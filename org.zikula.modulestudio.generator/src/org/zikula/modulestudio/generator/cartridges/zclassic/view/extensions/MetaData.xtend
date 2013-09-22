@@ -25,7 +25,7 @@ class MetaData {
         {* purpose of this template: reusable display of meta data fields *}
         {if isset($obj.metadata)}
             {if isset($panel) && $panel eq true}
-                <h3 class="metadata z-panel-header z-panel-indicator z-pointer">{gt text='Metadata'}</h3>
+                <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
                 <div class="metadata z-panel-content" style="display: none">
             {else}
                 <h3 class="metadata">{gt text='Metadata'}</h3>
@@ -113,109 +113,217 @@ class MetaData {
     def private metaDataEditImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable editing of meta data fields *}
         {if isset($panel) && $panel eq true}
-            <h3 class="metadata z-panel-header z-panel-indicator z-pointer">{gt text='Metadata'}</h3>
+            <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
             <fieldset class="metadata z-panel-content" style="display: none">
         {else}
             <fieldset class="metadata">
         {/if}
             <legend>{gt text='Metadata'}</legend>
 
-            <div class="z-formrow">
-                {formlabel for='metadataTitle' __text='Title'}
-                {formtextinput group='meta' id='metadataTitle' dataField='title' maxLength=80}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataTitle' __text='Title'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataTitle' dataField='title' maxLength=80«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataAuthor' __text='Author'}
-                {formtextinput group='meta' id='metadataAuthor' dataField='author' maxLength=80}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataAuthor' __text='Author'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataAuthor' dataField='author' maxLength=80«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataSubject' __text='Subject'}
-                {formtextinput group='meta' id='metadataSubject' dataField='subject' maxLength=255}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataSubject' __text='Subject'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataSubject' dataField='subject' maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataKeywords' __text='Keywords'}
-                {formtextinput group='meta' id='metadataKeywords' dataField='keywords' maxLength=128}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataKeywords' __text='Keywords'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataKeywords' dataField='keywords' maxLength=128«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataDescription' __text='Description'}
-                {formtextinput group='meta' id='metadataDescription' dataField='description' maxLength=255}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataDescription' __text='Description'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataDescription' dataField='description' maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataPublisher' __text='Publisher'}
-                {formtextinput group='meta' id='metadataPublisher' dataField='publisher' maxLength=128}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataPublisher' __text='Publisher'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataPublisher' dataField='publisher' maxLength=128«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataContributor' __text='Contributor'}
-                {formtextinput group='meta' id='metadataContributor' dataField='contributor' maxLength=80}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataContributor' __text='Contributor'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataContributor' dataField='contributor' maxLength=80«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataStartdate' __text='Start date'}
-            {if $mode ne 'create'}
-                {formdateinput group='meta' id='metadataStartdate' dataField='startdate' mandatory=false includeTime=true}
-            {else}
-                {formdateinput group='meta' id='metadataStartdate' dataField='startdate' mandatory=false includeTime=true defaultValue='now'}
-            {/if}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataStartdate' __text='Start date'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                {if $mode ne 'create'}
+                    {formdateinput group='meta' id='metadataStartdate' dataField='startdate' mandatory=false includeTime=true«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                {else}
+                    {formdateinput group='meta' id='metadataStartdate' dataField='startdate' mandatory=false includeTime=true defaultValue='now'«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                {/if}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataEnddate' __text='End date'}
-            {if $mode ne 'create'}
-                {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true}
-            {else}
-                {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true defaultValue='now'}
-            {/if}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataEnddate' __text='End date'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                {if $mode ne 'create'}
+                    {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                {else}
+                    {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true defaultValue='now'«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                {/if}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataType' __text='Type'}
-                {formtextinput group='meta' id='metadataType' dataField='type' maxLength=128}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataType' __text='Type'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataType' dataField='type' maxLength=128«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataFormat' __text='Format'}
-                {formtextinput group='meta' id='metadataFormat' dataField='format' maxLength=128}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataFormat' __text='Format'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataFormat' dataField='format' maxLength=128«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataUri' __text='Uri'}
-                {formtextinput group='meta' id='metadataUri' dataField='uri' maxLength=255}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataUri' __text='Uri'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataUri' dataField='uri' maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataSource' __text='Source'}
-                {formtextinput group='meta' id='metadataSource' dataField='source' maxLength=128}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataSource' __text='Source'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataSource' dataField='source' maxLength=128«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataLanguage' __text='Language'}
-                {formlanguageselector group='meta' id='metadataLanguage' mandatory=false __title='Choose a language' dataField='language'}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataLanguage' __text='Language'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formlanguageselector group='meta' id='metadataLanguage' mandatory=false __title='Choose a language' dataField='language'«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataRelation' __text='Relation'}
-                {formtextinput group='meta' id='metadataRelation' dataField='relation' maxLength=255}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataRelation' __text='Relation'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataRelation' dataField='relation' maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataCoverage' __text='Coverage'}
-                {formtextinput group='meta' id='metadataCoverage' dataField='coverage' maxLength=64}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataCoverage' __text='Coverage'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataCoverage' dataField='coverage' maxLength=64«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataComment' __text='Comment'}
-                {formtextinput group='meta' id='metadataComment' dataField='comment' maxLength=255}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataComment' __text='Comment'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataComment' dataField='comment' maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
 
-            <div class="z-formrow">
-                {formlabel for='metadataExtra' __text='Extra'}
-                {formtextinput group='meta' id='metadataExtra' dataField='extra' maxLength=255}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for='metadataExtra' __text='Extra'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group='meta' id='metadataExtra' dataField='extra' maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
         </fieldset>
     '''

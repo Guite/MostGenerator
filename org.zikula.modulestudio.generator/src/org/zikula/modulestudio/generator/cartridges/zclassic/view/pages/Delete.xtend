@@ -33,18 +33,24 @@ class Delete {
         {pagesetvar name='title' value=$templateTitle}
         «controller.templateHeader»
 
-        <p class="z-warningmsg">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
+        <p class="«IF container.application.targets('1.3.5')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
 
-        <form class="z-form" action="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDelete(name, true)»}" method="post">
+        <form class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»" action="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDelete(name, true)»}" method="post"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
             <div>
                 <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
                 <input type="hidden" id="confirmation" name="confirmation" value="1" />
                 <fieldset>
                     <legend>{gt text='Confirmation prompt'}</legend>
-                    <div class="z-buttons z-formbuttons">
+                    <div class="«IF container.application.targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
+                    «IF !container.application.targets('1.3.5')»
+                        <div class="col-lg-offset-3 col-lg-9">
+                    «ENDIF»
                         {gt text='Delete' assign='deleteTitle'}
-                        {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='z-btred'}
-                        <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«name.formatForCode»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
+                        {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF container.application.targets('1.3.5')»z-btred«ELSE»btn btn-danger«ENDIF»'}
+                        <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«name.formatForCode»'}"«IF !container.application.targets('1.3.5')» class="btn btn-default" role="button"«ENDIF»>{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
+                    «IF !container.application.targets('1.3.5')»
+                        </div>
+                    «ENDIF»
                     </div>
                 </fieldset>
 

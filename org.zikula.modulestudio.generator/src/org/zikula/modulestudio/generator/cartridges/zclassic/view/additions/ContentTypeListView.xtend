@@ -78,12 +78,18 @@ class ContentTypeListView {
     def private editTemplate(Application it) '''
         {* Purpose of this template: edit view of generic item list content type *}
 
-        <div class="z-formrow">
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Object type' domain='module_«appName.formatForDB»' assign='objectTypeSelectorLabel'}
-            {formlabel for='«appName»_objecttype' text=$objectTypeSelectorLabel}
-            {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
-            {formdropdownlist id='«appName»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes}
-            <span class="z-sub z-formnote">{gt text='If you change this please save the element once to reload the parameters below.' domain='module_«appName.formatForDB»'}</span>
+            {formlabel for='«appName»_objecttype' text=$objectTypeSelectorLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
+                {formdropdownlist id='«appName»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='If you change this please save the element once to reload the parameters below.' domain='module_«appName.formatForDB»'}</span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
         {formvolatile}
@@ -96,7 +102,7 @@ class ContentTypeListView {
                         {assign var='propName' value=$propertyName}
                     {/if}
                 {/foreach}
-                <div class="z-formrow">
+                <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
                     {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
                     {gt text='Category' domain='module_«appName.formatForDB»' assign='categorySelectorLabel'}
                     {assign var='selectionMode' value='single'}
@@ -104,19 +110,25 @@ class ContentTypeListView {
                         {gt text='Categories' domain='module_«appName.formatForDB»' assign='categorySelectorLabel'}
                         {assign var='selectionMode' value='multiple'}
                     {/if}
-                    {formlabel for="«appName»_catids`$propertyName`" text=$categorySelectorLabel}
-                    {formdropdownlist id="«appName»_catids`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode}
-                    <span class="z-sub z-formnote">{gt text='This is an optional filter.' domain='module_«appName.formatForDB»'}</span>
+                    {formlabel for="«appName»_catids`$propertyName`" text=$categorySelectorLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                    «IF !targets('1.3.5')»
+                        <div class="col-lg-9">
+                    «ENDIF»
+                        {formdropdownlist id="«appName»_catids`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                        <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='This is an optional filter.' domain='module_«appName.formatForDB»'}</span>
+                    «IF !targets('1.3.5')»
+                        </div>
+                    «ENDIF»
                 </div>
             {/foreach}
             {/nocache}
         {/if}
         {/formvolatile}
 
-        <div class="z-formrow">
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Sorting' domain='module_«appName.formatForDB»' assign='sortingLabel'}
-            {formlabel text=$sortingLabel}
-            <div>
+            {formlabel text=$sortingLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            <div«IF !targets('1.3.5')» class="col-lg-9"«ENDIF»>
                 {formradiobutton id='«appName»_srandom' value='random' dataField='sorting' group='data' mandatory=true}
                 {gt text='Random' domain='module_«appName.formatForDB»' assign='sortingRandomLabel'}
                 {formlabel for='«appName»_srandom' text=$sortingRandomLabel}
@@ -129,31 +141,55 @@ class ContentTypeListView {
             </div>
         </div>
 
-        <div class="z-formrow">
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Amount' domain='module_«appName.formatForDB»' assign='amountLabel'}
-            {formlabel for='«appName»_amount' text=$amountLabel}
-            {formintinput id='«appName»_amount' dataField='amount' group='data' mandatory=true maxLength=2}
+            {formlabel for='«appName»_amount' text=$amountLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                {formintinput id='«appName»_amount' dataField='amount' group='data' mandatory=true maxLength=2}
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
-        <div class="z-formrow">
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Template' domain='module_«appName.formatForDB»' assign='templateLabel'}
-            {formlabel for='«appName»_template' text=$templateLabel}
-            {«appName.formatForDB»TemplateSelector assign='allTemplates'}
-            {formdropdownlist id='«appName»_template' dataField='template' group='data' mandatory=true items=$allTemplates}
+            {formlabel for='«appName»_template' text=$templateLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                {«appName.formatForDB»TemplateSelector assign='allTemplates'}
+                {formdropdownlist id='«appName»_template' dataField='template' group='data' mandatory=true items=$allTemplates«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
-        <div id="customtemplatearea" class="z-formrow z-hide">
+        <div id="customtemplatearea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
             {gt text='Custom template' domain='module_«appName.formatForDB»' assign='customTemplateLabel'}
-            {formlabel for='«appName»_customtemplate' text=$customTemplateLabel}
-            {formtextinput id='«appName»_customtemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80}
-            <span class="z-sub z-formnote">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objecttype]_display.tpl</em></span>
+            {formlabel for='«appName»_customtemplate' text=$customTemplateLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                {formtextinput id='«appName»_customtemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objecttype]_display.tpl</em></span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
-        <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
+        <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
             {gt text='Filter (expert option)' domain='module_«appName.formatForDB»' assign='filterLabel'}
-            {formlabel for='«appName»_filter' text=$filterLabel}
-            {formtextinput id='«appName»_filter' dataField='filter' group='data' mandatory=false maxLength=255}
-            <span class="z-sub z-formnote">({gt text='Syntax examples' domain='module_«appName.formatForDB»'}: <kbd>name:like:foobar</kbd> {gt text='or' domain='module_«appName.formatForDB»'} <kbd>status:ne:3</kbd>)</span>
+            {formlabel for='«appName»_filter' text=$filterLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                {formtextinput id='«appName»_filter' dataField='filter' group='data' mandatory=false maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">({gt text='Syntax examples' domain='module_«appName.formatForDB»'}: <kbd>name:like:foobar</kbd> {gt text='or' domain='module_«appName.formatForDB»'} <kbd>status:ne:3</kbd>)</span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
         {pageaddvar name='javascript' value='prototype'}
@@ -161,9 +197,9 @@ class ContentTypeListView {
         /* <![CDATA[ */
             function «prefix()»ToggleCustomTemplate() {
                 if ($F('«appName»_template') == 'custom') {
-                    $('customtemplatearea').removeClassName('z-hide');
+                    $('customtemplatearea').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 } else {
-                    $('customtemplatearea').addClassName('z-hide');
+                    $('customtemplatearea').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 }
             }
 

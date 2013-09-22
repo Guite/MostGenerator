@@ -86,8 +86,17 @@ public class Categories {
     _builder.append("{if isset($panel) && $panel eq true}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<h3 class=\"categories z-panel-header z-panel-indicator z-pointer\">{gt text=\'Categories\'}</h3>");
-    _builder.newLine();
+    _builder.append("<h3 class=\"categories z-panel-header z-panel-indicator ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("cursor");
+      }
+    }
+    _builder.append("-pointer\">{gt text=\'Categories\'}</h3>");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<div class=\"categories z-panel-content\" style=\"display: none\">");
     _builder.newLine();
@@ -148,8 +157,17 @@ public class Categories {
     _builder.append("{if isset($panel) && $panel eq true}");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<h3 class=\"categories z-panel-header z-panel-indicator z-pointer\">{gt text=\'Categories\'}</h3>");
-    _builder.newLine();
+    _builder.append("<h3 class=\"categories z-panel-header z-panel-indicator ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("cursor");
+      }
+    }
+    _builder.append("-pointer\">{gt text=\'Categories\'}</h3>");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<fieldset class=\"categories z-panel-content\" style=\"display: none\">");
     _builder.newLine();
@@ -188,20 +206,55 @@ public class Categories {
     _builder.append("{/if}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
-    _builder.append("{formlabel for=\"category_`$registryId`\" text=$categorySelectorLabel}");
-    _builder.newLine();
-    _builder.append("            ");
+    _builder.append("{formlabel for=\"category_`$registryId`\" text=$categorySelectorLabel");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_3);
+      if (_not_1) {
+        _builder.append("            ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("                ");
     _builder.append("{formcategoryselector id=\"category_`$registryId`\" category=$registryCid");
     _builder.newLine();
-    _builder.append("                                  ");
+    _builder.append("                                      ");
     _builder.append("dataField=\'categories\' group=$groupName registryId=$registryId doctrine2=true");
     _builder.newLine();
-    _builder.append("                                  ");
+    _builder.append("                                      ");
     _builder.append("selectionMode=$selectionMode}");
     _builder.newLine();
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_4);
+      if (_not_2) {
+        _builder.append("            ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("        ");
     _builder.append("</div>");
     _builder.newLine();

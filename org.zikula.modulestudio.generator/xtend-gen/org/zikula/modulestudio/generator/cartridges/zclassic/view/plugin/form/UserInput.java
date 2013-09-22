@@ -362,7 +362,14 @@ public class UserInput {
     _builder.append("$result = \'<div id=\"\' . $this->getId() . \'LiveSearch\" class=\"");
     String _prefix = it.getPrefix();
     _builder.append(_prefix, "        ");
-    _builder.append("LiveSearchUser z-hide\">");
+    _builder.append("LiveSearchUser ");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\">");
     _builder.newLineIfNotEmpty();
     _builder.append("                ");
     _builder.append("<img src=\"/images/icons/extrasmall/search.png\" width=\"16\" height=\"16\" alt=\"\' . $searchTitle . \'\" title=\"\' . $searchTitle . \'\" />");
@@ -374,8 +381,15 @@ public class UserInput {
     _builder.append("<img src=\"/images/ajax/indicator_circle.gif\" width=\"16\" height=\"16\" alt=\"\" id=\"\' . $this->getId() . \'Indicator\" style=\"display: none\" />");
     _builder.newLine();
     _builder.append("                ");
-    _builder.append("<span id=\"\' . $this->getId() . \'NoResultsHint\" class=\"z-hide\">\' . __(\'No results found!\', $dom) . \'</span>");
-    _builder.newLine();
+    _builder.append("<span id=\"\' . $this->getId() . \'NoResultsHint\" class=\"");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\">\' . __(\'No results found!\', $dom) . \'</span>");
+    _builder.newLineIfNotEmpty();
     _builder.append("                ");
     _builder.append("<div id=\"\' . $this->getId() . \'SelectorChoices\" class=\"");
     String _prefix_1 = it.getPrefix();

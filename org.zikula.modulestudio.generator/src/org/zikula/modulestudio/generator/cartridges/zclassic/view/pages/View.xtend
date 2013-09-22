@@ -69,7 +69,7 @@ class View {
         «controller.templateHeader»
         «IF documentation !== null && documentation != ''»
 
-            <p class="sectiondesc">«documentation»</p>
+            <p class="«IF container.application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">«documentation»</p>
         «ENDIF»
 
         «IF controller.hasActions('edit')»
@@ -142,7 +142,7 @@ class View {
 
     def private viewForm(Entity it, String appName, Controller controller) '''
         «IF listType == 3 && controller.tableClass == 'admin'»
-            <form class="z-form" id="«nameMultiple.formatForCode»_view" action="{modurl modname='«appName»' type='«controller.formattedName»' func='handleselectedentries'}" method="post">
+            <form class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»" id="«nameMultiple.formatForCode»_view" action="{modurl modname='«appName»' type='«controller.formattedName»' func='handleselectedentries'}" method="post"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
                     <input type="hidden" name="ot" value="«name.formatForCode»" />
@@ -164,7 +164,7 @@ class View {
             «IF listType != 3»
                 <«listType.asListTag»>
             «ELSE»
-                <table class="z-datatable">
+                <table class="«IF container.application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0)) > 7» table-condensed«ENDIF»{* table-responsive*}«ENDIF»">
                     <colgroup>
                         «IF controller.tableClass == 'admin'»
                             <col id="cselect" />
@@ -187,7 +187,7 @@ class View {
                         «FOR field : listItemsFields»«field.headerLine(controller)»«ENDFOR»
                         «FOR relation : listItemsIn»«relation.headerLine(controller, false)»«ENDFOR»
                         «FOR relation : listItemsOut»«relation.headerLine(controller, true)»«ENDFOR»
-                        <th id="hitemactions" scope="col" class="z-right z-order-unsorted">{gt text='Actions'}</th>
+                        <th id="hitemactions" scope="col" class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-right z-order-unsorted">{gt text='Actions'}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -199,7 +199,7 @@ class View {
                 «ELSEIF listType == 2»
                     <dt>
                 «ELSEIF listType == 3»
-                    <tr class="{cycle values='z-odd, z-even'}">
+                    <tr«IF container.application.targets('1.3.5')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
                         «IF controller.tableClass == 'admin'»
                             <td headers="hselect" align="center" valign="top">
                                 <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode»_checkbox" />
@@ -224,7 +224,7 @@ class View {
                     <dt>
                 «ELSEIF listType == 3»
                     <tr class="z-«controller.tableClass»tableempty">
-                      <td class="z-left" colspan="«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0))»">
+                      <td class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-left" colspan="«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0))»">
                 «ENDIF»
                 {gt text='No «nameMultiple.formatForDisplay» found.'}
                 «IF listType < 2»
@@ -255,7 +255,7 @@ class View {
     def private massActionFields(Entity it, String appName) '''
         <fieldset>
             <label for="«appName.formatForDB»_action">{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
-            <select id="«appName.formatForDB»_action" name="action">
+            <select id="«appName.formatForDB»_action" name="action"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
                 <option value="">{gt text='Choose action'}</option>
             «IF workflow != EntityWorkflowType::NONE»
                 «IF workflow == EntityWorkflowType::ENTERPRISE»
@@ -337,14 +337,14 @@ class View {
     '''
 
     def private headerLine(DerivedField it, Controller controller) '''
-        <th id="h«markupIdCode(false)»" scope="col" class="z-«alignment»">
+        <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-«alignment»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
             «headerSortingLink(controller, entity, name.formatForCode, fieldLabel)»
         </th>
     '''
 
     def private headerLine(JoinRelationship it, Controller controller, Boolean useTarget) '''
-        <th id="h«markupIdCode(useTarget)»" scope="col" class="z-left">
+        <th id="h«markupIdCode(useTarget)»" scope="col" class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-left">
             «val mainEntity = (if (useTarget) source else target)»
             «headerSortingLink(controller, mainEntity, getRelationAliasName(useTarget).formatForCode, getRelationAliasName(useTarget).formatForCodeCapital)»
         </th>
@@ -378,7 +378,13 @@ class View {
         return ''
     }
     def private dispatch entryContainerCssClass(ListField it) {
-        if (name == 'workflowState') 'z-nowrap' else ''
+        if (name == 'workflowState') {
+            if (entity.container.application.targets('1.3.5')) {
+                'z-nowrap'
+            } else {
+                'nowrap'
+            }
+        } else ''
     }
 
     def private dispatch displayEntryInner(Object it, Controller controller, Boolean useTarget) {
@@ -418,7 +424,7 @@ class View {
               «ENDIF»
             «IF linkController !== null»
                 {/strip}</a>
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«linkController.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«linkController.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
@@ -459,13 +465,13 @@ class View {
         «IF listType != 3»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«itemActionContainerId»" headers="hitemactions" class="z-right z-nowrap z-w02">
+            <td id="«itemActionContainerId»" headers="hitemactions" class="«IF container.application.targets('1.3.5')»z-right z-nowrap«ELSE»actions text-right nowrap«ENDIF» z-w02">
         «ENDIF»
             {if count($«objName»._actions) gt 0}
                 {foreach item='option' from=$«objName»._actions}
                     <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
                 {/foreach}
-                {icon id="«itemActionContainerIdForSmarty»trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
+                {icon id="«itemActionContainerIdForSmarty»trigger" type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hide«ENDIF»'}
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {

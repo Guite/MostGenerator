@@ -91,13 +91,21 @@ class WorkflowUtil {
 
     '''
 
-    def private stateInfo(ListFieldItem it) '''
-        $states[] = array('value' => '«value»',
-                          'text' => $this->__('«name»'),
-                          'icon' => '«stateIcon»led.png');
+    def private stateInfo(Application it, ListFieldItem item) '''
+        $states[] = array('value' => '«item.value»',
+                          'text' => $this->__('«item.name»'),
+                          'ui' => '«uiFeedback(item)»');
     '''
 
-    def private stateIcon(ListFieldItem it) {
+    def private uiFeedback(Application it, ListFieldItem item) {
+        if (targets('1.3.5')) {
+            return item.stateIcon135
+        } else {
+            return item.stateLabel
+        }
+    }
+
+    def private stateIcon135(ListFieldItem it) {
         switch (it.value) {
             case 'initial': 'red'
             case 'deferred': 'red'
@@ -109,6 +117,21 @@ class WorkflowUtil {
             case 'trashed': 'red'
             case 'deleted': 'red'
             default: 'red'
+        }
+    }
+
+    def private stateLabel(ListFieldItem it) {
+        switch (it.value) {
+            case 'initial': 'danger'
+            case 'deferred': 'danger'
+            case 'waiting': 'warning'
+            case 'accepted': 'warning'
+            case 'approved': 'success'
+            case 'suspended': 'primary'
+            case 'archived': 'info'
+            case 'trashed': 'danger'
+            case 'deleted': 'danger'
+            default: 'default'
         }
     }
 
@@ -240,10 +263,10 @@ class WorkflowUtil {
                         break;
                 «ENDIF»
                 case 'submit':
-                    $buttonClass = 'ok';//'new';
+                    $buttonClass = '«IF targets('1.3.5')»ok«ELSE»success«ENDIF»';
                     break;
                 case 'update':
-                    $buttonClass = 'save';//'edit';
+                    $buttonClass = '«IF targets('1.3.5')»ok«ELSE»success«ENDIF»';
                     break;
                 «IF hasWorkflowState('deferred')»
                     case 'reject':
@@ -252,12 +275,12 @@ class WorkflowUtil {
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
                     case 'accept':
-                        $buttonClass = 'ok';
+                        $buttonClass = '«IF targets('1.3.5')»ok«ELSE»default«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
                     case 'approve':
-                        $buttonClass = 'ok';
+                        $buttonClass = '«IF targets('1.3.5')»ok«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
@@ -267,15 +290,15 @@ class WorkflowUtil {
                 «ENDIF»
                 «IF hasWorkflowState('suspended')»
                     case 'unpublish':
-                        $buttonClass = '';//'filter';
+                        $buttonClass = '';
                         break;
                     case 'publish':
-                        $buttonClass = 'ok';
+                        $buttonClass = '«IF targets('1.3.5')»ok«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('archived')»
                     case 'archive':
-                        $buttonClass = 'archive';
+                        $buttonClass = '«IF targets('1.3.5')»archive«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('trashed')»
@@ -283,17 +306,25 @@ class WorkflowUtil {
                         $buttonClass = '';
                         break;
                     case 'recover':
-                        $buttonClass = 'ok';
+                        $buttonClass = '«IF targets('1.3.5')»ok«ENDIF»';
                         break;
                 «ENDIF»
                 case 'delete':
-                    $buttonClass = 'delete z-btred';
+                    $buttonClass = '«IF targets('1.3.5')»delete z-btred«ELSE»danger«ENDIF»';
                     break;
             }
 
-            if (!empty($buttonClass)) {
-                $buttonClass = 'z-bt-' . $buttonClass;
-            }
+            «IF targets('1.3.5')»
+                if (!empty($buttonClass)) {
+                    $buttonClass = 'z-bt-' . $buttonClass;
+                }
+            «ELSE»
+                if (empty($buttonClass)) {
+                    $buttonClass = 'default';
+                }
+
+                $buttonClass = 'btn btn-' . $buttonClass;
+            «ENDIF»
 
             return $buttonClass;
         }

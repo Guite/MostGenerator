@@ -139,7 +139,18 @@ public class ViewQuickNavForm {
     _builder.append("QuickNavForm\" class=\"");
     String _prefix_1 = app.getPrefix();
     _builder.append(_prefix_1, "");
-    _builder.append("QuickNavForm\">");
+    _builder.append("-quicknav");
+    {
+      Models _container_1 = it.getContainer();
+      Application _application = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("\"");
+      } else {
+        _builder.append(" {*form-inline*}navbar-form navbar-left\" role=\"navigation\"");
+      }
+    }
+    _builder.append(">");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<fieldset>");
@@ -181,8 +192,16 @@ public class ViewQuickNavForm {
     _builder.append(_formFields, "        ");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
-    _builder.append("<input type=\"submit\" name=\"updateview\" id=\"quicknav_submit\" value=\"{gt text=\'OK\'}\" />");
-    _builder.newLine();
+    _builder.append("<input type=\"submit\" name=\"updateview\" id=\"quicknav_submit\" value=\"{gt text=\'OK\'}\"");
+    {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" class=\"btn btn-default\"");
+      }
+    }
+    _builder.append(" />");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("</fieldset>");
     _builder.newLine();
@@ -215,8 +234,15 @@ public class ViewQuickNavForm {
     _builder.append("{{* we can hide the submit button if we have no quick search field *}}");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$(\'quicknav_submit\').addClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("$(\'quicknav_submit\').addClassName(\'");
+    {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      if (_targets_2) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("{{/if}}");
     _builder.newLine();
@@ -403,20 +429,42 @@ public class ViewQuickNavForm {
         _builder.append("            ");
         _builder.append("{/if}");
         _builder.newLine();
-        _builder.append("            ");
+        {
+          Models _container_2 = it.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets = this._utils.targets(_application_2, "1.3.5");
+          boolean _not = (!_targets);
+          if (_not) {
+            _builder.append("            ");
+            _builder.append("<div class=\"form-group\">");
+            _builder.newLine();
+          }
+        }
+        _builder.append("                ");
         _builder.append("<label for=\"{$categorySelectorId}{$propertyName}\">{$categoryLabel}</label>");
         _builder.newLine();
-        _builder.append("            ");
+        _builder.append("                ");
         _builder.append("&nbsp;");
         _builder.newLine();
-        _builder.append("            ");
+        _builder.append("                ");
         _builder.append("{selector_category name=\"`$categorySelectorName``$propertyName`\" field=\'id\' selectedValue=$catIdList.$propertyName categoryRegistryModule=\'");
-        Models _container_2 = it.getContainer();
-        Application _application_2 = _container_2.getApplication();
-        String _appName_2 = this._utils.appName(_application_2);
-        _builder.append(_appName_2, "            ");
+        Models _container_3 = it.getContainer();
+        Application _application_3 = _container_3.getApplication();
+        String _appName_2 = this._utils.appName(_application_3);
+        _builder.append(_appName_2, "                ");
         _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}");
         _builder.newLineIfNotEmpty();
+        {
+          Models _container_4 = it.getContainer();
+          Application _application_4 = _container_4.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_4, "1.3.5");
+          boolean _not_1 = (!_targets_1);
+          if (_not_1) {
+            _builder.append("            ");
+            _builder.append("</div>");
+            _builder.newLine();
+          }
+        }
         _builder.append("        ");
         _builder.append("{/foreach}");
         _builder.newLine();
@@ -444,10 +492,34 @@ public class ViewQuickNavForm {
     _builder.append(fieldName, "");
     _builder.append("Filter eq true}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append("    ");
+        _builder.append("<div class=\"form-group\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     CharSequence _formFieldImpl = this.formFieldImpl(it);
-    _builder.append(_formFieldImpl, "    ");
+    _builder.append(_formFieldImpl, "        ");
     _builder.newLineIfNotEmpty();
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container_1 = _entity_1.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("{/if}");
     _builder.newLine();
     return _builder;
@@ -480,7 +552,18 @@ public class ViewQuickNavForm {
     _builder.append(fieldName, "");
     _builder.append("\" name=\"");
     _builder.append(fieldName, "");
-    _builder.append("\">");
+    _builder.append("\"");
+    {
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<option value=\"\">{$lblDefault}</option>");
@@ -577,7 +660,18 @@ public class ViewQuickNavForm {
     _builder.append(fieldName, "");
     _builder.append("\" name=\"");
     _builder.append(fieldName, "");
-    _builder.append("\">");
+    _builder.append("\"");
+    {
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<option value=\"\">{$lblDefault}</option>");
@@ -619,28 +713,39 @@ public class ViewQuickNavForm {
     _builder.append(sourceName, "");
     _builder.append("Filter eq true}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append("    ");
+        _builder.append("<div class=\"form-group\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("<label for=\"");
-    _builder.append(sourceAliasName, "    ");
+    _builder.append(sourceAliasName, "        ");
     _builder.append("\">{gt text=\'");
     Entity _source_1 = it.getSource();
     String _nameMultiple = _source_1.getNameMultiple();
     String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_nameMultiple);
-    _builder.append(_formatForDisplayCapital, "    ");
+    _builder.append(_formatForDisplayCapital, "        ");
     _builder.append("\'}</label>");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("{modapifunc modname=\'");
     Entity _source_2 = it.getSource();
-    Models _container = _source_2.getContainer();
-    Application _application = _container.getApplication();
-    String _appName = this._utils.appName(_application);
-    _builder.append(_appName, "    ");
+    Models _container_1 = _source_2.getContainer();
+    Application _application_1 = _container_1.getApplication();
+    String _appName = this._utils.appName(_application_1);
+    _builder.append(_appName, "        ");
     _builder.append("\' type=\'selection\' func=\'getEntities\' ot=\'");
     Entity _source_3 = it.getSource();
     String _name_1 = _source_3.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
-    _builder.append(_formatForCode, "    ");
+    _builder.append(_formatForCode, "        ");
     _builder.append("\'");
     {
       Entity _source_4 = it.getSource();
@@ -652,30 +757,40 @@ public class ViewQuickNavForm {
         DerivedField _leadingField_1 = this._modelExtensions.getLeadingField(_source_5);
         String _name_2 = _leadingField_1.getName();
         String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
-        _builder.append(_formatForCode_1, "    ");
+        _builder.append(_formatForCode_1, "        ");
         _builder.append("\'");
       }
     }
     _builder.append(" slimMode=true assign=\'listEntries\'}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("<select id=\"");
-    _builder.append(sourceAliasName, "    ");
-    _builder.append("\" name=\"");
-    _builder.append(sourceAliasName, "    ");
-    _builder.append("\">");
-    _builder.newLineIfNotEmpty();
     _builder.append("        ");
+    _builder.append("<select id=\"");
+    _builder.append(sourceAliasName, "        ");
+    _builder.append("\" name=\"");
+    _builder.append(sourceAliasName, "        ");
+    _builder.append("\"");
+    {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("            ");
     _builder.append("<option value=\"\">{$lblDefault}</option>");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("{foreach item=\'option\' from=$listEntries}");
     _builder.newLine();
     {
       Entity _source_6 = it.getSource();
       boolean _hasCompositeKeys = this._modelExtensions.hasCompositeKeys(_source_6);
       if (_hasCompositeKeys) {
-        _builder.append("        ");
+        _builder.append("            ");
         _builder.append("{assign var=\'entryId\' value=\"");
         {
           Entity _source_7 = it.getSource();
@@ -685,57 +800,68 @@ public class ViewQuickNavForm {
             if (!_hasElements) {
               _hasElements = true;
             } else {
-              _builder.appendImmediate("_", "        ");
+              _builder.appendImmediate("_", "            ");
             }
             _builder.append("`$option.");
             String _name_3 = pkField.getName();
             String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
-            _builder.append(_formatForCode_2, "        ");
+            _builder.append(_formatForCode_2, "            ");
             _builder.append("`");
           }
         }
         _builder.append("\"}");
         _builder.newLineIfNotEmpty();
-        _builder.append("        ");
+        _builder.append("            ");
         _builder.append("<option value=\"{$entryId}\"{if $entryId eq $");
-        _builder.append(sourceAliasName, "        ");
+        _builder.append(sourceAliasName, "            ");
         _builder.append("} selected=\"selected\"{/if}>{$option.");
         Entity _source_8 = it.getSource();
         DerivedField _leadingField_2 = this._modelExtensions.getLeadingField(_source_8);
         String _name_4 = _leadingField_2.getName();
         String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
-        _builder.append(_formatForCode_3, "        ");
+        _builder.append(_formatForCode_3, "            ");
         _builder.append("}</option>");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("        ");
+        _builder.append("            ");
         _builder.append("{assign var=\'entryId\' value=$option.");
         Entity _source_9 = it.getSource();
         DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(_source_9);
         String _name_5 = _firstPrimaryKey.getName();
         String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
-        _builder.append(_formatForCode_4, "        ");
+        _builder.append(_formatForCode_4, "            ");
         _builder.append("}");
         _builder.newLineIfNotEmpty();
-        _builder.append("        ");
+        _builder.append("            ");
         _builder.append("<option value=\"{$entryId}\"{if $entryId eq $");
-        _builder.append(sourceAliasName, "        ");
+        _builder.append(sourceAliasName, "            ");
         _builder.append("} selected=\"selected\"{/if}>{$option.");
         Entity _source_10 = it.getSource();
         DerivedField _leadingField_3 = this._modelExtensions.getLeadingField(_source_10);
         String _name_6 = _leadingField_3.getName();
         String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
-        _builder.append(_formatForCode_5, "        ");
+        _builder.append(_formatForCode_5, "            ");
         _builder.append("}</option>");
         _builder.newLineIfNotEmpty();
       }
     }
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("{/foreach}");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("</select>");
     _builder.newLine();
+    {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not_2 = (!_targets_2);
+      if (_not_2) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("{/if}");
     _builder.newLine();
     return _builder;
@@ -745,31 +871,52 @@ public class ViewQuickNavForm {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("{if !isset($sorting) || $sorting eq true}");
     _builder.newLine();
-    _builder.append("    ");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append("    ");
+        _builder.append("<div class=\"form-group\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("<label for=\"sortby\">{gt text=\'Sort by\'}</label>");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("&nbsp;");
     _builder.newLine();
-    _builder.append("    ");
-    _builder.append("<select id=\"sortby\" name=\"sort\">");
-    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<select id=\"sortby\" name=\"sort\"");
+    {
+      Models _container_1 = it.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
     {
       Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
       for(final DerivedField field : _derivedFields) {
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("<option value=\"");
         String _name = field.getName();
         String _formatForCode = this._formattingExtensions.formatForCode(_name);
-        _builder.append(_formatForCode, "    ");
+        _builder.append(_formatForCode, "        ");
         _builder.append("\"{if $sort eq \'");
         String _name_1 = field.getName();
         String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
-        _builder.append(_formatForCode_1, "    ");
+        _builder.append(_formatForCode_1, "        ");
         _builder.append("\'} selected=\"selected\"{/if}>{gt text=\'");
         String _name_2 = field.getName();
         String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_name_2);
-        _builder.append(_formatForDisplayCapital, "    ");
+        _builder.append(_formatForDisplayCapital, "        ");
         _builder.append("\'}</option>");
         _builder.newLineIfNotEmpty();
       }
@@ -777,32 +924,53 @@ public class ViewQuickNavForm {
     {
       boolean _isStandardFields = it.isStandardFields();
       if (_isStandardFields) {
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("<option value=\"createdDate\"{if $sort eq \'createdDate\'} selected=\"selected\"{/if}>{gt text=\'Creation date\'}</option>");
         _builder.newLine();
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("<option value=\"createdUserId\"{if $sort eq \'createdUserId\'} selected=\"selected\"{/if}>{gt text=\'Creator\'}</option>");
         _builder.newLine();
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("<option value=\"updatedDate\"{if $sort eq \'updatedDate\'} selected=\"selected\"{/if}>{gt text=\'Update date\'}</option>");
         _builder.newLine();
       }
     }
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("</select>");
     _builder.newLine();
-    _builder.append("    ");
-    _builder.append("<select id=\"sortdir\" name=\"sortdir\">");
-    _builder.newLine();
     _builder.append("        ");
+    _builder.append("<select id=\"sortdir\" name=\"sortdir\"");
+    {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_2 = (!_targets_2);
+      if (_not_2) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("            ");
     _builder.append("<option value=\"asc\"{if $sdir eq \'asc\'} selected=\"selected\"{/if}>{gt text=\'ascending\'}</option>");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"desc\"{if $sdir eq \'desc\'} selected=\"selected\"{/if}>{gt text=\'descending\'}</option>");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("</select>");
     _builder.newLine();
+    {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not_3 = (!_targets_3);
+      if (_not_3) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("{else}");
     _builder.newLine();
     _builder.append("    ");
@@ -815,39 +983,61 @@ public class ViewQuickNavForm {
     _builder.newLine();
     _builder.append("{if !isset($pageSizeSelector) || $pageSizeSelector eq true}");
     _builder.newLine();
-    _builder.append("    ");
+    {
+      Models _container_4 = it.getContainer();
+      Application _application_4 = _container_4.getApplication();
+      boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
+      boolean _not_4 = (!_targets_4);
+      if (_not_4) {
+        _builder.append("    ");
+        _builder.append("<div class=\"form-group\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("<label for=\"num\">{gt text=\'Page size\'}</label>");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("&nbsp;");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("<select id=\"num\" name=\"num\">");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"5\"{if $pageSize eq 5} selected=\"selected\"{/if}>5</option>");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"10\"{if $pageSize eq 10} selected=\"selected\"{/if}>10</option>");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"15\"{if $pageSize eq 15} selected=\"selected\"{/if}>15</option>");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"20\"{if $pageSize eq 20} selected=\"selected\"{/if}>20</option>");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"30\"{if $pageSize eq 30} selected=\"selected\"{/if}>30</option>");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"50\"{if $pageSize eq 50} selected=\"selected\"{/if}>50</option>");
     _builder.newLine();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("<option value=\"100\"{if $pageSize eq 100} selected=\"selected\"{/if}>100</option>");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("</select>");
     _builder.newLine();
+    {
+      Models _container_5 = it.getContainer();
+      Application _application_5 = _container_5.getApplication();
+      boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
+      boolean _not_5 = (!_targets_5);
+      if (_not_5) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("{/if}");
     _builder.newLine();
     return _builder;

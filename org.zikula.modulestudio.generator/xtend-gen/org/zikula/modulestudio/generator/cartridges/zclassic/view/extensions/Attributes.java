@@ -86,8 +86,17 @@ public class Attributes {
     _builder.append("{if isset($panel) && $panel eq true}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<h3 class=\"attributes z-panel-header z-panel-indicator z-pointer\">{gt text=\'Attributes\'}</h3>");
-    _builder.newLine();
+    _builder.append("<h3 class=\"attributes z-panel-header z-panel-indicator ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("cursor");
+      }
+    }
+    _builder.append("-pointer\">{gt text=\'Attributes\'}</h3>");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<div class=\"attributes z-panel-content\" style=\"display: none\">");
     _builder.newLine();
@@ -140,8 +149,17 @@ public class Attributes {
     _builder.append("{if isset($panel) && $panel eq true}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<h3 class=\"attributes z-panel-header z-panel-indicator z-pointer\">{gt text=\'Attributes\'}</h3>");
-    _builder.newLine();
+    _builder.append("<h3 class=\"attributes z-panel-header z-panel-indicator ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("cursor");
+      }
+    }
+    _builder.append("-pointer\">{gt text=\'Attributes\'}</h3>");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<fieldset class=\"attributes z-panel-content\" style=\"display: none\">");
     _builder.newLine();
@@ -164,14 +182,57 @@ public class Attributes {
     _builder.append("{foreach key=\'fieldName\' item=\'fieldValue\' from=$attributes}");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
-    _builder.append("{formlabel for=\"attributes`$fieldName`\"\' text=$fieldName}");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("{formtextinput id=\"attributes`$fieldName`\" group=\'attributes\' dataField=$fieldName maxLength=255}");
-    _builder.newLine();
+    _builder.append("{formlabel for=\"attributes`$fieldName`\"\' text=$fieldName");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_3);
+      if (_not_1) {
+        _builder.append("        ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("            ");
+    _builder.append("{formtextinput id=\"attributes`$fieldName`\" group=\'attributes\' dataField=$fieldName maxLength=255");
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_4);
+      if (_not_2) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      boolean _not_3 = (!_targets_5);
+      if (_not_3) {
+        _builder.append("        ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("    ");
     _builder.append("</div>");
     _builder.newLine();

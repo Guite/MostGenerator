@@ -437,8 +437,15 @@ public class RelationSelectorAutoComplete {
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$addLink = \'<a id=\"\' . $idPrefix . \'AddLink\" href=\"javascript:void(0);\" class=\"z-hide\">\' . $addLinkText . \'</a>\';");
-    _builder.newLine();
+    _builder.append("$addLink = \'<a id=\"\' . $idPrefix . \'AddLink\" href=\"javascript:void(0);\" class=\"");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\">\' . $addLinkText . \'</a>\';");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("$createLink = \'\';");
     _builder.newLine();
@@ -493,8 +500,15 @@ public class RelationSelectorAutoComplete {
     _builder.append("<img src=\"/images/ajax/indicator_circle.gif\" width=\"16\" height=\"16\" alt=\"\" id=\"\' . $idPrefix . \'Indicator\" style=\"display: none\" />");
     _builder.newLine();
     _builder.append("                    ");
-    _builder.append("<span id=\"\' . $idPrefix . \'NoResultsHint\" class=\"z-hide\">\' . __(\'No results found!\', $dom) . \'</span>");
-    _builder.newLine();
+    _builder.append("<span id=\"\' . $idPrefix . \'NoResultsHint\" class=\"");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\">\' . __(\'No results found!\', $dom) . \'</span>");
+    _builder.newLineIfNotEmpty();
     _builder.append("                    ");
     _builder.append("<div id=\"\' . $idPrefix . \'SelectorChoices\" class=\"");
     String _prefix_2 = this._utils.prefix(it);

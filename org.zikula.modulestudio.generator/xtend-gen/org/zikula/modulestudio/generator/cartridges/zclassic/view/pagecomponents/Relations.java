@@ -243,7 +243,14 @@ public class Relations {
         _builder.append(" theme=\'Printer\'");
         String _additionalUrlParametersForQuickViewLink = this._viewExtensions.additionalUrlParametersForQuickViewLink(controller);
         _builder.append(_additionalUrlParametersForQuickViewLink, "    ");
-        _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"z-hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
+        _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"");
+        {
+          boolean _targets = this._utils.targets(app, "1.3.5");
+          if (_targets) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
         _builder.newLineIfNotEmpty();
         _builder.append("{/if}");
         _builder.newLine();
@@ -409,6 +416,15 @@ public class Relations {
             String _formatForDisplayCapital_2 = this._formattingExtensions.formatForDisplayCapital(_name_16);
             _builder.append(_formatForDisplayCapital_2, "    ");
             _builder.append("\'");
+          }
+        }
+        {
+          Models _container = it.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets_1 = this._utils.targets(_application, "1.3.5");
+          boolean _not_2 = (!_targets_1);
+          if (_not_2) {
+            _builder.append(" img_class=\'img-rounded\'");
           }
         }
         _builder.append("}");

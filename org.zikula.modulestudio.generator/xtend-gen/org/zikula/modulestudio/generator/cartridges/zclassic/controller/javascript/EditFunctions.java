@@ -186,8 +186,15 @@ public class EditFunctions {
         _builder.append("}");
         _builder.newLine();
         _builder.append("    ");
-        _builder.append("$(fieldName + \'LiveSearch\').removeClassName(\'z-hide\');");
-        _builder.newLine();
+        _builder.append("$(fieldName + \'LiveSearch\').removeClassName(\'");
+        {
+          boolean _targets = this._utils.targets(it, "1.3.5");
+          if (_targets) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\');");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("new Ajax.Autocompleter(");
         _builder.newLine();
@@ -200,8 +207,8 @@ public class EditFunctions {
         _builder.append("        ");
         _builder.append("Zikula.Config.baseURL + \'");
         {
-          boolean _targets = this._utils.targets(it, "1.3.5");
-          if (_targets) {
+          boolean _targets_1 = this._utils.targets(it, "1.3.5");
+          if (_targets_1) {
             _builder.append("ajax");
           } else {
             _builder.append("index");
@@ -211,8 +218,8 @@ public class EditFunctions {
         String _appName = this._utils.appName(it);
         _builder.append(_appName, "        ");
         {
-          boolean _targets_1 = this._utils.targets(it, "1.3.5");
-          boolean _not = (!_targets_1);
+          boolean _targets_2 = this._utils.targets(it, "1.3.5");
+          boolean _not = (!_targets_2);
           if (_not) {
             _builder.append("&type=ajax");
           }
@@ -320,8 +327,15 @@ public class EditFunctions {
     _builder.append("ResetUploadField(fieldName);");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
-    _builder.append("}).removeClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("}).removeClassName(\'");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("}");
     _builder.newLine();
@@ -405,8 +419,15 @@ public class EditFunctions {
     _builder.append("ResetDateField(fieldName);");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
-    _builder.append("}).removeClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("}).removeClassName(\'");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("}");
     _builder.newLine();
@@ -584,8 +605,15 @@ public class EditFunctions {
         _builder.append("if ($(idPrefix + \'NoResultsHint\') != undefined) {");
         _builder.newLine();
         _builder.append("                ");
-        _builder.append("$(idPrefix + \'NoResultsHint\').removeClassName(\'z-hide\');");
-        _builder.newLine();
+        _builder.append("$(idPrefix + \'NoResultsHint\').removeClassName(\'");
+        {
+          boolean _targets = this._utils.targets(it, "1.3.5");
+          if (_targets) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\');");
+        _builder.newLineIfNotEmpty();
         _builder.append("            ");
         _builder.append("}");
         _builder.newLine();
@@ -749,15 +777,29 @@ public class EditFunctions {
     _builder.append("// show/hide the toggle link");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$(idPrefix + \'AddLink\').toggleClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("$(idPrefix + \'AddLink\').toggleClassName(\'");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// hide/show the fields");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$(idPrefix + \'AddFields\').toggleClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("$(idPrefix + \'AddFields\').toggleClassName(\'");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("}");
     _builder.newLine();
     return _builder;
@@ -1345,8 +1387,15 @@ public class EditFunctions {
     _builder.append("if ($(idPrefix + \'NoResultsHint\') != undefined) {");
     _builder.newLine();
     _builder.append("                ");
-    _builder.append("$(idPrefix + \'NoResultsHint\').addClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("$(idPrefix + \'NoResultsHint\').addClassName(\'");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("}");
     _builder.newLine();
@@ -1394,8 +1443,8 @@ public class EditFunctions {
     _builder.append("                ");
     _builder.append("Zikula.Config.baseURL + \'");
     {
-      boolean _targets = this._utils.targets(it, "1.3.5");
-      if (_targets) {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
         _builder.append("ajax");
       } else {
         _builder.append("index");
@@ -1403,8 +1452,8 @@ public class EditFunctions {
     }
     _builder.append(".php?module=\' + relationHandler.moduleName + \'");
     {
-      boolean _targets_1 = this._utils.targets(it, "1.3.5");
-      boolean _not = (!_targets_1);
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_2);
       if (_not) {
         _builder.append("&type=ajax");
       }

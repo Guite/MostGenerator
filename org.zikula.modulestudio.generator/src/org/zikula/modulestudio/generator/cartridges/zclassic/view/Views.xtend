@@ -156,7 +156,12 @@ class Views {
                     {«appName.formatForDB»ModerationObjects assign='moderationObjects'}
                     {if count($moderationObjects) gt 0}
                         {foreach item='modItem' from=$moderationObjects}
-                            <p class="z-informationmsg z-center"><a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a></p>
+                            <p class="«IF targets('1.3.5')»z-informationmsg z«ELSE»alert alert-info alert-dismissable text«ENDIF»-center">
+                                «IF !targets('1.3.5')»
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                «ENDIF»
+                                <a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="«IF targets('1.3.5')»z-«ENDIF»bold«IF !targets('1.3.5')» alert-link«ENDIF»">{$modItem.message}</a>
+                            </p>
                         {/foreach}
                     {/if}
                 {/nocache}

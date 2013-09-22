@@ -1452,8 +1452,21 @@ public class ControllerLayer {
             _builder.append("    ");
             _builder.append("    ");
             _builder.append("                     ");
-            _builder.append("\'title\' => $this->__(\'Manage settings for this application\'));");
-            _builder.newLine();
+            _builder.append("\'title\' => $this->__(\'Manage settings for this application\')");
+            {
+              boolean _targets_4 = this._utils.targets(app, "1.3.5");
+              boolean _not_3 = (!_targets_4);
+              if (_not_3) {
+                _builder.append(",");
+                _builder.newLineIfNotEmpty();
+                _builder.append("    ");
+                _builder.append("    ");
+                _builder.append("                     ");
+                _builder.append("\'icon\' => \'wrench\'");
+              }
+            }
+            _builder.append(");");
+            _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("    ");
             _builder.append("}");
@@ -1514,8 +1527,18 @@ public class ControllerLayer {
           _builder.append("\'title\' => $this->__(\'Switch to user area.\'),");
           _builder.newLine();
           _builder.append("                     ");
-          _builder.append("\'class\' => \'z-icon-es-home\');");
-          _builder.newLine();
+          {
+            Controllers _container_2 = _adminController.getContainer();
+            Application _application = _container_2.getApplication();
+            boolean _targets = this._utils.targets(_application, "1.3.5");
+            if (_targets) {
+              _builder.append("\'class\' => \'z-icon-es-home\'");
+            } else {
+              _builder.append("\'icon\' => \'home\'");
+            }
+          }
+          _builder.append(");");
+          _builder.newLineIfNotEmpty();
           _builder.append("}");
           _builder.newLine();
           _switchResult = _builder;
@@ -1554,8 +1577,18 @@ public class ControllerLayer {
           _builder.append("\'title\' => $this->__(\'Switch to administration area.\'),");
           _builder.newLine();
           _builder.append("                     ");
-          _builder.append("\'class\' => \'z-icon-es-options\');");
-          _builder.newLine();
+          {
+            Controllers _container_2 = _userController.getContainer();
+            Application _application = _container_2.getApplication();
+            boolean _targets = this._utils.targets(_application, "1.3.5");
+            if (_targets) {
+              _builder.append("\'class\' => \'z-icon-es-options\'");
+            } else {
+              _builder.append("\'icon\' => \'wrench\'");
+            }
+          }
+          _builder.append(");");
+          _builder.newLineIfNotEmpty();
           _builder.append("}");
           _builder.newLine();
           _switchResult = _builder;

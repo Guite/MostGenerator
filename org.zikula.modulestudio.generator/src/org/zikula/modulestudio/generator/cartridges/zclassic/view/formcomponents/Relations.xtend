@@ -107,18 +107,24 @@ class Relations {
             {assign var='allowEditing' value=false}
         {/if}
         {if isset($panel) && $panel eq true}
-            <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
+            <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
             <fieldset class="«ownEntityName.formatForDB» z-panel-content" style="display: none">
         {else}
             <fieldset class="«ownEntityName.formatForDB»">
         {/if}
             <legend>{gt text='«ownEntityName.formatForDisplayCapital»'}</legend>
-            <div class="z-formrow">
+            <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
         «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
         «val appnameLower = container.application.appName.formatForDB»
             {if $displayMode eq 'dropdown'}
-                {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»}
-                {«appnameLower»RelationSelectorList «pluginAttributes»}
+                {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !app.targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {«appnameLower»RelationSelectorList «pluginAttributes»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !app.targets('1.3.5')»
+                    </div>
+                «ENDIF»
             {elseif $displayMode eq 'autocomplete'}
                 «IF !isManyToMany && !incoming»
                     «component_ParentEditing(ownEntity, many)»
@@ -127,7 +133,7 @@ class Relations {
                     {if $allowEditing eq true}
                         {modurl modname='«app.appName»' type='«controller.formattedName»' func='edit' ot='«ownEntity.name.formatForCode»'«controller.additionalUrlParametersForQuickViewLink» assign='createLink'}
                     {/if}
-                    {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink selectedEntityName='«ownEntityName.formatForDisplay»' withImage=«ownEntity.hasImageFieldsEntity.displayBool»}
+                    {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink selectedEntityName='«ownEntityName.formatForDisplay»' withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
                     «component_AutoComplete(app, controller, ownEntity, many, incoming, hasEdit)»
                 «ENDIF»
             {/if}
@@ -201,7 +207,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField !== null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«targetEntity.name.formatForDisplayCapital»'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField !== null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«targetEntity.name.formatForDisplayCapital»'«ENDIF»«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
                 {/if}
             «ENDIF»
         </li>

@@ -142,14 +142,36 @@ public class Delete {
     _builder.append(_templateHeader, "");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
-    _builder.append("<p class=\"z-warningmsg\">{gt text=\'Do you really want to delete this ");
+    _builder.append("<p class=\"");
+    {
+      Models _container_1 = it.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-warningmsg");
+      } else {
+        _builder.append("alert alert-warningmsg");
+      }
+    }
+    _builder.append("\">{gt text=\'Do you really want to delete this ");
     String _name_2 = it.getName();
     String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
     _builder.append(_formatForDisplay_2, "");
     _builder.append(" ?\'}</p>");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
-    _builder.append("<form class=\"z-form\" action=\"{modurl modname=\'");
+    _builder.append("<form class=\"");
+    {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      if (_targets_2) {
+        _builder.append("z-form");
+      } else {
+        _builder.append("form-horizontal");
+      }
+    }
+    _builder.append("\" action=\"{modurl modname=\'");
     _builder.append(appName, "");
     _builder.append("\' type=\'");
     String _formattedName_3 = this._controllerExtensions.formattedName(controller);
@@ -158,7 +180,17 @@ public class Delete {
     String _name_3 = it.getName();
     String _modUrlDelete = this._urlExtensions.modUrlDelete(it, _name_3, Boolean.valueOf(true));
     _builder.append(_modUrlDelete, "");
-    _builder.append("}\" method=\"post\">");
+    _builder.append("}\" method=\"post\"");
+    {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not = (!_targets_3);
+      if (_not) {
+        _builder.append(" role=\"form\"");
+      }
+    }
+    _builder.append(">");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<div>");
@@ -176,14 +208,47 @@ public class Delete {
     _builder.append("<legend>{gt text=\'Confirmation prompt\'}</legend>");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<div class=\"z-buttons z-formbuttons\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      Models _container_4 = it.getContainer();
+      Application _application_4 = _container_4.getApplication();
+      boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
+      if (_targets_4) {
+        _builder.append("z-buttons z-formbuttons");
+      } else {
+        _builder.append("form-group form-buttons");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
+    {
+      Models _container_5 = it.getContainer();
+      Application _application_5 = _container_5.getApplication();
+      boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
+      boolean _not_1 = (!_targets_5);
+      if (_not_1) {
+        _builder.append("            ");
+        _builder.append("<div class=\"col-lg-offset-3 col-lg-9\">");
+        _builder.newLine();
+      }
+    }
     _builder.append("                ");
     _builder.append("{gt text=\'Delete\' assign=\'deleteTitle\'}");
     _builder.newLine();
     _builder.append("                ");
-    _builder.append("{button src=\'14_layer_deletelayer.png\' set=\'icons/small\' text=$deleteTitle title=$deleteTitle class=\'z-btred\'}");
-    _builder.newLine();
+    _builder.append("{button src=\'14_layer_deletelayer.png\' set=\'icons/small\' text=$deleteTitle title=$deleteTitle class=\'");
+    {
+      Models _container_6 = it.getContainer();
+      Application _application_6 = _container_6.getApplication();
+      boolean _targets_6 = this._utils.targets(_application_6, "1.3.5");
+      if (_targets_6) {
+        _builder.append("z-btred");
+      } else {
+        _builder.append("btn btn-danger");
+      }
+    }
+    _builder.append("\'}");
+    _builder.newLineIfNotEmpty();
     _builder.append("                ");
     _builder.append("<a href=\"{modurl modname=\'");
     _builder.append(appName, "                ");
@@ -194,8 +259,29 @@ public class Delete {
     String _name_4 = it.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name_4);
     _builder.append(_formatForCode, "                ");
-    _builder.append("\'}\">{icon type=\'cancel\' size=\'small\' __alt=\'Cancel\' __title=\'Cancel\'} {gt text=\'Cancel\'}</a>");
+    _builder.append("\'}\"");
+    {
+      Models _container_7 = it.getContainer();
+      Application _application_7 = _container_7.getApplication();
+      boolean _targets_7 = this._utils.targets(_application_7, "1.3.5");
+      boolean _not_2 = (!_targets_7);
+      if (_not_2) {
+        _builder.append(" class=\"btn btn-default\" role=\"button\"");
+      }
+    }
+    _builder.append(">{icon type=\'cancel\' size=\'small\' __alt=\'Cancel\' __title=\'Cancel\'} {gt text=\'Cancel\'}</a>");
     _builder.newLineIfNotEmpty();
+    {
+      Models _container_8 = it.getContainer();
+      Application _application_8 = _container_8.getApplication();
+      boolean _targets_8 = this._utils.targets(_application_8, "1.3.5");
+      boolean _not_3 = (!_targets_8);
+      if (_not_3) {
+        _builder.append("            ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("            ");
     _builder.append("</div>");
     _builder.newLine();
@@ -219,10 +305,10 @@ public class Delete {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      Models _container_1 = it.getContainer();
-      Application _application_1 = _container_1.getApplication();
-      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-      if (_targets_1) {
+      Models _container_9 = it.getContainer();
+      Application _application_9 = _container_9.getApplication();
+      boolean _targets_9 = this._utils.targets(_application_9, "1.3.5");
+      if (_targets_9) {
         String _formattedName_5 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_5, "");
       } else {

@@ -389,7 +389,24 @@ public class Forms {
         _builder.append("enctype=\'multipart/form-data\' ");
       }
     }
-    _builder.append("cssClass=\'z-form\'}");
+    _builder.append("cssClass=\'");
+    {
+      boolean _targets = this._utils.targets(app, "1.3.5");
+      if (_targets) {
+        _builder.append("z-form");
+      } else {
+        _builder.append("form-horizontal");
+      }
+    }
+    _builder.append("\'");
+    {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" role=\'form\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{* add validation summary and a <div> element for styling the form *}");
@@ -405,8 +422,8 @@ public class Forms {
     {
       List<DerivedField> _editableFields = this._modelExtensions.getEditableFields(it);
       boolean _isEmpty = _editableFields.isEmpty();
-      boolean _not = (!_isEmpty);
-      if (_not) {
+      boolean _not_1 = (!_isEmpty);
+      if (_not_1) {
         _builder.append("    ");
         _builder.append("{formsetinitialfocus inputId=\'");
         List<DerivedField> _editableFields_1 = this._modelExtensions.getEditableFields(it);
@@ -431,8 +448,17 @@ public class Forms {
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("    ");
-        _builder.append("<h3 id=\"z-panel-header-fields\" class=\"z-panel-header z-panel-indicator z-pointer\">{gt text=\'Fields\'}</h3>");
-        _builder.newLine();
+        _builder.append("<h3 id=\"z-panel-header-fields\" class=\"z-panel-header z-panel-indicator ");
+        {
+          boolean _targets_2 = this._utils.targets(app, "1.3.5");
+          if (_targets_2) {
+            _builder.append("z");
+          } else {
+            _builder.append("cursor");
+          }
+        }
+        _builder.append("-pointer\">{gt text=\'Fields\'}</h3>");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("<div class=\"z-panel-content z-panel-active\" style=\"overflow: visible\">");
@@ -485,8 +511,8 @@ public class Forms {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      boolean _targets = this._utils.targets(app, "1.3.5");
-      if (_targets) {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      if (_targets_3) {
         String _formattedName = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName, "");
       } else {
@@ -699,8 +725,17 @@ public class Forms {
               ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList("latitude", "longitude");
               for(final String geoFieldName : _newArrayList) {
                 _builder.append("    ");
-                _builder.append("<div class=\"z-formrow\">");
-                _builder.newLine();
+                _builder.append("<div class=\"");
+                {
+                  boolean _targets = this._utils.targets(app, "1.3.5");
+                  if (_targets) {
+                    _builder.append("z-formrow");
+                  } else {
+                    _builder.append("form-group");
+                  }
+                }
+                _builder.append("\">");
+                _builder.newLineIfNotEmpty();
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("{formlabel for=\'");
@@ -708,38 +743,74 @@ public class Forms {
                 _builder.append("\' __text=\'");
                 String _firstUpper = StringExtensions.toFirstUpper(geoFieldName);
                 _builder.append(_firstUpper, "        ");
-                _builder.append("\'}");
+                _builder.append("\'");
+                {
+                  boolean _targets_1 = this._utils.targets(app, "1.3.5");
+                  boolean _not_5 = (!_targets_1);
+                  if (_not_5) {
+                    _builder.append(" cssClass=\'col-lg-3 control-label\'");
+                  }
+                }
+                _builder.append("}");
                 _builder.newLineIfNotEmpty();
+                {
+                  boolean _targets_2 = this._utils.targets(app, "1.3.5");
+                  boolean _not_6 = (!_targets_2);
+                  if (_not_6) {
+                    _builder.append("    ");
+                    _builder.append("    ");
+                    _builder.append("<div class=\"col-lg-9\">");
+                    _builder.newLine();
+                  }
+                }
                 _builder.append("    ");
-                _builder.append("    ");
+                _builder.append("        ");
                 _builder.append("{");
                 String _appName = this._utils.appName(app);
                 String _formatForDB = this._formattingExtensions.formatForDB(_appName);
-                _builder.append(_formatForDB, "        ");
+                _builder.append(_formatForDB, "            ");
                 _builder.append("GeoInput group=\'");
                 String _name = it.getName();
                 String _formatForDB_1 = this._formattingExtensions.formatForDB(_name);
-                _builder.append(_formatForDB_1, "        ");
+                _builder.append(_formatForDB_1, "            ");
                 _builder.append("\' id=\'");
-                _builder.append(geoFieldName, "        ");
+                _builder.append(geoFieldName, "            ");
                 _builder.append("\' mandatory=false __title=\'Enter the ");
-                _builder.append(geoFieldName, "        ");
+                _builder.append(geoFieldName, "            ");
                 _builder.append(" of the ");
                 String _name_1 = it.getName();
                 String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name_1);
-                _builder.append(_formatForDisplay, "        ");
-                _builder.append("\' cssClass=\'validate-number\'}");
+                _builder.append(_formatForDisplay, "            ");
+                _builder.append("\' cssClass=\'validate-number");
+                {
+                  boolean _targets_3 = this._utils.targets(app, "1.3.5");
+                  boolean _not_7 = (!_targets_3);
+                  if (_not_7) {
+                    _builder.append(" form-control");
+                  }
+                }
+                _builder.append("\'}");
                 _builder.newLineIfNotEmpty();
                 _builder.append("    ");
-                _builder.append("    ");
+                _builder.append("        ");
                 _builder.append("{");
                 String _appName_1 = this._utils.appName(app);
                 String _formatForDB_2 = this._formattingExtensions.formatForDB(_appName_1);
-                _builder.append(_formatForDB_2, "        ");
+                _builder.append(_formatForDB_2, "            ");
                 _builder.append("ValidationError id=\'");
-                _builder.append(geoFieldName, "        ");
+                _builder.append(geoFieldName, "            ");
                 _builder.append("\' class=\'validate-number\'}");
                 _builder.newLineIfNotEmpty();
+                {
+                  boolean _targets_4 = this._utils.targets(app, "1.3.5");
+                  boolean _not_8 = (!_targets_4);
+                  if (_not_8) {
+                    _builder.append("    ");
+                    _builder.append("    ");
+                    _builder.append("</div>");
+                    _builder.newLine();
+                  }
+                }
                 _builder.append("    ");
                 _builder.append("</div>");
                 _builder.newLine();
@@ -807,77 +878,144 @@ public class Forms {
       }
       if (_and) {
         _builder.append("    ");
-        _builder.append("<div class=\"z-formrow\">");
-        _builder.newLine();
+        _builder.append("<div class=\"");
+        {
+          Models _container_1 = it.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          if (_targets_1) {
+            _builder.append("z-formrow");
+          } else {
+            _builder.append("form-group");
+          }
+        }
+        _builder.append("\">");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("{formlabel for=");
         String _templateIdWithSuffix = this._utils.templateIdWithSuffix("slug", idSuffix);
         _builder.append(_templateIdWithSuffix, "        ");
         _builder.append(" __text=\'Permalink\'");
+        {
+          Models _container_2 = it.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+          boolean _not_1 = (!_targets_2);
+          if (_not_1) {
+            _builder.append(" cssClass=\'col-lg-3 control-label\'");
+          }
+        }
         _builder.append("}");
         _builder.newLineIfNotEmpty();
-        _builder.append("        ");
+        {
+          Models _container_3 = it.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+          boolean _not_2 = (!_targets_3);
+          if (_not_2) {
+            _builder.append("        ");
+            _builder.append("<div class=\"col-lg-9\">");
+            _builder.newLine();
+          }
+        }
+        _builder.append("            ");
         _builder.append("{formtextinput group=");
         String _name = it.getName();
         String _formatForDB = this._formattingExtensions.formatForDB(_name);
         String _templateIdWithSuffix_1 = this._utils.templateIdWithSuffix(_formatForDB, groupSuffix);
-        _builder.append(_templateIdWithSuffix_1, "        ");
+        _builder.append(_templateIdWithSuffix_1, "            ");
         _builder.append(" id=");
         String _templateIdWithSuffix_2 = this._utils.templateIdWithSuffix("slug", idSuffix);
-        _builder.append(_templateIdWithSuffix_2, "        ");
+        _builder.append(_templateIdWithSuffix_2, "            ");
         _builder.append(" mandatory=false");
         _builder.append(" readOnly=false __title=\'You can input a custom permalink for the ");
         String _name_1 = it.getName();
         String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name_1);
-        _builder.append(_formatForDisplay, "        ");
+        _builder.append(_formatForDisplay, "            ");
         {
           boolean _isSlugUnique = it.isSlugUnique();
-          boolean _not_1 = (!_isSlugUnique);
-          if (_not_1) {
+          boolean _not_3 = (!_isSlugUnique);
+          if (_not_3) {
             _builder.append(" or let this field free to create one automatically");
           }
         }
-        _builder.append("\' textMode=\'singleline\' maxLength=255");
+        _builder.append("\' textMode=\'singleline\' maxLength=255 cssClass=\'");
         {
           boolean _isSlugUnique_1 = it.isSlugUnique();
           if (_isSlugUnique_1) {
-            _builder.append(" cssClass=\'");
-            _builder.append("validate-unique\'");
+            _builder.append("validate-unique");
           }
         }
-        _builder.append("}");
+        {
+          Models _container_4 = it.getContainer();
+          Application _application_4 = _container_4.getApplication();
+          boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
+          boolean _not_4 = (!_targets_4);
+          if (_not_4) {
+            {
+              boolean _isSlugUnique_2 = it.isSlugUnique();
+              if (_isSlugUnique_2) {
+                _builder.append(" ");
+              }
+            }
+            _builder.append("form-control");
+          }
+        }
+        _builder.append("\'}");
         _builder.newLineIfNotEmpty();
-        _builder.append("        ");
-        _builder.append("<div class=\"z-formnote z-sub\">{gt text=\'You can input a custom permalink for the ");
+        _builder.append("            ");
+        _builder.append("<span class=\"");
+        {
+          Models _container_5 = it.getContainer();
+          Application _application_5 = _container_5.getApplication();
+          boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
+          if (_targets_5) {
+            _builder.append("z-sub z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\">{gt text=\'You can input a custom permalink for the ");
         String _name_2 = it.getName();
         String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_2);
-        _builder.append(_formatForDisplay_1, "        ");
+        _builder.append(_formatForDisplay_1, "            ");
         {
-          boolean _isSlugUnique_2 = it.isSlugUnique();
-          boolean _not_2 = (!_isSlugUnique_2);
-          if (_not_2) {
+          boolean _isSlugUnique_3 = it.isSlugUnique();
+          boolean _not_5 = (!_isSlugUnique_3);
+          if (_not_5) {
             _builder.append(" or let this field free to create one automatically");
           }
         }
-        _builder.append("\'}</div>");
+        _builder.append("\'}</span>");
         _builder.newLineIfNotEmpty();
         {
-          boolean _isSlugUnique_3 = it.isSlugUnique();
-          if (_isSlugUnique_3) {
-            _builder.append("    ");
+          boolean _isSlugUnique_4 = it.isSlugUnique();
+          if (_isSlugUnique_4) {
+            _builder.append("        ");
             _builder.newLine();
-            _builder.append("    ");
+            _builder.append("        ");
             _builder.append("{");
-            Models _container_1 = it.getContainer();
-            Application _application_1 = _container_1.getApplication();
-            String _appName = this._utils.appName(_application_1);
+            Models _container_6 = it.getContainer();
+            Application _application_6 = _container_6.getApplication();
+            String _appName = this._utils.appName(_application_6);
             String _formatForDB_1 = this._formattingExtensions.formatForDB(_appName);
-            _builder.append(_formatForDB_1, "    ");
+            _builder.append(_formatForDB_1, "        ");
             _builder.append("ValidationError id=");
             String _templateIdWithSuffix_3 = this._utils.templateIdWithSuffix("slug", idSuffix);
-            _builder.append(_templateIdWithSuffix_3, "    ");
+            _builder.append(_templateIdWithSuffix_3, "        ");
             _builder.append(" class=\'validate-unique\'}");
             _builder.newLineIfNotEmpty();
+          }
+        }
+        {
+          Models _container_7 = it.getContainer();
+          Application _application_7 = _container_7.getApplication();
+          boolean _targets_6 = this._utils.targets(_application_7, "1.3.5");
+          boolean _not_6 = (!_targets_6);
+          if (_not_6) {
+            _builder.append("        ");
+            _builder.append("</div>");
+            _builder.newLine();
           }
         }
         _builder.append("</div>");
@@ -1179,8 +1317,15 @@ public class Forms {
     _builder.append("formButtons.each(function (btn) {");
     _builder.newLine();
     _builder.append("                ");
-    _builder.append("btn.addClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("btn.addClassName(\'");
+    {
+      boolean _targets = this._utils.targets(app, "1.3.5");
+      if (_targets) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("});");
     _builder.newLine();
@@ -1285,8 +1430,17 @@ public class Forms {
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("formButtons = $(\'{{$__formid}}\').select(\'div.z-formbuttons input\');");
-    _builder.newLine();
+    _builder.append("formButtons = $(\'{{$__formid}}\').select(\'div.");
+    {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-formbuttons");
+      } else {
+        _builder.append("form-buttons");
+      }
+    }
+    _builder.append(" input\');");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("        ");
     _builder.append("formButtons.each(function (elem) {");
@@ -1381,8 +1535,20 @@ public class Forms {
       Iterable<JoinRelationship> _filter = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelations, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       if (_isEmpty) {
-        _builder.append("<div class=\"z-formrow\">");
-        _builder.newLine();
+        _builder.append("<div class=\"");
+        {
+          Entity _entity_1 = it.getEntity();
+          Models _container = _entity_1.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("z-formrow");
+          } else {
+            _builder.append("form-group");
+          }
+        }
+        _builder.append("\">");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         CharSequence _formRow = this.fieldHelper.formRow(it, groupSuffix, idSuffix);
         _builder.append(_formRow, "    ");

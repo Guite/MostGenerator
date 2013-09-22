@@ -420,7 +420,8 @@ class ControllerLayer {
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                                          'text' => $this->__('Configuration'),
-                                         'title' => $this->__('Manage settings for this application'));
+                                         'title' => $this->__('Manage settings for this application')«IF !app.targets('1.3.5')»,
+                                         'icon' => 'wrench'«ENDIF»);
                     }
                 «ENDIF»
 
@@ -439,7 +440,7 @@ class ControllerLayer {
                         $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
-                                         'class' => 'z-icon-es-home');
+                                         «IF container.application.targets('1.3.5')»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
                     }
                     '''
             UserController case !container.getAdminControllers.empty: '''
@@ -448,7 +449,7 @@ class ControllerLayer {
                         $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
-                                         'class' => 'z-icon-es-options');
+                                         «IF container.application.targets('1.3.5')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
                     }
                     '''
         }

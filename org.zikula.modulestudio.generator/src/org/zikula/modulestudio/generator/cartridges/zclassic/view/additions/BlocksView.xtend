@@ -27,21 +27,27 @@ class BlocksView {
 
     def private editTemplate(Application it) '''
         {* Purpose of this template: Edit block for generic item list *}
-        <div class="z-formrow">
-            <label for="«appName»_objecttype">{gt text='Object type'}:</label>
-            <select id="«appName»_objecttype" name="objecttype" size="1">
-                «FOR entity : getAllEntities»
-                    <option value="«entity.name.formatForCode»"{if $objectType eq '«entity.name.formatForCode»'} selected="selected"{/if}>{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</option>
-                «ENDFOR»
-            </select>
-            <span class="z-sub z-formnote">{gt text='If you change this please save the block once to reload the parameters below.'}</span>
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«appName»_objecttype"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Object type'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <select id="«appName»_objecttype" name="objecttype" size="1"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                    «FOR entity : getAllEntities»
+                        <option value="«entity.name.formatForCode»"{if $objectType eq '«entity.name.formatForCode»'} selected="selected"{/if}>{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</option>
+                    «ENDFOR»
+                </select>
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='If you change this please save the block once to reload the parameters below.'}</span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
         {if $properties ne null && is_array($properties)}
             {gt text='All' assign='lblDefault'}
             {nocache}
             {foreach key='propertyName' item='propertyId' from=$properties}
-                <div class="z-formrow">
+                <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
                     {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
                     {gt text='Category' assign='categoryLabel'}
                     {assign var='categorySelectorId' value='catid'}
@@ -53,48 +59,85 @@ class BlocksView {
                         {assign var='categorySelectorId' value='catids__'}
                         {assign var='categorySelectorSize' value='8'}
                     {/if}
-                    <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
-                    &nbsp;
-                    {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                    <span class="z-sub z-formnote">{gt text='This is an optional filter.'}</span>
+                    <label for="{$categorySelectorId}{$propertyName}"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{$categoryLabel}</label>
+                    «IF !targets('1.3.5')»
+                        <div class="col-lg-9">
+                    «ELSE»
+                        &nbsp;
+                    «ENDIF»
+                        {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                        <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='This is an optional filter.'}</span>
+                    «IF !targets('1.3.5')»
+                        </div>
+                    «ENDIF»
                 </div>
             {/foreach}
             {/nocache}
         {/if}
 
-        <div class="z-formrow">
-            <label for="«appName»_sorting">{gt text='Sorting'}:</label>
-            <select id="«appName»_sorting" name="sorting">
-                <option value="random"{if $sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
-                <option value="newest"{if $sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
-                <option value="alpha"{if $sorting eq 'default' || ($sorting != 'random' && $sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
-            </select>
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«appName»_sorting"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <select id="«appName»_sorting" name="sorting"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                    <option value="random"{if $sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
+                    <option value="newest"{if $sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
+                    <option value="alpha"{if $sorting eq 'default' || ($sorting != 'random' && $sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
+                </select>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
-        <div class="z-formrow">
-            <label for="«appName»_amount">{gt text='Amount'}:</label>
-            <input type="text" id="«appName»_amount" name="amount" maxlength="2" size="10" value="{$amount|default:"5"}" />
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«appName»_amount"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <input type="text" id="«appName»_amount" name="amount" maxlength="2" size="10" value="{$amount|default:"5"}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
-        <div class="z-formrow">
-            <label for="«appName»_template">{gt text='Template'}:</label>
-            <select id="«appName»_template" name="template">
-                <option value="itemlist_display.tpl"{if $template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
-                <option value="itemlist_display_description.tpl"{if $template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
-                <option value="custom"{if $template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
-            </select>
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«appName»_template"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Template'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <select id="«appName»_template" name="template"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                    <option value="itemlist_display.tpl"{if $template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
+                    <option value="itemlist_display_description.tpl"{if $template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
+                    <option value="custom"{if $template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
+                </select>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
-        <div id="customtemplatearea" class="z-formrow z-hide">
-            <label for="«appName»_customtemplate">{gt text='Custom template'}:</label>
-            <input type="text" id="«appName»__customtemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}" />
-            <span class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{$objecttype}_display.tpl</em></span>
+        <div id="customtemplatearea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
+            <label for="«appName»_customtemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <input type="text" id="«appName»__customtemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example'}: <em>itemlist_{$objecttype}_display.tpl</em></span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
-        <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
-            <label for="«appName»_filter">{gt text='Filter (expert option)'}:</label>
-            <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:''}" />
-            <span class="z-sub z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</span>
+        <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
+            <label for="«appName»_filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
 
         {pageaddvar name='javascript' value='prototype'}
@@ -102,9 +145,9 @@ class BlocksView {
         /* <![CDATA[ */
             function «prefix()»ToggleCustomTemplate() {
                 if ($F('«appName»_template') == 'custom') {
-                    $('customtemplatearea').removeClassName('z-hide');
+                    $('customtemplatearea').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 } else {
-                    $('customtemplatearea').addClassName('z-hide');
+                    $('customtemplatearea').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 }
             }
 

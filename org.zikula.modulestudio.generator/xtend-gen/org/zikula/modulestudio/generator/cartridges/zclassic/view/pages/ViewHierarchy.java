@@ -145,7 +145,18 @@ public class ViewHierarchy {
         _and = (_tripleNotEquals && _notEquals);
       }
       if (_and) {
-        _builder.append("<p class=\"sectiondesc\">");
+        _builder.append("<p class=\"");
+        {
+          Models _container_2 = it.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_2, "1.3.5");
+          if (_targets_1) {
+            _builder.append("z-informationmsg");
+          } else {
+            _builder.append("alert alert-info");
+          }
+        }
+        _builder.append("\">");
         String _documentation_2 = it.getDocumentation();
         _builder.append(_documentation_2, "");
         _builder.append("</p>");
@@ -173,8 +184,17 @@ public class ViewHierarchy {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("    ");
-        _builder.append("<a id=\"z-tree-addroot\" href=\"javascript:void(0)\" title=\"{$addRootTitle}\" class=\"z-icon-es-add z-hide\">{$addRootTitle}</a>");
-        _builder.newLine();
+        _builder.append("<a id=\"z-tree-addroot\" href=\"javascript:void(0)\" title=\"{$addRootTitle}\" class=\"z-icon-es-add ");
+        {
+          Models _container_3 = it.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_3, "1.3.5");
+          if (_targets_2) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{$addRootTitle}</a>");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("    ");
         _builder.append("    ");
@@ -205,8 +225,17 @@ public class ViewHierarchy {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("       ");
-        _builder.append("}).removeClassName(\'z-hide\');");
-        _builder.newLine();
+        _builder.append("}).removeClassName(\'");
+        {
+          Models _container_4 = it.getContainer();
+          Application _application_4 = _container_4.getApplication();
+          boolean _targets_3 = this._utils.targets(_application_4, "1.3.5");
+          if (_targets_3) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\');");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("});");
         _builder.newLine();
@@ -279,10 +308,10 @@ public class ViewHierarchy {
     _builder.append("    ");
     _builder.append("{include file=\'");
     {
-      Models _container_2 = it.getContainer();
-      Application _application_2 = _container_2.getApplication();
-      boolean _targets_1 = this._utils.targets(_application_2, "1.3.5");
-      if (_targets_1) {
+      Models _container_5 = it.getContainer();
+      Application _application_5 = _container_5.getApplication();
+      boolean _targets_4 = this._utils.targets(_application_5, "1.3.5");
+      if (_targets_4) {
         String _formattedName_5 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_5, "    ");
         _builder.append("/");
@@ -306,10 +335,10 @@ public class ViewHierarchy {
     _builder.append("    ");
     _builder.append("{include file=\'");
     {
-      Models _container_3 = it.getContainer();
-      Application _application_3 = _container_3.getApplication();
-      boolean _targets_2 = this._utils.targets(_application_3, "1.3.5");
-      if (_targets_2) {
+      Models _container_6 = it.getContainer();
+      Application _application_6 = _container_6.getApplication();
+      boolean _targets_5 = this._utils.targets(_application_6, "1.3.5");
+      if (_targets_5) {
         String _formattedName_7 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_7, "    ");
         _builder.append("/");
@@ -341,10 +370,10 @@ public class ViewHierarchy {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      Models _container_4 = it.getContainer();
-      Application _application_4 = _container_4.getApplication();
-      boolean _targets_3 = this._utils.targets(_application_4, "1.3.5");
-      if (_targets_3) {
+      Models _container_7 = it.getContainer();
+      Application _application_7 = _container_7.getApplication();
+      boolean _targets_6 = this._utils.targets(_application_7, "1.3.5");
+      if (_targets_6) {
         String _formattedName_9 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_9, "");
       } else {

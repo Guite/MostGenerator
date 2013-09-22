@@ -80,7 +80,7 @@ class DisplayFunctions {
             // process normal links
             $$('#' + containerId + ' a').each(function (elem) {
                 // hide it
-                elem.addClassName('z-hide');
+                elem.addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 // determine the link text
                 var linkText = '';
                 if (func === 'display') {
@@ -133,7 +133,7 @@ class DisplayFunctions {
                     }
                 });
             });
-            $(triggerId).removeClassName('z-hide');
+            $(triggerId).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
         }
     '''
 
@@ -244,7 +244,7 @@ class DisplayFunctions {
             var newWindow;
 
             // show the container (hidden for users without JavaScript)
-            containerElem.removeClassName('z-hide');
+            containerElem.removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
 
             // define the new window instance
             newWindow = new Zikula.UI.Window(
@@ -278,7 +278,7 @@ class DisplayFunctions {
             }
             $('toggle' + idSuffix).observe('click', function() {
                 «prefix()»ToggleFlag(objectType, fieldName, itemId);
-            }).removeClassName('z-hide');
+            }).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
         }
 
     '''
@@ -309,11 +309,11 @@ class DisplayFunctions {
                         var idSuffix = fieldName.toLowerCase() + '_' + itemId;
                         var state = data.state;
                         if (state === true) {
-                            $('no' + idSuffix).addClassName('z-hide');
-                            $('yes' + idSuffix).removeClassName('z-hide');
+                            $('no' + idSuffix).addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                            $('yes' + idSuffix).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                         } else {
-                            $('yes' + idSuffix).addClassName('z-hide');
-                            $('no' + idSuffix).removeClassName('z-hide');
+                            $('yes' + idSuffix).addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                            $('no' + idSuffix).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                         }
                     }
                 }

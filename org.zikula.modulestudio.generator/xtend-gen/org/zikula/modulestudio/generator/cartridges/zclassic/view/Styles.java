@@ -297,15 +297,51 @@ public class Styles {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("/* validation */");
     _builder.newLine();
-    _builder.append("div.z-formrow input.required, div.z-formrow textarea.required {");
-    _builder.newLine();
+    _builder.append("div.");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append(" input.required, div.");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append(" textarea.required {");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("border: 1px solid #00a8e6;");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
-    _builder.append("div.z-formrow input.validation-failed, div.z-formrow textarea.validation-failed {");
-    _builder.newLine();
+    _builder.append("div.");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append(" input.validation-failed, div.");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append(" textarea.validation-failed {");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("border: 1px solid #f30;");
     _builder.newLine();
@@ -314,8 +350,26 @@ public class Styles {
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
-    _builder.append("div.z-formrow input.validation-passed, div.z-formrow textarea.validation-passed {");
-    _builder.newLine();
+    _builder.append("div.");
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append(" input.validation-passed, div.");
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      if (_targets_5) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append(" textarea.validation-passed {");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("border: 1px solid #0c0;");
     _builder.newLine();
@@ -810,7 +864,7 @@ public class Styles {
         _builder.append("-view form.");
         String _prefix = it.getPrefix();
         _builder.append(_prefix, "");
-        _builder.append("QuickNavForm {");
+        _builder.append("-quicknav {");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("margin: 10px 0;");
@@ -831,7 +885,7 @@ public class Styles {
         _builder.append("-view form.");
         String _prefix_1 = it.getPrefix();
         _builder.append(_prefix_1, "");
-        _builder.append("QuickNavForm fieldset {");
+        _builder.append("-quicknav fieldset {");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("padding: 3px 10px;");
@@ -849,10 +903,13 @@ public class Styles {
         _builder.append("-view form.");
         String _prefix_2 = it.getPrefix();
         _builder.append(_prefix_2, "");
-        _builder.append("QuickNavForm fieldset h3 {");
+        _builder.append("-quicknav fieldset h3 {");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("margin-top: 0;");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("display: none;");
         _builder.newLine();
         _builder.append("}");
         _builder.newLine();
@@ -864,7 +921,7 @@ public class Styles {
         _builder.append("-view form.");
         String _prefix_3 = it.getPrefix();
         _builder.append(_prefix_3, "");
-        _builder.append("QuickNavForm fieldset #num {");
+        _builder.append("-quicknav fieldset #num {");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("width: 50px;");

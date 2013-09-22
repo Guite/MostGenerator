@@ -461,7 +461,16 @@ public class InstallerView {
     _builder.append("<form action=\"{modurl modname=\'");
     String _appName_1 = this._utils.appName(it);
     _builder.append(_appName_1, "");
-    _builder.append("\' type=\'init\' func=\'interactiveinitstep2\'}\" method=\"post\" enctype=\"application/x-www-form-urlencoded\">");
+    _builder.append("\' type=\'init\' func=\'interactiveinitstep2\'}\" method=\"post\" enctype=\"application/x-www-form-urlencoded\"");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append(" class=\"z-form\"");
+      } else {
+        _builder.append(" class=\"form-horizontal\" role=\"form\"");
+      }
+    }
+    _builder.append("\">");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<fieldset>");
@@ -493,26 +502,118 @@ public class InstallerView {
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<label for=\"");
-    String _appName_2 = this._utils.appName(it);
-    _builder.append(_appName_2, "        ");
-    _builder.append("_activate\">{gt text=\'Activate ");
-    String _appName_3 = this._utils.appName(it);
-    _builder.append(_appName_3, "        ");
-    _builder.append(" after installation?\'}</label>");
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
+        _builder.append("            ");
+        _builder.append("<label for=\"");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "            ");
+        _builder.append("_activate\">{gt text=\'Activate ");
+        String _appName_3 = this._utils.appName(it);
+        _builder.append(_appName_3, "            ");
+        _builder.append(" after installation?\'}</label>");
+        _builder.newLineIfNotEmpty();
+        _builder.append("            ");
+        _builder.append("<input id=\"");
+        String _appName_4 = this._utils.appName(it);
+        _builder.append(_appName_4, "            ");
+        _builder.append("_activate\" name=\"activate\" type=\"checkbox\" value=\"1\" checked=\"checked\" />");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("            ");
+        _builder.append("<div class=\"col-lg-offset-3 col-lg-9\">");
+        _builder.newLine();
+        _builder.append("            ");
+        _builder.append("    ");
+        _builder.append("<div class=\"checkbox\">");
+        _builder.newLine();
+        _builder.append("            ");
+        _builder.append("        ");
+        _builder.append("<label>");
+        _builder.newLine();
+        _builder.append("            ");
+        _builder.append("            ");
+        _builder.append("<input id=\"");
+        String _appName_5 = this._utils.appName(it);
+        _builder.append(_appName_5, "                        ");
+        _builder.append("_activate\" name=\"activate\" type=\"checkbox\" value=\"1\" checked=\"checked\" /> {gt text=\'Activate ");
+        String _appName_6 = this._utils.appName(it);
+        _builder.append(_appName_6, "                        ");
+        _builder.append(" after installation?\'}");
+        _builder.newLineIfNotEmpty();
+        _builder.append("            ");
+        _builder.append("        ");
+        _builder.append("</label>");
+        _builder.newLine();
+        _builder.append("            ");
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+        _builder.append("            ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("        ");
-    _builder.append("<input id=\"");
-    String _appName_4 = this._utils.appName(it);
-    _builder.append(_appName_4, "        ");
-    _builder.append("_activate\" name=\"activate\" type=\"checkbox\" value=\"1\" checked=\"checked\" />");
-    _builder.newLineIfNotEmpty();
-    _builder.append("        ");
-    _builder.append("<br /><br />");
+    _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<input name=\"submit\" type=\"submit\" value=\"{gt text=\'Submit\'}\" style=\"margin-left: 17em\" />");
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
+        _builder.append("z-buttons z-formbuttons");
+      } else {
+        _builder.append("form-group form-buttons");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_4);
+      if (_not) {
+        _builder.append("        ");
+        _builder.append("<div class=\"col-lg-offset-3 col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("            ");
+    _builder.append("{formbutton commandName=\'submit\' __text=\'Submit\' class=\'");
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      if (_targets_5) {
+        _builder.append("z-bt-save");
+      } else {
+        _builder.append("btn btn-success");
+      }
+    }
+    _builder.append("\'}");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_6);
+      if (_not_1) {
+        _builder.append("        ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
+    _builder.append("</div>");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("</fieldset>");
@@ -524,35 +625,82 @@ public class InstallerView {
   
   private CharSequence tplInitStep2Var(final Variable it, final Application app) {
     StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets = this._utils.targets(app, "1.3.4");
+      if (_targets) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("    ");
     _builder.append("<label for=\"");
     String _name = app.getName();
     String _plus = (_name + "_");
     String _name_1 = it.getName();
     String _plus_1 = (_plus + _name_1);
     String _formatForCode = this._formattingExtensions.formatForCode(_plus_1);
-    _builder.append(_formatForCode, "");
-    _builder.append("\" style=\"float: left; width: 20em\">{gt text=\'");
+    _builder.append(_formatForCode, "    ");
+    _builder.append("\"");
+    {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" class=\"col-lg-3 control-label\"");
+      }
+    }
+    _builder.append(">{gt text=\'");
     String _name_2 = it.getName();
-    _builder.append(_name_2, "");
+    _builder.append(_name_2, "    ");
     _builder.append("\'}</label>");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("<input id=\"");
     String _name_3 = app.getName();
     String _plus_2 = (_name_3 + "_");
     String _name_4 = it.getName();
     String _plus_3 = (_plus_2 + _name_4);
     String _formatForCode_1 = this._formattingExtensions.formatForCode(_plus_3);
-    _builder.append(_formatForCode_1, "");
+    _builder.append(_formatForCode_1, "        ");
     _builder.append("\" type=\"text\" name=\"");
     String _name_5 = it.getName();
     String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_5);
-    _builder.append(_formatForCode_2, "");
+    _builder.append(_formatForCode_2, "        ");
     _builder.append("\" value=\"");
     String _value = it.getValue();
-    _builder.append(_value, "");
-    _builder.append("\" size=\"40\" />");
+    _builder.append(_value, "        ");
+    _builder.append("\" size=\"40\"");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(" />");
     _builder.newLineIfNotEmpty();
-    _builder.append("<br style=\"clear: left\" /><br />");
+    {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      boolean _not_3 = (!_targets_4);
+      if (_not_3) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
+    _builder.append("</div>");
     _builder.newLine();
     return _builder;
   }

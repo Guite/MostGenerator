@@ -67,7 +67,7 @@ class Display {
         «IF useGroupingPanels('display')»
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
         <div class="z-panels" id="«appName»_panel">
-            <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator z-pointer z-panel-active">{gt text='Fields'}</h3>
+            <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer z-panel-active">{gt text='Fields'}</h3>
             <div class="z-panel-content z-panel-active" style="overflow: visible">
         {/if}
         «ENDIF»
@@ -153,7 +153,7 @@ class Display {
         }
     }
 
-    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» ({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})«ENDIF»{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}'''
+    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>{$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hide«ENDIF»'}'''
 
     def private templateFooter(Controller it) {
         switch it {
@@ -195,7 +195,7 @@ class Display {
             «ENDIF»
           «IF linkController !== null»
             {/strip}</a>
-            <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+            <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
@@ -246,7 +246,7 @@ class Display {
     def private displayExtensions(Entity it, Controller controller, String objName) '''
         «IF geographical»
             «IF useGroupingPanels('display')»
-                <h3 class="«container.application.appName.formatForDB»map z-panel-header z-panel-indicator z-pointer">{gt text='Map'}</h3>
+                <h3 class="«container.application.appName.formatForDB»map z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
                 <div class="«container.application.appName.formatForDB»map z-panel-content" style="display: none">
             «ELSE»
                 <h3 class="«container.application.appName.formatForDB»map">{gt text='Map'}</h3>
@@ -289,7 +289,7 @@ class Display {
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             «IF useGroupingPanels('display')»
-                <h3 class="relatives z-panel-header z-panel-indicator z-pointer">{gt text='Relatives'}</h3>
+                <h3 class="relatives z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Relatives'}</h3>
                 <div class="relatives z-panel-content" style="display: none">
             «ELSE»
                 <h3 class="relatives">{gt text='Relatives'}</h3>
@@ -312,7 +312,7 @@ class Display {
         {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' id=«displayHookId» urlobject=$currentUrlObject assign='hooks'}
         {foreach key='providerArea' item='hook' from=$hooks}
             «IF useGroupingPanels('display')»
-                <h3 class="z-panel-header z-panel-indicator z-pointer">{$providerArea}</h3>
+                <h3 class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
                 <div class="z-panel-content" style="display: none">{$hook}</div>
             «ELSE»
                 {$hook}

@@ -25,7 +25,7 @@ class Attributes {
         {* purpose of this template: reusable display of entity attributes *}
         {if isset($obj.attributes)}
             {if isset($panel) && $panel eq true}
-                <h3 class="attributes z-panel-header z-panel-indicator z-pointer">{gt text='Attributes'}</h3>
+                <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
                 <div class="attributes z-panel-content" style="display: none">
             {else}
                 <h3 class="attributes">{gt text='Attributes'}</h3>
@@ -45,7 +45,7 @@ class Attributes {
     def private attributesEditImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable editing of entity attributes *}
             {if isset($panel) && $panel eq true}
-                <h3 class="attributes z-panel-header z-panel-indicator z-pointer">{gt text='Attributes'}</h3>
+                <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
                 <fieldset class="attributes z-panel-content" style="display: none">
             {else}
                 <fieldset class="attributes">
@@ -53,9 +53,15 @@ class Attributes {
             <legend>{gt text='Attributes'}</legend>
             {formvolatile}
             {foreach key='fieldName' item='fieldValue' from=$attributes}
-            <div class="z-formrow">
-                {formlabel for="attributes`$fieldName`"' text=$fieldName}
-                {formtextinput id="attributes`$fieldName`" group='attributes' dataField=$fieldName maxLength=255}
+            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for="attributes`$fieldName`"' text=$fieldName«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput id="attributes`$fieldName`" group='attributes' dataField=$fieldName maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
             </div>
             {/foreach}
             {/formvolatile}

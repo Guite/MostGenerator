@@ -41,7 +41,7 @@ class Config {
                     <h2>{$templateTitle}</h2>
             «ENDIF»
 
-            {form cssClass='z-form'}
+            {form cssClass='«IF targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»'«IF !targets('1.3.5')» role='form'«ENDIF»}
 «/*            {formsetinitialfocus inputId='myelemid'}*/»
 
                 {* add validation summary and a <div> element for styling the form *}
@@ -55,9 +55,15 @@ class Config {
                         {/formtabbedpanelset}
                     «ENDIF»
 
-                    <div class="z-buttons z-formbuttons">
-                        {formbutton commandName='save' __text='Update configuration' class='z-bt-save'}
-                        {formbutton commandName='cancel' __text='Cancel' class='z-bt-cancel'}
+                    <div class="«IF targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
+                    «IF !targets('1.3.5')»
+                        <div class="col-lg-offset-3 col-lg-9">
+                    «ENDIF»
+                        {formbutton commandName='save' __text='Update configuration' class='«IF targets('1.3.5')»z-bt-save«ELSE»btn btn-success«ENDIF»'}
+                        {formbutton commandName='cancel' __text='Cancel' class='«IF targets('1.3.5')»z-bt-cancel«ELSE»btn btn-default«ENDIF»'}
+                    «IF !targets('1.3.5')»
+                        </div>
+                    «ENDIF»
                     </div>
                 {/«appName.formatForDB»FormFrame}
             {/form}
@@ -100,21 +106,27 @@ class Config {
     '''
 
     def private formRow(Variable it) '''
-        <div class="z-formrow">
+        <div class="«IF container.container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             «IF documentation !== null && documentation != ""»
                 {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
             «ENDIF»
-            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»'«IF documentation !== null && documentation != ''» class='«container.container.application.appName.formatForDB»FormTooltips' title=$toolTip«ENDIF»}
-            «inputField»
+            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.container.application.appName.formatForDB»FormTooltips «ENDIF»«IF !container.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
+            «IF !container.container.application.targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                «inputField»
+            «IF !container.container.application.targets('1.3.5')»
+                </div>
+            «ENDIF»
         </div>
     '''
 
     def private dispatch inputField(Variable it) '''
-        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'}
+        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
     '''
 
     def private dispatch inputField(IntVar it) '''
-        {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'}
+        {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
     '''
 
     def private dispatch inputField(BoolVar it) '''
@@ -123,9 +135,9 @@ class Config {
 
     def private dispatch inputField(ListVar it) '''
         «IF multiple»
-            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2 __title='Choose the «name.formatForDisplay»'}
+            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2 __title='Choose the «name.formatForDisplay»'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSE»
-            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF» __title='Choose the «name.formatForDisplay»'}
+            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF» __title='Choose the «name.formatForDisplay»'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ENDIF»
     '''
 }

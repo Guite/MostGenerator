@@ -61,7 +61,7 @@ class Relations {
             «IF controller.hasActions('display')»
                 {if !$nolink}
                     </a>
-                    <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+                    <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="«IF app.targets('1.3.5')»z-«ENDIF»hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 {/if}
                 {/strip}
             «ENDIF»
@@ -86,7 +86,7 @@ class Relations {
                 <br />
                 «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField !== null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«name.formatForDisplayCapital»'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField !== null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«name.formatForDisplayCapital»'«ENDIF»«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
                 {/if}
             «ENDIF»
             «IF many»

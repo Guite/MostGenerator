@@ -77,23 +77,23 @@ public class ObjectState {
     String _appName_1 = this._utils.appName(it);
     String _formatForDB_1 = this._formattingExtensions.formatForDB(_appName_1);
     _builder.append(_formatForDB_1, " ");
-    _builder.append("ObjectState}       {* with led icon *}");
+    _builder.append("ObjectState}       {* with visual feedback *}");
     _builder.newLineIfNotEmpty();
     _builder.append(" ");
     _builder.append("*    {$item.workflowState|");
     String _appName_2 = this._utils.appName(it);
     String _formatForDB_2 = this._formattingExtensions.formatForDB(_appName_2);
     _builder.append(_formatForDB_2, " ");
-    _builder.append("ObjectState:false} {* no icon *}");
+    _builder.append("ObjectState:false} {* no ui feedback *}");
     _builder.newLineIfNotEmpty();
     _builder.append(" ");
     _builder.append("*");
     _builder.newLine();
     _builder.append(" ");
-    _builder.append("* @param string  $state    Name of given workflow state.");
+    _builder.append("* @param string  $state      Name of given workflow state.");
     _builder.newLine();
     _builder.append(" ");
-    _builder.append("* @param boolean $withIcon Whether a led icon should be displayed before the name.");
+    _builder.append("* @param boolean $uiFeedback Whether the output should include some visual feedback about the state.");
     _builder.newLine();
     _builder.append(" ");
     _builder.append("*");
@@ -108,7 +108,7 @@ public class ObjectState {
     String _appName_3 = this._utils.appName(it);
     String _formatForDB_3 = this._formattingExtensions.formatForDB(_appName_3);
     _builder.append(_formatForDB_3, "");
-    _builder.append("ObjectState($state = \'initial\', $withIcon = true)");
+    _builder.append("ObjectState($state = \'initial\', $uiFeedback = true)");
     _builder.newLineIfNotEmpty();
     _builder.append("{");
     _builder.newLine();
@@ -150,11 +150,20 @@ public class ObjectState {
     _builder.append("$result = $stateInfo[\'text\'];");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if ($withIcon === true) {");
+    _builder.append("if ($uiFeedback === true) {");
     _builder.newLine();
-    _builder.append("        ");
-    _builder.append("$result = \'<img src=\"\' . System::getBaseUrl() . \'images/icons/extrasmall/\' . $stateInfo[\'icon\'] . \'\" width=\"16\" height=\"16\" alt=\"\' . $result . \'\" />&nbsp;&nbsp;\' . $result;");
-    _builder.newLine();
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
+        _builder.append("        ");
+        _builder.append("$result = \'<img src=\"\' . System::getBaseUrl() . \'images/icons/extrasmall/\' . $stateInfo[\'ui\'] . \'led.png\" width=\"16\" height=\"16\" alt=\"\' . $result . \'\" />&nbsp;&nbsp;\' . $result;");
+        _builder.newLine();
+      } else {
+        _builder.append("        ");
+        _builder.append("$result = \'<span class=\"label label-\' . $stateInfo[\'ui\'] . \'\">\' . $result . \'</span>\';");
+        _builder.newLine();
+      }
+    }
     _builder.append("    ");
     _builder.append("}");
     _builder.newLine();

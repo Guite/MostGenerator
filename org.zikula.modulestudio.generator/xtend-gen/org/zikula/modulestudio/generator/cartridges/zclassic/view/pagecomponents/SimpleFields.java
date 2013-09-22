@@ -108,7 +108,17 @@ public class SimpleFields {
       String _name_1 = it.getName();
       String _formatForDB = this._formattingExtensions.formatForDB(_name_1);
       _builder.append(_formatForDB, "");
-      _builder.append("{$itemid}\" href=\"javascript:void(0);\" class=\"z-hide\">");
+      _builder.append("{$itemid}\" href=\"javascript:void(0);\" class=\"");
+      {
+        Entity _entity_1 = it.getEntity();
+        Models _container = _entity_1.getContainer();
+        Application _application = _container.getApplication();
+        boolean _targets = this._utils.targets(_application, "1.3.5");
+        if (_targets) {
+          _builder.append("z-");
+        }
+      }
+      _builder.append("hide\">");
       _builder.newLineIfNotEmpty();
       _builder.append("{if $");
       _builder.append(objName, "");
@@ -130,7 +140,17 @@ public class SimpleFields {
       String _name_4 = it.getName();
       String _formatForDB_2 = this._formattingExtensions.formatForDB(_name_4);
       _builder.append(_formatForDB_2, "    ");
-      _builder.append("_`$itemid`\" __title=\'This setting is disabled. Click here to enable it.\' class=\'z-hide\'}");
+      _builder.append("_`$itemid`\" __title=\'This setting is disabled. Click here to enable it.\' class=\'");
+      {
+        Entity _entity_2 = it.getEntity();
+        Models _container_1 = _entity_2.getContainer();
+        Application _application_1 = _container_1.getApplication();
+        boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+        if (_targets_1) {
+          _builder.append("z-");
+        }
+      }
+      _builder.append("hide\'}");
       _builder.newLineIfNotEmpty();
       _builder.append("{else}");
       _builder.newLine();
@@ -139,7 +159,17 @@ public class SimpleFields {
       String _name_5 = it.getName();
       String _formatForDB_3 = this._formattingExtensions.formatForDB(_name_5);
       _builder.append(_formatForDB_3, "    ");
-      _builder.append("_`$itemid`\" __title=\'This setting is enabled. Click here to disable it.\' class=\'z-hide\'}");
+      _builder.append("_`$itemid`\" __title=\'This setting is enabled. Click here to disable it.\' class=\'");
+      {
+        Entity _entity_3 = it.getEntity();
+        Models _container_2 = _entity_3.getContainer();
+        Application _application_2 = _container_2.getApplication();
+        boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+        if (_targets_2) {
+          _builder.append("z-");
+        }
+      }
+      _builder.append("hide\'}");
       _builder.newLineIfNotEmpty();
       _builder.append("    ");
       _builder.append("{icon type=\'cancel\' size=\'extrasmall\' __alt=\'No\' id=\"no");
@@ -630,6 +660,16 @@ public class SimpleFields {
           String _name_8 = _leadingField_1.getName();
           String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_8);
           _builder_2.append(_formatForCode_6, "      ");
+          {
+            Entity _entity_9 = it.getEntity();
+            Models _container_1 = _entity_9.getContainer();
+            Application _application_1 = _container_1.getApplication();
+            boolean _targets = this._utils.targets(_application_1, "1.3.5");
+            boolean _not_1 = (!_targets);
+            if (_not_1) {
+              _builder_2.append(" img_class=\'img-thumbnail\'");
+            }
+          }
           _builder_2.append("}");
           _builder_2.newLineIfNotEmpty();
           _builder_2.append("  ");
@@ -652,8 +692,8 @@ public class SimpleFields {
           _builder_2.newLine();
           {
             boolean _isMandatory_1 = it.isMandatory();
-            boolean _not_1 = (!_isMandatory_1);
-            if (_not_1) {
+            boolean _not_2 = (!_isMandatory_1);
+            if (_not_2) {
               _builder_2.append("{else}&nbsp;{/if}");
               _builder_2.newLine();
             }

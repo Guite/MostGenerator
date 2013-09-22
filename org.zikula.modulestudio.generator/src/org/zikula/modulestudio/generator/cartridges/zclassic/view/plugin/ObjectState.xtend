@@ -26,23 +26,27 @@ class ObjectState {
         /**
          * The «appName.formatForDB»ObjectState modifier displays the name of a given object's workflow state.
          * Examples:
-         *    {$item.workflowState|«appName.formatForDB»ObjectState}       {* with led icon *}
-         *    {$item.workflowState|«appName.formatForDB»ObjectState:false} {* no icon *}
+         *    {$item.workflowState|«appName.formatForDB»ObjectState}       {* with visual feedback *}
+         *    {$item.workflowState|«appName.formatForDB»ObjectState:false} {* no ui feedback *}
          *
-         * @param string  $state    Name of given workflow state.
-         * @param boolean $withIcon Whether a led icon should be displayed before the name.
+         * @param string  $state      Name of given workflow state.
+         * @param boolean $uiFeedback Whether the output should include some visual feedback about the state.
          *
          * @return string Enriched and translated workflow state ready for display.
          */
-        function smarty_modifier_«appName.formatForDB»ObjectState($state = 'initial', $withIcon = true)
+        function smarty_modifier_«appName.formatForDB»ObjectState($state = 'initial', $uiFeedback = true)
         {
             $serviceManager = ServiceUtil::getManager();
             $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»«appNamespace»\Util\WorkflowUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);
             $stateInfo = $workflowHelper->getStateInfo($state);
 
             $result = $stateInfo['text'];
-            if ($withIcon === true) {
-                $result = '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/' . $stateInfo['icon'] . '" width="16" height="16" alt="' . $result . '" />&nbsp;&nbsp;' . $result;
+            if ($uiFeedback === true) {
+                «IF targets('1.3.5')»«/* led images (legacy) */»
+                    $result = '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/' . $stateInfo['ui'] . 'led.png" width="16" height="16" alt="' . $result . '" />&nbsp;&nbsp;' . $result;
+                «ELSE»«/* use Bootstrap labels instead of images */»
+                    $result = '<span class="label label-' . $stateInfo['ui'] . '">' . $result . '</span>';
+                «ENDIF»
             }
 
             return $result;

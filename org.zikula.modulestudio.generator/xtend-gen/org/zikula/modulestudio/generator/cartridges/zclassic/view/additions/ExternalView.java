@@ -652,62 +652,133 @@ public class ExternalView {
       int _size = _allEntities.size();
       boolean _greaterThan = (_size > 1);
       if (_greaterThan) {
-        _builder.append("    ");
-        _builder.append("<p>{gt text=\'Switch to\'}:");
-        _builder.newLine();
         {
-          EList<Entity> _allEntities_1 = this._modelExtensions.getAllEntities(app);
-          final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-            public Boolean apply(final Entity e) {
-              String _name = e.getName();
-              String _name_1 = it.getName();
-              boolean _notEquals = (!Objects.equal(_name, _name_1));
-              return Boolean.valueOf(_notEquals);
-            }
-          };
-          Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities_1, _function);
-          boolean _hasElements = false;
-          for(final Entity entity : _filter) {
-            if (!_hasElements) {
-              _hasElements = true;
-            } else {
-              _builder.appendImmediate(" | ", "    ");
+          boolean _targets_4 = this._utils.targets(app, "1.3.5");
+          if (_targets_4) {
+            _builder.append("    ");
+            _builder.append("<p>{gt text=\'Switch to\'}:");
+            _builder.newLine();
+            {
+              EList<Entity> _allEntities_1 = this._modelExtensions.getAllEntities(app);
+              final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
+                public Boolean apply(final Entity e) {
+                  String _name = e.getName();
+                  String _name_1 = it.getName();
+                  boolean _notEquals = (!Objects.equal(_name, _name_1));
+                  return Boolean.valueOf(_notEquals);
+                }
+              };
+              Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities_1, _function);
+              boolean _hasElements = false;
+              for(final Entity entity : _filter) {
+                if (!_hasElements) {
+                  _hasElements = true;
+                } else {
+                  _builder.appendImmediate(" | ", "    ");
+                }
+                _builder.append("    ");
+                _builder.append("<a href=\"{modurl modname=\'");
+                String _appName_4 = this._utils.appName(app);
+                _builder.append(_appName_4, "    ");
+                _builder.append("\' type=\'external\' func=\'finder\' objectType=\'");
+                String _name_1 = entity.getName();
+                String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
+                _builder.append(_formatForCode, "    ");
+                _builder.append("\' editor=$editorName}\" title=\"{gt text=\'Search and select ");
+                String _name_2 = entity.getName();
+                String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
+                _builder.append(_formatForDisplay_2, "    ");
+                _builder.append("\'}\">{gt text=\'");
+                String _nameMultiple_1 = entity.getNameMultiple();
+                String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_nameMultiple_1);
+                _builder.append(_formatForDisplayCapital, "    ");
+                _builder.append("\'}</a>");
+                _builder.newLineIfNotEmpty();
+              }
             }
             _builder.append("    ");
-            _builder.append("<a href=\"{modurl modname=\'");
-            String _appName_4 = this._utils.appName(app);
-            _builder.append(_appName_4, "    ");
-            _builder.append("\' type=\'external\' func=\'finder\' objectType=\'");
-            String _name_1 = entity.getName();
-            String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
-            _builder.append(_formatForCode, "    ");
-            _builder.append("\' editor=$editorName}\" title=\"{gt text=\'Search and select ");
-            String _name_2 = entity.getName();
-            String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
-            _builder.append(_formatForDisplay_2, "    ");
-            _builder.append("\'}\">{gt text=\'");
-            String _nameMultiple_1 = entity.getNameMultiple();
-            String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_nameMultiple_1);
-            _builder.append(_formatForDisplayCapital, "    ");
-            _builder.append("\'}</a>");
-            _builder.newLineIfNotEmpty();
+            _builder.append("</p>");
+            _builder.newLine();
+          } else {
+            _builder.append("    ");
+            _builder.append("<ul class=\"nav nav-pills nav-justified\">");
+            _builder.newLine();
+            {
+              EList<Entity> _allEntities_2 = this._modelExtensions.getAllEntities(app);
+              final Function1<Entity,Boolean> _function_1 = new Function1<Entity,Boolean>() {
+                public Boolean apply(final Entity e) {
+                  String _name = e.getName();
+                  String _name_1 = it.getName();
+                  boolean _notEquals = (!Objects.equal(_name, _name_1));
+                  return Boolean.valueOf(_notEquals);
+                }
+              };
+              Iterable<Entity> _filter_1 = IterableExtensions.<Entity>filter(_allEntities_2, _function_1);
+              boolean _hasElements_1 = false;
+              for(final Entity entity_1 : _filter_1) {
+                if (!_hasElements_1) {
+                  _hasElements_1 = true;
+                } else {
+                  _builder.appendImmediate(" | ", "    ");
+                }
+                _builder.append("    ");
+                _builder.append("<li{if $objectType eq \'");
+                String _name_3 = entity_1.getName();
+                String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_3);
+                _builder.append(_formatForCode_1, "    ");
+                _builder.append("\'} class=\"active\"{/if}><a href=\"{modurl modname=\'");
+                String _appName_5 = this._utils.appName(app);
+                _builder.append(_appName_5, "    ");
+                _builder.append("\' type=\'external\' func=\'finder\' objectType=\'");
+                String _name_4 = entity_1.getName();
+                String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_4);
+                _builder.append(_formatForCode_2, "    ");
+                _builder.append("\' editor=$editorName}\" title=\"{gt text=\'Search and select ");
+                String _name_5 = entity_1.getName();
+                String _formatForDisplay_3 = this._formattingExtensions.formatForDisplay(_name_5);
+                _builder.append(_formatForDisplay_3, "    ");
+                _builder.append("\'}\">{gt text=\'");
+                String _nameMultiple_2 = entity_1.getNameMultiple();
+                String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(_nameMultiple_2);
+                _builder.append(_formatForDisplayCapital_1, "    ");
+                _builder.append("\'}</a></li>");
+                _builder.newLineIfNotEmpty();
+              }
+            }
+            _builder.append("    ");
+            _builder.append("</ul>");
+            _builder.newLine();
           }
         }
-        _builder.append("    ");
-        _builder.append("</p>");
-        _builder.newLine();
       }
     }
     _builder.append("    ");
-    _builder.append("<form action=\"{$ourEntry|default:\'index.php\'}\" id=\"selectorForm\" method=\"get\" class=\"z-form\">");
-    _builder.newLine();
+    _builder.append("<form action=\"{$ourEntry|default:\'index.php\'}\" id=\"selectorForm\" method=\"get\" class=\"");
+    {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      if (_targets_5) {
+        _builder.append("z-form");
+      } else {
+        _builder.append("form-horizontal");
+      }
+    }
+    _builder.append("\"");
+    {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      boolean _not = (!_targets_6);
+      if (_not) {
+        _builder.append(" role=\"form\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<div>");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("<input type=\"hidden\" name=\"module\" value=\"");
-    String _appName_5 = this._utils.appName(app);
-    _builder.append(_appName_5, "        ");
+    String _appName_6 = this._utils.appName(app);
+    _builder.append(_appName_6, "        ");
     _builder.append("\" />");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
@@ -728,9 +799,9 @@ public class ExternalView {
     _builder.newLine();
     _builder.append("            ");
     _builder.append("<legend>{gt text=\'Search and select ");
-    String _name_3 = it.getName();
-    String _formatForDisplay_3 = this._formattingExtensions.formatForDisplay(_name_3);
-    _builder.append(_formatForDisplay_3, "            ");
+    String _name_6 = it.getName();
+    String _formatForDisplay_4 = this._formattingExtensions.formatForDisplay(_name_6);
+    _builder.append(_formatForDisplay_4, "            ");
     _builder.append("\'}</legend>");
     _builder.newLineIfNotEmpty();
     {
@@ -754,13 +825,22 @@ public class ExternalView {
         _builder.newLine();
         _builder.append("            ");
         _builder.append("        ");
-        _builder.append("<div class=\"z-formrow categoryselector\">");
-        _builder.newLine();
+        _builder.append("<div class=\"");
+        {
+          boolean _targets_7 = this._utils.targets(app, "1.3.5");
+          if (_targets_7) {
+            _builder.append("z-formrow");
+          } else {
+            _builder.append("form-group");
+          }
+        }
+        _builder.append(" categoryselector\">");
+        _builder.newLineIfNotEmpty();
         _builder.append("            ");
         _builder.append("            ");
         _builder.append("{modapifunc modname=\'");
-        String _appName_6 = this._utils.appName(app);
-        _builder.append(_appName_6, "                        ");
+        String _appName_7 = this._utils.appName(app);
+        _builder.append(_appName_7, "                        ");
         _builder.append("\' type=\'category\' func=\'hasMultipleSelection\' ot=$objectType registry=$propertyName assign=\'hasMultiSelection\'}");
         _builder.newLineIfNotEmpty();
         _builder.append("            ");
@@ -805,23 +885,61 @@ public class ExternalView {
         _builder.newLine();
         _builder.append("            ");
         _builder.append("            ");
-        _builder.append("<label for=\"{$categorySelectorId}{$propertyName}\">{$categoryLabel}</label>");
-        _builder.newLine();
+        _builder.append("<label for=\"{$categorySelectorId}{$propertyName}\"");
+        {
+          boolean _targets_8 = this._utils.targets(app, "1.3.5");
+          boolean _not_1 = (!_targets_8);
+          if (_not_1) {
+            _builder.append(" class=\"col-lg-3 control-label\"");
+          }
+        }
+        _builder.append(">{$categoryLabel}</label>");
+        _builder.newLineIfNotEmpty();
+        {
+          boolean _targets_9 = this._utils.targets(app, "1.3.5");
+          boolean _not_2 = (!_targets_9);
+          if (_not_2) {
+            _builder.append("            ");
+            _builder.append("            ");
+            _builder.append("<div class=\"col-lg-9\">");
+            _builder.newLine();
+          } else {
+            _builder.append("            ");
+            _builder.append("            ");
+            _builder.append("&nbsp;");
+            _builder.newLine();
+          }
+        }
         _builder.append("            ");
-        _builder.append("            ");
-        _builder.append("&nbsp;");
-        _builder.newLine();
-        _builder.append("            ");
-        _builder.append("            ");
+        _builder.append("                ");
         _builder.append("{selector_category name=\"`$categorySelectorName``$propertyName`\" field=\'id\' selectedValue=$catIds.$propertyName categoryRegistryModule=\'");
-        String _appName_7 = this._utils.appName(app);
-        _builder.append(_appName_7, "                        ");
+        String _appName_8 = this._utils.appName(app);
+        _builder.append(_appName_8, "                            ");
         _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}");
         _builder.newLineIfNotEmpty();
         _builder.append("            ");
-        _builder.append("            ");
-        _builder.append("<span class=\"z-sub z-formnote\">{gt text=\'This is an optional filter.\'}</span>");
-        _builder.newLine();
+        _builder.append("                ");
+        _builder.append("<span class=\"");
+        {
+          boolean _targets_10 = this._utils.targets(app, "1.3.5");
+          if (_targets_10) {
+            _builder.append("z-sub z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\">{gt text=\'This is an optional filter.\'}</span>");
+        _builder.newLineIfNotEmpty();
+        {
+          boolean _targets_11 = this._utils.targets(app, "1.3.5");
+          boolean _not_3 = (!_targets_11);
+          if (_not_3) {
+            _builder.append("            ");
+            _builder.append("            ");
+            _builder.append("</div>");
+            _builder.newLine();
+          }
+        }
         _builder.append("            ");
         _builder.append("        ");
         _builder.append("</div>");
@@ -841,37 +959,80 @@ public class ExternalView {
     }
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_12 = this._utils.targets(app, "1.3.5");
+      if (_targets_12) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("                ");
     _builder.append("<label for=\"");
-    String _appName_8 = this._utils.appName(app);
-    _builder.append(_appName_8, "                ");
-    _builder.append("_pasteas\">{gt text=\'Paste as\'}:</label>");
-    _builder.newLineIfNotEmpty();
-    _builder.append("                ");
-    _builder.append("<select id=\"");
     String _appName_9 = this._utils.appName(app);
     _builder.append(_appName_9, "                ");
-    _builder.append("_pasteas\" name=\"pasteas\">");
+    _builder.append("_pasteas\"");
+    {
+      boolean _targets_13 = this._utils.targets(app, "1.3.5");
+      boolean _not_4 = (!_targets_13);
+      if (_not_4) {
+        _builder.append(" class=\"col-lg-3 control-label\"");
+      }
+    }
+    _builder.append(">{gt text=\'Paste as\'}:</label>");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_14 = this._utils.targets(app, "1.3.5");
+      boolean _not_5 = (!_targets_14);
+      if (_not_5) {
+        _builder.append("                ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
     _builder.append("                    ");
+    _builder.append("<select id=\"");
+    String _appName_10 = this._utils.appName(app);
+    _builder.append(_appName_10, "                    ");
+    _builder.append("_pasteas\" name=\"pasteas\"");
+    {
+      boolean _targets_15 = this._utils.targets(app, "1.3.5");
+      boolean _not_6 = (!_targets_15);
+      if (_not_6) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("                        ");
     _builder.append("<option value=\"1\">{gt text=\'Link to the ");
-    String _name_4 = it.getName();
-    String _formatForDisplay_4 = this._formattingExtensions.formatForDisplay(_name_4);
-    _builder.append(_formatForDisplay_4, "                    ");
+    String _name_7 = it.getName();
+    String _formatForDisplay_5 = this._formattingExtensions.formatForDisplay(_name_7);
+    _builder.append(_formatForDisplay_5, "                        ");
+    _builder.append("\'}</option>");
+    _builder.newLineIfNotEmpty();
+    _builder.append("                        ");
+    _builder.append("<option value=\"2\">{gt text=\'ID of ");
+    String _name_8 = it.getName();
+    String _formatForDisplay_6 = this._formattingExtensions.formatForDisplay(_name_8);
+    _builder.append(_formatForDisplay_6, "                        ");
     _builder.append("\'}</option>");
     _builder.newLineIfNotEmpty();
     _builder.append("                    ");
-    _builder.append("<option value=\"2\">{gt text=\'ID of ");
-    String _name_5 = it.getName();
-    String _formatForDisplay_5 = this._formattingExtensions.formatForDisplay(_name_5);
-    _builder.append(_formatForDisplay_5, "                    ");
-    _builder.append("\'}</option>");
-    _builder.newLineIfNotEmpty();
-    _builder.append("                ");
     _builder.append("</select>");
     _builder.newLine();
+    {
+      boolean _targets_16 = this._utils.targets(app, "1.3.5");
+      boolean _not_7 = (!_targets_16);
+      if (_not_7) {
+        _builder.append("                ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("            ");
     _builder.append("</div>");
     _builder.newLine();
@@ -880,197 +1041,267 @@ public class ExternalView {
     _builder.newLine();
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_17 = this._utils.targets(app, "1.3.5");
+      if (_targets_17) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("                ");
     _builder.append("<label for=\"");
-    String _appName_10 = this._utils.appName(app);
-    _builder.append(_appName_10, "                ");
-    _builder.append("_objectid\">{gt text=\'");
-    String _name_6 = it.getName();
-    String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(_name_6);
-    _builder.append(_formatForDisplayCapital_1, "                ");
+    String _appName_11 = this._utils.appName(app);
+    _builder.append(_appName_11, "                ");
+    _builder.append("_objectid\"");
+    {
+      boolean _targets_18 = this._utils.targets(app, "1.3.5");
+      boolean _not_8 = (!_targets_18);
+      if (_not_8) {
+        _builder.append(" class=\"col-lg-3 control-label\"");
+      }
+    }
+    _builder.append(">{gt text=\'");
+    String _name_9 = it.getName();
+    String _formatForDisplayCapital_2 = this._formattingExtensions.formatForDisplayCapital(_name_9);
+    _builder.append(_formatForDisplayCapital_2, "                ");
     _builder.append("\'}:</label>");
     _builder.newLineIfNotEmpty();
-    _builder.append("                ");
+    {
+      boolean _targets_19 = this._utils.targets(app, "1.3.5");
+      boolean _not_9 = (!_targets_19);
+      if (_not_9) {
+        _builder.append("                ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("                    ");
     _builder.append("<div id=\"");
     String _prefix = this._utils.prefix(app);
-    _builder.append(_prefix, "                ");
+    _builder.append(_prefix, "                    ");
     _builder.append("itemcontainer\">");
     _builder.newLineIfNotEmpty();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<ul>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("{foreach item=\'");
-    String _name_7 = it.getName();
-    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_7);
-    _builder.append(_formatForCode_1, "                    ");
+    String _name_10 = it.getName();
+    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_10);
+    _builder.append(_formatForCode_3, "                        ");
     _builder.append("\' from=$items}");
     _builder.newLineIfNotEmpty();
-    _builder.append("                        ");
+    _builder.append("                            ");
     _builder.append("<li>");
     _builder.newLine();
-    _builder.append("                            ");
+    _builder.append("                                ");
     _builder.append("<a href=\"#\" onclick=\"");
-    String _name_8 = app.getName();
-    String _formatForDB = this._formattingExtensions.formatForDB(_name_8);
-    _builder.append(_formatForDB, "                            ");
-    _builder.append(".finder.selectItem({$");
-    String _name_9 = it.getName();
-    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_9);
-    _builder.append(_formatForCode_2, "                            ");
-    _builder.append(".");
-    DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name_10 = _firstPrimaryKey.getName();
-    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_10);
-    _builder.append(_formatForCode_3, "                            ");
-    _builder.append("})\" onkeypress=\"");
     String _name_11 = app.getName();
-    String _formatForDB_1 = this._formattingExtensions.formatForDB(_name_11);
-    _builder.append(_formatForDB_1, "                            ");
+    String _formatForDB = this._formattingExtensions.formatForDB(_name_11);
+    _builder.append(_formatForDB, "                                ");
     _builder.append(".finder.selectItem({$");
     String _name_12 = it.getName();
     String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_12);
-    _builder.append(_formatForCode_4, "                            ");
+    _builder.append(_formatForCode_4, "                                ");
     _builder.append(".");
-    DerivedField _firstPrimaryKey_1 = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name_13 = _firstPrimaryKey_1.getName();
+    DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
+    String _name_13 = _firstPrimaryKey.getName();
     String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_13);
-    _builder.append(_formatForCode_5, "                            ");
-    _builder.append("})\">");
-    _builder.newLineIfNotEmpty();
-    _builder.append("                                ");
-    _builder.append("{$");
-    String _name_14 = it.getName();
-    String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_14);
+    _builder.append(_formatForCode_5, "                                ");
+    _builder.append("})\" onkeypress=\"");
+    String _name_14 = app.getName();
+    String _formatForDB_1 = this._formattingExtensions.formatForDB(_name_14);
+    _builder.append(_formatForDB_1, "                                ");
+    _builder.append(".finder.selectItem({$");
+    String _name_15 = it.getName();
+    String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_15);
     _builder.append(_formatForCode_6, "                                ");
     _builder.append(".");
-    DerivedField _leadingField = this._modelExtensions.getLeadingField(it);
-    String _name_15 = _leadingField.getName();
-    String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_15);
+    DerivedField _firstPrimaryKey_1 = this._modelExtensions.getFirstPrimaryKey(it);
+    String _name_16 = _firstPrimaryKey_1.getName();
+    String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_16);
     _builder.append(_formatForCode_7, "                                ");
+    _builder.append("})\">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("                                    ");
+    _builder.append("{$");
+    String _name_17 = it.getName();
+    String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_17);
+    _builder.append(_formatForCode_8, "                                    ");
+    _builder.append(".");
+    DerivedField _leadingField = this._modelExtensions.getLeadingField(it);
+    String _name_18 = _leadingField.getName();
+    String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_18);
+    _builder.append(_formatForCode_9, "                                    ");
     _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("                            ");
+    _builder.append("                                ");
     _builder.append("</a>");
     _builder.newLine();
-    _builder.append("                            ");
+    _builder.append("                                ");
     _builder.append("<input type=\"hidden\" id=\"url{$");
-    String _name_16 = it.getName();
-    String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_16);
-    _builder.append(_formatForCode_8, "                            ");
+    String _name_19 = it.getName();
+    String _formatForCode_10 = this._formattingExtensions.formatForCode(_name_19);
+    _builder.append(_formatForCode_10, "                                ");
     _builder.append(".");
     DerivedField _firstPrimaryKey_2 = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name_17 = _firstPrimaryKey_2.getName();
-    String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_17);
-    _builder.append(_formatForCode_9, "                            ");
+    String _name_20 = _firstPrimaryKey_2.getName();
+    String _formatForCode_11 = this._formattingExtensions.formatForCode(_name_20);
+    _builder.append(_formatForCode_11, "                                ");
     _builder.append("}\" value=\"");
     {
       boolean _hasUserController = this._controllerExtensions.hasUserController(app);
       if (_hasUserController) {
         _builder.append("{modurl modname=\'");
-        String _appName_11 = this._utils.appName(app);
-        _builder.append(_appName_11, "                            ");
+        String _appName_12 = this._utils.appName(app);
+        _builder.append(_appName_12, "                                ");
         _builder.append("\' type=\'user\' ");
-        String _name_18 = it.getName();
-        String _formatForCode_10 = this._formattingExtensions.formatForCode(_name_18);
-        String _modUrlDisplay = this._urlExtensions.modUrlDisplay(it, _formatForCode_10, Boolean.valueOf(true));
-        _builder.append(_modUrlDisplay, "                            ");
+        String _name_21 = it.getName();
+        String _formatForCode_12 = this._formattingExtensions.formatForCode(_name_21);
+        String _modUrlDisplay = this._urlExtensions.modUrlDisplay(it, _formatForCode_12, Boolean.valueOf(true));
+        _builder.append(_modUrlDisplay, "                                ");
         _builder.append(" fqurl=true}");
       }
     }
     _builder.append("\" />");
     _builder.newLineIfNotEmpty();
-    _builder.append("                            ");
+    _builder.append("                                ");
     _builder.append("<input type=\"hidden\" id=\"title{$");
-    String _name_19 = it.getName();
-    String _formatForCode_11 = this._formattingExtensions.formatForCode(_name_19);
-    _builder.append(_formatForCode_11, "                            ");
+    String _name_22 = it.getName();
+    String _formatForCode_13 = this._formattingExtensions.formatForCode(_name_22);
+    _builder.append(_formatForCode_13, "                                ");
     _builder.append(".");
     DerivedField _firstPrimaryKey_3 = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name_20 = _firstPrimaryKey_3.getName();
-    String _formatForCode_12 = this._formattingExtensions.formatForCode(_name_20);
-    _builder.append(_formatForCode_12, "                            ");
+    String _name_23 = _firstPrimaryKey_3.getName();
+    String _formatForCode_14 = this._formattingExtensions.formatForCode(_name_23);
+    _builder.append(_formatForCode_14, "                                ");
     _builder.append("}\" value=\"{$");
-    String _name_21 = it.getName();
-    String _formatForCode_13 = this._formattingExtensions.formatForCode(_name_21);
-    _builder.append(_formatForCode_13, "                            ");
+    String _name_24 = it.getName();
+    String _formatForCode_15 = this._formattingExtensions.formatForCode(_name_24);
+    _builder.append(_formatForCode_15, "                                ");
     _builder.append(".");
     DerivedField _leadingField_1 = this._modelExtensions.getLeadingField(it);
-    String _name_22 = _leadingField_1.getName();
-    String _formatForCode_14 = this._formattingExtensions.formatForCode(_name_22);
-    _builder.append(_formatForCode_14, "                            ");
+    String _name_25 = _leadingField_1.getName();
+    String _formatForCode_16 = this._formattingExtensions.formatForCode(_name_25);
+    _builder.append(_formatForCode_16, "                                ");
     _builder.append("|replace:\"\\\"\":\"\"}\" />");
     _builder.newLineIfNotEmpty();
-    _builder.append("                            ");
+    _builder.append("                                ");
     _builder.append("<input type=\"hidden\" id=\"desc{$");
-    String _name_23 = it.getName();
-    String _formatForCode_15 = this._formattingExtensions.formatForCode(_name_23);
-    _builder.append(_formatForCode_15, "                            ");
+    String _name_26 = it.getName();
+    String _formatForCode_17 = this._formattingExtensions.formatForCode(_name_26);
+    _builder.append(_formatForCode_17, "                                ");
     _builder.append(".");
     DerivedField _firstPrimaryKey_4 = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name_24 = _firstPrimaryKey_4.getName();
-    String _formatForCode_16 = this._formattingExtensions.formatForCode(_name_24);
-    _builder.append(_formatForCode_16, "                            ");
+    String _name_27 = _firstPrimaryKey_4.getName();
+    String _formatForCode_18 = this._formattingExtensions.formatForCode(_name_27);
+    _builder.append(_formatForCode_18, "                                ");
     _builder.append("}\" value=\"{capture assign=\'description\'}");
     CharSequence _displayDescription = this.displayDescription(it, "", "");
-    _builder.append(_displayDescription, "                            ");
+    _builder.append(_displayDescription, "                                ");
     _builder.append("{/capture}{$description|strip_tags|replace:\"\\\"\":\"\"}\" />");
     _builder.newLineIfNotEmpty();
-    _builder.append("                        ");
+    _builder.append("                            ");
     _builder.append("</li>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("{foreachelse}");
     _builder.newLine();
-    _builder.append("                        ");
+    _builder.append("                            ");
     _builder.append("<li>{gt text=\'No entries found.\'}</li>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("{/foreach}");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("</ul>");
     _builder.newLine();
-    _builder.append("                ");
+    _builder.append("                    ");
     _builder.append("</div>");
     _builder.newLine();
+    {
+      boolean _targets_20 = this._utils.targets(app, "1.3.5");
+      boolean _not_10 = (!_targets_20);
+      if (_not_10) {
+        _builder.append("                ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("            ");
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
-    _builder.append("                ");
-    _builder.append("<label for=\"");
-    String _appName_12 = this._utils.appName(app);
-    _builder.append(_appName_12, "                ");
-    _builder.append("_sort\">{gt text=\'Sort by\'}:</label>");
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_21 = this._utils.targets(app, "1.3.5");
+      if (_targets_21) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
     _builder.newLineIfNotEmpty();
     _builder.append("                ");
-    _builder.append("<select id=\"");
+    _builder.append("<label for=\"");
     String _appName_13 = this._utils.appName(app);
     _builder.append(_appName_13, "                ");
-    _builder.append("_sort\" name=\"sort\" style=\"width: 150px\" class=\"z-floatleft\" style=\"margin-right: 10px\">");
+    _builder.append("_sort\"");
+    {
+      boolean _targets_22 = this._utils.targets(app, "1.3.5");
+      boolean _not_11 = (!_targets_22);
+      if (_not_11) {
+        _builder.append(" class=\"col-lg-3 control-label\"");
+      }
+    }
+    _builder.append(">{gt text=\'Sort by\'}:</label>");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_23 = this._utils.targets(app, "1.3.5");
+      boolean _not_12 = (!_targets_23);
+      if (_not_12) {
+        _builder.append("                ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("                    ");
+    _builder.append("<select id=\"");
+    String _appName_14 = this._utils.appName(app);
+    _builder.append(_appName_14, "                    ");
+    _builder.append("_sort\" name=\"sort\" style=\"width: 150px\" class=\"");
+    {
+      boolean _targets_24 = this._utils.targets(app, "1.3.5");
+      if (_targets_24) {
+        _builder.append("z-floatleft");
+      } else {
+        _builder.append("pull-left");
+      }
+    }
+    _builder.append("\" style=\"margin-right: 10px\">");
     _builder.newLineIfNotEmpty();
     {
       Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
       for(final DerivedField field : _derivedFields) {
-        _builder.append("                ");
+        _builder.append("                    ");
         _builder.append("<option value=\"");
-        String _name_25 = field.getName();
-        String _formatForCode_17 = this._formattingExtensions.formatForCode(_name_25);
-        _builder.append(_formatForCode_17, "                ");
+        String _name_28 = field.getName();
+        String _formatForCode_19 = this._formattingExtensions.formatForCode(_name_28);
+        _builder.append(_formatForCode_19, "                    ");
         _builder.append("\"{if $sort eq \'");
-        String _name_26 = field.getName();
-        String _formatForCode_18 = this._formattingExtensions.formatForCode(_name_26);
-        _builder.append(_formatForCode_18, "                ");
+        String _name_29 = field.getName();
+        String _formatForCode_20 = this._formattingExtensions.formatForCode(_name_29);
+        _builder.append(_formatForCode_20, "                    ");
         _builder.append("\'} selected=\"selected\"{/if}>{gt text=\'");
-        String _name_27 = field.getName();
-        String _formatForDisplayCapital_2 = this._formattingExtensions.formatForDisplayCapital(_name_27);
-        _builder.append(_formatForDisplayCapital_2, "                ");
+        String _name_30 = field.getName();
+        String _formatForDisplayCapital_3 = this._formattingExtensions.formatForDisplayCapital(_name_30);
+        _builder.append(_formatForDisplayCapital_3, "                    ");
         _builder.append("\'}</option>");
         _builder.newLineIfNotEmpty();
       }
@@ -1078,78 +1309,138 @@ public class ExternalView {
     {
       boolean _isStandardFields = it.isStandardFields();
       if (_isStandardFields) {
-        _builder.append("                ");
+        _builder.append("                    ");
         _builder.append("<option value=\"createdDate\"{if $sort eq \'createdDate\'} selected=\"selected\"{/if}>{gt text=\'Creation date\'}</option>");
         _builder.newLine();
-        _builder.append("                ");
+        _builder.append("                    ");
         _builder.append("<option value=\"createdUserId\"{if $sort eq \'createdUserId\'} selected=\"selected\"{/if}>{gt text=\'Creator\'}</option>");
         _builder.newLine();
-        _builder.append("                ");
+        _builder.append("                    ");
         _builder.append("<option value=\"updatedDate\"{if $sort eq \'updatedDate\'} selected=\"selected\"{/if}>{gt text=\'Update date\'}</option>");
         _builder.newLine();
       }
     }
-    _builder.append("                ");
+    _builder.append("                    ");
     _builder.append("</select>");
     _builder.newLine();
-    _builder.append("                ");
-    _builder.append("<select id=\"");
-    String _appName_14 = this._utils.appName(app);
-    _builder.append(_appName_14, "                ");
-    _builder.append("_sortdir\" name=\"sortdir\" style=\"width: 100px\">");
-    _builder.newLineIfNotEmpty();
     _builder.append("                    ");
+    _builder.append("<select id=\"");
+    String _appName_15 = this._utils.appName(app);
+    _builder.append(_appName_15, "                    ");
+    _builder.append("_sortdir\" name=\"sortdir\" style=\"width: 100px\"");
+    {
+      boolean _targets_25 = this._utils.targets(app, "1.3.5");
+      boolean _not_13 = (!_targets_25);
+      if (_not_13) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("                        ");
     _builder.append("<option value=\"asc\"{if $sortdir eq \'asc\'} selected=\"selected\"{/if}>{gt text=\'ascending\'}</option>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<option value=\"desc\"{if $sortdir eq \'desc\'} selected=\"selected\"{/if}>{gt text=\'descending\'}</option>");
     _builder.newLine();
-    _builder.append("                ");
+    _builder.append("                    ");
     _builder.append("</select>");
     _builder.newLine();
+    {
+      boolean _targets_26 = this._utils.targets(app, "1.3.5");
+      boolean _not_14 = (!_targets_26);
+      if (_not_14) {
+        _builder.append("                ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("            ");
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_27 = this._utils.targets(app, "1.3.5");
+      if (_targets_27) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("                ");
     _builder.append("<label for=\"");
-    String _appName_15 = this._utils.appName(app);
-    _builder.append(_appName_15, "                ");
-    _builder.append("_pagesize\">{gt text=\'Page size\'}:</label>");
-    _builder.newLineIfNotEmpty();
-    _builder.append("                ");
-    _builder.append("<select id=\"");
     String _appName_16 = this._utils.appName(app);
     _builder.append(_appName_16, "                ");
-    _builder.append("_pagesize\" name=\"num\" style=\"width: 50px; text-align: right\">");
+    _builder.append("_pagesize\"");
+    {
+      boolean _targets_28 = this._utils.targets(app, "1.3.5");
+      boolean _not_15 = (!_targets_28);
+      if (_not_15) {
+        _builder.append(" class=\"col-lg-3 control-label\"");
+      }
+    }
+    _builder.append(">{gt text=\'Page size\'}:</label>");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_29 = this._utils.targets(app, "1.3.5");
+      boolean _not_16 = (!_targets_29);
+      if (_not_16) {
+        _builder.append("                ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
     _builder.append("                    ");
+    _builder.append("<select id=\"");
+    String _appName_17 = this._utils.appName(app);
+    _builder.append(_appName_17, "                    ");
+    _builder.append("_pagesize\" name=\"num\" style=\"width: 50px; text-align: right\"");
+    {
+      boolean _targets_30 = this._utils.targets(app, "1.3.5");
+      boolean _not_17 = (!_targets_30);
+      if (_not_17) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("                        ");
     _builder.append("<option value=\"5\"{if $pager.itemsperpage eq 5} selected=\"selected\"{/if}>5</option>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<option value=\"10\"{if $pager.itemsperpage eq 10} selected=\"selected\"{/if}>10</option>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<option value=\"15\"{if $pager.itemsperpage eq 15} selected=\"selected\"{/if}>15</option>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<option value=\"20\"{if $pager.itemsperpage eq 20} selected=\"selected\"{/if}>20</option>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<option value=\"30\"{if $pager.itemsperpage eq 30} selected=\"selected\"{/if}>30</option>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<option value=\"50\"{if $pager.itemsperpage eq 50} selected=\"selected\"{/if}>50</option>");
     _builder.newLine();
-    _builder.append("                    ");
+    _builder.append("                        ");
     _builder.append("<option value=\"100\"{if $pager.itemsperpage eq 100} selected=\"selected\"{/if}>100</option>");
     _builder.newLine();
-    _builder.append("                ");
+    _builder.append("                    ");
     _builder.append("</select>");
     _builder.newLine();
+    {
+      boolean _targets_31 = this._utils.targets(app, "1.3.5");
+      boolean _not_18 = (!_targets_31);
+      if (_not_18) {
+        _builder.append("                ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("            ");
     _builder.append("</div>");
     _builder.newLine();
@@ -1158,29 +1449,81 @@ public class ExternalView {
       boolean _hasAbstractStringFieldsEntity = this._modelExtensions.hasAbstractStringFieldsEntity(it);
       if (_hasAbstractStringFieldsEntity) {
         _builder.append("            ");
-        _builder.append("<div class=\"z-formrow\">");
-        _builder.newLine();
+        _builder.append("<div class=\"");
+        {
+          boolean _targets_32 = this._utils.targets(app, "1.3.5");
+          if (_targets_32) {
+            _builder.append("z-formrow");
+          } else {
+            _builder.append("form-group");
+          }
+        }
+        _builder.append("\">");
+        _builder.newLineIfNotEmpty();
         _builder.append("            ");
         _builder.append("    ");
         _builder.append("<label for=\"");
-        String _appName_17 = this._utils.appName(app);
-        _builder.append(_appName_17, "                ");
-        _builder.append("_searchterm\">{gt text=\'Search for\'}:</label>");
-        _builder.newLineIfNotEmpty();
-        _builder.append("            ");
-        _builder.append("    ");
-        _builder.append("<input type=\"text\" id=\"");
         String _appName_18 = this._utils.appName(app);
         _builder.append(_appName_18, "                ");
-        _builder.append("_searchterm\" name=\"searchterm\" style=\"width: 150px\" class=\"z-floatleft\" style=\"margin-right: 10px\" />");
+        _builder.append("_searchterm\"");
+        {
+          boolean _targets_33 = this._utils.targets(app, "1.3.5");
+          boolean _not_19 = (!_targets_33);
+          if (_not_19) {
+            _builder.append(" class=\"col-lg-3 control-label\"");
+          }
+        }
+        _builder.append(">{gt text=\'Search for\'}:</label>");
+        _builder.newLineIfNotEmpty();
+        {
+          boolean _targets_34 = this._utils.targets(app, "1.3.5");
+          boolean _not_20 = (!_targets_34);
+          if (_not_20) {
+            _builder.append("            ");
+            _builder.append("<div class=\"col-lg-9\">");
+            _builder.newLine();
+          }
+        }
+        _builder.append("            ");
+        _builder.append("        ");
+        _builder.append("<input type=\"text\" id=\"");
+        String _appName_19 = this._utils.appName(app);
+        _builder.append(_appName_19, "                    ");
+        _builder.append("_searchterm\" name=\"searchterm\" style=\"width: 150px\" class=\"");
+        {
+          boolean _targets_35 = this._utils.targets(app, "1.3.5");
+          if (_targets_35) {
+            _builder.append("z-floatleft");
+          } else {
+            _builder.append("form-control pull-left");
+          }
+        }
+        _builder.append("\" style=\"margin-right: 10px\" />");
         _builder.newLineIfNotEmpty();
         _builder.append("            ");
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("<input type=\"button\" id=\"");
-        String _appName_19 = this._utils.appName(app);
-        _builder.append(_appName_19, "                ");
-        _builder.append("_gosearch\" name=\"gosearch\" value=\"{gt text=\'Filter\'}\" style=\"width: 80px\" />");
+        String _appName_20 = this._utils.appName(app);
+        _builder.append(_appName_20, "                    ");
+        _builder.append("_gosearch\" name=\"gosearch\" value=\"{gt text=\'Filter\'}\" style=\"width: 80px\"");
+        {
+          boolean _targets_36 = this._utils.targets(app, "1.3.5");
+          boolean _not_21 = (!_targets_36);
+          if (_not_21) {
+            _builder.append(" class=\"btn btn-default\"");
+          }
+        }
+        _builder.append(" />");
         _builder.newLineIfNotEmpty();
+        {
+          boolean _targets_37 = this._utils.targets(app, "1.3.5");
+          boolean _not_22 = (!_targets_37);
+          if (_not_22) {
+            _builder.append("            ");
+            _builder.append("</div>");
+            _builder.newLine();
+          }
+        }
         _builder.append("            ");
         _builder.append("</div>");
         _builder.newLine();
@@ -1198,15 +1541,31 @@ public class ExternalView {
     _builder.newLine();
     _builder.append("            ");
     _builder.append("<input type=\"submit\" id=\"");
-    String _appName_20 = this._utils.appName(app);
-    _builder.append(_appName_20, "            ");
-    _builder.append("_submit\" name=\"submitButton\" value=\"{gt text=\'Change selection\'}\" />");
+    String _appName_21 = this._utils.appName(app);
+    _builder.append(_appName_21, "            ");
+    _builder.append("_submit\" name=\"submitButton\" value=\"{gt text=\'Change selection\'}\"");
+    {
+      boolean _targets_38 = this._utils.targets(app, "1.3.5");
+      boolean _not_23 = (!_targets_38);
+      if (_not_23) {
+        _builder.append(" class=\"btn btn-success\"");
+      }
+    }
+    _builder.append(" />");
     _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("<input type=\"button\" id=\"");
-    String _appName_21 = this._utils.appName(app);
-    _builder.append(_appName_21, "            ");
-    _builder.append("_cancel\" name=\"cancelButton\" value=\"{gt text=\'Cancel\'}\" />");
+    String _appName_22 = this._utils.appName(app);
+    _builder.append(_appName_22, "            ");
+    _builder.append("_cancel\" name=\"cancelButton\" value=\"{gt text=\'Cancel\'}\"");
+    {
+      boolean _targets_39 = this._utils.targets(app, "1.3.5");
+      boolean _not_24 = (!_targets_39);
+      if (_not_24) {
+        _builder.append(" class=\"btn btn-default\"");
+      }
+    }
+    _builder.append(" />");
     _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("<br />");
@@ -1231,8 +1590,8 @@ public class ExternalView {
     _builder.append("document.observe(\'dom:loaded\', function() {");
     _builder.newLine();
     _builder.append("            ");
-    String _name_28 = app.getName();
-    String _formatForDB_2 = this._formattingExtensions.formatForDB(_name_28);
+    String _name_31 = app.getName();
+    String _formatForDB_2 = this._formattingExtensions.formatForDB(_name_31);
     _builder.append(_formatForDB_2, "            ");
     _builder.append(".finder.onLoad();");
     _builder.newLineIfNotEmpty();
@@ -1249,8 +1608,8 @@ public class ExternalView {
     {
       Iterable<AdminController> _allAdminControllers = this._controllerExtensions.getAllAdminControllers(app);
       boolean _isEmpty = IterableExtensions.isEmpty(_allAdminControllers);
-      boolean _not = (!_isEmpty);
-      if (_not) {
+      boolean _not_25 = (!_isEmpty);
+      if (_not_25) {
         _builder.append("    ");
         _builder.append("{*");
         _builder.newLine();
@@ -1267,8 +1626,8 @@ public class ExternalView {
         _builder.append("    ");
         _builder.append("        ");
         _builder.append("{modfunc modname=\'");
-        String _appName_22 = this._utils.appName(app);
-        _builder.append(_appName_22, "            ");
+        String _appName_23 = this._utils.appName(app);
+        _builder.append(_appName_23, "            ");
         _builder.append("\' type=\'admin\' func=\'edit\'}");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -1310,8 +1669,15 @@ public class ExternalView {
     _builder.append(" information\'}</strong></p>");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("{img id=\'ajax_indicator\' modname=\'core\' set=\'ajax\' src=\'indicator_circle.gif\' alt=\'\' class=\'z-hide\'}");
-    _builder.newLine();
+    _builder.append("{img id=\'ajax_indicator\' modname=\'core\' set=\'ajax\' src=\'indicator_circle.gif\' alt=\'\' class=\'");
+    {
+      boolean _targets = this._utils.targets(app, "1.3.5");
+      if (_targets) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\'}");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<div id=\"{$baseID}_previewcontainer\">&nbsp;</div>");
     _builder.newLine();
@@ -1531,8 +1897,16 @@ public class ExternalView {
     _builder.append("</select>");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<select id=\"{$baseID}_sortdir\" name=\"sortdir\">");
-    _builder.newLine();
+    _builder.append("<select id=\"{$baseID}_sortdir\" name=\"sortdir\"");
+    {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<option value=\"asc\"{if $sortdir eq \'asc\'} selected=\"selected\"{/if}>{gt text=\'ascending\'}</option>");
     _builder.newLine();
@@ -1556,13 +1930,29 @@ public class ExternalView {
         _builder.append("<label for=\"{$baseID}_searchterm\"{$leftSide}>{gt text=\'Search for\'}:</label>");
         _builder.newLine();
         _builder.append("    ");
-        _builder.append("<input type=\"text\" id=\"{$baseID}_searchterm\" name=\"searchterm\"{$rightSide} />");
-        _builder.newLine();
+        _builder.append("<input type=\"text\" id=\"{$baseID}_searchterm\" name=\"searchterm\"");
+        {
+          boolean _targets_2 = this._utils.targets(app, "1.3.5");
+          boolean _not_1 = (!_targets_2);
+          if (_not_1) {
+            _builder.append(" class=\"form-control\"");
+          }
+        }
+        _builder.append("{$rightSide} />");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<input type=\"button\" id=\"");
         String _appName_2 = this._utils.appName(app);
         _builder.append(_appName_2, "    ");
-        _builder.append("_gosearch\" name=\"gosearch\" value=\"{gt text=\'Filter\'}\" />");
+        _builder.append("_gosearch\" name=\"gosearch\" value=\"{gt text=\'Filter\'}\"");
+        {
+          boolean _targets_3 = this._utils.targets(app, "1.3.5");
+          boolean _not_2 = (!_targets_3);
+          if (_not_2) {
+            _builder.append(" class=\"btn btn-default\"");
+          }
+        }
+        _builder.append(" />");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<br{$break} />");

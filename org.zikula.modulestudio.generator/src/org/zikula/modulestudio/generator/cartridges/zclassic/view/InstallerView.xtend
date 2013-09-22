@@ -93,7 +93,7 @@ class InstallerView {
     def private tplInitStep2(Application it) '''
         {* Purpose of this template: 2nd step of init process: initial settings *}
         <h2>{gt text='Installation of «appName»'}</h2>
-        <form action="{modurl modname='«appName»' type='init' func='interactiveinitstep2'}" method="post" enctype="application/x-www-form-urlencoded">
+        <form action="{modurl modname='«appName»' type='init' func='interactiveinitstep2'}" method="post" enctype="application/x-www-form-urlencoded"«IF targets('1.3.5')» class="z-form"«ELSE» class="form-horizontal" role="form"«ENDIF»">
             <fieldset>
                 <legend>{gt text='Settings'}</legend>
                 <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
@@ -103,19 +103,45 @@ class InstallerView {
             <fieldset>
                 <legend>{gt text='Action'}</legend>
 
-                <label for="«appName»_activate">{gt text='Activate «appName» after installation?'}</label>
-                <input id="«appName»_activate" name="activate" type="checkbox" value="1" checked="checked" />
-                <br /><br />
+                <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                    «IF targets('1.3.5')»
+                        <label for="«appName»_activate">{gt text='Activate «appName» after installation?'}</label>
+                        <input id="«appName»_activate" name="activate" type="checkbox" value="1" checked="checked" />
+                    «ELSE»
+                        <div class="col-lg-offset-3 col-lg-9">
+                            <div class="checkbox">
+                                <label>
+                                    <input id="«appName»_activate" name="activate" type="checkbox" value="1" checked="checked" /> {gt text='Activate «appName» after installation?'}
+                                </label>
+                            </div>
+                        </div>
+                    «ENDIF»
+                </div>
 
-                <input name="submit" type="submit" value="{gt text='Submit'}" style="margin-left: 17em" />
+                <div class="«IF targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
+                «IF !targets('1.3.5')»
+                    <div class="col-lg-offset-3 col-lg-9">
+                «ENDIF»
+                    {formbutton commandName='submit' __text='Submit' class='«IF targets('1.3.5')»z-bt-save«ELSE»btn btn-success«ENDIF»'}
+                «IF !targets('1.3.5')»
+                    </div>
+                «ENDIF»
+                </div>
             </fieldset>
         </form>
     '''
 
     def private tplInitStep2Var(Variable it, Application app) '''
-        <label for="«formatForCode(app.name + '_' + name)»" style="float: left; width: 20em">{gt text='«name»'}</label>
-        <input id="«formatForCode(app.name + '_' + name)»" type="text" name="«name.formatForCode»" value="«value»" size="40" />
-        <br style="clear: left" /><br />
+        <div class="«IF app.targets('1.3.4')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«formatForCode(app.name + '_' + name)»"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='«name»'}</label>
+            «IF !app.targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <input id="«formatForCode(app.name + '_' + name)»" type="text" name="«name.formatForCode»" value="«value»" size="40"«IF !app.targets('1.3.5')» class="form-control"«ENDIF» />
+            «IF !app.targets('1.3.5')»
+                </div>
+            «ENDIF»
+        </div>
     '''
 
     def private tplInitStep3(Application it) '''

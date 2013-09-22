@@ -36,7 +36,7 @@ class ViewQuickNavForm {
         {* purpose of this template: «nameMultiple.formatForDisplay» view filter form in «controller.formattedName» area *}
         {checkpermissionblock component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
         {assign var='objectType' value='«name.formatForCode»'}
-        <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.prefix»«name.formatForCodeCapital»QuickNavForm" class="«app.prefix»QuickNavForm">
+        <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.prefix»«name.formatForCodeCapital»QuickNavForm" class="«app.prefix»-quicknav«IF container.application.targets('1.3.5')»"«ELSE» {*form-inline*}navbar-form navbar-left" role="navigation"«ENDIF»>
             <fieldset>
                 <h3>{gt text='Quick navigation'}</h3>
                 <input type="hidden" name="module" value="{modgetinfo modname='«app.appName»' info='url'}" />
@@ -47,7 +47,7 @@ class ViewQuickNavForm {
                 <input type="hidden" name="own" value="{$own|default:0}" />
                 {gt text='All' assign='lblDefault'}
                 «formFields»
-                <input type="submit" name="updateview" id="quicknav_submit" value="{gt text='OK'}" />
+                <input type="submit" name="updateview" id="quicknav_submit" value="{gt text='OK'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
             </fieldset>
         </form>
 
@@ -57,7 +57,7 @@ class ViewQuickNavForm {
                 «app.prefix»InitQuickNavigation('«name.formatForCode»', '«controller.formattedName»');
                 {{if isset($searchFilter) && $searchFilter eq false}}
                     {{* we can hide the submit button if we have no quick search field *}}
-                    $('quicknav_submit').addClassName('z-hide');
+                    $('quicknav_submit').addClassName('«IF app.targets('1.3.5')»z-«ENDIF»hide');
                 {{/if}}
             });
         /* ]]> */
@@ -126,9 +126,15 @@ class ViewQuickNavForm {
                             {assign var='categorySelectorId' value='catids__'}
                             {assign var='categorySelectorSize' value='5'}
                         {/if}
-                        <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
-                        &nbsp;
-                        {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«container.application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                        «IF !container.application.targets('1.3.5')»
+                            <div class="form-group">
+                        «ENDIF»
+                            <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
+                            &nbsp;
+                            {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«container.application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                        «IF !container.application.targets('1.3.5')»
+                            </div>
+                        «ENDIF»
                     {/foreach}
                     {/nocache}
                 {/if}
@@ -139,7 +145,13 @@ class ViewQuickNavForm {
     def private dispatch formField(DerivedField it) '''
         «val fieldName = name.formatForCode»
         {if !isset($«fieldName»Filter) || $«fieldName»Filter eq true}
-            «formFieldImpl»
+            «IF !entity.container.application.targets('1.3.5')»
+                <div class="form-group">
+            «ENDIF»
+                «formFieldImpl»
+            «IF !entity.container.application.targets('1.3.5')»
+                </div>
+            «ENDIF»
         {/if}
     '''
 
@@ -147,7 +159,7 @@ class ViewQuickNavForm {
         «val fieldName = name.formatForCode»
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
         <label for="«fieldName»">{gt text='«fieldLabel.formatForDisplayCapital»'}</label>
-        <select id="«fieldName»" name="«fieldName»">
+        <select id="«fieldName»" name="«fieldName»"«IF !entity.container.application.targets('1.3.5')» class="form-control"«ENDIF»>
             <option value="">{$lblDefault}</option>
         {foreach item='option' from=$«fieldName»Items}
             <option value="{$option.value}"{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
@@ -174,7 +186,7 @@ class ViewQuickNavForm {
     def private dispatch formFieldImpl(ListField it) '''
         «val fieldName = name.formatForCode»
         <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
-        <select id="«fieldName»" name="«fieldName»">
+        <select id="«fieldName»" name="«fieldName»"«IF !entity.container.application.targets('1.3.5')» class="form-control"«ENDIF»>
             <option value="">{$lblDefault}</option>
         {foreach item='option' from=$«fieldName»Items}
         «IF multiple»
@@ -190,57 +202,75 @@ class ViewQuickNavForm {
         «val sourceName = source.name.formatForCode»
         «val sourceAliasName = getRelationAliasName(false)»
         {if !isset($«sourceName»Filter) || $«sourceName»Filter eq true}
-            <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
-            {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»'«IF source.leadingField !== null» orderBy='tbl.«source.leadingField.name.formatForCode»'«ENDIF» slimMode=true assign='listEntries'}
-            <select id="«sourceAliasName»" name="«sourceAliasName»">
-                <option value="">{$lblDefault}</option>
-            {foreach item='option' from=$listEntries}
-                «IF source.hasCompositeKeys»
-                    {assign var='entryId' value="«FOR pkField : source.getPrimaryKeyFields SEPARATOR '_'»`$option.«pkField.name.formatForCode»`«ENDFOR»"}
-                    <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.«source.leadingField.name.formatForCode»}</option>
-                «ELSE»
-                    {assign var='entryId' value=$option.«source.getFirstPrimaryKey.name.formatForCode»}
-                    <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.«source.leadingField.name.formatForCode»}</option>
-                «ENDIF»
-            {/foreach}
-            </select>
+            «IF !container.application.targets('1.3.5')»
+                <div class="form-group">
+            «ENDIF»
+                <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
+                {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»'«IF source.leadingField !== null» orderBy='tbl.«source.leadingField.name.formatForCode»'«ENDIF» slimMode=true assign='listEntries'}
+                <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+                    <option value="">{$lblDefault}</option>
+                {foreach item='option' from=$listEntries}
+                    «IF source.hasCompositeKeys»
+                        {assign var='entryId' value="«FOR pkField : source.getPrimaryKeyFields SEPARATOR '_'»`$option.«pkField.name.formatForCode»`«ENDFOR»"}
+                        <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.«source.leadingField.name.formatForCode»}</option>
+                    «ELSE»
+                        {assign var='entryId' value=$option.«source.getFirstPrimaryKey.name.formatForCode»}
+                        <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.«source.leadingField.name.formatForCode»}</option>
+                    «ENDIF»
+                {/foreach}
+                </select>
+            «IF !container.application.targets('1.3.5')»
+                </div>
+            «ENDIF»
         {/if}
     '''
 
     def private sortingAndPageSize(Entity it) '''
         {if !isset($sorting) || $sorting eq true}
-            <label for="sortby">{gt text='Sort by'}</label>
-            &nbsp;
-            <select id="sortby" name="sort">
-            «FOR field : getDerivedFields»
-                <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
-            «ENDFOR»
-            «IF standardFields»
-                <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
-                <option value="createdUserId"{if $sort eq 'createdUserId'} selected="selected"{/if}>{gt text='Creator'}</option>
-                <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
+            «IF !container.application.targets('1.3.5')»
+                <div class="form-group">
             «ENDIF»
-            </select>
-            <select id="sortdir" name="sortdir">
-                <option value="asc"{if $sdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
-                <option value="desc"{if $sdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
-            </select>
+                <label for="sortby">{gt text='Sort by'}</label>
+                &nbsp;
+                <select id="sortby" name="sort"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+                «FOR field : getDerivedFields»
+                    <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                «ENDFOR»
+                «IF standardFields»
+                    <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
+                    <option value="createdUserId"{if $sort eq 'createdUserId'} selected="selected"{/if}>{gt text='Creator'}</option>
+                    <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
+                «ENDIF»
+                </select>
+                <select id="sortdir" name="sortdir"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+                    <option value="asc"{if $sdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
+                    <option value="desc"{if $sdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
+                </select>
+            «IF !container.application.targets('1.3.5')»
+                </div>
+            «ENDIF»
         {else}
             <input type="hidden" name="sort" value="{$sort}" />
             <input type="hidden" name="sdir" value="{if $sdir eq 'desc'}asc{else}desc{/if}" />
         {/if}
         {if !isset($pageSizeSelector) || $pageSizeSelector eq true}
-            <label for="num">{gt text='Page size'}</label>
-            &nbsp;
-            <select id="num" name="num">
-                <option value="5"{if $pageSize eq 5} selected="selected"{/if}>5</option>
-                <option value="10"{if $pageSize eq 10} selected="selected"{/if}>10</option>
-                <option value="15"{if $pageSize eq 15} selected="selected"{/if}>15</option>
-                <option value="20"{if $pageSize eq 20} selected="selected"{/if}>20</option>
-                <option value="30"{if $pageSize eq 30} selected="selected"{/if}>30</option>
-                <option value="50"{if $pageSize eq 50} selected="selected"{/if}>50</option>
-                <option value="100"{if $pageSize eq 100} selected="selected"{/if}>100</option>
-            </select>
+            «IF !container.application.targets('1.3.5')»
+                <div class="form-group">
+            «ENDIF»
+                <label for="num">{gt text='Page size'}</label>
+                &nbsp;
+                <select id="num" name="num">
+                    <option value="5"{if $pageSize eq 5} selected="selected"{/if}>5</option>
+                    <option value="10"{if $pageSize eq 10} selected="selected"{/if}>10</option>
+                    <option value="15"{if $pageSize eq 15} selected="selected"{/if}>15</option>
+                    <option value="20"{if $pageSize eq 20} selected="selected"{/if}>20</option>
+                    <option value="30"{if $pageSize eq 30} selected="selected"{/if}>30</option>
+                    <option value="50"{if $pageSize eq 50} selected="selected"{/if}>50</option>
+                    <option value="100"{if $pageSize eq 100} selected="selected"{/if}>100</option>
+                </select>
+            «IF !container.application.targets('1.3.5')»
+                </div>
+            «ENDIF»
         {/if}
     '''
 }

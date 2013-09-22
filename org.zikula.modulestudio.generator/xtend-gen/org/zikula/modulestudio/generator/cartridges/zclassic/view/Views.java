@@ -433,11 +433,53 @@ public class Views {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("            ");
-        _builder.append("<p class=\"z-informationmsg z-center\"><a href=\"{modurl modname=\'");
-        String _appName_4 = this._utils.appName(it);
-        _builder.append(_appName_4, "                ");
-        _builder.append("\' type=\'admin\' func=\'view\' ot=$modItem.objectType workflowState=$modItem.state}\" class=\"z-bold\">{$modItem.message}</a></p>");
+        _builder.append("<p class=\"");
+        {
+          boolean _targets_1 = this._utils.targets(it, "1.3.5");
+          if (_targets_1) {
+            _builder.append("z-informationmsg z");
+          } else {
+            _builder.append("alert alert-info alert-dismissable text");
+          }
+        }
+        _builder.append("-center\">");
         _builder.newLineIfNotEmpty();
+        {
+          boolean _targets_2 = this._utils.targets(it, "1.3.5");
+          boolean _not = (!_targets_2);
+          if (_not) {
+            _builder.append("    ");
+            _builder.append("                ");
+            _builder.append("<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>");
+            _builder.newLine();
+          }
+        }
+        _builder.append("    ");
+        _builder.append("                ");
+        _builder.append("<a href=\"{modurl modname=\'");
+        String _appName_4 = this._utils.appName(it);
+        _builder.append(_appName_4, "                    ");
+        _builder.append("\' type=\'admin\' func=\'view\' ot=$modItem.objectType workflowState=$modItem.state}\" class=\"");
+        {
+          boolean _targets_3 = this._utils.targets(it, "1.3.5");
+          if (_targets_3) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("bold");
+        {
+          boolean _targets_4 = this._utils.targets(it, "1.3.5");
+          boolean _not_1 = (!_targets_4);
+          if (_not_1) {
+            _builder.append(" alert-link");
+          }
+        }
+        _builder.append("\">{$modItem.message}</a>");
+        _builder.newLineIfNotEmpty();
+        _builder.append("    ");
+        _builder.append("            ");
+        _builder.append("</p>");
+        _builder.newLine();
         _builder.append("    ");
         _builder.append("        ");
         _builder.append("{/foreach}");

@@ -250,8 +250,17 @@ public class ValidationError {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$message = \'<div id=\"advice-\' . $class . \'-\' . $id . \'\" class=\"validation-advice z-formnote\" style=\"display: none\">\' . $message . \'</div>\';");
-    _builder.newLine();
+    _builder.append("$message = \'<span id=\"advice-\' . $class . \'-\' . $id . \'\" class=\"validation-advice ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\" style=\"display: none\">\' . $message . \'</span>\';");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("if (array_key_exists(\'assign\', $params)) {");

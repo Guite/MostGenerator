@@ -25,7 +25,7 @@ class StandardFields {
         {* purpose of this template: reusable display of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}
-                <h3 class="standardfields z-panel-header z-panel-indicator z-pointer">{gt text='Creation and update'}</h3>
+                <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
                 <div class="standardfields z-panel-content" style="display: none">
             {else}
                 <h3 class="standardfields">{gt text='Creation and update'}</h3>
@@ -70,7 +70,7 @@ class StandardFields {
         {* purpose of this template: reusable editing of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}
-                <h3 class="standardfields z-panel-header z-panel-indicator z-pointer">{gt text='Creation and update'}</h3>
+                <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
                 <fieldset class="standardfields z-panel-content" style="display: none">
             {else}
                 <fieldset class="standardfields">

@@ -29,12 +29,12 @@ class SimpleFields {
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey.name.formatForCode»}
-            <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="z-hide">
+            <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">
             {if $«objName».«name.formatForCode»}
                 {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.'}
-                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.' class='z-hide'}
+                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.' class='«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide'}
             {else}
-                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.' class='z-hide'}
+                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.' class='«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide'}
                 {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.'}
             {/if}
             </a>
@@ -133,7 +133,7 @@ class SimpleFields {
             «ENDIF»
               <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
               {if $«realName»Meta.isImage}
-                  {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName».«entity.getLeadingField.name.formatForCode»}
+                  {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName».«entity.getLeadingField.name.formatForCode»«IF !entity.container.application.targets('1.3.5')» img_class='img-thumbnail'«ENDIF»}
               {else}
                   {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
               {/if}

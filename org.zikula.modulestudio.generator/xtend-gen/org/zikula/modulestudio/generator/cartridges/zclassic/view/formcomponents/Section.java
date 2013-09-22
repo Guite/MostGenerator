@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controller;
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField;
 import de.guite.modulestudio.metamodel.modulestudio.Entity;
+import de.guite.modulestudio.metamodel.modulestudio.Models;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.xbase.lib.Extension;
@@ -107,7 +108,16 @@ public class Section {
             String _appName = this._utils.appName(app);
             String _formatForDB = this._formattingExtensions.formatForDB(_appName);
             _builder.append(_formatForDB, "");
-            _builder.append("map z-panel-header z-panel-indicator z-pointer\">{gt text=\'Map\'}</h3>");
+            _builder.append("map z-panel-header z-panel-indicator ");
+            {
+              boolean _targets = this._utils.targets(app, "1.3.5");
+              if (_targets) {
+                _builder.append("z");
+              } else {
+                _builder.append("cursor");
+              }
+            }
+            _builder.append("-pointer\">{gt text=\'Map\'}</h3>");
             _builder.newLineIfNotEmpty();
             _builder.append("<fieldset class=\"");
             String _appName_1 = this._utils.appName(app);
@@ -147,8 +157,8 @@ public class Section {
       if (_isAttributable) {
         _builder.append("{include file=\'");
         {
-          boolean _targets = this._utils.targets(app, "1.3.5");
-          if (_targets) {
+          boolean _targets_1 = this._utils.targets(app, "1.3.5");
+          if (_targets_1) {
             String _formattedName = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName, "");
           } else {
@@ -176,8 +186,8 @@ public class Section {
       if (_isCategorisable) {
         _builder.append("{include file=\'");
         {
-          boolean _targets_1 = this._utils.targets(app, "1.3.5");
-          if (_targets_1) {
+          boolean _targets_2 = this._utils.targets(app, "1.3.5");
+          if (_targets_2) {
             String _formattedName_2 = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName_2, "");
           } else {
@@ -213,8 +223,8 @@ public class Section {
       if (_isMetaData) {
         _builder.append("{include file=\'");
         {
-          boolean _targets_2 = this._utils.targets(app, "1.3.5");
-          if (_targets_2) {
+          boolean _targets_3 = this._utils.targets(app, "1.3.5");
+          if (_targets_3) {
             String _formattedName_4 = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName_4, "");
           } else {
@@ -245,8 +255,8 @@ public class Section {
         _builder.append("    ");
         _builder.append("{include file=\'");
         {
-          boolean _targets_3 = this._utils.targets(app, "1.3.5");
-          if (_targets_3) {
+          boolean _targets_4 = this._utils.targets(app, "1.3.5");
+          if (_targets_4) {
             String _formattedName_6 = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName_6, "    ");
           } else {
@@ -357,8 +367,17 @@ public class Section {
       boolean _useGroupingPanels = this._viewExtensions.useGroupingPanels(it, "edit");
       if (_useGroupingPanels) {
         _builder.append("        ");
-        _builder.append("<h3 class=\"hook z-panel-header z-panel-indicator z-pointer\">{$providerArea}</h3>");
-        _builder.newLine();
+        _builder.append("<h3 class=\"hook z-panel-header z-panel-indicator ");
+        {
+          boolean _targets = this._utils.targets(app, "1.3.5");
+          if (_targets) {
+            _builder.append("z");
+          } else {
+            _builder.append("cursor");
+          }
+        }
+        _builder.append("-pointer\">{$providerArea}</h3>");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("<fieldset class=\"hook z-panel-content\" style=\"display: none\">{$hook}</div>");
         _builder.newLine();
@@ -395,18 +414,61 @@ public class Section {
     _builder.append("<legend>{gt text=\'Return control\'}</legend>");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
-    _builder.append("{formlabel for=\'repeatcreation\' __text=\'Create another item after save\'}");
-    _builder.newLine();
-    _builder.append("            ");
+    _builder.append("{formlabel for=\'repeatcreation\' __text=\'Create another item after save\'");
+    {
+      Models _container_1 = it.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("        ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("                ");
     _builder.append("{formcheckbox group=\'");
     String _name = it.getName();
     String _formatForDB = this._formattingExtensions.formatForDB(_name);
-    _builder.append(_formatForDB, "            ");
+    _builder.append(_formatForDB, "                ");
     _builder.append("\' id=\'repeatcreation\' readOnly=false}");
     _builder.newLineIfNotEmpty();
+    {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append("        ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("        ");
     _builder.append("</div>");
     _builder.newLine();
@@ -422,8 +484,29 @@ public class Section {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("{* include possible submit actions *}");
     _builder.newLine();
-    _builder.append("<div class=\"z-buttons z-formbuttons\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("z-buttons z-formbuttons");
+      } else {
+        _builder.append("form-group form-buttons");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
+    {
+      Models _container_1 = it.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append("<div class=\"col-lg-offset-3 col-lg-9\">");
+        _builder.newLine();
+      }
+    }
     _builder.append("{foreach item=\'action\' from=$actions}");
     _builder.newLine();
     _builder.append("    ");
@@ -460,8 +543,29 @@ public class Section {
     _builder.append("{/foreach}");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("{formbutton id=\'btnCancel\' commandName=\'cancel\' __text=\'Cancel\' class=\'z-bt-cancel\'}");
-    _builder.newLine();
+    _builder.append("{formbutton id=\'btnCancel\' commandName=\'cancel\' __text=\'Cancel\' class=\'");
+    {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      if (_targets_2) {
+        _builder.append("z-bt-cancel");
+      } else {
+        _builder.append("btn btn-default");
+      }
+    }
+    _builder.append("\'}");
+    _builder.newLineIfNotEmpty();
+    {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not_1 = (!_targets_3);
+      if (_not_1) {
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("</div>");
     _builder.newLine();
     return _builder;

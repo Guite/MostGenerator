@@ -409,7 +409,16 @@ public class Relations {
     _builder.append("<h3 class=\"");
     String _formatForDB = this._formattingExtensions.formatForDB(ownEntityName);
     _builder.append(_formatForDB, "    ");
-    _builder.append(" z-panel-header z-panel-indicator z-pointer\">{gt text=\'");
+    _builder.append(" z-panel-header z-panel-indicator ");
+    {
+      boolean _targets = this._utils.targets(app, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("cursor");
+      }
+    }
+    _builder.append("-pointer\">{gt text=\'");
     String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(ownEntityName);
     _builder.append(_formatForDisplayCapital, "    ");
     _builder.append("\'}</h3>");
@@ -437,15 +446,26 @@ public class Relations {
     _builder.append("\'}</legend>");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets_1 = this._utils.targets(_application, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     String _name = ownEntity.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name);
     final CharSequence pluginAttributes = this.formPluginAttributes(it, ownEntity, ownEntityName, _formatForCode, many);
     _builder.newLineIfNotEmpty();
-    Models _container = it.getContainer();
-    Application _application = _container.getApplication();
-    String _appName = this._utils.appName(_application);
+    Models _container_1 = it.getContainer();
+    Application _application_1 = _container_1.getApplication();
+    String _appName = this._utils.appName(_application_1);
     final String appnameLower = this._formattingExtensions.formatForDB(_appName);
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -463,27 +483,61 @@ public class Relations {
         _builder.append(" mandatorysym=\'1\'");
       }
     }
+    {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
     _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("        ");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append("        ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("            ");
     _builder.append("{");
-    _builder.append(appnameLower, "        ");
+    _builder.append(appnameLower, "            ");
     _builder.append("RelationSelectorList ");
-    _builder.append(pluginAttributes, "        ");
+    _builder.append(pluginAttributes, "            ");
+    {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_4 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_3 = (!_targets_4);
+      if (_not_3) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
     _builder.append("}");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      boolean _not_4 = (!_targets_5);
+      if (_not_4) {
+        _builder.append("        ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("    ");
     _builder.append("{elseif $displayMode eq \'autocomplete\'}");
     _builder.newLine();
     {
       boolean _and = false;
       boolean _isManyToMany = this.isManyToMany(it);
-      boolean _not_1 = (!_isManyToMany);
-      if (!_not_1) {
+      boolean _not_5 = (!_isManyToMany);
+      if (!_not_5) {
         _and = false;
       } else {
-        boolean _not_2 = (!(incoming).booleanValue());
-        _and = (_not_1 && _not_2);
+        boolean _not_6 = (!(incoming).booleanValue());
+        _and = (_not_5 && _not_6);
       }
       if (_and) {
         _builder.append("        ");
@@ -529,6 +583,15 @@ public class Relations {
         boolean _hasImageFieldsEntity = this._modelExtensions.hasImageFieldsEntity(ownEntity);
         String _displayBool = this._formattingExtensions.displayBool(Boolean.valueOf(_hasImageFieldsEntity));
         _builder.append(_displayBool, "        ");
+        {
+          Models _container_3 = it.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_6 = this._utils.targets(_application_3, "1.3.5");
+          boolean _not_7 = (!_targets_6);
+          if (_not_7) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
         _builder.append("}");
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
@@ -977,6 +1040,15 @@ public class Relations {
             String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(_name_13);
             _builder.append(_formatForDisplayCapital_1, "        ");
             _builder.append("\'");
+          }
+        }
+        {
+          Models _container = it.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          boolean _not_3 = (!_targets);
+          if (_not_3) {
+            _builder.append(" img_class=\'img-rounded\'");
           }
         }
         _builder.append("}");

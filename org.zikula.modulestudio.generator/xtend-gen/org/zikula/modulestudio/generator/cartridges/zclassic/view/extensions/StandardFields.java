@@ -86,8 +86,17 @@ public class StandardFields {
     _builder.append("{if isset($panel) && $panel eq true}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<h3 class=\"standardfields z-panel-header z-panel-indicator z-pointer\">{gt text=\'Creation and update\'}</h3>");
-    _builder.newLine();
+    _builder.append("<h3 class=\"standardfields z-panel-header z-panel-indicator ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("cursor");
+      }
+    }
+    _builder.append("-pointer\">{gt text=\'Creation and update\'}</h3>");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<div class=\"standardfields z-panel-content\" style=\"display: none\">");
     _builder.newLine();
@@ -214,8 +223,17 @@ public class StandardFields {
     _builder.append("{if isset($panel) && $panel eq true}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<h3 class=\"standardfields z-panel-header z-panel-indicator z-pointer\">{gt text=\'Creation and update\'}</h3>");
-    _builder.newLine();
+    _builder.append("<h3 class=\"standardfields z-panel-header z-panel-indicator ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("cursor");
+      }
+    }
+    _builder.append("-pointer\">{gt text=\'Creation and update\'}</h3>");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<fieldset class=\"standardfields z-panel-content\" style=\"display: none\">");
     _builder.newLine();

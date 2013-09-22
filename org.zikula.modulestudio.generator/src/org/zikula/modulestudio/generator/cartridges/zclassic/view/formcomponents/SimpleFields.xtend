@@ -58,7 +58,7 @@ class SimpleFields {
         «ENDIF»
     '''
 
-    def private formLabelAdditions(DerivedField it) '''«IF documentation !== null && documentation != ''» class='«entity.container.application.appName.formatForDB»FormTooltips' title=$toolTip«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) '''cssClass='«IF documentation !== null && documentation != ''»«entity.container.application.appName.formatForDB»FormTooltips«ENDIF»«IF !entity.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»'''
 
     def private formLabelText(DerivedField it) {
         name.formatForDisplayCapital
@@ -71,57 +71,78 @@ class SimpleFields {
     '''
 
     def private dispatch formField(IntegerField it, String groupSuffix, String idSuffix) '''
-        {formintinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' maxLength=«length»«IF minValue.toString != '0'» minValue=«minValue»«ENDIF»«IF maxValue.toString != '0'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+        {formintinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' maxLength=«length»«IF minValue.toString != '0'» minValue=«minValue»«ENDIF»«IF maxValue.toString != '0'» maxValue=«maxValue»«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
     '''
 
     def private dispatch formField(DecimalField it, String groupSuffix, String idSuffix) '''
-        {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+        «IF !entity.container.application.targets('1.3.5') && currency»
+            <div class="input-group">
+                <span class="input-group-addon">{gt text='$' comment='Currency symbol'}</span>
+        «ENDIF»
+            {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+        «IF !entity.container.application.targets('1.3.5') && currency»
+            </div>
+        «ENDIF»
     '''
 
     def private dispatch formField(FloatField it, String groupSuffix, String idSuffix) '''
-        {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+        «IF !entity.container.application.targets('1.3.5') && currency»
+            <div class="input-group">
+                <span class="input-group-addon">{gt text='$' comment='Currency symbol'}</span>
+        «ENDIF»
+            {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+        «IF !entity.container.application.targets('1.3.5') && currency»
+            </div>
+        «ENDIF»
     '''
 
     def private dispatch formField(StringField it, String groupSuffix, String idSuffix) '''
         «IF country»
-            {«entity.container.application.appName.formatForDB»CountrySelector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'}
+            {«entity.container.application.appName.formatForDB»CountrySelector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSEIF language»
-            {formlanguageselector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool»«IF mandatory» addAllOption=false«ENDIF» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'}
+            {formlanguageselector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool»«IF mandatory» addAllOption=false«ENDIF» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSEIF htmlcolour»
-            {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it)»}
+            {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»' cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
         «ELSE»
-            {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it)»}
+            {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
         «ENDIF»
     '''
 
     def private dispatch formField(TextField it, String groupSuffix, String idSuffix) '''
-        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='multiline'«IF minLength > 0» minLength=«minLength»«ENDIF» rows='6«/*8*/»' cols='50'«validationHelper.fieldValidationCssClass(it)»}
+        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='multiline'«IF minLength > 0» minLength=«minLength»«ENDIF» rows='6«/*8*/»'«IF entity.container.application.targets('1.3.5')» cols='50'«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
     '''
 
     def private dispatch formField(EmailField it, String groupSuffix, String idSuffix) '''
-        {formemailinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it)»}
+        «IF !entity.container.application.targets('1.3.5')»
+            <div class="input-group">
+                <span class="input-group-addon">@</span>
+        «ENDIF»
+            {formemailinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+        «IF !entity.container.application.targets('1.3.5')»
+            </div>
+        «ENDIF»
     '''
 
     def private dispatch formField(UrlField it, String groupSuffix, String idSuffix) '''
-        {formurlinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it)»}
+        {formurlinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
     '''
 
     def private dispatch formField(UploadField it, String groupSuffix, String idSuffix) '''
         «IF mandatory»
             {if $mode eq 'create'}
-                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
+                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
             {else}
-                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassEdit(it)»}
-                <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
+                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
             {/if}
         «ELSE»
-            {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
-            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
+            {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
         «ENDIF»
 
-            <div class="z-formnote">{gt text='Allowed file extensions:'} <span id="fileextensions«name.formatForCode»">«allowedExtensions»</span></div>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file extensions:'} <span id="fileextensions«name.formatForCode»">«allowedExtensions»</span></span>
         «IF allowedFileSize > 0»
-            <div class="z-formnote">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.container.application.appName.formatForDB»GetFileSize:'':false:false}</div>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.container.application.appName.formatForDB»GetFileSize:'':false:false}</span>
         «ENDIF»
         «decideWhetherToShowCurrentFile»
     '''
@@ -139,37 +160,37 @@ class SimpleFields {
         «val appNameSmall = entity.container.application.appName.formatForDB»
         «val objName = entity.name.formatForDB»
         «val realName = objName + '.' + name.formatForCode»
-        <div class="z-formnote">
+        <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">
             {gt text='Current file'}:
             <a href="{$«realName»FullPathUrl}" title="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
             {if $«realName»Meta.isImage}
-                {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName».«entity.getLeadingField.name.formatForCode»}
+                {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName».«entity.getLeadingField.name.formatForCode»«IF !entity.container.application.targets('1.3.5')» img_class='img-thumbnail'«ENDIF»}
             {else}
                 {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
             {/if}
             </a>
-        </div>
+        </span>
         «IF !mandatory»
-            <div class="z-formnote">
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">
                 {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}
                 {formlabel for='«name.formatForCode»DeleteFile' __text='Delete existing file'}
-            </div>
+            </span>
         «ENDIF»
     '''
 
     def private dispatch formField(ListField it, String groupSuffix, String idSuffix) '''
         «IF multiple == true && useChecks == true»
-            {formcheckboxlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' repeatColumns=2}
+            {formcheckboxlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' repeatColumns=2«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSE»
-            {formdropdownlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' selectionMode='«IF multiple»multiple«ELSE»single«ENDIF»'}
+            {formdropdownlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' selectionMode='«IF multiple»multiple«ELSE»single«ENDIF»'«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ENDIF»
     '''
 
     def private dispatch formField(UserField it, String groupSuffix, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search'«IF mandatory» cssClass='required'«ENDIF»}
+        {«entity.container.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' cssClass='«IF mandatory»required«ENDIF»«IF !entity.container.application.targets('1.3.5')»«IF mandatory» «ENDIF»form-control«ENDIF»'}
         {if $mode ne 'create' && $«entity.name.formatForDB».«name.formatForDB» && !$inlineUsage}
             {checkpermissionblock component='Users::' instance='::' level='ACCESS_ADMIN'}
-            <div class="z-formnote"><a href="{modurl modname='«IF entity.container.application.targets('1.3.5')»Users«ELSE»ZikulaUsersModule«ENDIF»' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a href="{modurl modname='«IF entity.container.application.targets('1.3.5')»Users«ELSE»ZikulaUsersModule«ENDIF»' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to users administration'}">{gt text='Manage user'}</a></span>
             {/checkpermissionblock}
         {/if}
     '''
@@ -177,9 +198,9 @@ class SimpleFields {
     def private dispatch formField(AbstractDateField it, String groupSuffix, String idSuffix) '''
         «formFieldDetails(groupSuffix, idSuffix)»
         «IF past»
-            <div class="z-formnote">{gt text='Note: this value must be in the past.'}</div>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be in the past.'}</span>
         «ELSEIF future»
-            <div class="z-formnote">{gt text='Note: this value must be in the future.'}</div>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be in the future.'}</span>
         «ENDIF»
     '''
 
@@ -187,29 +208,29 @@ class SimpleFields {
     }
     def private dispatch formFieldDetails(DatetimeField it, String groupSuffix, String idSuffix) '''
         {if $mode ne 'create'}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
         {/if}
         «/*TODO: visible=false*/»
         «IF !mandatory && nullable»
-            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
         «ENDIF»
     '''
 
     def private dispatch formFieldDetails(DateField it, String groupSuffix, String idSuffix) '''
         {if $mode ne 'create'}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
         {/if}
         «IF !mandatory && nullable»
-            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
         «ENDIF»
     '''
 
     def private dispatch formFieldDetails(TimeField it, String groupSuffix, String idSuffix) '''
         {* TODO: support time fields in Zikula (see https://github.com/Guite/MostGenerator/issues/87 for more information) *}
-        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8«validationHelper.fieldValidationCssClass(it)»}
+        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8 cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
     '''
 }

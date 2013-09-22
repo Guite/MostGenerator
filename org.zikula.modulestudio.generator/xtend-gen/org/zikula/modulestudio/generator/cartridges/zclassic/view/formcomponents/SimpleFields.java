@@ -181,6 +181,7 @@ public class SimpleFields {
   
   private CharSequence formLabelAdditions(final DerivedField it) {
     StringConcatenation _builder = new StringConcatenation();
+    _builder.append("cssClass=\'");
     {
       boolean _and = false;
       String _documentation = it.getDocumentation();
@@ -193,14 +194,39 @@ public class SimpleFields {
         _and = (_tripleNotEquals && _notEquals);
       }
       if (_and) {
-        _builder.append(" class=\'");
         Entity _entity = it.getEntity();
         Models _container = _entity.getContainer();
         Application _application = _container.getApplication();
         String _appName = this._utils.appName(_application);
         String _formatForDB = this._formattingExtensions.formatForDB(_appName);
         _builder.append(_formatForDB, "");
-        _builder.append("FormTooltips\' title=$toolTip");
+        _builder.append("FormTooltips");
+      }
+    }
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container_1 = _entity_1.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application_1, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" col-lg-3 control-label");
+      }
+    }
+    _builder.append("\'");
+    {
+      boolean _and_1 = false;
+      String _documentation_2 = it.getDocumentation();
+      boolean _tripleNotEquals_1 = (_documentation_2 != null);
+      if (!_tripleNotEquals_1) {
+        _and_1 = false;
+      } else {
+        String _documentation_3 = it.getDocumentation();
+        boolean _notEquals_1 = (!Objects.equal(_documentation_3, ""));
+        _and_1 = (_tripleNotEquals_1 && _notEquals_1);
+      }
+      if (_and_1) {
+        _builder.append(" title=$toolTip");
       }
     }
     return _builder;
@@ -290,84 +316,117 @@ public class SimpleFields {
         _builder.append(_maxValue_1, "");
       }
     }
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass, "");
-    _builder.append("}");
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container = _entity_1.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
   
   private CharSequence _formField(final DecimalField it, final String groupSuffix, final String idSuffix) {
     StringConcatenation _builder = new StringConcatenation();
+    {
+      boolean _and = false;
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (!_not) {
+        _and = false;
+      } else {
+        boolean _isCurrency = it.isCurrency();
+        _and = (_not && _isCurrency);
+      }
+      if (_and) {
+        _builder.append("<div class=\"input-group\">");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("<span class=\"input-group-addon\">{gt text=\'$\' comment=\'Currency symbol\'}</span>");
+        _builder.newLine();
+      }
+    }
+    _builder.append("    ");
     _builder.append("{formfloatinput ");
     CharSequence _groupAndId = this.groupAndId(it, groupSuffix, idSuffix);
-    _builder.append(_groupAndId, "");
+    _builder.append(_groupAndId, "    ");
     _builder.append(" mandatory=");
     boolean _isMandatory = it.isMandatory();
     String _displayBool = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory));
-    _builder.append(_displayBool, "");
+    _builder.append(_displayBool, "    ");
     _builder.append(" __title=\'Enter the ");
     String _name = it.getName();
     String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name);
-    _builder.append(_formatForDisplay, "");
+    _builder.append(_formatForDisplay, "    ");
     _builder.append(" of the ");
-    Entity _entity = it.getEntity();
-    String _name_1 = _entity.getName();
+    Entity _entity_1 = it.getEntity();
+    String _name_1 = _entity_1.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
-    _builder.append(_formatForDisplay_1, "");
+    _builder.append(_formatForDisplay_1, "    ");
     _builder.append("\'");
     {
-      boolean _and = false;
       boolean _and_1 = false;
+      boolean _and_2 = false;
       float _minValue = it.getMinValue();
       boolean _notEquals = (_minValue != 0);
       if (!_notEquals) {
-        _and_1 = false;
+        _and_2 = false;
       } else {
         float _minValue_1 = it.getMinValue();
         String _string = Float.valueOf(_minValue_1).toString();
         boolean _notEquals_1 = (!Objects.equal(_string, "0.0"));
-        _and_1 = (_notEquals && _notEquals_1);
+        _and_2 = (_notEquals && _notEquals_1);
       }
-      if (!_and_1) {
-        _and = false;
+      if (!_and_2) {
+        _and_1 = false;
       } else {
         float _minValue_2 = it.getMinValue();
         String _string_1 = Float.valueOf(_minValue_2).toString();
         boolean _notEquals_2 = (!Objects.equal(_string_1, "0.00"));
-        _and = (_and_1 && _notEquals_2);
+        _and_1 = (_and_2 && _notEquals_2);
       }
-      if (_and) {
+      if (_and_1) {
         _builder.append(" minValue=");
         float _minValue_3 = it.getMinValue();
-        _builder.append(_minValue_3, "");
+        _builder.append(_minValue_3, "    ");
       }
     }
     {
-      boolean _and_2 = false;
       boolean _and_3 = false;
+      boolean _and_4 = false;
       float _maxValue = it.getMaxValue();
       boolean _notEquals_3 = (_maxValue != 0);
       if (!_notEquals_3) {
-        _and_3 = false;
+        _and_4 = false;
       } else {
         float _maxValue_1 = it.getMaxValue();
         String _string_2 = Float.valueOf(_maxValue_1).toString();
         boolean _notEquals_4 = (!Objects.equal(_string_2, "0.0"));
-        _and_3 = (_notEquals_3 && _notEquals_4);
+        _and_4 = (_notEquals_3 && _notEquals_4);
       }
-      if (!_and_3) {
-        _and_2 = false;
+      if (!_and_4) {
+        _and_3 = false;
       } else {
         float _maxValue_2 = it.getMaxValue();
         String _string_3 = Float.valueOf(_maxValue_2).toString();
         boolean _notEquals_5 = (!Objects.equal(_string_3, "0.00"));
-        _and_2 = (_and_3 && _notEquals_5);
+        _and_3 = (_and_4 && _notEquals_5);
       }
-      if (_and_2) {
+      if (_and_3) {
         _builder.append(" maxValue=");
         float _maxValue_3 = it.getMaxValue();
-        _builder.append(_maxValue_3, "");
+        _builder.append(_maxValue_3, "    ");
       }
     }
     _builder.append(" maxLength=");
@@ -375,100 +434,180 @@ public class SimpleFields {
     int _plus = (_length + 3);
     int _scale = it.getScale();
     int _plus_1 = (_plus + _scale);
-    _builder.append(_plus_1, "");
+    _builder.append(_plus_1, "    ");
     {
       int _scale_1 = it.getScale();
       boolean _notEquals_6 = (_scale_1 != 2);
       if (_notEquals_6) {
         _builder.append(" precision=");
         int _scale_2 = it.getScale();
-        _builder.append(_scale_2, "");
+        _builder.append(_scale_2, "    ");
       }
     }
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
-    _builder.append(_fieldValidationCssClass, "");
-    _builder.append("}");
+    _builder.append(_fieldValidationCssClass, "    ");
+    {
+      Entity _entity_2 = it.getEntity();
+      Models _container_1 = _entity_2.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _and_5 = false;
+      Entity _entity_3 = it.getEntity();
+      Models _container_2 = _entity_3.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_2 = (!_targets_2);
+      if (!_not_2) {
+        _and_5 = false;
+      } else {
+        boolean _isCurrency_1 = it.isCurrency();
+        _and_5 = (_not_2 && _isCurrency_1);
+      }
+      if (_and_5) {
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     return _builder;
   }
   
   private CharSequence _formField(final FloatField it, final String groupSuffix, final String idSuffix) {
     StringConcatenation _builder = new StringConcatenation();
+    {
+      boolean _and = false;
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (!_not) {
+        _and = false;
+      } else {
+        boolean _isCurrency = it.isCurrency();
+        _and = (_not && _isCurrency);
+      }
+      if (_and) {
+        _builder.append("<div class=\"input-group\">");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("<span class=\"input-group-addon\">{gt text=\'$\' comment=\'Currency symbol\'}</span>");
+        _builder.newLine();
+      }
+    }
+    _builder.append("    ");
     _builder.append("{formfloatinput ");
     CharSequence _groupAndId = this.groupAndId(it, groupSuffix, idSuffix);
-    _builder.append(_groupAndId, "");
+    _builder.append(_groupAndId, "    ");
     _builder.append(" mandatory=");
     boolean _isMandatory = it.isMandatory();
     String _displayBool = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory));
-    _builder.append(_displayBool, "");
+    _builder.append(_displayBool, "    ");
     _builder.append(" __title=\'Enter the ");
     String _name = it.getName();
     String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name);
-    _builder.append(_formatForDisplay, "");
+    _builder.append(_formatForDisplay, "    ");
     _builder.append(" of the ");
-    Entity _entity = it.getEntity();
-    String _name_1 = _entity.getName();
+    Entity _entity_1 = it.getEntity();
+    String _name_1 = _entity_1.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
-    _builder.append(_formatForDisplay_1, "");
+    _builder.append(_formatForDisplay_1, "    ");
     _builder.append("\'");
     {
-      boolean _and = false;
       boolean _and_1 = false;
+      boolean _and_2 = false;
       float _minValue = it.getMinValue();
       boolean _notEquals = (_minValue != 0);
       if (!_notEquals) {
-        _and_1 = false;
+        _and_2 = false;
       } else {
         float _minValue_1 = it.getMinValue();
         String _string = Float.valueOf(_minValue_1).toString();
         boolean _notEquals_1 = (!Objects.equal(_string, "0.0"));
-        _and_1 = (_notEquals && _notEquals_1);
+        _and_2 = (_notEquals && _notEquals_1);
       }
-      if (!_and_1) {
-        _and = false;
+      if (!_and_2) {
+        _and_1 = false;
       } else {
         float _minValue_2 = it.getMinValue();
         String _string_1 = Float.valueOf(_minValue_2).toString();
         boolean _notEquals_2 = (!Objects.equal(_string_1, "0.00"));
-        _and = (_and_1 && _notEquals_2);
+        _and_1 = (_and_2 && _notEquals_2);
       }
-      if (_and) {
+      if (_and_1) {
         _builder.append(" minValue=");
         float _minValue_3 = it.getMinValue();
-        _builder.append(_minValue_3, "");
+        _builder.append(_minValue_3, "    ");
       }
     }
     {
-      boolean _and_2 = false;
       boolean _and_3 = false;
+      boolean _and_4 = false;
       float _maxValue = it.getMaxValue();
       boolean _notEquals_3 = (_maxValue != 0);
       if (!_notEquals_3) {
-        _and_3 = false;
+        _and_4 = false;
       } else {
         float _maxValue_1 = it.getMaxValue();
         String _string_2 = Float.valueOf(_maxValue_1).toString();
         boolean _notEquals_4 = (!Objects.equal(_string_2, "0.0"));
-        _and_3 = (_notEquals_3 && _notEquals_4);
+        _and_4 = (_notEquals_3 && _notEquals_4);
       }
-      if (!_and_3) {
-        _and_2 = false;
+      if (!_and_4) {
+        _and_3 = false;
       } else {
         float _maxValue_2 = it.getMaxValue();
         String _string_3 = Float.valueOf(_maxValue_2).toString();
         boolean _notEquals_5 = (!Objects.equal(_string_3, "0.00"));
-        _and_2 = (_and_3 && _notEquals_5);
+        _and_3 = (_and_4 && _notEquals_5);
       }
-      if (_and_2) {
+      if (_and_3) {
         _builder.append(" maxValue=");
         float _maxValue_3 = it.getMaxValue();
-        _builder.append(_maxValue_3, "");
+        _builder.append(_maxValue_3, "    ");
       }
     }
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
-    _builder.append(_fieldValidationCssClass, "");
-    _builder.append("}");
+    _builder.append(_fieldValidationCssClass, "    ");
+    {
+      Entity _entity_2 = it.getEntity();
+      Models _container_1 = _entity_2.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _and_5 = false;
+      Entity _entity_3 = it.getEntity();
+      Models _container_2 = _entity_3.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_2 = (!_targets_2);
+      if (!_not_2) {
+        _and_5 = false;
+      } else {
+        boolean _isCurrency_1 = it.isCurrency();
+        _and_5 = (_not_2 && _isCurrency_1);
+      }
+      if (_and_5) {
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     return _builder;
   }
   
@@ -500,7 +639,18 @@ public class SimpleFields {
         String _name_1 = _entity_1.getName();
         String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
         _builder.append(_formatForDisplay_1, "");
-        _builder.append("\'}");
+        _builder.append("\'");
+        {
+          Entity _entity_2 = it.getEntity();
+          Models _container_1 = _entity_2.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets = this._utils.targets(_application_1, "1.3.5");
+          boolean _not = (!_targets);
+          if (_not) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
       } else {
         boolean _isLanguage = it.isLanguage();
@@ -523,20 +673,31 @@ public class SimpleFields {
           String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
           _builder.append(_formatForDisplay_2, "");
           _builder.append(" of the ");
-          Entity _entity_2 = it.getEntity();
-          String _name_3 = _entity_2.getName();
+          Entity _entity_3 = it.getEntity();
+          String _name_3 = _entity_3.getName();
           String _formatForDisplay_3 = this._formattingExtensions.formatForDisplay(_name_3);
           _builder.append(_formatForDisplay_3, "");
-          _builder.append("\'}");
+          _builder.append("\'");
+          {
+            Entity _entity_4 = it.getEntity();
+            Models _container_2 = _entity_4.getContainer();
+            Application _application_2 = _container_2.getApplication();
+            boolean _targets_1 = this._utils.targets(_application_2, "1.3.5");
+            boolean _not_1 = (!_targets_1);
+            if (_not_1) {
+              _builder.append(" cssClass=\'form-control\'");
+            }
+          }
+          _builder.append("}");
           _builder.newLineIfNotEmpty();
         } else {
           boolean _isHtmlcolour = it.isHtmlcolour();
           if (_isHtmlcolour) {
             _builder.append("{");
-            Entity _entity_3 = it.getEntity();
-            Models _container_1 = _entity_3.getContainer();
-            Application _application_1 = _container_1.getApplication();
-            String _appName_1 = this._utils.appName(_application_1);
+            Entity _entity_5 = it.getEntity();
+            Models _container_3 = _entity_5.getContainer();
+            Application _application_3 = _container_3.getApplication();
+            String _appName_1 = this._utils.appName(_application_3);
             String _formatForDB_1 = this._formattingExtensions.formatForDB(_appName_1);
             _builder.append(_formatForDB_1, "");
             _builder.append("ColourInput ");
@@ -551,14 +712,24 @@ public class SimpleFields {
             String _formatForDisplay_4 = this._formattingExtensions.formatForDisplay(_name_4);
             _builder.append(_formatForDisplay_4, "");
             _builder.append(" of the ");
-            Entity _entity_4 = it.getEntity();
-            String _name_5 = _entity_4.getName();
+            Entity _entity_6 = it.getEntity();
+            String _name_5 = _entity_6.getName();
             String _formatForDisplay_5 = this._formattingExtensions.formatForDisplay(_name_5);
             _builder.append(_formatForDisplay_5, "");
-            _builder.append("\'");
+            _builder.append("\' cssClass=\'");
             CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
             _builder.append(_fieldValidationCssClass, "");
-            _builder.append("}");
+            {
+              Entity _entity_7 = it.getEntity();
+              Models _container_4 = _entity_7.getContainer();
+              Application _application_4 = _container_4.getApplication();
+              boolean _targets_2 = this._utils.targets(_application_4, "1.3.5");
+              boolean _not_2 = (!_targets_2);
+              if (_not_2) {
+                _builder.append(" form-control");
+              }
+            }
+            _builder.append("\'}");
             _builder.newLineIfNotEmpty();
           } else {
             _builder.append("{formtextinput ");
@@ -577,8 +748,8 @@ public class SimpleFields {
             String _formatForDisplay_6 = this._formattingExtensions.formatForDisplay(_name_6);
             _builder.append(_formatForDisplay_6, "");
             _builder.append(" of the ");
-            Entity _entity_5 = it.getEntity();
-            String _name_7 = _entity_5.getName();
+            Entity _entity_8 = it.getEntity();
+            String _name_7 = _entity_8.getName();
             String _formatForDisplay_7 = this._formattingExtensions.formatForDisplay(_name_7);
             _builder.append(_formatForDisplay_7, "");
             _builder.append("\' textMode=\'");
@@ -603,9 +774,20 @@ public class SimpleFields {
             _builder.append(" maxLength=");
             int _length = it.getLength();
             _builder.append(_length, "");
+            _builder.append(" cssClass=\'");
             CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
             _builder.append(_fieldValidationCssClass_1, "");
-            _builder.append("}");
+            {
+              Entity _entity_9 = it.getEntity();
+              Models _container_5 = _entity_9.getContainer();
+              Application _application_5 = _container_5.getApplication();
+              boolean _targets_3 = this._utils.targets(_application_5, "1.3.5");
+              boolean _not_3 = (!_targets_3);
+              if (_not_3) {
+                _builder.append(" form-control");
+              }
+            }
+            _builder.append("\'}");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -643,36 +825,71 @@ public class SimpleFields {
       }
     }
     _builder.append(" rows=\'6");
-    _builder.append("\' cols=\'50\'");
+    _builder.append("\'");
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container = _entity_1.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append(" cols=\'50\'");
+      }
+    }
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass, "");
-    _builder.append("}");
+    {
+      Entity _entity_2 = it.getEntity();
+      Models _container_1 = _entity_2.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
   
   private CharSequence _formField(final EmailField it, final String groupSuffix, final String idSuffix) {
     StringConcatenation _builder = new StringConcatenation();
+    {
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append("<div class=\"input-group\">");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("<span class=\"input-group-addon\">@</span>");
+        _builder.newLine();
+      }
+    }
+    _builder.append("    ");
     _builder.append("{formemailinput ");
     CharSequence _groupAndId = this.groupAndId(it, groupSuffix, idSuffix);
-    _builder.append(_groupAndId, "");
+    _builder.append(_groupAndId, "    ");
     _builder.append(" mandatory=");
     boolean _isMandatory = it.isMandatory();
     String _displayBool = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory));
-    _builder.append(_displayBool, "");
+    _builder.append(_displayBool, "    ");
     _builder.append(" readOnly=");
     boolean _isReadonly = it.isReadonly();
     String _displayBool_1 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly));
-    _builder.append(_displayBool_1, "");
+    _builder.append(_displayBool_1, "    ");
     _builder.append(" __title=\'Enter the ");
     String _name = it.getName();
     String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name);
-    _builder.append(_formatForDisplay, "");
+    _builder.append(_formatForDisplay, "    ");
     _builder.append(" of the ");
-    Entity _entity = it.getEntity();
-    String _name_1 = _entity.getName();
+    Entity _entity_1 = it.getEntity();
+    String _name_1 = _entity_1.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
-    _builder.append(_formatForDisplay_1, "");
+    _builder.append(_formatForDisplay_1, "    ");
     _builder.append("\' textMode=\'singleline\'");
     {
       int _minLength = it.getMinLength();
@@ -680,16 +897,38 @@ public class SimpleFields {
       if (_greaterThan) {
         _builder.append(" minLength=");
         int _minLength_1 = it.getMinLength();
-        _builder.append(_minLength_1, "");
+        _builder.append(_minLength_1, "    ");
       }
     }
     _builder.append(" maxLength=");
     int _length = it.getLength();
-    _builder.append(_length, "");
+    _builder.append(_length, "    ");
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
-    _builder.append(_fieldValidationCssClass, "");
-    _builder.append("}");
+    _builder.append(_fieldValidationCssClass, "    ");
+    {
+      Entity _entity_2 = it.getEntity();
+      Models _container_1 = _entity_2.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
+    {
+      Entity _entity_3 = it.getEntity();
+      Models _container_2 = _entity_3.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_2 = (!_targets_2);
+      if (_not_2) {
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     return _builder;
   }
   
@@ -728,9 +967,20 @@ public class SimpleFields {
     _builder.append(" maxLength=");
     int _length = it.getLength();
     _builder.append(_length, "");
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass, "");
-    _builder.append("}");
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container = _entity_1.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -754,9 +1004,20 @@ public class SimpleFields {
         boolean _isReadonly = it.isReadonly();
         String _displayBool_1 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly));
         _builder.append(_displayBool_1, "    ");
+        _builder.append(" cssClass=\'");
         CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
         _builder.append(_fieldValidationCssClass, "    ");
-        _builder.append("}");
+        {
+          Entity _entity = it.getEntity();
+          Models _container = _entity.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          boolean _not = (!_targets);
+          if (_not) {
+            _builder.append(" form-control");
+          }
+        }
+        _builder.append("\'}");
         _builder.newLineIfNotEmpty();
         _builder.append("{else}");
         _builder.newLine();
@@ -768,16 +1029,49 @@ public class SimpleFields {
         boolean _isReadonly_1 = it.isReadonly();
         String _displayBool_2 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly_1));
         _builder.append(_displayBool_2, "    ");
-        CharSequence _fieldValidationCssClassEdit = this.validationHelper.fieldValidationCssClassEdit(it);
-        _builder.append(_fieldValidationCssClassEdit, "    ");
-        _builder.append("}");
+        _builder.append(" cssClass=\'");
+        CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
+        _builder.append(_fieldValidationCssClass_1, "    ");
+        {
+          Entity _entity_1 = it.getEntity();
+          Models _container_1 = _entity_1.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          boolean _not_1 = (!_targets_1);
+          if (_not_1) {
+            _builder.append(" form-control");
+          }
+        }
+        _builder.append("\'}");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
-        _builder.append("<p class=\"z-formnote\"><a id=\"reset");
+        _builder.append("<span class=\"");
+        {
+          Entity _entity_2 = it.getEntity();
+          Models _container_2 = _entity_2.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+          if (_targets_2) {
+            _builder.append("z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\"><a id=\"reset");
         String _name = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital, "    ");
-        _builder.append("Val\" href=\"javascript:void(0);\" class=\"z-hide\">{gt text=\'Reset to empty value\'}</a></p>");
+        _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
+        {
+          Entity _entity_3 = it.getEntity();
+          Models _container_3 = _entity_3.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+          if (_targets_3) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{gt text=\'Reset to empty value\'}</a></span>");
         _builder.newLineIfNotEmpty();
         _builder.append("{/if}");
         _builder.newLine();
@@ -789,44 +1083,101 @@ public class SimpleFields {
         boolean _isReadonly_2 = it.isReadonly();
         String _displayBool_3 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly_2));
         _builder.append(_displayBool_3, "");
-        CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
-        _builder.append(_fieldValidationCssClass_1, "");
-        _builder.append("}");
+        _builder.append(" cssClass=\'");
+        CharSequence _fieldValidationCssClass_2 = this.validationHelper.fieldValidationCssClass(it);
+        _builder.append(_fieldValidationCssClass_2, "");
+        {
+          Entity _entity_4 = it.getEntity();
+          Models _container_4 = _entity_4.getContainer();
+          Application _application_4 = _container_4.getApplication();
+          boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
+          boolean _not_2 = (!_targets_4);
+          if (_not_2) {
+            _builder.append(" form-control");
+          }
+        }
+        _builder.append("\'}");
         _builder.newLineIfNotEmpty();
-        _builder.append("<p class=\"z-formnote\"><a id=\"reset");
+        _builder.append("<span class=\"");
+        {
+          Entity _entity_5 = it.getEntity();
+          Models _container_5 = _entity_5.getContainer();
+          Application _application_5 = _container_5.getApplication();
+          boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
+          if (_targets_5) {
+            _builder.append("z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\"><a id=\"reset");
         String _name_1 = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
         _builder.append(_formatForCodeCapital_1, "");
-        _builder.append("Val\" href=\"javascript:void(0);\" class=\"z-hide\">{gt text=\'Reset to empty value\'}</a></p>");
+        _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
+        {
+          Entity _entity_6 = it.getEntity();
+          Models _container_6 = _entity_6.getContainer();
+          Application _application_6 = _container_6.getApplication();
+          boolean _targets_6 = this._utils.targets(_application_6, "1.3.5");
+          if (_targets_6) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{gt text=\'Reset to empty value\'}</a></span>");
         _builder.newLineIfNotEmpty();
       }
     }
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<div class=\"z-formnote\">{gt text=\'Allowed file extensions:\'} <span id=\"fileextensions");
+    _builder.append("<span class=\"");
+    {
+      Entity _entity_7 = it.getEntity();
+      Models _container_7 = _entity_7.getContainer();
+      Application _application_7 = _container_7.getApplication();
+      boolean _targets_7 = this._utils.targets(_application_7, "1.3.5");
+      if (_targets_7) {
+        _builder.append("z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\">{gt text=\'Allowed file extensions:\'} <span id=\"fileextensions");
     String _name_2 = it.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name_2);
     _builder.append(_formatForCode, "    ");
     _builder.append("\">");
     String _allowedExtensions = it.getAllowedExtensions();
     _builder.append(_allowedExtensions, "    ");
-    _builder.append("</span></div>");
+    _builder.append("</span></span>");
     _builder.newLineIfNotEmpty();
     {
       int _allowedFileSize = it.getAllowedFileSize();
       boolean _greaterThan = (_allowedFileSize > 0);
       if (_greaterThan) {
-        _builder.append("<div class=\"z-formnote\">{gt text=\'Allowed file size:\'} {\'");
+        _builder.append("<span class=\"");
+        {
+          Entity _entity_8 = it.getEntity();
+          Models _container_8 = _entity_8.getContainer();
+          Application _application_8 = _container_8.getApplication();
+          boolean _targets_8 = this._utils.targets(_application_8, "1.3.5");
+          if (_targets_8) {
+            _builder.append("z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\">{gt text=\'Allowed file size:\'} {\'");
         int _allowedFileSize_1 = it.getAllowedFileSize();
         _builder.append(_allowedFileSize_1, "");
         _builder.append("\'|");
-        Entity _entity = it.getEntity();
-        Models _container = _entity.getContainer();
-        Application _application = _container.getApplication();
-        String _appName = this._utils.appName(_application);
+        Entity _entity_9 = it.getEntity();
+        Models _container_9 = _entity_9.getContainer();
+        Application _application_9 = _container_9.getApplication();
+        String _appName = this._utils.appName(_application_9);
         String _formatForDB = this._formattingExtensions.formatForDB(_appName);
         _builder.append(_formatForDB, "");
-        _builder.append("GetFileSize:\'\':false:false}</div>");
+        _builder.append("GetFileSize:\'\':false:false}</span>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -882,8 +1233,20 @@ public class SimpleFields {
     String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
     final String realName = (_plus + _formatForCode);
     _builder.newLineIfNotEmpty();
-    _builder.append("<div class=\"z-formnote\">");
-    _builder.newLine();
+    _builder.append("<span class=\"");
+    {
+      Entity _entity_2 = it.getEntity();
+      Models _container_1 = _entity_2.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application_1, "1.3.5");
+      if (_targets) {
+        _builder.append("z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{gt text=\'Current file\'}:");
     _builder.newLine();
@@ -893,16 +1256,16 @@ public class SimpleFields {
     _builder.append("FullPathUrl}\" title=\"{$");
     _builder.append(objName, "    ");
     _builder.append(".");
-    Entity _entity_2 = it.getEntity();
-    DerivedField _leadingField = this._modelExtensions.getLeadingField(_entity_2);
+    Entity _entity_3 = it.getEntity();
+    DerivedField _leadingField = this._modelExtensions.getLeadingField(_entity_3);
     String _name_2 = _leadingField.getName();
     String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
     _builder.append(_formatForCode_1, "    ");
     _builder.append("|replace:\"\\\"\":\"\"}\"{if $");
     _builder.append(realName, "    ");
     _builder.append("Meta.isImage} rel=\"imageviewer[");
-    Entity _entity_3 = it.getEntity();
-    String _name_3 = _entity_3.getName();
+    Entity _entity_4 = it.getEntity();
+    String _name_3 = _entity_4.getName();
     String _formatForDB = this._formattingExtensions.formatForDB(_name_3);
     _builder.append(_formatForDB, "    ");
     _builder.append("]\"{/if}>");
@@ -916,17 +1279,17 @@ public class SimpleFields {
     _builder.append("{thumb image=$");
     _builder.append(realName, "        ");
     _builder.append("FullPath objectid=\"");
-    Entity _entity_4 = it.getEntity();
-    String _name_4 = _entity_4.getName();
+    Entity _entity_5 = it.getEntity();
+    String _name_4 = _entity_5.getName();
     String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_4);
     _builder.append(_formatForCode_2, "        ");
     {
-      Entity _entity_5 = it.getEntity();
-      boolean _hasCompositeKeys = this._modelExtensions.hasCompositeKeys(_entity_5);
+      Entity _entity_6 = it.getEntity();
+      boolean _hasCompositeKeys = this._modelExtensions.hasCompositeKeys(_entity_6);
       if (_hasCompositeKeys) {
         {
-          Entity _entity_6 = it.getEntity();
-          Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(_entity_6);
+          Entity _entity_7 = it.getEntity();
+          Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(_entity_7);
           for(final DerivedField pkField : _primaryKeyFields) {
             _builder.append("-`$");
             _builder.append(objName, "        ");
@@ -941,8 +1304,8 @@ public class SimpleFields {
         _builder.append("-`$");
         _builder.append(objName, "        ");
         _builder.append(".");
-        Entity _entity_7 = it.getEntity();
-        Iterable<DerivedField> _primaryKeyFields_1 = this._modelExtensions.getPrimaryKeyFields(_entity_7);
+        Entity _entity_8 = it.getEntity();
+        Iterable<DerivedField> _primaryKeyFields_1 = this._modelExtensions.getPrimaryKeyFields(_entity_8);
         DerivedField _head = IterableExtensions.<DerivedField>head(_primaryKeyFields_1);
         String _name_6 = _head.getName();
         String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_6);
@@ -951,8 +1314,8 @@ public class SimpleFields {
       }
     }
     _builder.append("\" preset=$");
-    Entity _entity_8 = it.getEntity();
-    String _name_7 = _entity_8.getName();
+    Entity _entity_9 = it.getEntity();
+    String _name_7 = _entity_9.getName();
     String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_7);
     _builder.append(_formatForCode_5, "        ");
     _builder.append("ThumbPreset");
@@ -962,11 +1325,21 @@ public class SimpleFields {
     _builder.append(" tag=true img_alt=$");
     _builder.append(objName, "        ");
     _builder.append(".");
-    Entity _entity_9 = it.getEntity();
-    DerivedField _leadingField_1 = this._modelExtensions.getLeadingField(_entity_9);
+    Entity _entity_10 = it.getEntity();
+    DerivedField _leadingField_1 = this._modelExtensions.getLeadingField(_entity_10);
     String _name_9 = _leadingField_1.getName();
     String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_9);
     _builder.append(_formatForCode_6, "        ");
+    {
+      Entity _entity_11 = it.getEntity();
+      Models _container_2 = _entity_11.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" img_class=\'img-thumbnail\'");
+      }
+    }
     _builder.append("}");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -987,18 +1360,30 @@ public class SimpleFields {
     _builder.append("    ");
     _builder.append("</a>");
     _builder.newLine();
-    _builder.append("</div>");
+    _builder.append("</span>");
     _builder.newLine();
     {
       boolean _isMandatory = it.isMandatory();
-      boolean _not = (!_isMandatory);
-      if (_not) {
-        _builder.append("<div class=\"z-formnote\">");
-        _builder.newLine();
+      boolean _not_1 = (!_isMandatory);
+      if (_not_1) {
+        _builder.append("<span class=\"");
+        {
+          Entity _entity_12 = it.getEntity();
+          Models _container_3 = _entity_12.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_3, "1.3.5");
+          if (_targets_2) {
+            _builder.append("z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\">");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("{formcheckbox group=\'");
-        Entity _entity_10 = it.getEntity();
-        String _name_10 = _entity_10.getName();
+        Entity _entity_13 = it.getEntity();
+        String _name_10 = _entity_13.getName();
         String _formatForDB_1 = this._formattingExtensions.formatForDB(_name_10);
         _builder.append(_formatForDB_1, "    ");
         _builder.append("\' id=\'");
@@ -1018,7 +1403,7 @@ public class SimpleFields {
         _builder.append(_formatForCode_8, "    ");
         _builder.append("DeleteFile\' __text=\'Delete existing file\'}");
         _builder.newLineIfNotEmpty();
-        _builder.append("</div>");
+        _builder.append("</span>");
         _builder.newLine();
       }
     }
@@ -1050,7 +1435,18 @@ public class SimpleFields {
         String _name = it.getName();
         String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name);
         _builder.append(_formatForDisplay, "");
-        _builder.append("\' repeatColumns=2}");
+        _builder.append("\' repeatColumns=2");
+        {
+          Entity _entity = it.getEntity();
+          Models _container = _entity.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          boolean _not = (!_targets);
+          if (_not) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("{formdropdownlist ");
@@ -1073,7 +1469,18 @@ public class SimpleFields {
             _builder.append("single");
           }
         }
-        _builder.append("\'}");
+        _builder.append("\'");
+        {
+          Entity _entity_1 = it.getEntity();
+          Models _container_1 = _entity_1.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          boolean _not_1 = (!_targets_1);
+          if (_not_1) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1100,18 +1507,34 @@ public class SimpleFields {
     boolean _isReadonly = it.isReadonly();
     String _displayBool_1 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly));
     _builder.append(_displayBool_1, "");
-    _builder.append(" __title=\'Enter a part of the user name to search\'");
+    _builder.append(" __title=\'Enter a part of the user name to search\' cssClass=\'");
     {
       boolean _isMandatory_1 = it.isMandatory();
       if (_isMandatory_1) {
-        _builder.append(" cssClass=\'required\'");
+        _builder.append("required");
       }
     }
-    _builder.append("}");
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container_1 = _entity_1.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application_1, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        {
+          boolean _isMandatory_2 = it.isMandatory();
+          if (_isMandatory_2) {
+            _builder.append(" ");
+          }
+        }
+        _builder.append("form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("{if $mode ne \'create\' && $");
-    Entity _entity_1 = it.getEntity();
-    String _name = _entity_1.getName();
+    Entity _entity_2 = it.getEntity();
+    String _name = _entity_2.getName();
     String _formatForDB_1 = this._formattingExtensions.formatForDB(_name);
     _builder.append(_formatForDB_1, "");
     _builder.append(".");
@@ -1124,28 +1547,40 @@ public class SimpleFields {
     _builder.append("{checkpermissionblock component=\'Users::\' instance=\'::\' level=\'ACCESS_ADMIN\'}");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<div class=\"z-formnote\"><a href=\"{modurl modname=\'");
+    _builder.append("<span class=\"");
     {
-      Entity _entity_2 = it.getEntity();
-      Models _container_1 = _entity_2.getContainer();
-      Application _application_1 = _container_1.getApplication();
-      boolean _targets = this._utils.targets(_application_1, "1.3.5");
-      if (_targets) {
+      Entity _entity_3 = it.getEntity();
+      Models _container_2 = _entity_3.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_2, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\"><a href=\"{modurl modname=\'");
+    {
+      Entity _entity_4 = it.getEntity();
+      Models _container_3 = _entity_4.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_3, "1.3.5");
+      if (_targets_2) {
         _builder.append("Users");
       } else {
         _builder.append("ZikulaUsersModule");
       }
     }
     _builder.append("\' type=\'admin\' func=\'modify\' userid=$");
-    Entity _entity_3 = it.getEntity();
-    String _name_2 = _entity_3.getName();
+    Entity _entity_5 = it.getEntity();
+    String _name_2 = _entity_5.getName();
     String _formatForDB_3 = this._formattingExtensions.formatForDB(_name_2);
     _builder.append(_formatForDB_3, "    ");
     _builder.append(".");
     String _name_3 = it.getName();
     String _formatForDB_4 = this._formattingExtensions.formatForDB(_name_3);
     _builder.append(_formatForDB_4, "    ");
-    _builder.append("}\" title=\"{gt text=\'Switch to the user administration\'}\">{gt text=\'Manage user\'}</a></div>");
+    _builder.append("}\" title=\"{gt text=\'Switch to users administration\'}\">{gt text=\'Manage user\'}</a></span>");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{/checkpermissionblock}");
@@ -1163,13 +1598,37 @@ public class SimpleFields {
     {
       boolean _isPast = it.isPast();
       if (_isPast) {
-        _builder.append("<div class=\"z-formnote\">{gt text=\'Note: this value must be in the past.\'}</div>");
-        _builder.newLine();
+        _builder.append("<span class=\"");
+        {
+          Entity _entity = it.getEntity();
+          Models _container = _entity.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\">{gt text=\'Note: this value must be in the past.\'}</span>");
+        _builder.newLineIfNotEmpty();
       } else {
         boolean _isFuture = it.isFuture();
         if (_isFuture) {
-          _builder.append("<div class=\"z-formnote\">{gt text=\'Note: this value must be in the future.\'}</div>");
-          _builder.newLine();
+          _builder.append("<span class=\"");
+          {
+            Entity _entity_1 = it.getEntity();
+            Models _container_1 = _entity_1.getContainer();
+            Application _application_1 = _container_1.getApplication();
+            boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+            if (_targets_1) {
+              _builder.append("z-formnote");
+            } else {
+              _builder.append("help-block");
+            }
+          }
+          _builder.append("\">{gt text=\'Note: this value must be in the future.\'}</span>");
+          _builder.newLineIfNotEmpty();
         }
       }
     }
@@ -1201,10 +1660,20 @@ public class SimpleFields {
     String _name_1 = _entity.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay_1, "    ");
-    _builder.append("\' includeTime=true");
+    _builder.append("\' includeTime=true cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass, "    ");
-    _builder.append("}");
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container = _entity_1.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("{else}");
     _builder.newLine();
@@ -1221,8 +1690,8 @@ public class SimpleFields {
     String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
     _builder.append(_formatForDisplay_2, "    ");
     _builder.append(" of the ");
-    Entity _entity_1 = it.getEntity();
-    String _name_3 = _entity_1.getName();
+    Entity _entity_2 = it.getEntity();
+    String _name_3 = _entity_2.getName();
     String _formatForDisplay_3 = this._formattingExtensions.formatForDisplay(_name_3);
     _builder.append(_formatForDisplay_3, "    ");
     _builder.append("\' includeTime=true");
@@ -1257,17 +1726,28 @@ public class SimpleFields {
           _or = true;
         } else {
           boolean _isNullable = it.isNullable();
-          boolean _not = (!_isNullable);
-          _or = (_isMandatory_2 || _not);
+          boolean _not_1 = (!_isNullable);
+          _or = (_isMandatory_2 || _not_1);
         }
         if (_or) {
           _builder.append(" defaultValue=\'now\'");
         }
       }
     }
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass_1, "    ");
-    _builder.append("}");
+    {
+      Entity _entity_3 = it.getEntity();
+      Models _container_1 = _entity_3.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_2 = (!_targets_1);
+      if (_not_2) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("{/if}");
     _builder.newLine();
@@ -1275,19 +1755,41 @@ public class SimpleFields {
     {
       boolean _and_2 = false;
       boolean _isMandatory_3 = it.isMandatory();
-      boolean _not_1 = (!_isMandatory_3);
-      if (!_not_1) {
+      boolean _not_3 = (!_isMandatory_3);
+      if (!_not_3) {
         _and_2 = false;
       } else {
         boolean _isNullable_1 = it.isNullable();
-        _and_2 = (_not_1 && _isNullable_1);
+        _and_2 = (_not_3 && _isNullable_1);
       }
       if (_and_2) {
-        _builder.append("<p class=\"z-formnote\"><a id=\"reset");
+        _builder.append("<span class=\"");
+        {
+          Entity _entity_4 = it.getEntity();
+          Models _container_2 = _entity_4.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+          if (_targets_2) {
+            _builder.append("z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\"><a id=\"reset");
         String _name_4 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_4);
         _builder.append(_formatForCodeCapital, "");
-        _builder.append("Val\" href=\"javascript:void(0);\" class=\"z-hide\">{gt text=\'Reset to empty value\'}</a></p>");
+        _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
+        {
+          Entity _entity_5 = it.getEntity();
+          Models _container_3 = _entity_5.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+          if (_targets_3) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{gt text=\'Reset to empty value\'}</a></span>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1315,10 +1817,20 @@ public class SimpleFields {
     String _name_1 = _entity.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay_1, "    ");
-    _builder.append("\' useSelectionMode=true");
+    _builder.append("\' useSelectionMode=true cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass, "    ");
-    _builder.append("}");
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container = _entity_1.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("{else}");
     _builder.newLine();
@@ -1335,8 +1847,8 @@ public class SimpleFields {
     String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
     _builder.append(_formatForDisplay_2, "    ");
     _builder.append(" of the ");
-    Entity _entity_1 = it.getEntity();
-    String _name_3 = _entity_1.getName();
+    Entity _entity_2 = it.getEntity();
+    String _name_3 = _entity_2.getName();
     String _formatForDisplay_3 = this._formattingExtensions.formatForDisplay(_name_3);
     _builder.append(_formatForDisplay_3, "    ");
     _builder.append("\' useSelectionMode=true");
@@ -1371,36 +1883,69 @@ public class SimpleFields {
           _or = true;
         } else {
           boolean _isNullable = it.isNullable();
-          boolean _not = (!_isNullable);
-          _or = (_isMandatory_2 || _not);
+          boolean _not_1 = (!_isNullable);
+          _or = (_isMandatory_2 || _not_1);
         }
         if (_or) {
           _builder.append(" defaultValue=\'today\'");
         }
       }
     }
+    _builder.append(" cssClass=\'");
     CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass_1, "    ");
-    _builder.append("}");
+    {
+      Entity _entity_3 = it.getEntity();
+      Models _container_1 = _entity_3.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_2 = (!_targets_1);
+      if (_not_2) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("{/if}");
     _builder.newLine();
     {
       boolean _and_2 = false;
       boolean _isMandatory_3 = it.isMandatory();
-      boolean _not_1 = (!_isMandatory_3);
-      if (!_not_1) {
+      boolean _not_3 = (!_isMandatory_3);
+      if (!_not_3) {
         _and_2 = false;
       } else {
         boolean _isNullable_1 = it.isNullable();
-        _and_2 = (_not_1 && _isNullable_1);
+        _and_2 = (_not_3 && _isNullable_1);
       }
       if (_and_2) {
-        _builder.append("<p class=\"z-formnote\"><a id=\"reset");
+        _builder.append("<span class=\"");
+        {
+          Entity _entity_4 = it.getEntity();
+          Models _container_2 = _entity_4.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+          if (_targets_2) {
+            _builder.append("z-formnote");
+          } else {
+            _builder.append("help-block");
+          }
+        }
+        _builder.append("\"><a id=\"reset");
         String _name_4 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_4);
         _builder.append(_formatForCodeCapital, "");
-        _builder.append("Val\" href=\"javascript:void(0);\" class=\"z-hide\">{gt text=\'Reset to empty value\'}</a></p>");
+        _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
+        {
+          Entity _entity_5 = it.getEntity();
+          Models _container_3 = _entity_5.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+          if (_targets_3) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{gt text=\'Reset to empty value\'}</a></span>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1431,10 +1976,20 @@ public class SimpleFields {
     String _name_1 = _entity.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay_1, "");
-    _builder.append("\' textMode=\'singleline\' maxLength=8");
+    _builder.append("\' textMode=\'singleline\' maxLength=8 cssClass=\'");
     CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
     _builder.append(_fieldValidationCssClass, "");
-    _builder.append("}");
+    {
+      Entity _entity_1 = it.getEntity();
+      Models _container = _entity_1.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" form-control");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }

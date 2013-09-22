@@ -148,8 +148,25 @@ public class Config {
     }
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("{form cssClass=\'z-form\'}");
-    _builder.newLine();
+    _builder.append("{form cssClass=\'");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-form");
+      } else {
+        _builder.append("form-horizontal");
+      }
+    }
+    _builder.append("\'");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(" role=\'form\'");
+      }
+    }
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
@@ -204,14 +221,59 @@ public class Config {
     }
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("<div class=\"z-buttons z-formbuttons\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
+        _builder.append("z-buttons z-formbuttons");
+      } else {
+        _builder.append("form-group form-buttons");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_4);
+      if (_not_1) {
+        _builder.append("            ");
+        _builder.append("<div class=\"col-lg-offset-3 col-lg-9\">");
+        _builder.newLine();
+      }
+    }
     _builder.append("                ");
-    _builder.append("{formbutton commandName=\'save\' __text=\'Update configuration\' class=\'z-bt-save\'}");
-    _builder.newLine();
+    _builder.append("{formbutton commandName=\'save\' __text=\'Update configuration\' class=\'");
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      if (_targets_5) {
+        _builder.append("z-bt-save");
+      } else {
+        _builder.append("btn btn-success");
+      }
+    }
+    _builder.append("\'}");
+    _builder.newLineIfNotEmpty();
     _builder.append("                ");
-    _builder.append("{formbutton commandName=\'cancel\' __text=\'Cancel\' class=\'z-bt-cancel\'}");
-    _builder.newLine();
+    _builder.append("{formbutton commandName=\'cancel\' __text=\'Cancel\' class=\'");
+    {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      if (_targets_6) {
+        _builder.append("z-bt-cancel");
+      } else {
+        _builder.append("btn btn-default");
+      }
+    }
+    _builder.append("\'}");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_7);
+      if (_not_2) {
+        _builder.append("            ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("            ");
     _builder.append("</div>");
     _builder.newLine();
@@ -240,8 +302,8 @@ public class Config {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      boolean _targets_1 = this._utils.targets(it, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      if (_targets_8) {
         String _configController_4 = this._controllerExtensions.configController(it);
         String _formatForDB_6 = this._formattingExtensions.formatForDB(_configController_4);
         _builder.append(_formatForDB_6, "");
@@ -273,8 +335,8 @@ public class Config {
       };
       Iterable<Variable> _filter = IterableExtensions.<Variable>filter(_allVariables, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
-      boolean _not = (!_isEmpty);
-      if (_not) {
+      boolean _not_3 = (!_isEmpty);
+      if (_not_3) {
         _builder.append("<script type=\"text/javascript\">");
         _builder.newLine();
         _builder.append("/* <![CDATA[ */");
@@ -400,8 +462,20 @@ public class Config {
   
   private CharSequence formRow(final Variable it) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      Variables _container = it.getContainer();
+      Models _container_1 = _container.getContainer();
+      Application _application = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     {
       boolean _and = false;
       String _documentation = it.getDocumentation();
@@ -432,7 +506,7 @@ public class Config {
     String _name_1 = it.getName();
     String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_name_1);
     _builder.append(_formatForDisplayCapital, "    ");
-    _builder.append("\'");
+    _builder.append("\' cssClass=\'");
     {
       boolean _and_1 = false;
       String _documentation_3 = it.getDocumentation();
@@ -445,22 +519,71 @@ public class Config {
         _and_1 = (_tripleNotEquals_1 && _notEquals_1);
       }
       if (_and_1) {
-        _builder.append(" class=\'");
-        Variables _container = it.getContainer();
-        Models _container_1 = _container.getContainer();
-        Application _application = _container_1.getApplication();
-        String _appName = this._utils.appName(_application);
+        Variables _container_2 = it.getContainer();
+        Models _container_3 = _container_2.getContainer();
+        Application _application_1 = _container_3.getApplication();
+        String _appName = this._utils.appName(_application_1);
         String _formatForDB = this._formattingExtensions.formatForDB(_appName);
         _builder.append(_formatForDB, "    ");
-        _builder.append("FormTooltips\' title=$toolTip");
+        _builder.append("FormTooltips ");
+      }
+    }
+    {
+      Variables _container_4 = it.getContainer();
+      Models _container_5 = _container_4.getContainer();
+      Application _application_2 = _container_5.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" col-lg-3 control-label");
+      }
+    }
+    _builder.append("\'");
+    {
+      boolean _and_2 = false;
+      String _documentation_5 = it.getDocumentation();
+      boolean _tripleNotEquals_2 = (_documentation_5 != null);
+      if (!_tripleNotEquals_2) {
+        _and_2 = false;
+      } else {
+        String _documentation_6 = it.getDocumentation();
+        boolean _notEquals_2 = (!Objects.equal(_documentation_6, ""));
+        _and_2 = (_tripleNotEquals_2 && _notEquals_2);
+      }
+      if (_and_2) {
+        _builder.append(" title=$toolTip");
       }
     }
     _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      Variables _container_6 = it.getContainer();
+      Models _container_7 = _container_6.getContainer();
+      Application _application_3 = _container_7.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     CharSequence _inputField = this.inputField(it);
-    _builder.append(_inputField, "    ");
+    _builder.append(_inputField, "        ");
     _builder.newLineIfNotEmpty();
+    {
+      Variables _container_8 = it.getContainer();
+      Models _container_9 = _container_8.getContainer();
+      Application _application_4 = _container_9.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_4, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("</div>");
     _builder.newLine();
     return _builder;
@@ -476,7 +599,18 @@ public class Config {
     String _name_1 = it.getName();
     String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay, "");
-    _builder.append(".\'}");
+    _builder.append(".\'");
+    {
+      Variables _container = it.getContainer();
+      Models _container_1 = _container.getContainer();
+      Application _application = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -491,7 +625,18 @@ public class Config {
     String _name_1 = it.getName();
     String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay, "");
-    _builder.append(". Only digits are allowed.\'}");
+    _builder.append(". Only digits are allowed.\'");
+    {
+      Variables _container = it.getContainer();
+      Models _container_1 = _container.getContainer();
+      Application _application = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -520,7 +665,18 @@ public class Config {
         String _name_1 = it.getName();
         String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name_1);
         _builder.append(_formatForDisplay, "");
-        _builder.append("\'}");
+        _builder.append("\'");
+        {
+          Variables _container = it.getContainer();
+          Models _container_1 = _container.getContainer();
+          Application _application = _container_1.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          boolean _not = (!_targets);
+          if (_not) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("{formdropdownlist id=\'");
@@ -538,7 +694,18 @@ public class Config {
         String _name_3 = it.getName();
         String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_3);
         _builder.append(_formatForDisplay_1, "");
-        _builder.append("\'}");
+        _builder.append("\'");
+        {
+          Variables _container_2 = it.getContainer();
+          Models _container_3 = _container_2.getContainer();
+          Application _application_1 = _container_3.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          boolean _not_1 = (!_targets_1);
+          if (_not_1) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
       }
     }

@@ -343,8 +343,17 @@ public class ContentTypeListView {
     _builder.append("{* Purpose of this template: edit view of generic item list content type *}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{gt text=\'Object type\' domain=\'module_");
     String _appName = this._utils.appName(it);
@@ -356,28 +365,71 @@ public class ContentTypeListView {
     _builder.append("{formlabel for=\'");
     String _appName_1 = this._utils.appName(it);
     _builder.append(_appName_1, "    ");
-    _builder.append("_objecttype\' text=$objectTypeSelectorLabel}");
+    _builder.append("_objecttype\' text=$objectTypeSelectorLabel");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("{");
     String _appName_2 = this._utils.appName(it);
     String _formatForDB_1 = this._formattingExtensions.formatForDB(_appName_2);
-    _builder.append(_formatForDB_1, "    ");
+    _builder.append(_formatForDB_1, "        ");
     _builder.append("ObjectTypeSelector assign=\'allObjectTypes\'}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("{formdropdownlist id=\'");
     String _appName_3 = this._utils.appName(it);
-    _builder.append(_appName_3, "    ");
-    _builder.append("_objecttype\' dataField=\'objectType\' group=\'data\' mandatory=true items=$allObjectTypes}");
+    _builder.append(_appName_3, "        ");
+    _builder.append("_objecttype\' dataField=\'objectType\' group=\'data\' mandatory=true items=$allObjectTypes");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("<span class=\"z-sub z-formnote\">{gt text=\'If you change this please save the element once to reload the parameters below.\' domain=\'module_");
+    _builder.append("        ");
+    _builder.append("<span class=\"");
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
+        _builder.append("z-sub z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\">{gt text=\'If you change this please save the element once to reload the parameters below.\' domain=\'module_");
     String _appName_4 = this._utils.appName(it);
     String _formatForDB_2 = this._formattingExtensions.formatForDB(_appName_4);
-    _builder.append(_formatForDB_2, "    ");
+    _builder.append(_formatForDB_2, "        ");
     _builder.append("\'}</span>");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      boolean _not_3 = (!_targets_5);
+      if (_not_3) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
@@ -410,8 +462,17 @@ public class ContentTypeListView {
     _builder.append("{/foreach}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      if (_targets_6) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("{modapifunc modname=\'");
     String _appName_5 = this._utils.appName(it);
@@ -448,21 +509,64 @@ public class ContentTypeListView {
     _builder.append("{formlabel for=\"");
     String _appName_8 = this._utils.appName(it);
     _builder.append(_appName_8, "            ");
-    _builder.append("_catids`$propertyName`\" text=$categorySelectorLabel}");
+    _builder.append("_catids`$propertyName`\" text=$categorySelectorLabel");
+    {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      boolean _not_4 = (!_targets_7);
+      if (_not_4) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("            ");
+    {
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      boolean _not_5 = (!_targets_8);
+      if (_not_5) {
+        _builder.append("            ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("                ");
     _builder.append("{formdropdownlist id=\"");
     String _appName_9 = this._utils.appName(it);
-    _builder.append(_appName_9, "            ");
-    _builder.append("_catids`$propName`\" items=$categories.$propName dataField=\"catids`$propName`\" group=\'data\' selectionMode=$selectionMode}");
+    _builder.append(_appName_9, "                ");
+    _builder.append("_catids`$propName`\" items=$categories.$propName dataField=\"catids`$propName`\" group=\'data\' selectionMode=$selectionMode");
+    {
+      boolean _targets_9 = this._utils.targets(it, "1.3.5");
+      boolean _not_6 = (!_targets_9);
+      if (_not_6) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("            ");
-    _builder.append("<span class=\"z-sub z-formnote\">{gt text=\'This is an optional filter.\' domain=\'module_");
+    _builder.append("                ");
+    _builder.append("<span class=\"");
+    {
+      boolean _targets_10 = this._utils.targets(it, "1.3.5");
+      if (_targets_10) {
+        _builder.append("z-sub z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\">{gt text=\'This is an optional filter.\' domain=\'module_");
     String _appName_10 = this._utils.appName(it);
     String _formatForDB_5 = this._formattingExtensions.formatForDB(_appName_10);
-    _builder.append(_formatForDB_5, "            ");
+    _builder.append(_formatForDB_5, "                ");
     _builder.append("\'}</span>");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_11 = this._utils.targets(it, "1.3.5");
+      boolean _not_7 = (!_targets_11);
+      if (_not_7) {
+        _builder.append("            ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("        ");
     _builder.append("</div>");
     _builder.newLine();
@@ -477,8 +581,17 @@ public class ContentTypeListView {
     _builder.append("{/formvolatile}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_12 = this._utils.targets(it, "1.3.5");
+      if (_targets_12) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{gt text=\'Sorting\' domain=\'module_");
     String _appName_11 = this._utils.appName(it);
@@ -487,11 +600,27 @@ public class ContentTypeListView {
     _builder.append("\' assign=\'sortingLabel\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("{formlabel text=$sortingLabel}");
-    _builder.newLine();
+    _builder.append("{formlabel text=$sortingLabel");
+    {
+      boolean _targets_13 = this._utils.targets(it, "1.3.5");
+      boolean _not_8 = (!_targets_13);
+      if (_not_8) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("<div>");
-    _builder.newLine();
+    _builder.append("<div");
+    {
+      boolean _targets_14 = this._utils.targets(it, "1.3.5");
+      boolean _not_9 = (!_targets_14);
+      if (_not_9) {
+        _builder.append(" class=\"col-lg-9\"");
+      }
+    }
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("{formradiobutton id=\'");
     String _appName_12 = this._utils.appName(it);
@@ -555,8 +684,17 @@ public class ContentTypeListView {
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_15 = this._utils.targets(it, "1.3.5");
+      if (_targets_15) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{gt text=\'Amount\' domain=\'module_");
     String _appName_21 = this._utils.appName(it);
@@ -568,19 +706,54 @@ public class ContentTypeListView {
     _builder.append("{formlabel for=\'");
     String _appName_22 = this._utils.appName(it);
     _builder.append(_appName_22, "    ");
-    _builder.append("_amount\' text=$amountLabel}");
+    _builder.append("_amount\' text=$amountLabel");
+    {
+      boolean _targets_16 = this._utils.targets(it, "1.3.5");
+      boolean _not_10 = (!_targets_16);
+      if (_not_10) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      boolean _targets_17 = this._utils.targets(it, "1.3.5");
+      boolean _not_11 = (!_targets_17);
+      if (_not_11) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("{formintinput id=\'");
     String _appName_23 = this._utils.appName(it);
-    _builder.append(_appName_23, "    ");
+    _builder.append(_appName_23, "        ");
     _builder.append("_amount\' dataField=\'amount\' group=\'data\' mandatory=true maxLength=2}");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_18 = this._utils.targets(it, "1.3.5");
+      boolean _not_12 = (!_targets_18);
+      if (_not_12) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_19 = this._utils.targets(it, "1.3.5");
+      if (_targets_19) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{gt text=\'Template\' domain=\'module_");
     String _appName_24 = this._utils.appName(it);
@@ -592,26 +765,69 @@ public class ContentTypeListView {
     _builder.append("{formlabel for=\'");
     String _appName_25 = this._utils.appName(it);
     _builder.append(_appName_25, "    ");
-    _builder.append("_template\' text=$templateLabel}");
+    _builder.append("_template\' text=$templateLabel");
+    {
+      boolean _targets_20 = this._utils.targets(it, "1.3.5");
+      boolean _not_13 = (!_targets_20);
+      if (_not_13) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      boolean _targets_21 = this._utils.targets(it, "1.3.5");
+      boolean _not_14 = (!_targets_21);
+      if (_not_14) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("{");
     String _appName_26 = this._utils.appName(it);
     String _formatForDB_12 = this._formattingExtensions.formatForDB(_appName_26);
-    _builder.append(_formatForDB_12, "    ");
+    _builder.append(_formatForDB_12, "        ");
     _builder.append("TemplateSelector assign=\'allTemplates\'}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    _builder.append("        ");
     _builder.append("{formdropdownlist id=\'");
     String _appName_27 = this._utils.appName(it);
-    _builder.append(_appName_27, "    ");
-    _builder.append("_template\' dataField=\'template\' group=\'data\' mandatory=true items=$allTemplates}");
+    _builder.append(_appName_27, "        ");
+    _builder.append("_template\' dataField=\'template\' group=\'data\' mandatory=true items=$allTemplates");
+    {
+      boolean _targets_22 = this._utils.targets(it, "1.3.5");
+      boolean _not_15 = (!_targets_22);
+      if (_not_15) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_23 = this._utils.targets(it, "1.3.5");
+      boolean _not_16 = (!_targets_23);
+      if (_not_16) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("<div id=\"customtemplatearea\" class=\"z-formrow z-hide\">");
-    _builder.newLine();
+    _builder.append("<div id=\"customtemplatearea\" class=\"");
+    {
+      boolean _targets_24 = this._utils.targets(it, "1.3.5");
+      if (_targets_24) {
+        _builder.append("z-formrow z-hide");
+      } else {
+        _builder.append("form-group hide");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{gt text=\'Custom template\' domain=\'module_");
     String _appName_28 = this._utils.appName(it);
@@ -623,27 +839,79 @@ public class ContentTypeListView {
     _builder.append("{formlabel for=\'");
     String _appName_29 = this._utils.appName(it);
     _builder.append(_appName_29, "    ");
-    _builder.append("_customtemplate\' text=$customTemplateLabel}");
+    _builder.append("_customtemplate\' text=$customTemplateLabel");
+    {
+      boolean _targets_25 = this._utils.targets(it, "1.3.5");
+      boolean _not_17 = (!_targets_25);
+      if (_not_17) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      boolean _targets_26 = this._utils.targets(it, "1.3.5");
+      boolean _not_18 = (!_targets_26);
+      if (_not_18) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("{formtextinput id=\'");
     String _appName_30 = this._utils.appName(it);
-    _builder.append(_appName_30, "    ");
-    _builder.append("_customtemplate\' dataField=\'customTemplate\' group=\'data\' mandatory=false maxLength=80}");
+    _builder.append(_appName_30, "        ");
+    _builder.append("_customtemplate\' dataField=\'customTemplate\' group=\'data\' mandatory=false maxLength=80");
+    {
+      boolean _targets_27 = this._utils.targets(it, "1.3.5");
+      boolean _not_19 = (!_targets_27);
+      if (_not_19) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("<span class=\"z-sub z-formnote\">{gt text=\'Example\' domain=\'module_");
+    _builder.append("        ");
+    _builder.append("<span class=\"");
+    {
+      boolean _targets_28 = this._utils.targets(it, "1.3.5");
+      if (_targets_28) {
+        _builder.append("z-sub z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\">{gt text=\'Example\' domain=\'module_");
     String _appName_31 = this._utils.appName(it);
     String _formatForDB_14 = this._formattingExtensions.formatForDB(_appName_31);
-    _builder.append(_formatForDB_14, "    ");
+    _builder.append(_formatForDB_14, "        ");
     _builder.append("\'}: <em>itemlist_[objecttype]_display.tpl</em></span>");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_29 = this._utils.targets(it, "1.3.5");
+      boolean _not_20 = (!_targets_29);
+      if (_not_20) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("<div class=\"z-formrow z-hide\"");
+    _builder.append("<div class=\"");
+    {
+      boolean _targets_30 = this._utils.targets(it, "1.3.5");
+      if (_targets_30) {
+        _builder.append("z-formrow z-hide");
+      } else {
+        _builder.append("form-group hide");
+      }
+    }
+    _builder.append("\"");
     _builder.append(">");
-    _builder.newLine();
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{gt text=\'Filter (expert option)\' domain=\'module_");
     String _appName_32 = this._utils.appName(it);
@@ -655,25 +923,68 @@ public class ContentTypeListView {
     _builder.append("{formlabel for=\'");
     String _appName_33 = this._utils.appName(it);
     _builder.append(_appName_33, "    ");
-    _builder.append("_filter\' text=$filterLabel}");
+    _builder.append("_filter\' text=$filterLabel");
+    {
+      boolean _targets_31 = this._utils.targets(it, "1.3.5");
+      boolean _not_21 = (!_targets_31);
+      if (_not_21) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    {
+      boolean _targets_32 = this._utils.targets(it, "1.3.5");
+      boolean _not_22 = (!_targets_32);
+      if (_not_22) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
     _builder.append("{formtextinput id=\'");
     String _appName_34 = this._utils.appName(it);
-    _builder.append(_appName_34, "    ");
-    _builder.append("_filter\' dataField=\'filter\' group=\'data\' mandatory=false maxLength=255}");
+    _builder.append(_appName_34, "        ");
+    _builder.append("_filter\' dataField=\'filter\' group=\'data\' mandatory=false maxLength=255");
+    {
+      boolean _targets_33 = this._utils.targets(it, "1.3.5");
+      boolean _not_23 = (!_targets_33);
+      if (_not_23) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("<span class=\"z-sub z-formnote\">({gt text=\'Syntax examples\' domain=\'module_");
+    _builder.append("        ");
+    _builder.append("<span class=\"");
+    {
+      boolean _targets_34 = this._utils.targets(it, "1.3.5");
+      if (_targets_34) {
+        _builder.append("z-sub z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\">({gt text=\'Syntax examples\' domain=\'module_");
     String _appName_35 = this._utils.appName(it);
     String _formatForDB_16 = this._formattingExtensions.formatForDB(_appName_35);
-    _builder.append(_formatForDB_16, "    ");
+    _builder.append(_formatForDB_16, "        ");
     _builder.append("\'}: <kbd>name:like:foobar</kbd> {gt text=\'or\' domain=\'module_");
     String _appName_36 = this._utils.appName(it);
     String _formatForDB_17 = this._formattingExtensions.formatForDB(_appName_36);
-    _builder.append(_formatForDB_17, "    ");
+    _builder.append(_formatForDB_17, "        ");
     _builder.append("\'} <kbd>status:ne:3</kbd>)</span>");
     _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_35 = this._utils.targets(it, "1.3.5");
+      boolean _not_24 = (!_targets_35);
+      if (_not_24) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("</div>");
     _builder.newLine();
     _builder.newLine();
@@ -696,14 +1007,28 @@ public class ContentTypeListView {
     _builder.append("_template\') == \'custom\') {");
     _builder.newLineIfNotEmpty();
     _builder.append("            ");
-    _builder.append("$(\'customtemplatearea\').removeClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("$(\'customtemplatearea\').removeClassName(\'");
+    {
+      boolean _targets_36 = this._utils.targets(it, "1.3.5");
+      if (_targets_36) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("} else {");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$(\'customtemplatearea\').addClassName(\'z-hide\');");
-    _builder.newLine();
+    _builder.append("$(\'customtemplatearea\').addClassName(\'");
+    {
+      boolean _targets_37 = this._utils.targets(it, "1.3.5");
+      if (_targets_37) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("hide\');");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("}");
     _builder.newLine();

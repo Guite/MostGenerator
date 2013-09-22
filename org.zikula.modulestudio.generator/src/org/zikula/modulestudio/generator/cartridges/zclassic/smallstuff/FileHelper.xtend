@@ -38,7 +38,7 @@ class FileHelper {
     '''
 
     def msWeblink(Application it) '''
-        <p class="z-center">
+        <p class="«IF targets('1.3.5')»z«ELSE»text«ENDIF»-center">
             Powered by <a href="«msUrl»" title="Get the MOST out of Zikula!">ModuleStudio «msVersion»</a>
         </p>
     '''

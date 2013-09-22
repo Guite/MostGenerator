@@ -25,7 +25,7 @@ class Categories {
         {* purpose of this template: reusable display of entity categories *}
         {if isset($obj.categories)}
             {if isset($panel) && $panel eq true}
-                <h3 class="categories z-panel-header z-panel-indicator z-pointer">{gt text='Categories'}</h3>
+                <h3 class="categories z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Categories'}</h3>
                 <div class="categories z-panel-content" style="display: none">
             {else}
                 <h3 class="categories">{gt text='Categories'}</h3>
@@ -48,7 +48,7 @@ class Categories {
     def private categoriesEditImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable editing of entity attributes *}
         {if isset($panel) && $panel eq true}
-            <h3 class="categories z-panel-header z-panel-indicator z-pointer">{gt text='Categories'}</h3>
+            <h3 class="categories z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Categories'}</h3>
             <fieldset class="categories z-panel-content" style="display: none">
         {else}
             <fieldset class="categories">
@@ -62,11 +62,17 @@ class Categories {
                     {gt text='Categories' assign='categorySelectorLabel'}
                     {assign var='selectionMode' value='multiple'}
                 {/if}
-                <div class="z-formrow">
-                    {formlabel for="category_`$registryId`" text=$categorySelectorLabel}
-                    {formcategoryselector id="category_`$registryId`" category=$registryCid
-                                          dataField='categories' group=$groupName registryId=$registryId doctrine2=true
-                                          selectionMode=$selectionMode}
+                <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                    {formlabel for="category_`$registryId`" text=$categorySelectorLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                    «IF !targets('1.3.5')»
+                        <div class="col-lg-9">
+                    «ENDIF»
+                        {formcategoryselector id="category_`$registryId`" category=$registryCid
+                                              dataField='categories' group=$groupName registryId=$registryId doctrine2=true
+                                              selectionMode=$selectionMode}
+                    «IF !targets('1.3.5')»
+                        </div>
+                    «ENDIF»
                 </div>
             {/foreach}
             {/formvolatile}

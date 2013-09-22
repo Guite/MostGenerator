@@ -160,8 +160,17 @@ public class FileHelper {
   
   public CharSequence msWeblink(final Application it) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("<p class=\"z-center\">");
-    _builder.newLine();
+    _builder.append("<p class=\"");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("text");
+      }
+    }
+    _builder.append("-center\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("Powered by <a href=\"");
     String _msUrl = this._utils.msUrl();

@@ -119,7 +119,7 @@ class Forms {
     }
 
     def private formTemplateBody(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) '''
-        {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='z-form'}
+        {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.5')» role='form'«ENDIF»}
             {* add validation summary and a <div> element for styling the form *}
             {«app.appName.formatForDB»FormFrame}
 «/*            {*formvalidationsummary*}
@@ -131,7 +131,7 @@ class Forms {
 
             «IF useGroupingPanels('edit')»
                 <div class="z-panels" id="«app.appName»_panel">
-                    <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator z-pointer">{gt text='Fields'}</h3>
+                    <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
                     <div class="z-panel-content z-panel-active" style="overflow: visible">
                         «fieldDetails(app, controller)»
                     </div>
@@ -194,10 +194,16 @@ class Forms {
                 «ENDIF»
                 «IF geographical»
                     «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                        <div class="z-formrow">
-                            {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'}
-                            {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number'}
-                            {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
+                        <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                            {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                            «IF !app.targets('1.3.5')»
+                                <div class="col-lg-9">
+                            «ENDIF»
+                                {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.5')» form-control«ENDIF»'}
+                                {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
+                            «IF !app.targets('1.3.5')»
+                                </div>
+                            «ENDIF»
                         </div>
                     «ENDFOR»
                 «ENDIF»
@@ -217,14 +223,20 @@ class Forms {
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
         «IF hasSluggableFields && slugUpdatable && !container.application.targets('1.3.5')»
-            <div class="z-formrow">
-                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»}
-                {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255«IF slugUnique» cssClass='«/*required */»validate-unique'«ENDIF»}
-                <div class="z-formnote z-sub">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</div>
-            «IF slugUnique»
-                «/*{«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
-                {«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
-            «ENDIF»
+            <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !container.application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !container.application.targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                    {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !container.application.targets('1.3.5')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
+                    <span class="«IF container.application.targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>
+                «IF slugUnique»
+                    «/*{«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
+                    {«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
+                «ENDIF»
+                «IF !container.application.targets('1.3.5')»
+                    </div>
+                «ENDIF»
         </div>
         «ENDIF»
     '''
@@ -330,7 +342,7 @@ class Forms {
                 } else {
                     // hide form buttons to prevent double submits by accident
                     formButtons.each(function (btn) {
-                        btn.addClassName('z-hide');
+                        btn.addClassName('«IF app.targets('1.3.5')»z-«ENDIF»hide');
                     });
                 }
 
@@ -355,7 +367,7 @@ class Forms {
                     var result = formValidator.validate();
                 {{/if}}
 
-                formButtons = $('{{$__formid}}').select('div.z-formbuttons input');
+                formButtons = $('{{$__formid}}').select('div.«IF app.targets('1.3.5')»z-formbuttons«ELSE»form-buttons«ENDIF» input');
 
                 formButtons.each(function (elem) {
                     if (elem.id != 'btnCancel') {
@@ -383,7 +395,7 @@ class Forms {
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
         «/*No input fields for foreign keys, relations are processed further down*/»
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
-            <div class="z-formrow">
+            <div class="«IF entity.container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
                 «fieldHelper.formRow(it, groupSuffix, idSuffix)»
             </div>
         «ENDIF»
@@ -441,7 +453,7 @@ class Forms {
     /*
         A 'zparameters' parameter was added as a direct way to assign the values of
         the form plugins attributes. For instance:
-        $attributes = {class:z-bt-ok; confirmMessage:Are you sure?}
+        $attributes = {class:«IF app.targets('1.3.5')»z-btred«ELSE»btn btn-danger; confirmMessage:Are you sure?}
         {formbutton commandName='delete' __text='Delete' zparameters=$attributes}
     */
 }

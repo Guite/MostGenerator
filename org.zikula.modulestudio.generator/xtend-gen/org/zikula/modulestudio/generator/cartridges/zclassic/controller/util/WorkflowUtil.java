@@ -250,7 +250,7 @@ public class WorkflowUtil {
     {
       for(final ListFieldItem state : states) {
         _builder.append("     ");
-        CharSequence _stateInfo = this.stateInfo(state);
+        CharSequence _stateInfo = this.stateInfo(it, state);
         _builder.append(_stateInfo, "     ");
         _builder.newLineIfNotEmpty();
       }
@@ -266,29 +266,38 @@ public class WorkflowUtil {
     return _builder;
   }
   
-  private CharSequence stateInfo(final ListFieldItem it) {
+  private CharSequence stateInfo(final Application it, final ListFieldItem item) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("$states[] = array(\'value\' => \'");
-    String _value = it.getValue();
+    String _value = item.getValue();
     _builder.append(_value, "");
     _builder.append("\',");
     _builder.newLineIfNotEmpty();
     _builder.append("                  ");
     _builder.append("\'text\' => $this->__(\'");
-    String _name = it.getName();
+    String _name = item.getName();
     _builder.append(_name, "                  ");
     _builder.append("\'),");
     _builder.newLineIfNotEmpty();
     _builder.append("                  ");
-    _builder.append("\'icon\' => \'");
-    String _stateIcon = this.stateIcon(it);
-    _builder.append(_stateIcon, "                  ");
-    _builder.append("led.png\');");
+    _builder.append("\'ui\' => \'");
+    String _uiFeedback = this.uiFeedback(it, item);
+    _builder.append(_uiFeedback, "                  ");
+    _builder.append("\');");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
   
-  private String stateIcon(final ListFieldItem it) {
+  private String uiFeedback(final Application it, final ListFieldItem item) {
+    boolean _targets = this._utils.targets(it, "1.3.5");
+    if (_targets) {
+      return this.stateIcon135(item);
+    } else {
+      return this.stateLabel(item);
+    }
+  }
+  
+  private String stateIcon135(final ListFieldItem it) {
     String _switchResult = null;
     String _value = it.getValue();
     final String _switchValue = _value;
@@ -349,6 +358,71 @@ public class WorkflowUtil {
     }
     if (!_matched) {
       _switchResult = "red";
+    }
+    return _switchResult;
+  }
+  
+  private String stateLabel(final ListFieldItem it) {
+    String _switchResult = null;
+    String _value = it.getValue();
+    final String _switchValue = _value;
+    boolean _matched = false;
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"initial")) {
+        _matched=true;
+        _switchResult = "danger";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"deferred")) {
+        _matched=true;
+        _switchResult = "danger";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"waiting")) {
+        _matched=true;
+        _switchResult = "warning";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"accepted")) {
+        _matched=true;
+        _switchResult = "warning";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"approved")) {
+        _matched=true;
+        _switchResult = "success";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"suspended")) {
+        _matched=true;
+        _switchResult = "primary";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"archived")) {
+        _matched=true;
+        _switchResult = "info";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"trashed")) {
+        _matched=true;
+        _switchResult = "danger";
+      }
+    }
+    if (!_matched) {
+      if (Objects.equal(_switchValue,"deleted")) {
+        _matched=true;
+        _switchResult = "danger";
+      }
+    }
+    if (!_matched) {
+      _switchResult = "default";
     }
     return _switchResult;
   }
@@ -709,8 +783,17 @@ public class WorkflowUtil {
     _builder.append("case \'submit\':");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$buttonClass = \'ok\';//\'new\';");
-    _builder.newLine();
+    _builder.append("$buttonClass = \'");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
+        _builder.append("ok");
+      } else {
+        _builder.append("success");
+      }
+    }
+    _builder.append("\';");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("break;");
     _builder.newLine();
@@ -718,8 +801,17 @@ public class WorkflowUtil {
     _builder.append("case \'update\':");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$buttonClass = \'save\';//\'edit\';");
-    _builder.newLine();
+    _builder.append("$buttonClass = \'");
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
+        _builder.append("ok");
+      } else {
+        _builder.append("success");
+      }
+    }
+    _builder.append("\';");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("break;");
     _builder.newLine();
@@ -747,8 +839,17 @@ public class WorkflowUtil {
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
-        _builder.append("$buttonClass = \'ok\';");
-        _builder.newLine();
+        _builder.append("$buttonClass = \'");
+        {
+          boolean _targets_5 = this._utils.targets(it, "1.3.5");
+          if (_targets_5) {
+            _builder.append("ok");
+          } else {
+            _builder.append("default");
+          }
+        }
+        _builder.append("\';");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("    ");
         _builder.append("break;");
@@ -770,8 +871,15 @@ public class WorkflowUtil {
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
-        _builder.append("$buttonClass = \'ok\';");
-        _builder.newLine();
+        _builder.append("$buttonClass = \'");
+        {
+          boolean _targets_6 = this._utils.targets(it, "1.3.5");
+          if (_targets_6) {
+            _builder.append("ok");
+          }
+        }
+        _builder.append("\';");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("    ");
         _builder.append("break;");
@@ -802,7 +910,7 @@ public class WorkflowUtil {
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
-        _builder.append("$buttonClass = \'\';//\'filter\';");
+        _builder.append("$buttonClass = \'\';");
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
@@ -813,8 +921,15 @@ public class WorkflowUtil {
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
-        _builder.append("$buttonClass = \'ok\';");
-        _builder.newLine();
+        _builder.append("$buttonClass = \'");
+        {
+          boolean _targets_7 = this._utils.targets(it, "1.3.5");
+          if (_targets_7) {
+            _builder.append("ok");
+          }
+        }
+        _builder.append("\';");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("    ");
         _builder.append("break;");
@@ -829,8 +944,15 @@ public class WorkflowUtil {
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
-        _builder.append("$buttonClass = \'archive\';");
-        _builder.newLine();
+        _builder.append("$buttonClass = \'");
+        {
+          boolean _targets_8 = this._utils.targets(it, "1.3.5");
+          if (_targets_8) {
+            _builder.append("archive");
+          }
+        }
+        _builder.append("\';");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("    ");
         _builder.append("break;");
@@ -856,8 +978,15 @@ public class WorkflowUtil {
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
-        _builder.append("$buttonClass = \'ok\';");
-        _builder.newLine();
+        _builder.append("$buttonClass = \'");
+        {
+          boolean _targets_9 = this._utils.targets(it, "1.3.5");
+          if (_targets_9) {
+            _builder.append("ok");
+          }
+        }
+        _builder.append("\';");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("    ");
         _builder.append("break;");
@@ -868,8 +997,17 @@ public class WorkflowUtil {
     _builder.append("case \'delete\':");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$buttonClass = \'delete z-btred\';");
-    _builder.newLine();
+    _builder.append("$buttonClass = \'");
+    {
+      boolean _targets_10 = this._utils.targets(it, "1.3.5");
+      if (_targets_10) {
+        _builder.append("delete z-btred");
+      } else {
+        _builder.append("danger");
+      }
+    }
+    _builder.append("\';");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("break;");
     _builder.newLine();
@@ -877,15 +1015,36 @@ public class WorkflowUtil {
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("    ");
-    _builder.append("if (!empty($buttonClass)) {");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("$buttonClass = \'z-bt-\' . $buttonClass;");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("}");
-    _builder.newLine();
+    {
+      boolean _targets_11 = this._utils.targets(it, "1.3.5");
+      if (_targets_11) {
+        _builder.append("    ");
+        _builder.append("if (!empty($buttonClass)) {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$buttonClass = \'z-bt-\' . $buttonClass;");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("}");
+        _builder.newLine();
+      } else {
+        _builder.append("    ");
+        _builder.append("if (empty($buttonClass)) {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$buttonClass = \'default\';");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("}");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("$buttonClass = \'btn btn-\' . $buttonClass;");
+        _builder.newLine();
+      }
+    }
     _builder.newLine();
     _builder.append("    ");
     _builder.append("return $buttonClass;");

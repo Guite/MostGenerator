@@ -231,7 +231,18 @@ public class View {
       }
       if (_and) {
         _builder.newLine();
-        _builder.append("<p class=\"sectiondesc\">");
+        _builder.append("<p class=\"");
+        {
+          Models _container_1 = it.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          if (_targets_1) {
+            _builder.append("z-informationmsg");
+          } else {
+            _builder.append("alert alert-info");
+          }
+        }
+        _builder.append("\">");
         String _documentation_2 = it.getDocumentation();
         _builder.append(_documentation_2, "");
         _builder.append("</p>");
@@ -359,10 +370,10 @@ public class View {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      Models _container_1 = it.getContainer();
-      Application _application_1 = _container_1.getApplication();
-      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-      if (_targets_1) {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      if (_targets_2) {
         String _formattedName_7 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_7, "");
         _builder.append("/");
@@ -404,10 +415,10 @@ public class View {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      Models _container_2 = it.getContainer();
-      Application _application_2 = _container_2.getApplication();
-      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-      if (_targets_2) {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+      if (_targets_3) {
         String _formattedName_9 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_9, "");
       } else {
@@ -468,9 +479,9 @@ public class View {
               for(final BooleanField field : _booleansWithAjaxToggleEntity) {
                 _builder.append("    ");
                 _builder.append("    ");
-                Models _container_3 = it.getContainer();
-                Application _application_3 = _container_3.getApplication();
-                String _prefix = _application_3.getPrefix();
+                Models _container_4 = it.getContainer();
+                Application _application_4 = _container_4.getApplication();
+                String _prefix = _application_4.getPrefix();
                 _builder.append(_prefix, "        ");
                 _builder.append("InitToggle(\'");
                 _builder.append(objName, "        ");
@@ -562,7 +573,18 @@ public class View {
         _and = (_equals && _equals_1);
       }
       if (_and) {
-        _builder.append("<form class=\"z-form\" id=\"");
+        _builder.append("<form class=\"");
+        {
+          Models _container = it.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("z-form");
+          } else {
+            _builder.append("form-horizontal");
+          }
+        }
+        _builder.append("\" id=\"");
         String _nameMultiple = it.getNameMultiple();
         String _formatForCode = this._formattingExtensions.formatForCode(_nameMultiple);
         _builder.append(_formatForCode, "");
@@ -571,7 +593,17 @@ public class View {
         _builder.append("\' type=\'");
         String _formattedName = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName, "");
-        _builder.append("\' func=\'handleselectedentries\'}\" method=\"post\">");
+        _builder.append("\' func=\'handleselectedentries\'}\" method=\"post\"");
+        {
+          Models _container_1 = it.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          boolean _not = (!_targets_1);
+          if (_not) {
+            _builder.append(" role=\"form\"");
+          }
+        }
+        _builder.append(">");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<div>");
@@ -641,15 +673,48 @@ public class View {
         _builder.append(">");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("<table class=\"z-datatable\">");
-        _builder.newLine();
+        _builder.append("<table class=\"");
+        {
+          Models _container = it.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("z-datatable");
+          } else {
+            _builder.append("table table-striped table-bordered table-hover");
+            {
+              int _size = listItemsFields.size();
+              int _size_1 = IterableExtensions.size(listItemsIn);
+              int _plus = (_size + _size_1);
+              int _size_2 = IterableExtensions.size(listItemsOut);
+              int _plus_1 = (_plus + _size_2);
+              int _plus_2 = (_plus_1 + 1);
+              int _xifexpression = (int) 0;
+              String _tableClass = this.tableClass(controller);
+              boolean _equals = Objects.equal(_tableClass, "admin");
+              if (_equals) {
+                _xifexpression = 1;
+              } else {
+                _xifexpression = 0;
+              }
+              int _plus_3 = (_plus_2 + _xifexpression);
+              boolean _greaterThan = (_plus_3 > 7);
+              if (_greaterThan) {
+                _builder.append(" table-condensed");
+              }
+            }
+            _builder.append("{* table-responsive*}");
+          }
+        }
+        _builder.append("\">");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<colgroup>");
         _builder.newLine();
         {
-          String _tableClass = this.tableClass(controller);
-          boolean _equals = Objects.equal(_tableClass, "admin");
-          if (_equals) {
+          String _tableClass_1 = this.tableClass(controller);
+          boolean _equals_1 = Objects.equal(_tableClass_1, "admin");
+          if (_equals_1) {
             _builder.append("        ");
             _builder.append("<col id=\"cselect\" />");
             _builder.newLine();
@@ -700,9 +765,9 @@ public class View {
           }
         }
         {
-          String _tableClass_1 = this.tableClass(controller);
-          boolean _equals_1 = Objects.equal(_tableClass_1, "admin");
-          if (_equals_1) {
+          String _tableClass_2 = this.tableClass(controller);
+          boolean _equals_2 = Objects.equal(_tableClass_2, "admin");
+          if (_equals_2) {
             _builder.append("        ");
             _builder.append("<th id=\"hselect\" scope=\"col\" align=\"center\" valign=\"middle\">");
             _builder.newLine();
@@ -744,8 +809,19 @@ public class View {
         }
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
-        _builder.append("<th id=\"hitemactions\" scope=\"col\" class=\"z-right z-order-unsorted\">{gt text=\'Actions\'}</th>");
-        _builder.newLine();
+        _builder.append("<th id=\"hitemactions\" scope=\"col\" class=\"");
+        {
+          Models _container_1 = it.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          if (_targets_1) {
+            _builder.append("z");
+          } else {
+            _builder.append("text");
+          }
+        }
+        _builder.append("-right z-order-unsorted\">{gt text=\'Actions\'}</th>");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("</tr>");
         _builder.newLine();
@@ -771,21 +847,30 @@ public class View {
         _builder.append("<li><ul>");
         _builder.newLine();
       } else {
-        boolean _equals_2 = ((this.listType).intValue() == 2);
-        if (_equals_2) {
+        boolean _equals_3 = ((this.listType).intValue() == 2);
+        if (_equals_3) {
           _builder.append("    ");
           _builder.append("<dt>");
           _builder.newLine();
         } else {
-          boolean _equals_3 = ((this.listType).intValue() == 3);
-          if (_equals_3) {
+          boolean _equals_4 = ((this.listType).intValue() == 3);
+          if (_equals_4) {
             _builder.append("    ");
-            _builder.append("<tr class=\"{cycle values=\'z-odd, z-even\'}\">");
-            _builder.newLine();
+            _builder.append("<tr");
             {
-              String _tableClass_2 = this.tableClass(controller);
-              boolean _equals_4 = Objects.equal(_tableClass_2, "admin");
-              if (_equals_4) {
+              Models _container_2 = it.getContainer();
+              Application _application_2 = _container_2.getApplication();
+              boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+              if (_targets_2) {
+                _builder.append(" class=\"{cycle values=\'z-odd, z-even\'}\"");
+              }
+            }
+            _builder.append(">");
+            _builder.newLineIfNotEmpty();
+            {
+              String _tableClass_3 = this.tableClass(controller);
+              boolean _equals_5 = Objects.equal(_tableClass_3, "admin");
+              if (_equals_5) {
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("<td headers=\"hselect\" align=\"center\" valign=\"top\">");
@@ -854,14 +939,14 @@ public class View {
         _builder.append("</ul></li>");
         _builder.newLine();
       } else {
-        boolean _equals_5 = ((this.listType).intValue() == 2);
-        if (_equals_5) {
+        boolean _equals_6 = ((this.listType).intValue() == 2);
+        if (_equals_6) {
           _builder.append("    ");
           _builder.append("</dt>");
           _builder.newLine();
         } else {
-          boolean _equals_6 = ((this.listType).intValue() == 3);
-          if (_equals_6) {
+          boolean _equals_7 = ((this.listType).intValue() == 3);
+          if (_equals_7) {
             _builder.append("    ");
             _builder.append("</tr>");
             _builder.newLine();
@@ -878,39 +963,50 @@ public class View {
         _builder.append("<li>");
         _builder.newLine();
       } else {
-        boolean _equals_7 = ((this.listType).intValue() == 2);
-        if (_equals_7) {
+        boolean _equals_8 = ((this.listType).intValue() == 2);
+        if (_equals_8) {
           _builder.append("    ");
           _builder.append("<dt>");
           _builder.newLine();
         } else {
-          boolean _equals_8 = ((this.listType).intValue() == 3);
-          if (_equals_8) {
+          boolean _equals_9 = ((this.listType).intValue() == 3);
+          if (_equals_9) {
             _builder.append("    ");
             _builder.append("<tr class=\"z-");
-            String _tableClass_3 = this.tableClass(controller);
-            _builder.append(_tableClass_3, "    ");
+            String _tableClass_4 = this.tableClass(controller);
+            _builder.append(_tableClass_4, "    ");
             _builder.append("tableempty\">");
             _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("  ");
-            _builder.append("<td class=\"z-left\" colspan=\"");
-            int _size = listItemsFields.size();
-            int _size_1 = IterableExtensions.size(listItemsIn);
-            int _plus = (_size + _size_1);
-            int _size_2 = IterableExtensions.size(listItemsOut);
-            int _plus_1 = (_plus + _size_2);
-            int _plus_2 = (_plus_1 + 1);
-            int _xifexpression = (int) 0;
-            String _tableClass_4 = this.tableClass(controller);
-            boolean _equals_9 = Objects.equal(_tableClass_4, "admin");
-            if (_equals_9) {
-              _xifexpression = 1;
-            } else {
-              _xifexpression = 0;
+            _builder.append("<td class=\"");
+            {
+              Models _container_3 = it.getContainer();
+              Application _application_3 = _container_3.getApplication();
+              boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+              if (_targets_3) {
+                _builder.append("z");
+              } else {
+                _builder.append("text");
+              }
             }
-            int _plus_3 = (_plus_2 + _xifexpression);
-            _builder.append(_plus_3, "      ");
+            _builder.append("-left\" colspan=\"");
+            int _size_3 = listItemsFields.size();
+            int _size_4 = IterableExtensions.size(listItemsIn);
+            int _plus_4 = (_size_3 + _size_4);
+            int _size_5 = IterableExtensions.size(listItemsOut);
+            int _plus_5 = (_plus_4 + _size_5);
+            int _plus_6 = (_plus_5 + 1);
+            int _xifexpression_1 = (int) 0;
+            String _tableClass_5 = this.tableClass(controller);
+            boolean _equals_10 = Objects.equal(_tableClass_5, "admin");
+            if (_equals_10) {
+              _xifexpression_1 = 1;
+            } else {
+              _xifexpression_1 = 0;
+            }
+            int _plus_7 = (_plus_6 + _xifexpression_1);
+            _builder.append(_plus_7, "      ");
             _builder.append("\">");
             _builder.newLineIfNotEmpty();
           }
@@ -931,14 +1027,14 @@ public class View {
         _builder.append("</li>");
         _builder.newLine();
       } else {
-        boolean _equals_10 = ((this.listType).intValue() == 2);
-        if (_equals_10) {
+        boolean _equals_11 = ((this.listType).intValue() == 2);
+        if (_equals_11) {
           _builder.append("    ");
           _builder.append("</dt>");
           _builder.newLine();
         } else {
-          boolean _equals_11 = ((this.listType).intValue() == 3);
-          if (_equals_11) {
+          boolean _equals_12 = ((this.listType).intValue() == 3);
+          if (_equals_12) {
             _builder.append("    ");
             _builder.append("  ");
             _builder.append("</td>");
@@ -1012,7 +1108,17 @@ public class View {
     _builder.append("<select id=\"");
     String _formatForDB_1 = this._formattingExtensions.formatForDB(appName);
     _builder.append(_formatForDB_1, "    ");
-    _builder.append("_action\" name=\"action\">");
+    _builder.append("_action\" name=\"action\"");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" class=\"form-control\"");
+      }
+    }
+    _builder.append(">");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<option value=\"\">{gt text=\'Choose action\'}</option>");
@@ -1257,7 +1363,19 @@ public class View {
     _builder.append("<th id=\"h");
     String _markupIdCode = this.markupIdCode(it, Boolean.valueOf(false));
     _builder.append(_markupIdCode, "");
-    _builder.append("\" scope=\"col\" class=\"z-");
+    _builder.append("\" scope=\"col\" class=\"");
+    {
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("text");
+      }
+    }
+    _builder.append("-");
     String _alignment = this.alignment(it);
     _builder.append(_alignment, "");
     _builder.append("\">");
@@ -1275,10 +1393,10 @@ public class View {
     final String fieldLabel = _xifexpression;
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    Entity _entity = it.getEntity();
+    Entity _entity_1 = it.getEntity();
     String _name_2 = it.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name_2);
-    CharSequence _headerSortingLink = this.headerSortingLink(it, controller, _entity, _formatForCode, fieldLabel);
+    CharSequence _headerSortingLink = this.headerSortingLink(it, controller, _entity_1, _formatForCode, fieldLabel);
     _builder.append(_headerSortingLink, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("</th>");
@@ -1291,7 +1409,18 @@ public class View {
     _builder.append("<th id=\"h");
     String _markupIdCode = this.markupIdCode(it, useTarget);
     _builder.append(_markupIdCode, "");
-    _builder.append("\" scope=\"col\" class=\"z-left\">");
+    _builder.append("\" scope=\"col\" class=\"");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("z");
+      } else {
+        _builder.append("text");
+      }
+    }
+    _builder.append("-left\">");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     Entity _xifexpression = null;
@@ -1563,7 +1692,17 @@ public class View {
     String _name = it.getName();
     boolean _equals = Objects.equal(_name, "workflowState");
     if (_equals) {
-      _xifexpression = "z-nowrap";
+      String _xifexpression_1 = null;
+      Entity _entity = it.getEntity();
+      Models _container = _entity.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _xifexpression_1 = "z-nowrap";
+      } else {
+        _xifexpression_1 = "nowrap";
+      }
+      _xifexpression = _xifexpression_1;
     } else {
       _xifexpression = "";
     }
@@ -1817,7 +1956,16 @@ public class View {
         _builder.append(" theme=\'Printer\'");
         String _additionalUrlParametersForQuickViewLink = this._viewExtensions.additionalUrlParametersForQuickViewLink(linkController);
         _builder.append(_additionalUrlParametersForQuickViewLink, "    ");
-        _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"z-hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
+        _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"");
+        {
+          Models _container_3 = it.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets = this._utils.targets(_application_3, "1.3.5");
+          if (_targets) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<script type=\"text/javascript\">");
@@ -1831,9 +1979,9 @@ public class View {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("        ");
-        Models _container_3 = it.getContainer();
-        Application _application_3 = _container_3.getApplication();
-        String _prefix = _application_3.getPrefix();
+        Models _container_4 = it.getContainer();
+        Application _application_4 = _container_4.getApplication();
+        String _prefix = _application_4.getPrefix();
         _builder.append(_prefix, "            ");
         _builder.append("InitInlineWindow($(\'");
         String _name_7 = linkEntity.getName();
@@ -1997,7 +2145,18 @@ public class View {
         _builder.append("<td id=\"");
         CharSequence _itemActionContainerId = this.itemActionContainerId(it);
         _builder.append(_itemActionContainerId, "");
-        _builder.append("\" headers=\"hitemactions\" class=\"z-right z-nowrap z-w02\">");
+        _builder.append("\" headers=\"hitemactions\" class=\"");
+        {
+          Models _container = it.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("z-right z-nowrap");
+          } else {
+            _builder.append("actions text-right nowrap");
+          }
+        }
+        _builder.append(" z-w02\">");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -2024,7 +2183,18 @@ public class View {
     _builder.append("{icon id=\"");
     CharSequence _itemActionContainerIdForSmarty = this.itemActionContainerIdForSmarty(it);
     _builder.append(_itemActionContainerIdForSmarty, "        ");
-    _builder.append("trigger\" type=\'options\' size=\'extrasmall\' __alt=\'Actions\' class=\'z-pointer z-hide\'}");
+    _builder.append("trigger\" type=\'options\' size=\'extrasmall\' __alt=\'Actions\' class=\'");
+    {
+      Models _container_1 = it.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      if (_targets_1) {
+        _builder.append("z-pointer z-hide");
+      } else {
+        _builder.append("cursor-pointer hide");
+      }
+    }
+    _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<script type=\"text/javascript\">");
@@ -2036,9 +2206,9 @@ public class View {
     _builder.append("document.observe(\'dom:loaded\', function() {");
     _builder.newLine();
     _builder.append("                ");
-    Models _container = it.getContainer();
-    Application _application = _container.getApplication();
-    String _prefix = _application.getPrefix();
+    Models _container_2 = it.getContainer();
+    Application _application_2 = _container_2.getApplication();
+    String _prefix = _application_2.getPrefix();
     _builder.append(_prefix, "                ");
     _builder.append("InitItemActions(\'");
     String _name_1 = it.getName();

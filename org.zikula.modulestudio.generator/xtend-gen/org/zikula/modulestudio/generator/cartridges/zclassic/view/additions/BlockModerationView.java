@@ -61,7 +61,14 @@ public class BlockModerationView {
     _builder.append("<li><a href=\"{modurl modname=\'");
     String _appName = this._utils.appName(it);
     _builder.append(_appName, "        ");
-    _builder.append("\' type=\'admin\' func=\'view\' ot=$modItem.objectType workflowState=$modItem.state}\" class=\"z-bold\">{$modItem.message}</a></li>");
+    _builder.append("\' type=\'admin\' func=\'view\' ot=$modItem.objectType workflowState=$modItem.state}\" class=\"");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-");
+      }
+    }
+    _builder.append("bold\">{$modItem.message}</a></li>");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("{/foreach}");

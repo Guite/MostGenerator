@@ -93,14 +93,14 @@ class Styles {
 
     def private validationStyles(Application it) '''
         /* validation */
-        div.z-formrow input.required, div.z-formrow textarea.required {
+        div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» input.required, div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» textarea.required {
             border: 1px solid #00a8e6;
         }
-        div.z-formrow input.validation-failed, div.z-formrow textarea.validation-failed {
+        div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» input.validation-failed, div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» textarea.validation-failed {
             border: 1px solid #f30;
             color: #f30;
         }
-        div.z-formrow input.validation-passed, div.z-formrow textarea.validation-passed {
+        div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» input.validation-passed, div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» textarea.validation-passed {
             border: 1px solid #0c0;
             color: #000;
         }
@@ -241,22 +241,23 @@ class Styles {
 
     def private viewFilterForm(Application it) '''
         «IF !getAllControllers.filter[hasActions('view')].empty»
-            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm {
+            div.«appName.toLowerCase»-view form.«prefix»-quicknav {
                 margin: 10px 0;
                 padding: 8px 12px;
                 border: 1px solid #ccc;
             }
 
-            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm fieldset {
+            div.«appName.toLowerCase»-view form.«prefix»-quicknav fieldset {
                 padding: 3px 10px;
                 margin-bottom: 0;
             }
 
-            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm fieldset h3 {
+            div.«appName.toLowerCase»-view form.«prefix»-quicknav fieldset h3 {
                 margin-top: 0;
+                display: none;
             }
 
-            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm fieldset #num {
+            div.«appName.toLowerCase»-view form.«prefix»-quicknav fieldset #num {
                 width: 50px;
                 text-align: right;
             }

@@ -63,36 +63,97 @@ public class ContentTypeSingleView {
     _builder.append("<div style=\"margin-left: 80px\">");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<div class=\"z-formrow\">");
-    _builder.newLine();
+    _builder.append("<div class=\"");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("{formlabel for=\'");
     String _appName = this._utils.appName(it);
     _builder.append(_appName, "        ");
-    _builder.append("_objecttype\' __text=\'Object type\'}");
+    _builder.append("_objecttype\' __text=\'Object type\'");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(" cssClass=\'col-lg-3 control-label\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("        ");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("        ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("            ");
     _builder.append("{");
     String _appName_1 = this._utils.appName(it);
     String _formatForDB = this._formattingExtensions.formatForDB(_appName_1);
-    _builder.append(_formatForDB, "        ");
+    _builder.append(_formatForDB, "            ");
     _builder.append("ObjectTypeSelector assign=\'allObjectTypes\'}");
     _builder.newLineIfNotEmpty();
-    _builder.append("        ");
+    _builder.append("            ");
     _builder.append("{formdropdownlist id=\'");
     String _appName_2 = this._utils.appName(it);
-    _builder.append(_appName_2, "        ");
-    _builder.append("_objecttype\' dataField=\'objectType\' group=\'data\' mandatory=true items=$allObjectTypes}");
+    _builder.append(_appName_2, "            ");
+    _builder.append("_objecttype\' dataField=\'objectType\' group=\'data\' mandatory=true items=$allObjectTypes");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
-    _builder.append("        ");
-    _builder.append("<span class=\"z-sub z-formnote\">{gt text=\'If you change this please save the element once to reload the parameters below.\'}</span>");
-    _builder.newLine();
+    _builder.append("            ");
+    _builder.append("<span class=\"");
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
+        _builder.append("z-sub z-formnote");
+      } else {
+        _builder.append("help-block");
+      }
+    }
+    _builder.append("\">{gt text=\'If you change this please save the element once to reload the parameters below.\'}</span>");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      boolean _not_3 = (!_targets_5);
+      if (_not_3) {
+        _builder.append("        ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("    ");
     _builder.append("</div>");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<div{* class=\"z-formrow\"*}>");
-    _builder.newLine();
+    _builder.append("<div{* class=\"");
+    {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      if (_targets_6) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\"*}>");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<p>{gt text=\'Please select your item here. You can resort the dropdown list and reduce it\\\'s entries by applying filters. On the right side you will see a preview of the selected entry.\'}</p>");
     _builder.newLine();
@@ -108,8 +169,17 @@ public class ContentTypeSingleView {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<div{* class=\"z-formrow\"*}>");
-    _builder.newLine();
+    _builder.append("<div{* class=\"");
+    {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      if (_targets_7) {
+        _builder.append("z-formrow");
+      } else {
+        _builder.append("form-group");
+      }
+    }
+    _builder.append("\"*}>");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("{formradiobutton id=\'linkButton\' value=\'link\' dataField=\'displayMode\' group=\'data\' mandatory=1}");
     _builder.newLine();

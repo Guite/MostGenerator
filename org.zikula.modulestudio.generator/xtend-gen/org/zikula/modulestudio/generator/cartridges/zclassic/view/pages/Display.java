@@ -300,8 +300,19 @@ public class Display {
         _builder.append("_panel\">");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
-        _builder.append("<h3 id=\"z-panel-header-fields\" class=\"z-panel-header z-panel-indicator z-pointer z-panel-active\">{gt text=\'Fields\'}</h3>");
-        _builder.newLine();
+        _builder.append("<h3 id=\"z-panel-header-fields\" class=\"z-panel-header z-panel-indicator ");
+        {
+          Models _container_1 = it.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          if (_targets_1) {
+            _builder.append("z");
+          } else {
+            _builder.append("cursor");
+          }
+        }
+        _builder.append("-pointer z-panel-active\">{gt text=\'Fields\'}</h3>");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<div class=\"z-panel-content z-panel-active\" style=\"overflow: visible\">");
         _builder.newLine();
@@ -365,10 +376,10 @@ public class Display {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      Models _container_1 = it.getContainer();
-      Application _application_1 = _container_1.getApplication();
-      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-      if (_targets_1) {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      if (_targets_2) {
         String _formattedName_3 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_3, "");
       } else {
@@ -420,9 +431,9 @@ public class Display {
               Iterable<BooleanField> _booleansWithAjaxToggleEntity = this._modelExtensions.getBooleansWithAjaxToggleEntity(it);
               for(final BooleanField field : _booleansWithAjaxToggleEntity) {
                 _builder.append("                ");
-                Models _container_2 = it.getContainer();
-                Application _application_2 = _container_2.getApplication();
-                String _prefix = _application_2.getPrefix();
+                Models _container_3 = it.getContainer();
+                Application _application_3 = _container_3.getApplication();
+                String _prefix = _application_3.getPrefix();
                 _builder.append(_prefix, "                ");
                 _builder.append("InitToggle(\'");
                 String _name_6 = it.getName();
@@ -615,17 +626,28 @@ public class Display {
     {
       boolean _hasVisibleWorkflow = this._workflowExtensions.hasVisibleWorkflow(it);
       if (_hasVisibleWorkflow) {
-        _builder.append(" ({$");
+        _builder.append(" <small>{$");
         String _name = it.getName();
         String _formatForCode = this._formattingExtensions.formatForCode(_name);
         _builder.append(_formatForCode, "");
         _builder.append(".workflowState|");
         String _formatForDB_2 = this._formattingExtensions.formatForDB(appName);
         _builder.append(_formatForDB_2, "");
-        _builder.append("ObjectState:false|lower})");
+        _builder.append("ObjectState:false|lower})</small>");
       }
     }
-    _builder.append("{icon id=\'itemactionstrigger\' type=\'options\' size=\'extrasmall\' __alt=\'Actions\' class=\'z-pointer z-hide\'}");
+    _builder.append("{icon id=\'itemactionstrigger\' type=\'options\' size=\'extrasmall\' __alt=\'Actions\' class=\'");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("z-pointer z-hide");
+      } else {
+        _builder.append("cursor-pointer hide");
+      }
+    }
+    _builder.append("\'}");
     return _builder;
   }
   
@@ -816,7 +838,16 @@ public class Display {
         _builder.append(" theme=\'Printer\'");
         String _additionalUrlParametersForQuickViewLink = this._viewExtensions.additionalUrlParametersForQuickViewLink(controller);
         _builder.append(_additionalUrlParametersForQuickViewLink, "  ");
-        _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"z-hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
+        _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"");
+        {
+          Models _container_3 = it.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets = this._utils.targets(_application_3, "1.3.5");
+          if (_targets) {
+            _builder.append("z-");
+          }
+        }
+        _builder.append("hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
         _builder.newLineIfNotEmpty();
         _builder.append("  ");
         _builder.append("<script type=\"text/javascript\">");
@@ -837,9 +868,9 @@ public class Display {
           if (_tripleNotEquals_3) {
             _builder.append("  ");
             _builder.append("        ");
-            Models _container_3 = it.getContainer();
-            Application _application_3 = _container_3.getApplication();
-            String _prefix = _application_3.getPrefix();
+            Models _container_4 = it.getContainer();
+            Application _application_4 = _container_4.getApplication();
+            String _prefix = _application_4.getPrefix();
             _builder.append(_prefix, "          ");
             _builder.append("InitInlineWindow($(\'");
             String _name_5 = linkEntity.getName();
@@ -875,9 +906,9 @@ public class Display {
           } else {
             _builder.append("  ");
             _builder.append("        ");
-            Models _container_4 = it.getContainer();
-            Application _application_4 = _container_4.getApplication();
-            String _prefix_1 = _application_4.getPrefix();
+            Models _container_5 = it.getContainer();
+            Application _application_5 = _container_5.getApplication();
+            String _prefix_1 = _application_5.getPrefix();
             _builder.append(_prefix_1, "          ");
             _builder.append("InitInlineWindow($(\'");
             String _name_8 = linkEntity.getName();
@@ -1039,21 +1070,32 @@ public class Display {
             String _appName = this._utils.appName(_application);
             String _formatForDB = this._formattingExtensions.formatForDB(_appName);
             _builder.append(_formatForDB, "");
-            _builder.append("map z-panel-header z-panel-indicator z-pointer\">{gt text=\'Map\'}</h3>");
+            _builder.append("map z-panel-header z-panel-indicator ");
+            {
+              Models _container_1 = it.getContainer();
+              Application _application_1 = _container_1.getApplication();
+              boolean _targets = this._utils.targets(_application_1, "1.3.5");
+              if (_targets) {
+                _builder.append("z");
+              } else {
+                _builder.append("cursor");
+              }
+            }
+            _builder.append("-pointer\">{gt text=\'Map\'}</h3>");
             _builder.newLineIfNotEmpty();
             _builder.append("<div class=\"");
-            Models _container_1 = it.getContainer();
-            Application _application_1 = _container_1.getApplication();
-            String _appName_1 = this._utils.appName(_application_1);
+            Models _container_2 = it.getContainer();
+            Application _application_2 = _container_2.getApplication();
+            String _appName_1 = this._utils.appName(_application_2);
             String _formatForDB_1 = this._formattingExtensions.formatForDB(_appName_1);
             _builder.append(_formatForDB_1, "");
             _builder.append("map z-panel-content\" style=\"display: none\">");
             _builder.newLineIfNotEmpty();
           } else {
             _builder.append("<h3 class=\"");
-            Models _container_2 = it.getContainer();
-            Application _application_2 = _container_2.getApplication();
-            String _appName_2 = this._utils.appName(_application_2);
+            Models _container_3 = it.getContainer();
+            Application _application_3 = _container_3.getApplication();
+            String _appName_2 = this._utils.appName(_application_3);
             String _formatForDB_2 = this._formattingExtensions.formatForDB(_appName_2);
             _builder.append(_formatForDB_2, "");
             _builder.append("map\">{gt text=\'Map\'}</h3>");
@@ -1103,17 +1145,17 @@ public class Display {
         _builder.append("var latlon = new mxn.LatLonPoint({{$");
         _builder.append(objName, "            ");
         _builder.append(".latitude|");
-        Models _container_3 = it.getContainer();
-        Application _application_3 = _container_3.getApplication();
-        String _name = _application_3.getName();
+        Models _container_4 = it.getContainer();
+        Application _application_4 = _container_4.getApplication();
+        String _name = _application_4.getName();
         String _formatForDB_3 = this._formattingExtensions.formatForDB(_name);
         _builder.append(_formatForDB_3, "            ");
         _builder.append("FormatGeoData}}, {{$");
         _builder.append(objName, "            ");
         _builder.append(".longitude|");
-        Models _container_4 = it.getContainer();
-        Application _application_4 = _container_4.getApplication();
-        String _name_1 = _application_4.getName();
+        Models _container_5 = it.getContainer();
+        Application _application_5 = _container_5.getApplication();
+        String _name_1 = _application_5.getName();
         String _formatForDB_4 = this._formattingExtensions.formatForDB(_name_1);
         _builder.append(_formatForDB_4, "            ");
         _builder.append("FormatGeoData}});");
@@ -1150,9 +1192,9 @@ public class Display {
         _builder.append("{/pageaddvarblock}");
         _builder.newLine();
         _builder.append("<div id=\"mapcontainer\" class=\"");
-        Controllers _container_5 = controller.getContainer();
-        Application _application_5 = _container_5.getApplication();
-        String _appName_3 = this._utils.appName(_application_5);
+        Controllers _container_6 = controller.getContainer();
+        Application _application_6 = _container_6.getApplication();
+        String _appName_3 = this._utils.appName(_application_6);
         String _lowerCase = _appName_3.toLowerCase();
         _builder.append(_lowerCase, "");
         _builder.append("mapcontainer\">");
@@ -1166,10 +1208,10 @@ public class Display {
       if (_isAttributable) {
         _builder.append("{include file=\'");
         {
-          Models _container_6 = it.getContainer();
-          Application _application_6 = _container_6.getApplication();
-          boolean _targets = this._utils.targets(_application_6, "1.3.5");
-          if (_targets) {
+          Models _container_7 = it.getContainer();
+          Application _application_7 = _container_7.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_7, "1.3.5");
+          if (_targets_1) {
             String _formattedName = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName, "");
           } else {
@@ -1195,10 +1237,10 @@ public class Display {
       if (_isCategorisable) {
         _builder.append("{include file=\'");
         {
-          Models _container_7 = it.getContainer();
-          Application _application_7 = _container_7.getApplication();
-          boolean _targets_1 = this._utils.targets(_application_7, "1.3.5");
-          if (_targets_1) {
+          Models _container_8 = it.getContainer();
+          Application _application_8 = _container_8.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_8, "1.3.5");
+          if (_targets_2) {
             String _formattedName_2 = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName_2, "");
           } else {
@@ -1226,8 +1268,19 @@ public class Display {
         {
           boolean _useGroupingPanels_3 = this._viewExtensions.useGroupingPanels(it, "display");
           if (_useGroupingPanels_3) {
-            _builder.append("<h3 class=\"relatives z-panel-header z-panel-indicator z-pointer\">{gt text=\'Relatives\'}</h3>");
-            _builder.newLine();
+            _builder.append("<h3 class=\"relatives z-panel-header z-panel-indicator ");
+            {
+              Models _container_9 = it.getContainer();
+              Application _application_9 = _container_9.getApplication();
+              boolean _targets_3 = this._utils.targets(_application_9, "1.3.5");
+              if (_targets_3) {
+                _builder.append("z");
+              } else {
+                _builder.append("cursor");
+              }
+            }
+            _builder.append("-pointer\">{gt text=\'Relatives\'}</h3>");
+            _builder.newLineIfNotEmpty();
             _builder.append("<div class=\"relatives z-panel-content\" style=\"display: none\">");
             _builder.newLine();
           } else {
@@ -1238,10 +1291,10 @@ public class Display {
         _builder.append("        ");
         _builder.append("{include file=\'");
         {
-          Models _container_8 = it.getContainer();
-          Application _application_8 = _container_8.getApplication();
-          boolean _targets_2 = this._utils.targets(_application_8, "1.3.5");
-          if (_targets_2) {
+          Models _container_10 = it.getContainer();
+          Application _application_10 = _container_10.getApplication();
+          boolean _targets_4 = this._utils.targets(_application_10, "1.3.5");
+          if (_targets_4) {
             String _formattedName_4 = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName_4, "        ");
             _builder.append("/");
@@ -1274,10 +1327,10 @@ public class Display {
       if (_isMetaData) {
         _builder.append("{include file=\'");
         {
-          Models _container_9 = it.getContainer();
-          Application _application_9 = _container_9.getApplication();
-          boolean _targets_3 = this._utils.targets(_application_9, "1.3.5");
-          if (_targets_3) {
+          Models _container_11 = it.getContainer();
+          Application _application_11 = _container_11.getApplication();
+          boolean _targets_5 = this._utils.targets(_application_11, "1.3.5");
+          if (_targets_5) {
             String _formattedName_6 = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName_6, "");
           } else {
@@ -1303,10 +1356,10 @@ public class Display {
       if (_isStandardFields) {
         _builder.append("{include file=\'");
         {
-          Models _container_10 = it.getContainer();
-          Application _application_10 = _container_10.getApplication();
-          boolean _targets_4 = this._utils.targets(_application_10, "1.3.5");
-          if (_targets_4) {
+          Models _container_12 = it.getContainer();
+          Application _application_12 = _container_12.getApplication();
+          boolean _targets_6 = this._utils.targets(_application_12, "1.3.5");
+          if (_targets_6) {
             String _formattedName_8 = this._controllerExtensions.formattedName(controller);
             _builder.append(_formattedName_8, "");
           } else {
@@ -1352,8 +1405,19 @@ public class Display {
       boolean _useGroupingPanels = this._viewExtensions.useGroupingPanels(it, "display");
       if (_useGroupingPanels) {
         _builder.append("    ");
-        _builder.append("<h3 class=\"z-panel-header z-panel-indicator z-pointer\">{$providerArea}</h3>");
-        _builder.newLine();
+        _builder.append("<h3 class=\"z-panel-header z-panel-indicator ");
+        {
+          Models _container = it.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("z");
+          } else {
+            _builder.append("cursor");
+          }
+        }
+        _builder.append("-pointer\">{$providerArea}</h3>");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<div class=\"z-panel-content\" style=\"display: none\">{$hook}</div>");
         _builder.newLine();

@@ -37,7 +37,7 @@ class Section {
     def private extensionsAndRelations(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
         «IF geographical»
             «IF useGroupingPanels('edit')»
-            <h3 class="«app.appName.formatForDB»map z-panel-header z-panel-indicator z-pointer">{gt text='Map'}</h3>
+            <h3 class="«app.appName.formatForDB»map z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
             <fieldset class="«app.appName.formatForDB»map z-panel-content" style="display: none">
             «ELSE»
             <fieldset class="«app.appName.formatForDB»map">
@@ -76,7 +76,7 @@ class Section {
         {if is_array($hooks) && count($hooks)}
             {foreach key='providerArea' item='hook' from=$hooks}
                 «IF useGroupingPanels('edit')»
-                    <h3 class="hook z-panel-header z-panel-indicator z-pointer">{$providerArea}</h3>
+                    <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
                     <fieldset class="hook z-panel-content" style="display: none">{$hook}</div>
                 «ELSE»
                     <fieldset>
@@ -92,9 +92,15 @@ class Section {
         {if $mode eq 'create'}
             <fieldset>
                 <legend>{gt text='Return control'}</legend>
-                <div class="z-formrow">
-                    {formlabel for='repeatcreation' __text='Create another item after save'}
-                    {formcheckbox group='«name.formatForDB»' id='repeatcreation' readOnly=false}
+                <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                    {formlabel for='repeatcreation' __text='Create another item after save'«IF !container.application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !container.application.targets('1.3.5')»
+                    <div class="col-lg-9">
+                «ENDIF»
+                        {formcheckbox group='«name.formatForDB»' id='repeatcreation' readOnly=false}
+                «IF !container.application.targets('1.3.5')»
+                    </div>
+                «ENDIF»
                 </div>
             </fieldset>
         {/if}
@@ -102,7 +108,10 @@ class Section {
 
     def private submitActions(Entity it) '''
         {* include possible submit actions *}
-        <div class="z-buttons z-formbuttons">
+        <div class="«IF container.application.targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
+        «IF !container.application.targets('1.3.5')»
+            <div class="col-lg-offset-3 col-lg-9">
+        «ENDIF»
         {foreach item='action' from=$actions}
             {assign var='actionIdCapital' value=$action.id|@ucwords}
             {gt text=$action.title assign='actionTitle'}
@@ -114,7 +123,10 @@ class Section {
                 {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
             {/if}
         {/foreach}
-            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='z-bt-cancel'}
+            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF container.application.targets('1.3.5')»z-bt-cancel«ELSE»btn btn-default«ENDIF»'}
+        «IF !container.application.targets('1.3.5')»
+            </div>
+        «ENDIF»
         </div>
     '''
 }

@@ -82,7 +82,7 @@ class Finder {
             $('«appName»_pagesize').observe('change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_gosearch').observe('click', «name.formatForDB».finder.onParamChanged)
                                    .observe('keypress', «name.formatForDB».finder.onParamChanged);
-            $('«appName»_submit').addClassName('z-hide');
+            $('«appName»_submit').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
             $('«appName»_cancel').observe('click', «name.formatForDB».finder.handleCancel);
         };
 
@@ -225,7 +225,7 @@ class Finder {
 
         «name.formatForDB».itemSelector.onParamChanged = function ()
         {
-            $('ajax_indicator').removeClassName('z-hide');
+            $('ajax_indicator').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
 
             «name.formatForDB».itemSelector.getItemList();
         };
@@ -253,7 +253,7 @@ class Finder {
                     var baseId;
                     baseId = «name.formatForDB».itemSelector.baseId;
                     «name.formatForDB».itemSelector.items[baseId] = req.getData();
-                    $('ajax_indicator').addClassName('z-hide');
+                    $('ajax_indicator').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                     «name.formatForDB».itemSelector.updateItemDropdownEntries();
                     «name.formatForDB».itemSelector.updatePreview();
                 }
@@ -286,7 +286,7 @@ class Finder {
             baseId = «name.formatForDB».itemSelector.baseId;
             items = «name.formatForDB».itemSelector.items[baseId];
 
-            $(baseId + '_previewcontainer').addClassName('z-hide');
+            $(baseId + '_previewcontainer').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
 
             if (items.length === 0) {
                 return;
@@ -304,7 +304,7 @@ class Finder {
 
             if (selectedElement !== null) {
                 $(baseId + '_previewcontainer').update(window.atob(selectedElement.previewInfo))
-                                               .removeClassName('z-hide');
+                                               .removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
             }
         };
 
