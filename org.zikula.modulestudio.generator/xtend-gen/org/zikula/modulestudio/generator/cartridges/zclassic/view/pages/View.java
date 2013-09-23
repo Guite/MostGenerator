@@ -1508,13 +1508,13 @@ public class View {
   private CharSequence sortParamsForIncomingRelations(final Entity it) {
     StringConcatenation _builder = new StringConcatenation();
     {
-      Iterable<JoinRelationship> _incomingJoinRelationsWithOneSource = this._modelJoinExtensions.getIncomingJoinRelationsWithOneSource(it);
-      boolean _isEmpty = IterableExtensions.isEmpty(_incomingJoinRelationsWithOneSource);
+      Iterable<JoinRelationship> _bidirectionalIncomingJoinRelationsWithOneSource = this._modelJoinExtensions.getBidirectionalIncomingJoinRelationsWithOneSource(it);
+      boolean _isEmpty = IterableExtensions.isEmpty(_bidirectionalIncomingJoinRelationsWithOneSource);
       boolean _not = (!_isEmpty);
       if (_not) {
         {
-          Iterable<JoinRelationship> _incomingJoinRelationsWithOneSource_1 = this._modelJoinExtensions.getIncomingJoinRelationsWithOneSource(it);
-          for(final JoinRelationship relation : _incomingJoinRelationsWithOneSource_1) {
+          Iterable<JoinRelationship> _bidirectionalIncomingJoinRelationsWithOneSource_1 = this._modelJoinExtensions.getBidirectionalIncomingJoinRelationsWithOneSource(it);
+          for(final JoinRelationship relation : _bidirectionalIncomingJoinRelationsWithOneSource_1) {
             String _relationAliasName = this._namingExtensions.getRelationAliasName(relation, Boolean.valueOf(false));
             final String sourceAliasName = this._formattingExtensions.formatForCode(_relationAliasName);
             _builder.append(" ");
