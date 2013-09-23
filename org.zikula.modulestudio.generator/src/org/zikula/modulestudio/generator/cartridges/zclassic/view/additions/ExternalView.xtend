@@ -133,10 +133,6 @@ class ExternalView {
                 <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.ImageViewer.js"></script>
-{*            <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/prototype.js"></script>
-            <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/scriptaculous.js"></script>
-            <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/dragdrop.js"></script>
-            <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/effects.js"></script>*}
             <script type="text/javascript" src="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_finder.js"></script>
         «IF app.targets('1.3.5')»
         {if $editorName eq 'tinymce'}

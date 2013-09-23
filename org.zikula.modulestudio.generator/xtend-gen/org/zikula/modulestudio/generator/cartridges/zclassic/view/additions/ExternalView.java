@@ -603,17 +603,6 @@ public class ExternalView {
     _builder.append("        ");
     _builder.append("<script type=\"text/javascript\" src=\"{$baseurl}javascript/helpers/Zikula.ImageViewer.js\"></script>");
     _builder.newLine();
-    _builder.append("{*            <script type=\"text/javascript\" src=\"{$baseurl}javascript/ajax/original_uncompressed/prototype.js\"></script>");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("<script type=\"text/javascript\" src=\"{$baseurl}javascript/ajax/original_uncompressed/scriptaculous.js\"></script>");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("<script type=\"text/javascript\" src=\"{$baseurl}javascript/ajax/original_uncompressed/dragdrop.js\"></script>");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("<script type=\"text/javascript\" src=\"{$baseurl}javascript/ajax/original_uncompressed/effects.js\"></script>*}");
-    _builder.newLine();
     _builder.append("    ");
     _builder.append("<script type=\"text/javascript\" src=\"{$baseurl}modules/");
     {
