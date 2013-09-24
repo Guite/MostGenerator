@@ -1098,23 +1098,44 @@ public class View {
     _builder.append("<label for=\"");
     String _formatForDB = this._formattingExtensions.formatForDB(appName);
     _builder.append(_formatForDB, "    ");
-    _builder.append("_action\">{gt text=\'With selected ");
-    String _nameMultiple = it.getNameMultiple();
-    String _formatForDisplay = this._formattingExtensions.formatForDisplay(_nameMultiple);
-    _builder.append(_formatForDisplay, "    ");
-    _builder.append("\'}</label>");
-    _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("<select id=\"");
-    String _formatForDB_1 = this._formattingExtensions.formatForDB(appName);
-    _builder.append(_formatForDB_1, "    ");
-    _builder.append("_action\" name=\"action\"");
+    _builder.append("_action\"");
     {
       Models _container = it.getContainer();
       Application _application = _container.getApplication();
       boolean _targets = this._utils.targets(_application, "1.3.5");
       boolean _not = (!_targets);
       if (_not) {
+        _builder.append(" class=\"col-lg-3 control-label\"");
+      }
+    }
+    _builder.append(">{gt text=\'With selected ");
+    String _nameMultiple = it.getNameMultiple();
+    String _formatForDisplay = this._formattingExtensions.formatForDisplay(_nameMultiple);
+    _builder.append(_formatForDisplay, "    ");
+    _builder.append("\'}</label>");
+    _builder.newLineIfNotEmpty();
+    {
+      Models _container_1 = it.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append("    ");
+        _builder.append("<div class=\"col-lg-9\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("    ");
+    _builder.append("<select id=\"");
+    String _formatForDB_1 = this._formattingExtensions.formatForDB(appName);
+    _builder.append(_formatForDB_1, "    ");
+    _builder.append("_action\" name=\"action\"");
+    {
+      Models _container_2 = it.getContainer();
+      Application _application_2 = _container_2.getApplication();
+      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+      boolean _not_2 = (!_targets_2);
+      if (_not_2) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -1228,6 +1249,17 @@ public class View {
     _builder.append("    ");
     _builder.append("</select>");
     _builder.newLine();
+    {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not_3 = (!_targets_3);
+      if (_not_3) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+      }
+    }
     _builder.append("    ");
     _builder.append("<input type=\"submit\" value=\"{gt text=\'Submit\'}\" />");
     _builder.newLine();

@@ -904,14 +904,22 @@ public class ExternalView {
         _builder.append("{selector_category name=\"`$categorySelectorName``$propertyName`\" field=\'id\' selectedValue=$catIds.$propertyName categoryRegistryModule=\'");
         String _appName_8 = this._utils.appName(app);
         _builder.append(_appName_8, "                            ");
-        _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}");
+        _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize");
+        {
+          boolean _targets_10 = this._utils.targets(app, "1.3.5");
+          boolean _not_3 = (!_targets_10);
+          if (_not_3) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
         _builder.append("            ");
         _builder.append("                ");
         _builder.append("<span class=\"");
         {
-          boolean _targets_10 = this._utils.targets(app, "1.3.5");
-          if (_targets_10) {
+          boolean _targets_11 = this._utils.targets(app, "1.3.5");
+          if (_targets_11) {
             _builder.append("z-sub z-formnote");
           } else {
             _builder.append("help-block");
@@ -920,9 +928,9 @@ public class ExternalView {
         _builder.append("\">{gt text=\'This is an optional filter.\'}</span>");
         _builder.newLineIfNotEmpty();
         {
-          boolean _targets_11 = this._utils.targets(app, "1.3.5");
-          boolean _not_3 = (!_targets_11);
-          if (_not_3) {
+          boolean _targets_12 = this._utils.targets(app, "1.3.5");
+          boolean _not_4 = (!_targets_12);
+          if (_not_4) {
             _builder.append("            ");
             _builder.append("            ");
             _builder.append("</div>");
@@ -950,8 +958,8 @@ public class ExternalView {
     _builder.append("            ");
     _builder.append("<div class=\"");
     {
-      boolean _targets_12 = this._utils.targets(app, "1.3.5");
-      if (_targets_12) {
+      boolean _targets_13 = this._utils.targets(app, "1.3.5");
+      if (_targets_13) {
         _builder.append("z-formrow");
       } else {
         _builder.append("form-group");
@@ -965,18 +973,18 @@ public class ExternalView {
     _builder.append(_appName_9, "                ");
     _builder.append("_pasteas\"");
     {
-      boolean _targets_13 = this._utils.targets(app, "1.3.5");
-      boolean _not_4 = (!_targets_13);
-      if (_not_4) {
+      boolean _targets_14 = this._utils.targets(app, "1.3.5");
+      boolean _not_5 = (!_targets_14);
+      if (_not_5) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Paste as\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_14 = this._utils.targets(app, "1.3.5");
-      boolean _not_5 = (!_targets_14);
-      if (_not_5) {
+      boolean _targets_15 = this._utils.targets(app, "1.3.5");
+      boolean _not_6 = (!_targets_15);
+      if (_not_6) {
         _builder.append("                ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -988,9 +996,9 @@ public class ExternalView {
     _builder.append(_appName_10, "                    ");
     _builder.append("_pasteas\" name=\"pasteas\"");
     {
-      boolean _targets_15 = this._utils.targets(app, "1.3.5");
-      boolean _not_6 = (!_targets_15);
-      if (_not_6) {
+      boolean _targets_16 = this._utils.targets(app, "1.3.5");
+      boolean _not_7 = (!_targets_16);
+      if (_not_7) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -1014,9 +1022,9 @@ public class ExternalView {
     _builder.append("</select>");
     _builder.newLine();
     {
-      boolean _targets_16 = this._utils.targets(app, "1.3.5");
-      boolean _not_7 = (!_targets_16);
-      if (_not_7) {
+      boolean _targets_17 = this._utils.targets(app, "1.3.5");
+      boolean _not_8 = (!_targets_17);
+      if (_not_8) {
         _builder.append("                ");
         _builder.append("</div>");
         _builder.newLine();
@@ -1032,8 +1040,8 @@ public class ExternalView {
     _builder.append("            ");
     _builder.append("<div class=\"");
     {
-      boolean _targets_17 = this._utils.targets(app, "1.3.5");
-      if (_targets_17) {
+      boolean _targets_18 = this._utils.targets(app, "1.3.5");
+      if (_targets_18) {
         _builder.append("z-formrow");
       } else {
         _builder.append("form-group");
@@ -1047,9 +1055,9 @@ public class ExternalView {
     _builder.append(_appName_11, "                ");
     _builder.append("_objectid\"");
     {
-      boolean _targets_18 = this._utils.targets(app, "1.3.5");
-      boolean _not_8 = (!_targets_18);
-      if (_not_8) {
+      boolean _targets_19 = this._utils.targets(app, "1.3.5");
+      boolean _not_9 = (!_targets_19);
+      if (_not_9) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
@@ -1060,9 +1068,9 @@ public class ExternalView {
     _builder.append("\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_19 = this._utils.targets(app, "1.3.5");
-      boolean _not_9 = (!_targets_19);
-      if (_not_9) {
+      boolean _targets_20 = this._utils.targets(app, "1.3.5");
+      boolean _not_10 = (!_targets_20);
+      if (_not_10) {
         _builder.append("                ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -1213,9 +1221,9 @@ public class ExternalView {
     _builder.append("</div>");
     _builder.newLine();
     {
-      boolean _targets_20 = this._utils.targets(app, "1.3.5");
-      boolean _not_10 = (!_targets_20);
-      if (_not_10) {
+      boolean _targets_21 = this._utils.targets(app, "1.3.5");
+      boolean _not_11 = (!_targets_21);
+      if (_not_11) {
         _builder.append("                ");
         _builder.append("</div>");
         _builder.newLine();
@@ -1228,8 +1236,8 @@ public class ExternalView {
     _builder.append("            ");
     _builder.append("<div class=\"");
     {
-      boolean _targets_21 = this._utils.targets(app, "1.3.5");
-      if (_targets_21) {
+      boolean _targets_22 = this._utils.targets(app, "1.3.5");
+      if (_targets_22) {
         _builder.append("z-formrow");
       } else {
         _builder.append("form-group");
@@ -1243,18 +1251,18 @@ public class ExternalView {
     _builder.append(_appName_13, "                ");
     _builder.append("_sort\"");
     {
-      boolean _targets_22 = this._utils.targets(app, "1.3.5");
-      boolean _not_11 = (!_targets_22);
-      if (_not_11) {
+      boolean _targets_23 = this._utils.targets(app, "1.3.5");
+      boolean _not_12 = (!_targets_23);
+      if (_not_12) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Sort by\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_23 = this._utils.targets(app, "1.3.5");
-      boolean _not_12 = (!_targets_23);
-      if (_not_12) {
+      boolean _targets_24 = this._utils.targets(app, "1.3.5");
+      boolean _not_13 = (!_targets_24);
+      if (_not_13) {
         _builder.append("                ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -1266,8 +1274,8 @@ public class ExternalView {
     _builder.append(_appName_14, "                    ");
     _builder.append("_sort\" name=\"sort\" style=\"width: 150px\" class=\"");
     {
-      boolean _targets_24 = this._utils.targets(app, "1.3.5");
-      if (_targets_24) {
+      boolean _targets_25 = this._utils.targets(app, "1.3.5");
+      if (_targets_25) {
         _builder.append("z-floatleft");
       } else {
         _builder.append("pull-left");
@@ -1318,9 +1326,9 @@ public class ExternalView {
     _builder.append(_appName_15, "                    ");
     _builder.append("_sortdir\" name=\"sortdir\" style=\"width: 100px\"");
     {
-      boolean _targets_25 = this._utils.targets(app, "1.3.5");
-      boolean _not_13 = (!_targets_25);
-      if (_not_13) {
+      boolean _targets_26 = this._utils.targets(app, "1.3.5");
+      boolean _not_14 = (!_targets_26);
+      if (_not_14) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -1336,9 +1344,9 @@ public class ExternalView {
     _builder.append("</select>");
     _builder.newLine();
     {
-      boolean _targets_26 = this._utils.targets(app, "1.3.5");
-      boolean _not_14 = (!_targets_26);
-      if (_not_14) {
+      boolean _targets_27 = this._utils.targets(app, "1.3.5");
+      boolean _not_15 = (!_targets_27);
+      if (_not_15) {
         _builder.append("                ");
         _builder.append("</div>");
         _builder.newLine();
@@ -1351,8 +1359,8 @@ public class ExternalView {
     _builder.append("            ");
     _builder.append("<div class=\"");
     {
-      boolean _targets_27 = this._utils.targets(app, "1.3.5");
-      if (_targets_27) {
+      boolean _targets_28 = this._utils.targets(app, "1.3.5");
+      if (_targets_28) {
         _builder.append("z-formrow");
       } else {
         _builder.append("form-group");
@@ -1366,18 +1374,18 @@ public class ExternalView {
     _builder.append(_appName_16, "                ");
     _builder.append("_pagesize\"");
     {
-      boolean _targets_28 = this._utils.targets(app, "1.3.5");
-      boolean _not_15 = (!_targets_28);
-      if (_not_15) {
+      boolean _targets_29 = this._utils.targets(app, "1.3.5");
+      boolean _not_16 = (!_targets_29);
+      if (_not_16) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Page size\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_29 = this._utils.targets(app, "1.3.5");
-      boolean _not_16 = (!_targets_29);
-      if (_not_16) {
+      boolean _targets_30 = this._utils.targets(app, "1.3.5");
+      boolean _not_17 = (!_targets_30);
+      if (_not_17) {
         _builder.append("                ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -1389,9 +1397,9 @@ public class ExternalView {
     _builder.append(_appName_17, "                    ");
     _builder.append("_pagesize\" name=\"num\" style=\"width: 50px; text-align: right\"");
     {
-      boolean _targets_30 = this._utils.targets(app, "1.3.5");
-      boolean _not_17 = (!_targets_30);
-      if (_not_17) {
+      boolean _targets_31 = this._utils.targets(app, "1.3.5");
+      boolean _not_18 = (!_targets_31);
+      if (_not_18) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -1422,9 +1430,9 @@ public class ExternalView {
     _builder.append("</select>");
     _builder.newLine();
     {
-      boolean _targets_31 = this._utils.targets(app, "1.3.5");
-      boolean _not_18 = (!_targets_31);
-      if (_not_18) {
+      boolean _targets_32 = this._utils.targets(app, "1.3.5");
+      boolean _not_19 = (!_targets_32);
+      if (_not_19) {
         _builder.append("                ");
         _builder.append("</div>");
         _builder.newLine();
@@ -1440,8 +1448,8 @@ public class ExternalView {
         _builder.append("            ");
         _builder.append("<div class=\"");
         {
-          boolean _targets_32 = this._utils.targets(app, "1.3.5");
-          if (_targets_32) {
+          boolean _targets_33 = this._utils.targets(app, "1.3.5");
+          if (_targets_33) {
             _builder.append("z-formrow");
           } else {
             _builder.append("form-group");
@@ -1456,18 +1464,18 @@ public class ExternalView {
         _builder.append(_appName_18, "                ");
         _builder.append("_searchterm\"");
         {
-          boolean _targets_33 = this._utils.targets(app, "1.3.5");
-          boolean _not_19 = (!_targets_33);
-          if (_not_19) {
+          boolean _targets_34 = this._utils.targets(app, "1.3.5");
+          boolean _not_20 = (!_targets_34);
+          if (_not_20) {
             _builder.append(" class=\"col-lg-3 control-label\"");
           }
         }
         _builder.append(">{gt text=\'Search for\'}:</label>");
         _builder.newLineIfNotEmpty();
         {
-          boolean _targets_34 = this._utils.targets(app, "1.3.5");
-          boolean _not_20 = (!_targets_34);
-          if (_not_20) {
+          boolean _targets_35 = this._utils.targets(app, "1.3.5");
+          boolean _not_21 = (!_targets_35);
+          if (_not_21) {
             _builder.append("            ");
             _builder.append("<div class=\"col-lg-9\">");
             _builder.newLine();
@@ -1480,8 +1488,8 @@ public class ExternalView {
         _builder.append(_appName_19, "                    ");
         _builder.append("_searchterm\" name=\"searchterm\" style=\"width: 150px\" class=\"");
         {
-          boolean _targets_35 = this._utils.targets(app, "1.3.5");
-          if (_targets_35) {
+          boolean _targets_36 = this._utils.targets(app, "1.3.5");
+          if (_targets_36) {
             _builder.append("z-floatleft");
           } else {
             _builder.append("form-control pull-left");
@@ -1496,18 +1504,18 @@ public class ExternalView {
         _builder.append(_appName_20, "                    ");
         _builder.append("_gosearch\" name=\"gosearch\" value=\"{gt text=\'Filter\'}\" style=\"width: 80px\"");
         {
-          boolean _targets_36 = this._utils.targets(app, "1.3.5");
-          boolean _not_21 = (!_targets_36);
-          if (_not_21) {
+          boolean _targets_37 = this._utils.targets(app, "1.3.5");
+          boolean _not_22 = (!_targets_37);
+          if (_not_22) {
             _builder.append(" class=\"btn btn-default\"");
           }
         }
         _builder.append(" />");
         _builder.newLineIfNotEmpty();
         {
-          boolean _targets_37 = this._utils.targets(app, "1.3.5");
-          boolean _not_22 = (!_targets_37);
-          if (_not_22) {
+          boolean _targets_38 = this._utils.targets(app, "1.3.5");
+          boolean _not_23 = (!_targets_38);
+          if (_not_23) {
             _builder.append("            ");
             _builder.append("</div>");
             _builder.newLine();
@@ -1534,9 +1542,9 @@ public class ExternalView {
     _builder.append(_appName_21, "            ");
     _builder.append("_submit\" name=\"submitButton\" value=\"{gt text=\'Change selection\'}\"");
     {
-      boolean _targets_38 = this._utils.targets(app, "1.3.5");
-      boolean _not_23 = (!_targets_38);
-      if (_not_23) {
+      boolean _targets_39 = this._utils.targets(app, "1.3.5");
+      boolean _not_24 = (!_targets_39);
+      if (_not_24) {
         _builder.append(" class=\"btn btn-success\"");
       }
     }
@@ -1548,9 +1556,9 @@ public class ExternalView {
     _builder.append(_appName_22, "            ");
     _builder.append("_cancel\" name=\"cancelButton\" value=\"{gt text=\'Cancel\'}\"");
     {
-      boolean _targets_39 = this._utils.targets(app, "1.3.5");
-      boolean _not_24 = (!_targets_39);
-      if (_not_24) {
+      boolean _targets_40 = this._utils.targets(app, "1.3.5");
+      boolean _not_25 = (!_targets_40);
+      if (_not_25) {
         _builder.append(" class=\"btn btn-default\"");
       }
     }
@@ -1597,8 +1605,8 @@ public class ExternalView {
     {
       Iterable<AdminController> _allAdminControllers = this._controllerExtensions.getAllAdminControllers(app);
       boolean _isEmpty = IterableExtensions.isEmpty(_allAdminControllers);
-      boolean _not_25 = (!_isEmpty);
-      if (_not_25) {
+      boolean _not_26 = (!_isEmpty);
+      if (_not_26) {
         _builder.append("    ");
         _builder.append("{*");
         _builder.newLine();
@@ -1750,7 +1758,15 @@ public class ExternalView {
         _builder.append("{selector_category name=\"`$baseID`_`$categorySelectorName``$propertyName`\" field=\'id\' selectedValue=$catIds.$propertyName categoryRegistryModule=\'");
         String _appName_1 = this._utils.appName(app);
         _builder.append(_appName_1, "            ");
-        _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}");
+        _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize");
+        {
+          boolean _targets_1 = this._utils.targets(app, "1.3.5");
+          boolean _not = (!_targets_1);
+          if (_not) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
         _builder.append("            ");
         _builder.append("<br{$break} />");
@@ -1888,9 +1904,9 @@ public class ExternalView {
     _builder.append("    ");
     _builder.append("<select id=\"{$baseID}_sortdir\" name=\"sortdir\"");
     {
-      boolean _targets_1 = this._utils.targets(app, "1.3.5");
-      boolean _not = (!_targets_1);
-      if (_not) {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -1921,9 +1937,9 @@ public class ExternalView {
         _builder.append("    ");
         _builder.append("<input type=\"text\" id=\"{$baseID}_searchterm\" name=\"searchterm\"");
         {
-          boolean _targets_2 = this._utils.targets(app, "1.3.5");
-          boolean _not_1 = (!_targets_2);
-          if (_not_1) {
+          boolean _targets_3 = this._utils.targets(app, "1.3.5");
+          boolean _not_2 = (!_targets_3);
+          if (_not_2) {
             _builder.append(" class=\"form-control\"");
           }
         }
@@ -1935,9 +1951,9 @@ public class ExternalView {
         _builder.append(_appName_2, "    ");
         _builder.append("_gosearch\" name=\"gosearch\" value=\"{gt text=\'Filter\'}\"");
         {
-          boolean _targets_3 = this._utils.targets(app, "1.3.5");
-          boolean _not_2 = (!_targets_3);
-          if (_not_2) {
+          boolean _targets_4 = this._utils.targets(app, "1.3.5");
+          boolean _not_3 = (!_targets_4);
+          if (_not_3) {
             _builder.append(" class=\"btn btn-default\"");
           }
         }

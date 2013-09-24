@@ -452,14 +452,24 @@ public class ViewQuickNavForm {
         Application _application_3 = _container_3.getApplication();
         String _appName_2 = this._utils.appName(_application_3);
         _builder.append(_appName_2, "                ");
-        _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}");
-        _builder.newLineIfNotEmpty();
+        _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize");
         {
           Models _container_4 = it.getContainer();
           Application _application_4 = _container_4.getApplication();
           boolean _targets_1 = this._utils.targets(_application_4, "1.3.5");
           boolean _not_1 = (!_targets_1);
           if (_not_1) {
+            _builder.append(" cssClass=\'form-control\'");
+          }
+        }
+        _builder.append("}");
+        _builder.newLineIfNotEmpty();
+        {
+          Models _container_5 = it.getContainer();
+          Application _application_5 = _container_5.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_5, "1.3.5");
+          boolean _not_2 = (!_targets_2);
+          if (_not_2) {
             _builder.append("            ");
             _builder.append("</div>");
             _builder.newLine();
@@ -938,14 +948,28 @@ public class ViewQuickNavForm {
     _builder.append("        ");
     _builder.append("</select>");
     _builder.newLine();
-    _builder.append("        ");
-    _builder.append("<select id=\"sortdir\" name=\"sortdir\"");
     {
       Models _container_2 = it.getContainer();
       Application _application_2 = _container_2.getApplication();
       boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
       boolean _not_2 = (!_targets_2);
       if (_not_2) {
+        _builder.append("    ");
+        _builder.append("</div>");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("<div class=\"form-group\">");
+        _builder.newLine();
+      }
+    }
+    _builder.append("        ");
+    _builder.append("<select id=\"sortdir\" name=\"sortdir\"");
+    {
+      Models _container_3 = it.getContainer();
+      Application _application_3 = _container_3.getApplication();
+      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not_3 = (!_targets_3);
+      if (_not_3) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -961,11 +985,11 @@ public class ViewQuickNavForm {
     _builder.append("</select>");
     _builder.newLine();
     {
-      Models _container_3 = it.getContainer();
-      Application _application_3 = _container_3.getApplication();
-      boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
-      boolean _not_3 = (!_targets_3);
-      if (_not_3) {
+      Models _container_4 = it.getContainer();
+      Application _application_4 = _container_4.getApplication();
+      boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
+      boolean _not_4 = (!_targets_4);
+      if (_not_4) {
         _builder.append("    ");
         _builder.append("</div>");
         _builder.newLine();
@@ -984,11 +1008,11 @@ public class ViewQuickNavForm {
     _builder.append("{if !isset($pageSizeSelector) || $pageSizeSelector eq true}");
     _builder.newLine();
     {
-      Models _container_4 = it.getContainer();
-      Application _application_4 = _container_4.getApplication();
-      boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
-      boolean _not_4 = (!_targets_4);
-      if (_not_4) {
+      Models _container_5 = it.getContainer();
+      Application _application_5 = _container_5.getApplication();
+      boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
+      boolean _not_5 = (!_targets_5);
+      if (_not_5) {
         _builder.append("    ");
         _builder.append("<div class=\"form-group\">");
         _builder.newLine();
@@ -1028,11 +1052,11 @@ public class ViewQuickNavForm {
     _builder.append("</select>");
     _builder.newLine();
     {
-      Models _container_5 = it.getContainer();
-      Application _application_5 = _container_5.getApplication();
-      boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
-      boolean _not_5 = (!_targets_5);
-      if (_not_5) {
+      Models _container_6 = it.getContainer();
+      Application _application_6 = _container_6.getApplication();
+      boolean _targets_6 = this._utils.targets(_application_6, "1.3.5");
+      boolean _not_6 = (!_targets_6);
+      if (_not_6) {
         _builder.append("    ");
         _builder.append("</div>");
         _builder.newLine();

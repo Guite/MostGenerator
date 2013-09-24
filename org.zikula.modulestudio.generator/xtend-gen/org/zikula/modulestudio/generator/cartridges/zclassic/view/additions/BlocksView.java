@@ -265,13 +265,21 @@ public class BlocksView {
     _builder.append("{selector_category name=\"`$categorySelectorName``$propertyName`\" field=\'id\' selectedValue=$catIds.$propertyName categoryRegistryModule=\'");
     String _appName_3 = this._utils.appName(it);
     _builder.append(_appName_3, "                ");
-    _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}");
+    _builder.append("\' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize");
+    {
+      boolean _targets_9 = this._utils.targets(it, "1.3.5");
+      boolean _not_6 = (!_targets_9);
+      if (_not_6) {
+        _builder.append(" cssClass=\'form-control\'");
+      }
+    }
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     _builder.append("                ");
     _builder.append("<span class=\"");
     {
-      boolean _targets_9 = this._utils.targets(it, "1.3.5");
-      if (_targets_9) {
+      boolean _targets_10 = this._utils.targets(it, "1.3.5");
+      if (_targets_10) {
         _builder.append("z-sub z-formnote");
       } else {
         _builder.append("help-block");
@@ -280,9 +288,9 @@ public class BlocksView {
     _builder.append("\">{gt text=\'This is an optional filter.\'}</span>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_10 = this._utils.targets(it, "1.3.5");
-      boolean _not_6 = (!_targets_10);
-      if (_not_6) {
+      boolean _targets_11 = this._utils.targets(it, "1.3.5");
+      boolean _not_7 = (!_targets_11);
+      if (_not_7) {
         _builder.append("            ");
         _builder.append("</div>");
         _builder.newLine();
@@ -302,8 +310,8 @@ public class BlocksView {
     _builder.newLine();
     _builder.append("<div class=\"");
     {
-      boolean _targets_11 = this._utils.targets(it, "1.3.5");
-      if (_targets_11) {
+      boolean _targets_12 = this._utils.targets(it, "1.3.5");
+      if (_targets_12) {
         _builder.append("z-formrow");
       } else {
         _builder.append("form-group");
@@ -317,18 +325,18 @@ public class BlocksView {
     _builder.append(_appName_4, "    ");
     _builder.append("_sorting\"");
     {
-      boolean _targets_12 = this._utils.targets(it, "1.3.5");
-      boolean _not_7 = (!_targets_12);
-      if (_not_7) {
+      boolean _targets_13 = this._utils.targets(it, "1.3.5");
+      boolean _not_8 = (!_targets_13);
+      if (_not_8) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Sorting\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_13 = this._utils.targets(it, "1.3.5");
-      boolean _not_8 = (!_targets_13);
-      if (_not_8) {
+      boolean _targets_14 = this._utils.targets(it, "1.3.5");
+      boolean _not_9 = (!_targets_14);
+      if (_not_9) {
         _builder.append("    ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -340,9 +348,9 @@ public class BlocksView {
     _builder.append(_appName_5, "        ");
     _builder.append("_sorting\" name=\"sorting\"");
     {
-      boolean _targets_14 = this._utils.targets(it, "1.3.5");
-      boolean _not_9 = (!_targets_14);
-      if (_not_9) {
+      boolean _targets_15 = this._utils.targets(it, "1.3.5");
+      boolean _not_10 = (!_targets_15);
+      if (_not_10) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -361,9 +369,9 @@ public class BlocksView {
     _builder.append("</select>");
     _builder.newLine();
     {
-      boolean _targets_15 = this._utils.targets(it, "1.3.5");
-      boolean _not_10 = (!_targets_15);
-      if (_not_10) {
+      boolean _targets_16 = this._utils.targets(it, "1.3.5");
+      boolean _not_11 = (!_targets_16);
+      if (_not_11) {
         _builder.append("    ");
         _builder.append("</div>");
         _builder.newLine();
@@ -374,8 +382,8 @@ public class BlocksView {
     _builder.newLine();
     _builder.append("<div class=\"");
     {
-      boolean _targets_16 = this._utils.targets(it, "1.3.5");
-      if (_targets_16) {
+      boolean _targets_17 = this._utils.targets(it, "1.3.5");
+      if (_targets_17) {
         _builder.append("z-formrow");
       } else {
         _builder.append("form-group");
@@ -389,18 +397,18 @@ public class BlocksView {
     _builder.append(_appName_6, "    ");
     _builder.append("_amount\"");
     {
-      boolean _targets_17 = this._utils.targets(it, "1.3.5");
-      boolean _not_11 = (!_targets_17);
-      if (_not_11) {
+      boolean _targets_18 = this._utils.targets(it, "1.3.5");
+      boolean _not_12 = (!_targets_18);
+      if (_not_12) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Amount\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_18 = this._utils.targets(it, "1.3.5");
-      boolean _not_12 = (!_targets_18);
-      if (_not_12) {
+      boolean _targets_19 = this._utils.targets(it, "1.3.5");
+      boolean _not_13 = (!_targets_19);
+      if (_not_13) {
         _builder.append("    ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -412,18 +420,18 @@ public class BlocksView {
     _builder.append(_appName_7, "        ");
     _builder.append("_amount\" name=\"amount\" maxlength=\"2\" size=\"10\" value=\"{$amount|default:\"5\"}\"");
     {
-      boolean _targets_19 = this._utils.targets(it, "1.3.5");
-      boolean _not_13 = (!_targets_19);
-      if (_not_13) {
+      boolean _targets_20 = this._utils.targets(it, "1.3.5");
+      boolean _not_14 = (!_targets_20);
+      if (_not_14) {
         _builder.append(" class=\"form-control\"");
       }
     }
     _builder.append(" />");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_20 = this._utils.targets(it, "1.3.5");
-      boolean _not_14 = (!_targets_20);
-      if (_not_14) {
+      boolean _targets_21 = this._utils.targets(it, "1.3.5");
+      boolean _not_15 = (!_targets_21);
+      if (_not_15) {
         _builder.append("    ");
         _builder.append("</div>");
         _builder.newLine();
@@ -434,8 +442,8 @@ public class BlocksView {
     _builder.newLine();
     _builder.append("<div class=\"");
     {
-      boolean _targets_21 = this._utils.targets(it, "1.3.5");
-      if (_targets_21) {
+      boolean _targets_22 = this._utils.targets(it, "1.3.5");
+      if (_targets_22) {
         _builder.append("z-formrow");
       } else {
         _builder.append("form-group");
@@ -449,18 +457,18 @@ public class BlocksView {
     _builder.append(_appName_8, "    ");
     _builder.append("_template\"");
     {
-      boolean _targets_22 = this._utils.targets(it, "1.3.5");
-      boolean _not_15 = (!_targets_22);
-      if (_not_15) {
+      boolean _targets_23 = this._utils.targets(it, "1.3.5");
+      boolean _not_16 = (!_targets_23);
+      if (_not_16) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Template\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_23 = this._utils.targets(it, "1.3.5");
-      boolean _not_16 = (!_targets_23);
-      if (_not_16) {
+      boolean _targets_24 = this._utils.targets(it, "1.3.5");
+      boolean _not_17 = (!_targets_24);
+      if (_not_17) {
         _builder.append("    ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -472,9 +480,9 @@ public class BlocksView {
     _builder.append(_appName_9, "        ");
     _builder.append("_template\" name=\"template\"");
     {
-      boolean _targets_24 = this._utils.targets(it, "1.3.5");
-      boolean _not_17 = (!_targets_24);
-      if (_not_17) {
+      boolean _targets_25 = this._utils.targets(it, "1.3.5");
+      boolean _not_18 = (!_targets_25);
+      if (_not_18) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -493,9 +501,9 @@ public class BlocksView {
     _builder.append("</select>");
     _builder.newLine();
     {
-      boolean _targets_25 = this._utils.targets(it, "1.3.5");
-      boolean _not_18 = (!_targets_25);
-      if (_not_18) {
+      boolean _targets_26 = this._utils.targets(it, "1.3.5");
+      boolean _not_19 = (!_targets_26);
+      if (_not_19) {
         _builder.append("    ");
         _builder.append("</div>");
         _builder.newLine();
@@ -506,8 +514,8 @@ public class BlocksView {
     _builder.newLine();
     _builder.append("<div id=\"customtemplatearea\" class=\"");
     {
-      boolean _targets_26 = this._utils.targets(it, "1.3.5");
-      if (_targets_26) {
+      boolean _targets_27 = this._utils.targets(it, "1.3.5");
+      if (_targets_27) {
         _builder.append("z-formrow z-hide");
       } else {
         _builder.append("form-group hide");
@@ -521,18 +529,18 @@ public class BlocksView {
     _builder.append(_appName_10, "    ");
     _builder.append("_customtemplate\"");
     {
-      boolean _targets_27 = this._utils.targets(it, "1.3.5");
-      boolean _not_19 = (!_targets_27);
-      if (_not_19) {
+      boolean _targets_28 = this._utils.targets(it, "1.3.5");
+      boolean _not_20 = (!_targets_28);
+      if (_not_20) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Custom template\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_28 = this._utils.targets(it, "1.3.5");
-      boolean _not_20 = (!_targets_28);
-      if (_not_20) {
+      boolean _targets_29 = this._utils.targets(it, "1.3.5");
+      boolean _not_21 = (!_targets_29);
+      if (_not_21) {
         _builder.append("    ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -544,9 +552,9 @@ public class BlocksView {
     _builder.append(_appName_11, "        ");
     _builder.append("__customtemplate\" name=\"customtemplate\" size=\"40\" maxlength=\"80\" value=\"{$customTemplate|default:\'\'}\"");
     {
-      boolean _targets_29 = this._utils.targets(it, "1.3.5");
-      boolean _not_21 = (!_targets_29);
-      if (_not_21) {
+      boolean _targets_30 = this._utils.targets(it, "1.3.5");
+      boolean _not_22 = (!_targets_30);
+      if (_not_22) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -555,8 +563,8 @@ public class BlocksView {
     _builder.append("        ");
     _builder.append("<span class=\"");
     {
-      boolean _targets_30 = this._utils.targets(it, "1.3.5");
-      if (_targets_30) {
+      boolean _targets_31 = this._utils.targets(it, "1.3.5");
+      if (_targets_31) {
         _builder.append("z-sub z-formnote");
       } else {
         _builder.append("help-block");
@@ -565,9 +573,9 @@ public class BlocksView {
     _builder.append("\">{gt text=\'Example\'}: <em>itemlist_{$objecttype}_display.tpl</em></span>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_31 = this._utils.targets(it, "1.3.5");
-      boolean _not_22 = (!_targets_31);
-      if (_not_22) {
+      boolean _targets_32 = this._utils.targets(it, "1.3.5");
+      boolean _not_23 = (!_targets_32);
+      if (_not_23) {
         _builder.append("    ");
         _builder.append("</div>");
         _builder.newLine();
@@ -578,8 +586,8 @@ public class BlocksView {
     _builder.newLine();
     _builder.append("<div class=\"");
     {
-      boolean _targets_32 = this._utils.targets(it, "1.3.5");
-      if (_targets_32) {
+      boolean _targets_33 = this._utils.targets(it, "1.3.5");
+      if (_targets_33) {
         _builder.append("z-formrow z-hide");
       } else {
         _builder.append("form-group hide");
@@ -594,18 +602,18 @@ public class BlocksView {
     _builder.append(_appName_12, "    ");
     _builder.append("_filter\"");
     {
-      boolean _targets_33 = this._utils.targets(it, "1.3.5");
-      boolean _not_23 = (!_targets_33);
-      if (_not_23) {
+      boolean _targets_34 = this._utils.targets(it, "1.3.5");
+      boolean _not_24 = (!_targets_34);
+      if (_not_24) {
         _builder.append(" class=\"col-lg-3 control-label\"");
       }
     }
     _builder.append(">{gt text=\'Filter (expert option)\'}:</label>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_34 = this._utils.targets(it, "1.3.5");
-      boolean _not_24 = (!_targets_34);
-      if (_not_24) {
+      boolean _targets_35 = this._utils.targets(it, "1.3.5");
+      boolean _not_25 = (!_targets_35);
+      if (_not_25) {
         _builder.append("    ");
         _builder.append("<div class=\"col-lg-9\">");
         _builder.newLine();
@@ -617,9 +625,9 @@ public class BlocksView {
     _builder.append(_appName_13, "        ");
     _builder.append("_filter\" name=\"filter\" size=\"40\" value=\"{$filterValue|default:\'\'}\"");
     {
-      boolean _targets_35 = this._utils.targets(it, "1.3.5");
-      boolean _not_25 = (!_targets_35);
-      if (_not_25) {
+      boolean _targets_36 = this._utils.targets(it, "1.3.5");
+      boolean _not_26 = (!_targets_36);
+      if (_not_26) {
         _builder.append(" class=\"form-control\"");
       }
     }
@@ -628,8 +636,8 @@ public class BlocksView {
     _builder.append("        ");
     _builder.append("<span class=\"");
     {
-      boolean _targets_36 = this._utils.targets(it, "1.3.5");
-      if (_targets_36) {
+      boolean _targets_37 = this._utils.targets(it, "1.3.5");
+      if (_targets_37) {
         _builder.append("z-sub z-formnote");
       } else {
         _builder.append("help-block");
@@ -638,9 +646,9 @@ public class BlocksView {
     _builder.append("\">({gt text=\'Syntax examples\'}: <kbd>name:like:foobar</kbd> {gt text=\'or\'} <kbd>status:ne:3</kbd>)</span>");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_37 = this._utils.targets(it, "1.3.5");
-      boolean _not_26 = (!_targets_37);
-      if (_not_26) {
+      boolean _targets_38 = this._utils.targets(it, "1.3.5");
+      boolean _not_27 = (!_targets_38);
+      if (_not_27) {
         _builder.append("    ");
         _builder.append("</div>");
         _builder.newLine();
@@ -670,8 +678,8 @@ public class BlocksView {
     _builder.append("            ");
     _builder.append("$(\'customtemplatearea\').removeClassName(\'");
     {
-      boolean _targets_38 = this._utils.targets(it, "1.3.5");
-      if (_targets_38) {
+      boolean _targets_39 = this._utils.targets(it, "1.3.5");
+      if (_targets_39) {
         _builder.append("z-");
       }
     }
@@ -683,8 +691,8 @@ public class BlocksView {
     _builder.append("            ");
     _builder.append("$(\'customtemplatearea\').addClassName(\'");
     {
-      boolean _targets_39 = this._utils.targets(it, "1.3.5");
-      if (_targets_39) {
+      boolean _targets_40 = this._utils.targets(it, "1.3.5");
+      if (_targets_40) {
         _builder.append("z-");
       }
     }

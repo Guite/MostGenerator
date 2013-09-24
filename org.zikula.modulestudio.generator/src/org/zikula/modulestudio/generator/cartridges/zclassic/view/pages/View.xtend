@@ -254,7 +254,10 @@ class View {
 
     def private massActionFields(Entity it, String appName) '''
         <fieldset>
-            <label for="«appName.formatForDB»_action">{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
+            <label for="«appName.formatForDB»_action"«IF !container.application.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
+            «IF !container.application.targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
             <select id="«appName.formatForDB»_action" name="action"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
                 <option value="">{gt text='Choose action'}</option>
             «IF workflow != EntityWorkflowType::NONE»
@@ -280,6 +283,9 @@ class View {
             «ENDIF»
                 <option value="delete" title="{gt text='«getWorkflowActionDescription(workflow, 'Delete')»'}">{gt text='Delete'}</option>
             </select>
+            «IF !container.application.targets('1.3.5')»
+                </div>
+            «ENDIF»
             <input type="submit" value="{gt text='Submit'}" />
         </fieldset>
     '''

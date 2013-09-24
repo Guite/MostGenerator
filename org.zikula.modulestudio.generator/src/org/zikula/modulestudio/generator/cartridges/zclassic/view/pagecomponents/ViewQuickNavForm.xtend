@@ -131,7 +131,7 @@ class ViewQuickNavForm {
                         «ENDIF»
                             <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
                             &nbsp;
-                            {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«container.application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                            {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«container.application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
                         «IF !container.application.targets('1.3.5')»
                             </div>
                         «ENDIF»
@@ -242,6 +242,10 @@ class ViewQuickNavForm {
                     <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
                 «ENDIF»
                 </select>
+            «IF !container.application.targets('1.3.5')»
+                </div>
+                <div class="form-group">
+            «ENDIF»
                 <select id="sortdir" name="sortdir"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="asc"{if $sdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
                     <option value="desc"{if $sdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
