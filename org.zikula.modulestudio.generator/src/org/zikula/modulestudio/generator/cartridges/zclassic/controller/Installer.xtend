@@ -274,7 +274,7 @@ class Installer {
                 // of course 1.2.3 should match the number you used for the last stable 1.3.5 module version.
                 /* if ($oldVersion = 1.2.3) {
                     «new MigrationHelper().generateUsageExample(it)»
-                } */
+                } * /
             «ENDIF»
         */
 

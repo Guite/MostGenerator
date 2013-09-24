@@ -819,7 +819,7 @@ public class Installer {
         _builder.append(_generateUsageExample, "        ");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
-        _builder.append("} */");
+        _builder.append("} * /");
         _builder.newLine();
       }
     }
