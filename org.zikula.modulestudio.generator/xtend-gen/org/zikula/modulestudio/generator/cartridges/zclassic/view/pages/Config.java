@@ -122,20 +122,40 @@ public class Config {
       String _formatForDB_2 = this._formattingExtensions.formatForDB(_configController_2);
       boolean _equals = Objects.equal(_formatForDB_2, "admin");
       if (_equals) {
-        _builder.append("    ");
-        _builder.append("<div class=\"z-admin-content-pagetitle\">");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("    ");
-        _builder.append("{icon type=\'config\' size=\'small\' __alt=\'Settings\'}");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("    ");
-        _builder.append("<h3>{$templateTitle}</h3>");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("</div>");
-        _builder.newLine();
+        {
+          boolean _targets_1 = this._utils.targets(it, "1.3.5");
+          if (_targets_1) {
+            _builder.append("    ");
+            _builder.append("<div class=\"z-admin-content-pagetitle\">");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("    ");
+            _builder.append("{icon type=\'config\' size=\'small\' __alt=\'Settings\'}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("    ");
+            _builder.append("<h3>{$templateTitle}</h3>");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("</div>");
+            _builder.newLine();
+          } else {
+            _builder.append("    ");
+            _builder.append("<h3>");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("    ");
+            _builder.append("{icon type=\'config\' size=\'small\' __alt=\'Settings\'}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("    ");
+            _builder.append("{$templateTitle}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("</h3>");
+            _builder.newLine();
+          }
+        }
       } else {
         _builder.append("    ");
         _builder.append("<div class=\"z-frontendcontainer\">");
@@ -150,8 +170,8 @@ public class Config {
     _builder.append("    ");
     _builder.append("{form cssClass=\'");
     {
-      boolean _targets_1 = this._utils.targets(it, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
         _builder.append("z-form");
       } else {
         _builder.append("form-horizontal");
@@ -159,8 +179,8 @@ public class Config {
     }
     _builder.append("\'");
     {
-      boolean _targets_2 = this._utils.targets(it, "1.3.5");
-      boolean _not = (!_targets_2);
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_3);
       if (_not) {
         _builder.append(" role=\'form\'");
       }
@@ -223,8 +243,8 @@ public class Config {
     _builder.append("            ");
     _builder.append("<div class=\"");
     {
-      boolean _targets_3 = this._utils.targets(it, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
         _builder.append("z-buttons z-formbuttons");
       } else {
         _builder.append("form-group form-buttons");
@@ -233,8 +253,8 @@ public class Config {
     _builder.append("\">");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_4 = this._utils.targets(it, "1.3.5");
-      boolean _not_1 = (!_targets_4);
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_5);
       if (_not_1) {
         _builder.append("            ");
         _builder.append("<div class=\"col-lg-offset-3 col-lg-9\">");
@@ -244,8 +264,8 @@ public class Config {
     _builder.append("                ");
     _builder.append("{formbutton commandName=\'save\' __text=\'Update configuration\' class=\'");
     {
-      boolean _targets_5 = this._utils.targets(it, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      if (_targets_6) {
         _builder.append("z-bt-save");
       } else {
         _builder.append("btn btn-success");
@@ -256,8 +276,8 @@ public class Config {
     _builder.append("                ");
     _builder.append("{formbutton commandName=\'cancel\' __text=\'Cancel\' class=\'");
     {
-      boolean _targets_6 = this._utils.targets(it, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      if (_targets_7) {
         _builder.append("z-bt-cancel");
       } else {
         _builder.append("btn btn-default");
@@ -266,8 +286,8 @@ public class Config {
     _builder.append("\'}");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_7 = this._utils.targets(it, "1.3.5");
-      boolean _not_2 = (!_targets_7);
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_8);
       if (_not_2) {
         _builder.append("            ");
         _builder.append("</div>");
@@ -302,8 +322,8 @@ public class Config {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      boolean _targets_8 = this._utils.targets(it, "1.3.5");
-      if (_targets_8) {
+      boolean _targets_9 = this._utils.targets(it, "1.3.5");
+      if (_targets_9) {
         String _configController_4 = this._controllerExtensions.configController(it);
         String _formatForDB_6 = this._formattingExtensions.formatForDB(_configController_4);
         _builder.append(_formatForDB_6, "");

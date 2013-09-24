@@ -401,8 +401,17 @@ public class UserInput {
     _builder.append("if ($this->mandatory && $this->mandatorysym) {");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$result .= \'<span class=\"z-form-mandatory-flag\">*</span>\';");
-    _builder.newLine();
+    _builder.append("$result .= \'<span class=\"");
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
+        _builder.append("z-form-mandatory-flag");
+      } else {
+        _builder.append("requires");
+      }
+    }
+    _builder.append("\">*</span>\';");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("}");
     _builder.newLine();

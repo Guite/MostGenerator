@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Action;
 import de.guite.modulestudio.metamodel.modulestudio.AdminController;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controller;
+import de.guite.modulestudio.metamodel.modulestudio.Controllers;
 import de.guite.modulestudio.metamodel.modulestudio.DateField;
 import de.guite.modulestudio.metamodel.modulestudio.DatetimeField;
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField;
@@ -336,16 +337,34 @@ public class Forms {
         final AdminController _adminController = (AdminController)it;
         _matched=true;
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("<div class=\"z-admin-content-pagetitle\">");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("{icon type=$adminPageIcon size=\'small\' alt=$templateTitle}");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("<h3>{$templateTitle}</h3>");
-        _builder.newLine();
-        _builder.append("</div>");
-        _builder.newLine();
+        {
+          Controllers _container = _adminController.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("<div class=\"z-admin-content-pagetitle\">");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{icon type=$adminPageIcon size=\'small\' alt=$templateTitle}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("<h3>{$templateTitle}</h3>");
+            _builder.newLine();
+            _builder.append("</div>");
+            _builder.newLine();
+          } else {
+            _builder.append("<h3>");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{icon type=$adminPageIcon size=\'small\' alt=$templateTitle}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{$templateTitle}");
+            _builder.newLine();
+            _builder.append("</h3>");
+            _builder.newLine();
+          }
+        }
         _switchResult = _builder;
       }
     }

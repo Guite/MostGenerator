@@ -32,10 +32,17 @@ class Config {
             {gt text='Settings' assign='templateTitle'}
             {pagesetvar name='title' value=$templateTitle}
             «IF configController.formatForDB == 'admin'»
-                <div class="z-admin-content-pagetitle">
-                    {icon type='config' size='small' __alt='Settings'}
-                    <h3>{$templateTitle}</h3>
-                </div>
+                «IF targets('1.3.5')»
+                    <div class="z-admin-content-pagetitle">
+                        {icon type='config' size='small' __alt='Settings'}
+                        <h3>{$templateTitle}</h3>
+                    </div>
+                «ELSE»
+                    <h3>
+                        {icon type='config' size='small' __alt='Settings'}
+                        {$templateTitle}
+                    </h3>
+                «ENDIF»
             «ELSE»
                 <div class="z-frontendcontainer">
                     <h2>{$templateTitle}</h2>

@@ -141,10 +141,17 @@ class Display {
     def private templateHeader(Controller it, Entity entity, String appName) {
         switch it {
             AdminController: '''
-                <div class="z-admin-content-pagetitle">
-                    {icon type='display' size='small' __alt='Details'}
-                    <h3>«templateHeading(entity, appName)»</h3>
-                </div>
+                «IF container.application.targets('1.3.5')»
+                    <div class="z-admin-content-pagetitle">
+                        {icon type='display' size='small' __alt='Details'}
+                        <h3>«templateHeading(entity, appName)»</h3>
+                    </div>
+                «ELSE»
+                    <h3>
+                        {icon type='display' size='small' __alt='Details'}
+                        «templateHeading(entity, appName)»
+                    </h3>
+                «ENDIF»
             '''
             default: '''
                 <div class="z-frontendcontainer">

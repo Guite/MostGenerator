@@ -140,7 +140,7 @@ class UserInput {
                         <div id="' . $this->getId() . 'SelectorChoices" class="«prefix»AutoCompleteUser"></div>';
 
                 if ($this->mandatory && $this->mandatorysym) {
-                    $result .= '<span class="z-form-mandatory-flag">*</span>';
+                    $result .= '<span class="«IF targets('1.3.5')»z-form-mandatory-flag«ELSE»requires«ENDIF»">*</span>';
                 }
 
                 $result .= '</div>' . "\n";

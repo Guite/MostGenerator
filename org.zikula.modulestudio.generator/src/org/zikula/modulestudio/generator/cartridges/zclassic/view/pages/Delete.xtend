@@ -65,10 +65,17 @@ class Delete {
     def private templateHeader(Controller it) {
         switch it {
             AdminController: '''
-                <div class="z-admin-content-pagetitle">
-                    {icon type='delete' size='small' __alt='Delete'}
-                    <h3>{$templateTitle}</h3>
-                </div>
+                «IF container.application.targets('1.3.5')»
+                    <div class="z-admin-content-pagetitle">
+                        {icon type='delete' size='small' __alt='Delete'}
+                        <h3>{$templateTitle}</h3>
+                    </div>
+                «ELSE»
+                    <h3>
+                        {icon type='delete' size='small' __alt='Delete'}
+                        {$templateTitle}
+                    </h3>
+                «ENDIF»
             '''
             default: '''
                 <div class="z-frontendcontainer">

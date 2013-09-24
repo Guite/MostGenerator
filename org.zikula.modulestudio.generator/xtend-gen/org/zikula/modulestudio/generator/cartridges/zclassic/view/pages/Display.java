@@ -582,19 +582,38 @@ public class Display {
         final AdminController _adminController = (AdminController)it;
         _matched=true;
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("<div class=\"z-admin-content-pagetitle\">");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("{icon type=\'display\' size=\'small\' __alt=\'Details\'}");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("<h3>");
-        CharSequence _templateHeading = this.templateHeading(entity, appName);
-        _builder.append(_templateHeading, "    ");
-        _builder.append("</h3>");
-        _builder.newLineIfNotEmpty();
-        _builder.append("</div>");
-        _builder.newLine();
+        {
+          Controllers _container = _adminController.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("<div class=\"z-admin-content-pagetitle\">");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{icon type=\'display\' size=\'small\' __alt=\'Details\'}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("<h3>");
+            CharSequence _templateHeading = this.templateHeading(entity, appName);
+            _builder.append(_templateHeading, "    ");
+            _builder.append("</h3>");
+            _builder.newLineIfNotEmpty();
+            _builder.append("</div>");
+            _builder.newLine();
+          } else {
+            _builder.append("<h3>");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{icon type=\'display\' size=\'small\' __alt=\'Details\'}");
+            _builder.newLine();
+            _builder.append("    ");
+            CharSequence _templateHeading_1 = this.templateHeading(entity, appName);
+            _builder.append(_templateHeading_1, "    ");
+            _builder.newLineIfNotEmpty();
+            _builder.append("</h3>");
+            _builder.newLine();
+          }
+        }
         _switchResult = _builder;
       }
     }

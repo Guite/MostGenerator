@@ -97,10 +97,17 @@ class Forms {
     def private templateHeader(Controller it) {
         switch it {
             AdminController: '''
-                <div class="z-admin-content-pagetitle">
-                    {icon type=$adminPageIcon size='small' alt=$templateTitle}
-                    <h3>{$templateTitle}</h3>
-                </div>
+                «IF container.application.targets('1.3.5')»
+                    <div class="z-admin-content-pagetitle">
+                        {icon type=$adminPageIcon size='small' alt=$templateTitle}
+                        <h3>{$templateTitle}</h3>
+                    </div>
+                «ELSE»
+                    <h3>
+                        {icon type=$adminPageIcon size='small' alt=$templateTitle}
+                        {$templateTitle}
+                    </h3>
+                «ENDIF»
             '''
             default: '''
                 <div class="z-frontendcontainer">

@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Action;
 import de.guite.modulestudio.metamodel.modulestudio.AdminController;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controller;
+import de.guite.modulestudio.metamodel.modulestudio.Controllers;
 import de.guite.modulestudio.metamodel.modulestudio.CustomAction;
 import java.util.Arrays;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -249,19 +250,40 @@ public class Custom {
         final AdminController _adminController = (AdminController)it;
         _matched=true;
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("<div class=\"z-admin-content-pagetitle\">");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("{icon type=\'options\' size=\'small\' __alt=\'");
-        String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(actionName);
-        _builder.append(_formatForDisplayCapital, "    ");
-        _builder.append("\'}");
-        _builder.newLineIfNotEmpty();
-        _builder.append("    ");
-        _builder.append("<h3>{$templateTitle}</h3>");
-        _builder.newLine();
-        _builder.append("</div>");
-        _builder.newLine();
+        {
+          Controllers _container = _adminController.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("<div class=\"z-admin-content-pagetitle\">");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{icon type=\'options\' size=\'small\' __alt=\'");
+            String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(actionName);
+            _builder.append(_formatForDisplayCapital, "    ");
+            _builder.append("\'}");
+            _builder.newLineIfNotEmpty();
+            _builder.append("    ");
+            _builder.append("<h3>{$templateTitle}</h3>");
+            _builder.newLine();
+            _builder.append("</div>");
+            _builder.newLine();
+          } else {
+            _builder.append("<h3>");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{icon type=\'options\' size=\'small\' __alt=\'");
+            String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(actionName);
+            _builder.append(_formatForDisplayCapital_1, "    ");
+            _builder.append("\'}");
+            _builder.newLineIfNotEmpty();
+            _builder.append("    ");
+            _builder.append("{$templateTitle}");
+            _builder.newLine();
+            _builder.append("</h3>");
+            _builder.newLine();
+          }
+        }
         _switchResult = _builder;
       }
     }

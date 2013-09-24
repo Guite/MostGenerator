@@ -46,10 +46,17 @@ class Custom {
     def private templateHeader(Controller it, String actionName) {
         switch it {
             AdminController: '''
-                <div class="z-admin-content-pagetitle">
-                    {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
-                    <h3>{$templateTitle}</h3>
-                </div>
+                «IF container.application.targets('1.3.5')»
+                    <div class="z-admin-content-pagetitle">
+                        {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
+                        <h3>{$templateTitle}</h3>
+                    </div>
+                «ELSE»
+                    <h3>
+                        {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
+                        {$templateTitle}
+                    </h3>
+                «ENDIF»
             '''
             default: '''
                 <div class="z-frontendcontainer">
