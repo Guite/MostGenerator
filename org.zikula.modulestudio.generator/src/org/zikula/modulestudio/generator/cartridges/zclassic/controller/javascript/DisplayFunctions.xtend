@@ -70,7 +70,7 @@ class DisplayFunctions {
          */
         function «prefix()»InitItemActions(objectType, func, containerId)
         {
-            var triggerId, contextMenu, iconFile;
+            var triggerId, contextMenu, icon;
 
             triggerId = containerId + 'trigger';
 
@@ -92,35 +92,41 @@ class DisplayFunctions {
                 }
 
                 // determine the icon
-                iconFile = '';
-                if (func === 'display') {
-                    if (elem.hasClassName('z-icon-es-preview')) {
-                        iconFile = 'xeyes.png';
-                    } else if (elem.hasClassName('z-icon-es-display')) {
-                        iconFile = 'kview.png';
-                    } else if (elem.hasClassName('z-icon-es-edit')) {
-                        iconFile = 'edit';
-                    } else if (elem.hasClassName('z-icon-es-saveas')) {
-                        iconFile = 'filesaveas';
-                    } else if (elem.hasClassName('z-icon-es-delete')) {
-                        iconFile = '14_layer_deletelayer';
-                    } else if (elem.hasClassName('z-icon-es-back')) {
-                        iconFile = 'agt_back';
+                «IF targets('1.3.5')»
+                    icon = '';
+                    if (func === 'display') {
+                        if (elem.hasClassName('z-icon-es-preview')) {
+                            icon = 'xeyes.png';
+                        } else if (elem.hasClassName('z-icon-es-display')) {
+                            icon = 'kview.png';
+                        } else if (elem.hasClassName('z-icon-es-edit')) {
+                            icon = 'edit';
+                        } else if (elem.hasClassName('z-icon-es-saveas')) {
+                            icon = 'filesaveas';
+                        } else if (elem.hasClassName('z-icon-es-delete')) {
+                            icon = '14_layer_deletelayer';
+                        } else if (elem.hasClassName('z-icon-es-back')) {
+                            icon = 'agt_back';
+                        }
+                        if (icon !== '') {
+                            icon = Zikula.Config.baseURL + 'images/icons/extrasmall/' + icon + '.png';
+                        }
+                    } else if (func === 'view') {
+                        elem.select('img').each(function (imgElem) {
+                            icon = imgElem.readAttribute('src');
+                        });
                     }
-                    if (iconFile !== '') {
-                        iconFile = Zikula.Config.baseURL + 'images/icons/extrasmall/' + iconFile + '.png';
+                    if (icon !== '') {
+                        icon = '<img src="' + icon + '" width="16" height="16" alt="' + linkText + '" /> ';
                     }
-                } else if (func === 'view') {
-                    elem.select('img').each(function (imgElem) {
-                        iconFile = imgElem.readAttribute('src');
-                    });
-                }
-                if (iconFile !== '') {
-                    iconFile = '<img src="' + iconFile + '" width="16" height="16" alt="' + linkText + '" /> ';
-                }
+                «ELSE»
+                    if (elem.hasClassName('icon')) {
+                        icon = '<span class="' + elem.readAttribute('class') + '"></span>';
+                    }
+                «ENDIF»
 
                 contextMenu.addItem({
-                    label: iconFile + linkText,
+                    label: icon + linkText,
                     callback: function (selectedMenuItem, isRightClick) {
                         var url;
 

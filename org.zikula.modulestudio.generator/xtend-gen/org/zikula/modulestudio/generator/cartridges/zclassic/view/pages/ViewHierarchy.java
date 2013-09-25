@@ -185,16 +185,18 @@ public class ViewHierarchy {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("    ");
-        _builder.append("<a id=\"z-tree-addroot\" href=\"javascript:void(0)\" title=\"{$addRootTitle}\" class=\"z-icon-es-add ");
+        _builder.append("<a id=\"z-tree-addroot\" href=\"javascript:void(0)\" title=\"{$addRootTitle}\" class=\"");
         {
           Models _container_3 = it.getContainer();
           Application _application_3 = _container_3.getApplication();
           boolean _targets_2 = this._utils.targets(_application_3, "1.3.5");
           if (_targets_2) {
-            _builder.append("z-");
+            _builder.append("z-icon-es-add z-hide");
+          } else {
+            _builder.append("icon icon-plus hide");
           }
         }
-        _builder.append("hide\">{$addRootTitle}</a>");
+        _builder.append("\">{$addRootTitle}</a>");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("    ");
@@ -270,7 +272,18 @@ public class ViewHierarchy {
         _builder.append(_formattedName_3, "        ");
         _builder.append("\' func=\'edit\' ot=\'");
         _builder.append(objName, "        ");
-        _builder.append("\'}\" title=\"{$createTitle}\" class=\"z-icon-es-add\">");
+        _builder.append("\'}\" title=\"{$createTitle}\" class=\"");
+        {
+          Models _container_5 = it.getContainer();
+          Application _application_5 = _container_5.getApplication();
+          boolean _targets_4 = this._utils.targets(_application_5, "1.3.5");
+          if (_targets_4) {
+            _builder.append("z-icon-es-add");
+          } else {
+            _builder.append("icon icon-plus");
+          }
+        }
+        _builder.append("\">");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("        ");
@@ -299,7 +312,18 @@ public class ViewHierarchy {
     _builder.append(_formattedName_4, "    ");
     _builder.append("\' func=\'view\' ot=\'");
     _builder.append(objName, "    ");
-    _builder.append("\'}\" title=\"{$switchTitle}\" class=\"z-icon-es-view\">{$switchTitle}</a>");
+    _builder.append("\'}\" title=\"{$switchTitle}\" class=\"");
+    {
+      Models _container_6 = it.getContainer();
+      Application _application_6 = _container_6.getApplication();
+      boolean _targets_5 = this._utils.targets(_application_6, "1.3.5");
+      if (_targets_5) {
+        _builder.append("z-icon-es-view");
+      } else {
+        _builder.append("icon icon-table");
+      }
+    }
+    _builder.append("\">{$switchTitle}</a>");
     _builder.newLineIfNotEmpty();
     _builder.append("</p>");
     _builder.newLine();
@@ -309,10 +333,10 @@ public class ViewHierarchy {
     _builder.append("    ");
     _builder.append("{include file=\'");
     {
-      Models _container_5 = it.getContainer();
-      Application _application_5 = _container_5.getApplication();
-      boolean _targets_4 = this._utils.targets(_application_5, "1.3.5");
-      if (_targets_4) {
+      Models _container_7 = it.getContainer();
+      Application _application_7 = _container_7.getApplication();
+      boolean _targets_6 = this._utils.targets(_application_7, "1.3.5");
+      if (_targets_6) {
         String _formattedName_5 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_5, "    ");
         _builder.append("/");
@@ -336,10 +360,10 @@ public class ViewHierarchy {
     _builder.append("    ");
     _builder.append("{include file=\'");
     {
-      Models _container_6 = it.getContainer();
-      Application _application_6 = _container_6.getApplication();
-      boolean _targets_5 = this._utils.targets(_application_6, "1.3.5");
-      if (_targets_5) {
+      Models _container_8 = it.getContainer();
+      Application _application_8 = _container_8.getApplication();
+      boolean _targets_7 = this._utils.targets(_application_8, "1.3.5");
+      if (_targets_7) {
         String _formattedName_7 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_7, "    ");
         _builder.append("/");
@@ -371,10 +395,10 @@ public class ViewHierarchy {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      Models _container_7 = it.getContainer();
-      Application _application_7 = _container_7.getApplication();
-      boolean _targets_6 = this._utils.targets(_application_7, "1.3.5");
-      if (_targets_6) {
+      Models _container_9 = it.getContainer();
+      Application _application_9 = _container_9.getApplication();
+      boolean _targets_8 = this._utils.targets(_application_9, "1.3.5");
+      if (_targets_8) {
         String _formattedName_9 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_9, "");
       } else {
@@ -415,7 +439,7 @@ public class ViewHierarchy {
             _builder.append("<h3>");
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("{icon type=\'view\' size=\'small\' alt=$templateTitle}");
+            _builder.append("<span class=\"icon icon-list\"></span>");
             _builder.newLine();
             _builder.append("    ");
             _builder.append("{$templateTitle}");

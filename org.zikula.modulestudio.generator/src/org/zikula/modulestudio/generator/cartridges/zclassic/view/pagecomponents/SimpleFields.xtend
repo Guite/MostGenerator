@@ -29,15 +29,27 @@ class SimpleFields {
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey.name.formatForCode»}
-            <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">
-            {if $«objName».«name.formatForCode»}
-                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.'}
-                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.' class='«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide'}
-            {else}
-                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.' class='«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide'}
-                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.'}
-            {/if}
-            </a>
+            «IF entity.container.application.targets('1.3.5')»
+                <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="z-hide">
+                {if $«objName».«name.formatForCode»}
+                    {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.'}
+                    {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.' class='z-hide'}
+                {else}
+                    {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.' class='z-hide'}
+                    {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.'}
+                {/if}
+                </a>
+            «ELSE»
+                <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="hide">
+                {if $«objName».«name.formatForCode»}
+                    <span class="cursor-pointer icon icon-ok" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
+                    <span class="cursor-pointer icon icon-remove hide" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
+                {else}
+                    <span class="cursor-pointer icon icon-ok hide" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
+                    <span class="cursor-pointer icon icon-remove" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
+                {/if}
+                </a>
+            «ENDIF»
             <noscript><div id="noscript«name.formatForDB»{$itemid}">
                 {$«objName».«name.formatForCode»|yesno:true}
             </div></noscript>
@@ -87,7 +99,11 @@ class SimpleFields {
             «IF page == 'display'»
                   {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «ENDIF»
+            «IF entity.container.application.targets('1.3.5')»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
+            «ELSE»
+                <a href="mailto:{$«realName»}" title="{gt text='Send an email'}" class="icon icon-envelope text-hide">{gt text='Email'}</a>
+            «ENDIF»
             «IF page == 'display'»
                   {else}
                     {$«realName»}
@@ -109,7 +125,11 @@ class SimpleFields {
             «IF page == 'display'»
                   {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «ENDIF»
+            «IF entity.container.application.targets('1.3.5')»
                 <a href="{$«realName»}" title="{gt text='Visit this page'}">{icon type='url' size='extrasmall' __alt='Homepage'}</a>
+            «ELSE»
+                <a href="{$«realName»}" title="{gt text='Visit this page'}" class="icon icon-external-link-sign text-hide">{gt text='Homepage'}</a>
+            «ENDIF»
             «IF page == 'display'»
                   {else}
                     {$«realName»}

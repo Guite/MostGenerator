@@ -75,7 +75,7 @@ class Forms {
             «controller.pageIcon('edit')»
         {elseif $mode eq 'create'}
             {gt text='Create «name.formatForDisplay»' assign='templateTitle'}
-            «controller.pageIcon('new')»
+            «controller.pageIcon(if (app.targets('1.3.5')) 'new' else 'plus')»
         {else}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
             «controller.pageIcon('edit')»
@@ -104,7 +104,7 @@ class Forms {
                     </div>
                 «ELSE»
                     <h3>
-                        {icon type=$adminPageIcon size='small' alt=$templateTitle}
+                        <span class="icon icon-{$adminPageIcon}"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»
@@ -249,8 +249,13 @@ class Forms {
     '''
 
     def private formTemplateJS(Entity it, Application app, Controller controller, String actionName) '''
-        {icon type='edit' size='extrasmall' assign='editImageArray'}
-        {icon type='delete' size='extrasmall' assign='deleteImageArray'}
+        «IF app.targets('1.3.5')»
+            {icon type='edit' size='extrasmall' assign='editImageArray'}
+            {icon type='delete' size='extrasmall' assign='removeImageArray'}
+        «ELSE»
+            {assign var='editImage' value='<span class="icon icon-edit"></span>'}
+            {assign var='deleteImage' value='<span class="icon icon-trash"></span>'}
+        «ENDIF»
 
         «IF geographical»
             {pageaddvarblock name='header'}

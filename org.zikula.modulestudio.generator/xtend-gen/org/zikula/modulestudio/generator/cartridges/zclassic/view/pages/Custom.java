@@ -272,11 +272,8 @@ public class Custom {
             _builder.append("<h3>");
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("{icon type=\'options\' size=\'small\' __alt=\'");
-            String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(actionName);
-            _builder.append(_formatForDisplayCapital_1, "    ");
-            _builder.append("\'}");
-            _builder.newLineIfNotEmpty();
+            _builder.append("<span class=\"icon icon-sign-blank\"></span>");
+            _builder.newLine();
             _builder.append("    ");
             _builder.append("{$templateTitle}");
             _builder.newLine();

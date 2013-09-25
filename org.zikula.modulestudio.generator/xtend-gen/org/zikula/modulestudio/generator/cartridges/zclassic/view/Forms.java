@@ -266,7 +266,14 @@ public class Forms {
     _builder.append("\' assign=\'templateTitle\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    CharSequence _pageIcon_1 = this.pageIcon(controller, "new");
+    String _xifexpression = null;
+    boolean _targets_3 = this._utils.targets(app, "1.3.5");
+    if (_targets_3) {
+      _xifexpression = "new";
+    } else {
+      _xifexpression = "plus";
+    }
+    CharSequence _pageIcon_1 = this.pageIcon(controller, _xifexpression);
     _builder.append(_pageIcon_1, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("{else}");
@@ -356,7 +363,7 @@ public class Forms {
             _builder.append("<h3>");
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("{icon type=$adminPageIcon size=\'small\' alt=$templateTitle}");
+            _builder.append("<span class=\"icon icon-{$adminPageIcon}\"></span>");
             _builder.newLine();
             _builder.append("    ");
             _builder.append("{$templateTitle}");
@@ -1046,10 +1053,20 @@ public class Forms {
   
   private CharSequence formTemplateJS(final Entity it, final Application app, final Controller controller, final String actionName) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("{icon type=\'edit\' size=\'extrasmall\' assign=\'editImageArray\'}");
-    _builder.newLine();
-    _builder.append("{icon type=\'delete\' size=\'extrasmall\' assign=\'deleteImageArray\'}");
-    _builder.newLine();
+    {
+      boolean _targets = this._utils.targets(app, "1.3.5");
+      if (_targets) {
+        _builder.append("{icon type=\'edit\' size=\'extrasmall\' assign=\'editImageArray\'}");
+        _builder.newLine();
+        _builder.append("{icon type=\'delete\' size=\'extrasmall\' assign=\'removeImageArray\'}");
+        _builder.newLine();
+      } else {
+        _builder.append("{assign var=\'editImage\' value=\'<span class=\"icon icon-edit\"></span>\'}");
+        _builder.newLine();
+        _builder.append("{assign var=\'deleteImage\' value=\'<span class=\"icon icon-trash\"></span>\'}");
+        _builder.newLine();
+      }
+    }
     _builder.newLine();
     {
       boolean _isGeographical = it.isGeographical();
@@ -1338,8 +1355,8 @@ public class Forms {
     _builder.append("                ");
     _builder.append("btn.addClassName(\'");
     {
-      boolean _targets = this._utils.targets(app, "1.3.5");
-      if (_targets) {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      if (_targets_1) {
         _builder.append("z-");
       }
     }
@@ -1451,8 +1468,8 @@ public class Forms {
     _builder.append("        ");
     _builder.append("formButtons = $(\'{{$__formid}}\').select(\'div.");
     {
-      boolean _targets_1 = this._utils.targets(app, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      if (_targets_2) {
         _builder.append("z-formbuttons");
       } else {
         _builder.append("form-buttons");

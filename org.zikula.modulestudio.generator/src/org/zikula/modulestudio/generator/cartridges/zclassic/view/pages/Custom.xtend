@@ -53,7 +53,7 @@ class Custom {
                     </div>
                 «ELSE»
                     <h3>
-                        {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
+                        <span class="icon icon-sign-blank"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»

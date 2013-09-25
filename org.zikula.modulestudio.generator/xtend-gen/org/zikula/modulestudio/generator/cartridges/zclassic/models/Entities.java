@@ -1512,8 +1512,17 @@ public class Entities {
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
-                _builder.append("\'icon\' => \'preview\',");
-                _builder.newLine();
+                _builder.append("\'icon\' => \'");
+                {
+                  boolean _targets_6 = this._utils.targets(app, "1.3.5");
+                  if (_targets_6) {
+                    _builder.append("preview");
+                  } else {
+                    _builder.append("zoom-in");
+                  }
+                }
+                _builder.append("\',");
+                _builder.newLineIfNotEmpty();
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
@@ -1572,8 +1581,17 @@ public class Entities {
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
-                _builder.append("\'icon\' => \'display\',");
-                _builder.newLine();
+                _builder.append("\'icon\' => \'");
+                {
+                  boolean _targets_7 = this._utils.targets(app, "1.3.5");
+                  if (_targets_7) {
+                    _builder.append("display");
+                  } else {
+                    _builder.append("eye-open");
+                  }
+                }
+                _builder.append("\',");
+                _builder.newLineIfNotEmpty();
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
@@ -1626,8 +1644,8 @@ public class Entities {
             _builder.append("    ");
             _builder.append("if (in_array($currentFunc, array(\'");
             {
-              boolean _targets_6 = this._utils.targets(app, "1.3.5");
-              if (_targets_6) {
+              boolean _targets_8 = this._utils.targets(app, "1.3.5");
+              if (_targets_8) {
                 _builder.append("main");
               } else {
                 _builder.append("index");
@@ -1761,8 +1779,17 @@ public class Entities {
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("        ");
-                _builder.append("\'icon\' => \'delete\',");
-                _builder.newLine();
+                _builder.append("\'icon\' => \'");
+                {
+                  boolean _targets_9 = this._utils.targets(app, "1.3.5");
+                  if (_targets_9) {
+                    _builder.append("delete");
+                  } else {
+                    _builder.append("trash");
+                  }
+                }
+                _builder.append("\',");
+                _builder.newLineIfNotEmpty();
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
@@ -1826,8 +1853,17 @@ public class Entities {
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
-                _builder.append("\'icon\' => \'back\',");
-                _builder.newLine();
+                _builder.append("\'icon\' => \'");
+                {
+                  boolean _targets_10 = this._utils.targets(app, "1.3.5");
+                  if (_targets_10) {
+                    _builder.append("back");
+                  } else {
+                    _builder.append("reply");
+                  }
+                }
+                _builder.append("\',");
+                _builder.newLineIfNotEmpty();
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
@@ -2093,8 +2129,19 @@ public class Entities {
         _builder.append(")),");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
-        _builder.append("\'icon\' => \'saveas\',");
-        _builder.newLine();
+        _builder.append("\'icon\' => \'");
+        {
+          Models _container = it.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder.append("saveas");
+          } else {
+            _builder.append("copy");
+          }
+        }
+        _builder.append("\',");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("\'linkTitle\' => __(\'Reuse for new item\', $dom),");
         _builder.newLine();

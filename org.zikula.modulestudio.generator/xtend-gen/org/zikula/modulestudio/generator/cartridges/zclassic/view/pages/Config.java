@@ -145,7 +145,7 @@ public class Config {
             _builder.newLine();
             _builder.append("    ");
             _builder.append("    ");
-            _builder.append("{icon type=\'config\' size=\'small\' __alt=\'Settings\'}");
+            _builder.append("<span class=\"icon icon-wrench\"></span>");
             _builder.newLine();
             _builder.append("    ");
             _builder.append("    ");

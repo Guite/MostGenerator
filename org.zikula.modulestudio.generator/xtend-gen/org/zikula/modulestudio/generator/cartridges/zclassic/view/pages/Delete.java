@@ -270,13 +270,24 @@ public class Delete {
         _builder.append(" class=\"btn btn-default\" role=\"button\"");
       }
     }
-    _builder.append(">{icon type=\'cancel\' size=\'small\' __alt=\'Cancel\' __title=\'Cancel\'} {gt text=\'Cancel\'}</a>");
-    _builder.newLineIfNotEmpty();
+    _builder.append(">");
     {
       Models _container_8 = it.getContainer();
       Application _application_8 = _container_8.getApplication();
       boolean _targets_8 = this._utils.targets(_application_8, "1.3.5");
-      boolean _not_3 = (!_targets_8);
+      if (_targets_8) {
+        _builder.append("{icon type=\'cancel\' size=\'small\' __alt=\'Cancel\' __title=\'Cancel\'}");
+      } else {
+        _builder.append("<span class=\"icon icon-remove\"></span>");
+      }
+    }
+    _builder.append(" {gt text=\'Cancel\'}</a>");
+    _builder.newLineIfNotEmpty();
+    {
+      Models _container_9 = it.getContainer();
+      Application _application_9 = _container_9.getApplication();
+      boolean _targets_9 = this._utils.targets(_application_9, "1.3.5");
+      boolean _not_3 = (!_targets_9);
       if (_not_3) {
         _builder.append("            ");
         _builder.append("</div>");
@@ -306,10 +317,10 @@ public class Delete {
     _builder.newLine();
     _builder.append("{include file=\'");
     {
-      Models _container_9 = it.getContainer();
-      Application _application_9 = _container_9.getApplication();
-      boolean _targets_9 = this._utils.targets(_application_9, "1.3.5");
-      if (_targets_9) {
+      Models _container_10 = it.getContainer();
+      Application _application_10 = _container_10.getApplication();
+      boolean _targets_10 = this._utils.targets(_application_10, "1.3.5");
+      if (_targets_10) {
         String _formattedName_5 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_5, "");
       } else {
@@ -350,7 +361,7 @@ public class Delete {
             _builder.append("<h3>");
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("{icon type=\'delete\' size=\'small\' __alt=\'Delete\'}");
+            _builder.append("<span class=\"icon icon-trash\"></span>");
             _builder.newLine();
             _builder.append("    ");
             _builder.append("{$templateTitle}");

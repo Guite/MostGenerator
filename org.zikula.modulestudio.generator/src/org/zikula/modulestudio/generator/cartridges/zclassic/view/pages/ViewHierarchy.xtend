@@ -40,7 +40,7 @@ class ViewHierarchy {
             «IF controller.hasActions('edit')»
                 {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_ADD'}
                     {gt text='Add root node' assign='addRootTitle'}
-                    <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" class="z-icon-es-add «IF container.application.targets('1.3.5')»z-«ENDIF»hide">{$addRootTitle}</a>
+                    <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»icon icon-plus hide«ENDIF»">{$addRootTitle}</a>
 
                     <script type="text/javascript">
                 /* <![CDATA[ */
@@ -56,14 +56,14 @@ class ViewHierarchy {
 
                 {*
                     {gt text='Create «name.formatForDisplay»' assign='createTitle'}
-                    <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">
+                    <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»icon icon-plus«ENDIF»">
                         {$createTitle}
                     </a>
                 *}
                 {/checkpermissionblock}
             «ENDIF»
             {gt text='Switch to table view' assign='switchTitle'}
-            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">{$switchTitle}</a>
+            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»icon icon-table«ENDIF»">{$switchTitle}</a>
         </p>
 
         {foreach key='rootId' item='treeNodes' from=$trees}
@@ -89,7 +89,7 @@ class ViewHierarchy {
                     </div>
                 «ELSE»
                     <h3>
-                        {icon type='view' size='small' alt=$templateTitle}
+                        <span class="icon icon-list"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»

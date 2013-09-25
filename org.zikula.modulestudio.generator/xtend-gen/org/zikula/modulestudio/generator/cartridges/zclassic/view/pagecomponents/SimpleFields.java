@@ -104,97 +104,124 @@ public class SimpleFields {
       _builder.append(_formatForCode, "");
       _builder.append("}");
       _builder.newLineIfNotEmpty();
-      _builder.append("<a id=\"toggle");
-      String _name_1 = it.getName();
-      String _formatForDB = this._formattingExtensions.formatForDB(_name_1);
-      _builder.append(_formatForDB, "");
-      _builder.append("{$itemid}\" href=\"javascript:void(0);\" class=\"");
       {
         Entity _entity_1 = it.getEntity();
         Models _container = _entity_1.getContainer();
         Application _application = _container.getApplication();
         boolean _targets = this._utils.targets(_application, "1.3.5");
         if (_targets) {
-          _builder.append("z-");
+          _builder.append("<a id=\"toggle");
+          String _name_1 = it.getName();
+          String _formatForDB = this._formattingExtensions.formatForDB(_name_1);
+          _builder.append(_formatForDB, "");
+          _builder.append("{$itemid}\" href=\"javascript:void(0);\" class=\"z-hide\">");
+          _builder.newLineIfNotEmpty();
+          _builder.append("{if $");
+          _builder.append(objName, "");
+          _builder.append(".");
+          String _name_2 = it.getName();
+          String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
+          _builder.append(_formatForCode_1, "");
+          _builder.append("}");
+          _builder.newLineIfNotEmpty();
+          _builder.append("    ");
+          _builder.append("{icon type=\'ok\' size=\'extrasmall\' __alt=\'Yes\' id=\"yes");
+          String _name_3 = it.getName();
+          String _formatForDB_1 = this._formattingExtensions.formatForDB(_name_3);
+          _builder.append(_formatForDB_1, "    ");
+          _builder.append("_`$itemid`\" __title=\'This setting is enabled. Click here to disable it.\'}");
+          _builder.newLineIfNotEmpty();
+          _builder.append("    ");
+          _builder.append("{icon type=\'cancel\' size=\'extrasmall\' __alt=\'No\' id=\"no");
+          String _name_4 = it.getName();
+          String _formatForDB_2 = this._formattingExtensions.formatForDB(_name_4);
+          _builder.append(_formatForDB_2, "    ");
+          _builder.append("_`$itemid`\" __title=\'This setting is disabled. Click here to enable it.\' class=\'z-hide\'}");
+          _builder.newLineIfNotEmpty();
+          _builder.append("{else}");
+          _builder.newLine();
+          _builder.append("    ");
+          _builder.append("{icon type=\'ok\' size=\'extrasmall\' __alt=\'Yes\' id=\"yes");
+          String _name_5 = it.getName();
+          String _formatForDB_3 = this._formattingExtensions.formatForDB(_name_5);
+          _builder.append(_formatForDB_3, "    ");
+          _builder.append("_`$itemid`\" __title=\'This setting is enabled. Click here to disable it.\' class=\'z-hide\'}");
+          _builder.newLineIfNotEmpty();
+          _builder.append("    ");
+          _builder.append("{icon type=\'cancel\' size=\'extrasmall\' __alt=\'No\' id=\"no");
+          String _name_6 = it.getName();
+          String _formatForDB_4 = this._formattingExtensions.formatForDB(_name_6);
+          _builder.append(_formatForDB_4, "    ");
+          _builder.append("_`$itemid`\" __title=\'This setting is disabled. Click here to enable it.\'}");
+          _builder.newLineIfNotEmpty();
+          _builder.append("{/if}");
+          _builder.newLine();
+          _builder.append("</a>");
+          _builder.newLine();
+        } else {
+          _builder.append("<a id=\"toggle");
+          String _name_7 = it.getName();
+          String _formatForDB_5 = this._formattingExtensions.formatForDB(_name_7);
+          _builder.append(_formatForDB_5, "");
+          _builder.append("{$itemid}\" href=\"javascript:void(0);\" class=\"hide\">");
+          _builder.newLineIfNotEmpty();
+          _builder.append("{if $");
+          _builder.append(objName, "");
+          _builder.append(".");
+          String _name_8 = it.getName();
+          String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_8);
+          _builder.append(_formatForCode_2, "");
+          _builder.append("}");
+          _builder.newLineIfNotEmpty();
+          _builder.append("    ");
+          _builder.append("<span class=\"cursor-pointer icon icon-ok\" id=\"yes");
+          String _name_9 = it.getName();
+          String _formatForDB_6 = this._formattingExtensions.formatForDB(_name_9);
+          _builder.append(_formatForDB_6, "    ");
+          _builder.append("_{$itemid}\" title=\"{gt text=\'This setting is enabled. Click here to disable it.\'}\"></span>");
+          _builder.newLineIfNotEmpty();
+          _builder.append("    ");
+          _builder.append("<span class=\"cursor-pointer icon icon-remove hide\" id=\"no");
+          String _name_10 = it.getName();
+          String _formatForDB_7 = this._formattingExtensions.formatForDB(_name_10);
+          _builder.append(_formatForDB_7, "    ");
+          _builder.append("_{$itemid}\" title=\"{gt text=\'This setting is disabled. Click here to enable it.\'}\"></span>");
+          _builder.newLineIfNotEmpty();
+          _builder.append("{else}");
+          _builder.newLine();
+          _builder.append("    ");
+          _builder.append("<span class=\"cursor-pointer icon icon-ok hide\" id=\"yes");
+          String _name_11 = it.getName();
+          String _formatForDB_8 = this._formattingExtensions.formatForDB(_name_11);
+          _builder.append(_formatForDB_8, "    ");
+          _builder.append("_{$itemid}\" title=\"{gt text=\'This setting is enabled. Click here to disable it.\'}\"></span>");
+          _builder.newLineIfNotEmpty();
+          _builder.append("    ");
+          _builder.append("<span class=\"cursor-pointer icon icon-remove\" id=\"no");
+          String _name_12 = it.getName();
+          String _formatForDB_9 = this._formattingExtensions.formatForDB(_name_12);
+          _builder.append(_formatForDB_9, "    ");
+          _builder.append("_{$itemid}\" title=\"{gt text=\'This setting is disabled. Click here to enable it.\'}\"></span>");
+          _builder.newLineIfNotEmpty();
+          _builder.append("{/if}");
+          _builder.newLine();
+          _builder.append("</a>");
+          _builder.newLine();
         }
       }
-      _builder.append("hide\">");
-      _builder.newLineIfNotEmpty();
-      _builder.append("{if $");
-      _builder.append(objName, "");
-      _builder.append(".");
-      String _name_2 = it.getName();
-      String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
-      _builder.append(_formatForCode_1, "");
-      _builder.append("}");
-      _builder.newLineIfNotEmpty();
-      _builder.append("    ");
-      _builder.append("{icon type=\'ok\' size=\'extrasmall\' __alt=\'Yes\' id=\"yes");
-      String _name_3 = it.getName();
-      String _formatForDB_1 = this._formattingExtensions.formatForDB(_name_3);
-      _builder.append(_formatForDB_1, "    ");
-      _builder.append("_`$itemid`\" __title=\'This setting is enabled. Click here to disable it.\'}");
-      _builder.newLineIfNotEmpty();
-      _builder.append("    ");
-      _builder.append("{icon type=\'cancel\' size=\'extrasmall\' __alt=\'No\' id=\"no");
-      String _name_4 = it.getName();
-      String _formatForDB_2 = this._formattingExtensions.formatForDB(_name_4);
-      _builder.append(_formatForDB_2, "    ");
-      _builder.append("_`$itemid`\" __title=\'This setting is disabled. Click here to enable it.\' class=\'");
-      {
-        Entity _entity_2 = it.getEntity();
-        Models _container_1 = _entity_2.getContainer();
-        Application _application_1 = _container_1.getApplication();
-        boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-        if (_targets_1) {
-          _builder.append("z-");
-        }
-      }
-      _builder.append("hide\'}");
-      _builder.newLineIfNotEmpty();
-      _builder.append("{else}");
-      _builder.newLine();
-      _builder.append("    ");
-      _builder.append("{icon type=\'ok\' size=\'extrasmall\' __alt=\'Yes\' id=\"yes");
-      String _name_5 = it.getName();
-      String _formatForDB_3 = this._formattingExtensions.formatForDB(_name_5);
-      _builder.append(_formatForDB_3, "    ");
-      _builder.append("_`$itemid`\" __title=\'This setting is enabled. Click here to disable it.\' class=\'");
-      {
-        Entity _entity_3 = it.getEntity();
-        Models _container_2 = _entity_3.getContainer();
-        Application _application_2 = _container_2.getApplication();
-        boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-        if (_targets_2) {
-          _builder.append("z-");
-        }
-      }
-      _builder.append("hide\'}");
-      _builder.newLineIfNotEmpty();
-      _builder.append("    ");
-      _builder.append("{icon type=\'cancel\' size=\'extrasmall\' __alt=\'No\' id=\"no");
-      String _name_6 = it.getName();
-      String _formatForDB_4 = this._formattingExtensions.formatForDB(_name_6);
-      _builder.append(_formatForDB_4, "    ");
-      _builder.append("_`$itemid`\" __title=\'This setting is disabled. Click here to enable it.\'}");
-      _builder.newLineIfNotEmpty();
-      _builder.append("{/if}");
-      _builder.newLine();
-      _builder.append("</a>");
-      _builder.newLine();
       _builder.append("<noscript><div id=\"noscript");
-      String _name_7 = it.getName();
-      String _formatForDB_5 = this._formattingExtensions.formatForDB(_name_7);
-      _builder.append(_formatForDB_5, "");
+      String _name_13 = it.getName();
+      String _formatForDB_10 = this._formattingExtensions.formatForDB(_name_13);
+      _builder.append(_formatForDB_10, "");
       _builder.append("{$itemid}\">");
       _builder.newLineIfNotEmpty();
       _builder.append("    ");
       _builder.append("{$");
       _builder.append(objName, "    ");
       _builder.append(".");
-      String _name_8 = it.getName();
-      String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_8);
-      _builder.append(_formatForCode_2, "    ");
+      String _name_14 = it.getName();
+      String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_14);
+      _builder.append(_formatForCode_3, "    ");
       _builder.append("|yesno:true}");
       _builder.newLineIfNotEmpty();
       _builder.append("</div></noscript>");
@@ -205,9 +232,9 @@ public class SimpleFields {
       _builder_1.append("{$");
       _builder_1.append(objName, "");
       _builder_1.append(".");
-      String _name_9 = it.getName();
-      String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_9);
-      _builder_1.append(_formatForCode_3, "");
+      String _name_15 = it.getName();
+      String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_15);
+      _builder_1.append(_formatForCode_4, "");
       _builder_1.append("|yesno:true}");
       _xifexpression = _builder_1;
     }
@@ -414,11 +441,23 @@ public class SimpleFields {
             _builder_1.newLine();
           }
         }
-        _builder_1.append("    ");
-        _builder_1.append("<a href=\"mailto:{$");
-        _builder_1.append(realName, "    ");
-        _builder_1.append("}\" title=\"{gt text=\'Send an email\'}\">{icon type=\'mail\' size=\'extrasmall\' __alt=\'Email\'}</a>");
-        _builder_1.newLineIfNotEmpty();
+        {
+          Entity _entity = it.getEntity();
+          Models _container = _entity.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder_1.append("<a href=\"mailto:{$");
+            _builder_1.append(realName, "");
+            _builder_1.append("}\" title=\"{gt text=\'Send an email\'}\">{icon type=\'mail\' size=\'extrasmall\' __alt=\'Email\'}</a>");
+            _builder_1.newLineIfNotEmpty();
+          } else {
+            _builder_1.append("<a href=\"mailto:{$");
+            _builder_1.append(realName, "");
+            _builder_1.append("}\" title=\"{gt text=\'Send an email\'}\" class=\"icon icon-envelope text-hide\">{gt text=\'Email\'}</a>");
+            _builder_1.newLineIfNotEmpty();
+          }
+        }
         {
           boolean _equals_3 = Objects.equal(page, "display");
           if (_equals_3) {
@@ -489,11 +528,23 @@ public class SimpleFields {
             _builder_1.newLine();
           }
         }
-        _builder_1.append("    ");
-        _builder_1.append("<a href=\"{$");
-        _builder_1.append(realName, "    ");
-        _builder_1.append("}\" title=\"{gt text=\'Visit this page\'}\">{icon type=\'url\' size=\'extrasmall\' __alt=\'Homepage\'}</a>");
-        _builder_1.newLineIfNotEmpty();
+        {
+          Entity _entity = it.getEntity();
+          Models _container = _entity.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
+            _builder_1.append("<a href=\"{$");
+            _builder_1.append(realName, "");
+            _builder_1.append("}\" title=\"{gt text=\'Visit this page\'}\">{icon type=\'url\' size=\'extrasmall\' __alt=\'Homepage\'}</a>");
+            _builder_1.newLineIfNotEmpty();
+          } else {
+            _builder_1.append("<a href=\"{$");
+            _builder_1.append(realName, "");
+            _builder_1.append("}\" title=\"{gt text=\'Visit this page\'}\" class=\"icon icon-external-link-sign text-hide\">{gt text=\'Homepage\'}</a>");
+            _builder_1.newLineIfNotEmpty();
+          }
+        }
         {
           boolean _equals_3 = Objects.equal(page, "display");
           if (_equals_3) {

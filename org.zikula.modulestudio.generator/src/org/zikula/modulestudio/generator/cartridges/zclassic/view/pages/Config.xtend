@@ -39,7 +39,7 @@ class Config {
                     </div>
                 «ELSE»
                     <h3>
-                        {icon type='config' size='small' __alt='Settings'}
+                        <span class="icon icon-wrench"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»

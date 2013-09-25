@@ -604,7 +604,7 @@ public class Display {
             _builder.append("<h3>");
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("{icon type=\'display\' size=\'small\' __alt=\'Details\'}");
+            _builder.append("<span class=\"icon icon-eye-open\"></span>");
             _builder.newLine();
             _builder.append("    ");
             CharSequence _templateHeading_1 = this.templateHeading(entity, appName);
@@ -825,49 +825,82 @@ public class Display {
         _builder.append("  ");
         _builder.append("{/strip}</a>");
         _builder.newLine();
-        _builder.append("  ");
-        _builder.append("<a id=\"");
-        String _name_3 = linkEntity.getName();
-        String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
-        _builder.append(_formatForCode_2, "  ");
-        _builder.append("Item");
         {
-          Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(linkEntity);
-          for(final DerivedField pkField : _primaryKeyFields) {
-            _builder.append("{$");
-            _builder.append(relObjName, "  ");
-            _builder.append(".");
-            String _name_4 = pkField.getName();
-            String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
-            _builder.append(_formatForCode_3, "  ");
-            _builder.append("}");
-          }
-        }
-        _builder.append("Display\" href=\"{modurl modname=\'");
-        Models _container_2 = linkEntity.getContainer();
-        Application _application_2 = _container_2.getApplication();
-        String _appName_1 = this._utils.appName(_application_2);
-        _builder.append(_appName_1, "  ");
-        _builder.append("\' type=\'");
-        String _formattedName_1 = this._controllerExtensions.formattedName(linkController);
-        _builder.append(_formattedName_1, "  ");
-        _builder.append("\' ");
-        String _modUrlDisplay_1 = this._urlExtensions.modUrlDisplay(linkEntity, relObjName, Boolean.valueOf(true));
-        _builder.append(_modUrlDisplay_1, "  ");
-        _builder.append(" theme=\'Printer\'");
-        String _additionalUrlParametersForQuickViewLink = this._viewExtensions.additionalUrlParametersForQuickViewLink(controller);
-        _builder.append(_additionalUrlParametersForQuickViewLink, "  ");
-        _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"");
-        {
-          Models _container_3 = it.getContainer();
-          Application _application_3 = _container_3.getApplication();
-          boolean _targets = this._utils.targets(_application_3, "1.3.5");
+          Models _container_2 = it.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets = this._utils.targets(_application_2, "1.3.5");
           if (_targets) {
-            _builder.append("z-");
+            _builder.append("  ");
+            _builder.append("<a id=\"");
+            String _name_3 = linkEntity.getName();
+            String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
+            _builder.append(_formatForCode_2, "  ");
+            _builder.append("Item");
+            {
+              Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(linkEntity);
+              for(final DerivedField pkField : _primaryKeyFields) {
+                _builder.append("{$");
+                _builder.append(relObjName, "  ");
+                _builder.append(".");
+                String _name_4 = pkField.getName();
+                String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
+                _builder.append(_formatForCode_3, "  ");
+                _builder.append("}");
+              }
+            }
+            _builder.append("Display\" href=\"{modurl modname=\'");
+            Models _container_3 = linkEntity.getContainer();
+            Application _application_3 = _container_3.getApplication();
+            String _appName_1 = this._utils.appName(_application_3);
+            _builder.append(_appName_1, "  ");
+            _builder.append("\' type=\'");
+            String _formattedName_1 = this._controllerExtensions.formattedName(linkController);
+            _builder.append(_formattedName_1, "  ");
+            _builder.append("\' ");
+            String _modUrlDisplay_1 = this._urlExtensions.modUrlDisplay(linkEntity, relObjName, Boolean.valueOf(true));
+            _builder.append(_modUrlDisplay_1, "  ");
+            _builder.append(" theme=\'Printer\'");
+            String _additionalUrlParametersForQuickViewLink = this._viewExtensions.additionalUrlParametersForQuickViewLink(controller);
+            _builder.append(_additionalUrlParametersForQuickViewLink, "  ");
+            _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"z-hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
+            _builder.newLineIfNotEmpty();
+          } else {
+            _builder.append("  ");
+            _builder.append("<a id=\"");
+            String _name_5 = linkEntity.getName();
+            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
+            _builder.append(_formatForCode_4, "  ");
+            _builder.append("Item");
+            {
+              Iterable<DerivedField> _primaryKeyFields_1 = this._modelExtensions.getPrimaryKeyFields(linkEntity);
+              for(final DerivedField pkField_1 : _primaryKeyFields_1) {
+                _builder.append("{$");
+                _builder.append(relObjName, "  ");
+                _builder.append(".");
+                String _name_6 = pkField_1.getName();
+                String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
+                _builder.append(_formatForCode_5, "  ");
+                _builder.append("}");
+              }
+            }
+            _builder.append("Display\" href=\"{modurl modname=\'");
+            Models _container_4 = linkEntity.getContainer();
+            Application _application_4 = _container_4.getApplication();
+            String _appName_2 = this._utils.appName(_application_4);
+            _builder.append(_appName_2, "  ");
+            _builder.append("\' type=\'");
+            String _formattedName_2 = this._controllerExtensions.formattedName(linkController);
+            _builder.append(_formattedName_2, "  ");
+            _builder.append("\' ");
+            String _modUrlDisplay_2 = this._urlExtensions.modUrlDisplay(linkEntity, relObjName, Boolean.valueOf(true));
+            _builder.append(_modUrlDisplay_2, "  ");
+            _builder.append(" theme=\'Printer\'");
+            String _additionalUrlParametersForQuickViewLink_1 = this._viewExtensions.additionalUrlParametersForQuickViewLink(controller);
+            _builder.append(_additionalUrlParametersForQuickViewLink_1, "  ");
+            _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"hide\"><span class=\"icon icon-zoom-in text-hide\">{gt text=\'Quick view\'}</span></a>");
+            _builder.newLineIfNotEmpty();
           }
         }
-        _builder.append("hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
-        _builder.newLineIfNotEmpty();
         _builder.append("  ");
         _builder.append("<script type=\"text/javascript\">");
         _builder.newLine();
@@ -887,19 +920,19 @@ public class Display {
           if (_tripleNotEquals_3) {
             _builder.append("  ");
             _builder.append("        ");
-            Models _container_4 = it.getContainer();
-            Application _application_4 = _container_4.getApplication();
-            String _prefix = _application_4.getPrefix();
+            Models _container_5 = it.getContainer();
+            Application _application_5 = _container_5.getApplication();
+            String _prefix = _application_5.getPrefix();
             _builder.append(_prefix, "          ");
             _builder.append("InitInlineWindow($(\'");
-            String _name_5 = linkEntity.getName();
-            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
-            _builder.append(_formatForCode_4, "          ");
+            String _name_7 = linkEntity.getName();
+            String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_7);
+            _builder.append(_formatForCode_6, "          ");
             _builder.append("Item");
             {
-              Iterable<DerivedField> _primaryKeyFields_1 = this._modelExtensions.getPrimaryKeyFields(linkEntity);
+              Iterable<DerivedField> _primaryKeyFields_2 = this._modelExtensions.getPrimaryKeyFields(linkEntity);
               boolean _hasElements = false;
-              for(final DerivedField pkField_1 : _primaryKeyFields_1) {
+              for(final DerivedField pkField_2 : _primaryKeyFields_2) {
                 if (!_hasElements) {
                   _hasElements = true;
                 } else {
@@ -908,36 +941,36 @@ public class Display {
                 _builder.append("{{$");
                 _builder.append(relObjName, "          ");
                 _builder.append(".");
-                String _name_6 = pkField_1.getName();
-                String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
-                _builder.append(_formatForCode_5, "          ");
+                String _name_8 = pkField_2.getName();
+                String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_8);
+                _builder.append(_formatForCode_7, "          ");
                 _builder.append("}}");
               }
             }
             _builder.append("Display\'), \'{{$");
             _builder.append(relObjName, "          ");
             _builder.append(".");
-            String _name_7 = leadingLinkField.getName();
-            String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_7);
-            _builder.append(_formatForCode_6, "          ");
+            String _name_9 = leadingLinkField.getName();
+            String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_9);
+            _builder.append(_formatForCode_8, "          ");
             _builder.append("|replace:\"\'\":\"\"}}\');");
             _builder.newLineIfNotEmpty();
           } else {
             _builder.append("  ");
             _builder.append("        ");
-            Models _container_5 = it.getContainer();
-            Application _application_5 = _container_5.getApplication();
-            String _prefix_1 = _application_5.getPrefix();
+            Models _container_6 = it.getContainer();
+            Application _application_6 = _container_6.getApplication();
+            String _prefix_1 = _application_6.getPrefix();
             _builder.append(_prefix_1, "          ");
             _builder.append("InitInlineWindow($(\'");
-            String _name_8 = linkEntity.getName();
-            String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_8);
-            _builder.append(_formatForCode_7, "          ");
+            String _name_10 = linkEntity.getName();
+            String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_10);
+            _builder.append(_formatForCode_9, "          ");
             _builder.append("Item");
             {
-              Iterable<DerivedField> _primaryKeyFields_2 = this._modelExtensions.getPrimaryKeyFields(linkEntity);
+              Iterable<DerivedField> _primaryKeyFields_3 = this._modelExtensions.getPrimaryKeyFields(linkEntity);
               boolean _hasElements_1 = false;
-              for(final DerivedField pkField_2 : _primaryKeyFields_2) {
+              for(final DerivedField pkField_3 : _primaryKeyFields_3) {
                 if (!_hasElements_1) {
                   _hasElements_1 = true;
                 } else {
@@ -946,15 +979,15 @@ public class Display {
                 _builder.append("{{$");
                 _builder.append(relObjName, "          ");
                 _builder.append(".");
-                String _name_9 = pkField_2.getName();
-                String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_9);
-                _builder.append(_formatForCode_8, "          ");
+                String _name_11 = pkField_3.getName();
+                String _formatForCode_10 = this._formattingExtensions.formatForCode(_name_11);
+                _builder.append(_formatForCode_10, "          ");
                 _builder.append("}}");
               }
             }
             _builder.append("Display\'), \'{{gt text=\'");
-            String _name_10 = linkEntity.getName();
-            String _formatForDisplayCapital_2 = this._formattingExtensions.formatForDisplayCapital(_name_10);
+            String _name_12 = linkEntity.getName();
+            String _formatForDisplayCapital_2 = this._formattingExtensions.formatForDisplayCapital(_name_12);
             _builder.append(_formatForDisplayCapital_2, "          ");
             _builder.append("\'|replace:\"\'\":\"\"}}\');");
             _builder.newLineIfNotEmpty();
@@ -981,15 +1014,15 @@ public class Display {
         _builder.append("{$");
         _builder.append(relObjName, "");
         _builder.append(".");
-        String _name_11 = leadingField.getName();
-        String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_11);
-        _builder.append(_formatForCode_9, "");
+        String _name_13 = leadingField.getName();
+        String _formatForCode_11 = this._formattingExtensions.formatForCode(_name_13);
+        _builder.append(_formatForCode_11, "");
         _builder.append("|default:\"\"}");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("{gt text=\'");
-        String _name_12 = linkEntity.getName();
-        String _formatForDisplayCapital_3 = this._formattingExtensions.formatForDisplayCapital(_name_12);
+        String _name_14 = linkEntity.getName();
+        String _formatForDisplayCapital_3 = this._formattingExtensions.formatForDisplayCapital(_name_14);
         _builder.append(_formatForDisplayCapital_3, "");
         _builder.append("\'}");
         _builder.newLineIfNotEmpty();
@@ -1041,7 +1074,18 @@ public class Display {
     _builder.append("<a href=\"{$option.url.type|");
     String _formatForDB = this._formattingExtensions.formatForDB(appName);
     _builder.append(_formatForDB, "    ");
-    _builder.append("ActionUrl:$option.url.func:$option.url.arguments}\" title=\"{$option.linkTitle|safetext}\" class=\"z-icon-es-{$option.icon}\">{$option.linkText|safetext}</a>");
+    _builder.append("ActionUrl:$option.url.func:$option.url.arguments}\" title=\"{$option.linkTitle|safetext}\" class=\"");
+    {
+      Models _container = it.getContainer();
+      Application _application = _container.getApplication();
+      boolean _targets = this._utils.targets(_application, "1.3.5");
+      if (_targets) {
+        _builder.append("z-icon-es");
+      } else {
+        _builder.append("icon icon");
+      }
+    }
+    _builder.append("-{$option.icon}\">{$option.linkText|safetext}</a>");
     _builder.newLineIfNotEmpty();
     _builder.append("{/foreach}");
     _builder.newLine();
@@ -1055,9 +1099,9 @@ public class Display {
     _builder.append("document.observe(\'dom:loaded\', function() {");
     _builder.newLine();
     _builder.append("        ");
-    Models _container = it.getContainer();
-    Application _application = _container.getApplication();
-    String _prefix = _application.getPrefix();
+    Models _container_1 = it.getContainer();
+    Application _application_1 = _container_1.getApplication();
+    String _prefix = _application_1.getPrefix();
     _builder.append(_prefix, "        ");
     _builder.append("InitItemActions(\'");
     String _name_1 = it.getName();

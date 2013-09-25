@@ -77,9 +77,9 @@ class Entities {
         val entityFileName = name.formatForCodeCapital + entityClassSuffix + '.php'
         if (!isInheriting) {
             if (app.targets('1.3.5')) {
-            fsa.generateFile(entityPath + 'Base/' + entityFileName, modelEntityBaseFile(app))
+                fsa.generateFile(entityPath + 'Base/' + entityFileName, modelEntityBaseFile(app))
             } else {
-            fsa.generateFile(entityPath + 'Base/Abstract' + entityFileName, modelEntityBaseFile(app))
+                fsa.generateFile(entityPath + 'Base/Abstract' + entityFileName, modelEntityBaseFile(app))
             }
         }
         fsa.generateFile(entityPath + entityFileName, modelEntityFile(app))
@@ -409,7 +409,7 @@ class Entities {
                             «IF controller.tempIsAdminController && container.application.hasUserController && container.application.getMainUserController.hasActions('display')»
                                 $this->_actions[] = array(
                                     'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
-                                    'icon' => 'preview',
+                                    'icon' => '«IF app.targets('1.3.5')»preview«ELSE»zoom-in«ENDIF»',
                                     'linkTitle' => __('Open preview page', $dom),
                                     'linkText' => __('Preview', $dom)
                                 );
@@ -418,7 +418,7 @@ class Entities {
                                 «val leadingField = getLeadingField»
                                 $this->_actions[] = array(
                                     'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
-                                    'icon' => 'display',
+                                    'icon' => '«IF app.targets('1.3.5')»display«ELSE»eye-open«ENDIF»',
                                     'linkTitle' => «IF leadingField !== null»str_replace('"', '', $this['«leadingField.name.formatForCode»'])«ELSE»__('Open detail page', $dom)«ENDIF»,
                                     'linkText' => __('Details', $dom)
                                 );
@@ -447,7 +447,7 @@ class Entities {
                                 if (SecurityUtil::checkPermission($component, $instance, ACCESS_DELETE)) {
                                     $this->_actions[] = array(
                                         'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
-                                        'icon' => 'delete',
+                                        'icon' => '«IF app.targets('1.3.5')»delete«ELSE»trash«ENDIF»',
                                         'linkTitle' => __('Delete', $dom),
                                         'linkText' => __('Delete', $dom)
                                     );
@@ -460,7 +460,7 @@ class Entities {
                             «IF controller.hasActions('view')»
                                 $this->_actions[] = array(
                                     'url' => array('type' => '«controller.formattedName»', 'func' => 'view', 'arguments' => array('ot' => '«name.formatForCode»')),
-                                    'icon' => 'back',
+                                    'icon' => '«IF app.targets('1.3.5')»back«ELSE»reply«ENDIF»',
                                     'linkTitle' => __('Back to overview', $dom),
                                     'linkText' => __('Back to overview', $dom)
                                 );
@@ -544,7 +544,7 @@ class Entities {
         «IF tree == EntityTreeType::NONE»
                 $this->_actions[] = array(
                     'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
-                    'icon' => 'saveas',
+                    'icon' => '«IF container.application.targets('1.3.5')»saveas«ELSE»copy«ENDIF»',
                     'linkTitle' => __('Reuse for new item', $dom),
                     'linkText' => __('Reuse', $dom)
                 );

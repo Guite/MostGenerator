@@ -171,11 +171,19 @@ class Relations {
     def private component_ItemList(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» in «controller.formattedName» area *}
         «IF includeEditing»
-            {icon type='edit' size='extrasmall' assign='editImageArray'}
-            {assign var='editImage' value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+            «IF app.targets('1.3.5')»
+                {icon type='edit' size='extrasmall' assign='editImageArray'}
+                {assign var='editImage' value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+            «ELSE»
+                {assign var='editImage' value='<span class="icon icon-edit"></span>'}
+            «ENDIF»
         «ENDIF»
-        {icon type='delete' size='extrasmall' assign='removeImageArray'}
-        {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+        «IF app.targets('1.3.5')»
+            {icon type='delete' size='extrasmall' assign='removeImageArray'}
+            {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+        «ELSE»
+            {assign var='removeImage' value='<span class="icon icon-trash"></span>'}
+        «ENDIF»
         «IF !many»
 
         {if isset($item) && is_array($item) && !is_object($item[0])}
@@ -223,8 +231,13 @@ class Relations {
         «val outgoingJoins = outgoingJoinRelations.filter[target.container.application == app && usesAutoCompletion(true)]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
-                var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
-                var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';
+                «IF app.targets('1.3.5')»
+                    var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
+                    var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
+                «ELSE»
+                    var editImage = '{{$editImage}}';
+                    var removeImage = '{{$removeImage}}';
+                «ENDIF»
                 var relationHandler = new Array();
             «ENDIF»
             «FOR relation : incomingJoins»«relation.initJs(app, it, true, insideLoader)»«ENDFOR»

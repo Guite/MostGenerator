@@ -735,16 +735,32 @@ public class Relations {
     _builder.newLineIfNotEmpty();
     {
       if ((includeEditing).booleanValue()) {
-        _builder.append("{icon type=\'edit\' size=\'extrasmall\' assign=\'editImageArray\'}");
+        {
+          boolean _targets = this._utils.targets(app, "1.3.5");
+          if (_targets) {
+            _builder.append("{icon type=\'edit\' size=\'extrasmall\' assign=\'editImageArray\'}");
+            _builder.newLine();
+            _builder.append("{assign var=\'editImage\' value=\"<img src=\\\"`$editImageArray.src`\\\" width=\\\"16\\\" height=\\\"16\\\" alt=\\\"\\\" />\"}");
+            _builder.newLine();
+          } else {
+            _builder.append("{assign var=\'editImage\' value=\'<span class=\"icon icon-edit\"></span>\'}");
+            _builder.newLine();
+          }
+        }
+      }
+    }
+    {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      if (_targets_1) {
+        _builder.append("{icon type=\'delete\' size=\'extrasmall\' assign=\'removeImageArray\'}");
         _builder.newLine();
-        _builder.append("{assign var=\'editImage\' value=\"<img src=\\\"`$editImageArray.src`\\\" width=\\\"16\\\" height=\\\"16\\\" alt=\\\"\\\" />\"}");
+        _builder.append("{assign var=\'removeImage\' value=\"<img src=\\\"`$removeImageArray.src`\\\" width=\\\"16\\\" height=\\\"16\\\" alt=\\\"\\\" />\"}");
+        _builder.newLine();
+      } else {
+        _builder.append("{assign var=\'removeImage\' value=\'<span class=\"icon icon-trash\"></span>\'}");
         _builder.newLine();
       }
     }
-    _builder.append("{icon type=\'delete\' size=\'extrasmall\' assign=\'removeImageArray\'}");
-    _builder.newLine();
-    _builder.append("{assign var=\'removeImage\' value=\"<img src=\\\"`$removeImageArray.src`\\\" width=\\\"16\\\" height=\\\"16\\\" alt=\\\"\\\" />\"}");
-    _builder.newLine();
     {
       boolean _not = (!(many).booleanValue());
       if (_not) {
@@ -1045,8 +1061,8 @@ public class Relations {
         {
           Models _container = it.getContainer();
           Application _application = _container.getApplication();
-          boolean _targets = this._utils.targets(_application, "1.3.5");
-          boolean _not_3 = (!_targets);
+          boolean _targets_2 = this._utils.targets(_application, "1.3.5");
+          boolean _not_3 = (!_targets_2);
           if (_not_3) {
             _builder.append(" img_class=\'img-rounded\'");
           }
@@ -1128,10 +1144,20 @@ public class Relations {
         {
           boolean _not_2 = (!(insideLoader).booleanValue());
           if (_not_2) {
-            _builder.append("var editImage = \'<img src=\"{{$editImageArray.src}}\" width=\"16\" height=\"16\" alt=\"\" />\';");
-            _builder.newLine();
-            _builder.append("var removeImage = \'<img src=\"{{$deleteImageArray.src}}\" width=\"16\" height=\"16\" alt=\"\" />\';");
-            _builder.newLine();
+            {
+              boolean _targets = this._utils.targets(app, "1.3.5");
+              if (_targets) {
+                _builder.append("var editImage = \'<img src=\"{{$editImageArray.src}}\" width=\"16\" height=\"16\" alt=\"\" />\';");
+                _builder.newLine();
+                _builder.append("var removeImage = \'<img src=\"{{$removeImageArray.src}}\" width=\"16\" height=\"16\" alt=\"\" />\';");
+                _builder.newLine();
+              } else {
+                _builder.append("var editImage = \'{{$editImage}}\';");
+                _builder.newLine();
+                _builder.append("var removeImage = \'{{$removeImage}}\';");
+                _builder.newLine();
+              }
+            }
             _builder.append("var relationHandler = new Array();");
             _builder.newLine();
           }
