@@ -2724,10 +2724,13 @@ public class Repository {
       boolean _isOwnerPermission = it.isOwnerPermission();
       if (_isOwnerPermission) {
         _builder.append("        ");
-        _builder.append("$onlyOwn = (int) FormUtil::getPassedValue(\'own\', 0, \'GETPOST\');");
-        _builder.newLine();
+        _builder.append("$showOnlyOwnEntries = (int) FormUtil::getPassedValue(\'own\', ModUtil::getVar(\'");
+        String _appName_2 = this._utils.appName(this.app);
+        _builder.append(_appName_2, "        ");
+        _builder.append("\', \'showOnlyOwnEntries\', 0), \'GETPOST\');");
+        _builder.newLineIfNotEmpty();
         _builder.append("        ");
-        _builder.append("if ($onlyOwn == 1) {");
+        _builder.append("if ($showOnlyOwnEntries == 1) {");
         _builder.newLine();
         _builder.append("        ");
         _builder.append("    ");
@@ -3671,10 +3674,13 @@ public class Repository {
       if (_isStandardFields) {
         _builder.newLine();
         _builder.append("    ");
-        _builder.append("$onlyOwn = (int) FormUtil::getPassedValue(\'own\', 0, \'GETPOST\');");
-        _builder.newLine();
+        _builder.append("$showOnlyOwnEntries = (int) FormUtil::getPassedValue(\'own\', ModUtil::getVar(\'");
+        String _appName = this._utils.appName(this.app);
+        _builder.append(_appName, "    ");
+        _builder.append("\', \'showOnlyOwnEntries\', 0), \'GETPOST\');");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
-        _builder.append("if ($onlyOwn == 1) {");
+        _builder.append("if ($showOnlyOwnEntries == 1) {");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("    ");

@@ -856,8 +856,8 @@ class Repository {
                 // per default we show approved «nameMultiple.formatForDisplay» only
                 $onlineStates = array('approved');
                 «IF ownerPermission»
-                    $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
-                    if ($onlyOwn == 1) {
+                    $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                    if ($showOnlyOwnEntries == 1) {
                         // allow the owner to see his deferred «nameMultiple.formatForDisplay»
                         $onlineStates[] = 'deferred';
                     }
@@ -1170,8 +1170,8 @@ class Repository {
             }
             «IF standardFields»
 
-                $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
-                if ($onlyOwn == 1) {
+                $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                if ($showOnlyOwnEntries == 1) {
                     $uid = UserUtil::getVar('uid');
                     $qb->andWhere('tbl.createdUserId = :creator')
                        ->setParameter('creator', $uid);
