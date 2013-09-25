@@ -470,10 +470,26 @@ public class Validation {
     return _builder;
   }
   
-  public CharSequence fieldValidationCssClass(final DerivedField it) {
+  public CharSequence fieldValidationCssClass(final DerivedField it, final Boolean addFormControl) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append(" ");
     _builder.append("cssClass=\'");
+    {
+      boolean _and = false;
+      if (!(addFormControl).booleanValue()) {
+        _and = false;
+      } else {
+        Entity _entity = it.getEntity();
+        Models _container = _entity.getContainer();
+        Application _application = _container.getApplication();
+        boolean _targets = this._utils.targets(_application, "1.3.5");
+        boolean _not = (!_targets);
+        _and = ((addFormControl).booleanValue() && _not);
+      }
+      if (_and) {
+        _builder.append("form-control ");
+      }
+    }
     {
       boolean _isMandatory = it.isMandatory();
       if (_isMandatory) {
@@ -498,10 +514,26 @@ public class Validation {
     return _builder;
   }
   
-  public CharSequence fieldValidationCssClassEdit(final UploadField it) {
+  public CharSequence fieldValidationCssClassOptional(final UploadField it, final Boolean addFormControl) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append(" ");
     _builder.append("cssClass=\'");
+    {
+      boolean _and = false;
+      if (!(addFormControl).booleanValue()) {
+        _and = false;
+      } else {
+        Entity _entity = it.getEntity();
+        Models _container = _entity.getContainer();
+        Application _application = _container.getApplication();
+        boolean _targets = this._utils.targets(_application, "1.3.5");
+        boolean _not = (!_targets);
+        _and = ((addFormControl).booleanValue() && _not);
+      }
+      if (_and) {
+        _builder.append("form-control ");
+      }
+    }
     {
       boolean _isUnique = it.isUnique();
       if (_isUnique) {

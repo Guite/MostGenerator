@@ -58,7 +58,7 @@ class SimpleFields {
         «ENDIF»
     '''
 
-    def private formLabelAdditions(DerivedField it) '''cssClass='«IF documentation !== null && documentation != ''»«entity.container.application.appName.formatForDB»FormTooltips«ENDIF»«IF !entity.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.container.application.appName.formatForDB»FormTooltips«ENDIF»«IF !entity.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»'''
 
     def private formLabelText(DerivedField it) {
         name.formatForDisplayCapital
@@ -67,11 +67,11 @@ class SimpleFields {
     def private groupAndId(EntityField it, String groupSuffix, String idSuffix) '''group=«templateIdWithSuffix(entity.name.formatForDB, groupSuffix)» id=«templateIdWithSuffix(name.formatForCode, idSuffix)»'''
 
     def private dispatch formField(BooleanField it, String groupSuffix, String idSuffix) '''
-        {formcheckbox «groupAndId(groupSuffix, idSuffix)» readOnly=«readonly.displayBool» __title='«name.formatForDisplay» ?'«validationHelper.fieldValidationCssClass(it)»}
+        {formcheckbox «groupAndId(groupSuffix, idSuffix)» readOnly=«readonly.displayBool» __title='«name.formatForDisplay» ?'«validationHelper.fieldValidationCssClass(it, false)»}
     '''
 
     def private dispatch formField(IntegerField it, String groupSuffix, String idSuffix) '''
-        {formintinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' maxLength=«length»«IF minValue.toString != '0'» minValue=«minValue»«ENDIF»«IF maxValue.toString != '0'» maxValue=«maxValue»«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+        {formintinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' maxLength=«length»«IF minValue.toString != '0'» minValue=«minValue»«ENDIF»«IF maxValue.toString != '0'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
     '''
 
     def private dispatch formField(DecimalField it, String groupSuffix, String idSuffix) '''
@@ -79,7 +79,7 @@ class SimpleFields {
             <div class="input-group">
                 <span class="input-group-addon">{gt text='$' comment='Currency symbol'}</span>
         «ENDIF»
-            {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         «IF !entity.container.application.targets('1.3.5') && currency»
             </div>
         «ENDIF»
@@ -90,7 +90,7 @@ class SimpleFields {
             <div class="input-group">
                 <span class="input-group-addon">{gt text='$' comment='Currency symbol'}</span>
         «ENDIF»
-            {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         «IF !entity.container.application.targets('1.3.5') && currency»
             </div>
         «ENDIF»
@@ -102,14 +102,14 @@ class SimpleFields {
         «ELSEIF language»
             {formlanguageselector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool»«IF mandatory» addAllOption=false«ENDIF» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSEIF htmlcolour»
-            {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»' cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it, true)»}
         «ELSE»
-            {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it, true)»}
         «ENDIF»
     '''
 
     def private dispatch formField(TextField it, String groupSuffix, String idSuffix) '''
-        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='multiline'«IF minLength > 0» minLength=«minLength»«ENDIF» rows='6«/*8*/»'«IF entity.container.application.targets('1.3.5')» cols='50'«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='multiline'«IF minLength > 0» minLength=«minLength»«ENDIF» rows='6«/*8*/»'«IF entity.container.application.targets('1.3.5')» cols='50'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
     '''
 
     def private dispatch formField(EmailField it, String groupSuffix, String idSuffix) '''
@@ -117,26 +117,26 @@ class SimpleFields {
             <div class="input-group">
                 <span class="input-group-addon">@</span>
         «ENDIF»
-            {formemailinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formemailinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it, true)»}
         «IF !entity.container.application.targets('1.3.5')»
             </div>
         «ENDIF»
     '''
 
     def private dispatch formField(UrlField it, String groupSuffix, String idSuffix) '''
-        {formurlinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+        {formurlinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it, true)»}
     '''
 
     def private dispatch formField(UploadField it, String groupSuffix, String idSuffix) '''
         «IF mandatory»
             {if $mode eq 'create'}
-                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it, true)»}
             {else}
-                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassOptional(it, true)»}
                 <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
             {/if}
         «ELSE»
-            {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassOptional(it, true)»}
             <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
         «ENDIF»
 
@@ -208,9 +208,9 @@ class SimpleFields {
     }
     def private dispatch formFieldDetails(DatetimeField it, String groupSuffix, String idSuffix) '''
         {if $mode ne 'create'}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«validationHelper.fieldValidationCssClass(it, true)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         {/if}
         «/*TODO: visible=false*/»
         «IF !mandatory && nullable»
@@ -220,9 +220,9 @@ class SimpleFields {
 
     def private dispatch formFieldDetails(DateField it, String groupSuffix, String idSuffix) '''
         {if $mode ne 'create'}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«validationHelper.fieldValidationCssClass(it, true)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF» cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         {/if}
         «IF !mandatory && nullable»
             <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
@@ -231,6 +231,6 @@ class SimpleFields {
 
     def private dispatch formFieldDetails(TimeField it, String groupSuffix, String idSuffix) '''
         {* TODO: support time fields in Zikula (see https://github.com/Guite/MostGenerator/issues/87 for more information) *}
-        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8 cssClass='«validationHelper.fieldValidationCssClass(it)»«IF !entity.container.application.targets('1.3.5')» form-control«ENDIF»'}
+        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8«validationHelper.fieldValidationCssClass(it, true)»}
     '''
 }

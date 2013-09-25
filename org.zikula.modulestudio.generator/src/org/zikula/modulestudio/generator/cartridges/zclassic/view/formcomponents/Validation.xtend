@@ -101,8 +101,8 @@ class Validation {
         «ENDIF»
     '''
 
-    def fieldValidationCssClass(DerivedField it) ''' cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»' '''
-    def fieldValidationCssClassEdit(UploadField it)''' cssClass='«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»' '''
+    def fieldValidationCssClass(DerivedField it, Boolean addFormControl) ''' cssClass='«IF addFormControl && !entity.container.application.targets('1.3.5')»form-control «ENDIF»«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»' '''
+    def fieldValidationCssClassOptional(UploadField it, Boolean addFormControl)''' cssClass='«IF addFormControl && !entity.container.application.targets('1.3.5')»form-control «ENDIF»«IF unique»validate-unique«ENDIF»«fieldValidationCssClassAdditions»' '''
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
             AbstractIntegerField: ' validate-digits'

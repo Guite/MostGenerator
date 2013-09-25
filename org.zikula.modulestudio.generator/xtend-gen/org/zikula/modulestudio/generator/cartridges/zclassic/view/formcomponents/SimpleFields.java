@@ -181,6 +181,7 @@ public class SimpleFields {
   
   private CharSequence formLabelAdditions(final DerivedField it) {
     StringConcatenation _builder = new StringConcatenation();
+    _builder.append(" ");
     _builder.append("cssClass=\'");
     {
       boolean _and = false;
@@ -199,7 +200,7 @@ public class SimpleFields {
         Application _application = _container.getApplication();
         String _appName = this._utils.appName(_application);
         String _formatForDB = this._formattingExtensions.formatForDB(_appName);
-        _builder.append(_formatForDB, "");
+        _builder.append(_formatForDB, " ");
         _builder.append("FormTooltips");
       }
     }
@@ -268,7 +269,7 @@ public class SimpleFields {
     String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name);
     _builder.append(_formatForDisplay, "");
     _builder.append(" ?\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(false));
     _builder.append(_fieldValidationCssClass, "");
     _builder.append("}");
     _builder.newLineIfNotEmpty();
@@ -316,20 +317,9 @@ public class SimpleFields {
         _builder.append(_maxValue_1, "");
       }
     }
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "");
-    {
-      Entity _entity_1 = it.getEntity();
-      Models _container = _entity_1.getContainer();
-      Application _application = _container.getApplication();
-      boolean _targets = this._utils.targets(_application, "1.3.5");
-      boolean _not = (!_targets);
-      if (_not) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -444,33 +434,22 @@ public class SimpleFields {
         _builder.append(_scale_2, "    ");
       }
     }
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "    ");
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
     {
+      boolean _and_5 = false;
       Entity _entity_2 = it.getEntity();
       Models _container_1 = _entity_2.getContainer();
       Application _application_1 = _container_1.getApplication();
       boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
       boolean _not_1 = (!_targets_1);
-      if (_not_1) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
-    _builder.newLineIfNotEmpty();
-    {
-      boolean _and_5 = false;
-      Entity _entity_3 = it.getEntity();
-      Models _container_2 = _entity_3.getContainer();
-      Application _application_2 = _container_2.getApplication();
-      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-      boolean _not_2 = (!_targets_2);
-      if (!_not_2) {
+      if (!_not_1) {
         _and_5 = false;
       } else {
         boolean _isCurrency_1 = it.isCurrency();
-        _and_5 = (_not_2 && _isCurrency_1);
+        _and_5 = (_not_1 && _isCurrency_1);
       }
       if (_and_5) {
         _builder.append("</div>");
@@ -575,33 +554,22 @@ public class SimpleFields {
         _builder.append(_maxValue_3, "    ");
       }
     }
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "    ");
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
     {
+      boolean _and_5 = false;
       Entity _entity_2 = it.getEntity();
       Models _container_1 = _entity_2.getContainer();
       Application _application_1 = _container_1.getApplication();
       boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
       boolean _not_1 = (!_targets_1);
-      if (_not_1) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
-    _builder.newLineIfNotEmpty();
-    {
-      boolean _and_5 = false;
-      Entity _entity_3 = it.getEntity();
-      Models _container_2 = _entity_3.getContainer();
-      Application _application_2 = _container_2.getApplication();
-      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-      boolean _not_2 = (!_targets_2);
-      if (!_not_2) {
+      if (!_not_1) {
         _and_5 = false;
       } else {
         boolean _isCurrency_1 = it.isCurrency();
-        _and_5 = (_not_2 && _isCurrency_1);
+        _and_5 = (_not_1 && _isCurrency_1);
       }
       if (_and_5) {
         _builder.append("</div>");
@@ -716,20 +684,10 @@ public class SimpleFields {
             String _name_5 = _entity_6.getName();
             String _formatForDisplay_5 = this._formattingExtensions.formatForDisplay(_name_5);
             _builder.append(_formatForDisplay_5, "");
-            _builder.append("\' cssClass=\'");
-            CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+            _builder.append("\'");
+            CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
             _builder.append(_fieldValidationCssClass, "");
-            {
-              Entity _entity_7 = it.getEntity();
-              Models _container_4 = _entity_7.getContainer();
-              Application _application_4 = _container_4.getApplication();
-              boolean _targets_2 = this._utils.targets(_application_4, "1.3.5");
-              boolean _not_2 = (!_targets_2);
-              if (_not_2) {
-                _builder.append(" form-control");
-              }
-            }
-            _builder.append("\'}");
+            _builder.append("}");
             _builder.newLineIfNotEmpty();
           } else {
             _builder.append("{formtextinput ");
@@ -748,8 +706,8 @@ public class SimpleFields {
             String _formatForDisplay_6 = this._formattingExtensions.formatForDisplay(_name_6);
             _builder.append(_formatForDisplay_6, "");
             _builder.append(" of the ");
-            Entity _entity_8 = it.getEntity();
-            String _name_7 = _entity_8.getName();
+            Entity _entity_7 = it.getEntity();
+            String _name_7 = _entity_7.getName();
             String _formatForDisplay_7 = this._formattingExtensions.formatForDisplay(_name_7);
             _builder.append(_formatForDisplay_7, "");
             _builder.append("\' textMode=\'");
@@ -774,20 +732,9 @@ public class SimpleFields {
             _builder.append(" maxLength=");
             int _length = it.getLength();
             _builder.append(_length, "");
-            _builder.append(" cssClass=\'");
-            CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
+            CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
             _builder.append(_fieldValidationCssClass_1, "");
-            {
-              Entity _entity_9 = it.getEntity();
-              Models _container_5 = _entity_9.getContainer();
-              Application _application_5 = _container_5.getApplication();
-              boolean _targets_3 = this._utils.targets(_application_5, "1.3.5");
-              boolean _not_3 = (!_targets_3);
-              if (_not_3) {
-                _builder.append(" form-control");
-              }
-            }
-            _builder.append("\'}");
+            _builder.append("}");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -835,20 +782,9 @@ public class SimpleFields {
         _builder.append(" cols=\'50\'");
       }
     }
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "");
-    {
-      Entity _entity_2 = it.getEntity();
-      Models _container_1 = _entity_2.getContainer();
-      Application _application_1 = _container_1.getApplication();
-      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-      boolean _not = (!_targets_1);
-      if (_not) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -903,9 +839,10 @@ public class SimpleFields {
     _builder.append(" maxLength=");
     int _length = it.getLength();
     _builder.append(_length, "    ");
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "    ");
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
     {
       Entity _entity_2 = it.getEntity();
       Models _container_1 = _entity_2.getContainer();
@@ -913,18 +850,6 @@ public class SimpleFields {
       boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
       boolean _not_1 = (!_targets_1);
       if (_not_1) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
-    _builder.newLineIfNotEmpty();
-    {
-      Entity _entity_3 = it.getEntity();
-      Models _container_2 = _entity_3.getContainer();
-      Application _application_2 = _container_2.getApplication();
-      boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-      boolean _not_2 = (!_targets_2);
-      if (_not_2) {
         _builder.append("</div>");
         _builder.newLine();
       }
@@ -967,20 +892,9 @@ public class SimpleFields {
     _builder.append(" maxLength=");
     int _length = it.getLength();
     _builder.append(_length, "");
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "");
-    {
-      Entity _entity_1 = it.getEntity();
-      Models _container = _entity_1.getContainer();
-      Application _application = _container.getApplication();
-      boolean _targets = this._utils.targets(_application, "1.3.5");
-      boolean _not = (!_targets);
-      if (_not) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -1004,20 +918,9 @@ public class SimpleFields {
         boolean _isReadonly = it.isReadonly();
         String _displayBool_1 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly));
         _builder.append(_displayBool_1, "    ");
-        _builder.append(" cssClass=\'");
-        CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+        CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
         _builder.append(_fieldValidationCssClass, "    ");
-        {
-          Entity _entity = it.getEntity();
-          Models _container = _entity.getContainer();
-          Application _application = _container.getApplication();
-          boolean _targets = this._utils.targets(_application, "1.3.5");
-          boolean _not = (!_targets);
-          if (_not) {
-            _builder.append(" form-control");
-          }
-        }
-        _builder.append("\'}");
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
         _builder.append("{else}");
         _builder.newLine();
@@ -1029,29 +932,18 @@ public class SimpleFields {
         boolean _isReadonly_1 = it.isReadonly();
         String _displayBool_2 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly_1));
         _builder.append(_displayBool_2, "    ");
-        _builder.append(" cssClass=\'");
-        CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
-        _builder.append(_fieldValidationCssClass_1, "    ");
-        {
-          Entity _entity_1 = it.getEntity();
-          Models _container_1 = _entity_1.getContainer();
-          Application _application_1 = _container_1.getApplication();
-          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-          boolean _not_1 = (!_targets_1);
-          if (_not_1) {
-            _builder.append(" form-control");
-          }
-        }
-        _builder.append("\'}");
+        CharSequence _fieldValidationCssClassOptional = this.validationHelper.fieldValidationCssClassOptional(it, Boolean.valueOf(true));
+        _builder.append(_fieldValidationCssClassOptional, "    ");
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<span class=\"");
         {
-          Entity _entity_2 = it.getEntity();
-          Models _container_2 = _entity_2.getContainer();
-          Application _application_2 = _container_2.getApplication();
-          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-          if (_targets_2) {
+          Entity _entity = it.getEntity();
+          Models _container = _entity.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
             _builder.append("z-formnote");
           } else {
             _builder.append("help-block");
@@ -1063,11 +955,11 @@ public class SimpleFields {
         _builder.append(_formatForCodeCapital, "    ");
         _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
         {
-          Entity _entity_3 = it.getEntity();
-          Models _container_3 = _entity_3.getContainer();
-          Application _application_3 = _container_3.getApplication();
-          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
-          if (_targets_3) {
+          Entity _entity_1 = it.getEntity();
+          Models _container_1 = _entity_1.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          if (_targets_1) {
             _builder.append("z-");
           }
         }
@@ -1083,28 +975,17 @@ public class SimpleFields {
         boolean _isReadonly_2 = it.isReadonly();
         String _displayBool_3 = this._formattingExtensions.displayBool(Boolean.valueOf(_isReadonly_2));
         _builder.append(_displayBool_3, "");
-        _builder.append(" cssClass=\'");
-        CharSequence _fieldValidationCssClass_2 = this.validationHelper.fieldValidationCssClass(it);
-        _builder.append(_fieldValidationCssClass_2, "");
-        {
-          Entity _entity_4 = it.getEntity();
-          Models _container_4 = _entity_4.getContainer();
-          Application _application_4 = _container_4.getApplication();
-          boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
-          boolean _not_2 = (!_targets_4);
-          if (_not_2) {
-            _builder.append(" form-control");
-          }
-        }
-        _builder.append("\'}");
+        CharSequence _fieldValidationCssClassOptional_1 = this.validationHelper.fieldValidationCssClassOptional(it, Boolean.valueOf(true));
+        _builder.append(_fieldValidationCssClassOptional_1, "");
+        _builder.append("}");
         _builder.newLineIfNotEmpty();
         _builder.append("<span class=\"");
         {
-          Entity _entity_5 = it.getEntity();
-          Models _container_5 = _entity_5.getContainer();
-          Application _application_5 = _container_5.getApplication();
-          boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
-          if (_targets_5) {
+          Entity _entity_2 = it.getEntity();
+          Models _container_2 = _entity_2.getContainer();
+          Application _application_2 = _container_2.getApplication();
+          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
+          if (_targets_2) {
             _builder.append("z-formnote");
           } else {
             _builder.append("help-block");
@@ -1116,11 +997,11 @@ public class SimpleFields {
         _builder.append(_formatForCodeCapital_1, "");
         _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
         {
-          Entity _entity_6 = it.getEntity();
-          Models _container_6 = _entity_6.getContainer();
-          Application _application_6 = _container_6.getApplication();
-          boolean _targets_6 = this._utils.targets(_application_6, "1.3.5");
-          if (_targets_6) {
+          Entity _entity_3 = it.getEntity();
+          Models _container_3 = _entity_3.getContainer();
+          Application _application_3 = _container_3.getApplication();
+          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
+          if (_targets_3) {
             _builder.append("z-");
           }
         }
@@ -1132,11 +1013,11 @@ public class SimpleFields {
     _builder.append("    ");
     _builder.append("<span class=\"");
     {
-      Entity _entity_7 = it.getEntity();
-      Models _container_7 = _entity_7.getContainer();
-      Application _application_7 = _container_7.getApplication();
-      boolean _targets_7 = this._utils.targets(_application_7, "1.3.5");
-      if (_targets_7) {
+      Entity _entity_4 = it.getEntity();
+      Models _container_4 = _entity_4.getContainer();
+      Application _application_4 = _container_4.getApplication();
+      boolean _targets_4 = this._utils.targets(_application_4, "1.3.5");
+      if (_targets_4) {
         _builder.append("z-formnote");
       } else {
         _builder.append("help-block");
@@ -1157,11 +1038,11 @@ public class SimpleFields {
       if (_greaterThan) {
         _builder.append("<span class=\"");
         {
-          Entity _entity_8 = it.getEntity();
-          Models _container_8 = _entity_8.getContainer();
-          Application _application_8 = _container_8.getApplication();
-          boolean _targets_8 = this._utils.targets(_application_8, "1.3.5");
-          if (_targets_8) {
+          Entity _entity_5 = it.getEntity();
+          Models _container_5 = _entity_5.getContainer();
+          Application _application_5 = _container_5.getApplication();
+          boolean _targets_5 = this._utils.targets(_application_5, "1.3.5");
+          if (_targets_5) {
             _builder.append("z-formnote");
           } else {
             _builder.append("help-block");
@@ -1171,10 +1052,10 @@ public class SimpleFields {
         int _allowedFileSize_1 = it.getAllowedFileSize();
         _builder.append(_allowedFileSize_1, "");
         _builder.append("\'|");
-        Entity _entity_9 = it.getEntity();
-        Models _container_9 = _entity_9.getContainer();
-        Application _application_9 = _container_9.getApplication();
-        String _appName = this._utils.appName(_application_9);
+        Entity _entity_6 = it.getEntity();
+        Models _container_6 = _entity_6.getContainer();
+        Application _application_6 = _container_6.getApplication();
+        String _appName = this._utils.appName(_application_6);
         String _formatForDB = this._formattingExtensions.formatForDB(_appName);
         _builder.append(_formatForDB, "");
         _builder.append("GetFileSize:\'\':false:false}</span>");
@@ -1660,20 +1541,10 @@ public class SimpleFields {
     String _name_1 = _entity.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay_1, "    ");
-    _builder.append("\' includeTime=true cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    _builder.append("\' includeTime=true");
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "    ");
-    {
-      Entity _entity_1 = it.getEntity();
-      Models _container = _entity_1.getContainer();
-      Application _application = _container.getApplication();
-      boolean _targets = this._utils.targets(_application, "1.3.5");
-      boolean _not = (!_targets);
-      if (_not) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     _builder.append("{else}");
     _builder.newLine();
@@ -1690,8 +1561,8 @@ public class SimpleFields {
     String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
     _builder.append(_formatForDisplay_2, "    ");
     _builder.append(" of the ");
-    Entity _entity_2 = it.getEntity();
-    String _name_3 = _entity_2.getName();
+    Entity _entity_1 = it.getEntity();
+    String _name_3 = _entity_1.getName();
     String _formatForDisplay_3 = this._formattingExtensions.formatForDisplay(_name_3);
     _builder.append(_formatForDisplay_3, "    ");
     _builder.append("\' includeTime=true");
@@ -1726,28 +1597,17 @@ public class SimpleFields {
           _or = true;
         } else {
           boolean _isNullable = it.isNullable();
-          boolean _not_1 = (!_isNullable);
-          _or = (_isMandatory_2 || _not_1);
+          boolean _not = (!_isNullable);
+          _or = (_isMandatory_2 || _not);
         }
         if (_or) {
           _builder.append(" defaultValue=\'now\'");
         }
       }
     }
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass_1, "    ");
-    {
-      Entity _entity_3 = it.getEntity();
-      Models _container_1 = _entity_3.getContainer();
-      Application _application_1 = _container_1.getApplication();
-      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-      boolean _not_2 = (!_targets_1);
-      if (_not_2) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     _builder.append("{/if}");
     _builder.newLine();
@@ -1755,21 +1615,21 @@ public class SimpleFields {
     {
       boolean _and_2 = false;
       boolean _isMandatory_3 = it.isMandatory();
-      boolean _not_3 = (!_isMandatory_3);
-      if (!_not_3) {
+      boolean _not_1 = (!_isMandatory_3);
+      if (!_not_1) {
         _and_2 = false;
       } else {
         boolean _isNullable_1 = it.isNullable();
-        _and_2 = (_not_3 && _isNullable_1);
+        _and_2 = (_not_1 && _isNullable_1);
       }
       if (_and_2) {
         _builder.append("<span class=\"");
         {
-          Entity _entity_4 = it.getEntity();
-          Models _container_2 = _entity_4.getContainer();
-          Application _application_2 = _container_2.getApplication();
-          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-          if (_targets_2) {
+          Entity _entity_2 = it.getEntity();
+          Models _container = _entity_2.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
             _builder.append("z-formnote");
           } else {
             _builder.append("help-block");
@@ -1781,11 +1641,11 @@ public class SimpleFields {
         _builder.append(_formatForCodeCapital, "");
         _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
         {
-          Entity _entity_5 = it.getEntity();
-          Models _container_3 = _entity_5.getContainer();
-          Application _application_3 = _container_3.getApplication();
-          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
-          if (_targets_3) {
+          Entity _entity_3 = it.getEntity();
+          Models _container_1 = _entity_3.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          if (_targets_1) {
             _builder.append("z-");
           }
         }
@@ -1817,20 +1677,10 @@ public class SimpleFields {
     String _name_1 = _entity.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay_1, "    ");
-    _builder.append("\' useSelectionMode=true cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    _builder.append("\' useSelectionMode=true");
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "    ");
-    {
-      Entity _entity_1 = it.getEntity();
-      Models _container = _entity_1.getContainer();
-      Application _application = _container.getApplication();
-      boolean _targets = this._utils.targets(_application, "1.3.5");
-      boolean _not = (!_targets);
-      if (_not) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     _builder.append("{else}");
     _builder.newLine();
@@ -1847,8 +1697,8 @@ public class SimpleFields {
     String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
     _builder.append(_formatForDisplay_2, "    ");
     _builder.append(" of the ");
-    Entity _entity_2 = it.getEntity();
-    String _name_3 = _entity_2.getName();
+    Entity _entity_1 = it.getEntity();
+    String _name_3 = _entity_1.getName();
     String _formatForDisplay_3 = this._formattingExtensions.formatForDisplay(_name_3);
     _builder.append(_formatForDisplay_3, "    ");
     _builder.append("\' useSelectionMode=true");
@@ -1883,49 +1733,38 @@ public class SimpleFields {
           _or = true;
         } else {
           boolean _isNullable = it.isNullable();
-          boolean _not_1 = (!_isNullable);
-          _or = (_isMandatory_2 || _not_1);
+          boolean _not = (!_isNullable);
+          _or = (_isMandatory_2 || _not);
         }
         if (_or) {
           _builder.append(" defaultValue=\'today\'");
         }
       }
     }
-    _builder.append(" cssClass=\'");
-    CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it);
+    CharSequence _fieldValidationCssClass_1 = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass_1, "    ");
-    {
-      Entity _entity_3 = it.getEntity();
-      Models _container_1 = _entity_3.getContainer();
-      Application _application_1 = _container_1.getApplication();
-      boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-      boolean _not_2 = (!_targets_1);
-      if (_not_2) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     _builder.append("{/if}");
     _builder.newLine();
     {
       boolean _and_2 = false;
       boolean _isMandatory_3 = it.isMandatory();
-      boolean _not_3 = (!_isMandatory_3);
-      if (!_not_3) {
+      boolean _not_1 = (!_isMandatory_3);
+      if (!_not_1) {
         _and_2 = false;
       } else {
         boolean _isNullable_1 = it.isNullable();
-        _and_2 = (_not_3 && _isNullable_1);
+        _and_2 = (_not_1 && _isNullable_1);
       }
       if (_and_2) {
         _builder.append("<span class=\"");
         {
-          Entity _entity_4 = it.getEntity();
-          Models _container_2 = _entity_4.getContainer();
-          Application _application_2 = _container_2.getApplication();
-          boolean _targets_2 = this._utils.targets(_application_2, "1.3.5");
-          if (_targets_2) {
+          Entity _entity_2 = it.getEntity();
+          Models _container = _entity_2.getContainer();
+          Application _application = _container.getApplication();
+          boolean _targets = this._utils.targets(_application, "1.3.5");
+          if (_targets) {
             _builder.append("z-formnote");
           } else {
             _builder.append("help-block");
@@ -1937,11 +1776,11 @@ public class SimpleFields {
         _builder.append(_formatForCodeCapital, "");
         _builder.append("Val\" href=\"javascript:void(0);\" class=\"");
         {
-          Entity _entity_5 = it.getEntity();
-          Models _container_3 = _entity_5.getContainer();
-          Application _application_3 = _container_3.getApplication();
-          boolean _targets_3 = this._utils.targets(_application_3, "1.3.5");
-          if (_targets_3) {
+          Entity _entity_3 = it.getEntity();
+          Models _container_1 = _entity_3.getContainer();
+          Application _application_1 = _container_1.getApplication();
+          boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
+          if (_targets_1) {
             _builder.append("z-");
           }
         }
@@ -1976,20 +1815,10 @@ public class SimpleFields {
     String _name_1 = _entity.getName();
     String _formatForDisplay_1 = this._formattingExtensions.formatForDisplay(_name_1);
     _builder.append(_formatForDisplay_1, "");
-    _builder.append("\' textMode=\'singleline\' maxLength=8 cssClass=\'");
-    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it);
+    _builder.append("\' textMode=\'singleline\' maxLength=8");
+    CharSequence _fieldValidationCssClass = this.validationHelper.fieldValidationCssClass(it, Boolean.valueOf(true));
     _builder.append(_fieldValidationCssClass, "");
-    {
-      Entity _entity_1 = it.getEntity();
-      Models _container = _entity_1.getContainer();
-      Application _application = _container.getApplication();
-      boolean _targets = this._utils.targets(_application, "1.3.5");
-      boolean _not = (!_targets);
-      if (_not) {
-        _builder.append(" form-control");
-      }
-    }
-    _builder.append("\'}");
+    _builder.append("}");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
