@@ -868,7 +868,7 @@ public class ControllerAction {
     _builder.append(");");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("$showOwnEntries = (int) (isset($args[\'own\']) && !empty($args[\'own\'])) ? $args[\'own\'] : $this->request->query->filter(\'own\', 0, FILTER_VALIDATE_INT);");
+    _builder.append("$showOwnEntries = (int) (isset($args[\'own\']) && !empty($args[\'own\'])) ? $args[\'own\'] : $this->request->query->filter(\'own\', $this->getVar(\'showOnlyOwnEntries\', 0), FILTER_VALIDATE_INT);");
     _builder.newLine();
     _builder.append("$showAllEntries = (int) (isset($args[\'all\']) && !empty($args[\'all\'])) ? $args[\'all\'] : $this->request->query->filter(\'all\', 0, FILTER_VALIDATE_INT);");
     _builder.newLine();
