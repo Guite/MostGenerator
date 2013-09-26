@@ -102,7 +102,7 @@ class SimpleFields {
             «IF entity.container.application.targets('1.3.5')»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
             «ELSE»
-                <a href="mailto:{$«realName»}" title="{gt text='Send an email'}" class="icon icon-envelope text-hide">{gt text='Email'}</a>
+                <a href="mailto:{$«realName»}" title="{gt text='Send an email'}" class="icon icon-envelope"></a>
             «ENDIF»
             «IF page == 'display'»
                   {else}
@@ -128,7 +128,7 @@ class SimpleFields {
             «IF entity.container.application.targets('1.3.5')»
                 <a href="{$«realName»}" title="{gt text='Visit this page'}">{icon type='url' size='extrasmall' __alt='Homepage'}</a>
             «ELSE»
-                <a href="{$«realName»}" title="{gt text='Visit this page'}" class="icon icon-external-link-sign text-hide">{gt text='Homepage'}</a>
+                <a href="{$«realName»}" title="{gt text='Visit this page'}" class="icon icon-external-link-sign"></a>
             «ENDIF»
             «IF page == 'display'»
                   {else}

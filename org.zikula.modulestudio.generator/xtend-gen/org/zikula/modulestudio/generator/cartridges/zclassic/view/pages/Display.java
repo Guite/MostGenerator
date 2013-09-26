@@ -897,7 +897,7 @@ public class Display {
             _builder.append(" theme=\'Printer\'");
             String _additionalUrlParametersForQuickViewLink_1 = this._viewExtensions.additionalUrlParametersForQuickViewLink(controller);
             _builder.append(_additionalUrlParametersForQuickViewLink_1, "  ");
-            _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"hide\"><span class=\"icon icon-zoom-in text-hide\">{gt text=\'Quick view\'}</span></a>");
+            _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"icon icon-zoom-in hide\"></a>");
             _builder.newLineIfNotEmpty();
           }
         }

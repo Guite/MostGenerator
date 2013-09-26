@@ -205,7 +205,7 @@ class Display {
             «IF container.application.targets('1.3.5')»
                 <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             «ELSE»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="hide"><span class="icon icon-zoom-in text-hide">{gt text='Quick view'}</span></a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="icon icon-zoom-in hide"></a>
             «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */

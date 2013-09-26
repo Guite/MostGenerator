@@ -187,7 +187,7 @@ class View {
                         «FOR field : listItemsFields»«field.headerLine(controller)»«ENDFOR»
                         «FOR relation : listItemsIn»«relation.headerLine(controller, false)»«ENDFOR»
                         «FOR relation : listItemsOut»«relation.headerLine(controller, true)»«ENDFOR»
-                        <th id="hitemactions" scope="col" class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-right z-order-unsorted">{gt text='Actions'}</th>
+                        <th id="hitemactions" scope="col" class="«IF container.application.targets('1.3.5')»z-right «ENDIF»z-order-unsorted">{gt text='Actions'}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -440,7 +440,7 @@ class View {
                 «IF container.application.targets('1.3.5')»
                     <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«linkController.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 «ELSE»
-                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«linkController.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="hide"><span class="icon icon-zoom-in text-hide">{gt text='Quick view'}</span></a>
+                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«linkController.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="icon icon-zoom-in hide"></a>
                 «ENDIF»
                 <script type="text/javascript">
                 /* <![CDATA[ */
@@ -482,14 +482,14 @@ class View {
         «IF listType != 3»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«itemActionContainerId»" headers="hitemactions" class="«IF container.application.targets('1.3.5')»z-right z-nowrap«ELSE»actions text-right nowrap«ENDIF» z-w02">
+            <td id="«itemActionContainerId»" headers="hitemactions" class="«IF container.application.targets('1.3.5')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
         «ENDIF»
             {if count($«objName»._actions) gt 0}
                 {foreach item='option' from=$«objName»._actions}
                     «IF container.application.targets('1.3.5')»
                         <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
                     «ELSE»
-                        <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'zoom-in'} target="_blank"{/if} class="icon icon-{$option.icon} text-hide">{$option.linkText|safetext}</a>
+                        <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'zoom-in'} target="_blank"{/if} class="icon icon-{$option.icon}" data-linktext="{$option.linkText|safetext}"></a>
                     «ENDIF»
                 {/foreach}
                 {icon id="«itemActionContainerIdForSmarty»trigger" type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hide«ENDIF»'}

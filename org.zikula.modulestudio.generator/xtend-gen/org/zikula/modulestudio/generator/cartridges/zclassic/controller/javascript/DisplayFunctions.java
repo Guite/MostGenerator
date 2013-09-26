@@ -264,15 +264,25 @@ public class DisplayFunctions {
     _builder.append("        ");
     _builder.append("} else if (func === \'view\') {");
     _builder.newLine();
-    _builder.append("            ");
-    _builder.append("elem.select(\'img\').each(function (imgElem) {");
-    _builder.newLine();
-    _builder.append("                ");
-    _builder.append("linkText = imgElem.readAttribute(\'alt\');");
-    _builder.newLine();
-    _builder.append("            ");
-    _builder.append("});");
-    _builder.newLine();
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("            ");
+        _builder.append("elem.select(\'img\').each(function (imgElem) {");
+        _builder.newLine();
+        _builder.append("            ");
+        _builder.append("    ");
+        _builder.append("linkText = imgElem.readAttribute(\'alt\');");
+        _builder.newLine();
+        _builder.append("            ");
+        _builder.append("});");
+        _builder.newLine();
+      } else {
+        _builder.append("            ");
+        _builder.append("linkText = elem.readAttribute(\'data-linktext\');");
+        _builder.newLine();
+      }
+    }
     _builder.append("        ");
     _builder.append("}");
     _builder.newLine();
@@ -281,8 +291,8 @@ public class DisplayFunctions {
     _builder.append("// determine the icon");
     _builder.newLine();
     {
-      boolean _targets_1 = this._utils.targets(it, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
         _builder.append("        ");
         _builder.append("icon = \'\';");
         _builder.newLine();
@@ -438,8 +448,8 @@ public class DisplayFunctions {
     _builder.append("    ");
     _builder.append("$(triggerId).removeClassName(\'");
     {
-      boolean _targets_2 = this._utils.targets(it, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
         _builder.append("z-");
       }
     }

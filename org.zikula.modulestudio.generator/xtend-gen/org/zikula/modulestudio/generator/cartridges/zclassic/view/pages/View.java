@@ -859,12 +859,10 @@ public class View {
           Application _application_1 = _container_1.getApplication();
           boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
           if (_targets_1) {
-            _builder.append("z");
-          } else {
-            _builder.append("text");
+            _builder.append("z-right ");
           }
         }
-        _builder.append("-right z-order-unsorted\">{gt text=\'Actions\'}</th>");
+        _builder.append("z-order-unsorted\">{gt text=\'Actions\'}</th>");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("</tr>");
@@ -2117,7 +2115,7 @@ public class View {
             _builder.append(" theme=\'Printer\'");
             String _additionalUrlParametersForQuickViewLink_1 = this._viewExtensions.additionalUrlParametersForQuickViewLink(linkController);
             _builder.append(_additionalUrlParametersForQuickViewLink_1, "    ");
-            _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"hide\"><span class=\"icon icon-zoom-in text-hide\">{gt text=\'Quick view\'}</span></a>");
+            _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"icon icon-zoom-in hide\"></a>");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -2307,7 +2305,7 @@ public class View {
           if (_targets) {
             _builder.append("z-right z-nowrap");
           } else {
-            _builder.append("actions text-right nowrap");
+            _builder.append("actions nowrap");
           }
         }
         _builder.append(" z-w02\">");
@@ -2340,7 +2338,7 @@ public class View {
         _builder.append("<a href=\"{$option.url.type|");
         String _formatForDB_1 = this._formattingExtensions.formatForDB(appName);
         _builder.append(_formatForDB_1, "            ");
-        _builder.append("ActionUrl:$option.url.func:$option.url.arguments}\" title=\"{$option.linkTitle|safetext}\"{if $option.icon eq \'zoom-in\'} target=\"_blank\"{/if} class=\"icon icon-{$option.icon} text-hide\">{$option.linkText|safetext}</a>");
+        _builder.append("ActionUrl:$option.url.func:$option.url.arguments}\" title=\"{$option.linkTitle|safetext}\"{if $option.icon eq \'zoom-in\'} target=\"_blank\"{/if} class=\"icon icon-{$option.icon}\" data-linktext=\"{$option.linkText|safetext}\"></a>");
         _builder.newLineIfNotEmpty();
       }
     }

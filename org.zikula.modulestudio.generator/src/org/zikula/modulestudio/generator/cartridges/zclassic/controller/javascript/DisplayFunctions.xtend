@@ -86,9 +86,13 @@ class DisplayFunctions {
                 if (func === 'display') {
                     linkText = elem.innerHTML;
                 } else if (func === 'view') {
-                    elem.select('img').each(function (imgElem) {
-                        linkText = imgElem.readAttribute('alt');
-                    });
+                    «IF targets('1.3.5')»
+                        elem.select('img').each(function (imgElem) {
+                            linkText = imgElem.readAttribute('alt');
+                        });
+                    «ELSE»
+                        linkText = elem.readAttribute('data-linktext');
+                    «ENDIF»
                 }
 
                 // determine the icon

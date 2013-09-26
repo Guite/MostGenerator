@@ -454,7 +454,7 @@ public class SimpleFields {
           } else {
             _builder_1.append("<a href=\"mailto:{$");
             _builder_1.append(realName, "");
-            _builder_1.append("}\" title=\"{gt text=\'Send an email\'}\" class=\"icon icon-envelope text-hide\">{gt text=\'Email\'}</a>");
+            _builder_1.append("}\" title=\"{gt text=\'Send an email\'}\" class=\"icon icon-envelope\"></a>");
             _builder_1.newLineIfNotEmpty();
           }
         }
@@ -541,7 +541,7 @@ public class SimpleFields {
           } else {
             _builder_1.append("<a href=\"{$");
             _builder_1.append(realName, "");
-            _builder_1.append("}\" title=\"{gt text=\'Visit this page\'}\" class=\"icon icon-external-link-sign text-hide\">{gt text=\'Homepage\'}</a>");
+            _builder_1.append("}\" title=\"{gt text=\'Visit this page\'}\" class=\"icon icon-external-link-sign\"></a>");
             _builder_1.newLineIfNotEmpty();
           }
         }
