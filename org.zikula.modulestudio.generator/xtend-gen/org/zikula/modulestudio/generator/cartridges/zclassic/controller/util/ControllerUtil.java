@@ -414,8 +414,16 @@ public class ControllerUtil {
     _builder.append("        ");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$id = $request->query->filter($idField, $defaultValue);");
-    _builder.newLine();
+    _builder.append("$id = $request->query->filter($idField, $defaultValue");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(", false");
+      }
+    }
+    _builder.append(");");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("if (!$id && $idField != \'id\' && count($idFields) == 1) {");
     _builder.newLine();
@@ -423,8 +431,16 @@ public class ControllerUtil {
     _builder.append("$defaultValue = isset($args[\'id\']) && is_numeric($args[\'id\']) ? $args[\'id\'] : 0;");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$id = (int) $request->query->filter(\'id\', $defaultValue, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$id = (int) $request->query->filter(\'id\', $defaultValue, ");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("}");
     _builder.newLine();

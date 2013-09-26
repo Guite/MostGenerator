@@ -142,7 +142,7 @@ class Category {
                     }
                 } else {
                     $argName = 'catid' . $propertyName;
-                    $inputVal = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);
+                    $inputVal = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : (int) $dataSource->filter($argName, 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                     $inputValue = array();
                     if ($inputVal > 0) {
                         $inputValue[] = $inputVal;

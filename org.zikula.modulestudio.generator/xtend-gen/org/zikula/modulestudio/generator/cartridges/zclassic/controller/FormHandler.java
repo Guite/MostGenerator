@@ -1205,15 +1205,31 @@ public class FormHandler {
     _builder.append("$this->inlineUsage = ((UserUtil::getTheme() == \'Printer\') ? true : false);");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$this->idPrefix = $this->request->query->filter(\'idp\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$this->idPrefix = $this->request->query->filter(\'idp\', \'\', ");
+    {
+      boolean _targets = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// initialise redirect goal");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$this->returnTo = $this->request->query->filter(\'returnTo\', null, FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$this->returnTo = $this->request->query->filter(\'returnTo\', null, ");
+    {
+      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("// store current uri for repeated creations");
     _builder.newLine();
@@ -1226,8 +1242,8 @@ public class FormHandler {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets = this._utils.targets(this.app, "1.3.5");
-      if (_targets) {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_2) {
         _builder.append("    ");
         _builder.append("$entityClass = $this->name . \'_Entity_\' . ucfirst($this->objectType);");
         _builder.newLine();
@@ -1258,8 +1274,8 @@ public class FormHandler {
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_3) {
         String _appName = this._utils.appName(this.app);
         _builder.append(_appName, "    ");
         _builder.append("_Util_Controller");
@@ -1269,9 +1285,9 @@ public class FormHandler {
     }
     _builder.append("($this->view->getServiceManager()");
     {
-      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
-      boolean _not = (!_targets_2);
-      if (_not) {
+      boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
+      boolean _not_2 = (!_targets_4);
+      if (_not_2) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -1436,8 +1452,8 @@ public class FormHandler {
     _builder.append("    ");
     _builder.append("$workflowHelper = new ");
     {
-      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_5) {
         String _appName_1 = this._utils.appName(this.app);
         _builder.append(_appName_1, "    ");
         _builder.append("_Util_Workflow");
@@ -1447,9 +1463,9 @@ public class FormHandler {
     }
     _builder.append("($this->view->getServiceManager()");
     {
-      boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
-      boolean _not_1 = (!_targets_4);
-      if (_not_1) {
+      boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
+      boolean _not_3 = (!_targets_6);
+      if (_not_3) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -1693,8 +1709,8 @@ public class FormHandler {
     _builder.append("} else {");
     _builder.newLine();
     {
-      boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_7 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_7) {
         _builder.append("        ");
         _builder.append("$entityClass = $this->name . \'_Entity_\' . ucfirst($this->objectType);");
         _builder.newLine();
@@ -1752,8 +1768,8 @@ public class FormHandler {
         _builder.append("    ");
         _builder.append("$translatableHelper = new ");
         {
-          boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_6) {
+          boolean _targets_8 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_8) {
             String _appName_2 = this._utils.appName(this.app);
             _builder.append(_appName_2, "    ");
             _builder.append("_Util_Translatable");
@@ -1763,9 +1779,9 @@ public class FormHandler {
         }
         _builder.append("($this->view->getServiceManager()");
         {
-          boolean _targets_7 = this._utils.targets(this.app, "1.3.5");
-          boolean _not_2 = (!_targets_7);
-          if (_not_2) {
+          boolean _targets_9 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_4 = (!_targets_9);
+          if (_not_4) {
             _builder.append(", ModUtil::getModule($this->name)");
           }
         }
@@ -2780,8 +2796,16 @@ public class FormHandler {
             _builder.append("    ");
             _builder.append("    ");
             _builder.append("        ");
-            _builder.append("$entityData[$userField] = (int) $this->request->request->filter($userField, 0, FILTER_VALIDATE_INT);");
-            _builder.newLine();
+            _builder.append("$entityData[$userField] = (int) $this->request->request->filter($userField, 0, ");
+            {
+              boolean _targets = this._utils.targets(this.app, "1.3.5");
+              boolean _not_1 = (!_targets);
+              if (_not_1) {
+                _builder.append("false, ");
+              }
+            }
+            _builder.append("FILTER_VALIDATE_INT);");
+            _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("    ");
             _builder.append("        ");
@@ -2908,13 +2932,13 @@ public class FormHandler {
         }
         {
           boolean _and_1 = false;
-          boolean _targets = this._utils.targets(this.app, "1.3.5");
-          boolean _not_1 = (!_targets);
-          if (!_not_1) {
+          boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_2 = (!_targets_1);
+          if (!_not_2) {
             _and_1 = false;
           } else {
             boolean _hasSluggable_1 = this._modelBehaviourExtensions.hasSluggable(this.app);
-            _and_1 = (_not_1 && _hasSluggable_1);
+            _and_1 = (_not_2 && _hasSluggable_1);
           }
           if (_and_1) {
             _builder.newLine();
@@ -3154,8 +3178,8 @@ public class FormHandler {
     _builder.append("        ");
     _builder.append("if ($plugin instanceof ");
     {
-      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_2) {
         String _appName = this._utils.appName(this.app);
         _builder.append(_appName, "        ");
         _builder.append("_Form_Plugin_AbstractObjectSelector");
@@ -3226,8 +3250,8 @@ public class FormHandler {
     _builder.append("        ");
     _builder.append("if ($plugin instanceof ");
     {
-      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_3) {
         String _appName_1 = this._utils.appName(this.app);
         _builder.append(_appName_1, "        ");
         _builder.append("_Form_Plugin_AbstractObjectSelector");

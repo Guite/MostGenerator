@@ -105,19 +105,19 @@ class ExternalController {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
 
-            $id = (isset($args['id'])) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
+            $id = (isset($args['id'])) ? $args['id'] : $getData->filter('id', null, «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
 
             $component = $this->name . ':' . ucwords($objectType) . ':';
             if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
                 return '';
             }
 
-            $source = (isset($args['source'])) ? $args['source'] : $getData->filter('source', '', FILTER_SANITIZE_STRING);
+            $source = (isset($args['source'])) ? $args['source'] : $getData->filter('source', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             if (!in_array($source, array('contentType', 'scribite'))) {
                 $source = 'contentType';
             }
 
-            $displayMode = (isset($args['displayMode'])) ? $args['displayMode'] : $getData->filter('displayMode', 'embed', FILTER_SANITIZE_STRING);
+            $displayMode = (isset($args['displayMode'])) ? $args['displayMode'] : $getData->filter('displayMode', 'embed', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             if (!in_array($displayMode, array('link', 'embed'))) {
                 $displayMode = 'embed';
             }
@@ -198,7 +198,7 @@ class ExternalController {
             $getData = $this->request->query;
             $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
-            $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+            $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
@@ -214,7 +214,7 @@ class ExternalController {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments($args);
 
-            $editor = (isset($args['editor']) && !empty($args['editor'])) ? $args['editor'] : $getData->filter('editor', '', FILTER_SANITIZE_STRING);
+            $editor = (isset($args['editor']) && !empty($args['editor'])) ? $args['editor'] : $getData->filter('editor', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
                 return 'Error: Invalid editor context given for external controller action.';
             }
@@ -224,12 +224,12 @@ class ExternalController {
                 // the actual filtering is done inside the repository class
                 $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET', 'controllerArgs' => $args));
             «ENDIF»
-            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $getData->filter('sort', '', FILTER_SANITIZE_STRING);
+            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $getData->filter('sort', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
                 $sort = $repository->getDefaultSortingField();
             }
 
-            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $getData->filter('sortdir', '', FILTER_SANITIZE_STRING);
+            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $getData->filter('sortdir', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $sdir = strtolower($sdir);
             if ($sdir != 'asc' && $sdir != 'desc') {
                 $sdir = 'asc';
@@ -238,10 +238,10 @@ class ExternalController {
             $sortParam = $sort . ' ' . $sdir;
 
             // the current offset which is used to calculate the pagination
-            $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $getData->filter('pos', 1, FILTER_VALIDATE_INT);
+            $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $getData->filter('pos', 1, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
 
             // the number of items displayed on a page for pagination
-            $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $getData->filter('num', 0, FILTER_VALIDATE_INT);
+            $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $getData->filter('num', 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
             if ($resultsPerPage == 0) {
                 $resultsPerPage = $this->getVar('pageSize', 20);
             }

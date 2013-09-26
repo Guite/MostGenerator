@@ -347,8 +347,16 @@ public class ExternalController {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$id = (isset($args[\'id\'])) ? $args[\'id\'] : $getData->filter(\'id\', null, FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$id = (isset($args[\'id\'])) ? $args[\'id\'] : $getData->filter(\'id\', null, ");
+    {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$component = $this->name . \':\' . ucwords($objectType) . \':\';");
@@ -364,8 +372,16 @@ public class ExternalController {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$source = (isset($args[\'source\'])) ? $args[\'source\'] : $getData->filter(\'source\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$source = (isset($args[\'source\'])) ? $args[\'source\'] : $getData->filter(\'source\', \'\', ");
+    {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      boolean _not_3 = (!_targets_4);
+      if (_not_3) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if (!in_array($source, array(\'contentType\', \'scribite\'))) {");
     _builder.newLine();
@@ -377,8 +393,16 @@ public class ExternalController {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$displayMode = (isset($args[\'displayMode\'])) ? $args[\'displayMode\'] : $getData->filter(\'displayMode\', \'embed\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$displayMode = (isset($args[\'displayMode\'])) ? $args[\'displayMode\'] : $getData->filter(\'displayMode\', \'embed\', ");
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      boolean _not_4 = (!_targets_5);
+      if (_not_4) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if (!in_array($displayMode, array(\'link\', \'embed\'))) {");
     _builder.newLine();
@@ -394,8 +418,8 @@ public class ExternalController {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_3 = this._utils.targets(it, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      if (_targets_6) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_1 = this._utils.appName(it);
@@ -520,8 +544,8 @@ public class ExternalController {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_4 = this._utils.targets(it, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      if (_targets_7) {
         _builder.append("    ");
         _builder.append("return $this->view->fetch(\'external/\' . $objectType . \'/display.tpl\');");
         _builder.newLine();
@@ -559,9 +583,9 @@ public class ExternalController {
     _builder.newLine();
     _builder.append("public function finder");
     {
-      boolean _targets_5 = this._utils.targets(it, "1.3.5");
-      boolean _not_2 = (!_targets_5);
-      if (_not_2) {
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      boolean _not_5 = (!_targets_8);
+      if (_not_5) {
         _builder.append("Action");
       }
     }
@@ -582,8 +606,8 @@ public class ExternalController {
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets_6 = this._utils.targets(it, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_9 = this._utils.targets(it, "1.3.5");
+      if (_targets_9) {
         String _appName_4 = this._utils.appName(it);
         _builder.append(_appName_4, "    ");
         _builder.append("_Util_Controller");
@@ -593,9 +617,9 @@ public class ExternalController {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_7 = this._utils.targets(it, "1.3.5");
-      boolean _not_3 = (!_targets_7);
-      if (_not_3) {
+      boolean _targets_10 = this._utils.targets(it, "1.3.5");
+      boolean _not_6 = (!_targets_10);
+      if (_not_6) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -608,7 +632,15 @@ public class ExternalController {
     String _name_1 = _leadingEntity.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
     _builder.append(_formatForCode, "    ");
-    _builder.append("\', FILTER_SANITIZE_STRING);");
+    _builder.append("\', ");
+    {
+      boolean _targets_11 = this._utils.targets(it, "1.3.5");
+      boolean _not_7 = (!_targets_11);
+      if (_not_7) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$utilArgs = array(\'controller\' => \'external\', \'action\' => \'finder\');");
@@ -631,8 +663,8 @@ public class ExternalController {
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     {
-      boolean _targets_8 = this._utils.targets(it, "1.3.5");
-      if (_targets_8) {
+      boolean _targets_12 = this._utils.targets(it, "1.3.5");
+      if (_targets_12) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_6 = this._utils.appName(it);
@@ -661,8 +693,16 @@ public class ExternalController {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$editor = (isset($args[\'editor\']) && !empty($args[\'editor\'])) ? $args[\'editor\'] : $getData->filter(\'editor\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$editor = (isset($args[\'editor\']) && !empty($args[\'editor\'])) ? $args[\'editor\'] : $getData->filter(\'editor\', \'\', ");
+    {
+      boolean _targets_13 = this._utils.targets(it, "1.3.5");
+      boolean _not_8 = (!_targets_13);
+      if (_not_8) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if (empty($editor) || !in_array($editor, array(\'xinha\', \'tinymce\'/*, \'ckeditor\'*/))) {");
     _builder.newLine();
@@ -691,8 +731,16 @@ public class ExternalController {
       }
     }
     _builder.append("    ");
-    _builder.append("$sort = (isset($args[\'sort\']) && !empty($args[\'sort\'])) ? $args[\'sort\'] : $getData->filter(\'sort\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$sort = (isset($args[\'sort\']) && !empty($args[\'sort\'])) ? $args[\'sort\'] : $getData->filter(\'sort\', \'\', ");
+    {
+      boolean _targets_14 = this._utils.targets(it, "1.3.5");
+      boolean _not_9 = (!_targets_14);
+      if (_not_9) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {");
     _builder.newLine();
@@ -704,8 +752,16 @@ public class ExternalController {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$sdir = (isset($args[\'sortdir\']) && !empty($args[\'sortdir\'])) ? $args[\'sortdir\'] : $getData->filter(\'sortdir\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$sdir = (isset($args[\'sortdir\']) && !empty($args[\'sortdir\'])) ? $args[\'sortdir\'] : $getData->filter(\'sortdir\', \'\', ");
+    {
+      boolean _targets_15 = this._utils.targets(it, "1.3.5");
+      boolean _not_10 = (!_targets_15);
+      if (_not_10) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$sdir = strtolower($sdir);");
     _builder.newLine();
@@ -727,15 +783,31 @@ public class ExternalController {
     _builder.append("// the current offset which is used to calculate the pagination");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$currentPage = (int) (isset($args[\'pos\']) && !empty($args[\'pos\'])) ? $args[\'pos\'] : $getData->filter(\'pos\', 1, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$currentPage = (int) (isset($args[\'pos\']) && !empty($args[\'pos\'])) ? $args[\'pos\'] : $getData->filter(\'pos\', 1, ");
+    {
+      boolean _targets_16 = this._utils.targets(it, "1.3.5");
+      boolean _not_11 = (!_targets_16);
+      if (_not_11) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// the number of items displayed on a page for pagination");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$resultsPerPage = (int) (isset($args[\'num\']) && !empty($args[\'num\'])) ? $args[\'num\'] : $getData->filter(\'num\', 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$resultsPerPage = (int) (isset($args[\'num\']) && !empty($args[\'num\'])) ? $args[\'num\'] : $getData->filter(\'num\', 0, ");
+    {
+      boolean _targets_17 = this._utils.targets(it, "1.3.5");
+      boolean _not_12 = (!_targets_17);
+      if (_not_12) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if ($resultsPerPage == 0) {");
     _builder.newLine();
@@ -827,8 +899,8 @@ public class ExternalController {
     }
     _builder.newLine();
     {
-      boolean _targets_9 = this._utils.targets(it, "1.3.5");
-      if (_targets_9) {
+      boolean _targets_18 = this._utils.targets(it, "1.3.5");
+      if (_targets_18) {
         _builder.append("    ");
         _builder.append("return $view->display(\'external/\' . $objectType . \'/find.tpl\');");
         _builder.newLine();

@@ -402,8 +402,16 @@ public class Category {
     _builder.append("$argName = \'catid\' . $propertyName;");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$inputVal = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$inputVal = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : (int) $dataSource->filter($argName, 0, ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("$inputValue = array();");
     _builder.newLine();
@@ -736,8 +744,8 @@ public class Category {
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets = this._utils.targets(it, "1.3.5");
-      if (_targets) {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "    ");
         _builder.append("_Util_Controller");
@@ -747,9 +755,9 @@ public class Category {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_1 = this._utils.targets(it, "1.3.5");
-      boolean _not = (!_targets_1);
-      if (_not) {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }

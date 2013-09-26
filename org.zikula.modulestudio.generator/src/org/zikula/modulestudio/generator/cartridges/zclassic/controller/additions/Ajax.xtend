@@ -126,9 +126,9 @@ class Ajax {
 
             $objectType = '«app.getLeadingEntity.name.formatForCode»';
             if ($this->request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $this->request->request->has('ot')) {
-                $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+                $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
-                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             }
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListFinder');
@@ -147,12 +147,12 @@ class Ajax {
             $titleField = $repository->getTitleFieldName();
             $descriptionField = $repository->getDescriptionFieldName();
 
-            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->request->filter('sort', '', FILTER_SANITIZE_STRING);
+            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->request->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
                 $sort = $repository->getDefaultSortingField();
             }
 
-            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->request->filter('sortdir', '', FILTER_SANITIZE_STRING);
+            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->request->filter('sortdir', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $sdir = strtolower($sdir);
             if ($sdir != 'asc' && $sdir != 'desc') {
                 $sdir = 'asc';
@@ -224,9 +224,9 @@ class Ajax {
 
             $objectType = '«app.getLeadingEntity.name.formatForCode»';
             if ($this->request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $this->request->request->has('ot')) {
-                $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+                $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
-                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             }
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
@@ -325,14 +325,14 @@ class Ajax {
             $this->checkAjaxToken();
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
-            $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+            $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'checkForDuplicate');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
 
-            $fieldName = $this->request->request->filter('fn', '', FILTER_SANITIZE_STRING);
+            $fieldName = $this->request->request->filter('fn', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $value = $this->request->request->get('v', '');
 
             if (empty($fieldName) || empty($value)) {
@@ -415,9 +415,9 @@ class Ajax {
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
 
-            $objectType = $this->request->request->filter('ot', '', FILTER_SANITIZE_STRING);
-            $field = $this->request->request->filter('field', '', FILTER_SANITIZE_STRING);
-            $id = (int) $this->request->request->filter('id', 0, FILTER_VALIDATE_INT);
+            $objectType = $this->request->request->filter('ot', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $field = $this->request->request->filter('field', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $id = (int) $this->request->request->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
 
             «val entities = app.getEntitiesWithAjaxToggle»
             if ($id == 0
@@ -465,7 +465,7 @@ class Ajax {
 
             «val treeEntities = app.getTreeEntities»
             // parameter specifying which type of objects we are treating
-            $objectType = DataUtil::convertFromUTF8($this->request->request->filter('ot', '«treeEntities.head.name.formatForCode»', FILTER_SANITIZE_STRING));
+            $objectType = DataUtil::convertFromUTF8($this->request->request->filter('ot', '«treeEntities.head.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING));
             // ensure that we use only object types with tree extension enabled
             if (!in_array($objectType, array(«FOR treeEntity : treeEntities SEPARATOR ", "»'«treeEntity.name.formatForCode»'«ENDFOR»))) {
                 $objectType = '«treeEntities.head.name.formatForCode»';
@@ -476,7 +476,7 @@ class Ajax {
                 'message' => ''
             );
 
-            $op = DataUtil::convertFromUTF8($this->request->request->filter('op', '', FILTER_SANITIZE_STRING));
+            $op = DataUtil::convertFromUTF8($this->request->request->filter('op', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING));
             if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
                 throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid operation.'));
             }
@@ -484,7 +484,7 @@ class Ajax {
             // Get id of treated node
             $id = 0;
             if (!in_array($op, array('addRootNode', 'addChildNode'))) {
-                $id = (int) $this->request->request->filter('id', 0, FILTER_VALIDATE_INT);
+                $id = (int) $this->request->request->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                 if (!$id) {
                     throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid node.'));
                 }
@@ -499,7 +499,7 @@ class Ajax {
 
             $rootId = 1;
             if (!in_array($op, array('addRootNode'))) {
-                $rootId = (int) $this->request->request->filter('root', 0, FILTER_VALIDATE_INT);
+                $rootId = (int) $this->request->request->filter('root', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                 if (!$rootId) {
                     throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid root node.'));
                 }
@@ -569,7 +569,7 @@ class Ajax {
                                 //});
                                 break;
                 case 'addChildNode':
-                                $parentId = (int) $this->request->request->filter('pid', 0, FILTER_VALIDATE_INT);
+                                $parentId = (int) $this->request->request->filter('pid', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                                 if (!$parentId) {
                                     throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid parent node.'));
                                 }
@@ -625,7 +625,7 @@ class Ajax {
                                 $this->entityManager->clear(); // clear cached nodes
                                 break;
                 case 'moveNode':
-                                $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
+                                $moveDirection = $this->request->request->filter('direction', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
                                 if (!in_array($moveDirection, array('up', 'down'))) {
                                     throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
                                 }
@@ -644,12 +644,12 @@ class Ajax {
 
                                 break;
                 case 'moveNodeTo':
-                                $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
+                                $moveDirection = $this->request->request->filter('direction', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
                                 if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
                                     throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
                                 }
 
-                                $destId = (int) $this->request->request->filter('destid', 0, FILTER_VALIDATE_INT);
+                                $destId = (int) $this->request->request->filter('destid', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                                 if (!$destId) {
                                     throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid destination node.'));
                                 }

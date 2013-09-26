@@ -214,8 +214,16 @@ public class Interactive {
     }
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$activate = (bool) $this->request->request->filter(\'activate\', false, FILTER_VALIDATE_BOOLEAN);");
-    _builder.newLine();
+    _builder.append("$activate = (bool) $this->request->request->filter(\'activate\', false, ");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_BOOLEAN);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$activate = (!empty($activate)) ? true : false;");
     _builder.newLine();
@@ -264,8 +272,16 @@ public class Interactive {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$activate = (bool) $this->request->request->filter(\'activate\', false, FILTER_VALIDATE_BOOLEAN);");
-    _builder.newLine();
+    _builder.append("$activate = (bool) $this->request->request->filter(\'activate\', false, ");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_BOOLEAN);");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// assign activation flag");
@@ -278,8 +294,8 @@ public class Interactive {
     _builder.append("// fetch and return the appropriate template");
     _builder.newLine();
     {
-      boolean _targets_1 = this._utils.targets(it, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
         _builder.append("    ");
         _builder.append("return $this->view->fetch(\'init/step3.tpl\');");
         _builder.newLine();

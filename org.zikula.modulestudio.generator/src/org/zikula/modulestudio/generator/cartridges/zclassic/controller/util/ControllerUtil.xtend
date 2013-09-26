@@ -148,11 +148,11 @@ class ControllerUtil {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
                 «/*TODO: distinguish between composite keys and other ones (which are always integers)
                          this is why the $objectType parameter is available*/»
-                «/*$id = (int) $request->query->filter($idField, $defaultValue, FILTER_VALIDATE_INT);*/»
-                $id = $request->query->filter($idField, $defaultValue);
+                «/*$id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);*/»
+                $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.5')», false«ENDIF»);
                 if (!$id && $idField != 'id' && count($idFields) == 1) {
                     $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
-                    $id = (int) $request->query->filter('id', $defaultValue, FILTER_VALIDATE_INT);
+                    $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                 }
                 $idValues[$idField] = $id;
             }

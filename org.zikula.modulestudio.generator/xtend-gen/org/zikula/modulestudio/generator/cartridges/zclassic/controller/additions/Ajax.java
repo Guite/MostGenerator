@@ -453,13 +453,21 @@ public class Ajax {
     String _name_1 = _leadingEntity_1.getName();
     String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
     _builder.append(_formatForCode_1, "        ");
-    _builder.append("\', FILTER_SANITIZE_STRING);");
+    _builder.append("\', ");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_3);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("} elseif ($this->request->");
     {
-      boolean _targets_3 = this._utils.targets(app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      if (_targets_4) {
         _builder.append("isGet()");
       } else {
         _builder.append("isMethod(\'GET\')");
@@ -473,7 +481,15 @@ public class Ajax {
     String _name_2 = _leadingEntity_2.getName();
     String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
     _builder.append(_formatForCode_2, "        ");
-    _builder.append("\', FILTER_SANITIZE_STRING);");
+    _builder.append("\', ");
+    {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      boolean _not_2 = (!_targets_5);
+      if (_not_2) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("}");
@@ -481,8 +497,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets_4 = this._utils.targets(app, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      if (_targets_6) {
         String _appName = this._utils.appName(app);
         _builder.append(_appName, "    ");
         _builder.append("_Util_Controller");
@@ -492,9 +508,9 @@ public class Ajax {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_5 = this._utils.targets(app, "1.3.5");
-      boolean _not_1 = (!_targets_5);
-      if (_not_1) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      boolean _not_3 = (!_targets_7);
+      if (_not_3) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -517,8 +533,8 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_6 = this._utils.targets(app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_8 = this._utils.targets(app, "1.3.5");
+      if (_targets_8) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_1 = this._utils.appName(app);
@@ -556,8 +572,16 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$sort = (isset($args[\'sort\']) && !empty($args[\'sort\'])) ? $args[\'sort\'] : $this->request->request->filter(\'sort\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$sort = (isset($args[\'sort\']) && !empty($args[\'sort\'])) ? $args[\'sort\'] : $this->request->request->filter(\'sort\', \'\', ");
+    {
+      boolean _targets_9 = this._utils.targets(app, "1.3.5");
+      boolean _not_4 = (!_targets_9);
+      if (_not_4) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {");
     _builder.newLine();
@@ -569,8 +593,16 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$sdir = (isset($args[\'sortdir\']) && !empty($args[\'sortdir\'])) ? $args[\'sortdir\'] : $this->request->request->filter(\'sortdir\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$sdir = (isset($args[\'sortdir\']) && !empty($args[\'sortdir\'])) ? $args[\'sortdir\'] : $this->request->request->filter(\'sortdir\', \'\', ");
+    {
+      boolean _targets_10 = this._utils.targets(app, "1.3.5");
+      boolean _not_5 = (!_targets_10);
+      if (_not_5) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$sdir = strtolower($sdir);");
     _builder.newLine();
@@ -635,8 +667,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_7 = this._utils.targets(app, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_11 = this._utils.targets(app, "1.3.5");
+      if (_targets_11) {
         _builder.append("Zikula_Response_Ajax");
       } else {
         _builder.append("AjaxResponse");
@@ -695,8 +727,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("$previewInfo = base64_encode($view->fetch(");
     {
-      boolean _targets_8 = this._utils.targets(app, "1.3.5");
-      if (_targets_8) {
+      boolean _targets_12 = this._utils.targets(app, "1.3.5");
+      if (_targets_12) {
         _builder.append("\'external/\' . $objectType");
       } else {
         _builder.append("\'External/\' . ucwords($objectType)");
@@ -813,13 +845,21 @@ public class Ajax {
     String _name_1 = _leadingEntity_1.getName();
     String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
     _builder.append(_formatForCode_1, "        ");
-    _builder.append("\', FILTER_SANITIZE_STRING);");
+    _builder.append("\', ");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_3);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("} elseif ($this->request->");
     {
-      boolean _targets_3 = this._utils.targets(app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      if (_targets_4) {
         _builder.append("isGet()");
       } else {
         _builder.append("isMethod(\'GET\')");
@@ -833,7 +873,15 @@ public class Ajax {
     String _name_2 = _leadingEntity_2.getName();
     String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
     _builder.append(_formatForCode_2, "        ");
-    _builder.append("\', FILTER_SANITIZE_STRING);");
+    _builder.append("\', ");
+    {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      boolean _not_2 = (!_targets_5);
+      if (_not_2) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("}");
@@ -841,8 +889,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets_4 = this._utils.targets(app, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      if (_targets_6) {
         String _appName = this._utils.appName(app);
         _builder.append(_appName, "    ");
         _builder.append("_Util_Controller");
@@ -852,9 +900,9 @@ public class Ajax {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_5 = this._utils.targets(app, "1.3.5");
-      boolean _not_1 = (!_targets_5);
-      if (_not_1) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      boolean _not_3 = (!_targets_7);
+      if (_not_3) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -877,8 +925,8 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_6 = this._utils.targets(app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_8 = this._utils.targets(app, "1.3.5");
+      if (_targets_8) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_1 = this._utils.appName(app);
@@ -915,8 +963,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("if ($this->request->");
     {
-      boolean _targets_7 = this._utils.targets(app, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_9 = this._utils.targets(app, "1.3.5");
+      if (_targets_9) {
         _builder.append("isPost()");
       } else {
         _builder.append("isMethod(\'POST\')");
@@ -933,8 +981,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("} elseif ($this->request->");
     {
-      boolean _targets_8 = this._utils.targets(app, "1.3.5");
-      if (_targets_8) {
+      boolean _targets_10 = this._utils.targets(app, "1.3.5");
+      if (_targets_10) {
         _builder.append("isGet()");
       } else {
         _builder.append("isMethod(\'GET\')");
@@ -1009,8 +1057,8 @@ public class Ajax {
         _builder.append("    ");
         _builder.append("$imageHelper = new ");
         {
-          boolean _targets_9 = this._utils.targets(app, "1.3.5");
-          if (_targets_9) {
+          boolean _targets_11 = this._utils.targets(app, "1.3.5");
+          if (_targets_11) {
             String _appName_2 = this._utils.appName(app);
             _builder.append(_appName_2, "            ");
             _builder.append("_Util_Image");
@@ -1020,9 +1068,9 @@ public class Ajax {
         }
         _builder.append("($this->serviceManager");
         {
-          boolean _targets_10 = this._utils.targets(app, "1.3.5");
-          boolean _not_2 = (!_targets_10);
-          if (_not_2) {
+          boolean _targets_12 = this._utils.targets(app, "1.3.5");
+          boolean _not_4 = (!_targets_12);
+          if (_not_4) {
             _builder.append(", ModUtil::getModule($this->name)");
           }
         }
@@ -1128,8 +1176,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_11 = this._utils.targets(app, "1.3.5");
-      if (_targets_11) {
+      boolean _targets_13 = this._utils.targets(app, "1.3.5");
+      if (_targets_13) {
         _builder.append("Zikula_Response_Ajax_Plain");
       } else {
         _builder.append("Plain");
@@ -1209,13 +1257,21 @@ public class Ajax {
     String _name = _leadingEntity.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name);
     _builder.append(_formatForCode, "    ");
-    _builder.append("\', FILTER_SANITIZE_STRING);");
+    _builder.append("\', ");
+    {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets_2 = this._utils.targets(app, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      if (_targets_3) {
         String _appName = this._utils.appName(app);
         _builder.append(_appName, "    ");
         _builder.append("_Util_Controller");
@@ -1225,9 +1281,9 @@ public class Ajax {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_3 = this._utils.targets(app, "1.3.5");
-      boolean _not_1 = (!_targets_3);
-      if (_not_1) {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      boolean _not_2 = (!_targets_4);
+      if (_not_2) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -1250,8 +1306,16 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$fieldName = $this->request->request->filter(\'fn\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$fieldName = $this->request->request->filter(\'fn\', \'\', ");
+    {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      boolean _not_3 = (!_targets_5);
+      if (_not_3) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$value = $this->request->request->get(\'v\', \'\');");
     _builder.newLine();
@@ -1262,8 +1326,8 @@ public class Ajax {
     _builder.append("        ");
     _builder.append("return new ");
     {
-      boolean _targets_4 = this._utils.targets(app, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      if (_targets_6) {
         _builder.append("Zikula_Response_Ajax_BadData");
       } else {
         _builder.append("BadDataResponse");
@@ -1301,8 +1365,8 @@ public class Ajax {
         {
           boolean _or = false;
           boolean _isEmpty = IterableExtensions.isEmpty(uniqueFields);
-          boolean _not_2 = (!_isEmpty);
-          if (_not_2) {
+          boolean _not_4 = (!_isEmpty);
+          if (_not_4) {
             _or = true;
           } else {
             boolean _and = false;
@@ -1313,7 +1377,7 @@ public class Ajax {
               boolean _isSlugUnique = entity.isSlugUnique();
               _and = (_hasSluggableFields && _isSlugUnique);
             }
-            _or = (_not_2 || _and);
+            _or = (_not_4 || _and);
           }
           if (_or) {
             _builder.append("        ");
@@ -1353,8 +1417,8 @@ public class Ajax {
               if (_and_1) {
                 {
                   boolean _isEmpty_1 = IterableExtensions.isEmpty(uniqueFields);
-                  boolean _not_3 = (!_isEmpty_1);
-                  if (_not_3) {
+                  boolean _not_5 = (!_isEmpty_1);
+                  if (_not_5) {
                     _builder.append(", ");
                   }
                 }
@@ -1380,8 +1444,8 @@ public class Ajax {
     _builder.append("        ");
     _builder.append("return new ");
     {
-      boolean _targets_5 = this._utils.targets(app, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      if (_targets_7) {
         _builder.append("Zikula_Response_Ajax_BadData");
       } else {
         _builder.append("BadDataResponse");
@@ -1408,8 +1472,8 @@ public class Ajax {
       };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities_1, _function_1);
       boolean _isEmpty_2 = IterableExtensions.isEmpty(_filter);
-      boolean _not_4 = (!_isEmpty_2);
-      if (_not_4) {
+      boolean _not_6 = (!_isEmpty_2);
+      if (_not_6) {
         _builder.append("    ");
         _builder.append("if (strpos($exclude, \'_\') !== false) {");
         _builder.newLine();
@@ -1424,8 +1488,8 @@ public class Ajax {
     }
     _builder.newLine();
     {
-      boolean _targets_6 = this._utils.targets(app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_8 = this._utils.targets(app, "1.3.5");
+      if (_targets_8) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_1 = this._utils.appName(app);
@@ -1473,8 +1537,8 @@ public class Ajax {
         {
           boolean _or_1 = false;
           boolean _isEmpty_3 = IterableExtensions.isEmpty(uniqueFields_1);
-          boolean _not_5 = (!_isEmpty_3);
-          if (_not_5) {
+          boolean _not_7 = (!_isEmpty_3);
+          if (_not_7) {
             _or_1 = true;
           } else {
             boolean _and_2 = false;
@@ -1485,7 +1549,7 @@ public class Ajax {
               boolean _isSlugUnique_2 = entity_1.isSlugUnique();
               _and_2 = (_hasSluggableFields_2 && _isSlugUnique_2);
             }
-            _or_1 = (_not_5 || _and_2);
+            _or_1 = (_not_7 || _and_2);
           }
           if (_or_1) {
             _builder.append("    ");
@@ -1533,8 +1597,8 @@ public class Ajax {
                   };
                   Iterable<Entity> _filter_1 = IterableExtensions.<Entity>filter(_allEntities_3, _function_3);
                   boolean _isEmpty_4 = IterableExtensions.isEmpty(_filter_1);
-                  boolean _not_6 = (!_isEmpty_4);
-                  if (_not_6) {
+                  boolean _not_8 = (!_isEmpty_4);
+                  if (_not_8) {
                     _builder.append("[0]");
                   }
                 }
@@ -1604,8 +1668,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_7 = this._utils.targets(app, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_9 = this._utils.targets(app, "1.3.5");
+      if (_targets_9) {
         _builder.append("Zikula_Response_Ajax");
       } else {
         _builder.append("AjaxResponse");
@@ -1671,14 +1735,38 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$objectType = $this->request->request->filter(\'ot\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$objectType = $this->request->request->filter(\'ot\', \'\', ");
+    {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_2);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("$field = $this->request->request->filter(\'field\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$field = $this->request->request->filter(\'field\', \'\', ");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not_2 = (!_targets_3);
+      if (_not_2) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("$id = (int) $this->request->request->filter(\'id\', 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$id = (int) $this->request->request->filter(\'id\', 0, ");
+    {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      boolean _not_3 = (!_targets_4);
+      if (_not_3) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     final Iterable<Entity> entities = this._modelExtensions.getEntitiesWithAjaxToggle(app);
@@ -1739,8 +1827,8 @@ public class Ajax {
     _builder.append("        ");
     _builder.append("return new ");
     {
-      boolean _targets_2 = this._utils.targets(app, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      if (_targets_5) {
         _builder.append("Zikula_Response_Ajax_BadData");
       } else {
         _builder.append("BadDataResponse");
@@ -1764,8 +1852,8 @@ public class Ajax {
     _builder.append("        ");
     _builder.append("return new ");
     {
-      boolean _targets_3 = this._utils.targets(app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      if (_targets_6) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -1804,8 +1892,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_4 = this._utils.targets(app, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      if (_targets_7) {
         _builder.append("Zikula_Response_Ajax");
       } else {
         _builder.append("AjaxResponse");
@@ -1890,7 +1978,15 @@ public class Ajax {
     String _name = _head.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name);
     _builder.append(_formatForCode, "    ");
-    _builder.append("\', FILTER_SANITIZE_STRING));");
+    _builder.append("\', ");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_3);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING));");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("// ensure that we use only object types with tree extension enabled");
@@ -1940,16 +2036,24 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$op = DataUtil::convertFromUTF8($this->request->request->filter(\'op\', \'\', FILTER_SANITIZE_STRING));");
-    _builder.newLine();
+    _builder.append("$op = DataUtil::convertFromUTF8($this->request->request->filter(\'op\', \'\', ");
+    {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      boolean _not_2 = (!_targets_4);
+      if (_not_2) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING));");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if (!in_array($op, array(\'addRootNode\', \'addChildNode\', \'deleteNode\', \'moveNode\', \'moveNodeTo\'))) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("throw new ");
     {
-      boolean _targets_3 = this._utils.targets(app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      if (_targets_5) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -1971,16 +2075,24 @@ public class Ajax {
     _builder.append("if (!in_array($op, array(\'addRootNode\', \'addChildNode\'))) {");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$id = (int) $this->request->request->filter(\'id\', 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$id = (int) $this->request->request->filter(\'id\', 0, ");
+    {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      boolean _not_3 = (!_targets_6);
+      if (_not_3) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("if (!$id) {");
     _builder.newLine();
     _builder.append("            ");
     _builder.append("throw new ");
     {
-      boolean _targets_4 = this._utils.targets(app, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      if (_targets_7) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -1996,8 +2108,8 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_5 = this._utils.targets(app, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_8 = this._utils.targets(app, "1.3.5");
+      if (_targets_8) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName = this._utils.appName(app);
@@ -2029,16 +2141,24 @@ public class Ajax {
     _builder.append("if (!in_array($op, array(\'addRootNode\'))) {");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$rootId = (int) $this->request->request->filter(\'root\', 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$rootId = (int) $this->request->request->filter(\'root\', 0, ");
+    {
+      boolean _targets_9 = this._utils.targets(app, "1.3.5");
+      boolean _not_4 = (!_targets_9);
+      if (_not_4) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("if (!$rootId) {");
     _builder.newLine();
     _builder.append("            ");
     _builder.append("throw new ");
     {
-      boolean _targets_6 = this._utils.targets(app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_10 = this._utils.targets(app, "1.3.5");
+      if (_targets_10) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2164,8 +2284,8 @@ public class Ajax {
         _builder.append("$titleFieldName = \'");
         {
           boolean _isEmpty = IterableExtensions.isEmpty(stringFields);
-          boolean _not_1 = (!_isEmpty);
-          if (_not_1) {
+          boolean _not_5 = (!_isEmpty);
+          if (_not_5) {
             StringField _head_2 = IterableExtensions.<StringField>head(stringFields);
             String _name_5 = _head_2.getName();
             String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
@@ -2197,8 +2317,8 @@ public class Ajax {
         _builder.newLineIfNotEmpty();
         {
           boolean _isEmpty_1 = IterableExtensions.isEmpty(textFields);
-          boolean _not_2 = (!_isEmpty_1);
-          if (_not_2) {
+          boolean _not_6 = (!_isEmpty_1);
+          if (_not_6) {
             _builder.append("        ");
             _builder.append("        ");
             _builder.append("$descriptionFieldName = \'");
@@ -2264,8 +2384,8 @@ public class Ajax {
             _builder.newLineIfNotEmpty();
             {
               boolean _isEmpty_2 = IterableExtensions.isEmpty(textStringFields);
-              boolean _not_3 = (!_isEmpty_2);
-              if (_not_3) {
+              boolean _not_7 = (!_isEmpty_2);
+              if (_not_7) {
                 _builder.append("        ");
                 _builder.append("        ");
                 _builder.append("$descriptionFieldName = \'");
@@ -2343,8 +2463,8 @@ public class Ajax {
     _builder.append("                                ");
     _builder.append("$workflowHelper = new ");
     {
-      boolean _targets_7 = this._utils.targets(app, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_11 = this._utils.targets(app, "1.3.5");
+      if (_targets_11) {
         String _appName_1 = this._utils.appName(app);
         _builder.append(_appName_1, "                                ");
         _builder.append("_Util_Workflow");
@@ -2354,9 +2474,9 @@ public class Ajax {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_8 = this._utils.targets(app, "1.3.5");
-      boolean _not_4 = (!_targets_8);
-      if (_not_4) {
+      boolean _targets_12 = this._utils.targets(app, "1.3.5");
+      boolean _not_8 = (!_targets_12);
+      if (_not_8) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -2384,16 +2504,24 @@ public class Ajax {
     _builder.append("case \'addChildNode\':");
     _builder.newLine();
     _builder.append("                        ");
-    _builder.append("$parentId = (int) $this->request->request->filter(\'pid\', 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$parentId = (int) $this->request->request->filter(\'pid\', 0, ");
+    {
+      boolean _targets_13 = this._utils.targets(app, "1.3.5");
+      boolean _not_9 = (!_targets_13);
+      if (_not_9) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("                        ");
     _builder.append("if (!$parentId) {");
     _builder.newLine();
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_9 = this._utils.targets(app, "1.3.5");
-      if (_targets_9) {
+      boolean _targets_14 = this._utils.targets(app, "1.3.5");
+      if (_targets_14) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2445,8 +2573,8 @@ public class Ajax {
     _builder.append("                                ");
     _builder.append("$workflowHelper = new ");
     {
-      boolean _targets_10 = this._utils.targets(app, "1.3.5");
-      if (_targets_10) {
+      boolean _targets_15 = this._utils.targets(app, "1.3.5");
+      if (_targets_15) {
         String _appName_2 = this._utils.appName(app);
         _builder.append(_appName_2, "                                ");
         _builder.append("_Util_Workflow");
@@ -2456,9 +2584,9 @@ public class Ajax {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_11 = this._utils.targets(app, "1.3.5");
-      boolean _not_5 = (!_targets_11);
-      if (_not_5) {
+      boolean _targets_16 = this._utils.targets(app, "1.3.5");
+      boolean _not_10 = (!_targets_16);
+      if (_not_10) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -2489,8 +2617,8 @@ public class Ajax {
     _builder.append("                                ");
     _builder.append("return new ");
     {
-      boolean _targets_12 = this._utils.targets(app, "1.3.5");
-      if (_targets_12) {
+      boolean _targets_17 = this._utils.targets(app, "1.3.5");
+      if (_targets_17) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2528,8 +2656,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("return new ");
     {
-      boolean _targets_13 = this._utils.targets(app, "1.3.5");
-      if (_targets_13) {
+      boolean _targets_18 = this._utils.targets(app, "1.3.5");
+      if (_targets_18) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2560,8 +2688,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("$workflowHelper = new ");
     {
-      boolean _targets_14 = this._utils.targets(app, "1.3.5");
-      if (_targets_14) {
+      boolean _targets_19 = this._utils.targets(app, "1.3.5");
+      if (_targets_19) {
         String _appName_3 = this._utils.appName(app);
         _builder.append(_appName_3, "                            ");
         _builder.append("_Util_Workflow");
@@ -2571,9 +2699,9 @@ public class Ajax {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_15 = this._utils.targets(app, "1.3.5");
-      boolean _not_6 = (!_targets_15);
-      if (_not_6) {
+      boolean _targets_20 = this._utils.targets(app, "1.3.5");
+      boolean _not_11 = (!_targets_20);
+      if (_not_11) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -2605,16 +2733,24 @@ public class Ajax {
     _builder.append("case \'moveNode\':");
     _builder.newLine();
     _builder.append("                        ");
-    _builder.append("$moveDirection = $this->request->request->filter(\'direction\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$moveDirection = $this->request->request->filter(\'direction\', \'\', ");
+    {
+      boolean _targets_21 = this._utils.targets(app, "1.3.5");
+      boolean _not_12 = (!_targets_21);
+      if (_not_12) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("                        ");
     _builder.append("if (!in_array($moveDirection, array(\'up\', \'down\'))) {");
     _builder.newLine();
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_16 = this._utils.targets(app, "1.3.5");
-      if (_targets_16) {
+      boolean _targets_22 = this._utils.targets(app, "1.3.5");
+      if (_targets_22) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2635,8 +2771,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("return new ");
     {
-      boolean _targets_17 = this._utils.targets(app, "1.3.5");
-      if (_targets_17) {
+      boolean _targets_23 = this._utils.targets(app, "1.3.5");
+      if (_targets_23) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2674,16 +2810,24 @@ public class Ajax {
     _builder.append("case \'moveNodeTo\':");
     _builder.newLine();
     _builder.append("                        ");
-    _builder.append("$moveDirection = $this->request->request->filter(\'direction\', \'\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$moveDirection = $this->request->request->filter(\'direction\', \'\', ");
+    {
+      boolean _targets_24 = this._utils.targets(app, "1.3.5");
+      boolean _not_13 = (!_targets_24);
+      if (_not_13) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("                        ");
     _builder.append("if (!in_array($moveDirection, array(\'after\', \'before\', \'bottom\'))) {");
     _builder.newLine();
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_18 = this._utils.targets(app, "1.3.5");
-      if (_targets_18) {
+      boolean _targets_25 = this._utils.targets(app, "1.3.5");
+      if (_targets_25) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2696,16 +2840,24 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     _builder.append("                        ");
-    _builder.append("$destId = (int) $this->request->request->filter(\'destid\', 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$destId = (int) $this->request->request->filter(\'destid\', 0, ");
+    {
+      boolean _targets_26 = this._utils.targets(app, "1.3.5");
+      boolean _not_14 = (!_targets_26);
+      if (_not_14) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("                        ");
     _builder.append("if (!$destId) {");
     _builder.newLine();
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_19 = this._utils.targets(app, "1.3.5");
-      if (_targets_19) {
+      boolean _targets_27 = this._utils.targets(app, "1.3.5");
+      if (_targets_27) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2732,8 +2884,8 @@ public class Ajax {
     _builder.append("                                ");
     _builder.append("return new ");
     {
-      boolean _targets_20 = this._utils.targets(app, "1.3.5");
-      if (_targets_20) {
+      boolean _targets_28 = this._utils.targets(app, "1.3.5");
+      if (_targets_28) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2799,8 +2951,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_21 = this._utils.targets(app, "1.3.5");
-      if (_targets_21) {
+      boolean _targets_29 = this._utils.targets(app, "1.3.5");
+      if (_targets_29) {
         _builder.append("Zikula_Response_Ajax");
       } else {
         _builder.append("AjaxResponse");

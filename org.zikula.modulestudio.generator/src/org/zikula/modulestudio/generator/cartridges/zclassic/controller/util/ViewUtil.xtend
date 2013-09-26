@@ -183,7 +183,7 @@ class ViewUtil {
                 $extensionCheck = (isset($args[$extensionVar]) && !empty($extensionVar)) ? $extensionVar : 0;
                 if ($extensionCheck != 1) {
                     $extensionCheck = (int)FormUtil::getPassedValue($extensionVar, 0, 'GET', FILTER_VALIDATE_INT);
-                    //$extensionCheck = (int)$this->request->query->filter($extensionVar, 0, FILTER_VALIDATE_INT);
+                    //$extensionCheck = (int)$this->request->query->filter($extensionVar, 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                 }
                 if ($extensionCheck == 1) {
                     $templateExtension = $extension;

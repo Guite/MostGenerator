@@ -520,8 +520,16 @@ public class ViewUtil {
     _builder.append("$extensionCheck = (int)FormUtil::getPassedValue($extensionVar, 0, \'GET\', FILTER_VALIDATE_INT);");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("//$extensionCheck = (int)$this->request->query->filter($extensionVar, 0, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("//$extensionCheck = (int)$this->request->query->filter($extensionVar, 0, ");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("}");
     _builder.newLine();

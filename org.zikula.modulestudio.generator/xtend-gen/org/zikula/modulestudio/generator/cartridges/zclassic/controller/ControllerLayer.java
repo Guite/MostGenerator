@@ -600,16 +600,40 @@ public class ControllerLayer {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("    ");
-        _builder.append("$itemId = (int) $this->request->query->filter(\'id\', 0, FILTER_VALIDATE_INT);");
-        _builder.newLine();
+        _builder.append("$itemId = (int) $this->request->query->filter(\'id\', 0, ");
+        {
+          boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_5 = (!_targets_3);
+          if (_not_5) {
+            _builder.append("false, ");
+          }
+        }
+        _builder.append("FILTER_VALIDATE_INT);");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("    ");
-        _builder.append("$idPrefix = $this->request->query->filter(\'idp\', \'\', FILTER_SANITIZE_STRING);");
-        _builder.newLine();
+        _builder.append("$idPrefix = $this->request->query->filter(\'idp\', \'\', ");
+        {
+          boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_6 = (!_targets_4);
+          if (_not_6) {
+            _builder.append("false, ");
+          }
+        }
+        _builder.append("FILTER_SANITIZE_STRING);");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("    ");
-        _builder.append("$commandName = $this->request->query->filter(\'com\', \'\', FILTER_SANITIZE_STRING);");
-        _builder.newLine();
+        _builder.append("$commandName = $this->request->query->filter(\'com\', \'\', ");
+        {
+          boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_7 = (!_targets_5);
+          if (_not_7) {
+            _builder.append("false, ");
+          }
+        }
+        _builder.append("FILTER_SANITIZE_STRING);");
+        _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("if (empty($idPrefix)) {");
@@ -641,8 +665,8 @@ public class ControllerLayer {
         _builder.newLine();
         _builder.newLine();
         {
-          boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_3) {
+          boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_6) {
             _builder.append("    ");
             _builder.append("    ");
             _builder.append("$view->display(\'");
@@ -704,9 +728,9 @@ public class ControllerLayer {
         _builder.append("    ");
         _builder.append("public function config");
         {
-          boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
-          boolean _not_5 = (!_targets_4);
-          if (_not_5) {
+          boolean _targets_7 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_8 = (!_targets_7);
+          if (_not_8) {
             _builder.append("Action");
           }
         }
@@ -733,8 +757,8 @@ public class ControllerLayer {
         _builder.append("    ");
         _builder.append("$templateName = \'");
         {
-          boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_5) {
+          boolean _targets_8 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_8) {
             String _configController_1 = this._controllerExtensions.configController(this.app);
             String _formatForDB_1 = this._formattingExtensions.formatForDB(_configController_1);
             _builder.append(_formatForDB_1, "        ");
@@ -755,8 +779,8 @@ public class ControllerLayer {
         _builder.append("    ");
         _builder.append("return $view->execute($templateName, new ");
         {
-          boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_6) {
+          boolean _targets_9 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_9) {
             String _appName_1 = this._utils.appName(this.app);
             _builder.append(_appName_1, "        ");
             _builder.append("_Form_Handler_");

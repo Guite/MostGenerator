@@ -406,10 +406,10 @@ class FormHandler {
         public function initialize(Zikula_Form_View $view)
         {
             $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
-            $this->idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
+            $this->idPrefix = $this->request->query->filter('idp', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
 
             // initialise redirect goal
-            $this->returnTo = $this->request->query->filter('returnTo', null, FILTER_SANITIZE_STRING);
+            $this->returnTo = $this->request->query->filter('returnTo', null, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             // store current uri for repeated creations
             $this->repeatReturnUrl = System::getCurrentURI();
 
@@ -960,7 +960,7 @@ class FormHandler {
                     «IF app.hasUserFields»
                         if (count($this->userFields) > 0) {
                             foreach ($this->userFields as $userField => $isMandatory) {
-                                $entityData[$userField] = (int) $this->request->request->filter($userField, 0, FILTER_VALIDATE_INT);
+                                $entityData[$userField] = (int) $this->request->request->filter($userField, 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                                 unset($entityData[$userField . 'Selector']);
                             }
                         }

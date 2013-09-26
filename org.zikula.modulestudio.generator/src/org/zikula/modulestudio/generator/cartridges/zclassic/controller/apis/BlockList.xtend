@@ -402,9 +402,9 @@ class BlockList {
             // Get current content
             $vars = BlockUtil::varsFromContent($blockinfo['content']);
 
-            $vars['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            $vars['sorting'] = $this->request->request->filter('sorting', 'default', FILTER_SANITIZE_STRING);
-            $vars['amount'] = (int) $this->request->request->filter('amount', 5, FILTER_VALIDATE_INT);
+            $vars['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $vars['sorting'] = $this->request->request->filter('sorting', 'default', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $vars['amount'] = (int) $this->request->request->filter('amount', 5, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
             $vars['template'] = $this->request->request->get('template', '');
             $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
             $vars['filter'] = $this->request->request->get('filter', '');

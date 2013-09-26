@@ -188,9 +188,9 @@ class ControllerLayer {
                  */
                 public function handleInlineRedirect«IF !app.targets('1.3.5')»Action«ENDIF»()
                 {
-                    $itemId = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
-                    $idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
-                    $commandName = $this->request->query->filter('com', '', FILTER_SANITIZE_STRING);
+                    $itemId = (int) $this->request->query->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    $idPrefix = $this->request->query->filter('idp', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                    $commandName = $this->request->query->filter('com', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
                     if (empty($idPrefix)) {
                         return false;
                     }

@@ -140,7 +140,7 @@ class ControllerAction {
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             // parameter specifying which type of objects we are treating
-            $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+            $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -240,7 +240,7 @@ class ControllerAction {
             $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             «IF app.hasTrees»
 
-                $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
+                $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
                 if ($tpl == 'tree') {
                     $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
                     $this->view->assign('trees', $trees)
@@ -252,11 +252,11 @@ class ControllerAction {
         «ENDIF»
 
         // parameter for used sorting field
-        $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
+        $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->query->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
         «new ControllerHelper().defaultSorting(it)»
 
         // parameter for used sort order
-        $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
+        $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->query->filter('sortdir', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
         $sdir = strtolower($sdir);
         if ($sdir != 'asc' && $sdir != 'desc') {
             $sdir = 'asc';
@@ -266,7 +266,7 @@ class ControllerAction {
         $currentUrlArgs = array('ot' => $objectType);
 
         «IF controller instanceof AjaxController»
-            $where = (isset($args['where']) && !empty($args['where'])) ? $args['where'] : $this->request->query->filter('where', '');
+            $where = (isset($args['where']) && !empty($args['where'])) ? $args['where'] : $this->request->query->filter('where', ''«IF !app.targets('1.3.5')», false«ENDIF»);
             $where = str_replace('"', '', $where);
         «ELSE»
             $where = '';
@@ -278,8 +278,8 @@ class ControllerAction {
             'orderBy' => $sort . ' ' . $sdir
         );
 
-        $showOwnEntries = (int) (isset($args['own']) && !empty($args['own'])) ? $args['own'] : $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
-        $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
+        $showOwnEntries = (int) (isset($args['own']) && !empty($args['own'])) ? $args['own'] : $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+        $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
 
         «IF hasView»
             $this->view->assign('showOwnEntries', $showOwnEntries)
@@ -326,12 +326,12 @@ class ControllerAction {
             «ENDIF»
         } else {
             // the current offset which is used to calculate the pagination
-            $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
+            $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
 
             // the number of items displayed on a page for pagination
-            $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
+            $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $this->request->query->filter('num', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
             if ($resultsPerPage == 0) {
-                $csv = (int) (isset($args['usecsv']) && !empty($args['usecsv'])) ? $args['usecsv'] : $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
+                $csv = (int) (isset($args['usecsv']) && !empty($args['usecsv'])) ? $args['usecsv'] : $this->request->query->filter('usecsvext', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                 $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pageSize', 10);
             }
 
@@ -458,7 +458,7 @@ class ControllerAction {
                             $objectTemp = new $entityClass();
                             $hasSlug = $objectTemp->get_hasUniqueSlug();
                             if ($hasSlug) {
-                                $slug = (isset($args['slug']) && !empty($args['slug'])) ? $args['slug'] : $this->request->query->filter('slug', '', FILTER_SANITIZE_STRING);
+                                $slug = (isset($args['slug']) && !empty($args['slug'])) ? $args['slug'] : $this->request->query->filter('slug', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
                                 $hasSlug = (!empty($slug));
                             }
                         }
@@ -547,7 +547,7 @@ class ControllerAction {
         $this->checkAjaxToken();
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
-        $data = (isset($args['data']) && !empty($args['data'])) ? $args['data'] : $this->request->query->filter('data', null);
+        $data = (isset($args['data']) && !empty($args['data'])) ? $args['data'] : $this->request->query->filter('data', null«IF !app.targets('1.3.5')», false«ENDIF»);
         $data = json_decode($data, true);
 
         $idValues = array();
@@ -632,7 +632,7 @@ class ControllerAction {
             return LogUtil::registerError($this->__('Error! It is not allowed to delete this entity.'));
         }
 
-        $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
+        $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->request->filter('confirmation', false, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
         if ($confirmation) {
             $this->checkCsrfToken();
 

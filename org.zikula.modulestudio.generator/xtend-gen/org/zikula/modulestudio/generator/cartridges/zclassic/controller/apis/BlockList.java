@@ -1328,14 +1328,38 @@ public class BlockList {
     String _name_4 = _leadingEntity_2.getName();
     String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
     _builder.append(_formatForCode_3, "    ");
-    _builder.append("\', FILTER_SANITIZE_STRING);");
+    _builder.append("\', ");
+    {
+      boolean _targets_19 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_19);
+      if (_not_1) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("$vars[\'sorting\'] = $this->request->request->filter(\'sorting\', \'default\', FILTER_SANITIZE_STRING);");
-    _builder.newLine();
+    _builder.append("$vars[\'sorting\'] = $this->request->request->filter(\'sorting\', \'default\', ");
+    {
+      boolean _targets_20 = this._utils.targets(it, "1.3.5");
+      boolean _not_2 = (!_targets_20);
+      if (_not_2) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_SANITIZE_STRING);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("$vars[\'amount\'] = (int) $this->request->request->filter(\'amount\', 5, FILTER_VALIDATE_INT);");
-    _builder.newLine();
+    _builder.append("$vars[\'amount\'] = (int) $this->request->request->filter(\'amount\', 5, ");
+    {
+      boolean _targets_21 = this._utils.targets(it, "1.3.5");
+      boolean _not_3 = (!_targets_21);
+      if (_not_3) {
+        _builder.append("false, ");
+      }
+    }
+    _builder.append("FILTER_VALIDATE_INT);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$vars[\'template\'] = $this->request->request->get(\'template\', \'\');");
     _builder.newLine();
@@ -1349,8 +1373,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets_19 = this._utils.targets(it, "1.3.5");
-      if (_targets_19) {
+      boolean _targets_22 = this._utils.targets(it, "1.3.5");
+      if (_targets_22) {
         String _appName_18 = this._utils.appName(it);
         _builder.append(_appName_18, "    ");
         _builder.append("_Util_Controller");
@@ -1360,9 +1384,9 @@ public class BlockList {
     }
     _builder.append("($this->serviceManager");
     {
-      boolean _targets_20 = this._utils.targets(it, "1.3.5");
-      boolean _not_1 = (!_targets_20);
-      if (_not_1) {
+      boolean _targets_23 = this._utils.targets(it, "1.3.5");
+      boolean _not_4 = (!_targets_23);
+      if (_not_4) {
         _builder.append(", ModUtil::getModule($this->name)");
       }
     }
@@ -1420,8 +1444,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_21 = this._utils.targets(it, "1.3.5");
-      if (_targets_21) {
+      boolean _targets_24 = this._utils.targets(it, "1.3.5");
+      if (_targets_24) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1432,8 +1456,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_22 = this._utils.targets(it, "1.3.5");
-      if (_targets_22) {
+      boolean _targets_25 = this._utils.targets(it, "1.3.5");
+      if (_targets_25) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1444,8 +1468,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_23 = this._utils.targets(it, "1.3.5");
-      if (_targets_23) {
+      boolean _targets_26 = this._utils.targets(it, "1.3.5");
+      if (_targets_26) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1456,8 +1480,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_24 = this._utils.targets(it, "1.3.5");
-      if (_targets_24) {
+      boolean _targets_27 = this._utils.targets(it, "1.3.5");
+      if (_targets_27) {
         _builder.append("block");
       } else {
         _builder.append("Block");

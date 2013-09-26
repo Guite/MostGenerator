@@ -76,7 +76,7 @@ class Interactive {
 
             «ENDFOR»
 
-            $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
+            $activate = (bool) $this->request->request->filter('activate', false, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
             $activate = (!empty($activate)) ? true : false;
 
             return $this->redirect(ModUtil::url('«appName»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
@@ -93,7 +93,7 @@ class Interactive {
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
-            $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
+            $activate = (bool) $this->request->request->filter('activate', false, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
 
             // assign activation flag
             $this->view->assign('activate', $activate);
