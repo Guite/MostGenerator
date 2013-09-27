@@ -25,8 +25,8 @@ public class CollectionUtils {
       List<Predicate<Object>> _map = ListExtensions.<Class<? extends Object>, Predicate<Object>>map(((List<Class<? extends Object>>)Conversions.doWrapArray(types)), _function);
       final Predicate<Object> typeFilter = Predicates.<Object>or(_map);
       Iterable<Object> _filter = IterableExtensions.<Object>filter(unfiltered, new Function1<Object,Boolean>() {
-          public Boolean apply(Object p) {
-            return typeFilter.apply(p);
+          public Boolean apply(Object arg0) {
+            return typeFilter.apply(arg0);
           }
       });
       _xblockexpression = (_filter);
@@ -43,8 +43,8 @@ public class CollectionUtils {
       Predicate<Object> _instanceOf = Predicates.instanceOf(type);
       final Predicate<Object> exclusionFilter = Predicates.<Object>not(_instanceOf);
       Iterable<? extends Object> _filter = IterableExtensions.filter(unfiltered, new Function1<Object,Boolean>() {
-          public Boolean apply(Object p) {
-            return exclusionFilter.apply(p);
+          public Boolean apply(Object arg0) {
+            return exclusionFilter.apply(arg0);
           }
       });
       _xblockexpression = (_filter);

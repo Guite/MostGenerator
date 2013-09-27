@@ -6,25 +6,10 @@
     <dependencies>
         <dependency name="org.aopalliance" componentType="osgi.bundle"/>
         <dependency name="org.eclipse.rcp" componentType="eclipse.feature"/>
-        <dependency name="org.eclipse.xtext.xtend2.standalone" componentType="osgi.bundle"/>
-        <dependency name="org.eclipse.xtext.xtend2.lib" componentType="osgi.bundle"/>
         <dependency name="de.guite.modulestudio.branding" componentType="osgi.bundle"/>
         <dependency name="org.zikula.modulestudio.generator.tests" componentType="osgi.bundle"/>
     </dependencies>
     <actions>
-        <!-- trigger Xtend2 builder -->
-        <public name="compile.xtend.classes" actor="ant">
-            <actorProperties>
-                <property key="buildFile" value="build.xml" />
-                <property key="targets" value="compile.xtend.classes" />
-            </actorProperties>
-            <properties>
-            </properties>
-            <products alias="destination">
-                <path path="dummy_output_generator/" />
-            </products>
-        </public>
-
         <!-- perform all test analysis for the source code specified in referenced ant file -->
         <public name="metrics.prebuild" actor="ant">
             <actorProperties>
