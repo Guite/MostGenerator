@@ -55,10 +55,12 @@ class EventListener {
             EventUtil::registerPersistentModuleHandler('«appName»', 'pageutil.addvar_filter', array('«callableClass»', 'pageutilAddvarFilter'));
             EventUtil::registerPersistentModuleHandler('«appName»', 'system.outputfilter', array('«callableClass»', 'systemOutputfilter'));
 
-            // errors -> «callableClass = listenerBase + 'Errors' + listenerSuffix»
-            EventUtil::registerPersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
+            «IF targets('1.3.5')»
+                // errors -> «callableClass = listenerBase + 'Errors' + listenerSuffix»
+                EventUtil::registerPersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
+                EventUtil::registerPersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
 
+            «ENDIF»
             // theme -> «callableClass = listenerBase + 'Theme' + listenerSuffix»
             EventUtil::registerPersistentModuleHandler('«appName»', 'theme.preinit', array('«callableClass»', 'preInit'));
             EventUtil::registerPersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'init'));

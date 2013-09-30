@@ -48,7 +48,9 @@ class Listeners {
         fsa.generateFile(listenerBasePath + 'ModuleDispatch' + listenerSuffix, listenersModuleDispatchFile(true))
         fsa.generateFile(listenerBasePath + 'Mailer' + listenerSuffix, listenersMailerFile(true))
         fsa.generateFile(listenerBasePath + 'Page' + listenerSuffix, listenersPageFile(true))
-        fsa.generateFile(listenerBasePath + 'Errors' + listenerSuffix, listenersErrorsFile(true))
+        if (targets('1.3.5')) {
+            fsa.generateFile(listenerBasePath + 'Errors' + listenerSuffix, listenersErrorsFile(true))
+        }
         fsa.generateFile(listenerBasePath + 'Theme' + listenerSuffix, listenersThemeFile(true))
         fsa.generateFile(listenerBasePath + 'View' + listenerSuffix, listenersViewFile(true))
         fsa.generateFile(listenerBasePath + 'UserLogin' + listenerSuffix, listenersUserLoginFile(true))
@@ -67,7 +69,9 @@ class Listeners {
         fsa.generateFile(listenerPath + 'ModuleDispatch' + listenerSuffix, listenersModuleDispatchFile(false))
         fsa.generateFile(listenerPath + 'Mailer' + listenerSuffix, listenersMailerFile(false))
         fsa.generateFile(listenerPath + 'Page' + listenerSuffix, listenersPageFile(false))
-        fsa.generateFile(listenerPath + 'Errors' + listenerSuffix, listenersErrorsFile(false))
+        if (targets('1.3.5')) {
+            fsa.generateFile(listenerPath + 'Errors' + listenerSuffix, listenersErrorsFile(false))
+        }
         fsa.generateFile(listenerPath + 'Theme' + listenerSuffix, listenersThemeFile(false))
         fsa.generateFile(listenerPath + 'View' + listenerSuffix, listenersViewFile(false))
         fsa.generateFile(listenerPath + 'UserLogin' + listenerSuffix, listenersUserLoginFile(false))
@@ -225,6 +229,7 @@ class Listeners {
         }
     '''
 
+    // obsolete, used for 1.3.5 only
     def private listenersErrorsFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»

@@ -22,6 +22,9 @@ class MigrationHelper {
         // rename all tables
         $this->renameTablesFor136();
 
+        // drop handlers for obsolete events
+        $this->unregisterEventHandlersObsoleteIn136();
+
         // register two new event handlers
         $this->registerNewEventHandlersIn136();
 
@@ -34,6 +37,7 @@ class MigrationHelper {
         updateExtensionInfoFor136
         renamePermissionsFor136
         renameTablesFor136
+        unregisterEventHandlersObsoleteIn136
         registerNewEventHandlersIn136
         updateHookNamesFor136
         getConnection
@@ -54,6 +58,7 @@ class MigrationHelper {
                                  WHERE modname = '«name.formatForCodeCapital»';
             ");
         }
+
     '''
 
     def private updateExtensionInfoFor136(Application it) '''
@@ -71,8 +76,8 @@ class MigrationHelper {
                                  WHERE name = '«name.formatForCodeCapital»';
             ");
         }
-    '''
 
+    '''
 
     def private renamePermissionsFor136(Application it) '''
         /**
@@ -90,6 +95,7 @@ class MigrationHelper {
                                  WHERE component LIKE '«name.formatForCodeCapital»%';
             ");
         }
+
     '''
 
     def private renameTablesFor136(Application it) '''
@@ -120,6 +126,23 @@ class MigrationHelper {
                 ");
             }
         }
+
+    '''
+
+    def private unregisterEventHandlersObsoleteIn136(Application it) '''
+        /**
+         * Unregisters handlers for events which became obsolete in 1.3.6.
+         */
+        protected function unregisterEventHandlersObsoleteIn136()
+        {
+            «val listenerBase = vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\'»
+            «val listenerSuffix = 'Listener'»
+
+            // errors -> «val callableClass = listenerBase + 'Errors' + listenerSuffix»
+            EventUtil::unregisterPersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
+            EventUtil::unregisterPersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
+        }
+
     '''
 
     def private registerNewEventHandlersIn136(Application it) '''
@@ -128,9 +151,6 @@ class MigrationHelper {
          */
         protected function registerNewEventHandlersIn136()
         {
-            $conn = $this->getConnection();
-            $dbName = $this->getDbName();
-
             «val listenerBase = vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\'»
             «val listenerSuffix = 'Listener'»
 
@@ -143,6 +163,7 @@ class MigrationHelper {
             EventUtil::registerPersistentModuleHandler('«appName»', 'moduleplugin.tinymce.externalplugins', array('«callableClass»', 'getTinyMcePlugins'));
             EventUtil::registerPersistentModuleHandler('«appName»', 'moduleplugin.ckeditor.externalplugins', array('«callableClass»', 'getCKEditorPlugins'));
         }
+
     '''
 
     def private updateHookNamesFor136(Application it) '''
@@ -192,6 +213,7 @@ class MigrationHelper {
                                  WHERE eventname LIKE '«name.formatForDB»%';
             ");
         }
+
     '''
 
     def private getConnection(Application it) '''
@@ -207,6 +229,7 @@ class MigrationHelper {
 
             return $conn;
         }
+
     '''
 
     def private getDbName(Application it) '''
@@ -230,5 +253,6 @@ class MigrationHelper {
 
             return $dbName;
         }
+
     '''
 }

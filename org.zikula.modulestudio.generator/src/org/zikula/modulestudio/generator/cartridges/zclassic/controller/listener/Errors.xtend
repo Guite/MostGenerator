@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Errors {
     @Inject extension Utils = new Utils
 
+    // obsolete, used for 1.3.5 only
     def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `setup.errorreporting` event.
