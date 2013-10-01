@@ -72,7 +72,7 @@ class DisplayFunctions {
         {
             var triggerId, contextMenu, icon;
 
-            triggerId = containerId + 'trigger';
+            triggerId = containerId + 'Trigger';
 
             // attach context menu
             contextMenu = new «prefix()»ContextMenu(triggerId, { leftClick: true, animation: false });
@@ -158,7 +158,7 @@ class DisplayFunctions {
          */
         function «prefix()»SubmitQuickNavForm(objectType)
         {
-            $('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
+            $('«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
@@ -166,7 +166,7 @@ class DisplayFunctions {
          */
         function «prefix()»InitQuickNavigation(objectType, controller)
         {
-            if ($('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
+            if ($('«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
                 return;
             }
 
@@ -282,7 +282,7 @@ class DisplayFunctions {
          */
         function «prefix()»InitToggle(objectType, fieldName, itemId)
         {
-            var idSuffix = fieldName.toLowerCase() + itemId;
+            var idSuffix = fieldName + itemId;
             if ($('toggle' + idSuffix) == undefined) {
                 return;
             }
@@ -316,7 +316,7 @@ class DisplayFunctions {
                             Zikula.UI.Alert(data.message, Zikula.__('Success', 'module_«appName»'));
                         }*/
 
-                        var idSuffix = fieldName.toLowerCase() + '_' + itemId;
+                        var idSuffix = fieldName + '_' + itemId;
                         var state = data.state;
                         if (state === true) {
                             $('no' + idSuffix).addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');

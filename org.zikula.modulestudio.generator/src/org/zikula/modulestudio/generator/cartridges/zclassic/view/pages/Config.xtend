@@ -44,13 +44,10 @@ class Config {
                     </h3>
                 «ENDIF»
             «ELSE»
-                <div class="z-frontendcontainer">
-                    <h2>{$templateTitle}</h2>
+                <h2>{$templateTitle}</h2>
             «ENDIF»
 
             {form cssClass='«IF targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»'«IF !targets('1.3.5')» role='form'«ENDIF»}
-«/*            {formsetinitialfocus inputId='myelemid'}*/»
-
                 {* add validation summary and a <div> element for styling the form *}
                 {«appName.formatForDB»FormFrame}
                     {formsetinitialfocus inputId='«getSortedVariableContainers.head.vars.head.name.formatForCode»'}
@@ -74,17 +71,13 @@ class Config {
                     </div>
                 {/«appName.formatForDB»FormFrame}
             {/form}
-            «IF configController.formatForDB == 'admin'»
-            «ELSE»
-                </div>
-            «ENDIF»
         </div>
         {include file='«IF targets('1.3.5')»«configController.formatForDB»«ELSE»«configController.formatForDB.toFirstUpper»«ENDIF»/footer.tpl'}
         «IF !getAllVariables.filter[documentation !== null && documentation != ''].empty»
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
-                    Zikula.UI.Tooltips($$('.«appName.formatForDB»FormTooltips'));
+                    Zikula.UI.Tooltips($$('.«appName.toLowerCase»-form-tooltips'));
                 });
             /* ]]> */
             </script>
@@ -117,7 +110,7 @@ class Config {
             «IF documentation !== null && documentation != ""»
                 {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
             «ENDIF»
-            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.container.application.appName.formatForDB»FormTooltips «ENDIF»«IF !container.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
+            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.container.application.appName.toLowerCase»-form-tooltips «ENDIF»«IF !container.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
             «IF !container.container.application.targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»

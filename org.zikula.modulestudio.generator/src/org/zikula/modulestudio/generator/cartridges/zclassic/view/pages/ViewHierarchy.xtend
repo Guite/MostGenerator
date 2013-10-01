@@ -28,53 +28,51 @@ class ViewHierarchy {
         {* purpose of this template: «nameMultiple.formatForDisplay» tree view in «controller.formattedName» area *}
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
-        {gt text='«name.formatForDisplayCapital» hierarchy' assign='templateTitle'}
-        {pagesetvar name='title' value=$templateTitle}
-        «controller.templateHeader»
+            {gt text='«name.formatForDisplayCapital» hierarchy' assign='templateTitle'}
+            {pagesetvar name='title' value=$templateTitle}
+            «controller.templateHeader»
 
-        «IF documentation !== null && documentation != ''»
-            <p class="«IF container.application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">«documentation»</p>
-        «ENDIF»
+            «IF documentation !== null && documentation != ''»
+                <p class="«IF container.application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">«documentation»</p>
+            «ENDIF»
 
-        <p>
+            <p>
             «IF controller.hasActions('edit')»
                 {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_ADD'}
                     {gt text='Add root node' assign='addRootTitle'}
-                    <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»icon icon-plus hide«ENDIF»">{$addRootTitle}</a>
+                    <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»icon icon-plus hide«ENDIF»">{$addRootTitle}</a>
 
-                    <script type="text/javascript">
-                /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                       $('z-tree-addroot').observe('click', function(event) {
-                           «appPrefix»PerformTreeOperation('«name.formatForCode»', 1, 'addRootNode');
-                           Event.stop(event);
-                       }).removeClassName('«IF container.application.targets('1.3.5')»z-«ENDIF»hide');
-                });
-                /* ]]> */
-                </script>
-                <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
+                        <script type="text/javascript">
+                    /* <![CDATA[ */
+                    document.observe('dom:loaded', function() {
+                           $('treeAddRoot').observe('click', function(event) {
+                               «appPrefix»PerformTreeOperation('«name.formatForCode»', 1, 'addRootNode');
+                               Event.stop(event);
+                           }).removeClassName('«IF container.application.targets('1.3.5')»z-«ENDIF»hide');
+                    });
+                    /* ]]> */
+                    </script>
+                    <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
 
-                {*
-                    {gt text='Create «name.formatForDisplay»' assign='createTitle'}
-                    <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»icon icon-plus«ENDIF»">
-                        {$createTitle}
-                    </a>
-                *}
-                {/checkpermissionblock}
-            «ENDIF»
-            {gt text='Switch to table view' assign='switchTitle'}
-            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»icon icon-table«ENDIF»">{$switchTitle}</a>
-        </p>
+                    {*
+                        {gt text='Create «name.formatForDisplay»' assign='createTitle'}
+                        <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»icon icon-plus«ENDIF»">
+                            {$createTitle}
+                        </a>
+                    *}
+                    {/checkpermissionblock}
+                «ENDIF»
+                {gt text='Switch to table view' assign='switchTitle'}
+                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»icon icon-table«ENDIF»">{$switchTitle}</a>
+            </p>
 
-        {foreach key='rootId' item='treeNodes' from=$trees}
-            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' rootId=$rootId items=$treeNodes}
-        {foreachelse}
-            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' rootId=1 items=null}
-        {/foreach}
+            {foreach key='rootId' item='treeNodes' from=$trees}
+                {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' rootId=$rootId items=$treeNodes}
+            {foreachelse}
+                {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' rootId=1 items=null}
+            {/foreach}
 
-        <br style="clear: left" />
-
-        «controller.templateFooter»
+            <br style="clear: left" />
         </div>
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
@@ -95,17 +93,7 @@ class ViewHierarchy {
                 «ENDIF»
             '''
             default: '''
-                <div class="z-frontendcontainer">
-                    <h2>{$templateTitle}</h2>
-            '''
-        }
-    }
-
-    def private templateFooter(Controller it) {
-        switch it {
-            AdminController: ''
-            default: '''
-                </div>
+                <h2>{$templateTitle}</h2>
             '''
         }
     }
@@ -121,8 +109,8 @@ class ViewHierarchy {
         {* initialise additional gettext domain for translations within javascript *}
         {pageaddvar name='jsgettext' value='module_«appName.formatForDB»_js:«appName»'}
 
-        <div id="«name.formatForDB»_tree{$rootId}" class="z-treecontainer">
-            <div id="treeitems{$rootId}" class="z-treeitems">
+        <div id="«name.formatForCode.toFirstLower»Tree{$rootId}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»tree-container">
+            <div id="«name.formatForCode.toFirstLower»TreeItems{$rootId}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»tree-items">
             {if $hasNodes}
                 {«appName.formatForDB»TreeJS objectType='«name.formatForCode»' tree=$items controller='«controller.formattedName»' root=$rootId sortable=true}
             {/if}

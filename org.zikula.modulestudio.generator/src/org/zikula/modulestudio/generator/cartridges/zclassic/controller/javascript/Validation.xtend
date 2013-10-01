@@ -155,7 +155,7 @@ class Validation {
                         return true;
                     }
                     var fileExtension = '.' + val.substr(val.lastIndexOf('.') + 1);
-                    allowedExtensions = $('fileextensions' + elem.id).innerHTML;
+                    allowedExtensions = $(elem.id + 'FileExtensions').innerHTML;
                     allowedExtensions = '(.' + allowedExtensions.replace(/, /g, '|.').replace(/,/g, '|.') + ')$';
                     allowedExtensions = new RegExp(allowedExtensions, 'i');
                     return allowedExtensions.test(val);

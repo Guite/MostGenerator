@@ -1012,11 +1012,11 @@ class FormHandler {
                 }
             «ENDIF»
 
-            if (isset($entityData['repeatcreation'])) {
+            if (isset($entityData['repeatCreation'])) {
                 if ($this->mode == 'create') {
-                    $this->repeatCreateAction = $entityData['repeatcreation'];
+                    $this->repeatCreateAction = $entityData['repeatCreation'];
                 }
-                unset($entityData['repeatcreation']);
+                unset($entityData['repeatCreation']);
             }
             «IF app.hasAttributableEntities»
 

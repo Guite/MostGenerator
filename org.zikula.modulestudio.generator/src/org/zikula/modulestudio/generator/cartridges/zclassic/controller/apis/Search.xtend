@@ -134,7 +134,7 @@ class Search {
             $sessionId  = session_id();
 
             // retrieve list of activated object types
-            $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array) FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
+            $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array) FormUtil::getPassedValue('«appName.toFirstLower»SearchTypes', array(), 'GETPOST');
 
             $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('api' => 'search', 'action' => 'search');

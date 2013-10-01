@@ -102,7 +102,7 @@ class TreeJS {
 
             // instantiate and initialise the output tree object
             $tree = new Zikula_Tree();
-            $tree->setOption('id', 'itemtree' . $params['root']);
+            $tree->setOption('id', 'itemTree' . $params['root']);
             //$tree->setOption('objid', $idField);
             $tree->setOption('treeClass', 'z-nestedsetlist');
             $tree->setOption('nodePrefix', 'tree' . $params['root'] . 'node_');

@@ -154,7 +154,7 @@ class Relations {
     '''
 
     def private component_AutoComplete(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        <div class="«app.prefix()»RelationLeftSide">
+        <div class="«app.appName.toLowerCase»-relation-leftside">
             «val includeStatement = component_IncludeStatementForAutoCompleterItemList(controller, targetEntity, many, incoming, includeEditing)»
             {if isset($linkingItem.$alias)}
                 {«includeStatement» item«IF many»s«ENDIF»=$linkingItem.$alias}
@@ -162,7 +162,7 @@ class Relations {
                 {«includeStatement»}
             {/if}
         </div>
-        <br class="z-clearer" />
+        <br «IF app.targets('1.3.5')»class="z-clearer"«ELSE»style="clear: both"«ENDIF» />
     '''
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''

@@ -42,7 +42,7 @@ class Relations {
                 <h4>
             «ELSE»
                 {if isset($items) && $items ne null && count($items) gt 0}
-                <ul class="relatedItemList «name.formatForCode»">
+                <ul class="«app.appName.toLowerCase»-related-item-list «name.formatForCode»">
                 {foreach name='relLoop' item='item' from=$items}
                     <li>
             «ENDIF»
@@ -135,7 +135,7 @@ class Relations {
             «ENDIF»
             {checkpermission component='«appName»:«relatedEntity.name.formatForCodeCapital»:' instance="«relatedEntity.idFieldsAsParameterTemplate»::" level='ACCESS_ADMIN' assign='authAdmin'}
             {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
-            <p class="manageLink">
+            <p class="managelink">
                 {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
                 <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam.formatForDB»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»icon icon-plus«ENDIF»">{$createTitle}</a>
             </p>

@@ -36,7 +36,7 @@ class ViewQuickNavForm {
         {* purpose of this template: «nameMultiple.formatForDisplay» view filter form in «controller.formattedName» area *}
         {checkpermissionblock component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
         {assign var='objectType' value='«name.formatForCode»'}
-        <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.prefix»«name.formatForCodeCapital»QuickNavForm" class="«app.prefix»-quicknav«IF container.application.targets('1.3.5')»"«ELSE» {*form-inline*}navbar-form navbar-left" role="navigation"«ENDIF»>
+        <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm" class="«app.appName.toLowerCase»-quicknav«IF container.application.targets('1.3.5')»"«ELSE» {*form-inline*}navbar-form navbar-left" role="navigation"«ENDIF»>
             <fieldset>
                 <h3>{gt text='Quick navigation'}</h3>
                 <input type="hidden" name="module" value="{modgetinfo modname='«app.appName»' info='url'}" />
@@ -47,7 +47,7 @@ class ViewQuickNavForm {
                 <input type="hidden" name="own" value="{$own|default:0}" />
                 {gt text='All' assign='lblDefault'}
                 «formFields»
-                <input type="submit" name="updateview" id="quicknav_submit" value="{gt text='OK'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
+                <input type="submit" name="updateview" id="quicknavSubmit" value="{gt text='OK'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
             </fieldset>
         </form>
 
@@ -57,7 +57,7 @@ class ViewQuickNavForm {
                 «app.prefix»InitQuickNavigation('«name.formatForCode»', '«controller.formattedName»');
                 {{if isset($searchFilter) && $searchFilter eq false}}
                     {{* we can hide the submit button if we have no quick search field *}}
-                    $('quicknav_submit').addClassName('«IF app.targets('1.3.5')»z-«ENDIF»hide');
+                    $('quicknavSubmit').addClassName('«IF app.targets('1.3.5')»z-«ENDIF»hide');
                 {{/if}}
             });
         /* ]]> */
@@ -95,8 +95,8 @@ class ViewQuickNavForm {
         «ENDIF»
         «IF hasAbstractStringFieldsEntity»
             {if !isset($searchFilter) || $searchFilter eq true}
-                <label for="searchterm">{gt text='Search'}:</label>
-                <input type="text" id="searchterm" name="searchterm" value="{$searchterm}" />
+                <label for="searchTerm">{gt text='Search'}:</label>
+                <input type="text" id="searchTerm" name="searchterm" value="{$searchterm}" />
             {/if}
         «ENDIF»
         «sortingAndPageSize»
@@ -230,9 +230,9 @@ class ViewQuickNavForm {
             «IF !container.application.targets('1.3.5')»
                 <div class="form-group">
             «ENDIF»
-                <label for="sortby">{gt text='Sort by'}</label>
+                <label for="sortBy">{gt text='Sort by'}</label>
                 &nbsp;
-                <select id="sortby" name="sort"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+                <select id="sortBy" name="sort"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
                 «FOR field : getDerivedFields»
                     <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
                 «ENDFOR»
@@ -246,7 +246,7 @@ class ViewQuickNavForm {
                 </div>
                 <div class="form-group">
             «ENDIF»
-                <select id="sortdir" name="sortdir"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+                <select id="sortDir" name="sortdir"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="asc"{if $sdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
                     <option value="desc"{if $sdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
                 </select>

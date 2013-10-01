@@ -20,10 +20,13 @@ class Styles {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
+    String cssPrefix
+
     /**
      * Entry point for application styles.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        cssPrefix = appName.toLowerCase
         fsa.generateFile(getAppCssPath + 'style.css', appStyles)
         fsa.generateFile(getAppCssPath + 'finder.css', finderStyles)
     }
@@ -35,11 +38,11 @@ class Styles {
         }
 
         /* display pages */
-        .«appName.toLowerCase»-display.withrightbox div.z-panel-content {
+        .«cssPrefix»-display.with-rightbox div.z-panel-content {
             float: left;
             width: 79%;
         }
-        .«appName.toLowerCase»-display div.«appName.toLowerCase»rightbox {
+        .«cssPrefix»-display div.«cssPrefix»-rightbox {
             float: right;
             margin: 0 1em;
             padding: .5em;
@@ -47,25 +50,25 @@ class Styles {
             /*border: 1px solid #666;*/
         }
 
-        .«appName.toLowerCase»-display div.«appName.toLowerCase»rightbox h3 {
+        .«cssPrefix»-display div.«cssPrefix»-rightbox h3 {
             color: #333;
             font-weight: 400;
-            border-bottom: 1px solid #CCC;
+            border-bottom: 1px solid #ccc;
             padding-bottom: 8px;
         }
 
-        .«appName.toLowerCase»-display div.«appName.toLowerCase»rightbox p.manageLink {
+        .«cssPrefix»-display div.«cssPrefix»-rightbox p.managelink {
             margin-left: 18px;
         }
         «IF hasGeographical»
 
-            div.«appName.toLowerCase»mapcontainer {
+            div.«cssPrefix»-mapcontainer {
                 height: 400px;
             }
         «ENDIF»
         «IF hasTrees»
 
-            .z-treecontainer {
+            .«IF targets('1.3.5')»z-«ENDIF»tree-container {
                 border: 1px solid #ccc;
                 width: 400px;
                 float: left;
@@ -73,7 +76,8 @@ class Styles {
             }
         «ENDIF»
         «IF hasColourFields»
-            .«appName.formatForDB»ColourPicker {
+
+            .«cssPrefix»ColourPicker {
                 cursor: pointer;
             }
         «ENDIF»
@@ -82,10 +86,10 @@ class Styles {
         «viewFilterForm»
         «IF interactiveInstallation»
 
-            dl#«name.formatForDB»featurelist {
+            dl#«appName.toFirstLower»FeatureList {
                 margin-left: 50px;
             }
-            dl#«name.formatForDB»featurelist dt {
+            dl#«appName.toFirstLower»FeatureList dt {
                 font-weight: 700;
             }
         «ENDIF»
@@ -122,12 +126,12 @@ class Styles {
 
             /* edit pages */
             «IF !joinRelations.empty»
-                div.«prefix»RelationLeftSide {
+                div.«cssPrefix»-relation-leftside {
                     float: left;
                     width: 25%;
                 }
 
-                div.«prefix»RelationRightSide {
+                div.«cssPrefix»-relation-rightside {
                     float: right;
                     width: 65%;
                 }
@@ -139,13 +143,13 @@ class Styles {
             }
 
             «IF hasUserFields»
-                div.«prefix»LiveSearchUser {
+                div.«cssPrefix»-livesearch-user {
                     margin: 0;
                 }
 
             «ENDIF»
             «/*required for IE*/»
-            div.«prefix»AutoCompleteWrap {
+            div.«cssPrefix»-autocomplete-wrap {
                 position: absolute;
                 height: 40px;
                 margin: 0;
@@ -154,9 +158,9 @@ class Styles {
                 top: 10px;
             }
 
-            div.«prefix»AutoComplete«IF hasUserFields»,
-            div.«prefix»AutoCompleteUser«ENDIF»«IF hasImageFields»,
-            div.«prefix»AutoCompleteWithImage«ENDIF» {
+            div.«cssPrefix»-autoComplete«IF hasUserFields»,
+            div.«cssPrefix»-autoComplete-user«ENDIF»«IF hasImageFields»,
+            div.«cssPrefix»-autoComplete-withimage«ENDIF» {
                 position: relative !important;
                 top: 2px !important;
                 width: 191px !important;
@@ -166,26 +170,26 @@ class Styles {
                 padding: 0;
             }
 
-            div.«prefix»AutoComplete«IF hasImageFields»,
-            div.«prefix»AutoCompleteWithImage«ENDIF» {
+            div.«cssPrefix»-autocomplete«IF hasImageFields»,
+            div.«cssPrefix»-autocomplete-with-image«ENDIF» {
                 left: 0 !important;
             }
             «IF hasUserFields»
-                div.«prefix»AutoCompleteUser {
+                div.«cssPrefix»-autocomplete-user {
                     left: 29% !important;
                 }
 
             «ENDIF»
-            div.«prefix»AutoComplete ul«IF hasUserFields»,
-            div.«prefix»AutoCompleteUser ul«ENDIF»«IF hasImageFields»,
-            div.«prefix»AutoCompleteWithImage ul«ENDIF» {
+            div.«cssPrefix»-autocomplete ul«IF hasUserFields»,
+            div.«cssPrefix»-autocomplete-user ul«ENDIF»«IF hasImageFields»,
+            div.«cssPrefix»-autocomplete-with-image ul«ENDIF» {
                 margin: 0;
                 padding: 0;
             }
 
-            div.«prefix»AutoComplete ul li«IF hasUserFields»,
-            div.«prefix»AutoCompleteUser ul li«ENDIF»«IF hasImageFields»,
-            div.«prefix»AutoCompleteWithImage ul li«ENDIF» {
+            div.«cssPrefix»-autocomplete ul li«IF hasUserFields»,
+            div.«cssPrefix»-autocomplete-user ul li«ENDIF»«IF hasImageFields»,
+            div.«cssPrefix»-autocomplete-with-image ul li«ENDIF» {
                 margin: 0;
                 padding: 0.2em 0 0.2em 20px;
                 list-style-type: none;
@@ -196,41 +200,41 @@ class Styles {
                 background-repeat: no-repeat;
             }
 
-            div.«prefix»AutoComplete ul li {
+            div.«cssPrefix»-autocomplete ul li {
                 background-image: url("../../../images/icons/extrasmall/tab_right.png");
             }
             «IF hasUserFields»
-                div.«prefix»AutoCompleteUser ul li {
+                div.«cssPrefix»-autocomplete-user ul li {
                     background-image: url("../../../images/icons/extrasmall/user.png");
                 }
             «ENDIF»
             «IF hasImageFields»
-                div.«prefix»AutoCompleteWithImage ul li {
+                div.«cssPrefix»-autocomplete-with-image ul li {
                     background-image: url("../../../images/icons/extrasmall/agt_Multimedia.png");
                 }
             «ENDIF»
 
-            div.«prefix»AutoComplete ul li.selected«IF hasUserFields»,
-            div.«prefix»AutoCompleteUser ul li.selected«ENDIF»«IF hasImageFields»,
-            div.«prefix»AutoCompleteWithImage ul li.selected«ENDIF» {
+            div.«cssPrefix»-autocomplete ul li.selected«IF hasUserFields»,
+            div.«cssPrefix»-autocomplete-user ul li.selected«ENDIF»«IF hasImageFields»,
+            div.«cssPrefix»-autocomplete-with-image ul li.selected«ENDIF» {
                 background-color: #ffb;
             }
 
             «IF hasImageFields || !joinRelations.empty»
-                div.«prefix»AutoComplete ul li div.itemtitle«IF hasImageFields»,
-                div.«prefix»AutoCompleteWithImage ul li div.itemtitle«ENDIF» {
+                div.«cssPrefix»-autocomplete ul li div.itemtitle«IF hasImageFields»,
+                div.«cssPrefix»-autocomplete-with-image ul li div.itemtitle«ENDIF» {
                     font-weight: 700;
                     font-size: 12px;
                     line-height: 1.2em;
                 }
-                div.«prefix»AutoComplete ul li div.itemdesc«IF hasImageFields»,
-                div.«prefix»AutoCompleteWithImage ul li div.itemdesc«ENDIF» {
+                div.«cssPrefix»-autocomplete ul li div.itemdesc«IF hasImageFields»,
+                div.«cssPrefix»-autocomplete-with-image ul li div.itemdesc«ENDIF» {
                     font-size: 10px;
                     color: #888;
                 }
-
                 «IF !joinRelations.empty»
-                    button.«prefix»InlineButton {
+
+                    button.«cssPrefix»-inline-button {
                         margin-top: 1em;
                     }
                 «ENDIF»
@@ -241,23 +245,23 @@ class Styles {
 
     def private viewFilterForm(Application it) '''
         «IF !getAllControllers.filter[hasActions('view')].empty»
-            div.«appName.toLowerCase»-view form.«prefix»-quicknav {
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav {
                 margin: 10px 0;
                 padding: 8px 12px;
                 border: 1px solid #ccc;
             }
 
-            div.«appName.toLowerCase»-view form.«prefix»-quicknav fieldset {
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset {
                 padding: 3px 10px;
                 margin-bottom: 0;
             }
 
-            div.«appName.toLowerCase»-view form.«prefix»-quicknav fieldset h3 {
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset h3 {
                 margin-top: 0;
                 display: none;
             }
 
-            div.«appName.toLowerCase»-view form.«prefix»-quicknav fieldset #num {
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset #num {
                 width: 50px;
                 text-align: right;
             }
@@ -271,49 +275,49 @@ class Styles {
             text-align: left;
         }
 
-        .«prefix()»form fieldset,
-        .«prefix()»form fieldset legend {
+        .«cssPrefix»-finderform fieldset,
+        .«cssPrefix»-finderform fieldset legend {
             background-color: #fff;
             border: none;
         }
 
-        #«prefix()»itemcontainer {
+        #«cssPrefix»ItemContainer {
             background-color: #eee;
             height: 300px;
             overflow: auto;
             padding: 5px;
         }
 
-        #«prefix()»itemcontainer ul {
+        #«cssPrefix»ItemContainer ul {
             list-style: none;
             margin: 0;
             padding: 0;
         }
 
-        #«prefix()»itemcontainer a {
+        #«cssPrefix»ItemContainer a {
             color: #000;
             margin: 0.1em 0.2em;
             text-decoration: underline;
         }
-        #«prefix()»itemcontainer a:hover,
-        #«prefix()»itemcontainer a:focus,
-        #«prefix()»itemcontainer a:active {
+        #«cssPrefix»ItemContainer a:hover,
+        #«cssPrefix»ItemContainer a:focus,
+        #«cssPrefix»ItemContainer a:active {
             color: #900;
             text-decoration: none;
         }
 
-        #«prefix()»itemcontainer a img {
+        #«cssPrefix»ItemContainer a img {
             border: none;
         }
 
-        #«prefix()»itemcontainer a img {
+        #«cssPrefix»ItemContainer a img {
             border: 1px solid #ccc;
             background-color: #f5f5f5;
             padding: 0.5em;
         }
-        #«prefix()»itemcontainer a:hover img,
-        #«prefix()»itemcontainer a:focus img,
-        #«prefix()»itemcontainer a:active img {
+        #«cssPrefix»ItemContainer a:hover img,
+        #«cssPrefix»ItemContainer a:focus img,
+        #«cssPrefix»ItemContainer a:active img {
             background-color: #fff;
         }
     '''

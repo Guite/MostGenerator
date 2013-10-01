@@ -32,13 +32,11 @@ class Custom {
         {* purpose of this template: show output of «name.formatForDisplay» action in «controller.formattedName» area *}
         {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-        {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
-        {pagesetvar name='title' value=$templateTitle}
-        «controller.templateHeader(name)»
+            {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
+            {pagesetvar name='title' value=$templateTitle}
+            «controller.templateHeader(name)»
 
-        <p>Please override this template by moving it from <em>/modules/«IF app.targets('1.3.5')»«app.appName»/templates/«controller.formattedName»«ELSE»«app.getViewPath»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
-
-        «controller.templateFooter»
+            <p>Please override this template by moving it from <em>/modules/«IF app.targets('1.3.5')»«app.appName»/templates/«controller.formattedName»«ELSE»«app.getViewPath»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
         </div>
         {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
@@ -59,17 +57,7 @@ class Custom {
                 «ENDIF»
             '''
             default: '''
-                <div class="z-frontendcontainer">
-                    <h2>{$templateTitle}</h2>
-            '''
-        }
-    }
-
-    def private templateFooter(Controller it) {
-        switch it {
-            AdminController: ''
-            default: '''
-                </div>
+                <h2>{$templateTitle}</h2>
             '''
         }
     }

@@ -21,13 +21,13 @@ class SearchView {
 
     def private optionsTemplate(Application it) '''
         {* Purpose of this template: Display search options *}
-        <input type="hidden" id="active_«appName.formatForDB»" name="active[«appName»]" value="1" checked="checked" />
-        «val appLower = appName.formatForDB»
+        <input type="hidden" id="«appName.toFirstLower»Active" name="active[«appName»]" value="1" checked="checked" />
+        «val appLower = appName.toFirstLower»
         «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
-            «val nameMultiLower = entity.nameMultiple.formatForDB»
+            «val nameMulti = entity.nameMultiple.formatForCodeCapital»
             <div>
-                <input type="checkbox" id="active_«appLower»_«nameMultiLower»" name="search_«appLower»_types[]" value="«entity.name.formatForCode»"{if $active_«entity.name.formatForCode»} checked="checked"{/if} />
-                <label for="active_«appLower»_«nameMultiLower»">{gt text='«entity.nameMultiple.formatForDisplayCapital»' domain='module_«appLower»'}</label>
+                <input type="checkbox" id="«appLower»«nameMulti»" name="«appLower»SearchTypes[]" value="«entity.name.formatForCode»"{if $active_«entity.name.formatForCode»} checked="checked"{/if} />
+                <label for="active_«appLower»«nameMulti»">{gt text='«entity.nameMultiple.formatForDisplayCapital»' domain='module_«appLower.formatForDB»'}</label>
             </div>
         «ENDFOR»
     '''

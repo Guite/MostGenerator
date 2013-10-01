@@ -100,7 +100,7 @@ class Frame {
             {
                 $tabClass = $this->useTabs ? ' ' . $this->cssClass : '';
 
-                return '<div class="«appName.formatForDB»Form' . $tabClass . '">' . "\n";
+                return '<div class="«appName.toLowerCase»-form' . $tabClass . '">' . "\n";
             }
 
             /**

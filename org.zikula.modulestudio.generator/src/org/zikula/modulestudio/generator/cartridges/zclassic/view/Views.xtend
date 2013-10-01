@@ -146,10 +146,15 @@ class Views {
             «IF controller.tempIsAdminController»
                 {adminheader}
             «ELSE»
-                <div class="z-frontendbox">
-                    <h2>{gt text='«name.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
+                «IF targets('1.3.5')»
+                    <div class="z-frontendbox">
+                        <h2>{gt text='«name.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
+                        {modulelinks modname='«appName»' type='«controller.formattedName»'}
+                    </div>
+                «ELSE»
+                    <h2 class="userheader">{gt text='«name.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
                     {modulelinks modname='«appName»' type='«controller.formattedName»'}
-                </div>
+                «ENDIF»
             «ENDIF»
             «IF needsApproval && controller.tempIsUserController»
                 {nocache}

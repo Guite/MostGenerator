@@ -384,8 +384,8 @@ class EditFunctions {
             elemPrefix = idPrefix + 'Reference_' + newItemId;
             itemPreview = '';
 
-            if ($('itempreview' + selectedListItem.id) !== null) {
-                itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
+            if ($('itemPreview' + selectedListItem.id) !== null) {
+                itemPreview = $('itemPreview' + selectedListItem.id).innerHTML;
             }
 
             var li = Builder.node('li', {id: elemPrefix}, newTitle);

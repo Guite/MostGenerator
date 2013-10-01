@@ -37,13 +37,13 @@ class Section {
     def private extensionsAndRelations(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
         «IF geographical»
             «IF useGroupingPanels('edit')»
-            <h3 class="«app.appName.formatForDB»map z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
-            <fieldset class="«app.appName.formatForDB»map z-panel-content" style="display: none">
+            <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+            <fieldset class="«app.appName.toLowerCase»-map z-panel-content" style="display: none">
             «ELSE»
-            <fieldset class="«app.appName.formatForDB»map">
+            <fieldset class="«app.appName.toLowerCase»-map">
             «ENDIF»
                 <legend>{gt text='Map'}</legend>
-                <div id="mapcontainer" class="«app.appName.toLowerCase»mapcontainer">
+                <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
             </fieldset>
 
@@ -93,11 +93,11 @@ class Section {
             <fieldset>
                 <legend>{gt text='Return control'}</legend>
                 <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                    {formlabel for='repeatcreation' __text='Create another item after save'«IF !container.application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                    {formlabel for='repeatCreation' __text='Create another item after save'«IF !container.application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
                 «IF !container.application.targets('1.3.5')»
                     <div class="col-lg-9">
                 «ENDIF»
-                        {formcheckbox group='«name.formatForDB»' id='repeatcreation' readOnly=false}
+                        {formcheckbox group='«name.formatForDB»' id='repeatCreation' readOnly=false}
                 «IF !container.application.targets('1.3.5')»
                     </div>
                 «ENDIF»

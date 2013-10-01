@@ -34,9 +34,9 @@ class ExternalView {
 
     def private displayTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display one certain «name.formatForDisplay» within an external context *}
-        <div id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" class="«app.prefix()»external«name.formatForDB»">
+        <div id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" class="«app.appName.toLowerCase»-external-«name.formatForDB»">
         {if $displayMode eq 'link'}
-            <p«IF app.hasUserController» class="«app.prefix()»externallink"«ENDIF»>
+            <p«IF app.hasUserController» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
             «IF app.hasUserController»
                 <a href="{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)»}" title="{$«name.formatForCode».«getLeadingField.name.formatForCode»|replace:"\"":""}">
             «ENDIF»
@@ -48,7 +48,7 @@ class ExternalView {
         {/if}
         {checkpermissionblock component='«app.appName»::' instance='::' level='ACCESS_EDIT'}
             {if $displayMode eq 'embed'}
-                <p class="«app.prefix()»externaltitle">
+                <p class="«app.appName.toLowerCase»-external-title">
                     <strong>{$«name.formatForCode».«getLeadingField.name.formatForCode»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}</strong>
                 </p>
             {/if}
@@ -56,7 +56,7 @@ class ExternalView {
 
         {if $displayMode eq 'link'}
         {elseif $displayMode eq 'embed'}
-            <div class="«app.prefix()»externalsnippet">
+            <div class="«app.appName.toLowerCase»-external-snippet">
                 «displaySnippet»
             </div>
 
@@ -70,7 +70,7 @@ class ExternalView {
 
             {* you can enable more details about the item: *}
             {*
-                <p class="«app.prefix()»externaldesc">
+                <p class="«app.appName.toLowerCase»-external-description">
                     «displayDescription('', '<br />')»
                     «IF categorisable»
                         {assignedcategorieslist categories=$«name.formatForCode».categories doctrine2=true}
@@ -156,7 +156,7 @@ class ExternalView {
                     </ul>
                 «ENDIF»
             «ENDIF»
-            <form action="{$ourEntry|default:'index.php'}" id="selectorForm" method="get" class="«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !app.targets('1.3.5')» role="form"«ENDIF»>
+            <form action="{$ourEntry|default:'index.php'}" id="«app.appName.toFirstLower»SelectorForm" method="get" class="«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !app.targets('1.3.5')» role="form"«ENDIF»>
             <div>
                 <input type="hidden" name="module" value="«app.appName»" />
                 <input type="hidden" name="type" value="external" />
@@ -202,11 +202,11 @@ class ExternalView {
                     «ENDIF»
 
                     <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                        <label for="«app.appName»_pasteas"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Paste as'}:</label>
+                        <label for="«app.appName.toFirstLower»PasteAs"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Paste as'}:</label>
                         «IF !app.targets('1.3.5')»
                             <div class="col-lg-9">
                         «ENDIF»
-                            <select id="«app.appName»_pasteas" name="pasteas"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
+                            <select id="«app.appName.toFirstLower»PasteAs" name="pasteas"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
                                 <option value="1">{gt text='Link to the «name.formatForDisplay»'}</option>
                                 <option value="2">{gt text='ID of «name.formatForDisplay»'}</option>
                             </select>
@@ -217,11 +217,11 @@ class ExternalView {
                     <br />
 
                     <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                        <label for="«app.appName»_objectid"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='«name.formatForDisplayCapital»'}:</label>
+                        <label for="«app.appName.toFirstLower»ObjectId"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='«name.formatForDisplayCapital»'}:</label>
                         «IF !app.targets('1.3.5')»
                             <div class="col-lg-9">
                         «ENDIF»
-                            <div id="«app.prefix()»itemcontainer">
+                            <div id="«app.appName.toLowerCase»ItemContainer">
                                 <ul>
                                 {foreach item='«name.formatForCode»' from=$items}
                                     <li>
@@ -243,11 +243,11 @@ class ExternalView {
                     </div>
 
                     <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                        <label for="«app.appName»_sort"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sort by'}:</label>
+                        <label for="«app.appName.toFirstLower»Sort"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sort by'}:</label>
                         «IF !app.targets('1.3.5')»
                             <div class="col-lg-9">
                         «ENDIF»
-                            <select id="«app.appName»_sort" name="sort" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»pull-left«ENDIF»" style="margin-right: 10px">
+                            <select id="«app.appName.toFirstLower»Sort" name="sort" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»pull-left«ENDIF»" style="margin-right: 10px">
                             «FOR field : getDerivedFields»
                                 <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
                             «ENDFOR»
@@ -257,7 +257,7 @@ class ExternalView {
                                 <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
                             «ENDIF»
                             </select>
-                            <select id="«app.appName»_sortdir" name="sortdir" style="width: 100px"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
+                            <select id="«app.appName.toFirstLower»SortDir" name="sortdir" style="width: 100px"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
                                 <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
                                 <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
                             </select>
@@ -267,11 +267,11 @@ class ExternalView {
                     </div>
 
                     <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                        <label for="«app.appName»_pagesize"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Page size'}:</label>
+                        <label for="«app.appName.toFirstLower»PageSize"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Page size'}:</label>
                         «IF !app.targets('1.3.5')»
                             <div class="col-lg-9">
                         «ENDIF»
-                            <select id="«app.appName»_pagesize" name="num" style="width: 50px; text-align: right"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
+                            <select id="«app.appName.toFirstLower»PageSize" name="num" style="width: 50px; text-align: right"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
                                 <option value="5"{if $pager.itemsperpage eq 5} selected="selected"{/if}>5</option>
                                 <option value="10"{if $pager.itemsperpage eq 10} selected="selected"{/if}>10</option>
                                 <option value="15"{if $pager.itemsperpage eq 15} selected="selected"{/if}>15</option>
@@ -287,12 +287,12 @@ class ExternalView {
 
                     «IF hasAbstractStringFieldsEntity»
                         <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                            <label for="«app.appName»_searchterm"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Search for'}:</label>
+                            <label for="«app.appName.toFirstLower»SearchTerm"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Search for'}:</label>
                         «IF !app.targets('1.3.5')»
                             <div class="col-lg-9">
                         «ENDIF»
-                                <input type="text" id="«app.appName»_searchterm" name="searchterm" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="margin-right: 10px" />
-                                <input type="button" id="«app.appName»_gosearch" name="gosearch" value="{gt text='Filter'}" style="width: 80px"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
+                                <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="searchterm" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="margin-right: 10px" />
+                                <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" style="width: 80px"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
                         «IF !app.targets('1.3.5')»
                             </div>
                         «ENDIF»
@@ -302,8 +302,8 @@ class ExternalView {
                     <div style="margin-left: 6em">
                         {pager display='page' rowcount=$pager.numitems limit=$pager.itemsperpage posvar='pos' template='pagercss.tpl' maxpages='10'}
                     </div>
-                    <input type="submit" id="«app.appName»_submit" name="submitButton" value="{gt text='Change selection'}"«IF !app.targets('1.3.5')» class="btn btn-success"«ENDIF» />
-                    <input type="button" id="«app.appName»_cancel" name="cancelButton" value="{gt text='Cancel'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
+                    <input type="submit" id="«app.appName.toFirstLower»Submit" name="submitButton" value="{gt text='Change selection'}"«IF !app.targets('1.3.5')» class="btn btn-success"«ENDIF» />
+                    <input type="button" id="«app.appName.toFirstLower»Cancel" name="cancelButton" value="{gt text='Cancel'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
                     <br />
                 </fieldset>
             </div>
@@ -319,7 +319,7 @@ class ExternalView {
 
             «IF !app.getAllAdminControllers.empty»
                 {*
-                <div class="«app.prefix()»form">
+                <div class="«app.appName.toLowerCase»-finderform">
                     <fieldset>
                         {modfunc modname='«app.appName»' type='admin' func='edit'}
                     </fieldset>
@@ -333,10 +333,10 @@ class ExternalView {
     def private selectTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display a popup selector for Forms and Content integration *}
         {assign var='baseID' value='«name.formatForCode»'}
-        <div id="{$baseID}_preview" style="float: right; width: 300px; border: 1px dotted #a3a3a3; padding: .2em .5em; margin-right: 1em">
+        <div id="{$baseID}Preview" style="float: right; width: 300px; border: 1px dotted #a3a3a3; padding: .2em .5em; margin-right: 1em">
             <p><strong>{gt text='«name.formatForDisplayCapital» information'}</strong></p>
             {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='«IF app.targets('1.3.5')»z-«ENDIF»hide'}
-            <div id="{$baseID}_previewcontainer">&nbsp;</div>
+            <div id="{$baseID}PreviewContainer">&nbsp;</div>
         </div>
         <br />
         <br />
@@ -371,8 +371,8 @@ class ExternalView {
             {/if}
         «ENDIF»
         <p>
-            <label for="{$baseID}_id"{$leftSide}>{gt text='«name.formatForDisplayCapital»'}:</label>
-            <select id="{$baseID}_id" name="id"{$rightSide}>
+            <label for="{$baseID}Id"{$leftSide}>{gt text='«name.formatForDisplayCapital»'}:</label>
+            <select id="{$baseID}Id" name="id"{$rightSide}>
                 {foreach item='«name.formatForCode»' from=$items}{strip}
                     <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>
                         {$«name.formatForCode».«getLeadingField.name.formatForCode»}
@@ -384,8 +384,8 @@ class ExternalView {
             <br{$break} />
         </p>
         <p>
-            <label for="{$baseID}_sort"{$leftSide}>{gt text='Sort by'}:</label>
-            <select id="{$baseID}_sort" name="sort"{$rightSide}>
+            <label for="{$baseID}Sort"{$leftSide}>{gt text='Sort by'}:</label>
+            <select id="{$baseID}Sort" name="sort"{$rightSide}>
                 «FOR field : getDerivedFields»
                     <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
                 «ENDFOR»
@@ -395,7 +395,7 @@ class ExternalView {
                     <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
                 «ENDIF»
             </select>
-            <select id="{$baseID}_sortdir" name="sortdir"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
+            <select id="{$baseID}SortDir" name="sortdir"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
                 <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
                 <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
             </select>
@@ -403,9 +403,9 @@ class ExternalView {
         </p>
         «IF hasAbstractStringFieldsEntity»
             <p>
-                <label for="{$baseID}_searchterm"{$leftSide}>{gt text='Search for'}:</label>
-                <input type="text" id="{$baseID}_searchterm" name="searchterm"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»{$rightSide} />
-                <input type="button" id="«app.appName»_gosearch" name="gosearch" value="{gt text='Filter'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
+                <label for="{$baseID}SearchTerm"{$leftSide}>{gt text='Search for'}:</label>
+                <input type="text" id="{$baseID}SearchTerm" name="searchterm"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»{$rightSide} />
+                <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
                 <br{$break} />
             </p>
         «ENDIF»

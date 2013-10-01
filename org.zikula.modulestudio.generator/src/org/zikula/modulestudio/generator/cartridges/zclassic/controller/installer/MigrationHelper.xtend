@@ -19,6 +19,9 @@ class MigrationHelper {
         // rename existing permission rules
         $this->renamePermissionsFor136();
 
+        // rename existing category registries
+        $this->renameCategoryRegistriesFor136();
+
         // rename all tables
         $this->renameTablesFor136();
 
@@ -36,6 +39,7 @@ class MigrationHelper {
         updateModVarsTo136
         updateExtensionInfoFor136
         renamePermissionsFor136
+        renameCategoryRegistriesFor136
         renameTablesFor136
         unregisterEventHandlersObsoleteIn136
         registerNewEventHandlersIn136
@@ -93,6 +97,25 @@ class MigrationHelper {
             $conn->executeQuery("UPDATE $dbName.group_perms
                                  SET component = CONCAT('«appName»', SUBSTRING(component, $componentLength))
                                  WHERE component LIKE '«name.formatForCodeCapital»%';
+            ");
+        }
+
+    '''
+
+    def private renameCategoryRegistriesFor136(Application it) '''
+        /**
+         * Renames all category registries stored for this app.
+         */
+        protected function renameCategoryRegistriesFor136()
+        {
+            $conn = $this->getConnection();
+            $dbName = $this->getDbName();
+
+            $componentLength = strlen('«name.formatForCodeCapital»') + 1;
+
+            $conn->executeQuery("UPDATE $dbName.categories_registry
+                                 SET modname = CONCAT('«appName»', SUBSTRING(component, $componentLength))
+                                 WHERE modname LIKE '«name.formatForCodeCapital»%';
             ");
         }
 

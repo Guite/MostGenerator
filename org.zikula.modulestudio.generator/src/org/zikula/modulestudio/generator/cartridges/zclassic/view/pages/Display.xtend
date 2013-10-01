@@ -45,56 +45,55 @@ class Display {
         {* purpose of this template: «nameMultiple.formatForDisplay» display view in «controller.formattedName» area *}
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         «val refedElems = getOutgoingJoinRelations.filter[e|e.target.container.application == it.container.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.container.application == it.container.application]»
-        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» withrightbox«ENDIF»">
-        «val objName = name.formatForCode»
-        «val leadingField = getLeadingField»
-        {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
-        «IF leadingField !== null && leadingField.showLeadingFieldInTitle»
-            {assign var='templateTitle' value=$«objName».«leadingField.name.formatForCode»|default:$templateTitle}
-        «ENDIF»
-        {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
-        «controller.templateHeader(it, appName)»
-
-        «IF !refedElems.empty»
-            {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                <div class="«appName.toLowerCase»rightbox">
-                    «val relationHelper = new Relations»
-                    «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, controller, it)»«ENDFOR»
-                </div>
-            {/if}
-        «ENDIF»
-
-        «IF useGroupingPanels('display')»
-        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-        <div class="z-panels" id="«appName»_panel">
-            <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer z-panel-active">{gt text='Fields'}</h3>
-            <div class="z-panel-content z-panel-active" style="overflow: visible">
-        {/if}
-        «ENDIF»
-        «fieldDetails(appName, controller)»
-        «IF useGroupingPanels('display')»
-        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            </div>«/* fields panel */»
-        {/if}
-        «ENDIF»
-        «displayExtensions(controller, objName)»
-
-        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            «callDisplayHooks(appName, controller)»
-            «itemActions(appName, controller)»
-            «IF useGroupingPanels('display')»
-                </div>«/* panels */»
+        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» with-rightbox«ENDIF»">
+            «val objName = name.formatForCode»
+            «val leadingField = getLeadingField»
+            {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
+            «IF leadingField !== null && leadingField.showLeadingFieldInTitle»
+                {assign var='templateTitle' value=$«objName».«leadingField.name.formatForCode»|default:$templateTitle}
             «ENDIF»
+            {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
+            «controller.templateHeader(it, appName)»
             «IF !refedElems.empty»
-                <br style="clear: right" />
-            «ENDIF»
-        {/if}
 
-        «controller.templateFooter»
+                {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+                    <div class="«appName.toLowerCase»-rightbox">
+                        «val relationHelper = new Relations»
+                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, controller, it)»«ENDFOR»
+                    </div>
+                {/if}
+            «ENDIF»
+            «IF useGroupingPanels('display')»
+
+            {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+            <div id="«appName.toFirstLower»Panel" class="z-panels">
+                <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer z-panel-active">{gt text='Fields'}</h3>
+                <div class="z-panel-content z-panel-active" style="overflow: visible">
+            {/if}
+            «ENDIF»
+
+            «fieldDetails(appName, controller)»
+            «IF useGroupingPanels('display')»
+            {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+                </div>«/* fields panel */»
+            {/if}
+            «ENDIF»
+            «displayExtensions(controller, objName)»
+
+            {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+                «callDisplayHooks(appName, controller)»
+                «itemActions(appName, controller)»
+                «IF useGroupingPanels('display')»
+                    </div>«/* panels */»
+                «ENDIF»
+                «IF !refedElems.empty»
+                    <br style="clear: right" />
+                «ENDIF»
+            {/if}
         </div>
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
-
         «IF hasBooleansWithAjaxToggleEntity || useGroupingPanels('display')»
+
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             <script type="text/javascript">
             /* <![CDATA[ */
@@ -106,7 +105,7 @@ class Display {
                 «ENDFOR»
                     «ENDIF»
                     «IF useGroupingPanels('display')»
-                    var panel = new Zikula.UI.Panels('«appName»_panel', {
+                    var panel = new Zikula.UI.Panels('«appName.toFirstLower»Panel', {
                         headerSelector: 'h3',
                         headerClassName: 'z-panel-header z-panel-indicator',
                         contentClassName: 'z-panel-content',
@@ -154,22 +153,12 @@ class Display {
                 «ENDIF»
             '''
             default: '''
-                <div class="z-frontendcontainer">
-                    <h2>«templateHeading(entity, appName)»</h2>
+                <h2>«templateHeading(entity, appName)»</h2>
             '''
         }
     }
 
-    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>{$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hide«ENDIF»'}'''
-
-    def private templateFooter(Controller it) {
-        switch it {
-            AdminController: ''
-            default: '''
-                </div>
-            '''
-        }
-    }
+    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>{$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»{icon id='itemActionsTrigger' type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hide«ENDIF»'}'''
 
     def private displayEntry(DerivedField it, Controller controller) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
@@ -240,7 +229,7 @@ class Display {
     '''
 
     def private itemActionsImpl(Entity it, String appName, Controller controller) '''
-        <p id="itemactions">
+        <p id="itemActions">
         {foreach item='option' from=$«name.formatForCode»._actions}
             <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="«IF container.application.targets('1.3.5')»z-icon-es«ELSE»icon icon«ENDIF»-{$option.icon}">{$option.linkText|safetext}</a>
         {/foreach}
@@ -248,7 +237,7 @@ class Display {
         <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
-                «container.application.prefix»InitItemActions('«name.formatForCode»', 'display', 'itemactions');
+                «container.application.prefix»InitItemActions('«name.formatForCode»', 'display', 'itemActions');
             });
         /* ]]> */
         </script>
@@ -257,10 +246,10 @@ class Display {
     def private displayExtensions(Entity it, Controller controller, String objName) '''
         «IF geographical»
             «IF useGroupingPanels('display')»
-                <h3 class="«container.application.appName.formatForDB»map z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
-                <div class="«container.application.appName.formatForDB»map z-panel-content" style="display: none">
+                <h3 class="«container.application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+                <div class="«container.application.appName.toLowerCase»-map z-panel-content" style="display: none">
             «ELSE»
-                <h3 class="«container.application.appName.formatForDB»map">{gt text='Map'}</h3>
+                <h3 class="«container.application.appName.toLowerCase»-map">{gt text='Map'}</h3>
             «ENDIF»
             {pageaddvarblock name='header'}
                 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -269,7 +258,7 @@ class Display {
                 /* <![CDATA[ */
                     var mapstraction;
                     Event.observe(window, 'load', function() {
-                        mapstraction = new mxn.Mapstraction('mapcontainer', 'googlev3');
+                        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
                         mapstraction.addControls({
                             pan: true,
                             zoom: 'small',
@@ -289,7 +278,7 @@ class Display {
                 /* ]]> */
                 </script>
             {/pageaddvarblock}
-            <div id="mapcontainer" class="«controller.container.application.appName.toLowerCase»mapcontainer">
+            <div id="mapContainer" class="«controller.container.application.appName.toLowerCase»-mapcontainer">
             </div>
         «ENDIF»
         «IF attributable»

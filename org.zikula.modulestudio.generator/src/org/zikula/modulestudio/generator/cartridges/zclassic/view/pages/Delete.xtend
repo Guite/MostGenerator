@@ -29,35 +29,34 @@ class Delete {
         {* purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view in «controller.formattedName» area *}
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
-        {gt text='Delete «name.formatForDisplay»' assign='templateTitle'}
-        {pagesetvar name='title' value=$templateTitle}
-        «controller.templateHeader»
+            {gt text='Delete «name.formatForDisplay»' assign='templateTitle'}
+            {pagesetvar name='title' value=$templateTitle}
+            «controller.templateHeader»
 
-        <p class="«IF container.application.targets('1.3.5')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
+            <p class="«IF container.application.targets('1.3.5')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
 
-        <form class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»" action="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDelete(name, true)»}" method="post"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
-            <div>
-                <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
-                <input type="hidden" id="confirmation" name="confirmation" value="1" />
-                <fieldset>
-                    <legend>{gt text='Confirmation prompt'}</legend>
-                    <div class="«IF container.application.targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
-                    «IF !container.application.targets('1.3.5')»
-                        <div class="col-lg-offset-3 col-lg-9">
-                    «ENDIF»
-                        {gt text='Delete' assign='deleteTitle'}
-                        {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF container.application.targets('1.3.5')»z-btred«ELSE»btn btn-danger«ENDIF»'}
-                        <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«name.formatForCode»'}"«IF !container.application.targets('1.3.5')» class="btn btn-default" role="button"«ENDIF»>«IF container.application.targets('1.3.5')»{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'}«ELSE»<span class="icon icon-remove"></span>«ENDIF» {gt text='Cancel'}</a>
-                    «IF !container.application.targets('1.3.5')»
+            <form class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»" action="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDelete(name, true)»}" method="post"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
+                <div>
+                    <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
+                    <input type="hidden" id="confirmation" name="confirmation" value="1" />
+                    <fieldset>
+                        <legend>{gt text='Confirmation prompt'}</legend>
+                        <div class="«IF container.application.targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
+                        «IF !container.application.targets('1.3.5')»
+                            <div class="col-lg-offset-3 col-lg-9">
+                        «ENDIF»
+                            {gt text='Delete' assign='deleteTitle'}
+                            {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF container.application.targets('1.3.5')»z-btred«ELSE»btn btn-danger«ENDIF»'}
+                            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«name.formatForCode»'}"«IF !container.application.targets('1.3.5')» class="btn btn-default" role="button"«ENDIF»>«IF container.application.targets('1.3.5')»{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'}«ELSE»<span class="icon icon-remove"></span>«ENDIF» {gt text='Cancel'}</a>
+                        «IF !container.application.targets('1.3.5')»
+                            </div>
+                        «ENDIF»
                         </div>
-                    «ENDIF»
-                    </div>
-                </fieldset>
+                    </fieldset>
 
-                «callDisplayHooks(appName, controller)»
-            </div>
-        </form>
-        «controller.templateFooter»
+                    «callDisplayHooks(appName, controller)»
+                </div>
+            </form>
         </div>
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
@@ -78,17 +77,7 @@ class Delete {
                 «ENDIF»
             '''
             default: '''
-                <div class="z-frontendcontainer">
-                    <h2>{$templateTitle}</h2>
-            '''
-        }
-    }
-
-    def private templateFooter(Controller it) {
-        switch it {
-            AdminController: ''
-            default: '''
-                </div>
+                <h2>{$templateTitle}</h2>
             '''
         }
     }

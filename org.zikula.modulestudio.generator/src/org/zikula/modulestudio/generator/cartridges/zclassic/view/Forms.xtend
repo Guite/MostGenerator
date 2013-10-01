@@ -24,6 +24,7 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
+import de.guite.modulestudio.metamodel.modulestudio.ListField
 
 class Forms {
     @Inject extension ControllerExtensions = new ControllerExtensions
@@ -110,17 +111,7 @@ class Forms {
                 «ENDIF»
             '''
             default: '''
-                <div class="z-frontendcontainer">
-                    <h2>{$templateTitle}</h2>
-            '''
-        }
-    }
-
-    def private templateFooter(Controller it) {
-        switch it {
-            AdminController: ''
-            default: '''
-                </div>
+                <h2>{$templateTitle}</h2>
             '''
         }
     }
@@ -129,15 +120,16 @@ class Forms {
         {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.5')» role='form'«ENDIF»}
             {* add validation summary and a <div> element for styling the form *}
             {«app.appName.formatForDB»FormFrame}
-«/*            {*formvalidationsummary*}
-            {*formerrormessage id='error'*}*/»
             «IF !getEditableFields.empty»
-                {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»'}
-«/*            {formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())*/»
+                «IF (getEditableFields.head) instanceof ListField && !(getEditableFields.head as ListField).useChecks»
+                    {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»' doSelect=true}
+                «ELSE»
+                    {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»'}
+                «ENDIF»
             «ENDIF»
 
             «IF useGroupingPanels('edit')»
-                <div class="z-panels" id="«app.appName»_panel">
+                <div id="«app.appName.toFirstLower»Panel" class="z-panels">
                     <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
                     <div class="z-panel-content z-panel-active" style="overflow: visible">
                         «fieldDetails(app, controller)»
@@ -150,8 +142,6 @@ class Forms {
             «ENDIF»
             {/«app.appName.formatForDB»FormFrame}
         {/form}
-
-            «controller.templateFooter»
         </div>
         {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
 
@@ -277,7 +267,7 @@ class Forms {
                     }
 
                     Event.observe(window, 'load', function() {
-                        mapstraction = new mxn.Mapstraction('mapcontainer', 'googlev3');
+                        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
                         mapstraction.addControls({
                             pan: true,
                             zoom: 'small',
@@ -388,7 +378,7 @@ class Forms {
                 });
                 «IF useGroupingPanels('edit')»
 
-                    var panel = new Zikula.UI.Panels('«app.appName»_panel', {
+                    var panel = new Zikula.UI.Panels('«app.appName.toFirstLower»Panel', {
                         headerSelector: 'h3',
                         headerClassName: 'z-panel-header z-panel-indicator',
                         contentClassName: 'z-panel-content',
@@ -396,7 +386,7 @@ class Forms {
                     });
                 «ENDIF»
 
-                Zikula.UI.Tooltips($$('.«app.appName.formatForDB»FormTooltips'));
+                Zikula.UI.Tooltips($$('.«app.appName.toLowerCase»-form-tooltips'));
                 «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
             });
 

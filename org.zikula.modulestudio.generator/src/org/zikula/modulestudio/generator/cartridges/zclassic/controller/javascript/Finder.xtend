@@ -77,18 +77,18 @@ class Finder {
         «name.formatForDB».finder.onLoad = function (baseId, selectedId)
         {
             $$('div.categoryselector select').invoke('observe', 'change', «name.formatForDB».finder.onParamChanged);
-            $('«appName»_sort').observe('change', «name.formatForDB».finder.onParamChanged);
-            $('«appName»_sortdir').observe('change', «name.formatForDB».finder.onParamChanged);
-            $('«appName»_pagesize').observe('change', «name.formatForDB».finder.onParamChanged);
-            $('«appName»_gosearch').observe('click', «name.formatForDB».finder.onParamChanged)
-                                   .observe('keypress', «name.formatForDB».finder.onParamChanged);
-            $('«appName»_submit').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
-            $('«appName»_cancel').observe('click', «name.formatForDB».finder.handleCancel);
+            $('«appName.toFirstLower»Sort').observe('change', «name.formatForDB».finder.onParamChanged);
+            $('«appName.toFirstLower»SortDir').observe('change', «name.formatForDB».finder.onParamChanged);
+            $('«appName.toFirstLower»PageSize').observe('change', «name.formatForDB».finder.onParamChanged);
+            $('«appName.toFirstLower»SearchGo').observe('click', «name.formatForDB».finder.onParamChanged);
+            $('«appName.toFirstLower»SearchGo').observe('keypress', «name.formatForDB».finder.onParamChanged);
+            $('«appName.toFirstLower»Submit').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $('«appName.toFirstLower»Cancel').observe('click', «name.formatForDB».finder.handleCancel);
         };
 
         «name.formatForDB».finder.onParamChanged = function ()
         {
-            $('selectorForm').submit();
+            $('«appName.toFirstLower»SelectorForm').submit();
         };
 
         «name.formatForDB».finder.handleCancel = function ()
@@ -117,7 +117,7 @@ class Finder {
             itemUrl = $F('url' + itemId);
             itemTitle = $F('title' + itemId);
             itemDescription = $F('desc' + itemId);
-            pasteMode = $F('«appName»_pasteas');
+            pasteMode = $F('«appName.toFirstLower»PasteAs');
 
             if (pasteMode === '2' || pasteMode !== '1') {
                 return itemId;
@@ -209,16 +209,18 @@ class Finder {
             «name.formatForDB».itemSelector.selectedId = selectedId;
 
             // required as a changed object type requires a new instance of the item selector plugin
-            $('«appName»_objecttype').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            $('«appName.toFirstLower»ObjectType').observe('change', «name.formatForDB».itemSelector.onParamChanged);
 
             if ($(baseId + '_catidMain') != undefined) {
                 $(baseId + '_catidMain').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            } else if ($(baseId + '_catidsMain') != undefined) {
+                $(baseId + '_catidsMain').observe('change', «name.formatForDB».itemSelector.onParamChanged);
             }
-            $(baseId + '_id').observe('change', «name.formatForDB».itemSelector.onItemChanged);
-            $(baseId + '_sort').observe('change', «name.formatForDB».itemSelector.onParamChanged);
-            $(baseId + '_sortdir').observe('change', «name.formatForDB».itemSelector.onParamChanged);
-            $('«appName»_gosearch').observe('click', «name.formatForDB».itemSelector.onParamChanged)
-                                   .observe('keypress', «name.formatForDB».itemSelector.onParamChanged);
+            $(baseId + 'Id').observe('change', «name.formatForDB».itemSelector.onItemChanged);
+            $(baseId + 'Sort').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            $(baseId + 'SortDir').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            $('«appName.toFirstLower»SearchGo').observe('click', «name.formatForDB».itemSelector.onParamChanged);
+            $('«appName.toFirstLower»SearchGo').observe('keypress', «name.formatForDB».itemSelector.onParamChanged);
 
             «name.formatForDB».itemSelector.getItemList();
         };
@@ -238,10 +240,12 @@ class Finder {
             pars = 'ot=' + baseId + '&';
             if ($(baseId + '_catidMain') != undefined) {
                 pars += 'catidMain=' + $F(baseId + '_catidMain') + '&';
+            } else if ($(baseId + '_catidsMain') != undefined) {
+                pars += 'catidsMain=' + $F(baseId + '_catidsMain') + '&';
             }
-            pars += 'sort=' + $F(baseId + '_sort') + '&' +
-                    'sortdir=' + $F(baseId + '_sortdir') + '&' +
-                    'searchterm=' + $F(baseId + '_searchterm');
+            pars += 'sort=' + $F(baseId + 'Sort') + '&' +
+                    'sortdir=' + $F(baseId + 'SortDir') + '&' +
+                    'searchterm=' + $F(baseId + 'SearchTerm');
 
             request = new Zikula.Ajax.Request('«IF targets('1.3.5')»ajax«ELSE»index«ENDIF».php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=getItemListFinder', {
                 method: 'post',
@@ -265,7 +269,7 @@ class Finder {
             var baseId, itemSelector, items, i, item;
 
             baseId = «name.formatForDB».itemSelector.baseId;
-            itemSelector = $(baseId + '_id');
+            itemSelector = $(baseId + 'Id');
             itemSelector.length = 0;
 
             items = «name.formatForDB».itemSelector.items[baseId];
@@ -275,7 +279,7 @@ class Finder {
             }
 
             if («name.formatForDB».itemSelector.selectedId > 0) {
-                $(baseId + '_id').value = «name.formatForDB».itemSelector.selectedId;
+                $(baseId + 'Id').value = «name.formatForDB».itemSelector.selectedId;
             }
         };
 
@@ -286,7 +290,7 @@ class Finder {
             baseId = «name.formatForDB».itemSelector.baseId;
             items = «name.formatForDB».itemSelector.items[baseId];
 
-            $(baseId + '_previewcontainer').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $(baseId + 'PreviewContainer').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
 
             if (items.length === 0) {
                 return;
@@ -303,8 +307,8 @@ class Finder {
             }
 
             if (selectedElement !== null) {
-                $(baseId + '_previewcontainer').update(window.atob(selectedElement.previewInfo))
-                                               .removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                $(baseId + 'PreviewContainer').update(window.atob(selectedElement.previewInfo))
+                                              .removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
             }
         };
 
@@ -313,11 +317,11 @@ class Finder {
             var baseId, itemSelector, preview;
 
             baseId = «name.formatForDB».itemSelector.baseId;
-            itemSelector = $(baseId + '_id');
+            itemSelector = $(baseId + 'Id');
             preview = window.atob(«name.formatForDB».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
 
-            $(baseId + '_previewcontainer').update(preview);
-            «name.formatForDB».itemSelector.selectedId = $F(baseId + '_id');
+            $(baseId + 'PreviewContainer').update(preview);
+            «name.formatForDB».itemSelector.selectedId = $F(baseId + 'Id');
         };
     '''
 }

@@ -28,11 +28,11 @@ class BlocksView {
     def private editTemplate(Application it) '''
         {* Purpose of this template: Edit block for generic item list *}
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName»_objecttype"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Object type'}:</label>
+            <label for="«appName.toFirstLower»ObjectType"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Object type'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                <select id="«appName»_objecttype" name="objecttype" size="1"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                <select id="«appName.toFirstLower»ObjectType" name="objecttype" size="1"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
                     «FOR entity : getAllEntities»
                         <option value="«entity.name.formatForCode»"{if $objectType eq '«entity.name.formatForCode»'} selected="selected"{/if}>{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</option>
                     «ENDFOR»
@@ -76,11 +76,11 @@ class BlocksView {
         {/if}
 
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName»_sorting"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
+            <label for="«appName.toFirstLower»Sorting"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                <select id="«appName»_sorting" name="sorting"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                <select id="«appName.toFirstLower»Sorting" name="sorting"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="random"{if $sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
                     <option value="newest"{if $sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
                     <option value="alpha"{if $sorting eq 'default' || ($sorting != 'random' && $sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
@@ -91,22 +91,22 @@ class BlocksView {
         </div>
 
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName»_amount"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
+            <label for="«appName.toFirstLower»Amount"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                <input type="text" id="«appName»_amount" name="amount" maxlength="2" size="10" value="{$amount|default:"5"}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+                <input type="text" id="«appName.toFirstLower»Amount" name="amount" maxlength="2" size="10" value="{$amount|default:"5"}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
             «IF !targets('1.3.5')»
                 </div>
             «ENDIF»
         </div>
 
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName»_template"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Template'}:</label>
+            <label for="«appName.toFirstLower»Template"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Template'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                <select id="«appName»_template" name="template"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                <select id="«appName.toFirstLower»Template" name="template"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="itemlist_display.tpl"{if $template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
                     <option value="itemlist_display_description.tpl"{if $template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
                     <option value="custom"{if $template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
@@ -116,12 +116,12 @@ class BlocksView {
             «ENDIF»
         </div>
 
-        <div id="customtemplatearea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
-            <label for="«appName»_customtemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
+        <div id="customTemplateArea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
+            <label for="«appName.toFirstLower»CustomTemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                <input type="text" id="«appName»__customtemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+                <input type="text" id="«appName.toFirstLower»CustomTemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
                 <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example'}: <em>itemlist_{$objecttype}_display.tpl</em></span>
             «IF !targets('1.3.5')»
                 </div>
@@ -129,11 +129,11 @@ class BlocksView {
         </div>
 
         <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
-            <label for="«appName»_filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
+            <label for="«appName.toFirstLower»Filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+                <input type="text" id="«appName.toFirstLower»Filter" name="filter" size="40" value="{$filterValue|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
                 <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</span>
             «IF !targets('1.3.5')»
                 </div>
@@ -144,16 +144,16 @@ class BlocksView {
         <script type="text/javascript">
         /* <![CDATA[ */
             function «prefix()»ToggleCustomTemplate() {
-                if ($F('«appName»_template') == 'custom') {
-                    $('customtemplatearea').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                if ($F('«appName.toFirstLower»Template') == 'custom') {
+                    $('customTemplateArea').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 } else {
-                    $('customtemplatearea').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                    $('customTemplateArea').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 }
             }
 
             document.observe('dom:loaded', function() {
                 «prefix()»ToggleCustomTemplate();
-                $('«appName»_template').observe('change', function(e) {
+                $('«appName.toFirstLower»Template').observe('change', function(e) {
                     «prefix()»ToggleCustomTemplate();
                 });
             });

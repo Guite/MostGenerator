@@ -30,7 +30,7 @@ class SimpleFields {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey.name.formatForCode»}
             «IF entity.container.application.targets('1.3.5')»
-                <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="z-hide">
+                <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="z-hide">
                 {if $«objName».«name.formatForCode»}
                     {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.'}
                     {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.' class='z-hide'}
@@ -40,7 +40,7 @@ class SimpleFields {
                 {/if}
                 </a>
             «ELSE»
-                <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="hide">
+                <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="hide">
                 {if $«objName».«name.formatForCode»}
                     <span class="cursor-pointer icon icon-ok" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
                     <span class="cursor-pointer icon icon-remove hide" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
@@ -50,7 +50,7 @@ class SimpleFields {
                 {/if}
                 </a>
             «ENDIF»
-            <noscript><div id="noscript«name.formatForDB»{$itemid}">
+            <noscript><div id="noscript«name.formatForCodeCapital»{$itemid}">
                 {$«objName».«name.formatForCode»|yesno:true}
             </div></noscript>
         '''

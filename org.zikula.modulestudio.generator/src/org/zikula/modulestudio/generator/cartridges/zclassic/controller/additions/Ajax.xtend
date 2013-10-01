@@ -295,7 +295,7 @@ class Ajax {
                             $fullObjectId = $objectType . '-' . $itemId;
                             $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
                             $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
-                            $out .= '<div class="itempreview informal" id="itempreview' . $itemId . '">' . $preview . '</div>';
+                            $out .= '<div id="itemPreview' . $itemId . '" class="itempreview informal">' . $preview . '</div>';
                         }
                     «ENDIF»
                     $out .= '</li>';
