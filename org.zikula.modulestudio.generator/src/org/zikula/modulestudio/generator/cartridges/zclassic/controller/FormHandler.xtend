@@ -1176,9 +1176,6 @@ class FormHandler {
             use LogUtil;
             use ModUtil;
             use SecurityUtil;
-            «IF hasOptimisticLock»
-                use SessionUtil;
-            «ENDIF»
             use System;
             use UserUtil;
             use Zikula_Form_View;
@@ -1326,7 +1323,11 @@ class FormHandler {
             «IF hasOptimisticLock»
 
                 if ($this->mode == 'edit') {
-                    SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
+                    «IF app.targets('1.3.5')»
+                        SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
+                    «ELSE»
+                        $this->request->session->set($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
+                    «ENDIF»
                 }
             «ENDIF»
             «relationPresetsHelper.initPresets(it)»
@@ -1433,7 +1434,11 @@ class FormHandler {
 
                 $applyLock = ($this->mode != 'create' && $action != 'delete');
                 «IF hasOptimisticLock»
-                    $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
+                    «IF app.targets('1.3.5')»
+                        $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
+                    «ELSE»
+                        $expectedVersion = $this->request->session->get($this->name . 'EntityVersion', 1);
+                    «ENDIF»
                 «ENDIF»
             «ENDIF»
 

@@ -72,7 +72,11 @@ class Interactive {
             «val modVarHelper = new ModVars()»
             «FOR modvar : getAllVariables»
                 $formValue = $this->request->request->get('«modvar.name.formatForCode»', «modVarHelper.valForm2SessionDefault(modvar)»);
-                SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
+                «IF targets('1.3.5')»
+                    SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
+                «ELSE»
+                    $this->session->set('«formatForCode(name + '_' + modvar.name)»', $formValue);
+                «ENDIF»
 
             «ENDFOR»
 

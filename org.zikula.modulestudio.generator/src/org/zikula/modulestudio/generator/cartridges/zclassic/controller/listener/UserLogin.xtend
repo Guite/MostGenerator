@@ -139,9 +139,14 @@ class UserLogin {
          * In this example, the user will be redirected to the URL pointing to the `changePassword` function. This URL is constructed by calling 
          * `ModUtil::url()` with the modname, type, func, and args specified in the above array. The `changePassword` function also needs access
          * to the information from the log-in attempt, which will be stored in the session variable and namespace specified. This is accomplished
-         * by calling `SessionUtil::setVar()` prior to the redirect, as follows:
+         * by calling `«IF targets('1.3.5')»SessionUtil::setVar«ELSE»$session->set«ENDIF»()` prior to the redirect, as follows:
          *
-         *     SessionUtil::setVar('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users' true, true);
+         «IF targets('1.3.5')»
+         *     SessionUtil::setVar('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users');
+         «ELSE»
+         *     $request = ServiceUtil::getService('request');
+         *     $request->session->set('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users');
+         «ENDIF»
          *
          * where `$sessionVars` contains the information discussed previously.
          *

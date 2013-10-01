@@ -107,9 +107,6 @@ class Installer {
                 use ModUtil;
             «ENDIF»
             use SecurityUtil;
-            «IF !getAllVariableContainers.empty»
-                use SessionUtil;
-            «ENDIF»
             use Zikula_Controller_AbstractInteractiveInstaller;
             use ZLanguage;
 
@@ -169,9 +166,17 @@ class Installer {
                 «val modvarHelper = new ModVars()»
                 «FOR modvar : getAllVariables»
                     «IF interactiveInstallation == true»
-                        $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
-                        $this->setVar('«modvar.name.formatForCode»', (($sessionValue <> false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
-                        SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
+                        «IF targets('1.3.5')»
+                            $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
+                        «ELSE»
+                            $sessionValue = $this->session->get('«formatForCode(name + '_' + modvar.name)»');
+                        «ENDIF»
+                        $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
+                        «IF targets('1.3.5')»
+                            SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
+                        «ELSE»
+                            $this->session->del(«formatForCode(name + '_' + modvar.name)»);
+                        «ENDIF»
                     «ELSE»
                         $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
                     «ENDIF»
