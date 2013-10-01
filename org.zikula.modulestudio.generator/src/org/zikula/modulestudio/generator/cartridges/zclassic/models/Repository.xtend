@@ -1002,16 +1002,16 @@ class Repository {
                 }
             «ENDIF»
 
-            if ($orderBy == 'RAND()') {
-                // each entry in $result looks like array(0 => actualRecord, 'randomIdentifiers' => randomId)
-                $resRaw = array();
-                foreach ($result as $resultRow) {
-                    $resRaw[] = $resultRow[0];
-                }
-                $result = $resRaw;
-            }
-
             «IF app.targets('1.3.5')»
+                if ($orderBy == 'RAND()') {
+                    // each entry in $result looks like array(0 => actualRecord, 'randomIdentifiers' => randomId)
+                    $resRaw = array();
+                    foreach ($result as $resultRow) {
+                        $resRaw[] = $resultRow[0];
+                    }
+                    $result = $resRaw;
+                }
+
                 return $result;
             «ELSE»
                 if (!$isPaginated) {
@@ -1195,7 +1195,7 @@ class Repository {
         {
             if ($orderBy == 'RAND()') {
                 // random selection
-                $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS randomIdentifiers')
+                $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS «IF !app.targets('1.3.5')»HIDDEN «ENDIF»randomIdentifiers')
                    ->add('orderBy', 'randomIdentifiers');
                 $orderBy = '';
             }
