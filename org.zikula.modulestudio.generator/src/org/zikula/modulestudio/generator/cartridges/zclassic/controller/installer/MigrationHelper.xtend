@@ -263,18 +263,7 @@ class MigrationHelper {
          */
         protected function getDbName()
         {
-            global $ZConfig;
-
-            $dbName = '';
-            if (isset($ZConfig['DBInfo'])
-              && isset($ZConfig['DBInfo']['databases'])
-              && isset($ZConfig['DBInfo']['databases']['default'])
-              && isset($ZConfig['DBInfo']['databases']['default']['dbname'])
-            ) {
-                $dbName = $ZConfig['DBInfo']['databases']['default']['dbname'] . '.';
-            }
-
-            return $dbName;
+            return $this->getContainer()->getParameter('database_name');
         }
 
     '''
