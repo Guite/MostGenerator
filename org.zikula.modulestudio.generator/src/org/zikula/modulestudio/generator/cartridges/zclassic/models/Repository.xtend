@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.ArrayField
@@ -112,7 +113,13 @@ class Repository {
 
         «IF !app.targets('1.3.5')»
             use DataUtil;
-            use FilterUtil;
+            use Zikula\Core\FilterUtil;
+            «IF categorisable»
+                use Zikula\Core\FilterUtil\Plugin\Category as CategoryFilter;
+            «ENDIF»
+            «IF !fields.filter(AbstractDateField).empty»
+                use Zikula\Core\FilterUtil\Plugin\Date as DateFilter;
+            «ENDIF»
             use FormUtil;
             use LogUtil;
             use ModUtil;
@@ -294,7 +301,7 @@ class Repository {
                 if (in_array($args['action'], array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
-                        $listHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+                        $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
@@ -314,7 +321,7 @@ class Repository {
 
                 «IF app.hasUploads»
                     // initialise Imagine preset instances
-                    $imageHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+                    $imageHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
                     «IF hasUploadFieldsEntity»
 
                         $objectType = '«name.formatForCode»';
@@ -324,7 +331,7 @@ class Repository {
                     «ENDIF»
                     if (in_array($args['action'], array('display', 'view'))) {
                         // use separate preset for images in related items
-                        $templateParameters['relationThumbPreset'] = $imageHelper->getCustomPreset('', '', '«container.application.appName»_relateditem', $context, $args);
+                        $templateParameters['relationThumbPreset'] = $imageHelper->getCustomPreset('', '', '«app.appName»_relateditem', $context, $args);
                     }
                 «ENDIF»
             }
@@ -353,7 +360,7 @@ class Repository {
 
             $parameters = array();
             «IF categorisable»
-                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET', 'controllerArgs' => $this->controllerArguments));
+                $parameters['catIdList'] = ModUtil::apiFunc('«app.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET', 'controllerArgs' => $this->controllerArguments));
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
@@ -388,7 +395,7 @@ class Repository {
             «IF hasAbstractStringFieldsEntity»
                 $parameters['searchterm'] = isset($this->controllerArguments['searchterm']) ? $this->controllerArguments['searchterm'] : FormUtil::getPassedValue('searchterm', '', 'GET');
             «ENDIF»
-            «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
+            «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«app.appName»', 'pageSize', 10);
             $parameters['pageSize'] = isset($this->controllerArguments['pageSize']) ? $this->controllerArguments['pageSize'] : (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
@@ -799,7 +806,7 @@ class Repository {
                     $qb->andWhere('tblCategories.category IN (:categories)')
                        ->setParameter('categories', $v);
                      */
-                    $qb = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v));
+                    $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v));
                 } elseif ($k == 'searchterm') {
                     // quick search
                     if (!empty($v)) {
@@ -848,7 +855,7 @@ class Repository {
         {
             $currentModule = ModUtil::getName();//FormUtil::getPassedValue('module', '', 'GETPOST');
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
-            if ($currentType == 'admin' && $currentModule == '«container.application.appName»') {
+            if ($currentType == 'admin' && $currentModule == '«app.appName»') {
                 return $qb;
             }
 
@@ -1050,9 +1057,7 @@ class Repository {
                 $this->addJoinsToFrom($qb);
             }
 
-            if (!empty($where)) {
-                $qb->where($where);
-            }
+            $this->genericBaseQueryAddWhere($qb, $where);
 
             return $qb;
         }
@@ -1166,7 +1171,61 @@ class Repository {
         protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
             if (!empty($where)) {
+            «IF app.targets('1.3.5')»
                 $qb->where($where);
+            «ELSE»
+                // Use FilterUtil to support generic filtering.
+                //$qb->where($where);
+
+                // Create filter configuration.
+                $config = array(
+                    // Name of filter variable in the URL (defaults to 'filter').
+                    'varname' => 'filter',
+
+                    // Request object to obtain the filter string (only needed if the filter is set via GET or it reads values from GET).
+                    // We do this not per default (for now) to prevent problems with explicite filters set by blocks or content types.
+                    // TODO readd automatic request processing (basically replacing applyDefaultFilters() and addCommonViewFilters()).
+                    'request' => null,
+
+                    // Array of plugins to load.
+                    // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
+                    // Multiple objects of the same plugin with different configurations are possible.
+                    'plugins' => array(
+                        «IF !fields.filter(AbstractDateField).empty»,
+                            new DateFilter(array(«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/))
+                        «ENDIF»
+                    ),
+
+                    // Allowed operators per field.
+                    // Array in the form "field name => operator array".
+                    // If a field is not set in this array all operators are allowed.
+                    'restrictions' => array()
+                );
+                «IF categorisable»
+
+                    // add category plugins dynamically for all existing registry properties
+                    // we need to create one category plugin instance for each one
+                    $categoryProperties = ModUtil::apiFunc('«app.appName»', 'category', 'getAllProperties', array('ot' => '«name.formatForCode»'));
+                    foreach ($categoryProperties as $propertyName => $registryId) {
+                        $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucwords($propertyName));
+                    }
+                «ENDIF»
+
+                // initialise FilterUtil and assign both query builder and configuration
+                $filterUtil = new FilterUtil($this->getEntityManager(), $qb, $config);
+
+                // set our given filter
+                $filterUtil->setFilter($where);
+
+                // you could add explicit filters at this point, something like
+                // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
+                // read more at
+                // https://github.com/zikula/core/blob/1.3/src/lib/Zikula/Core/FilterUtil/docs/users.markdown
+                // https://github.com/zikula/core/blob/1.3/src/lib/Zikula/Core/FilterUtil/docs/developers.markdown
+
+                // now enrich the query builder
+                $filterUtil->enrichQuery();
+            «ENDIF»
             }
             «IF standardFields»
 
@@ -1223,27 +1282,16 @@ class Repository {
         public function getQueryFromBuilder(QueryBuilder $qb)
         {
             $query = $qb->getQuery();
-
-            // TODO - see https://github.com/zikula/core/issues/118
-            // use FilterUtil to support generic filtering
-            //$fu = new FilterUtil('«container.application.appName»', $this);
-
-            // you could set explicit filters at this point, something like
-            // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
-            // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
-
-            // process request input filters and add them to the query.
-            //$fu->enrichQuery($query);
-
             «IF hasTranslatableFields»
+
                 // set the translation query hint
                 $query->setHint(
                     Query::HINT_CUSTOM_OUTPUT_WALKER,
                     'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
                 );
-
             «ENDIF»
             «IF hasPessimisticReadLock»
+
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
 
@@ -1302,7 +1350,7 @@ class Repository {
              'latitude',
              'longitude',
         «ENDIF»
-        «IF softDeleteable && !container.application.targets('1.3.5')»
+        «IF softDeleteable && !app.targets('1.3.5')»
              'deletedAt',
         «ENDIF»
         «IF standardFields»

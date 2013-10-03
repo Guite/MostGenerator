@@ -216,7 +216,7 @@ class Newsletter {
             $repository = $entityManager->getRepository($entityClass);
 
             // create query
-            $where = (isset($args['filter']) ? $args['filter'] : '');
+            $where = isset($args['filter']) ? $args['filter'] : '';
             $orderBy = $this->getSortParam($args, $repository);
             $qb = $repository->genericBaseQuery($where, $orderBy);
 

@@ -179,18 +179,30 @@ class ContentTypeListView {
             «ENDIF»
         </div>
 
-        <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
+        <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group«ENDIF»">
             {gt text='Filter (expert option)' domain='module_«appName.formatForDB»' assign='filterLabel'}
             {formlabel for='«appName.toFirstLower»Filter' text=$filterLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
                 {formtextinput id='«appName.toFirstLower»Filter' dataField='filter' group='data' mandatory=false maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
-                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">({gt text='Syntax examples' domain='module_«appName.formatForDB»'}: <kbd>name:like:foobar</kbd> {gt text='or' domain='module_«appName.formatForDB»'} <kbd>status:ne:3</kbd>)</span>
+                «IF targets('1.3.5')»
+                    <span class="z-sub z-formnote">
+                        ({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)
+                    </span>
+                «ELSE»
+                    <span class="help-block">
+                        <a class="icon icon-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
+                    </span>
+                «ENDIF»
             «IF !targets('1.3.5')»
                 </div>
             «ENDIF»
         </div>
+        «IF !targets('1.3.5')»
+
+            {include file='include_filterSyntaxDialog.tpl'}
+        «ENDIF»
 
         {pageaddvar name='javascript' value='prototype'}
         <script type="text/javascript">

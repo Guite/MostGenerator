@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Att
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.MetaData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.StandardFields
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.FilterSyntaxDialog
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Custom
@@ -107,8 +108,12 @@ class Views {
             if (hasMetaDataEntities)
                 new MetaData().generate(it, controller, fsa)
         }
-        if (needsConfig)
+        if (!targets('1.3.5')) {
+            new FilterSyntaxDialog().generate(it, fsa)
+        }
+        if (needsConfig) {
             new Config().generate(it, fsa)
+        }
         pdfHeaderFile
     }
 

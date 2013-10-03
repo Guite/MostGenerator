@@ -128,17 +128,29 @@ class BlocksView {
             «ENDIF»
         </div>
 
-        <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
+        <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group«ENDIF»">
             <label for="«appName.toFirstLower»Filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
                 <input type="text" id="«appName.toFirstLower»Filter" name="filter" size="40" value="{$filterValue|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
-                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</span>
+                «IF targets('1.3.5')»
+                    <span class="z-sub z-formnote">
+                        ({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)
+                    </span>
+                «ELSE»
+                    <span class="help-block">
+                        <a class="icon icon-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
+                    </span>
+                «ENDIF»
             «IF !targets('1.3.5')»
                 </div>
             «ENDIF»
         </div>
+        «IF !targets('1.3.5')»
+
+            {include file='include_filterSyntaxDialog.tpl'}
+        «ENDIF»
 
         {pageaddvar name='javascript' value='prototype'}
         <script type="text/javascript">
