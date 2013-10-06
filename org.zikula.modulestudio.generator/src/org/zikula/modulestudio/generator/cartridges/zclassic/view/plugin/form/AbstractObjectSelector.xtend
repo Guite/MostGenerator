@@ -35,21 +35,18 @@ class AbstractObjectSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin\Base;
 
-            use DataUtil;
         «ENDIF»
         use Doctrine\Common\Collections\Collection;
         use Doctrine\ORM\QueryBuilder;
-        «IF targets('1.3.5')»
-
-        «ELSE»
+        «IF !targets('1.3.5')»
             use FormUtil;
             use ModUtil;
             use ServiceUtil;
             use Zikula_EntityAccess;
             use Zikula_Form_Plugin_DropdownList;
             use Zikula_Form_View;
-
         «ENDIF»
+
         /**
          * Abstract object selector plugin base class.
          */

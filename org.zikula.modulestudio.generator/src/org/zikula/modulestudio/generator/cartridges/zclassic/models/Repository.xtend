@@ -112,7 +112,6 @@ class Repository {
         «ENDIF»
 
         «IF !app.targets('1.3.5')»
-            use DataUtil;
             use Zikula\Core\FilterUtil;
             use Zikula\Core\FilterUtil\Config as FilterConfig;
             use Zikula\Core\FilterUtil\PluginManager as FilterPluginManager;

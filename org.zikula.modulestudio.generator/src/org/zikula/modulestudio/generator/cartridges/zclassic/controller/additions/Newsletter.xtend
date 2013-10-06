@@ -37,7 +37,6 @@ class Newsletter {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\NewsletterPlugin;
 
-            use DataUtil;
             use ModUtil;
             use SecurityUtil;
             use ServiceUtil;

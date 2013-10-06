@@ -43,9 +43,9 @@ class Category {
             use «appNamespace»\Util\ControllerUtil;
 
             use CategoryRegistryUtil;
-            use DataUtil;
             use ModUtil;
             use Zikula_AbstractApi;
+
         «ENDIF»
 
         /**
