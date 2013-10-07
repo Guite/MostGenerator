@@ -61,11 +61,11 @@ class Category {
         /**
          * Retrieves the main/default category of «appName».
          *
-         * @param string $args['ot']       The object type to be treated (optional)
-         * @param string $args['registry'] Name of category registry to be used (optional)
+         * @param string $args['ot']       The object type to be treated (optional).
+         * @param string $args['registry'] Name of category registry to be used (optional).
          * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead.
          *
-         * @return mixed Category array on success, false on failure
+         * @return mixed Category array on success, false on failure.
          */
         public function getMainCat(array $args = array())
         {
@@ -83,10 +83,10 @@ class Category {
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
          *
-         * @param string $args['ot']       The object type to be treated (optional)
-         * @param string $args['registry'] Name of category registry to be used (optional)
+         * @param string $args['ot']       The object type to be treated (optional).
+         * @param string $args['registry'] Name of category registry to be used (optional).
          *
-         * @return boolean true if multiple selection is allowed, else false
+         * @return boolean true if multiple selection is allowed, else false.
          */
         public function hasMultipleSelection(array $args = array())
         {
@@ -115,8 +115,8 @@ class Category {
         /**
          * Retrieves input data from POST for all registries.
          *
-         * @param string $args['ot']     The object type to be treated (optional)
-         * @param string $args['source'] Where to retrieve the data from (defaults to POST)
+         * @param string $args['ot']     The object type to be treated (optional).
+         * @param string $args['source'] Where to retrieve the data from (defaults to POST).
          *
          * @return array The fetched data indexed by the registry id.
          */
@@ -126,7 +126,6 @@ class Category {
             if (isset($args['source']) && $args['source'] == 'GET') {
                 $dataSource = $this->request->query;
             }
-            $controllerArgs = isset($args['controllerArgs']) && is_array($args['controllerArgs']) ? $args['controllerArgs'] : array();
 
             $catIdsPerRegistry = array();
 
@@ -136,13 +135,13 @@ class Category {
                 $hasMultiSelection = $this->hasMultipleSelection(array('ot' => $objectType, 'registry' => $propertyName));
                 if ($hasMultiSelection === true) {
                     $argName = 'catids' . $propertyName;
-                    $inputValue = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : $dataSource->get($argName, array());
+                    $inputValue = $dataSource->get($argName, array());
                     if (!is_array($inputValue)) {
                         $inputValue = explode(',', $inputValue);
                     }
                 } else {
                     $argName = 'catid' . $propertyName;
-                    $inputVal = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : (int) $dataSource->filter($argName, 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    $inputVal = (int) $dataSource->filter($argName, 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                     $inputValue = array();
                     if ($inputVal > 0) {
                         $inputValue[] = $inputVal;
@@ -158,8 +157,8 @@ class Category {
          * Adds a list of where clauses for a certain list of categories to a given query builder.
          *
          * @param Doctrine\ORM\QueryBuilder $args['qb']     Query builder instance to be enhanced.
-         * @param string                    $args['ot']     The object type to be treated (optional)
-         * @param string                    $args['catids'] Category ids grouped by property name
+         * @param string                    $args['ot']     The object type to be treated (optional).
+         * @param string                    $args['catids'] Category ids grouped by property name.
          *
          * @return Doctrine\ORM\QueryBuilder The enriched query builder instance.
          */
@@ -198,7 +197,7 @@ class Category {
         /**
          * Returns a list of all registries / properties for a given object type.
          *
-         * @param string $args['ot'] The object type to retrieve (optional)
+         * @param string $args['ot'] The object type to retrieve (optional).
          *
          * @return array list of the registries (property name as key, id as value).
          */

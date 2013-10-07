@@ -138,9 +138,10 @@ class Redirect {
         protected function getRedirectUrl($args)
         {
             if ($this->inlineUsage == true) {
-                $urlArgs = array('idp' => $this->idPrefix,
-                                 'com' => $args['commandName']);
+                $urlArgs = array('idPrefix'    => $this->idPrefix,
+                                 'commandName' => $args['commandName']);
                 $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
+
                 // inline usage, return to special function for closing the Zikula.UI.Window instance
                 return ModUtil::url($this->name, '«controller.formattedName»', 'handleInlineRedirect', $urlArgs);
             }

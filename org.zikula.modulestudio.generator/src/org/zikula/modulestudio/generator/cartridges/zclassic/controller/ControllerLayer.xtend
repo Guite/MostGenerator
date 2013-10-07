@@ -126,11 +126,15 @@ class ControllerLayer {
                 use «app.appNamespace»\Util\WorkflowUtil;
             «ENDIF»
 
+            «IF hasActions('view') && isAdminController»
+                use Symfony\Component\HttpFoundation\Request;
+            «ENDIF»
             «IF isAjaxController»
-                use DataUtil;
                 «IF !app.getAllUserFields.empty»
+                    use Symfony\Component\HttpFoundation\Request;
                     use Doctrine\ORM\AbstractQuery;
                 «ENDIF»
+                use DataUtil;
             «ENDIF»
             use FormUtil;
             «IF hasActions('edit')»
@@ -156,7 +160,6 @@ class ControllerLayer {
                 use Zikula\Core\Response\Ajax\BadDataResponse;
                 use Zikula\Core\Response\Ajax\FatalResponse;
                 use Zikula\Core\Response\Ajax\NotFoundResponse;
-                use Zikula\Core\Response\Ajax\Plain;
             «ENDIF»
             use Zikula\Core\Response\PlainResponse;
 
@@ -184,18 +187,24 @@ class ControllerLayer {
                 /**
                  * This method cares for a redirect within an inline frame.
                  *
-                 * @return boolean
+                 * @param string  $idPrefix    Prefix for inline window element identifier.
+                 * @param string  $commandName Name of action to be performed (create or edit).
+                 * @param integer $id          Id of created item (used for activating auto completion after closing the modal window).
+                 *
+                 * @return boolean Whether the inline redirect has been performed or not.
                  */
-                public function handleInlineRedirect«IF !app.targets('1.3.5')»Action«ENDIF»()
+                public function handleInlineRedirect«IF app.targets('1.3.5')»()«ELSE»Action($idPrefix, $commandName, $id = 0)«ENDIF»
                 {
-                    $itemId = (int) $this->request->query->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-                    $idPrefix = $this->request->query->filter('idp', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-                    $commandName = $this->request->query->filter('com', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                    «IF app.targets('1.3.5')»
+                        $id = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
+                        $idPrefix = $this->request->query->filter('idPrefix', '', FILTER_SANITIZE_STRING);
+                        $commandName = $this->request->query->filter('commandName', '', FILTER_SANITIZE_STRING);
+                    «ENDIF»
                     if (empty($idPrefix)) {
                         return false;
                     }
 
-                    $this->view->assign('itemId', $itemId)
+                    $this->view->assign('itemId', $id)
                                ->assign('idPrefix', $idPrefix)
                                ->assign('commandName', $commandName)
                                ->assign('jcssConfig', JCSSUtil::getJSConfig());
@@ -240,35 +249,38 @@ class ControllerLayer {
          * This function processes the items selected in the admin view page.
          * Multiple items may have their state changed or be deleted.
          *
-         * @param array  items  Identifier list of the items to be processed.
-         * @param string action The action to be executed.
+         * @param string $ot     Name of currently used object type.
+         * @param string $action The action to be executed.
+         * @param array  $items  Identifier list of the items to be processed.
          *
          * @return bool true on sucess, false on failure.
          */
-        public function handleselectedentries«IF !app.targets('1.3.5')»Action«ENDIF»(array $args = array())
+        public function handleSelectedEntries«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
         {
             $this->checkCsrfToken();
 
             $returnUrl = ModUtil::url($this->name, 'admin', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
             // Determine object type
-            $objectType = isset($args['ot']) ? $args['ot'] : $this->request->request->get('ot', '');
+            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('ot', '');
             if (!$objectType) {
                 return System::redirect($returnUrl);
             }
             $returnUrl = ModUtil::url($this->name, 'admin', 'view', array('ot' => $objectType));
 
             // Get other parameters
-            $items = isset($args['items']) ? $args['items'] : $this->request->request->get('items', null);
-            $action = isset($args['action']) ? $args['action'] : $this->request->request->get('action', null);
+            $action = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('action', null);
             $action = strtolower($action);
+            $items = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('items', null);
 
             $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             // process each item
             foreach ($items as $itemid) {
                 // check if item exists, and get record instance
-                $selectionArgs = array('ot' => $objectType, 'id' => $itemid, 'useJoins' => false);
+                $selectionArgs = array('ot' => $objectType,
+                                       'id' => $itemid,
+                                       'useJoins' => false);
                 $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
 
                 $entity->initWorkflow();

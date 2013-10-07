@@ -35,7 +35,7 @@ class ControllerAction {
 
     def dispatch generate(Action it) '''
         «actionDoc»
-        public function «name.formatForCode.toFirstLower»«IF !app.targets('1.3.5')»Action«ENDIF»(array $args = array())
+        public function «name.formatForCode.toFirstLower»«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
         {
             «IF app.hasSoftDeleteable && !app.targets('1.3.5')»
                 «IF controller.tempIsAdminController»
@@ -51,7 +51,7 @@ class ControllerAction {
 
     def dispatch generate(MainAction it) '''
         «actionDoc»
-        public function «IF !app.targets('1.3.5')»indexAction«ELSE»main«ENDIF»(array $args = array())
+        public function «IF app.targets('1.3.5')»main()«ELSE»indexAction(Request $request)«ENDIF»
         {
             «IF app.hasSoftDeleteable && !app.targets('1.3.5')»
                 «IF controller.tempIsAdminController»
@@ -70,7 +70,6 @@ class ControllerAction {
          * «actionDocMethodDescription»
         «actionDocMethodDocumentation»
          *
-         * @param array $args List of arguments.
         «actionDocMethodParams»
          *
          * @return mixed Output.
@@ -140,14 +139,12 @@ class ControllerAction {
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             // parameter specifying which type of objects we are treating
-            $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
-            if (!isset($args['skipPermissionCheck']) || $args['skipPermissionCheck'] != 1) {
-                «permissionCheck("' . ucwords($objectType) . '", '')»
-            }
+            «permissionCheck("' . ucwords($objectType) . '", '')»
         «ENDIF»
         «actionImplBody»
     '''
@@ -235,28 +232,40 @@ class ControllerAction {
             $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
-        $repository->setControllerArguments($args);
+        «IF app.targets('1.3.5')»
+            $repository->setControllerArguments(null);
+        «ELSE»
+            $repository->setRequest($this->request);
+        «ENDIF»
         «IF hasView»
             $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             «IF app.hasTrees»
 
-                $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $tpl = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('tpl', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
                 if ($tpl == 'tree') {
                     $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
                     $this->view->assign('trees', $trees)
                                ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
                     // fetch and return the appropriate template
-                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF»);
                 }
             «ENDIF»
         «ENDIF»
 
         // parameter for used sorting field
-        $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->query->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        «IF app.targets('1.3.5')»
+            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
+        «ELSE»
+            $sort = $request->query->filter('sort', '', false, FILTER_SANITIZE_STRING);
+        «ENDIF»
         «new ControllerHelper().defaultSorting(it)»
 
         // parameter for used sort order
-        $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->query->filter('sortdir', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        «IF app.targets('1.3.5')»
+            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
+        «ELSE»
+            $dir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
+        «ENDIF»
         $sdir = strtolower($sdir);
         if ($sdir != 'asc' && $sdir != 'desc') {
             $sdir = 'asc';
@@ -266,7 +275,11 @@ class ControllerAction {
         $currentUrlArgs = array('ot' => $objectType);
 
         «IF controller instanceof AjaxController»
-            $where = (isset($args['where']) && !empty($args['where'])) ? $args['where'] : $this->request->query->filter('where', ''«IF !app.targets('1.3.5')», false«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $where = (isset($args['where']) && !empty($args['where'])) ? $args['where'] : $this->request->query->filter('where', '');
+            «ELSE»
+                $where = $request->query->filter('where', '', false);
+            «ENDIF»
             $where = str_replace('"', '', $where);
         «ELSE»
             $where = '';
@@ -278,8 +291,13 @@ class ControllerAction {
             'orderBy' => $sort . ' ' . $sdir
         );
 
-        $showOwnEntries = (int) (isset($args['own']) && !empty($args['own'])) ? $args['own'] : $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-        $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+        «IF app.targets('1.3.5')»
+            $showOwnEntries = (int) (isset($args['own']) && !empty($args['own'])) ? $args['own'] : $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
+            $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
+        «ELSE»
+            $showOwnEntries = (int) $request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), false, FILTER_VALIDATE_INT);
+            $showAllEntries = (int) $request->query->filter('all', 0, false, FILTER_VALIDATE_INT);
+        «ENDIF»
 
         «IF hasView»
             $this->view->assign('showOwnEntries', $showOwnEntries)
@@ -304,7 +322,7 @@ class ControllerAction {
         }
 
         «IF hasView»
-            $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+            $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF»);
             $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
         «ENDIF»
         $resultsPerPage = 0;
@@ -315,7 +333,7 @@ class ControllerAction {
 
                 // if page is cached return cached content
                 if ($this->view->is_cached($templateFile)) {
-                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF», $templateFile);
                 }
 
             «ENDIF»
@@ -326,12 +344,24 @@ class ControllerAction {
             «ENDIF»
         } else {
             // the current offset which is used to calculate the pagination
-            $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+            «IF app.targets('1.3.5')»
+                $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
+            «ELSE»
+                $currentPage = (int) $request->query->filter('pos', 1, false, FILTER_VALIDATE_INT);
+            «ENDIF»
 
             // the number of items displayed on a page for pagination
-            $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $this->request->query->filter('num', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+            «IF app.targets('1.3.5')»
+                $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
+            «ELSE»
+                $resultsPerPage = (int) $request->query->filter('num', 0, false, FILTER_VALIDATE_INT);
+            «ENDIF»
             if ($resultsPerPage == 0) {
-                $csv = (int) (isset($args['usecsv']) && !empty($args['usecsv'])) ? $args['usecsv'] : $this->request->query->filter('usecsvext', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                «IF app.targets('1.3.5')»
+                    $csv = (int) (isset($args['usecsv']) && !empty($args['usecsv'])) ? $args['usecsv'] : $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
+                «ELSE»
+                    $csv = (int) $request->query->filter('usecsvext', 0, false, FILTER_VALIDATE_INT);
+                «ENDIF»
                 $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pageSize', 10);
             }
 
@@ -341,7 +371,7 @@ class ControllerAction {
 
                 // if page is cached return cached content
                 if ($this->view->is_cached($templateFile)) {
-                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF», $templateFile);
                 }
 
             «ENDIF»
@@ -374,7 +404,7 @@ class ControllerAction {
                        ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
             // fetch and return the appropriate template
-            return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+            return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF», $templateFile);
         «ELSE»
             $items = array();
             «IF app.hasListFields»
@@ -417,12 +447,16 @@ class ControllerAction {
             $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
-        $repository->setControllerArguments($args);
+        «IF app.targets('1.3.5')»
+            $repository->setControllerArguments(null);
+        «ELSE»
+            $repository->setRequest($this->request);
+        «ENDIF»
 
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to view
-        $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
+        $idValues = $controllerHelper->retrieveIdentifier(«IF app.targets('1.3.5')»$this->request, $args«ELSE»$this->request, array()«ENDIF», $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         «controller.checkForSlug»
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
@@ -458,7 +492,11 @@ class ControllerAction {
                             $objectTemp = new $entityClass();
                             $hasSlug = $objectTemp->get_hasUniqueSlug();
                             if ($hasSlug) {
-                                $slug = (isset($args['slug']) && !empty($args['slug'])) ? $args['slug'] : $this->request->query->filter('slug', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                                «IF app.targets('1.3.5')»
+                                    $slug = (isset($args['slug']) && !empty($args['slug'])) ? $args['slug'] : $this->request->query->filter('slug', '', FILTER_SANITIZE_STRING);
+                                «ELSE»
+                                    $slug = $request->query->filter('slug', '', false, FILTER_SANITIZE_STRING);
+                                «ENDIF»
                                 $hasSlug = (!empty($slug));
                             }
                         }
@@ -516,7 +554,7 @@ class ControllerAction {
                     '''
             default: '''
         $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-        $templateFile = $viewHelper->getViewTemplate($this->view, '«formattedName»', $objectType, 'display', $args);
+        $templateFile = $viewHelper->getViewTemplate($this->view, '«formattedName»', $objectType, 'display', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF»);
 
         // set cache id
         $component = $this->name . ':' . ucwords($objectType) . ':';
@@ -536,7 +574,7 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($this->view, '«formattedName»', $objectType, 'display', $args, $templateFile);
+        return $viewHelper->processTemplate($this->view, '«formattedName»', $objectType, 'display', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF», $templateFile);
                     '''
         }
     }
@@ -592,7 +630,7 @@ class ControllerAction {
 
         // determine the output template
         $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-        $template = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'edit', $args);
+        $template = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'edit', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF»);
 
         // execute form using supplied template and page event handler
         return $view->execute($template, new $handlerClass());
@@ -604,7 +642,7 @@ class ControllerAction {
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to delete
-        $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
+        $idValues = $controllerHelper->retrieveIdentifier(«IF app.targets('1.3.5')»$this->request, $args«ELSE»$this->request, array()«ENDIF», $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
@@ -690,7 +728,7 @@ class ControllerAction {
         // fetch and return the appropriate template
         $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
-        return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'delete', $args);
+        return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'delete', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF»);
     '''
 
     def private dispatch actionImplBody(CustomAction it) '''

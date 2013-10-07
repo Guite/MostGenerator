@@ -144,7 +144,7 @@ class Installer {
          *
          * @return boolean True on success, or false.
          */
-        public function install()
+        public function install«IF !targets('1.3.5')»Action«ENDIF»()
         {
             «processUploadFolders»
             // create all tables from according entity definitions
@@ -252,7 +252,7 @@ class Installer {
          *
          * @return boolean True on success, false otherwise.
          */
-        public function upgrade($oldVersion)
+        public function upgrade«IF !targets('1.3.5')»Action«ENDIF»($oldVersion)
         {
         /*
             // Upgrade dependent on old version number
@@ -298,7 +298,7 @@ class Installer {
          *
          * @return boolean True on success, false otherwise.
          */
-        public function uninstall()
+        public function uninstall«IF !targets('1.3.5')»Action«ENDIF»()
         {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
@@ -347,7 +347,7 @@ class Installer {
                 LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
             «ENDIF»
 
-            // deletion successful
+            // uninstallation successful
             return true;
         }
     '''

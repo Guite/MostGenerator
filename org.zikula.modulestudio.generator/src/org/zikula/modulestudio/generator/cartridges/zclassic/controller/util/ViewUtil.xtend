@@ -48,6 +48,7 @@ class ViewUtil {
             use PageUtil;
             use SecurityUtil;
             use System;
+            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\Response;
             use Zikula_AbstractBase;
             use Zikula_View;
@@ -83,20 +84,33 @@ class ViewUtil {
          * @param string      $type       Current type (admin, user, ...).
          * @param string      $objectType Name of treated entity type.
          * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         «IF targets('1.3.5')»
          * @param array       $args       Additional arguments.
+         «ELSE»
+         * @param Request     $request    Current request.
+         «ENDIF»
          *
          * @return string name of template file.
          */
-        public function getViewTemplate(Zikula_View $view, $type, $objectType, $func, $args = array())
+        public function getViewTemplate(Zikula_View $view, $type, $objectType, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
         {
             // create the base template name
             $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type . '/' . $objectType«ELSE»ucwords($type) . '/' . ucwords($objectType)«ENDIF» . '/' . $func);
 
             // check for template extension
-            $templateExtension = $this->determineExtension($view, $type, $objectType, $func, $args);
+            $templateExtension = $this->determineExtension($view, $type, $objectType, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
 
             // check whether a special template is used
-            $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
+            «IF targets('1.3.5')»
+                $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
+            «ELSE»
+                $tpl = '';
+                if ($request->isMethod('POST')) {
+                    $tpl = $request->request->filter('tpl', '', false, FILTER_SANITIZE_STRING);
+                } elseif ($request->isMethod('GET')) {
+                    $tpl = $request->query->filter('tpl', '', false, FILTER_SANITIZE_STRING);
+                }
+            «ENDIF»
             if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
                 $template .= '_' . DataUtil::formatForOS($tpl);
             }
@@ -115,19 +129,32 @@ class ViewUtil {
          * @param string      $objectType Name of treated entity type.
          * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          * @param string      $template   Optional assignment of precalculated template file.
+         «IF targets('1.3.5')»
          * @param array       $args       Additional arguments.
+         «ELSE»
+         * @param Request     $request    Current request.
+         «ENDIF»
          *
          * @return mixed Output.
          */
-        public function processTemplate(Zikula_View $view, $type, $objectType, $func, $args = array(), $template = '')
+        public function processTemplate(Zikula_View $view, $type, $objectType, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF», $template = '')
         {
-            $templateExtension = $this->determineExtension($view, $type, $objectType, $func, $args);
+            $templateExtension = $this->determineExtension($view, $type, $objectType, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
             if (empty($template)) {
-                $template = $this->getViewTemplate($view, $type, $objectType, $func, $args);
+                $template = $this->getViewTemplate($view, $type, $objectType, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
             }
 
             // look whether we need output with or without the theme
-            $raw = (bool) (isset($args['raw']) && !empty($args['raw'])) ? $args['raw'] : FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
+            «IF targets('1.3.5')»
+                $raw = (bool) (isset($args['raw']) && !empty($args['raw'])) ? $args['raw'] : FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
+            «ELSE»
+                $raw = false;
+                if ($request->isMethod('POST')) {
+                    $raw = (bool) $request->request->filter('raw', false, false, FILTER_VALIDATE_BOOLEAN);
+                } elseif ($request->isMethod('GET')) {
+                    $raw = (bool) $request->query->filter('raw', false, false, FILTER_VALIDATE_BOOLEAN);
+                }
+            «ENDIF»
             if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical', 'json', 'kml'))) {
                 $raw = true;
             }
@@ -166,25 +193,32 @@ class ViewUtil {
          * @param string      $type       Current type (admin, user, ...).
          * @param string      $objectType Name of treated entity type.
          * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         «IF targets('1.3.5')»
          * @param array       $args       Additional arguments.
+         «ELSE»
+         * @param Request     $request    Current request.
+         «ENDIF»
          *
          * @return array List of allowed template extensions.
          */
-        protected function determineExtension(Zikula_View $view, $type, $objectType, $func, $args = array())
+        protected function determineExtension(Zikula_View $view, $type, $objectType, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
         {
             $templateExtension = 'tpl';
             if (!in_array($func, array('view', 'display'))) {
                 return $templateExtension;
             }
 
-            $extParams = $this->availableExtensions($type, $objectType, $func, $args);
+            $extParams = $this->availableExtensions($type, $objectType, $func);
             foreach ($extParams as $extension) {
                 $extensionVar = 'use' . $extension . 'ext';
-                $extensionCheck = (isset($args[$extensionVar]) && !empty($extensionVar)) ? $extensionVar : 0;
-                if ($extensionCheck != 1) {
-                    $extensionCheck = (int)FormUtil::getPassedValue($extensionVar, 0, 'GET', FILTER_VALIDATE_INT);
-                    //$extensionCheck = (int)$this->request->query->filter($extensionVar, 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-                }
+                «IF targets('1.3.5')»
+                    $extensionCheck = (isset($args[$extensionVar]) && !empty($extensionVar)) ? $extensionVar : 0;
+                    if ($extensionCheck != 1) {
+                        $extensionCheck = (int)FormUtil::getPassedValue($extensionVar, 0, 'GET', FILTER_VALIDATE_INT);
+                    }
+                «ELSE»
+                    $extensionCheck = $request->query->filter($extensionVar, 0, false, FILTER_VALIDATE_INT);
+                «ENDIF»
                 if ($extensionCheck == 1) {
                     $templateExtension = $extension;
                     break;
@@ -202,11 +236,10 @@ class ViewUtil {
          * @param string $type       Current type (admin, user, ...).
          * @param string $objectType Name of treated entity type.
          * @param string $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
-         * @param array  $args       Additional arguments.
          *
          * @return array List of allowed template extensions.
          */
-        public function availableExtensions($type, $objectType, $func, $args = array())
+        public function availableExtensions($type, $objectType, $func)
         {
             $extParams = array();
             $hasAdminAccess = SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN);

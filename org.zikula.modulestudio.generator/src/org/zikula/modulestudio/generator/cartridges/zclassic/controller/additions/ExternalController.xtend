@@ -86,43 +86,48 @@ class ExternalController {
         /**
          * Displays one item of a certain object type using a separate template for external usages.
          *
-         * @param array  $args              List of arguments.
-         * @param string $args[ot]          The object type
-         * @param int    $args[id]          Identifier of the item to be shown
-         * @param string $args[source]      Source of this call (contentType or scribite)
-         * @param string $args[displayMode] Display mode (link or embed)
+         * @param string $ot          The object type.
+         * @param int    $id          Identifier of the item to be shown.
+         * @param string $source      Source of this call (contentType or scribite).
+         * @param string $displayMode Display mode (link or embed).
          *
          * @return string Desired data output.
          */
-        public function display«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
+        public function display«IF targets('1.3.5')»()«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
         {
-            $getData = $this->request->query;
+            «IF targets('1.3.5')»
+                $getData = $this->request->query;
+            «ENDIF»
             $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
-            $objectType = isset($args['objectType']) ? $args['objectType'] : '';
+            $objectType = «IF targets('1.3.5')»$getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
             $utilArgs = array('controller' => 'external', 'action' => 'display');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
+            «IF targets('1.3.5')»
 
-            $id = (isset($args['id'])) ? $args['id'] : $getData->filter('id', null, «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $id = $getData->filter('id', null, FILTER_SANITIZE_STRING);
+            «ENDIF»
 
             $component = $this->name . ':' . ucwords($objectType) . ':';
             if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
                 return '';
             }
 
-            $source = (isset($args['source'])) ? $args['source'] : $getData->filter('source', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF targets('1.3.5')»
+                $source = $getData->filter('source', '', FILTER_SANITIZE_STRING);
+            «ENDIF»
             if (!in_array($source, array('contentType', 'scribite'))) {
                 $source = 'contentType';
             }
 
-            $displayMode = (isset($args['displayMode'])) ? $args['displayMode'] : $getData->filter('displayMode', 'embed', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF targets('1.3.5')»
+                $displayMode = $getData->filter('displayMode', 'embed', FILTER_SANITIZE_STRING);
+            «ENDIF»
             if (!in_array($displayMode, array('link', 'embed'))) {
                 $displayMode = 'embed';
             }
-
-            unset($args);
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
@@ -130,7 +135,11 @@ class ExternalController {
                 $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
-            $repository->setControllerArguments($args);
+            «IF targets('1.3.5')»
+                $repository->setControllerArguments(null);
+            «ELSE»
+                $repository->setRequest($this->request);
+            «ENDIF»
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
@@ -184,21 +193,28 @@ class ExternalController {
         }
 
         /**
-         * Popup selector for scribite plugins.
+         * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
          *
-         * @param array $args List of arguments.
+         * @param string $objectType The object type.
+         * @param string $editor     Name of used Scribite editor.
+         * @param string $sort       Sorting field.
+         * @param string $sortdir    Sorting direction.
+         * @param int    $pos        Current pager position.
+         * @param int    $num        Amount of entries to display.
          *
          * @return output The external item finder page
          */
-        public function finder«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
+        public function finder«IF targets('1.3.5')»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
         {
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
             $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
-            $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF targets('1.3.5')»
+                $objectType = $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+            «ENDIF»
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
@@ -212,25 +228,35 @@ class ExternalController {
                 $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
-            $repository->setControllerArguments($args);
+            «IF targets('1.3.5')»
+                $repository->setControllerArguments(null);
+            «ELSE»
+                $repository->setRequest($this->request);
+            «ENDIF»
 
-            $editor = (isset($args['editor']) && !empty($args['editor'])) ? $args['editor'] : $getData->filter('editor', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF targets('1.3.5')»
+                $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
+            «ENDIF»
             if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
-                return 'Error: Invalid editor context given for external controller action.';
+                return $this->__('Error: Invalid editor context given for external controller action.');
             }
             «IF hasCategorisableEntities»
 
                 // fetch selected categories to reselect them in the output
                 // the actual filtering is done inside the repository class
-                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET', 'controllerArgs' => $args));
+                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
             «ENDIF»
-            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $getData->filter('sort', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF targets('1.3.5')»
+                $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);
+            «ENDIF»
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
                 $sort = $repository->getDefaultSortingField();
             }
 
-            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $getData->filter('sortdir', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $sdir = strtolower($sdir);
+            «IF targets('1.3.5')»
+                $sortdir = $getData->filter('sortdir', '', FILTER_SANITIZE_STRING);
+            «ENDIF»
+            $sdir = strtolower($sortdir);
             if ($sdir != 'asc' && $sdir != 'desc') {
                 $sdir = 'asc';
             }
@@ -238,10 +264,10 @@ class ExternalController {
             $sortParam = $sort . ' ' . $sdir;
 
             // the current offset which is used to calculate the pagination
-            $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $getData->filter('pos', 1, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+            $currentPage = (int) «IF targets('1.3.5')»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
 
             // the number of items displayed on a page for pagination
-            $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $getData->filter('num', 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+            $resultsPerPage = (int) «IF targets('1.3.5')»$getData->filter('num', 0, FILTER_VALIDATE_INT)«ELSE»$num«ENDIF»;
             if ($resultsPerPage == 0) {
                 $resultsPerPage = $this->getVar('pageSize', 20);
             }

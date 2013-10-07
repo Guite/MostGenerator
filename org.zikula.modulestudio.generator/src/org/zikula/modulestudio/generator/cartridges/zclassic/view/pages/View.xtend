@@ -141,7 +141,7 @@ class View {
 
     def private viewForm(Entity it, String appName, Controller controller) '''
         «IF listType == 3 && controller.tableClass == 'admin'»
-            <form action="{modurl modname='«appName»' type='«controller.formattedName»' func='handleselectedentries'}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
+            <form action="{modurl modname='«appName»' type='«controller.formattedName»' func='handleSelectedEntries'}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
                     <input type="hidden" name="ot" value="«name.formatForCode»" />
