@@ -757,6 +757,7 @@ class Entities {
          * (1) http://docs.doctrine-project.org/en/latest/cookbook/implementing-wakeup-or-clone.html
          * (2) http://www.sunilb.com/php/php5-oops-tutorial-magic-methods-__clone-method
          * (3) http://stackoverflow.com/questions/185934/how-do-i-create-a-copy-of-an-object-in-php
+         * (4) http://www.pantovic.com/article/26/doctrine2-entity-cloning
          */
         public function __clone()
         {
@@ -785,14 +786,18 @@ class Entities {
                     «FOR relation : joinsIn»
                         «var aliasName = relation.getRelationAliasName(false)»
                         if ($this->get«aliasName.toFirstUpper»() != null) {
-                            $this->«aliasName» = clone $this->«aliasName»;
+                            «IF relation.isManySide(true)»
+                                $this->«aliasName» = clone $this->«aliasName»;
+                            «ENDIF»
                             $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
                         }
                     «ENDFOR»
                     «FOR relation : joinsOut»
                         «var aliasName = relation.getRelationAliasName(true)»
                         if ($this->get«aliasName.toFirstUpper»() != null) {
-                            $this->«aliasName» = clone $this->«aliasName»;
+                            «IF relation.isManySide(false)»
+                                $this->«aliasName» = clone $this->«aliasName»;
+                            «ENDIF»
                             $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
                         }
                     «ENDFOR»
