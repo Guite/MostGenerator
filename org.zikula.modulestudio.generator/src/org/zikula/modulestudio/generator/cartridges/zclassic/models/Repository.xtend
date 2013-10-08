@@ -113,14 +113,14 @@ class Repository {
 
         «IF !app.targets('1.3.5')»
             use Symfony\Component\HttpFoundation\Request;
-            use Zikula\Core\FilterUtil;
-            use Zikula\Core\FilterUtil\Config as FilterConfig;
-            use Zikula\Core\FilterUtil\PluginManager as FilterPluginManager;
+            use Zikula\Component\FilterUtil;
+            use Zikula\Component\FilterUtil\Config as FilterConfig;
+            use Zikula\Component\FilterUtil\PluginManager as FilterPluginManager;
             «IF categorisable»
-                use Zikula\Core\FilterUtil\Plugin\CategoryPlugin as CategoryFilter;
+                use Zikula\Core\FilterUtil\CategoryPlugin as CategoryFilter;
             «ENDIF»
             «IF !fields.filter(AbstractDateField).empty»
-                use Zikula\Core\FilterUtil\Plugin\DatePlugin as DateFilter;
+                use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
             «ENDIF»
             use FormUtil;
             use LogUtil;
@@ -1218,13 +1218,8 @@ class Repository {
                 // Use FilterUtil to support generic filtering.
                 //$qb->where($where);
 
-                // Request object to obtain the filter string (only needed if the filter is set via GET or it reads values from GET).
-                // We do this not per default (for now) to prevent problems with explicite filters set by blocks or content types.
-                // TODO readd automatic request processing (basically replacing applyDefaultFilters() and addCommonViewFilters()).
-                $request = null;
-
                 // Create filter configuration.
-                $filterConfig = new FilterConfig($qb, $request);
+                $filterConfig = new FilterConfig($qb);
 
                 // Define plugins to be used during filtering.
                 $filterPluginManager = new FilterPluginManager(
@@ -1254,8 +1249,16 @@ class Repository {
                     }
                 «ENDIF»
 
+                // Request object to obtain the filter string (only needed if the filter is set via GET or it reads values from GET).
+                // We do this not per default (for now) to prevent problems with explicite filters set by blocks or content types.
+                // TODO readd automatic request processing (basically replacing applyDefaultFilters() and addCommonViewFilters()).
+                $request = null;
+
+                // Name of filter variable(s) (filterX).
+                $filterKey = 'filter';
+
                 // initialise FilterUtil and assign both query builder and configuration
-                $filterUtil = new FilterUtil($filterPluginManager);
+                $filterUtil = new FilterUtil($filterPluginManager, $request, $filterKey);
 
                 // set our given filter
                 $filterUtil->setFilter($where);
@@ -1263,8 +1266,8 @@ class Repository {
                 // you could add explicit filters at this point, something like
                 // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
                 // read more at
-                // https://github.com/zikula/core/blob/1.3/src/lib/Zikula/Core/FilterUtil/docs/users.md
-                // https://github.com/zikula/core/blob/1.3/src/lib/Zikula/Core/FilterUtil/docs/developers.md
+                // https://github.com/drak/core/blob/263529177a6b9165eb239e3243e7c45dc7aad9bd/src/lib/Zikula/Component/FilterUtil/README.md
+                // https://github.com/drak/core/blob/263529177a6b9165eb239e3243e7c45dc7aad9bd/src/lib/Zikula/Component/FilterUtil/Resources/docs/users.md
 
                 // now enrich the query builder
                 $filterUtil->enrichQuery();
