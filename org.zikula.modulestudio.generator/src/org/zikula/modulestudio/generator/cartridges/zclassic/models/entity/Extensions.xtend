@@ -230,7 +230,7 @@ class Extensions {
              *               orphanRemoval=true)
              * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('metaData', false)»
              */
-            protected $metadata;
+            protected $metadata = null;
         «ENDIF»
         «IF attributable»
 
@@ -240,17 +240,17 @@ class Extensions {
              *                orphanRemoval=true, indexBy="name")
              * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»
              */
-            protected $attributes;
+            protected $attributes = null;
         «ENDIF»
         «IF categorisable»
 
             /**
              * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»", 
              *                mappedBy="entity", cascade={"all"}, 
-             *                orphanRemoval=true, indexBy="categoryRegistryId")
+             *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»)
              * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»
              */
-            protected $categories;
+            protected $categories = null;
         «ENDIF»
         «IF standardFields»
 

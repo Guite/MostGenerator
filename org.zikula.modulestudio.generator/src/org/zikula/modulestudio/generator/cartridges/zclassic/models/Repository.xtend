@@ -666,6 +666,7 @@ class Repository {
             $query = $this->getQueryFromBuilder($qb);
 
             $results = $query->getResult();//OneOrNullResult();
+
             return (count($results) > 0) ? $results[0] : null;
         }
     '''
@@ -726,6 +727,7 @@ class Repository {
                 $qb->andWhere('tbl.id != :excludeId')
                    ->setParameter('excludeId', $excludeId);
             }
+
             return $qb;
         }
     '''
@@ -1118,6 +1120,7 @@ class Repository {
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
+
             return $query->getSingleScalarResult();
         }
     '''

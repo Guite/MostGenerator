@@ -147,6 +147,14 @@ class Category {
                         $inputValue[] = $inputVal;
                     }
                 }
+
+                // prevent "All" option hiding all entries
+                foreach ($inputValue as $k => $v) {
+                    if ($v == 0) {
+                        unset($inputValue[$k]);
+                    }
+                }
+
                 $catIdsPerRegistry[$propertyName] = $inputValue;
             }
 
@@ -183,9 +191,13 @@ class Category {
             }
 
             if (count($filtersPerRegistry) > 0) {
+                if (count($filtersPerRegistry) == 1) {
+                    $qb->andWhere($filtersPerRegistry[0]);
+                } else {
 «/* See http://stackoverflow.com/questions/9815047/chaining-orx-in-doctrine2-query-builder */»
-                $qb->andWhere($qb->expr()->orX()->addMultiple($filtersPerRegistry));
-                foreach ($filterParameters as $propertyName => $filterValue) {
+                    $qb->andWhere($qb->expr()->orX()->addMultiple($filtersPerRegistry));
+                }
+                foreach ($filterParameters['values'] as $propertyName => $filterValue) {
                     $qb->setParameter('propName' . $propertyName, $filterValue)
                        ->setParameter('propId' . $propertyName, $filterParameters['registries'][$propertyName]);
                 }
