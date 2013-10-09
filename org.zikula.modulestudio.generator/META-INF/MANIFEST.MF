@@ -35,6 +35,7 @@ Require-Bundle: de.guite.modulestudio.metamodel;bundle-version="1.0.1",
  org.eclipse.xtend.standalone;bundle-version="2.4.3";resolution:=optional,
  org.eclipse.xtend2.lib;bundle-version="2.4.3",
  org.eclipse.xtext;bundle-version="2.4.3",
+ org.eclipse.xtext.builder;bundle-version="2.4.3",
  org.hamcrest.core;bundle-version="1.1.0",
  org.junit;bundle-version="4.11.0"
 Bundle-Vendor: %providerName

@@ -2,8 +2,11 @@ package org.zikula.modulestudio.generator.cartridges;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule;
+
+import com.google.inject.Binder;
 
 /**
  * This class is the generator module which is injected by
@@ -49,5 +52,12 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
         return ResourceSetImpl.class;
         // Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("mostapp"/*"mostdsl"*/,
         // new ModulestudioResourceFactoryImpl());
+    }
+
+    @Override
+    public void configure(Binder binder) {
+        binder.bind(EclipseResourceFileSystemAccess2.class).to(
+                MostGenFileSystemAccess.class);
+        super.configure(binder);
     }
 }
