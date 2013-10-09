@@ -1,16 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges;
 
-import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule;
-import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
-import org.eclipse.xtext.ui.resource.Storage2UriMapperImpl;
-
-import com.google.inject.Binder;
 
 /**
  * This class is the generator module which is injected by
@@ -57,30 +50,5 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
         return ResourceSetImpl.class;
         // Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("mostapp"/*"mostdsl"*/,
         // new ModulestudioResourceFactoryImpl());
-    }
-
-    @Override
-    public void configure(Binder binder) {
-        binder.bind(EclipseResourceFileSystemAccess2.class).to(
-                MostGenFileSystemAccess.class);
-        super.configure(binder);
-    }
-
-    /**
-     * Binds a workspace (required for the configure method above).
-     * 
-     * @return Bound workspace class.
-     */
-    public Class<? extends IWorkspace> bindIWorkspace() {
-        return Workspace.class;
-    }
-
-    /**
-     * Binds a mapper instance (required for the configure method above).
-     * 
-     * @return Bound storage to uri mapper class.
-     */
-    public Class<? extends IStorage2UriMapper> bindIStorage2UriMapper() {
-        return Storage2UriMapperImpl.class;
     }
 }
