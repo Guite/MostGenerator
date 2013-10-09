@@ -10,7 +10,7 @@ import com.google.inject.Binder;
 
 /**
  * This class is the generator module which is injected by
- * {@link MostGeneratorSetup}.
+ * {@link org.zikula.modulestudio.generator.cartridges.MostGeneratorSetup}.
  */
 public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
 
@@ -35,18 +35,19 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
     }
 
     /**
-     * Binds the {@link MostGenerator}.
+     * Binds the
+     * {@link org.zikula.modulestudio.generator.cartridges.MostGenerator}.
      * 
-     * @return The {@link IGenerator} instance.
+     * @return The {@link org.eclipse.xtext.generator.IGenerator} instance.
      */
     public Class<? extends IGenerator> bindIGenerator() {
         return MostGenerator.class;
     }
 
     /**
-     * Binds the {@link ResourceSet}.
+     * Binds the {@link org.eclipse.emf.ecore.resource.ResourceSet}.
      * 
-     * @return The {@link ResourceSet} instance.
+     * @return The {@link org.eclipse.emf.ecore.resource.ResourceSet} instance.
      */
     public Class<? extends ResourceSet> bindResourceSet() {
         return ResourceSetImpl.class;

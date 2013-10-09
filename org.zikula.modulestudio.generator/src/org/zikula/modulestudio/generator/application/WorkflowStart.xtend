@@ -37,7 +37,7 @@ class WorkflowStart {
     public WorkflowPreProcess preProcess = new WorkflowPreProcess
 
     /**
-     * Reference to the model's {@link Resource} object.
+     * Reference to the model's {@link org.eclipse.emf.ecore.resource.Resource} object.
      */
     private Resource model = null
 

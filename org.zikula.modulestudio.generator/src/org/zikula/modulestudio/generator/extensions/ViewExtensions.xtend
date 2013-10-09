@@ -16,7 +16,8 @@ class ViewExtensions {
      * Temporary hack due to Zikula core bug with theme parameter in short urls
      * as we use the Printer theme for the quick view.
      *
-     * @param it Given {@link Controller} instance.
+     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.Controller} instance.
+     *
      * @return String The output of this method.
      */
     def additionalUrlParametersForQuickViewLink(Controller it) {
@@ -30,8 +31,9 @@ class ViewExtensions {
      * Determines whether grouping panels with JavaScript for
      * toggling their visibility state are generated or not.
      *
-     * @param it Given {@link Entity} instance.
+     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
      * @param page The page template name.
+     *
      * @return Boolean The result.
      */
     def useGroupingPanels(Entity it, String page) {
@@ -43,8 +45,9 @@ class ViewExtensions {
      * Determines if a given relationship is part
      * of an edit form or not.
      *
-     * @param it Given {@link JoinRelationship} instance.
+     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.JoinRelationship} instance.
      * @param useTarget Whether the target side or the source side should be used.
+     *
      * @return Boolean The determined result.
      */
     def private isPartOfEditForm(JoinRelationship it, Boolean useTarget) {
@@ -52,11 +55,12 @@ class ViewExtensions {
     }
 
     /**
-     * Counts the amount of visible groups of a given Entity
+     * Counts the amount of visible groups of a given {@link de.guite.modulestudio.metamodel.modulestudio.Entity}
      * for display and edit pages.
      *
-     * @param it Given {@link Entity} instance.
+     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
      * @param page The page template name.
+     *
      * @return Integer The resulting panel weight.
      */
     def private panelWeight(Entity it, String page) {

@@ -12,7 +12,9 @@ public class MostGeneratorSupport extends AbstractGenericResourceSupport {
     /**
      * Creates the Guice module.
      * 
-     * @return The {@link MostGeneratorModule} instance.
+     * @return The
+     *         {@link org.zikula.modulestudio.generator.cartridges.MostGeneratorModule}
+     *         instance.
      */
     @Override
     protected Module createGuiceModule() {

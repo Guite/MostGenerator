@@ -26,7 +26,7 @@ class PersistenceTransformer {
     /**
      * Transformation entry point consuming the application instance.
      *
-     * @param it The given {@link Application} instance.
+     * @param it The given {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
      */
     def modify(Application it) {
         // TEMPORARY
@@ -43,7 +43,7 @@ class PersistenceTransformer {
     /**
      * Transformation processing for a single entity.
      *
-     * @param it The currently treated {@link Entity} instance.
+     * @param it The currently treated {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
      */
     def private void handleEntity(Entity it) {
         //println('Transforming entity ' + name)
@@ -56,7 +56,7 @@ class PersistenceTransformer {
     /**
      * Adds a primary key to a given entity.
      * 
-     * @param entity The given {@link Entity} instance
+     * @param entity The given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
      */
     def private addPrimaryKey(Entity entity) {
         entity.fields.add(0, createIdColumn('', true))
@@ -83,7 +83,7 @@ class PersistenceTransformer {
     /**
      * Adds a list field for the workflow state to a given entity.
      * 
-     * @param entity The given {@link Entity} instance
+     * @param entity The given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
      */
     def private addWorkflowState(Entity entity) {
         val factory = ModulestudioFactory.eINSTANCE

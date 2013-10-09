@@ -45,7 +45,7 @@ class ModelReader extends WorkflowComponentWithSlot {
      * Invokes the workflow component from a workflow.
      * 
      * @param ctx
-     *            The given {@link IWorkflowContext} instance.
+     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         ctx.put(slot, getResource)
@@ -85,7 +85,7 @@ class ModelReader extends WorkflowComponentWithSlot {
      * Sets the injector.
      * 
      * @param injector
-     *            The given {@link Injector} instance.
+     *            The given {@link com.google.inject.Injector} instance.
      */
     def setInjector(Injector injector) {
         this.injector = injector

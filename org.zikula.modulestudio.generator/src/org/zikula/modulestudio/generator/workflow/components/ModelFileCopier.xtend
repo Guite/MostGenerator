@@ -65,7 +65,7 @@ class ModelFileCopier implements IWorkflowComponent {
      * Invokes the workflow component from a workflow.
      * 
      * @param ctx
-     *            The given {@link IWorkflowContext} instance.
+     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         invokeInternal

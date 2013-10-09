@@ -64,7 +64,7 @@ class DiagramExporter {
      * The constructor.
      * 
      * @param wfSettings
-     *            Given {@link WorkflowSettings} instance.
+     *            Given {@link org.zikula.modulestudio.generator.application.WorkflowSettings} instance.
      */
     new(WorkflowSettings wfSettings) {
         settings = wfSettings
@@ -74,11 +74,11 @@ class DiagramExporter {
      * Process an application diagram.
      * 
      * @param appDiagram
-     *            Instance of {@link Diagram}.
+     *            Instance of {@link org.eclipse.gmf.runtime.notation.Diagram}.
      * @param outPath
      *            The desired output path.
      * @param prefHint
-     *            Instance of {@link PreferencesHint}.
+     *            Instance of {@link org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint}.
      */
     def processDiagram(Diagram appDiagram, String outPath,
             PreferencesHint prefHint) {
@@ -121,7 +121,7 @@ class DiagramExporter {
     }
 
     /**
-     * Exports the given {@link Diagram} into all possible file formats.
+     * Exports the given {@link org.eclipse.gmf.runtime.notation.Diagram} into all possible file formats.
      * 
      * @param inputDiagram
      *            The given input diagram.
@@ -161,7 +161,7 @@ class DiagramExporter {
     }
 
     /**
-     * Exports the given {@link Diagram} into a certain {@link ImageFileFormat}.
+     * Exports the given {@link org.eclipse.gmf.runtime.notation.Diagram} into a certain {@link org.eclipse.gmf.runtime.diagram.ui.image.ImageFileFormat}.
      * 
      * @param format
      *            The given image file format.
@@ -202,10 +202,10 @@ class DiagramExporter {
     }
 
     /**
-     * Retrieve a resource set from a given application.
+     * Retrieve a resource set from a given {@link de.guite.modulestudio.metamodel.modulestudio.Application}.
      * 
      * @param app
-     *            The given application instance.
+     *            The given {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
      * @return The determined resource set.
      */
     def private getResourceSetFromApp(Application app) {

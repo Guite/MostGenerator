@@ -19,7 +19,7 @@ class Validator extends WorkflowComponentWithSlot {
      * Invokes the workflow component.
      * 
      * @param ctx
-     *            The given {@link IWorkflowContext} instance.
+     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         if (!enabled) {

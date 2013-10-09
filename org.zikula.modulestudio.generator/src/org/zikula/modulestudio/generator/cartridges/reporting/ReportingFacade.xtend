@@ -28,7 +28,7 @@ class ReportingFacade {
     String modelPath
 
     /**
-     * The {@link IReportEngine} reference.
+     * The {@link org.eclipse.birt.report.engine.api.IReportEngine} reference.
      */
     IReportEngine engine = null
 
@@ -38,7 +38,7 @@ class ReportingFacade {
     EngineConfig config = null
 
     /**
-     * The {@link IRunAndRenderTask} reference.
+     * The {@link org.eclipse.birt.report.engine.api.IRunAndRenderTask} reference.
      */
     IRunAndRenderTask task = null
 

@@ -11,9 +11,10 @@ import com.google.inject.Injector;
 public class MostGeneratorSetup implements ISetup {
 
     /**
-     * Creates the injector for {@link MostGeneratorModule}.
+     * Creates the injector for
+     * {@link org.zikula.modulestudio.generator.cartridges.MostGeneratorModule}.
      * 
-     * @return The {@link Injector} instance.
+     * @return The {@link com.google.inject.Injector} instance.
      */
     @Override
     public Injector createInjectorAndDoEMFRegistration() {

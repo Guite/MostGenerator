@@ -28,7 +28,7 @@ class UrlExtensions {
      * Creates the parameters for a modurl call relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param func The function to be called by the url
      * @param ot The treated object type
      * @param objName The name of the object variable carrying the entity object in the output
@@ -46,7 +46,7 @@ class UrlExtensions {
      * Creates the parameters for a modurl call relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param func The function to be called by the url
      * @param ot The treated object type
      * @param objName The name of the object variable carrying the entity object in the output
@@ -65,7 +65,7 @@ class UrlExtensions {
      * Creates the parameters for a modurl call to a display function relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param otVar Custom name for the object type parameter
@@ -83,7 +83,7 @@ class UrlExtensions {
      * Creates the parameters for a modurl call to a display function relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
@@ -95,7 +95,7 @@ class UrlExtensions {
     /**
      * Appends the slug parameter (if available) to display url arguments.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String the slug parameter assignment.
@@ -111,7 +111,7 @@ class UrlExtensions {
      * Creates the parameters for a modurl call to an edit function relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
@@ -124,7 +124,7 @@ class UrlExtensions {
      * Creates the parameters for a modurl call to an edit function relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param customVarName Custom name for using another field name as url parameter
@@ -138,7 +138,7 @@ class UrlExtensions {
      * Creates the parameters for a modurl call to a delete function relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
@@ -151,7 +151,7 @@ class UrlExtensions {
      * Collects primary key parameters for a modurl call relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
@@ -167,7 +167,7 @@ class UrlExtensions {
      * Collects primary key parameters for a modurl call relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param customVarName Custom name for using another field name as url parameter
@@ -183,7 +183,7 @@ class UrlExtensions {
     /**
      * Returns a single parameter pair for a modurl call in a source code file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it An {@link java.lang.Iterable} of primary key fields to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected url parameter string.
      */
@@ -196,7 +196,7 @@ class UrlExtensions {
     /**
      * Returns a single parameter pair for a modurl call in a template file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it An {@link java.lang.Iterable} of primary key fields to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected url parameter string.
      */
@@ -209,7 +209,7 @@ class UrlExtensions {
     /**
      * Returns a single parameter pair for a modurl call in a source code file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it An {@link java.lang.Iterable} of primary key fields to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param customVarName Custom name for using another field name as url parameter
      * @return String collected url parameter string.
@@ -223,7 +223,7 @@ class UrlExtensions {
     /**
      * Returns a single parameter pair for a modurl call in a template file.
      *
-     * @param it An {@link Iterable} of primary key fields to be linked to
+     * @param it An {@link java.lang.Iterable} of primary key fields to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param customVarName Custom name for using another field name as url parameter
      * @return String collected url parameter string.
