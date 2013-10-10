@@ -158,7 +158,7 @@ class Ajax {
             $titleField = $repository->getTitleFieldName();
             $descriptionField = $repository->getDescriptionFieldName();
 
-            $sort = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING)
+            $sort = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
                 $sort = $repository->getDefaultSortingField();
             }
