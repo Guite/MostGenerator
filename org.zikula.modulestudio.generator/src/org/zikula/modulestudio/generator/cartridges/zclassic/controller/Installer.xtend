@@ -144,7 +144,7 @@ class Installer {
          *
          * @return boolean True on success, or false.
          */
-        public function install«IF !targets('1.3.5')»Action«ENDIF»()
+        public function install«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»()
         {
             «processUploadFolders»
             // create all tables from according entity definitions
@@ -252,7 +252,7 @@ class Installer {
          *
          * @return boolean True on success, false otherwise.
          */
-        public function upgrade«IF !targets('1.3.5')»Action«ENDIF»($oldVersion)
+        public function upgrade«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»($oldVersion)
         {
         /*
             // Upgrade dependent on old version number
@@ -298,7 +298,7 @@ class Installer {
          *
          * @return boolean True on success, false otherwise.
          */
-        public function uninstall«IF !targets('1.3.5')»Action«ENDIF»()
+        public function uninstall«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»()
         {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
