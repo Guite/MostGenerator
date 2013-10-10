@@ -126,12 +126,9 @@ class ControllerLayer {
                 use «app.appNamespace»\Util\WorkflowUtil;
             «ENDIF»
 
-            «IF hasActions('view') && isAdminController»
-                use Symfony\Component\HttpFoundation\Request;
-            «ENDIF»
+            use Symfony\Component\HttpFoundation\Request;
             «IF isAjaxController»
                 «IF !app.getAllUserFields.empty»
-                    use Symfony\Component\HttpFoundation\Request;
                     use Doctrine\ORM\AbstractQuery;
                 «ENDIF»
                 use DataUtil;
