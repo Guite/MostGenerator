@@ -352,20 +352,7 @@ class Association {
          *
          * @return void
          */
-        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)
-        {
-            «addAssignment(useTarget, selfIsMany, name, nameSingle)»
-            «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
-            «IF generateInverseCalls»
-                «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
-                «val otherIsMany = isManySide(!useTarget)»
-                «IF otherIsMany»
-                    $«nameSingle»->add«ownAliasName»($this);
-                «ELSE»
-                    $«nameSingle»->set«ownAliasName»($this);
-                «ENDIF»
-            «ENDIF»
-        }
+        «addMethodImpl(useTarget, selfIsMany, name, nameSingle, type)»
         «/* this last line is on purpose */»
     '''
 
@@ -384,41 +371,73 @@ class Association {
             «IF !container.application.targets('1.3.5')»\«ENDIF»«targetField.fieldTypeAsString» $«targetField.name.formatForCode»
         «ELSE»«IF !container.application.targets('1.3.5')»\«ENDIF»«type» $«name»«ENDIF»'''
 
-    def private addAssignmentDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
-        $this->«name»«IF selfIsMany»->add(«ELSE» = «ENDIF»$«nameSingle»«IF selfIsMany»)«ENDIF»;
-    '''
-    def private dispatch addAssignment(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
-        «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»
-    '''
-    def private dispatch addAssignment(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
-        «IF !useTarget && indexBy !== null && indexBy != ''»
-            $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
-        «ELSEIF !useTarget && !source.getAggregateFields.empty»
-            «val sourceField = source.getAggregateFields.head»
-            «val targetField = sourceField.getAggregateTargetField»
-            $«getRelationAliasName(true)» = new «target.entityClassName('', false)»($this, $«targetField.name.formatForCode»);
-            $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
-            $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
-            return $«getRelationAliasName(true)»;
-        }
+    def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
+        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)'''
 
-        /**
-         * Additional add function for internal use.
-         *
-         * @param «targetField.fieldTypeAsString» $«targetField.name.formatForCode» Given instance to be used for aggregation.
-         */
-        protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»($«targetField.name.formatForCode»)
+    def private addMethodImplDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
+        «addMethodSignature(useTarget, name, nameSingle, type)»
         {
-            $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
+            $this->«name»«IF selfIsMany»->add(«ELSE» = «ENDIF»$«nameSingle»«IF selfIsMany»)«ENDIF»;
+            «addInverseCalls(useTarget, nameSingle)»
+        }
+    '''
+    def private dispatch addMethodImpl(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
+        «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
+    '''
+    def private dispatch addMethodImpl(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
+        «IF !useTarget && indexBy !== null && indexBy != ''»
+            «addMethodSignature(useTarget, name, nameSingle, type)»
+            {
+                $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
+                «addInverseCalls(useTarget, nameSingle)»
+            }
+        «ELSEIF !useTarget && !source.getAggregateFields.empty»
+            «addMethodSignature(useTarget, name, nameSingle, type)»
+            {
+                «val sourceField = source.getAggregateFields.head»
+                «val targetField = sourceField.getAggregateTargetField»
+                $«getRelationAliasName(true)» = new «target.entityClassName('', false)»($this, $«targetField.name.formatForCode»);
+                $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
+                $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
+
+                return $«getRelationAliasName(true)»;
+            }
+
+            /**
+             * Additional add function for internal use.
+             *
+             * @param «targetField.fieldTypeAsString» $«targetField.name.formatForCode» Given instance to be used for aggregation.
+             */
+            protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»($«targetField.name.formatForCode»)
+            {
+                $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
+            }
         «ELSE»
-            «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»
+            «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
         «ENDIF»
     '''
-    def private dispatch addAssignment(ManyToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
+    def private dispatch addMethodImpl(ManyToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
         «IF !useTarget && indexBy !== null && indexBy != ''»
-            $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
+            «addMethodSignature(useTarget, name, nameSingle, type)»
+            {
+                $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
+                «addInverseCalls(useTarget, nameSingle)»
+            }
         «ELSE»
-            «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»
+            «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
+        «ENDIF»
+    '''
+
+    def private addInverseCalls(JoinRelationship it, Boolean useTarget, String nameSingle) '''
+        «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
+        «IF generateInverseCalls»
+            «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
+            «val otherIsMany = isManySide(!useTarget)»
+            «IF otherIsMany»
+                $«nameSingle»->add«ownAliasName»($this);
+            «ELSE»
+                $«nameSingle»->set«ownAliasName»($this);
+            «ENDIF»
         «ENDIF»
     '''
 

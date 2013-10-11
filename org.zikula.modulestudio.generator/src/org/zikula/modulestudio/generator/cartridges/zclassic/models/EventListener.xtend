@@ -94,6 +94,7 @@ class EventListener {
         {
             // echo 'inserting a record ...';
             $this->validate();
+
             return true;
         }
 «/*}*/»«/*    def private eventListenerBaseImpl(PostPersist it) {*/»
@@ -218,6 +219,7 @@ class EventListener {
         {
             // echo 'updating a record ...';
             $this->validate();
+
             return true;
         }
 «/*}*/»«/*    def private eventListenerBaseImpl(PostUpdate it) {*/»
@@ -250,6 +252,7 @@ class EventListener {
         {
             // echo 'saving a record ...';
             $this->validate();
+
             return true;
         }
 
@@ -448,15 +451,16 @@ class EventListener {
             } catch (\Exception $e) {
                 return LogUtil::registerError($e->getMessage());
             }
+
             $fullPath = $basePath .  $this['«realName»'];
             $this['«realName»FullPath'] = $fullPath;
             $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
 
             // just some backwards compatibility stuff«/*TODO: remove somewhen*/»
-            if (!isset($this['«realName»Meta']) || !is_array($this['«realName»Meta']) || !count($this['«realName»Meta'])) {
+            /*if (!isset($this['«realName»Meta']) || !is_array($this['«realName»Meta']) || !count($this['«realName»Meta'])) {
                 // assign new meta data
                 $this['«realName»Meta'] = $uploadManager->readMetaDataForFile($this['«realName»'], $fullPath);
-            }
+            }*/
         }
     '''
 }

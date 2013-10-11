@@ -113,7 +113,7 @@ class MostGeneratorComponent extends GeneratorComponent implements
             if (object === null) {
                 throw new IllegalStateException("Slot '" + slot + "' was empty!")
             }
-            if (object instanceof Iterable) {
+            if (object instanceof Iterable<?>) {
                 val Iterable<?> iterable = object as Iterable<?>
                 for (object2 : iterable) {
                     if (!(object2 instanceof Resource)) {
