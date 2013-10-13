@@ -114,6 +114,9 @@ class Association {
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
              * @ORM\ManyToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
+             «IF orderByReverse !== null && orderByReverse != ''»
+              * @ORM\OrderBy({"«orderByReverse»" = "ASC"})
+             «ENDIF»
              * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«sourceName».
              */
             protected $«sourceName» = null;
