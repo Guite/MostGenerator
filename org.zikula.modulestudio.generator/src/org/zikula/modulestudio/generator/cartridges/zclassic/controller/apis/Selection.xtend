@@ -94,7 +94,7 @@ class Selection {
         public function getEntity(array $args = array())
         {
             if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid identifier received.'));
             }
             $objectType = $this->determineObjectType($args, 'getEntity');
             $repository = $this->getRepository($objectType);
@@ -202,7 +202,7 @@ class Selection {
         protected function getRepository($objectType = '')
         {
             if (empty($objectType)) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid object type received.'));
             }
 
             «IF targets('1.3.5')»
@@ -227,7 +227,7 @@ class Selection {
             public function getTree(array $args = array())
             {
                 if (!isset($args['rootId'])) {
-                    return LogUtil::registerArgsError();
+                    throw new \InvalidArgumentException(__('Invalid root identifier received.'));
                 }
                 $rootId = $args['rootId'];
 

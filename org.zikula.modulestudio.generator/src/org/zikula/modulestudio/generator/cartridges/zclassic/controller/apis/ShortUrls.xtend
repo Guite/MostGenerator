@@ -41,7 +41,7 @@ class ShortUrls {
         {
             // check if we have the required input
             if (!isset($args['modname']) || !isset($args['func'])) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid arguments array received.'));
             }
 
             // set default values
@@ -185,7 +185,7 @@ class ShortUrls {
         {
             // check we actually have some vars to work with
             if (!is_array($args) || !isset($args['vars']) || !is_array($args['vars']) || !count($args['vars'])) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid arguments array received.'));
             }
 
             // define the available user functions

@@ -486,7 +486,7 @@ class Repository {
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -511,7 +511,7 @@ class Repository {
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -538,7 +538,7 @@ class Repository {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -566,7 +566,7 @@ class Repository {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -598,12 +598,12 @@ class Repository {
         {
             // check field parameter
             if (empty($userFieldName) || !in_array($userFieldName, array(«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»))) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid user field name received.'));
             }
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid user identifier received.'));
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -656,7 +656,7 @@ class Repository {
         {
             // check id parameter
             if ($id == 0) {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid identifier received.'));
             }
 
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
@@ -686,7 +686,7 @@ class Repository {
         {
             // check input parameter
             if ($slugTitle == '') {
-                return LogUtil::registerArgsError();
+                throw new \InvalidArgumentException(__('Invalid slug title received.'));
             }
 
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
