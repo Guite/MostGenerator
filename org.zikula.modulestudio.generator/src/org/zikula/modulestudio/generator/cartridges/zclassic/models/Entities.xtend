@@ -11,6 +11,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.EmailField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
+import de.guite.modulestudio.metamodel.modulestudio.EntityField
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndex
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndexItem
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
@@ -18,6 +19,7 @@ import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
@@ -140,6 +142,8 @@ class Entities {
             «entityInfo(app)»
 
             «thEvLi.generateBase(it)»
+
+            «getTitleFromDisplayPattern(app)»
 
             «toStringImpl(app)»
 
@@ -416,11 +420,10 @@ class Entities {
                                 );
                             «ENDIF»
                             «IF controller.hasActions('display')»
-                                «val leadingField = getLeadingField»
                                 $this->_actions[] = array(
                                     'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
                                     'icon' => '«IF app.targets('1.3.5')»display«ELSE»eye-open«ENDIF»',
-                                    'linkTitle' => «IF leadingField !== null»str_replace('"', '', $this['«leadingField.name.formatForCode»'])«ELSE»__('Open detail page', $dom)«ENDIF»,
+                                    'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern())«/*__('Open detail page', $dom)*/»,
                                     'linkText' => __('Details', $dom)
                                 );
                             «ENDIF»
@@ -717,6 +720,72 @@ class Entities {
             }
         «ENDIF»
     '''
+
+    def private getTitleFromDisplayPattern(Entity it, Application app) '''
+        /**
+         * Returns the formatted title conforming to the display pattern
+         * specified for this entity.
+         */
+        public function getTitleFromDisplayPattern()
+        {
+            «IF displayPattern === null || displayPattern == ''»
+                «val leadingField = getLeadingField»
+                «IF leadingField !== null»
+                    $formattedTitle = $this->get«leadingField.name.formatForCodeCapital»();
+                «ELSE»
+                    $dom = ZLanguage::getModuleDomain('«app.appName»');
+                    $formattedTitle = __('«name.formatForDisplayCapital»', $dom);
+                «ENDIF»
+            «ELSE»
+                «IF hasListFieldsEntity»
+                    $serviceManager = ServiceUtil::getManager();
+                    $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»«app.appNamespace»\Util\ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+
+                «ENDIF»
+                $formattedTitle = «parseDisplayPattern»;
+            «ENDIF»
+
+            return $formattedTitle;
+        }
+    '''
+
+    def private parseDisplayPattern(Entity it) {
+        var result = ''
+        val patternParts = displayPattern.split('#')
+        for (patternPart : patternParts) {
+            if (result != '') {
+                result = result.concat("\n" + '        . ')
+            }
+
+            var CharSequence formattedPart = ''
+            // check if patternPart equals a field name
+            var matchedFields = fields.filter[name == patternPart]
+            if (!matchedFields.empty) {
+                // field referencing part
+                formattedPart = formatFieldValue(matchedFields.head, '$this->get' + patternPart.toFirstUpper + '()')
+            } else if (geographical && (patternPart == 'latitude' || patternPart == 'longitude')) {
+                // geo field referencing part
+                formattedPart = 'number_format($this->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
+            } else {
+                // static part
+                formattedPart = '\'' + patternPart.replaceAll('\'', '') + '\''
+            }
+            result = result.concat(formattedPart.toString)
+        }
+        result
+    }
+
+    def private formatFieldValue(EntityField it, CharSequence value) {
+        switch (it) {
+            DecimalField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
+            FloatField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
+            ListField: '''$listHelper->resolve(«value», «entity.name.formatForCode»', '«name.formatForCode»')'''
+            DateField: '''DateUtil::formatDatetime(«value», 'datebrief')'''
+            DatetimeField: '''DateUtil::formatDatetime(«value», 'datetimebrief')'''
+            TimeField: '''DateUtil::formatDatetime(«value», 'timebrief')'''
+            default: value
+        }
+    }
 
     def private toStringImpl(Entity it, Application app) '''
         /**

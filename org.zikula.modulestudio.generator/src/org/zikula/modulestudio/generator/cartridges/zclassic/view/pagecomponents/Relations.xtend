@@ -14,11 +14,6 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.ListField
-import de.guite.modulestudio.metamodel.modulestudio.DateField
-import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
-import de.guite.modulestudio.metamodel.modulestudio.TimeField
 
 class Relations {
     @Inject extension ControllerExtensions = new ControllerExtensions
@@ -49,15 +44,10 @@ class Relations {
             «IF controller.hasActions('display')»
                 {strip}
                 {if !$nolink}
-                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.displayLeadingField»|replace:"\"":""}">
+                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.getTitleFromDisplayPattern()|replace:"\"":""}">
                 {/if}
             «ENDIF»
-            «val leadingField = getLeadingField»
-            «IF leadingField !== null»
-                {$item.«leadingField.displayLeadingField»}
-            «ELSE»
-                {gt text='«name.formatForDisplayCapital»'}
-            «ENDIF»
+                {$item.getTitleFromDisplayPattern()}
             «IF controller.hasActions('display')»
                 {if !$nolink}
                     </a>
@@ -76,11 +66,7 @@ class Relations {
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «IF leadingField !== null»
-                            «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item.«leadingField.name.formatForCode»|replace:"'":""}}');
-                        «ELSE»
-                            «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«name.formatForDisplayCapital»'|replace:"'":""}}');
-                        «ENDIF»
+                        «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item.getTitleFromDisplayPattern()|replace:"'":""}}');
                     });
                 /* ]]> */
                 </script>
@@ -90,7 +76,7 @@ class Relations {
                 <br />
                 «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField !== null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«name.formatForDisplayCapital»'«ENDIF»«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item.getTitleFromDisplayPattern()«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
                 {/if}
             «ENDIF»
             «IF many»
@@ -100,16 +86,6 @@ class Relations {
                 {/if}
             «ENDIF»
         ''')
-    }
-
-    def private displayLeadingField(DerivedField it) {
-        switch (it) {
-            ListField: '''«it.name.formatForCode»|«entity.container.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext'''
-            DateField: '''«it.name.formatForCode»|dateformat:"datebrief"'''
-            DatetimeField: '''«it.name.formatForCode»|dateformat:"datetimebrief"'''
-            TimeField: '''«it.name.formatForCode»|dateformat:"timebrief"'''
-            default: '''«it.name.formatForCode»'''
-        }
     }
 
     def displayRelatedItems(JoinRelationship it, String appName, Controller controller, Entity relatedEntity) '''

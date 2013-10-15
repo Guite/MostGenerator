@@ -99,7 +99,7 @@ class Tag {
                 return;
             }
 
-            $this->setObjectTitle($entity[$repository->getTitleFieldName()]);
+            $this->setObjectTitle($entity->getTitleFromDisplayPattern());
 
             $dateFieldName = $repository->getStartDateFieldName();
             if ($dateFieldName != '') {

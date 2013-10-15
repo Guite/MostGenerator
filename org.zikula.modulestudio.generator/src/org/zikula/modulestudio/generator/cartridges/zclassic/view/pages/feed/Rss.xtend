@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.modulestudio.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -16,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Rss {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
     @Inject extension Utils = new Utils
@@ -59,12 +57,7 @@ class Rss {
 
         {foreach item='«objName»' from=$items}
             <item>
-                «val leadingField = getLeadingField»
-                «IF leadingField !== null»
-                    <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName».«leadingField.name.formatForCode»|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}]]></title>
-                «ELSE»
-                    <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{gt text='«name.formatForDisplayCapital»'}]]></title>
-                «ENDIF»
+                <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName».getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}]]></title>
                 <link>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</link>
                 <guid>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</guid>
                 «IF !standardFields»
@@ -98,9 +91,7 @@ class Rss {
                     «ELSEIF !stringFields.empty»
                         {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
                     «ELSE»
-                        «IF leadingField !== null»
-                            {$«objName».«leadingField.name.formatForCode»|replace:'<br>':'<br />'}
-                        «ENDIF»
+                        {$«objName».getTitleFromDisplayPattern()|replace:'<br>':'<br />'}
                     «ENDIF»
                     ]]>
                 </description>

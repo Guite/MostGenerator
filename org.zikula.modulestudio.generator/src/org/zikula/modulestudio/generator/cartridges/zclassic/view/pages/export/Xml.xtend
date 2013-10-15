@@ -104,31 +104,20 @@ class Xml {
 
     def private displayRelatedEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
-        «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = 'item.' + relationAliasName»
-        «val leadingField = linkEntity.getLeadingField»
-        «IF leadingField !== null»
-            <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{/if}</«relationAliasName.toFirstLower»>
-        «ELSE»
-            «linkEntity.name.formatForDisplay»
-        «ENDIF»
+        <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».getTitleFromDisplayPattern()|default:''}{/if}</«relationAliasName.toFirstLower»>
     '''
 
     def private displayRelatedEntries(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = 'item.' + relationAliasName»
-        «val leadingField = linkEntity.getLeadingField»
-        «IF leadingField !== null»
-            <«relationAliasName.toFirstLower»>
-            {if isset($«relObjName») && $«relObjName» ne null}
-                {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
-                <«linkEntity.name.formatForCode»>{$relatedItem.«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}</«linkEntity.name.formatForCode»>
-                {/foreach}
-            {/if}
-            </«relationAliasName.toFirstLower»>
-        «ELSE»
-            «linkEntity.nameMultiple.formatForDisplay»
-        «ENDIF»
+        <«relationAliasName.toFirstLower»>
+        {if isset($«relObjName») && $«relObjName» ne null}
+            {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
+            <«linkEntity.name.formatForCode»>{$relatedItem.getTitleFromDisplayPattern()|default:''}</«linkEntity.name.formatForCode»>
+            {/foreach}
+        {/if}
+        </«relationAliasName.toFirstLower»>
     '''
 }

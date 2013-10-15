@@ -77,7 +77,6 @@ class TreeJS {
             $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
-            $titleFieldName = $repository->getTitleFieldName();
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
 «/* TODO improve identifier handling in treejs plugin */»
@@ -91,7 +90,7 @@ class TreeJS {
 
                 $result[] = array('id' => $item[$idField],
                                   'parent_id' => $parentItem[$idField],
-                                  'name' => (($titleFieldName != '') ? $item[$titleFieldName] : ''),
+                                  'name' => $item->getTitleFromDisplayPattern(),
                                   'title' => (($descriptionFieldName != '') ? strip_tags($item[$descriptionFieldName]) : ''),
                                 //'icon' => '',
                                 //'class' => '',

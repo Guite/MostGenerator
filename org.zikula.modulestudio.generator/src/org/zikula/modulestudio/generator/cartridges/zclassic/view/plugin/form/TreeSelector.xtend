@@ -194,9 +194,9 @@ class TreeSelector {
                 if (!$this->includeRootNode) {
                     $shownLevel--;
                 }
-                $praefix = str_repeat('- - ', $shownLevel);
+                $prefix = str_repeat('- - ', $shownLevel);
 
-                $itemLabel = $praefix . parent::createItemLabel($item);
+                $itemLabel = $prefix . parent::createItemLabel($item);
 
                 return $itemLabel;
             }

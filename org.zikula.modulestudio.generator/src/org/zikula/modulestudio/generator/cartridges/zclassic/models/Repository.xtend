@@ -147,10 +147,11 @@ class Repository {
         class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
+            «val stringFields = fields.filter(StringField).filter[!leading && !password]»
             /**
              * @var string The default sorting field/expression.
              */
-            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else getLeadingField).name.formatForCode»';
+            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else getLeadingField).name.formatForCode»';
 
             «IF app.targets('1.3.5')»
                 /**
@@ -191,8 +192,11 @@ class Repository {
              */
             public function getTitleFieldName()
             {
-                «val leadingField = getLeadingField»
-                $fieldName = '«IF leadingField !== null»«leadingField.name.formatForCode»«ENDIF»';
+                «IF !stringFields.empty»
+                    $fieldName = '«stringFields.head.name.formatForCode»';
+                «ELSE»
+                    $fieldName = '';
+                «ENDIF»
 
                 return $fieldName;
             }
@@ -205,11 +209,14 @@ class Repository {
             public function getDescriptionFieldName()
            {
                 «val textFields = fields.filter(TextField).filter[!leading]»
-                «val stringFields = fields.filter(StringField).filter[!leading && !password]»
                 «IF !textFields.empty»
                     $fieldName = '«textFields.head.name.formatForCode»';
                 «ELSEIF !stringFields.empty»
-                    $fieldName = '«stringFields.head.name.formatForCode»';
+                    «IF stringFields.size > 1»
+                        $fieldName = '«stringFields.get(1).name.formatForCode»';
+                    «ELSE»
+                        $fieldName = '«stringFields.head.name.formatForCode»';
+                    «ENDIF»
                 «ELSE»
                     $fieldName = '';
                 «ENDIF»
@@ -1306,6 +1313,8 @@ class Repository {
                 $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS «IF !app.targets('1.3.5')»HIDDEN «ENDIF»randomIdentifiers')
                    ->add('orderBy', 'randomIdentifiers');
                 $orderBy = '';
+            } elseif (empty($orderBy)) {
+                $orderBy = $this->defaultSortingField;
             }
 
             // add order by clause

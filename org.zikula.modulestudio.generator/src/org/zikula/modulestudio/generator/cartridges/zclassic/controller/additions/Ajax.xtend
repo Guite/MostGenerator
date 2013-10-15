@@ -155,7 +155,7 @@ class Ajax {
                 $repository->setRequest($request);
             «ENDIF»
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-            $titleField = $repository->getTitleFieldName();
+
             $descriptionField = $repository->getDescriptionFieldName();
 
             $sort = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
@@ -184,7 +184,7 @@ class Ajax {
                 if (!SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
                     continue;
                 }
-                $slimItems[] = $this->prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField);
+                $slimItems[] = $this->prepareSlimItem($objectType, $item, $itemId, $descriptionField);
             }
 
             return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($slimItems);
@@ -196,18 +196,17 @@ class Ajax {
          * @param string $objectType       The currently treated object type.
          * @param object $item             The currently treated entity.
          * @param string $itemid           Data item identifier(s).
-         * @param string $titleField       Name of item title field.
          * @param string $descriptionField Name of item description field.
          *
          * @return array The slim data representation.
          */
-        protected function prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField)
+        protected function prepareSlimItem($objectType, $item, $itemId, $descriptionField)
         {
             $view = Zikula_View::getInstance('«app.appName»', false);
             $view->assign($objectType, $item);
             $previewInfo = base64_encode($view->fetch(«IF app.targets('1.3.5')»'external/' . $objectType«ELSE»'External/' . ucwords($objectType)«ENDIF» . '/info.tpl'));
 
-            $title = ($titleField != '') ? $item[$titleField] : '';
+            $title = $item->getTitleFromDisplayPattern();
             $description = ($descriptionField != '') ? $item[$descriptionField] : '';
 
             return array('id'          => $itemId,
@@ -277,7 +276,6 @@ class Ajax {
 
             $out = '<ul>';
             if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
-                $titleFieldName = $repository->getTitleFieldName();
                 $descriptionFieldName = $repository->getDescriptionFieldName();
                 $previewFieldName = $repository->getPreviewFieldName();
                 «IF app.hasImageFields»
@@ -288,7 +286,7 @@ class Ajax {
                 «ENDIF»
                 foreach ($entities as $item) {
                     // class="informal" --> show in dropdown, but do nots copy in the input field after selection
-                    $itemTitle = (!empty($titleFieldName)) ? $item[$titleFieldName] : $this->__('Item');
+                    $itemTitle = $item->getTitleFromDisplayPattern();
                     $itemTitleStripped = str_replace('"', '', $itemTitle);
                     $itemDescription = (isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.');
                     $itemId = '';

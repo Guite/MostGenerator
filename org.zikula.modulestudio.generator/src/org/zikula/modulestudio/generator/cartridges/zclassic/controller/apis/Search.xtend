@@ -179,7 +179,6 @@ class Search {
                 }
 
                 $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-                $titleField = $repository->getTitleFieldName();
                 $descriptionField = $repository->getDescriptionFieldName();
                 «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
                 foreach ($entities as $entity) {
@@ -209,7 +208,7 @@ class Search {
                         continue;
                     }
 
-                    $title = ($titleField != '') ? $entity[$titleField] : $this->__('Item');
+                    $title = $entity->getTitleFromDisplayPattern();
                     $description = ($descriptionField != '') ? $entity[$descriptionField] : '';
                     $created = (isset($entity['createdDate'])) ? $entity['createdDate']->format('Y-m-d H:i:s') : '';
 

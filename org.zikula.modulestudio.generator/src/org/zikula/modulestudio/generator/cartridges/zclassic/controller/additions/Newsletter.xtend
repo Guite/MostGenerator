@@ -234,7 +234,6 @@ class Newsletter {
             $entities = $query->getResult();
 
             // post processing
-            $titleFieldName = $repository->getTitleFieldName();
             $descriptionFieldName = $repository->getDescriptionFieldName();
             «IF hasImageFields»
                 $previewFieldName = $repository->getPreviewFieldName();
@@ -245,7 +244,7 @@ class Newsletter {
                 $items[$k] = array();
 
                 // Set title of this item.
-                $items[$k]['nl_title'] = $titleFieldName ? $item[$titleFieldName] : '';
+                $items[$k]['nl_title'] = $item->getTitleFromDisplayPattern();
 
                 «IF hasUserController && getMainUserController.hasActions('display')»
                     // Set (full qualified) link of title

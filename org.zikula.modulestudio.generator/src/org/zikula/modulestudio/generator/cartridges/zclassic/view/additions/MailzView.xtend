@@ -55,10 +55,7 @@ class MailzView {
     '''
 
     def private mailzEntryText(Entity it, String appName) '''
-        «val leadingField = getLeadingField»
-        «IF leadingField !== null»
-            {$«name.formatForCode».«leadingField.name.formatForCode»}
-        «ENDIF»
+        {$«name.formatForCode».getTitleFromDisplayPattern()}
         {modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')» fqurl=true}
     '''
 
@@ -87,9 +84,6 @@ class MailzView {
         «ENDIF»'''
 
     def private mailzEntryHtmlLinkText(Entity it, Application app) '''
-        «val leadingField = getLeadingField»
-        «IF leadingField !== null»{$«name.formatForCode».«leadingField.name.formatForCode»}
-        «ELSE»{gt text='«name.formatForDisplayCapital»'}
-        «ENDIF»
+        {$«name.formatForCode».getTitleFromDisplayPattern()}
     '''
 }

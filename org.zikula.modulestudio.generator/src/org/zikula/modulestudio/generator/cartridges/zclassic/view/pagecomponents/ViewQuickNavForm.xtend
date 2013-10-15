@@ -206,17 +206,16 @@ class ViewQuickNavForm {
                 <div class="form-group">
             «ENDIF»
                 <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
-                {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»'«IF source.leadingField !== null» orderBy='tbl.«source.leadingField.name.formatForCode»'«ENDIF» slimMode=true assign='listEntries'}
+                {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' slimMode=true assign='listEntries'}
                 <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="">{$lblDefault}</option>
                 {foreach item='option' from=$listEntries}
                     «IF source.hasCompositeKeys»
                         {assign var='entryId' value="«FOR pkField : source.getPrimaryKeyFields SEPARATOR '_'»`$option.«pkField.name.formatForCode»`«ENDFOR»"}
-                        <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.«source.leadingField.name.formatForCode»}</option>
                     «ELSE»
                         {assign var='entryId' value=$option.«source.getFirstPrimaryKey.name.formatForCode»}
-                        <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.«source.leadingField.name.formatForCode»}</option>
                     «ENDIF»
+                    <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.getTitleFromDisplayPattern()}</option>
                 {/foreach}
                 </select>
             «IF !container.application.targets('1.3.5')»

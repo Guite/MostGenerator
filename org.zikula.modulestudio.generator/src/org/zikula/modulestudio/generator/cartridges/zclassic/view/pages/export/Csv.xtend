@@ -63,24 +63,18 @@ class Csv {
     def private displayRelatedEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val mainEntity = (if (!useTarget) target else source)»
-        «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        «val leadingField = linkEntity.getLeadingField»
-        ;"{if isset($«relObjName») && $«relObjName» ne null}«IF leadingField !== null»{$«relObjName».«linkEntity.getLeadingField.name.formatForCode»«/*|nl2br*/»|default:''}«ELSE»«linkEntity.name.formatForDisplay»«ENDIF»{/if}"'''
+        ;"{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».getTitleFromDisplayPattern()|default:''}{/if}"'''
 
     def private displayRelatedEntries(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val mainEntity = (if (!useTarget) target else source)»
-        «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        «val leadingField = linkEntity.getLeadingField»
-        ;"«IF leadingField !== null»
+        ;"
             {if isset($«relObjName») && $«relObjName» ne null}
                 {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
-                {$relatedItem.«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
+                {$relatedItem.getTitleFromDisplayPattern()|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
                 {/foreach}
             {/if}
-        «ELSE»
-            «linkEntity.nameMultiple.formatForDisplay»
-        «ENDIF»"'''
+        "'''
 }

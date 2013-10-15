@@ -150,20 +150,6 @@ class AbstractObjectSelector {
         public $currentPage = 1;
 
         /**
-         * Name of the field to display.
-         *
-         * @var string
-         */
-        public $displayField = '';
-
-        /**
-         * Name of optional second field to display.
-         *
-         * @var string
-         */
-        public $displayFieldTwo = '';
-
-        /**
          * Whether to display an empty value to select nothing.
          *
          * @var boolean
@@ -208,33 +194,6 @@ class AbstractObjectSelector {
             }
             $this->aliasReverse = $params['aliasReverse'];
             unset($params['aliasReverse']);
-
-            if (isset($params['displayField'])) {
-                if (!empty($params['displayField'])) {
-                    $this->displayField = $params['displayField'];
-                }
-                unset($params['displayField']);
-            }
-            if (empty($this->displayField)) {
-                // fallback to the leading field
-                «IF targets('1.3.5')»
-                    $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
-                «ELSE»
-                    $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
-                «ENDIF»
-                $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
-                $repository = $entityManager->getRepository($entityClass);
-                $this->displayField = $repository->getTitleFieldName();
-            }
-
-            $this->displayFieldTwo = '';
-            if (isset($params['displayField2'])) {
-                $this->displayFieldTwo = $params['displayField2'];
-                unset($params['displayField2']);
-            } elseif (isset($params['displayFieldTwo'])) {
-                $this->displayFieldTwo = $params['displayFieldTwo'];
-                unset($params['displayFieldTwo']);
-            }
 
             if (isset($params['where'])) {
                 $this->where = $params['where'];
@@ -643,12 +602,7 @@ class AbstractObjectSelector {
          */
         protected function createItemLabel($item)
         {
-            $itemLabel = $item[$this->displayField];
-            if (!empty($this->displayFieldTwo) && isset($item[$this->displayFieldTwo])) {
-                $itemLabel .= ' (' . $item[$this->displayFieldTwo] . ')';
-            }
-
-            return $itemLabel;
+            return $item->getTitleFromDisplayPattern();
         }
 
         /**

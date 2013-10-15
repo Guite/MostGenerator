@@ -418,12 +418,7 @@ class View {
             «IF linkController !== null»
                 <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">{strip}
             «ENDIF»
-              «val leadingField = linkEntity.getLeadingField»
-              «IF leadingField !== null»
-                  {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
-              «ELSE»
-                  {gt text='«linkEntity.name.formatForDisplayCapital»'}
-              «ENDIF»
+              {$«relObjName».getTitleFromDisplayPattern()|default:""}
             «IF linkController !== null»
                 {/strip}</a>
                 «IF container.application.targets('1.3.5')»
@@ -434,7 +429,7 @@ class View {
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{«IF leadingField !== null»$«relObjName».«leadingField.name.formatForCode»«ELSE»gt text='«linkEntity.name.formatForDisplayCapital»'«ENDIF»|replace:"'":""}}');
+                        «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName».getTitleFromDisplayPattern()|replace:"'":""}}');
                     });
                 /* ]]> */
                 </script>

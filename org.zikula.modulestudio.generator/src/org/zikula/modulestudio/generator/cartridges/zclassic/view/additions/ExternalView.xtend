@@ -38,9 +38,9 @@ class ExternalView {
         {if $displayMode eq 'link'}
             <p«IF app.hasUserController» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
             «IF app.hasUserController»
-                <a href="{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)»}" title="{$«name.formatForCode».«getLeadingField.name.formatForCode»|replace:"\"":""}">
+                <a href="{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)»}" title="{$«name.formatForCode».getTitleFromDisplayPattern()|replace:"\"":""}">
             «ENDIF»
-            {$«name.formatForCode».«getLeadingField.name.formatForCode»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}
+            {$«name.formatForCode».getTitleFromDisplayPattern()|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}
             «IF app.hasUserController»
                 </a>
             «ENDIF»
@@ -49,7 +49,7 @@ class ExternalView {
         {checkpermissionblock component='«app.appName»::' instance='::' level='ACCESS_EDIT'}
             {if $displayMode eq 'embed'}
                 <p class="«app.appName.toLowerCase»-external-title">
-                    <strong>{$«name.formatForCode».«getLeadingField.name.formatForCode»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}</strong>
+                    <strong>{$«name.formatForCode».getTitleFromDisplayPattern()|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}</strong>
                 </p>
             {/if}
         {/checkpermissionblock}
@@ -104,7 +104,7 @@ class ExternalView {
     def private itemInfoTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display item information for previewing from other modules *}
         <dl id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}">
-        <dt>{$«name.formatForCode».«getLeadingField.name.formatForCode»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'|htmlentities}</dt>
+        <dt>{$«name.formatForCode».getTitleFromDisplayPattern()|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'|htmlentities}</dt>
         «IF hasImageFieldsEntity»
             <dd>«displaySnippet»</dd>
         «ENDIF»
@@ -225,11 +225,9 @@ class ExternalView {
                                 <ul>
                                 {foreach item='«name.formatForCode»' from=$items}
                                     <li>
-                                        <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})">
-                                            {$«name.formatForCode».«getLeadingField.name.formatForCode»}
-                                        </a>
+                                        <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})">{$«name.formatForCode».getTitleFromDisplayPattern()}</a>
                                         <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)» fqurl=true}«ENDIF»" />
-                                        <input type="hidden" id="title{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{$«name.formatForCode».«getLeadingField.name.formatForCode»|replace:"\"":""}" />
+                                        <input type="hidden" id="title{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{$«name.formatForCode».getTitleFromDisplayPattern()|replace:"\"":""}" />
                                         <input type="hidden" id="desc{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{capture assign='description'}«displayDescription('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
                                     </li>
                                 {foreachelse}
@@ -373,10 +371,8 @@ class ExternalView {
         <p>
             <label for="{$baseID}Id"{$leftSide}>{gt text='«name.formatForDisplayCapital»'}:</label>
             <select id="{$baseID}Id" name="id"{$rightSide}>
-                {foreach item='«name.formatForCode»' from=$items}{strip}
-                    <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>
-                        {$«name.formatForCode».«getLeadingField.name.formatForCode»}
-                    </option>{/strip}
+                {foreach item='«name.formatForCode»' from=$items}
+                    <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>{$«name.formatForCode».getTitleFromDisplayPattern()}</option>
                 {foreachelse}
                     <option value="0">{gt text='No entries found.'}</option>
                 {/foreach}

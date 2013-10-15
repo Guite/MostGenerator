@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.modulestudio.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -16,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Atom {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
     @Inject extension Utils = new Utils
@@ -50,12 +48,7 @@ class Atom {
 
         {foreach item='«objName»' from=$items}
             <entry>
-                «val leadingField = getLeadingField»
-                «IF leadingField !== null»
-                    <title type="html">{$«objName».«leadingField.name.formatForCode»|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}</title>
-                «ELSE»
-                    <title type="html">{gt text='«name.formatForCodeCapital»'}</title>
-                «ENDIF»
+                <title type="html">{$«objName».getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}</title>
                 <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}" />
 
                 {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF»}{/capture}
@@ -99,9 +92,7 @@ class Atom {
                     «ELSEIF !stringFields.empty»
                         {$«objName».«stringFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
                     «ELSE»
-                        «IF leadingField !== null»
-                            {$«objName».«leadingField.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
-                        «ENDIF»
+                        {$«objName».getTitleFromDisplayPattern()|truncate:150:"&hellip;"|default:'-'}
                     «ENDIF»
                     ]]>
                 </summary>
@@ -114,9 +105,7 @@ class Atom {
                     «ELSEIF stringFields.size > 1»
                         {$«objName».«stringFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}
                     «ELSE»
-                        «IF leadingField !== null»
-                            {$«objName».«leadingField.name.formatForCode»|replace:'<br>':'<br />'}
-                        «ENDIF»
+                        {$«objName».getTitleFromDisplayPattern()|replace:'<br>':'<br />'}
                     «ENDIF»
                     ]]>
                 </content>

@@ -34,12 +34,7 @@ class ContentTypeListView {
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         <dl>
             {foreach item='«name.formatForCode»' from=$items}
-                «val leadingField = getLeadingField»
-                «IF leadingField !== null»
-                    <dt>{$«name.formatForCode».«leadingField.name.formatForCode»}</dt>
-                «ELSE»
-                    <dt>{gt text='«name.formatForDisplayCapital»'}</dt>
-                «ENDIF»
+                <dt>{$«name.formatForCode».getTitleFromDisplayPattern()}</dt>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty»
                     {if $«name.formatForCode».«textFields.head.name.formatForCode»}
@@ -63,12 +58,7 @@ class ContentTypeListView {
     def private displayTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         {foreach item='«name.formatForCode»' from=$items}
-            «val leadingField = getLeadingField»
-            «IF leadingField !== null»
-                <h3>{$«name.formatForCode».«leadingField.name.formatForCode»}</h3>
-            «ELSE»
-                <h3>{gt text='«name.formatForDisplayCapital»'}</h3>
-            «ENDIF»
+            <h3>{$«name.formatForCode».getTitleFromDisplayPattern()}</h3>
             «IF app.hasUserController && app.getMainUserController.hasActions('display')»
                 <p>«detailLink(app.appName)»</p>
             «ENDIF»
