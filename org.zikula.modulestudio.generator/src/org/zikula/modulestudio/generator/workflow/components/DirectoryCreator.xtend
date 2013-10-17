@@ -22,7 +22,7 @@ class DirectoryCreator implements IWorkflowComponent {
      *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
-        if (!getDirectory().isEmpty()) {
+        if (!directory.empty) {
             val dirHandle = new File(directory)
             if (!dirHandle.mkdirs) {
                 System.err.println('Error during directory creation.')
