@@ -1180,11 +1180,8 @@ class Repository {
             if ($slimMode === true) {
                 // but for the slim version we select only the basic fields, and no joins
 
-                $titleField = $this->getTitleFieldName();
                 $selection = '«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»tbl.«pkField.name.formatForCode»«ENDFOR»';
-                if ($titleField != '') {
-                    $selection .= ', tbl.' . $titleField;
-                }
+                «addSelectionPartsForDisplayPattern»
                 «IF hasSluggableFields»
                     $selection .= ', tbl.slug';
                 «ENDIF»
@@ -1208,6 +1205,17 @@ class Repository {
 
             return $qb;
         }
+    '''
+
+    def private addSelectionPartsForDisplayPattern(Entity it) '''
+        «val patternParts = displayPattern.split('#')»
+        «FOR patternPart : patternParts»
+            «/* check if patternPart equals a field name */»
+            «var matchedFields = fields.filter[name == patternPart]»
+            «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»
+                $selection .= ', tbl.«patternPart.formatForCode»';
+            «ENDIF»
+        «ENDFOR»
     '''
 
     def private genericBaseQueryWhere(Entity it) '''
