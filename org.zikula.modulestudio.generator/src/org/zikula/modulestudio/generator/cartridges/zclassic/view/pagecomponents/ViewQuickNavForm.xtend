@@ -206,7 +206,7 @@ class ViewQuickNavForm {
                 <div class="form-group">
             «ENDIF»
                 <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
-                {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' slimMode=true assign='listEntries'}
+                {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' useJoins=false assign='listEntries'}
                 <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="">{$lblDefault}</option>
                 {foreach item='option' from=$listEntries}
