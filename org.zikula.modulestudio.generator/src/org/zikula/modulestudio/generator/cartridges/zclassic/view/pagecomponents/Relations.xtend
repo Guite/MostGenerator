@@ -44,10 +44,10 @@ class Relations {
             «IF controller.hasActions('display')»
                 {strip}
                 {if !$nolink}
-                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.getTitleFromDisplayPattern()|replace:"\"":""}">
+                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item->getTitleFromDisplayPattern()|replace:"\"":""}">
                 {/if}
             «ENDIF»
-                {$item.getTitleFromDisplayPattern()}
+                {$item->getTitleFromDisplayPattern()}
             «IF controller.hasActions('display')»
                 {if !$nolink}
                     </a>
@@ -66,7 +66,7 @@ class Relations {
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item.getTitleFromDisplayPattern()|replace:"'":""}}');
+                        «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item->getTitleFromDisplayPattern()|replace:"'":""}}');
                     });
                 /* ]]> */
                 </script>
@@ -76,7 +76,7 @@ class Relations {
                 <br />
                 «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item.getTitleFromDisplayPattern()«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
                 {/if}
             «ENDIF»
             «IF many»

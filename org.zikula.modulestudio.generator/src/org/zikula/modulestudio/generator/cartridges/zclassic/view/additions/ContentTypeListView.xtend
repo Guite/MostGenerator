@@ -34,7 +34,7 @@ class ContentTypeListView {
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         <dl>
             {foreach item='«name.formatForCode»' from=$items}
-                <dt>{$«name.formatForCode».getTitleFromDisplayPattern()}</dt>
+                <dt>{$«name.formatForCode»->getTitleFromDisplayPattern()}</dt>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty»
                     {if $«name.formatForCode».«textFields.head.name.formatForCode»}
@@ -58,7 +58,7 @@ class ContentTypeListView {
     def private displayTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         {foreach item='«name.formatForCode»' from=$items}
-            <h3>{$«name.formatForCode».getTitleFromDisplayPattern()}</h3>
+            <h3>{$«name.formatForCode»->getTitleFromDisplayPattern()}</h3>
             «IF app.hasUserController && app.getMainUserController.hasActions('display')»
                 <p>«detailLink(app.appName)»</p>
             «ENDIF»

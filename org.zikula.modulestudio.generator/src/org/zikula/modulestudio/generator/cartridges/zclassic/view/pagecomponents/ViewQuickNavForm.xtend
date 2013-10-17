@@ -215,7 +215,7 @@ class ViewQuickNavForm {
                     «ELSE»
                         {assign var='entryId' value=$option.«source.getFirstPrimaryKey.name.formatForCode»}
                     «ENDIF»
-                    <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option.getTitleFromDisplayPattern()}</option>
+                    <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option->getTitleFromDisplayPattern()}</option>
                 {/foreach}
                 </select>
             «IF !container.application.targets('1.3.5')»

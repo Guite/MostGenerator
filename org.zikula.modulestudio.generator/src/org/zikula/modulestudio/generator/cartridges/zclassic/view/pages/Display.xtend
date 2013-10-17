@@ -48,7 +48,7 @@ class Display {
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» with-rightbox«ENDIF»">
             «val objName = name.formatForCode»
             {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
-            {assign var='templateTitle' value=$«objName».getTitleFromDisplayPattern()|default:$templateTitle}
+            {assign var='templateTitle' value=$«objName»->getTitleFromDisplayPattern()|default:$templateTitle}
             {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
             «controller.templateHeader(it, appName)»
             «IF !refedElems.empty»
@@ -180,7 +180,7 @@ class Display {
           «IF linkController !== null»
               <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">{strip}
           «ENDIF»
-            {$«relObjName».getTitleFromDisplayPattern()|default:""}
+            {$«relObjName»->getTitleFromDisplayPattern()|default:""}
           «IF linkController !== null»
             {/strip}</a>
             «IF container.application.targets('1.3.5')»
@@ -191,13 +191,13 @@ class Display {
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
-                    «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName».getTitleFromDisplayPattern()|replace:"'":""}}');
+                    «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                 });
             /* ]]> */
             </script>
           «ENDIF»
           {else}
-            {$«relObjName».getTitleFromDisplayPattern()|default:""}
+            {$«relObjName»->getTitleFromDisplayPattern()|default:""}
           {/if}
         {else}
             {gt text='Not set.'}
@@ -317,7 +317,7 @@ class Display {
                     <h4>{gt text='All parents'}</h4>
                     <ul>
                     {foreach item='node' from=$allParents}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node.getTitleFromDisplayPattern()|replace:'"':''}">{$node.getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -327,7 +327,7 @@ class Display {
                 {if $directParent ne null}
                     <h4>{gt text='Direct parent'}</h4>
                     <ul>
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}" title="{$directParent.getTitleFromDisplayPattern()|replace:'"':''}">{$directParent.getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
                     </ul>
                 {/if}
             {/if}
@@ -338,7 +338,7 @@ class Display {
                 <h4>{gt text='All children'}</h4>
                 <ul>
                 {foreach item='node' from=$allChildren}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node.getTitleFromDisplayPattern()|replace:'"':''}">{$node.getTitleFromDisplayPattern()}</a></li>
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                 {/foreach}
                 </ul>
             {/if}
@@ -349,7 +349,7 @@ class Display {
                 <h4>{gt text='Direct children'}</h4>
                 <ul>
                 {foreach item='node' from=$directChildren}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node.getTitleFromDisplayPattern()|replace:'"':''}">{$node.getTitleFromDisplayPattern()}</a></li>
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                 {/foreach}
                 </ul>
             {/if}
@@ -361,7 +361,7 @@ class Display {
                     <h4>{gt text='Predecessors'}</h4>
                     <ul>
                     {foreach item='node' from=$predecessors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node.getTitleFromDisplayPattern()|replace:'"':''}">{$node.getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -372,7 +372,7 @@ class Display {
                     <h4>{gt text='Successors'}</h4>
                     <ul>
                     {foreach item='node' from=$successors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node.getTitleFromDisplayPattern()|replace:'"':''}">{$node.getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -383,7 +383,7 @@ class Display {
                     <h4>{gt text='Siblings'}</h4>
                     <ul>
                     {foreach item='node' from=$preandsuccessors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node.getTitleFromDisplayPattern()|replace:'"':''}">{$node.getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}

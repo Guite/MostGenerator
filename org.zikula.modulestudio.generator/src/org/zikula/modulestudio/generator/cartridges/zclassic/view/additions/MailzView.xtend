@@ -55,7 +55,7 @@ class MailzView {
     '''
 
     def private mailzEntryText(Entity it, String appName) '''
-        {$«name.formatForCode».getTitleFromDisplayPattern()}
+        {$«name.formatForCode»->getTitleFromDisplayPattern()}
         {modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')» fqurl=true}
     '''
 
@@ -84,6 +84,6 @@ class MailzView {
         «ENDIF»'''
 
     def private mailzEntryHtmlLinkText(Entity it, Application app) '''
-        {$«name.formatForCode».getTitleFromDisplayPattern()}
+        {$«name.formatForCode»->getTitleFromDisplayPattern()}
     '''
 }

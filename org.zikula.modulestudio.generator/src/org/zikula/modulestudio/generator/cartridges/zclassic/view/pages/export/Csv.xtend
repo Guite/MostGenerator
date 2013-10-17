@@ -64,7 +64,7 @@ class Csv {
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val mainEntity = (if (!useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        ;"{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».getTitleFromDisplayPattern()|default:''}{/if}"'''
+        ;"{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName»->getTitleFromDisplayPattern()|default:''}{/if}"'''
 
     def private displayRelatedEntries(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
@@ -73,7 +73,7 @@ class Csv {
         ;"
             {if isset($«relObjName») && $«relObjName» ne null}
                 {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
-                {$relatedItem.getTitleFromDisplayPattern()|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
+                {$relatedItem->getTitleFromDisplayPattern()|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
                 {/foreach}
             {/if}
         "'''

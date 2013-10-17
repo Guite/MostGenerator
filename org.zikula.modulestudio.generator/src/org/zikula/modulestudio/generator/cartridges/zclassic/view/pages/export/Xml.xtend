@@ -105,7 +105,7 @@ class Xml {
     def private displayRelatedEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val relObjName = 'item.' + relationAliasName»
-        <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».getTitleFromDisplayPattern()|default:''}{/if}</«relationAliasName.toFirstLower»>
+        <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName»->getTitleFromDisplayPattern()|default:''}{/if}</«relationAliasName.toFirstLower»>
     '''
 
     def private displayRelatedEntries(JoinRelationship it, Controller controller, Boolean useTarget) '''
@@ -115,7 +115,7 @@ class Xml {
         <«relationAliasName.toFirstLower»>
         {if isset($«relObjName») && $«relObjName» ne null}
             {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
-            <«linkEntity.name.formatForCode»>{$relatedItem.getTitleFromDisplayPattern()|default:''}</«linkEntity.name.formatForCode»>
+            <«linkEntity.name.formatForCode»>{$relatedItem->getTitleFromDisplayPattern()|default:''}</«linkEntity.name.formatForCode»>
             {/foreach}
         {/if}
         </«relationAliasName.toFirstLower»>
