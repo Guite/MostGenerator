@@ -1208,14 +1208,21 @@ class Repository {
     '''
 
     def private addSelectionPartsForDisplayPattern(Entity it) '''
-        «val patternParts = displayPattern.split('#')»
-        «FOR patternPart : patternParts»
-            «/* check if patternPart equals a field name */»
-            «var matchedFields = fields.filter[name == patternPart]»
-            «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»
-                $selection .= ', tbl.«patternPart.formatForCode»';
+        «IF displayPattern === null || displayPattern == ''»
+            «val leadingField = getLeadingField»
+            «IF leadingField !== null»
+                $selection .= ', tbl.«leadingField.name.formatForCode»';
             «ENDIF»
-        «ENDFOR»
+        «ELSE»
+            «val patternParts = displayPattern.split('#')»
+            «FOR patternPart : patternParts»
+                «/* check if patternPart equals a field name */»
+                «var matchedFields = fields.filter[name == patternPart]»
+                «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»
+                    $selection .= ', tbl.«patternPart.formatForCode»';
+                «ENDIF»
+            «ENDFOR»
+        «ENDIF»
     '''
 
     def private genericBaseQueryWhere(Entity it) '''
