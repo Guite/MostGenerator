@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -15,14 +16,18 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Delete {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
     @Inject extension Utils = new Utils
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
-        println('Generating ' + controller.formattedName + ' delete templates for entity "' + name.formatForDisplay + '"')
-        fsa.generateFile(templateFile(controller, name, 'delete'), deleteView(appName, controller))
+        val templateFilePath = templateFile(controller, name, 'delete')
+        if (!container.application.shouldBeSkipped(templateFilePath)) {
+            println('Generating ' + controller.formattedName + ' delete templates for entity "' + name.formatForDisplay + '"')
+            fsa.generateFile(templateFilePath, deleteView(appName, controller))
+        }
     }
 
     def private deleteView(Entity it, String appName, Controller controller) '''

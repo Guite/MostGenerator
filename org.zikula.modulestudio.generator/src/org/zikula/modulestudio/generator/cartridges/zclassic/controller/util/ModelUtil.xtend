@@ -4,10 +4,12 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModelUtil {
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -20,8 +22,12 @@ class ModelUtil {
         println('Generating utility class for model layer')
         val utilPath = getAppSourceLibPath + 'Util/'
         val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        fsa.generateFile(utilPath + 'Base/Model' + utilSuffix + '.php', modelFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Model' + utilSuffix + '.php', modelFunctionsFile)
+        if (!shouldBeSkipped(utilPath + 'Base/Model' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'Base/Model' + utilSuffix + '.php', modelFunctionsBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'Model' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'Model' + utilSuffix + '.php', modelFunctionsFile)
+        }
     }
 
     def private modelFunctionsBaseFile(Application it) '''

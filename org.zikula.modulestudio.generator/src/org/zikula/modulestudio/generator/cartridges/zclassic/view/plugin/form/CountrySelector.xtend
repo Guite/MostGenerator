@@ -5,11 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class CountrySelector {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -17,9 +19,15 @@ class CountrySelector {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        fsa.generateFile(formPluginPath + 'Base/CountrySelector.php', formCountrySelectorBaseFile)
-        fsa.generateFile(formPluginPath + 'CountrySelector.php', formCountrySelectorFile)
-        fsa.generateFile(viewPluginFilePath('function', 'CountrySelector'), formCountrySelectorPluginFile)
+        if (!shouldBeSkipped(formPluginPath + 'Base/CountrySelector.php')) {
+            fsa.generateFile(formPluginPath + 'Base/CountrySelector.php', formCountrySelectorBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'CountrySelector.php')) {
+            fsa.generateFile(formPluginPath + 'CountrySelector.php', formCountrySelectorFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('function', 'CountrySelector'))) {
+            fsa.generateFile(viewPluginFilePath('function', 'CountrySelector'), formCountrySelectorPluginFile)
+        }
     }
 
     def private formCountrySelectorBaseFile(Application it) '''

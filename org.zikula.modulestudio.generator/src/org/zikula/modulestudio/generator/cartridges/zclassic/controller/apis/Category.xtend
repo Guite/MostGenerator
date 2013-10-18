@@ -5,12 +5,14 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Category {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -22,8 +24,12 @@ class Category {
         val apiPath = getAppSourceLibPath + 'Api/'
         val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
         val apiFileName = 'Category' + apiClassSuffix + '.php'
-        fsa.generateFile(apiPath + 'Base/' + apiFileName, categoryBaseFile)
-        fsa.generateFile(apiPath + apiFileName, categoryFile)
+        if (!shouldBeSkipped(apiPath + 'Base/' + apiFileName)) {
+            fsa.generateFile(apiPath + 'Base/' + apiFileName, categoryBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(apiPath + apiFileName)) {
+            fsa.generateFile(apiPath + apiFileName, categoryFile)
+        }
     }
 
     def private categoryBaseFile(Application it) '''

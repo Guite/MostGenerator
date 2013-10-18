@@ -10,19 +10,23 @@ import de.guite.modulestudio.metamodel.modulestudio.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Config {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating config template')
         val templatePath = getViewPath + (if (targets('1.3.5')) configController.formatForDB else configController.formatForDB.toFirstUpper) + '/'
-        fsa.generateFile(templatePath + 'config.tpl', configView)
+        if (!shouldBeSkipped(templatePath + 'config.tpl')) {
+            println('Generating config template')
+            fsa.generateFile(templatePath + 'config.tpl', configView)
+        }
     }
 
     def private configView(Application it) '''

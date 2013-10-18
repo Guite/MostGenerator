@@ -5,11 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserInput {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -17,9 +19,15 @@ class UserInput {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        fsa.generateFile(formPluginPath + 'Base/UserInput.php', formUserInputBaseFile)
-        fsa.generateFile(formPluginPath + 'UserInput.php', formUserInputFile)
-        fsa.generateFile(viewPluginFilePath('function', 'UserInput'), formUserInputPluginFile)
+        if (!shouldBeSkipped(formPluginPath + 'Base/UserInput.php')) {
+            fsa.generateFile(formPluginPath + 'Base/UserInput.php', formUserInputBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'UserInput.php')) {
+            fsa.generateFile(formPluginPath + 'UserInput.php', formUserInputFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('function', 'UserInput'))) {
+            fsa.generateFile(viewPluginFilePath('function', 'UserInput'), formUserInputPluginFile)
+        }
     }
 
     def private formUserInputBaseFile(Application it) '''

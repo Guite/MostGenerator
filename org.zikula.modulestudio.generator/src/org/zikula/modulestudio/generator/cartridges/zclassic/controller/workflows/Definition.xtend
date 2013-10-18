@@ -4,17 +4,19 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
+import java.util.ArrayList
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
-import java.util.ArrayList
 
 /**
  * Workflow definitions in xml format.
  */
 class Definition {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
@@ -47,7 +49,9 @@ class Definition {
         this.wfType = wfType
         // generate only those states which are required by any entity using this workflow type
         this.states = getRequiredStateList(app, wfType)
-        fsa.generateFile(outputPath + wfType.textualName + '.xml', xmlSchema)
+        if (!app.shouldBeSkipped(outputPath + wfType.textualName + '.xml')) {
+            fsa.generateFile(outputPath + wfType.textualName + '.xml', xmlSchema)
+        }
     }
 
     def private xmlSchema() '''

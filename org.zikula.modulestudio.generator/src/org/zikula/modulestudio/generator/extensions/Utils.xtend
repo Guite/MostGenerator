@@ -16,6 +16,11 @@ class Utils {
     @Inject extension FormattingExtensions = new FormattingExtensions
 
     /**
+     * Helper methods for generator settings.
+     */
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+
+    /**
      * Returns the version number of ModuleStudio.
      *
      * @return String The version number.
@@ -36,7 +41,7 @@ class Utils {
     /**
      * Returns the formatted name of the application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The formatted name.
      */
@@ -48,7 +53,7 @@ class Utils {
     /**
      * Returns the base namespace of the application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The formatted namespace.
      */
@@ -60,7 +65,7 @@ class Utils {
     /**
      * Returns the lowercase application-specific prefix.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The prefix.
      */
@@ -71,13 +76,13 @@ class Utils {
     /**
      * Checks whether a given core version is targeted or not.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      * @param version The version in question
      *
      * @return Boolean The result.
      */
     def targets(Application it, String version) {
-        switch (targetCoreVersion) {
+        switch (getCoreVersion) {
             case CoreVersion.ZK135:
                 (version == '1.3.5')
             case CoreVersion.ZK136:
@@ -90,7 +95,7 @@ class Utils {
     /**
      * Checks whether any variables are part of the model or not.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return Boolean The result.
      */
@@ -101,7 +106,7 @@ class Utils {
     /**
      * Checks whether there exist multiple variables containers.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return Boolean The result.
      */
@@ -112,7 +117,7 @@ class Utils {
     /**
      * Returns the variables containers sorted by their sort order.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return List<Variables> The selected list.
      */
@@ -123,7 +128,7 @@ class Utils {
     /**
      * Returns all variables containers for a given application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return List<Variables> The selected list.
      */
@@ -134,7 +139,7 @@ class Utils {
     /**
      * Returns all variables for a given application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return List<Variable> The selected list.
      */

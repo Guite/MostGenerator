@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Variable
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -14,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class InstallerView {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -21,12 +23,21 @@ class InstallerView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'init' else 'Init') + '/'
-        fsa.generateFile(templatePath + 'interactive.tpl', tplInit)
-        if (needsConfig)
+        if (!shouldBeSkipped(templatePath + 'interactive.tpl')) {
+            fsa.generateFile(templatePath + 'interactive.tpl', tplInit)
+        }
+        if (needsConfig && !shouldBeSkipped(templatePath + 'step2.tpl')) {
             fsa.generateFile(templatePath + 'step2.tpl', tplInitStep2)
-        fsa.generateFile(templatePath + 'step3.tpl', tplInitStep3)
-        fsa.generateFile(templatePath + 'update.tpl', tplUpdate)
-        fsa.generateFile(templatePath + 'delete.tpl', tplDelete)
+        }
+        if (!shouldBeSkipped(templatePath + 'step3.tpl')) {
+            fsa.generateFile(templatePath + 'step3.tpl', tplInitStep3)
+        }
+        if (!shouldBeSkipped(templatePath + 'update.tpl')) {
+            fsa.generateFile(templatePath + 'update.tpl', tplUpdate)
+        }
+        if (!shouldBeSkipped(templatePath + 'delete.tpl')) {
+            fsa.generateFile(templatePath + 'delete.tpl', tplDelete)
+        }
     }
 
     def private tplInit(Application it) '''

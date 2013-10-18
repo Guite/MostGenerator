@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.NewsletterView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Newsletter {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -24,7 +26,9 @@ class Newsletter {
         val pluginPath = getAppSourceLibPath + 'NewsletterPlugin/'
         val pluginClassSuffix = if (!targets('1.3.5')) 'Plugin' else ''
         val pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
-        fsa.generateFile(pluginPath + pluginFileName, newsletterFile)
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(pluginPath + pluginFileName)) {
+            fsa.generateFile(pluginPath + pluginFileName, newsletterFile)
+        }
         new NewsletterView().generate(it, fsa)
     }
 

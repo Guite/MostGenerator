@@ -13,20 +13,25 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Csv {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
 
     SimpleFields fieldHelper = new SimpleFields
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
-        println('Generating ' + controller.formattedName + ' csv view templates for entity "' + name.formatForDisplay + '"')
-        fsa.generateFile(templateFileWithExtension(controller, name, 'view', 'csv'), csvView(appName, controller))
+        val templateFilePath = templateFileWithExtension(controller, name, 'view', 'csv')
+        if (!container.application.shouldBeSkipped(templateFilePath)) {
+            println('Generating ' + controller.formattedName + ' csv view templates for entity "' + name.formatForDisplay + '"')
+            fsa.generateFile(templateFilePath, csvView(appName, controller))
+        }
     }
 
     def private csvView(Entity it, String appName, Controller controller) '''

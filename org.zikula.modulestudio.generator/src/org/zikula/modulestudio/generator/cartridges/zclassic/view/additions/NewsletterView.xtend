@@ -3,10 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class NewsletterView {
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -14,7 +16,9 @@ class NewsletterView {
         val pluginClassSuffix = if (!targets('1.3.5')) 'Plugin' else ''
         val templateFileName = 'ItemList' + pluginClassSuffix + '.tpl'
         val templatePath = getViewPath + 'plugin_config/'
-        fsa.generateFile(templatePath + templateFileName, editTemplate)
+        if (!shouldBeSkipped(templatePath + templateFileName)) {
+            fsa.generateFile(templatePath + templateFileName, editTemplate)
+        }
     }
 
     def private editTemplate(Application it) '''

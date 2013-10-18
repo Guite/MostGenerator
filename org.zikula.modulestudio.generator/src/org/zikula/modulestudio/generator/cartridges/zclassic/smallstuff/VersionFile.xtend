@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -16,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class VersionFile {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -27,17 +29,21 @@ class VersionFile {
     def generate(Application it, IFileSystemAccess fsa) {
         val versionPrefix = if (!targets('1.3.5')) name.formatForCodeCapital + 'Module' else ''
         val versionFileName = versionPrefix + 'Version.php'
-        fsa.generateFile(getAppSourceLibPath + 'Base/' + versionFileName, versionBaseFile)
-        fsa.generateFile(getAppSourceLibPath + versionFileName, versionFile)
+        if (!shouldBeSkipped(getAppSourceLibPath + 'Base/' + versionFileName)) {
+            fsa.generateFile(getAppSourceLibPath + 'Base/' + versionFileName, versionBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + versionFileName)) {
+            fsa.generateFile(getAppSourceLibPath + versionFileName, versionFile)
+        }
     }
 
     def private versionBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
+        «fh.phpFileHeaderVersionClass(it)»
         «appInfoBaseImpl»
     '''
 
     def private versionFile(Application it) '''
-        «fh.phpFileHeader(it)»
+        «fh.phpFileHeaderVersionClass(it)»
         «appInfoImpl»
     '''
 

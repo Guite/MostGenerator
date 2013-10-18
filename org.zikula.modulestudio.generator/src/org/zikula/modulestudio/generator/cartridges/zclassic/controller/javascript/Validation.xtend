@@ -7,12 +7,14 @@ import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Validation {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -21,8 +23,10 @@ class Validation {
      * Entry point for the javascript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating javascript for validation')
-        fsa.generateFile(getAppJsPath + appName + '_validation.js', generate)
+        if (!shouldBeSkipped(getAppJsPath + appName + '_validation.js')) {
+            println('Generating javascript for validation')
+            fsa.generateFile(getAppJsPath + appName + '_validation.js', generate)
+        }
     }
 
     def private generate(Application it) '''

@@ -4,11 +4,13 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewUtil {
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -22,8 +24,12 @@ class ViewUtil {
         println('Generating utility class for view layer')
         val utilPath = getAppSourceLibPath + 'Util/'
         val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        fsa.generateFile(utilPath + 'Base/View' + utilSuffix + '.php', viewFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'View' + utilSuffix + '.php', viewFunctionsFile)
+        if (!shouldBeSkipped(utilPath + 'Base/View' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'Base/View' + utilSuffix + '.php', viewFunctionsBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'View' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'View' + utilSuffix + '.php', viewFunctionsFile)
+        }
     }
 
     def private viewFunctionsBaseFile(Application it) '''

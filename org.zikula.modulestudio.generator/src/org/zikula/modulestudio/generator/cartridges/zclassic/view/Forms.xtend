@@ -11,6 +11,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.EditAction
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Relations
@@ -18,17 +19,18 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
-import de.guite.modulestudio.metamodel.modulestudio.ListField
 
 class Forms {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
@@ -57,11 +59,14 @@ class Forms {
      * Entry point for form templates for each entity.
      */
     def private generate(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) {
-        println('Generating ' + controller.formattedName + ' edit form templates for entity "' + name.formatForDisplay + '"')
-        fsa.generateFile(editTemplateFile(controller, name, actionName), '''
-            «formTemplateHeader(app, controller, actionName)»
-            «formTemplateBody(app, controller, actionName, fsa)»
-        ''')
+        val templatePath = editTemplateFile(controller, name, actionName)
+        if (!app.shouldBeSkipped(templatePath)) {
+            println('Generating ' + controller.formattedName + ' edit form templates for entity "' + name.formatForDisplay + '"')
+            fsa.generateFile(templatePath, '''
+                «formTemplateHeader(app, controller, actionName)»
+                «formTemplateBody(app, controller, actionName, fsa)»
+            ''')
+        }
         relationHelper.generateInclusionTemplate(it, app, controller, fsa)
     }
 
@@ -423,7 +428,9 @@ class Forms {
 
     def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.5')) formattedName else formattedName.toFirstUpper) + '/'
-        fsa.generateFile(templatePath + 'inlineRedirectHandler.tpl', inlineRedirectHandlerImpl(app))
+        if (!app.shouldBeSkipped(templatePath + 'inlineRedirectHandler.tpl')) {
+            fsa.generateFile(templatePath + 'inlineRedirectHandler.tpl', inlineRedirectHandlerImpl(app))
+        }
     }
 
     def private inlineRedirectHandlerImpl(Controller it, Application app) '''

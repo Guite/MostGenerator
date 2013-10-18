@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -13,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class EditFunctions {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
@@ -23,8 +25,10 @@ class EditFunctions {
      * Entry point for the javascript file with edit functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating javascript for edit functions')
-        fsa.generateFile(getAppJsPath + appName + '_editFunctions.js', generate)
+        if (!shouldBeSkipped(getAppJsPath + appName + '_editFunctions.js')) {
+            println('Generating javascript for edit functions')
+            fsa.generateFile(getAppJsPath + appName + '_editFunctions.js', generate)
+        }
     }
 
     def private generate(Application it) '''

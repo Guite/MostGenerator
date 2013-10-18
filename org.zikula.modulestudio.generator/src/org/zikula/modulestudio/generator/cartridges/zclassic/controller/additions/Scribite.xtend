@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -13,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
  */
 class Scribite {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -20,37 +22,69 @@ class Scribite {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating Scribite support')
         var docPath = getAppDocPath + 'scribite/'
-        fsa.generateFile(docPath + 'integration.txt', integration)
+        if (!shouldBeSkipped(docPath + 'integration.txt')) {
+            fsa.generateFile(docPath + 'integration.txt', integration)
+        }
 
         docPath = docPath + 'plugins/'
 
-        //fsa.generateFile(docPath + 'Aloha/vendor/aloha/index.html', msUrl)
+        if (!shouldBeSkipped(docPath + 'Aloha/vendor/aloha/index.html')) {
+            //fsa.generateFile(docPath + 'Aloha/vendor/aloha/index.html', msUrl)
+        }
 
         var pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
-        fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
-        fsa.generateFile(pluginPath + 'lang/de.js', ckLangDe)
-        fsa.generateFile(pluginPath + 'lang/en.js', ckLangEn)
-        fsa.generateFile(pluginPath + 'lang/nl.js', ckLangNl)
+        if (!shouldBeSkipped(pluginPath + 'plugin.js')) {
+            fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
+        }
+        if (!shouldBeSkipped(pluginPath + 'lang/de.js')) {
+            fsa.generateFile(pluginPath + 'lang/de.js', ckLangDe)
+        }
+        if (!shouldBeSkipped(pluginPath + 'lang/en.js')) {
+            fsa.generateFile(pluginPath + 'lang/en.js', ckLangEn)
+        }
+        if (!shouldBeSkipped(pluginPath + 'lang/nl.js')) {
+            fsa.generateFile(pluginPath + 'lang/nl.js', ckLangNl)
+        }
 
-        //fsa.generateFile(docPath + 'MarkItUp/vendor/markitup/index.html', msUrl)
+        if (!shouldBeSkipped(docPath + 'MarkItUp/vendor/markitup/index.html')) {
+            //fsa.generateFile(docPath + 'MarkItUp/vendor/markitup/index.html', msUrl)
+        }
 
-        //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
+        if (!shouldBeSkipped(docPath + 'NicEdit/vendor/nicedit/index.html')) {
+            //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
+        }
 
         pluginPath = docPath + (if (targets('1.3.5')) 'TineMCE' else 'TinyMce') + '/vendor/tiny_mce/plugins/' + name.formatForDB + '/'
-        fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
-        fsa.generateFile(pluginPath + 'langs/de.js', tinyLangDe)
-        fsa.generateFile(pluginPath + 'langs/en.js', tinyLangEn)
-        fsa.generateFile(pluginPath + 'langs/nl.js', tinyLangNl)
+        if (!shouldBeSkipped(pluginPath + 'editor_plugin.js')) {
+            fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
+        }
+        if (!shouldBeSkipped(pluginPath + 'langs/de.js')) {
+            fsa.generateFile(pluginPath + 'langs/de.js', tinyLangDe)
+        }
+        if (!shouldBeSkipped(pluginPath + 'langs/en.js')) {
+            fsa.generateFile(pluginPath + 'langs/en.js', tinyLangEn)
+        }
+        if (!shouldBeSkipped(pluginPath + 'langs/nl.js')) {
+            fsa.generateFile(pluginPath + 'langs/nl.js', tinyLangNl)
+        }
 
         pluginPath = docPath + 'WYMeditor/vendor/wymeditor/plugins/' + name.formatForDB + '/'
-        //fsa.generateFile(pluginPath + 'index.html', msUrl)
+        if (!shouldBeSkipped(pluginPath + 'index.html')) {
+            //fsa.generateFile(pluginPath + 'index.html', msUrl)
+        }
 
-        //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
+        if (!shouldBeSkipped(docPath + 'Wysihtml5/javascript/index.html')) {
+            //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
+        }
 
         pluginPath = docPath + 'Xinha/' + (if (targets('1.3.5')) 'plugins' else 'vendor') + '/xinha/plugins/' + appName + '/'
-        fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
+        if (!shouldBeSkipped(pluginPath + appName + '.js')) {
+            fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
+        }
 
-        //fsa.generateFile(docPath + 'YUI/index.html', msUrl)
+        if (!shouldBeSkipped(docPath + 'YUI/index.html')) {
+            //fsa.generateFile(docPath + 'YUI/index.html', msUrl)
+        }
     }
 
     def private integration(Application it) '''

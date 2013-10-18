@@ -5,10 +5,12 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockModerationView
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockModeration {
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -19,8 +21,12 @@ class BlockModeration {
         val blockPath = getAppSourceLibPath + 'Block/'
         val blockClassSuffix = if (!targets('1.3.5')) 'Block' else ''
         val blockFileName = 'Moderation' + blockClassSuffix + '.php'
-        fsa.generateFile(blockPath + 'Base/' + blockFileName, moderationBlockBaseFile)
-        fsa.generateFile(blockPath + blockFileName, moderationBlockFile)
+        if (!shouldBeSkipped(blockPath + 'Base/' + blockFileName)) {
+            fsa.generateFile(blockPath + 'Base/' + blockFileName, moderationBlockBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(blockPath + blockFileName)) {
+            fsa.generateFile(blockPath + blockFileName, moderationBlockFile)
+        }
         new BlockModerationView().generate(it, fsa)
     }
 

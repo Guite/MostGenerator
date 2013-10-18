@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -25,6 +26,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Display {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -35,9 +37,15 @@ class Display {
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' display templates for entity "' + name.formatForDisplay + '"')
-        fsa.generateFile(templateFile(controller, name, 'display'), displayView(appName, controller))
+        var templateFilePath = templateFile(controller, name, 'display')
+        if (!container.application.shouldBeSkipped(templateFilePath)) {
+            fsa.generateFile(templateFilePath, displayView(appName, controller))
+        }
         if (tree != EntityTreeType::NONE) {
-            fsa.generateFile(templateFile(controller, name, 'display_treeRelatives'), treeRelatives(appName, controller))
+            templateFilePath = templateFile(controller, name, 'display_treeRelatives')
+            if (!container.application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, treeRelatives(appName, controller))
+            }
         }
     }
 

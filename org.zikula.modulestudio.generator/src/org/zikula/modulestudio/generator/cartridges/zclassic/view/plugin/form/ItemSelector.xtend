@@ -5,13 +5,15 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ItemSelector {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
@@ -21,9 +23,15 @@ class ItemSelector {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        fsa.generateFile(formPluginPath + 'Base/ItemSelector.php', itemSelectorBaseFile)
-        fsa.generateFile(formPluginPath + 'ItemSelector.php', itemSelectorFile)
-        fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), itemSelectorPluginFile)
+        if (!shouldBeSkipped(formPluginPath + 'Base/ItemSelector.php')) {
+            fsa.generateFile(formPluginPath + 'Base/ItemSelector.php', itemSelectorBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'ItemSelector.php')) {
+            fsa.generateFile(formPluginPath + 'ItemSelector.php', itemSelectorFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('function', 'ItemSelector'))) {
+            fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), itemSelectorPluginFile)
+        }
     }
 
     def private itemSelectorBaseFile(Application it) '''

@@ -155,6 +155,13 @@ class ControllerExtensions {
     }
 
     /**
+     * Returns a list of all custom actions contained by a given controller.
+     */
+    def getCustomActions(Controller it) {
+        actions.filter(CustomAction)
+    }
+
+    /**
      * Retrieves an integer value defining which relation edit type will be implemented.
      * This mapping is done to have a more appropriate logic inside the generator.
      * Possible values are:

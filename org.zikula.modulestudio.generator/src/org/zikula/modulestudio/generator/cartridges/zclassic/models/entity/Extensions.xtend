@@ -12,6 +12,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
@@ -20,6 +21,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Extensions {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
@@ -393,14 +395,20 @@ class Extensions {
         val repositoryPath = entityPath + 'Repository/'
         val repositoryFileName = name.formatForCodeCapital + classType.formatForCodeCapital + '.php'
         if (!isInheriting) {
-            fsa.generateFile(entityPath + 'Base/' + entityPrefix + entityFileName, extensionClassBaseFile(it, app, classType))
-            if (classType != 'closure') {
+            if (!app.shouldBeSkipped(entityPath + 'Base/' + entityPrefix + entityFileName)) {
+                fsa.generateFile(entityPath + 'Base/' + entityPrefix + entityFileName, extensionClassBaseFile(it, app, classType))
+            }
+            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + 'Base/' + repositoryFileName)) {
                 fsa.generateFile(repositoryPath + 'Base/' + repositoryFileName, extensionClassRepositoryBaseFile(it, app, classType))
             }
         }
-        fsa.generateFile(entityPath + entityFileName, extensionClassFile(it, app, classType))
-        if (classType != 'closure') {
-            fsa.generateFile(repositoryPath + repositoryFileName, extensionClassRepositoryFile(it, app, classType))
+        if (!app.generateOnlyBaseClasses) {
+            if (!app.shouldBeSkipped(entityPath + entityFileName)) {
+                fsa.generateFile(entityPath + entityFileName, extensionClassFile(it, app, classType))
+            }
+            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + repositoryFileName)) {
+                fsa.generateFile(repositoryPath + repositoryFileName, extensionClassRepositoryFile(it, app, classType))
+            }
         }
     }
 

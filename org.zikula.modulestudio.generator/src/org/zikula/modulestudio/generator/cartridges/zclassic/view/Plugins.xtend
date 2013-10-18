@@ -27,6 +27,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Re
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.UserInput
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -34,6 +35,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Plugins {
     @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension Utils = new Utils
@@ -71,7 +73,7 @@ class Plugins {
             new TreeJS().generate(it, fsa)
             new TreeSelection().generate(it, fsa)
         }
-        if (needsApproval) {
+        if (generateModerationPanel && needsApproval) {
             new ModerationObjects().generate(it, fsa)
         }
     }

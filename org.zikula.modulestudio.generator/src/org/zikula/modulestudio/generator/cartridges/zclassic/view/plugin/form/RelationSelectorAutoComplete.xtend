@@ -5,11 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationSelectorAutoComplete {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -17,9 +19,15 @@ class RelationSelectorAutoComplete {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        fsa.generateFile(formPluginPath + 'Base/RelationSelectorAutoComplete.php', relationSelectorBaseFile)
-        fsa.generateFile(formPluginPath + 'RelationSelectorAutoComplete.php', relationSelectorFile)
-        fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorAutoComplete'), relationSelectorPluginFile)
+        if (!shouldBeSkipped(formPluginPath + 'Base/RelationSelectorAutoComplete.php')) {
+            fsa.generateFile(formPluginPath + 'Base/RelationSelectorAutoComplete.php', relationSelectorBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'RelationSelectorAutoComplete.php')) {
+            fsa.generateFile(formPluginPath + 'RelationSelectorAutoComplete.php', relationSelectorFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('function', 'RelationSelectorAutoComplete'))) {
+            fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorAutoComplete'), relationSelectorPluginFile)
+        }
     }
 
     def private relationSelectorBaseFile(Application it) '''

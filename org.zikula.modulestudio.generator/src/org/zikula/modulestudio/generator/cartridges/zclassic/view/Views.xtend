@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.CustomAction
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -29,6 +28,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed.Ato
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed.Rss
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -38,6 +38,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Views {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -61,19 +62,29 @@ class Views {
                     for (entity : getAllEntities) pageHelperView.generate(entity, appName, controller, 3, fsa)
                     var pageHelperViewTree = new ViewHierarchy()
                     for (entity : getTreeEntities) pageHelperViewTree.generate(entity, appName, controller, fsa)
-                    var pageHelperCsv = new Csv()
-                    for (entity : getAllEntities) pageHelperCsv.generate(entity, appName, controller, fsa)
-                    var pageHelperRss = new Rss()
-                    for (entity : getAllEntities) pageHelperRss.generate(entity, appName, controller, fsa)
-                    var pageHelperAtom = new Atom()
-                    for (entity : getAllEntities) pageHelperAtom.generate(entity, appName, controller, fsa)
+                    if (generateCsvTemplates) {
+                        var pageHelperCsv = new Csv()
+                        for (entity : getAllEntities) pageHelperCsv.generate(entity, appName, controller, fsa)
+                    }
+                    if (generateRssTemplates) {
+                        var pageHelperRss = new Rss()
+                        for (entity : getAllEntities) pageHelperRss.generate(entity, appName, controller, fsa)
+                    }
+                    if (generateAtomTemplates) {
+                        var pageHelperAtom = new Atom()
+                        for (entity : getAllEntities) pageHelperAtom.generate(entity, appName, controller, fsa)
+                    }
                 }
                 if (controller.hasActions('view') || controller.hasActions('display')) {
-                    var pageHelperXml = new Xml()
-                    for (entity : getAllEntities) pageHelperXml.generate(entity, appName, controller, fsa)
-                    var pageHelperJson = new Json()
-                    for (entity : getAllEntities) pageHelperJson.generate(entity, appName, controller, fsa)
-                    if (hasGeographical) {
+                    if (generateXmlTemplates) {
+                        var pageHelperXml = new Xml()
+                        for (entity : getAllEntities) pageHelperXml.generate(entity, appName, controller, fsa)
+                    }
+                    if (generateJsonTemplates) {
+                        var pageHelperJson = new Json()
+                        for (entity : getAllEntities) pageHelperJson.generate(entity, appName, controller, fsa)
+                    }
+                    if (generateKmlTemplates && hasGeographical) {
                         var pageHelperKml = new Kml()
                         for (entity : getAllEntities) pageHelperKml.generate(entity, appName, controller, fsa)
                     }
@@ -87,26 +98,30 @@ class Views {
                     for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
                 }
                 var customHelper = new Custom()
-                for (action : controller.actions.filter(CustomAction)) customHelper.generate(action, it, controller, fsa)
+                for (action : controller.getCustomActions) {
+                    customHelper.generate(action, it, controller, fsa)
+                }
 
                 if (controller.hasActions('display')) {
                     // TODO: use relations to generate only required ones (???)
                     for (entity : getAllEntities) {
                         relationHelper.displayItemList(entity, it, controller, false, fsa)
                         relationHelper.displayItemList(entity, it, controller, true, fsa)
-                        relationHelper.displayItemList(entity, it, controller, false, fsa)
-                        relationHelper.displayItemList(entity, it, controller, true, fsa)
                     }
                 }
             }
-            if (hasAttributableEntities)
+            if (hasAttributableEntities) {
                 new Attributes().generate(it, controller, fsa)
-            if (hasCategorisableEntities)
+            }
+            if (hasCategorisableEntities) {
                 new Categories().generate(it, controller, fsa)
-            if (hasStandardFieldEntities)
+            }
+            if (hasStandardFieldEntities) {
                 new StandardFields().generate(it, controller, fsa)
-            if (hasMetaDataEntities)
+            }
+            if (hasMetaDataEntities) {
                 new MetaData().generate(it, controller, fsa)
+            }
         }
         if (!targets('1.3.5')) {
             new FilterSyntaxDialog().generate(it, fsa)
@@ -161,7 +176,7 @@ class Views {
                     {modulelinks modname='«appName»' type='«controller.formattedName»'}
                 «ENDIF»
             «ENDIF»
-            «IF needsApproval && controller.tempIsUserController»
+            «IF generateModerationPanel && needsApproval && controller.tempIsUserController»
                 {nocache}
                     {«appName.formatForDB»ModerationObjects assign='moderationObjects'}
                     {if count($moderationObjects) gt 0}
@@ -186,7 +201,9 @@ class Views {
     def private footerImpl(Application it, Controller controller) '''
         {* purpose of this template: footer for «controller.formattedName» area *}
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            «new FileHelper().msWeblink(it)»
+            «IF generatePoweredByBacklinksIntoFooterTemplates»
+                «new FileHelper().msWeblink(it)»
+            «ENDIF»
             «IF controller.tempIsAdminController»
                 {adminfooter}
             «ENDIF»

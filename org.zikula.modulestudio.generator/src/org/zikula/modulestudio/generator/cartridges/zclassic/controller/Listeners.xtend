@@ -20,6 +20,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Users
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -27,6 +28,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Listeners {
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -34,56 +36,80 @@ class Listeners {
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     FileHelper fh = new FileHelper
+    IFileSystemAccess fsa
+    Application app
+    Boolean isBase
+
+    String listenerPath
+    String listenerSuffix
 
     /**
      * Entry point for persistent event listeners.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        this.fsa = fsa
+        this.app = it
+        listenerSuffix = (if (targets('1.3.5')) '' else 'Listener') + '.php'
+
         println('Generating event listener base classes')
-        val listenerBasePath = getAppSourceLibPath + 'Listener/Base/'
-        val listenerSuffix = (if (targets('1.3.5')) '' else 'Listener') + '.php'
-        fsa.generateFile(listenerBasePath + 'Core' + listenerSuffix, listenersCoreFile(true))
-        fsa.generateFile(listenerBasePath + 'FrontController' + listenerSuffix, listenersFrontControllerFile(true))
-        fsa.generateFile(listenerBasePath + 'Installer' + listenerSuffix, listenersInstallerFile(true))
-        fsa.generateFile(listenerBasePath + 'ModuleDispatch' + listenerSuffix, listenersModuleDispatchFile(true))
-        fsa.generateFile(listenerBasePath + 'Mailer' + listenerSuffix, listenersMailerFile(true))
-        fsa.generateFile(listenerBasePath + 'Page' + listenerSuffix, listenersPageFile(true))
+        listenerPath = getAppSourceLibPath + 'Listener/Base/'
+        isBase = true
+
+        listenerFile('Core', listenersCoreFile)
+        listenerFile('FrontController', listenersFrontControllerFile)
+        listenerFile('Installer', listenersInstallerFile)
+        listenerFile('ModuleDispatch', listenersModuleDispatchFile)
+        listenerFile('Mailer', listenersMailerFile)
+        listenerFile('Page', listenersPageFile)
         if (targets('1.3.5')) {
-            fsa.generateFile(listenerBasePath + 'Errors' + listenerSuffix, listenersErrorsFile(true))
+            listenerFile('Errors', listenersErrorsFile)
         }
-        fsa.generateFile(listenerBasePath + 'Theme' + listenerSuffix, listenersThemeFile(true))
-        fsa.generateFile(listenerBasePath + 'View' + listenerSuffix, listenersViewFile(true))
-        fsa.generateFile(listenerBasePath + 'UserLogin' + listenerSuffix, listenersUserLoginFile(true))
-        fsa.generateFile(listenerBasePath + 'UserLogout' + listenerSuffix, listenersUserLogoutFile(true))
-        fsa.generateFile(listenerBasePath + 'User' + listenerSuffix, listenersUserFile(true))
-        fsa.generateFile(listenerBasePath + 'UserRegistration' + listenerSuffix, listenersUserRegistrationFile(true))
-        fsa.generateFile(listenerBasePath + 'Users' + listenerSuffix, listenersUsersFile(true))
-        fsa.generateFile(listenerBasePath + 'Group' + listenerSuffix, listenersGroupFile(true))
-        fsa.generateFile(listenerBasePath + 'ThirdParty' + listenerSuffix, listenersThirdPartyFile(true))
+        listenerFile('Theme', listenersThemeFile)
+        listenerFile('View', listenersViewFile)
+        listenerFile('UserLogin', listenersUserLoginFile)
+        listenerFile('UserLogout', listenersUserLogoutFile)
+        listenerFile('User', listenersUserFile)
+        listenerFile('UserRegistration', listenersUserRegistrationFile)
+        listenerFile('Users', listenersUsersFile)
+        listenerFile('Group', listenersGroupFile)
+        listenerFile('ThirdParty', listenersThirdPartyFile)
+
+        if (generateOnlyBaseClasses) {
+            return
+        }
 
         println('Generating event listener implementation classes')
-        val listenerPath = getAppSourceLibPath + 'Listener/'
-        fsa.generateFile(listenerPath + 'Core' + listenerSuffix, listenersCoreFile(false))
-        fsa.generateFile(listenerPath + 'FrontController' + listenerSuffix, listenersFrontControllerFile(false))
-        fsa.generateFile(listenerPath + 'Installer' + listenerSuffix, listenersInstallerFile(false))
-        fsa.generateFile(listenerPath + 'ModuleDispatch' + listenerSuffix, listenersModuleDispatchFile(false))
-        fsa.generateFile(listenerPath + 'Mailer' + listenerSuffix, listenersMailerFile(false))
-        fsa.generateFile(listenerPath + 'Page' + listenerSuffix, listenersPageFile(false))
+        listenerPath = getAppSourceLibPath + 'Listener/'
+        isBase = false
+
+        listenerFile('Core', listenersCoreFile)
+        listenerFile('FrontController', listenersFrontControllerFile)
+        listenerFile('Installer', listenersInstallerFile)
+        listenerFile('ModuleDispatch', listenersModuleDispatchFile)
+        listenerFile('Mailer', listenersMailerFile)
+        listenerFile('Page', listenersPageFile)
         if (targets('1.3.5')) {
-            fsa.generateFile(listenerPath + 'Errors' + listenerSuffix, listenersErrorsFile(false))
+            listenerFile('Errors', listenersErrorsFile)
         }
-        fsa.generateFile(listenerPath + 'Theme' + listenerSuffix, listenersThemeFile(false))
-        fsa.generateFile(listenerPath + 'View' + listenerSuffix, listenersViewFile(false))
-        fsa.generateFile(listenerPath + 'UserLogin' + listenerSuffix, listenersUserLoginFile(false))
-        fsa.generateFile(listenerPath + 'UserLogout' + listenerSuffix, listenersUserLogoutFile(false))
-        fsa.generateFile(listenerPath + 'User' + listenerSuffix, listenersUserFile(false))
-        fsa.generateFile(listenerPath + 'UserRegistration' + listenerSuffix, listenersUserRegistrationFile(false))
-        fsa.generateFile(listenerPath + 'Users' + listenerSuffix, listenersUsersFile(false))
-        fsa.generateFile(listenerPath + 'Group' + listenerSuffix, listenersGroupFile(false))
-        fsa.generateFile(listenerPath + 'ThirdParty' + listenerSuffix, listenersThirdPartyFile(false))
+        listenerFile('Theme', listenersThemeFile)
+        listenerFile('View', listenersViewFile)
+        listenerFile('UserLogin', listenersUserLoginFile)
+        listenerFile('UserLogout', listenersUserLogoutFile)
+        listenerFile('User', listenersUserFile)
+        listenerFile('UserRegistration', listenersUserRegistrationFile)
+        listenerFile('Users', listenersUsersFile)
+        listenerFile('Group', listenersGroupFile)
+        listenerFile('ThirdParty', listenersThirdPartyFile)
     }
 
-    def private listenersCoreFile(Application it, Boolean isBase) '''
+    def private listenerFile(String name, CharSequence content) {
+        val filePath = listenerPath + name + listenerSuffix
+        if (!app.shouldBeSkipped(filePath)) {
+            fsa.generateFile(filePath, content)
+        }
+    }
+
+    def private listenersCoreFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -106,7 +132,7 @@ class Listeners {
         }
     '''
 
-    def private listenersFrontControllerFile(Application it, Boolean isBase) '''
+    def private listenersFrontControllerFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -130,7 +156,7 @@ class Listeners {
         }
     '''
 
-    def private listenersInstallerFile(Application it, Boolean isBase) '''
+    def private listenersInstallerFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -154,7 +180,7 @@ class Listeners {
         }
     '''
 
-    def private listenersModuleDispatchFile(Application it, Boolean isBase) '''
+    def private listenersModuleDispatchFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -181,7 +207,7 @@ class Listeners {
         }
     '''
 
-    def private listenersMailerFile(Application it, Boolean isBase) '''
+    def private listenersMailerFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -205,7 +231,7 @@ class Listeners {
         }
     '''
 
-    def private listenersPageFile(Application it, Boolean isBase) '''
+    def private listenersPageFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -230,7 +256,7 @@ class Listeners {
     '''
 
     // obsolete, used for 1.3.5 only
-    def private listenersErrorsFile(Application it, Boolean isBase) '''
+    def private listenersErrorsFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -254,7 +280,7 @@ class Listeners {
         }
     '''
 
-    def private listenersThemeFile(Application it, Boolean isBase) '''
+    def private listenersThemeFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -278,7 +304,7 @@ class Listeners {
         }
     '''
 
-    def private listenersViewFile(Application it, Boolean isBase) '''
+    def private listenersViewFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -302,7 +328,7 @@ class Listeners {
         }
     '''
 
-    def private listenersUserLoginFile(Application it, Boolean isBase) '''
+    def private listenersUserLoginFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -326,7 +352,7 @@ class Listeners {
         }
     '''
 
-    def private listenersUserLogoutFile(Application it, Boolean isBase) '''
+    def private listenersUserLogoutFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -350,7 +376,7 @@ class Listeners {
         }
     '''
 
-    def private listenersUserFile(Application it, Boolean isBase) '''
+    def private listenersUserFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -379,7 +405,7 @@ class Listeners {
         }
     '''
 
-    def private listenersUserRegistrationFile(Application it, Boolean isBase) '''
+    def private listenersUserRegistrationFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -403,7 +429,7 @@ class Listeners {
         }
     '''
 
-    def private listenersUsersFile(Application it, Boolean isBase) '''
+    def private listenersUsersFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -427,7 +453,7 @@ class Listeners {
         }
     '''
 
-    def private listenersGroupFile(Application it, Boolean isBase) '''
+    def private listenersGroupFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
@@ -451,7 +477,7 @@ class Listeners {
         }
     '''
 
-    def private listenersThirdPartyFile(Application it, Boolean isBase) '''
+    def private listenersThirdPartyFile(Application it) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;

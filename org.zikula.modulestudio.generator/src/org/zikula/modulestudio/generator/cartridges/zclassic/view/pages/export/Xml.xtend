@@ -16,12 +16,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Xml {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
 
@@ -29,11 +31,23 @@ class Xml {
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' xml view templates for entity "' + name.formatForDisplay + '"')
-        if (controller.hasActions('view'))
-            fsa.generateFile(templateFileWithExtension(controller, name, 'view', 'xml'), xmlView(appName, controller))
-        if (controller.hasActions('display'))
-            fsa.generateFile(templateFileWithExtension(controller, name, 'display', 'xml'), xmlDisplay(appName, controller))
-        fsa.generateFile(templateFileWithExtension(controller, name, 'include', 'xml'), xmlInclude(appName, controller))
+        var templateFilePath = ''
+        if (controller.hasActions('view')) {
+            templateFilePath = templateFileWithExtension(controller, name, 'view', 'xml')
+            if (!container.application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, xmlView(appName, controller))
+            }
+        }
+        if (controller.hasActions('display')) {
+            templateFilePath = templateFileWithExtension(controller, name, 'display', 'xml')
+            if (!container.application.shouldBeSkipped(templateFilePath)) {
+                fsa.generateFile(templateFilePath, xmlDisplay(appName, controller))
+            }
+        }
+        templateFilePath = templateFileWithExtension(controller, name, 'include', 'xml')
+        if (!container.application.shouldBeSkipped(templateFilePath)) {
+            fsa.generateFile(templateFilePath, xmlInclude(appName, controller))
+        }
     }
 
     def private xmlView(Entity it, String appName, Controller controller) '''

@@ -11,8 +11,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.UrlRouting
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Category
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ShortUrls
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
@@ -22,6 +20,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -30,6 +29,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ControllerLayer {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -43,21 +43,29 @@ class ControllerLayer {
      */
     def void generate(Application it, IFileSystemAccess fsa) {
         this.app = it
+
+        // controllers and apis
         getAllControllers.forEach[generate(fsa)]
-        // controller for external calls
-        new ExternalController().generate(it, fsa)
-        // selection api
-        new Selection().generate(it, fsa)
-        if (hasCategorisableEntities)
-            new Category().generate(it, fsa)
+
         new UtilMethods().generate(it, fsa)
-        if (hasUserController)
+        if (hasUserController) {
             new UrlRouting().generate(it, fsa)
-        // scribite integration
-        new Scribite().generate(it, fsa)
+        }
+
+        if (generateExternalControllerAndFinder) {
+            // controller for external calls
+            new ExternalController().generate(it, fsa)
+
+            if (generateScribitePlugins) {
+                // Scribite integration
+                new Scribite().generate(it, fsa)
+            }
+        }
 
         // JavaScript
-        new Finder().generate(it, fsa)
+        if (generateExternalControllerAndFinder) {
+            new Finder().generate(it, fsa)
+        }
         if (hasEditActions)
             new EditFunctions().generate(it, fsa)
         new DisplayFunctions().generate(it, fsa)
@@ -74,15 +82,23 @@ class ControllerLayer {
         val controllerPath = app.getAppSourceLibPath + 'Controller/'
         val controllerClassSuffix = if (!app.targets('1.3.5')) 'Controller' else ''
         val controllerFileName = name.formatForCodeCapital + controllerClassSuffix + '.php'
-        fsa.generateFile(controllerPath + 'Base/' + controllerFileName, controllerBaseFile)
-        fsa.generateFile(controllerPath + controllerFileName, controllerFile)
+        if (!app.shouldBeSkipped(controllerPath + 'Base/' + controllerFileName)) {
+            fsa.generateFile(controllerPath + 'Base/' + controllerFileName, controllerBaseFile)
+        }
+        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(controllerPath + controllerFileName)) {
+            fsa.generateFile(controllerPath + controllerFileName, controllerFile)
+        }
 
         println('Generating "' + formattedName + '" api classes')
         val apiPath = app.getAppSourceLibPath + 'Api/'
         val apiClassSuffix = if (!app.targets('1.3.5')) 'Api' else ''
         val apiFileName = name.formatForCodeCapital + apiClassSuffix + '.php'
-        fsa.generateFile(apiPath + 'Base/' + apiFileName, apiBaseFile)
-        fsa.generateFile(apiPath + apiFileName, apiFile)
+        if (!app.shouldBeSkipped(apiPath + 'Base/' + apiFileName)) {
+            fsa.generateFile(apiPath + 'Base/' + apiFileName, apiBaseFile)
+        }
+        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(apiPath + 'Base/' + apiFileName)) {
+            fsa.generateFile(apiPath + apiFileName, apiFile)
+        }
     }
 
     def private controllerBaseFile(Controller it) '''

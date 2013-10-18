@@ -5,19 +5,25 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Frame {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(getAppSourceLibPath + 'Form/Plugin/FormFrame.php', formFrameFile)
-        fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), formFramePluginFile)
+        if (!shouldBeSkipped(getAppSourceLibPath + 'Form/Plugin/FormFrame.php')) {
+            fsa.generateFile(getAppSourceLibPath + 'Form/Plugin/FormFrame.php', formFrameFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('block', 'FormFrame'))) {
+            fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), formFramePluginFile)
+        }
     }
 
     def private formFrameFile(Application it) '''

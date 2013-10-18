@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -19,6 +20,7 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 class Relations {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -77,8 +79,12 @@ class Relations {
         var templateNameItemList = 'include_select' + editSnippet + 'ItemList' + getTargetMultiplicity(useTarget)
         val templateFileName = templateFile(controller, ownEntity.name, templateName)
         val templateFileNameItemList = templateFile(controller, ownEntity.name, templateNameItemList)
-        fsa.generateFile(templateFileName, includedEditTemplate(app, controller, ownEntity, otherEntity, incoming, hasEdit, many))
-        fsa.generateFile(templateFileNameItemList, component_ItemList(app, controller, ownEntity, many, incoming, hasEdit))
+        if (!app.shouldBeSkipped(templateFileName)) {
+            fsa.generateFile(templateFileName, includedEditTemplate(app, controller, ownEntity, otherEntity, incoming, hasEdit, many))
+        }
+        if (!app.shouldBeSkipped(templateFileNameItemList)) {
+            fsa.generateFile(templateFileNameItemList, component_ItemList(app, controller, ownEntity, many, incoming, hasEdit))
+        }
     }
 
     def private getTemplateName(JoinRelationship it, Boolean useTarget, String editSnippet) {

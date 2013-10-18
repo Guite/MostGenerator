@@ -5,11 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationSelectorList {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -17,9 +19,15 @@ class RelationSelectorList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        fsa.generateFile(formPluginPath + 'Base/RelationSelectorList.php', relationSelectorBaseFile)
-        fsa.generateFile(formPluginPath + 'RelationSelectorList.php', relationSelectorFile)
-        fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorList'), relationSelectorPluginFile)
+        if (!shouldBeSkipped(formPluginPath + 'Base/RelationSelectorList.php')) {
+            fsa.generateFile(formPluginPath + 'Base/RelationSelectorList.php', relationSelectorBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'RelationSelectorList.php')) {
+            fsa.generateFile(formPluginPath + 'RelationSelectorList.php', relationSelectorFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('function', 'RelationSelectorList'))) {
+            fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorList'), relationSelectorPluginFile)
+        }
     }
 
     def private relationSelectorBaseFile(Application it) '''

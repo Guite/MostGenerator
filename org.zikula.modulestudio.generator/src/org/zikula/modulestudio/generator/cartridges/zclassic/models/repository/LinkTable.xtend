@@ -6,11 +6,13 @@ import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class LinkTable {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -22,8 +24,12 @@ class LinkTable {
     def generate(ManyToManyRelationship it, Application app, IFileSystemAccess fsa) {
         val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository/'
         val repositoryFile = refClass.formatForCodeCapital + '.php'
-        fsa.generateFile(repositoryPath + 'Base/' + repositoryFile, modelRefRepositoryBaseFile(app))
-        fsa.generateFile(repositoryPath + repositoryFile, modelRefRepositoryFile(app))
+        if (!app.shouldBeSkipped(repositoryPath + 'Base/' + repositoryFile)) {
+            fsa.generateFile(repositoryPath + 'Base/' + repositoryFile, modelRefRepositoryBaseFile(app))
+        }
+        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(repositoryPath + repositoryFile)) {
+            fsa.generateFile(repositoryPath + repositoryFile, modelRefRepositoryFile(app))
+        }
     }
 
     def private modelRefRepositoryBaseFile(ManyToManyRelationship it, Application app) '''

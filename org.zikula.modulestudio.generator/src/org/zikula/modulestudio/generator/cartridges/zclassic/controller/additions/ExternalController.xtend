@@ -6,14 +6,16 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class ExternalController {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -26,8 +28,12 @@ class ExternalController {
         val controllerPath = getAppSourceLibPath + 'Controller/'
         val controllerClassSuffix = if (!targets('1.3.5')) 'Controller' else ''
         val controllerFileName = 'External' + controllerClassSuffix + '.php'
-        fsa.generateFile(controllerPath + 'Base/' + controllerFileName, externalBaseFile)
-        fsa.generateFile(controllerPath + controllerFileName, externalFile)
+        if (!shouldBeSkipped(controllerPath + 'Base/' + controllerFileName)) {
+            fsa.generateFile(controllerPath + 'Base/' + controllerFileName, externalBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(controllerPath + controllerFileName)) {
+            fsa.generateFile(controllerPath + controllerFileName, externalFile)
+        }
         new ExternalView().generate(it, fsa)
     }
 

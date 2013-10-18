@@ -26,6 +26,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.L
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.repository.Tree
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
@@ -35,6 +36,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Repository {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
@@ -66,10 +68,12 @@ class Repository {
         println('Generating repository classes for entity "' + name.formatForDisplay + '"')
         val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository/'
         val repositoryFileName = name.formatForCodeCapital + '.php'
-        if (!isInheriting) {
+        if (!isInheriting && !app.shouldBeSkipped(repositoryPath + 'Base/' + repositoryFileName)) {
             fsa.generateFile(repositoryPath + 'Base/' + repositoryFileName, modelRepositoryBaseFile)
         }
-        fsa.generateFile(repositoryPath + repositoryFileName, modelRepositoryFile)
+        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(repositoryPath + repositoryFileName)) {
+            fsa.generateFile(repositoryPath + repositoryFileName, modelRepositoryFile)
+        }
     }
 
     def private modelRepositoryBaseFile(Entity it) '''

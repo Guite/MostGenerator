@@ -5,11 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class GeoInput {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -17,9 +19,15 @@ class GeoInput {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        fsa.generateFile(formPluginPath + 'Base/GeoInput.php', formGeoInputBaseFile)
-        fsa.generateFile(formPluginPath + 'GeoInput.php', formGeoInputFile)
-        fsa.generateFile(viewPluginFilePath('function', 'GeoInput'), formGeoInputPluginFile)
+        if (!shouldBeSkipped(formPluginPath + 'Base/GeoInput.php')) {
+            fsa.generateFile(formPluginPath + 'Base/GeoInput.php', formGeoInputBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'GeoInput.php')) {
+            fsa.generateFile(formPluginPath + 'GeoInput.php', formGeoInputFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('function', 'GeoInput'))) {
+            fsa.generateFile(viewPluginFilePath('function', 'GeoInput'), formGeoInputPluginFile)
+        }
     }
 
     def private formGeoInputBaseFile(Application it) '''

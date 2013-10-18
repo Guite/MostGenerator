@@ -9,12 +9,14 @@ import de.guite.modulestudio.metamodel.modulestudio.CustomAction
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Custom {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -22,9 +24,11 @@ class Custom {
     }
 
     def dispatch generate(CustomAction it, Application app, Controller controller, IFileSystemAccess fsa) {
-        println('Generating ' + controller.formattedName + ' templates for custom action "' + name.formatForDisplay + '"')
         val templatePath = app.getViewPath + (if (app.targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
-        fsa.generateFile(templatePath + name.formatForCode.toFirstLower + '.tpl', customView(it, app, controller))
+        if (!app.shouldBeSkipped(templatePath + name.formatForCode.toFirstLower + '.tpl')) {
+            println('Generating ' + controller.formattedName + ' templates for custom action "' + name.formatForDisplay + '"')
+            fsa.generateFile(templatePath + name.formatForCode.toFirstLower + '.tpl', customView(it, app, controller))
+        }
         ''' '''
     }
 

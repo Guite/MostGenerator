@@ -8,6 +8,7 @@ import java.util.ArrayList
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -18,6 +19,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
  */
 class PermissionCheck {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -52,7 +54,9 @@ class PermissionCheck {
         this.wfType = wfType
         // generate only those states which are required by any entity using this workflow type
         this.states = getRequiredStateList(app, wfType)
-        fsa.generateFile(outputPath + 'function.' + wfType.textualName + '_permissioncheck.php', permissionCheckFile)
+        if (!app.shouldBeSkipped(outputPath + 'function.' + wfType.textualName + '_permissioncheck.php')) {
+            fsa.generateFile(outputPath + 'function.' + wfType.textualName + '_permissioncheck.php', permissionCheckFile)
+        }
     }
 
     def private permissionCheckFile() '''

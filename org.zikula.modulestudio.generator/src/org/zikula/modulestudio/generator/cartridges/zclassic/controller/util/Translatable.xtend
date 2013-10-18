@@ -1,28 +1,30 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
+import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.ArrayField
+import de.guite.modulestudio.metamodel.modulestudio.BooleanField
+import de.guite.modulestudio.metamodel.modulestudio.CalculatedField
+import de.guite.modulestudio.metamodel.modulestudio.DecimalField
+import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityField
-import de.guite.modulestudio.metamodel.modulestudio.BooleanField
-import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
-import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
-import de.guite.modulestudio.metamodel.modulestudio.UploadField
-import de.guite.modulestudio.metamodel.modulestudio.ArrayField
 import de.guite.modulestudio.metamodel.modulestudio.ObjectField
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.CalculatedField
-import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
+import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Translatable {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -36,8 +38,12 @@ class Translatable {
         println('Generating utility class for translatable entities')
         val utilPath = getAppSourceLibPath + 'Util/'
         val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        fsa.generateFile(utilPath + 'Base/Translatable' + utilSuffix + '.php', translatableFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Translatable' + utilSuffix + '.php', translatableFunctionsFile)
+        if (!shouldBeSkipped(utilPath + 'Base/Translatable' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'Base/Translatable' + utilSuffix + '.php', translatableFunctionsBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'Translatable' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'Translatable' + utilSuffix + '.php', translatableFunctionsFile)
+        }
     }
 
     def private translatableFunctionsBaseFile(Application it) '''

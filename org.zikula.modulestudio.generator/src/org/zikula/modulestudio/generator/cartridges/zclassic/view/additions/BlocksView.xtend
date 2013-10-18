@@ -4,20 +4,26 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlocksView {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'block' else 'Block') + '/'
-        fsa.generateFile(templatePath + 'itemlist.tpl', displayTemplate)
-        fsa.generateFile(templatePath + 'itemlist_modify.tpl', editTemplate)
+        if (!shouldBeSkipped(templatePath + 'itemlist.tpl')) {
+            fsa.generateFile(templatePath + 'itemlist.tpl', displayTemplate)
+        }
+        if (!shouldBeSkipped(templatePath + 'itemlist_modify.tpl')) {
+            fsa.generateFile(templatePath + 'itemlist_modify.tpl', editTemplate)
+        }
     }
 
     def private displayTemplate(Application it) '''

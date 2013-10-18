@@ -1,25 +1,33 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewHierarchy {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' tree view templates for entity "' + name.formatForDisplay + '"')
-        fsa.generateFile(templateFile(controller, name, 'view_tree'), hierarchyView(appName, controller))
-        fsa.generateFile(templateFile(controller, name, 'view_tree_items'), hierarchyItemsView(appName, controller))
+        var templateFilePath = templateFile(controller, name, 'view_tree')
+        if (!container.application.shouldBeSkipped(templateFilePath)) {
+            fsa.generateFile(templateFilePath, hierarchyView(appName, controller))
+        }
+        templateFilePath = templateFile(controller, name, 'view_tree_items')
+        if (!container.application.shouldBeSkipped(templateFilePath)) {
+            fsa.generateFile(templateFilePath, hierarchyItemsView(appName, controller))
+        }
     }
 
     def private hierarchyView(Entity it, String appName, Controller controller) '''

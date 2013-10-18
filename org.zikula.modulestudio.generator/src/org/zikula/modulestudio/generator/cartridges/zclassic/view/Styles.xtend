@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -14,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Styles {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
@@ -27,8 +29,12 @@ class Styles {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         cssPrefix = appName.toLowerCase
-        fsa.generateFile(getAppCssPath + 'style.css', appStyles)
-        fsa.generateFile(getAppCssPath + 'finder.css', finderStyles)
+        if (!shouldBeSkipped(getAppCssPath + 'style.css')) {
+            fsa.generateFile(getAppCssPath + 'style.css', appStyles)
+        }
+        if (generateExternalControllerAndFinder && !shouldBeSkipped(getAppCssPath + 'finder.css')) {
+            fsa.generateFile(getAppCssPath + 'finder.css', finderStyles)
+        }
     }
 
     def private appStyles(Application it) '''

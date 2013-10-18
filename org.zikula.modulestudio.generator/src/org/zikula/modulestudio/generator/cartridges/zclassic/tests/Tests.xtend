@@ -3,11 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.tests
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 
 class Tests {
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -18,8 +20,12 @@ class Tests {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         var testsPath = getAppTestsPath
-        fsa.generateFile(testsPath + 'bootstrap.php', bootstrapFile)
-        fsa.generateFile(testsPath + 'AllTests.php', testSuiteFile)
+        if (!shouldBeSkipped(testsPath + 'bootstrap.php')) {
+            fsa.generateFile(testsPath + 'bootstrap.php', bootstrapFile)
+        }
+        if (!shouldBeSkipped(testsPath + 'AllTests.php')) {
+            fsa.generateFile(testsPath + 'AllTests.php', testSuiteFile)
+        }
     }
 
     def private bootstrapFile(Application it) '''

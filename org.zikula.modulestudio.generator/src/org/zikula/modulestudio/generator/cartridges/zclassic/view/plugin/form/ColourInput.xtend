@@ -5,11 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ColourInput {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -17,9 +19,15 @@ class ColourInput {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        fsa.generateFile(formPluginPath + 'Base/ColourInput.php', formColourInputBaseFile)
-        fsa.generateFile(formPluginPath + 'ColourInput.php', formColourInputFile)
-        fsa.generateFile(viewPluginFilePath('function', 'ColourInput'), formColourInputPluginFile)
+        if (!shouldBeSkipped(formPluginPath + 'Base/ColourInput.php')) {
+            fsa.generateFile(formPluginPath + 'Base/ColourInput.php', formColourInputBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'ColourInput.php')) {
+            fsa.generateFile(formPluginPath + 'ColourInput.php', formColourInputFile)
+        }
+        if (!shouldBeSkipped(viewPluginFilePath('function', 'ColourInput'))) {
+            fsa.generateFile(viewPluginFilePath('function', 'ColourInput'), formColourInputPluginFile)
+        }
     }
 
     def private formColourInputBaseFile(Application it) '''

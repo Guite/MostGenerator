@@ -22,6 +22,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -33,6 +34,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class View {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -55,7 +57,10 @@ class View {
     def generate(Entity it, String appName, Controller controller, Integer listType, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' view templates for entity "' + name.formatForDisplay + '"')
         this.listType = listType
-        fsa.generateFile(templateFile(controller, name, 'view'), viewView(appName, controller))
+        val templateFilePath = templateFile(controller, name, 'view')
+        if (!container.application.shouldBeSkipped(templateFilePath)) {
+            fsa.generateFile(templateFilePath, viewView(appName, controller))
+        }
         new ViewQuickNavForm().generate(it, appName, controller, fsa)
     }
 

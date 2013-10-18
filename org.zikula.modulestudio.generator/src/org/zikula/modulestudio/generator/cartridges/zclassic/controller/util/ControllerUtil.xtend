@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerUtil {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -26,8 +28,12 @@ class ControllerUtil {
         println('Generating utility class for controller layer')
         val utilPath = getAppSourceLibPath + 'Util/'
         val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        fsa.generateFile(utilPath + 'Base/Controller' + utilSuffix + '.php', controllerFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Controller' + utilSuffix + '.php', controllerFunctionsFile)
+        if (!shouldBeSkipped(utilPath + 'Base/Controller' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'Base/Controller' + utilSuffix + '.php', controllerFunctionsBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'Controller' + utilSuffix + '.php')) {
+            fsa.generateFile(utilPath + 'Controller' + utilSuffix + '.php', controllerFunctionsFile)
+        }
     }
 
     def private controllerFunctionsBaseFile(Application it) '''

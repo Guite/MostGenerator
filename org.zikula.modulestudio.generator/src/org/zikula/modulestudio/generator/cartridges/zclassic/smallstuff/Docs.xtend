@@ -7,12 +7,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.document
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_GPL
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_LGPL
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Docs {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -21,15 +23,31 @@ class Docs {
      * Entry point for module documentation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(getAppSourcePath + 'CHANGELOG.md', Changelog)
-        fsa.generateFile(getAppSourcePath + 'README.md', ReadmeMarkup)
+        if (!shouldBeSkipped(getAppSourcePath + 'CHANGELOG.md')) {
+            fsa.generateFile(getAppSourcePath + 'CHANGELOG.md', Changelog)
+        }
+        if (!shouldBeSkipped(getAppSourcePath + 'README.md')) {
+            fsa.generateFile(getAppSourcePath + 'README.md', ReadmeMarkup)
+        }
         val docPath = getAppDocPath
-        fsa.generateFile(docPath + 'credits.md', Credits)
-        fsa.generateFile(docPath + 'developers.md', new DeveloperHints().generate(it))
-        fsa.generateFile(docPath + 'doctrine.md', DoctrineHints)
-        fsa.generateFile(docPath + 'modulestudio.md', MostText)
-        fsa.generateFile(docPath + 'install.md', Install)
-        fsa.generateFile(docPath + 'license.md', License)
+        if (!shouldBeSkipped(docPath + 'credits.md')) {
+            fsa.generateFile(docPath + 'credits.md', Credits)
+        }
+        if (!shouldBeSkipped(docPath + 'developers.md')) {
+            fsa.generateFile(docPath + 'developers.md', new DeveloperHints().generate(it))
+        }
+        if (!shouldBeSkipped(docPath + 'doctrine.md')) {
+            fsa.generateFile(docPath + 'doctrine.md', DoctrineHints)
+        }
+        if (!shouldBeSkipped(docPath + 'modulestudio.md')) {
+            fsa.generateFile(docPath + 'modulestudio.md', MostText)
+        }
+        if (!shouldBeSkipped(docPath + 'install.md')) {
+            fsa.generateFile(docPath + 'install.md', Install)
+        }
+        if (!shouldBeSkipped(docPath + 'license.md')) {
+            fsa.generateFile(docPath + 'license.md', License)
+        }
     }
 
     def private Credits(Application it) '''

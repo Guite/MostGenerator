@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -11,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class ThirdParty {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
     @Inject extension WorkflowExtensions = new WorkflowExtensions
@@ -48,6 +50,10 @@ class ThirdParty {
     def private pendingContentListenerImpl(Application it) '''
         «IF !needsApproval»
             // nothing required here as no entities use enhanced workflows including approval actions
+        «ELSEIF !generatePendingContentSupport»
+            // pending content support is disabled in generator settings
+            // however, we keep this empty stub to prevent errors if the event handler
+            // was already registered before
         «ELSE»
             $serviceManager = ServiceUtil::getManager();
             $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);

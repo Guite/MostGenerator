@@ -27,6 +27,7 @@ import de.guite.modulestudio.metamodel.modulestudio.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -34,6 +35,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Validator {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -50,8 +52,12 @@ class Validator {
         if (!targets('1.3.5')) {
             fileName = 'Abstract' + fileName
         }
-        fsa.generateFile(getAppSourceLibPath + 'Base/' + fileName, validatorCommonBaseFile)
-        fsa.generateFile(getAppSourceLibPath + fileName, validatorCommonFile)
+        if (!shouldBeSkipped(getAppSourceLibPath + 'Base/' + fileName)) {
+            fsa.generateFile(getAppSourceLibPath + 'Base/' + fileName, validatorCommonBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + fileName)) {
+            fsa.generateFile(getAppSourceLibPath + fileName, validatorCommonFile)
+        }
     }
 
     def private validatorCommonBaseFile(Application it) '''
@@ -503,9 +509,13 @@ class Validator {
         val validatorSuffix = (if (app.targets('1.3.5')) '' else 'Validator')
         val validatorFileName = name.formatForCodeCapital + validatorSuffix + '.php'
         if (!isInheriting) {
-            fsa.generateFile(validatorPath + 'Base/' + validatorFileName, validatorBaseFile(app))
+            if (!app.shouldBeSkipped(validatorPath + 'Base/' + validatorFileName)) {
+                fsa.generateFile(validatorPath + 'Base/' + validatorFileName, validatorBaseFile(app))
+            }
         }
-        fsa.generateFile(validatorPath + validatorFileName, validatorFile(app))
+        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(validatorPath + validatorFileName)) {
+            fsa.generateFile(validatorPath + validatorFileName, validatorFile(app))
+        }
     }
 
     def private validatorBaseFile(Entity it, Application app) '''

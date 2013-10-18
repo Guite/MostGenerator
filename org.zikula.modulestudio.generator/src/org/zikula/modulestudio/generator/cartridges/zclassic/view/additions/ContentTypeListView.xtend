@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -16,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ContentTypeListView {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
@@ -23,11 +25,20 @@ class ContentTypeListView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'contenttype' else 'ContentType') + '/'
+        var entityTemplate = ''
         for (entity : getAllEntities) {
-            fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_display_description.tpl', entity.displayDescTemplate(it))
-            fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_display.tpl', entity.displayTemplate(it))
+            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_display_description.tpl'
+            if (!shouldBeSkipped(entityTemplate)) {
+                fsa.generateFile(entityTemplate, entity.displayDescTemplate(it))
+            }
+            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_display.tpl'
+            if (!shouldBeSkipped(entityTemplate)) {
+                fsa.generateFile(entityTemplate, entity.displayTemplate(it))
+            }
         }
-        fsa.generateFile(templatePath + 'itemlist_edit.tpl', editTemplate)
+        if (!shouldBeSkipped(templatePath + 'itemlist_edit.tpl')) {
+            fsa.generateFile(templatePath + 'itemlist_edit.tpl', editTemplate)
+        }
     }
 
     def private displayDescTemplate(Entity it, Application app) '''

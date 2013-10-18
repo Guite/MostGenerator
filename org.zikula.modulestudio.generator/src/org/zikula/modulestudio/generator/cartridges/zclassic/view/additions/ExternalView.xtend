@@ -7,6 +7,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -15,6 +16,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ExternalView {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
@@ -25,10 +27,18 @@ class ExternalView {
     def generate(Application it, IFileSystemAccess fsa) {
         for (entity : getAllEntities) {
             val templatePath = getViewPath + (if (targets('1.3.5')) 'external/' + entity.name.formatForCode else 'External/' + entity.name.formatForCodeCapital) + '/'
-            fsa.generateFile(templatePath + 'display.tpl', entity.displayTemplate(it))
-            fsa.generateFile(templatePath + 'info.tpl', entity.itemInfoTemplate(it))
-            fsa.generateFile(templatePath + 'find.tpl', entity.findTemplate(it))
-            fsa.generateFile(templatePath + 'select.tpl', entity.selectTemplate(it))
+            if (!shouldBeSkipped(templatePath + 'display.tpl')) {
+                fsa.generateFile(templatePath + 'display.tpl', entity.displayTemplate(it))
+            }
+            if (!shouldBeSkipped(templatePath + 'info.tpl')) {
+                fsa.generateFile(templatePath + 'info.tpl', entity.itemInfoTemplate(it))
+            }
+            if (!shouldBeSkipped(templatePath + 'find.tpl')) {
+                fsa.generateFile(templatePath + 'find.tpl', entity.findTemplate(it))
+            }
+            if (!shouldBeSkipped(templatePath + 'select.tpl')) {
+                fsa.generateFile(templatePath + 'select.tpl', entity.selectTemplate(it))
+            }
         }
     }
 

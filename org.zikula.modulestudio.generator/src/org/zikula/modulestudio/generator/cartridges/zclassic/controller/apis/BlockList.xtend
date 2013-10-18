@@ -6,6 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlocksView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockList {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -25,8 +27,12 @@ class BlockList {
         val blockPath = getAppSourceLibPath + 'Block/'
         val blockClassSuffix = if (!targets('1.3.5')) 'Block' else ''
         val blockFileName = 'ItemList' + blockClassSuffix + '.php'
-        fsa.generateFile(blockPath + 'Base/' + blockFileName, listBlockBaseFile)
-        fsa.generateFile(blockPath + blockFileName, listBlockFile)
+        if (!shouldBeSkipped(blockPath + 'Base/' + blockFileName)) {
+            fsa.generateFile(blockPath + 'Base/' + blockFileName, listBlockBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(blockPath + blockFileName)) {
+            fsa.generateFile(blockPath + blockFileName, listBlockFile)
+        }
         new BlocksView().generate(it, fsa)
     }
 

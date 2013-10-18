@@ -4,11 +4,13 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Finder {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -16,8 +18,10 @@ class Finder {
      * Entry point for the javascript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating javascript for finder component')
-        fsa.generateFile(getAppJsPath + appName + '_finder.js', generate)
+        if (!shouldBeSkipped(getAppJsPath + appName + '_finder.js')) {
+            println('Generating javascript for finder component')
+            fsa.generateFile(getAppJsPath + appName + '_finder.js', generate)
+        }
     }
 
     def private generate(Application it) '''

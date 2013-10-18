@@ -6,6 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ContentTypeList {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -23,8 +25,12 @@ class ContentTypeList {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating content type for multiple objects')
         val contentTypePath = getAppSourceLibPath + 'ContentType/'
-        fsa.generateFile(contentTypePath + 'Base/ItemList.php', contentTypeBaseFile)
-        fsa.generateFile(contentTypePath + 'ItemList.php', contentTypeFile)
+        if (!shouldBeSkipped(contentTypePath + 'Base/ItemList.php')) {
+            fsa.generateFile(contentTypePath + 'Base/ItemList.php', contentTypeBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(contentTypePath + 'ItemList.php')) {
+            fsa.generateFile(contentTypePath + 'ItemList.php', contentTypeFile)
+        }
         new ContentTypeListView().generate(it, fsa)
     }
 

@@ -3,10 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleFile {
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -17,8 +19,12 @@ class ModuleFile {
             return
         }
         val moduleFileName = appName + '.php'
-        fsa.generateFile(getAppSourceLibPath + 'Base/' + moduleFileName, moduleBaseFile)
-        fsa.generateFile(getAppSourceLibPath + moduleFileName, moduleFile)
+        if (!shouldBeSkipped(getAppSourceLibPath + 'Base/' + moduleFileName)) {
+            fsa.generateFile(getAppSourceLibPath + 'Base/' + moduleFileName, moduleBaseFile)
+        }
+        if (!generateOnlyBaseClasses && shouldBeSkipped(getAppSourceLibPath + moduleFileName)) {
+            fsa.generateFile(getAppSourceLibPath + moduleFileName, moduleFile)
+        }
     }
 
     def private moduleBaseFile(Application it) '''
