@@ -158,9 +158,9 @@ class Styles {
                 top: 10px;
             }
 
-            div.«cssPrefix»-autoComplete«IF hasUserFields»,
-            div.«cssPrefix»-autoComplete-user«ENDIF»«IF hasImageFields»,
-            div.«cssPrefix»-autoComplete-withimage«ENDIF» {
+            div.«cssPrefix»-autocomplete«IF hasUserFields»,
+            div.«cssPrefix»-autocomplete-user«ENDIF»«IF hasImageFields»,
+            div.«cssPrefix»-autocomplete-withimage«ENDIF» {
                 position: relative !important;
                 top: 2px !important;
                 width: 191px !important;
