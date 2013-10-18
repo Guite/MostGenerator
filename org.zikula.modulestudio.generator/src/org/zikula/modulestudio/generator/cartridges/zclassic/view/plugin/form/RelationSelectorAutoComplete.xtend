@@ -177,7 +177,7 @@ class RelationSelectorAutoComplete {
                         <div id="' . $idPrefix . 'AddFields">
                             <label for="' . $idPrefix . 'Selector">' . $selectLabelText . '</label>
                             <br />
-                            <img src="/images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchIconText . '" />
+                            <img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchIconText . '" />
                             <input type="text" name="' . $idPrefix . 'Selector" id="' . $idPrefix . 'Selector" value="" />
                             <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . ((!$many) ? '0' : '1') . '" />
                             <img src="/images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $idPrefix . 'Indicator" style="display: none" />
