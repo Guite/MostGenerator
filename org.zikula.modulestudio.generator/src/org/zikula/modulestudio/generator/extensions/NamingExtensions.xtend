@@ -62,7 +62,7 @@ class NamingExtensions {
      * using a custom template extension (like xml instead of tpl).
      */
     def templateFileWithExtension(Controller it, String entityName, String actionName, String templateExtension) {
-        templateFileBase(entityName, actionName) + '.' + templateExtension
+        templateFileBase(entityName, actionName) + '.' + templateExtension + templateSuffix
     }
 
     /**

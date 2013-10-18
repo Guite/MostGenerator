@@ -117,10 +117,10 @@ class ViewUtil {
                     $tpl = $request->query->filter('tpl', '', false, FILTER_SANITIZE_STRING);
                 }
             «ENDIF»
-            if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
-                $template .= '_' . DataUtil::formatForOS($tpl);
+            if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension . '.tpl')) {
+                $template .= '_' . DataUtil::formatForOS($tpl) . '.tpl';
             }
-            $template .= '.' . $templateExtension;
+            $template .= '.' . $templateExtension . '.tpl';
 
             return $template;
         }
@@ -168,7 +168,7 @@ class ViewUtil {
             if ($raw == true) {
                 // standalone output
                 if ($templateExtension == 'pdf') {
-                    $template = str_replace('.pdf', '.tpl', $template);
+                    $template = str_replace('.pdf', '', $template);
                     return $this->processPdf($view, $template);
                 } else {
                     «IF targets('1.3.5')»
