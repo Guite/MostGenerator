@@ -186,7 +186,7 @@ class Relations {
         «ENDIF»
         «IF !many»
 
-        {if isset($item) && is_array($item) && !is_object($item[0])}
+        {if isset($item) && is_array($item) && isset($item[0]) && !is_object($item[0])}
             {modapifunc modname='«app.appName»' type='selection' func='getEntity' objectType='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
         {/if}
         «ENDIF»
