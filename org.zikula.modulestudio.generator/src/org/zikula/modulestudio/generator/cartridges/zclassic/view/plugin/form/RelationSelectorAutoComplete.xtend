@@ -6,12 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationSelectorAutoComplete {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -80,13 +82,6 @@ class RelationSelectorAutoComplete {
             public $createLink = '';
 
             /**
-             * Name of entity to be selected.
-             *
-             * @var string
-             */
-            public $selectedEntityName = '';
-
-            /**
              * Whether the treated entity has an image field or not.
              *
              * @var boolean
@@ -130,11 +125,6 @@ class RelationSelectorAutoComplete {
                     unset($params['createLink']);
                 }
 
-                if (isset($params['selectedEntityName'])) {
-                    $this->selectedEntityName = $params['selectedEntityName'];
-                    unset($params['selectedEntityName']);
-                }
-
                 if (isset($params['withImage'])) {
                     $this->withImage = $params['withImage'];
                     unset($params['withImage']);
@@ -164,17 +154,25 @@ class RelationSelectorAutoComplete {
                 $dom = ZLanguage::getModuleDomain('«appName»');
                 $many = ($this->selectionMode == 'multiple');
 
-                $entityName = $this->selectedEntityName;
-                $addLinkText = $many ? __f('Add %s', array($entityName), $dom) : __f('Select %s', array($entityName), $dom);
-                $selectLabelText = __f('Find %s', array($entityName), $dom);
-                $searchIconText = __f('Search %s', array($entityName), $dom);
+                $entityNameTranslated = '';
+                switch ($this->objectType) {
+                    «FOR entity : getAllEntities»
+                        case '«entity.name.formatForCode»':
+                            $entityNameTranslated = __('«entity.name.formatForDisplay»', $dom);
+                            break;
+                    «ENDFOR»
+                }
+
+                $addLinkText = $many ? __f('Add %s', array($entityNameTranslated), $dom) : __f('Select %s', array($entityNameTranslated), $dom);
+                $selectLabelText = __f('Find %s', array($entityNameTranslated), $dom);
+                $searchIconText = __f('Search %s', array($entityNameTranslated), $dom);
 
                 $idPrefix = $this->idPrefix;
 
                 $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="«IF targets('1.3.5')»z-«ENDIF»hide">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityName), $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
                 }
 
                 $alias = $this->id;
