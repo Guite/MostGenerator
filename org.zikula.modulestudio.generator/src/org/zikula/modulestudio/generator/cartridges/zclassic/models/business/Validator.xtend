@@ -30,6 +30,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -38,15 +39,18 @@ class Validator {
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
     FileHelper fh = new FileHelper
+    Application app
 
     /**
      * Creates a base validator class encapsulating common checks.
      */
     def generateCommon(Application it, IFileSystemAccess fsa) {
+        this.app = it
         println("Generating base validator class")
         var fileName = 'Validator.php'
         if (!targets('1.3.5')) {
@@ -503,32 +507,32 @@ class Validator {
     /**
      * Creates a validator class for every Entity instance.
      */
-    def generateWrapper(Entity it, Application app, IFileSystemAccess fsa) {
+    def generateWrapper(Entity it, IFileSystemAccess fsa) {
         println('Generating validator classes for entity "' + name.formatForDisplay + '"')
         val validatorPath = app.getAppSourceLibPath + 'Entity/Validator/'
         val validatorSuffix = (if (app.targets('1.3.5')) '' else 'Validator')
         val validatorFileName = name.formatForCodeCapital + validatorSuffix + '.php'
         if (!isInheriting) {
             if (!app.shouldBeSkipped(validatorPath + 'Base/' + validatorFileName)) {
-                fsa.generateFile(validatorPath + 'Base/' + validatorFileName, validatorBaseFile(app))
+                fsa.generateFile(validatorPath + 'Base/' + validatorFileName, validatorBaseFile)
             }
         }
         if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(validatorPath + validatorFileName)) {
-            fsa.generateFile(validatorPath + validatorFileName, validatorFile(app))
+            fsa.generateFile(validatorPath + validatorFileName, validatorFile)
         }
     }
 
-    def private validatorBaseFile(Entity it, Application app) '''
+    def private validatorBaseFile(Entity it) '''
         «fh.phpFileHeader(app)»
-        «validatorBaseImpl(app)»
+        «validatorBaseImpl»
     '''
 
-    def private validatorFile(Entity it, Application app) '''
+    def private validatorFile(Entity it) '''
         «fh.phpFileHeader(app)»
-        «validatorImpl(app)»
+        «validatorImpl»
     '''
 
-    def private validatorBaseImpl(Entity it, Application app) '''
+    def private validatorBaseImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Validator\Base;
 
@@ -549,11 +553,11 @@ class Validator {
         class «name.formatForCodeCapital»Validator extends BaseAbstractValidator
         «ENDIF»
         {
-            «validatorBaseImplBody(app, false)»
+            «validatorBaseImplBody(false)»
         }
     '''
 
-    def private validatorImpl(Entity it, Application app) '''
+    def private validatorImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Validator;
 
@@ -582,12 +586,12 @@ class Validator {
         {
             // here you can add custom validation methods or override existing checks
         «IF isInheriting»
-            «validatorBaseImplBody(app, true)»
+            «validatorBaseImplBody(true)»
         «ENDIF»
         }
     '''
 
-    def private validatorBaseImplBody(Entity it, Application app, Boolean isInheriting) '''
+    def private validatorBaseImplBody(Entity it, Boolean isInheriting) '''
         /**
          * Performs all validation rules.
          *
@@ -607,16 +611,17 @@ class Validator {
             «FOR udf : getUniqueDerivedFields.filter[!primaryKey]»
                 «validationCallUnique(udf)»
             «ENDFOR»
+            «validationCallsForMandatoryRelationships»
 
             return true;
         }
 
-        «checkForUniqueValues(app)»
+        «checkForUniqueValues»
 
         «fh.getterAndSetterMethods(app, 'entity', 'Zikula_EntityAccess', false, true, 'null', '')»
     '''
 
-    def private checkForUniqueValues(Entity it, Application app) '''
+    def private checkForUniqueValues(Entity it) '''
         /**
          * Check for unique values.
          *
@@ -908,5 +913,23 @@ class Validator {
             $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
             return $errorInfo;
         }
+    '''
+
+    def private validationCallsForMandatoryRelationships(Entity it) '''
+        «var incomingAndMandatoryRelations = getBidirectionalIncomingAndMandatoryJoinRelations»
+        «IF !incomingAndMandatoryRelations.empty»
+            // verify that all incoming bidirectional non-nullable relationships are not null
+            «FOR relation : incomingAndMandatoryRelations»
+                «val aliasName = relation.getRelationAliasName(false).toFirstLower»
+                if ($this->entity['«aliasName»'] === null) {
+                    «IF !relation.isManySide(false)»
+                        $errorInfo['message'] = __('Error! Choosing a «aliasName.formatForDisplay» is required.', $dom);
+                    «ELSE»
+                        $errorInfo['message'] = __('Error! Choosing at least one of the «aliasName.formatForDisplay» is required.', $dom);
+                    «ENDIF»
+                    return $errorInfo;
+                }
+            «ENDFOR»
+        «ENDIF»
     '''
 }

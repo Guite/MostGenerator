@@ -66,7 +66,7 @@ class Entities {
 
         val validator = new Validator()
         validator.generateCommon(it, fsa)
-        for (entity : getAllEntities) validator.generateWrapper(entity, it, fsa)
+        for (entity : getAllEntities) validator.generateWrapper(entity, fsa)
 
         thExt.extensionClasses(it, fsa)
     }

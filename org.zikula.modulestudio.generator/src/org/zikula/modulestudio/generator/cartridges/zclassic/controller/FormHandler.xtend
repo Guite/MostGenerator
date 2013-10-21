@@ -1329,6 +1329,15 @@ class FormHandler {
         {
             parent::initialize($view);
 
+            if ($this->mode == 'create') {
+                $modelHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Model«ELSE»ModelUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                if (!$modelHelper->canBeCreated($this->objectType)) {
+                    LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+
+                    return $this->view->redirect($this->getRedirectUrl(null));
+                }
+            }
+
             $entity = $this->entityRef;
             «IF hasOptimisticLock»
 

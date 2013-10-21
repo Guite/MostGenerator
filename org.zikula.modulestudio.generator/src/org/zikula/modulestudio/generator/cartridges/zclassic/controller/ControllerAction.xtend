@@ -403,6 +403,9 @@ class ControllerAction {
                        ->assign('currentUrlObject', $currentUrlObject)
                        ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
+            $modelHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Model«ELSE»ModelUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
+
             // fetch and return the appropriate template
             return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»$args«ELSE»$request«ENDIF», $templateFile);
         «ELSE»

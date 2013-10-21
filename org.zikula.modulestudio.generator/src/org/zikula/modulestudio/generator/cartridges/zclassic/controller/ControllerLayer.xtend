@@ -137,6 +137,9 @@ class ControllerLayer {
             «IF isAjaxController && app.hasListFields»
                 use «app.appNamespace»\Util\ListEntriesUtil;
             «ENDIF»
+            «IF hasActions('view')»
+                use «app.appNamespace»\Util\ModelUtil;
+            «ENDIF»
             use «app.appNamespace»\Util\ViewUtil;
             «IF (isAjaxController && app.hasTrees) || (hasActions('view') && isAdminController) || hasActions('delete')»
                 use «app.appNamespace»\Util\WorkflowUtil;

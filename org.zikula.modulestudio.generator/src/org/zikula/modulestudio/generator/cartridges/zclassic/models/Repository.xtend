@@ -905,7 +905,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function applyDefaultFilters(QueryBuilder $qb, $parameters)
+        protected function applyDefaultFilters(QueryBuilder $qb, $parameters = array())
         {
             $currentModule = ModUtil::getName();//FormUtil::getPassedValue('module', '', 'GETPOST');
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
@@ -1127,6 +1127,10 @@ class Repository {
         public function selectCount($where = '', $useJoins = true)
         {
             $qb = $this->getCountQuery($where, $useJoins);
+
+            $parameters = array();
+            $qb = $this->applyDefaultFilters($qb, $parameters);
+
             $query = $qb->getQuery();
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -1295,8 +1299,8 @@ class Repository {
                 // you could add explicit filters at this point, something like
                 // $filterUtil->addFilter('foo:eq:something,bar:gt:100');
                 // read more at
-                // https://github.com/drak/core/blob/263529177a6b9165eb239e3243e7c45dc7aad9bd/src/lib/Zikula/Component/FilterUtil/README.md
-                // https://github.com/drak/core/blob/263529177a6b9165eb239e3243e7c45dc7aad9bd/src/lib/Zikula/Component/FilterUtil/Resources/docs/users.md
+                // https://github.com/zikula/core/blob/master/src/lib/Zikula/Component/FilterUtil/README.md
+                // https://github.com/zikula/core/blob/master/src/lib/Zikula/Component/FilterUtil/Resources/docs/users.md
 
                 // now enrich the query builder
                 $filterUtil->enrichQuery();

@@ -109,18 +109,12 @@ class Redirect {
             «ELSE»
                 $url = System::getHomepageUrl();
             «ENDIF»
+            «IF controller.hasActions('display') && tree != EntityTreeType::NONE»
 
-            «IF controller.hasActions('display')»
-                «IF tree != EntityTreeType::NONE»
-                    /*
-                «ENDIF»
                 if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
                     // redirect to the detail page of treated «name.formatForCode»
                     $url = ModUtil::url($this->name, '«controller.formattedName»', «modUrlDisplay('this->idValues', false)»);
                 }
-                «IF tree != EntityTreeType::NONE»
-                    */
-                «ENDIF»
             «ENDIF»
 
             return $url;

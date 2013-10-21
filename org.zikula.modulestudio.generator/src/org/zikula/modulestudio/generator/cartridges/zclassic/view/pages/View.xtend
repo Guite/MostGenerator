@@ -78,16 +78,12 @@ class View {
             «ENDIF»
 
             «IF controller.hasActions('edit')»
-                {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
-                «IF tree != EntityTreeType::NONE»
-                    {*
-                «ENDIF»
-                    {gt text='Create «name.formatForDisplay»' assign='createTitle'}
-                    <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»icon icon-plus«ENDIF»">{$createTitle}</a>
-                «IF tree != EntityTreeType::NONE»
-                    *}
-                «ENDIF»
-                {/checkpermissionblock}
+                {if $canBeCreated}
+                    {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
+                        {gt text='Create «name.formatForDisplay»' assign='createTitle'}
+                        <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»icon icon-plus«ENDIF»">{$createTitle}</a>
+                    {/checkpermissionblock}
+                {/if}
             «ENDIF»
             {assign var='own' value=0}
             {if isset($showOwnEntries) && $showOwnEntries eq 1}

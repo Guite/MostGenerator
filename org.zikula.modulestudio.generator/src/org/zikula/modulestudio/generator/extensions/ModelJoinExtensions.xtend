@@ -88,6 +88,14 @@ class ModelJoinExtensions {
     }
 
     /**
+     * Returns a list of all incoming bidirectional join relations (excluding inheritance)
+     * which are not nullable.
+     */
+    def getBidirectionalIncomingAndMandatoryJoinRelations(Entity it) {
+        getBidirectionalIncomingJoinRelations.filter[!nullable]
+    }
+
+    /**
      * Returns a list of all incoming join relations which are either one2one or one2many.
      */
     def getIncomingJoinRelationsWithOneSource(Entity it) {
