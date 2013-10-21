@@ -89,12 +89,12 @@ class Config {
     '''
 
     def private configSection(Variables it, Application app, Boolean hasMultipleConfigSections, Boolean isPrimaryVarContainer) '''
+        {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
         «IF hasMultipleConfigSections»
-            {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
             {formtabbedpanel title=$tabTitle}
         «ENDIF»
         <fieldset>
-            <legend>«name.formatForDisplayCapital»</legend>
+            <legend>{$tabTitle}</legend>
 
             «IF documentation !== null && documentation != ''»
                 <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replaceAll("'", "")»'|nl2br}</p>
