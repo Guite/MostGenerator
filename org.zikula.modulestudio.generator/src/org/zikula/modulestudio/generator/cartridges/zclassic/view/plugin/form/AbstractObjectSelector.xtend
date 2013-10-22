@@ -536,7 +536,8 @@ class AbstractObjectSelector {
          */
         public function persistRelatedItems()
         {
-            $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
+            $serviceManager = ServiceUtil::getManager();
+            $entityManager = $serviceManager->getService('doctrine.entitymanager');
         
             foreach ($this->selectedItems as $relatedItem) {
                 $entityManager->persist($relatedItem);

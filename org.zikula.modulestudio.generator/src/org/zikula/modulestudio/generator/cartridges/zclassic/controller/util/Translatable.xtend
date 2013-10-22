@@ -134,8 +134,7 @@ class Translatable {
             }
 
             // prepare form data to edit multiple translations at once
-            $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
 
             // get translations
             «IF targets('1.3.5')»

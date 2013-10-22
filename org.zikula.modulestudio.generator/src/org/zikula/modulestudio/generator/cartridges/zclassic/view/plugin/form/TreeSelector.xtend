@@ -132,7 +132,8 @@ class TreeSelector {
                 «ELSE»
                     $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
-                $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
+                $serviceManager = ServiceUtil::getManager();
+                $entityManager = $serviceManager->getService('doctrine.entitymanager');
                 $this->repository = $entityManager->getRepository($entityClass);
             }
 
