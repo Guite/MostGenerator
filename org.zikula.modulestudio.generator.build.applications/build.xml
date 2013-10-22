@@ -26,16 +26,4 @@
             <arg value="-pdoModelCopy=true"/>
         </java>
     </target>
-
-    <target name="start.mwe.workflow.variant">
-        <taskdef name="workflow" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
-            <workflow file="${workflowFile}">
-<!--                <param name="baseDir" value="/base/"/>-->
-                <param name="modelName" value="${modelName}"/>
-                <param name="modelFile" value="${modelFile}"/>
-                <param name="cartridgeName" value="${cartridgeName}"/>
-                <param name="enrichedModelFile" value="${modelName}_Enriched.mostapp"/>
-                <param name="srcGenPath" value="output/${cartrigeName}"/>
-            </workflow>
-      </target>
 </project>

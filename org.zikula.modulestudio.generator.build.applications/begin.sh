@@ -4,7 +4,7 @@ echo "Linking product git repository"
 ln -sfT /var/lib/jenkins/jobs/MOST-0_Fetch-1_Product/workspace/scm "$WORKSPACE/refProduct"
 
 echo "Linking applications git repository"
-ln -sfT /var/lib/jenkins/jobs/MOST-0_Fetch-9_Applications/workspace/scm "$WORKSPACE/refApplications"
+ln -sfT /var/lib/jenkins/jobs/Applications/workspace/scm "$WORKSPACE/refApplications"
 echo "Creating working directory."
 mkdir -p tempWorkingDir
 
