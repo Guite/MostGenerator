@@ -109,20 +109,16 @@ class ModelUtil {
 
     def private canBeCreatedImpl(Entity it) '''
         «var incomingAndMandatoryRelations = getBidirectionalIncomingAndMandatoryJoinRelations»
-        «IF incomingAndMandatoryRelations.empty»
-            «/* has no incoming bidirectional non-nullable relationships */»
+        «IF incomingAndMandatoryRelations.empty»«/* has no incoming bidirectional non-nullable relationships */»
             $result = true;
-        «ELSE»
-            «/* we can leave out those relations which have PASSIVE_EDIT as edit type and use auto completion on the target side
-              * (then a new source object can be created while creating the target object).
-              */»
-            «incomingAndMandatoryRelations = incomingAndMandatoryRelations
+        «ELSE»«/* we can leave out those relations which have PASSIVE_EDIT as edit type and use auto completion on the target side
+                * (then a new source object can be created while creating the target object). */»
+            «{incomingAndMandatoryRelations = incomingAndMandatoryRelations
                 .filter[!usesAutoCompletion(true)]
-                .filter[editType != RelationEditType.ACTIVE_NONE_PASSIVE_EDIT && editType != RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT]»
+                .filter[editType != RelationEditType.ACTIVE_NONE_PASSIVE_EDIT && editType != RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT]; ''}»
             «IF incomingAndMandatoryRelations.empty»
                 $result = true;
-            «ELSE»
-                «/* corresponding source objects exist already in the system */»
+            «ELSE»«/* corresponding source objects exist already in the system */»
                 $result = true;
                 «FOR entity : getUniqueListOfSourceEntityTypes(incomingAndMandatoryRelations)»
                     $result &= $this->hasExistingInstances('«entity.name.formatForCode»');

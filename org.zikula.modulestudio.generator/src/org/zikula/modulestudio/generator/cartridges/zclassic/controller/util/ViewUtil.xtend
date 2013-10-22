@@ -117,10 +117,16 @@ class ViewUtil {
                     $tpl = $request->query->filter('tpl', '', false, FILTER_SANITIZE_STRING);
                 }
             «ENDIF»
-            if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension . '.tpl')) {
-                $template .= '_' . DataUtil::formatForOS($tpl) . '.tpl';
+
+            $templateExtension = '.' . $templateExtension;
+            if ($templateExtension != '.tpl') {
+                $templateExtension .= '.tpl';
             }
-            $template .= '.' . $templateExtension . '.tpl';
+
+            if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . $templateExtension)) {
+                $template .= '_' . DataUtil::formatForOS($tpl);
+            }
+            $template .= $templateExtension;
 
             return $template;
         }
