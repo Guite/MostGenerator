@@ -477,9 +477,19 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl');
             $query = $qb->getQuery();
+            «IF softDeleteable»
+
+                // set the softdeletable query hint
+                $query->setHint(
+                    Query::HINT_CUSTOM_OUTPUT_WALKER,
+                    'Gedmo\\SoftDeleteable\\Query\\TreeWalker\\SoftDeleteableWalker'
+                );
+            «ENDIF»
             «IF hasPessimisticWriteLock»
+
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
+
             $query->execute();
         }
     '''
@@ -505,9 +515,19 @@ class Repository {
                ->where('tbl.createdUserId = :creator')
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
+            «IF softDeleteable»
+
+                // set the softdeletable query hint
+                $query->setHint(
+                    Query::HINT_CUSTOM_OUTPUT_WALKER,
+                    'Gedmo\\SoftDeleteable\\Query\\TreeWalker\\SoftDeleteableWalker'
+                );
+            «ENDIF»
             «IF hasPessimisticWriteLock»
+
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
+
             $query->execute();
         }
 
@@ -530,9 +550,19 @@ class Repository {
                ->where('tbl.updatedUserId = :editor')
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
+            «IF softDeleteable»
+
+                // set the softdeletable query hint
+                $query->setHint(
+                    Query::HINT_CUSTOM_OUTPUT_WALKER,
+                    'Gedmo\\SoftDeleteable\\Query\\TreeWalker\\SoftDeleteableWalker'
+                );
+            «ENDIF»
             «IF hasPessimisticWriteLock»
+
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
+
             $query->execute();
         }
 
