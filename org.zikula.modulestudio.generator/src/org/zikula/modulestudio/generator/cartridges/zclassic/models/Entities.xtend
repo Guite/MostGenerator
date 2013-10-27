@@ -657,11 +657,11 @@ class Entities {
         «FOR mandatoryField : mandatoryFields.filter(FloatField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «IF getListFieldsEntity.size > 1»
+        «IF !getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)].empty»
 
             $serviceManager = ServiceUtil::getManager();
             $listHelper = new «IF container.application.targets('1.3.5')»«container.application.appName»_Util_ListEntries«ELSE»«container.application.appNamespace»\Util\ListEntriesUtil«ENDIF»($serviceManager«IF !container.application.targets('1.3.5')», ModUtil::getModule('«container.application.appName»')«ENDIF»);
-            «FOR listField : getListFieldsEntity.filter[name != 'workflowState']»
+            «FOR listField : getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)]»
 
                 $items = array();
                 $listEntries = $listHelper->get«listField.name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();
