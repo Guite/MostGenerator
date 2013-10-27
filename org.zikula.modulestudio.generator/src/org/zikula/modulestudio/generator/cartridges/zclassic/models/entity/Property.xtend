@@ -153,7 +153,7 @@ class Property {
                 if (it.defaultValue !== null && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: 'array()'
             ObjectField: 'null'
-            ListField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'' + it.defaultFieldDataItems + '\''
+            ListField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             AbstractStringField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             AbstractDateField:
                 if (it.mandatory && it.defaultValue !== null && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else 'null'
@@ -162,8 +162,6 @@ class Property {
             default: '\'\''
         }
     }
-
-    def private defaultFieldDataItems(ListField it) '''«FOR defaultItem : items.filter[^default] SEPARATOR '###'»«defaultItem.value»«ENDFOR»'''
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»
