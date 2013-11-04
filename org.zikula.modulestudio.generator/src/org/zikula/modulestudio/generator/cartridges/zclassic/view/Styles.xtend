@@ -131,6 +131,12 @@ class Styles {
         «IF !joinRelations.empty || hasUserFields»
 
             /* edit pages */
+            «IF targets('1.3.5')»«/* fix for #413 */»
+                form.z-form select.z-form-dropdownlist,
+                form.z-form input.z-form-upload {
+                    float: left;
+                }
+            «ENDIF»
             «IF !joinRelations.empty»
                 div.«cssPrefix»-relation-leftside {
                     float: left;
