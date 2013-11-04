@@ -11,7 +11,7 @@ class GeneratorSettingsExtensions {
      * Retrieves the target core version.
      */
     def getCoreVersion(Application it) {
-        if (hasSettings) getSettings.targetCoreVersion else /*CoreVersion::ZK136*/ targetCoreVersion
+        if (hasSettings) getSettings.targetCoreVersion else /*CoreVersion::ZKPRE14*/ targetCoreVersion
     }
 
     /**

@@ -84,9 +84,9 @@ class VersionFile {
                 // core requirement
                 «IF targets('1.3.5')»
                     $meta['core_min']             = '1.3.5'; // requires minimum 1.3.5
-                    $meta['core_max']             = '1.3.5'; // not ready for 1.3.6 yet
+                    $meta['core_max']             = '1.3.6'; // not ready for 1.3.7 yet
                 «ELSE»
-                    $meta['core_min']             = '1.3.6'; // requires minimum 1.3.6 or later
+                    $meta['core_min']             = '1.3.7'; // requires minimum 1.3.7 or later
                     $meta['core_max']             = '1.3.99'; // not ready for 1.4.0 yet
                 «ENDIF»
 

@@ -82,13 +82,18 @@ class Utils {
      * @return Boolean The result.
      */
     def targets(Application it, String version) {
+        // we query '1.3.5' for BC
+        val useSymfony = (version != '1.3.5')
+
         switch (getCoreVersion) {
             case CoreVersion.ZK135:
-                (version == '1.3.5')
+                !useSymfony
             case CoreVersion.ZK136:
-                (version != '1.3.5')
+                !useSymfony
+            case CoreVersion.ZKPRE14:
+                useSymfony
             default:
-                (version != '1.3.5')
+                useSymfony
         }
     }
 
