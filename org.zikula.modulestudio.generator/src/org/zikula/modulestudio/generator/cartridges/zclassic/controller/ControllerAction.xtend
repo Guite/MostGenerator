@@ -492,8 +492,8 @@ class ControllerAction {
                             «ELSE»
                                 $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
                             «ENDIF»
-                            $objectTemp = new $entityClass();
-                            $hasSlug = $objectTemp->get_hasUniqueSlug();
+                            $meta = $this->entityManager->getClassMetadata($entityClass);
+                            $hasSlug = $meta->hasField('slug') && $meta->isUniqueField('slug');
                             if ($hasSlug) {
                                 «IF app.targets('1.3.5')»
                                     $slug = (isset($args['slug']) && !empty($args['slug'])) ? $args['slug'] : $this->request->query->filter('slug', '', FILTER_SANITIZE_STRING);

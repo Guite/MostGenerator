@@ -430,8 +430,7 @@ class FormHandler {
             «ELSE»
             $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
-            $objectTemp = new $entityClass();
-            $this->idFields = $objectTemp->get_idFields();
+            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
 
             // retrieve identifier of the object we wish to view
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);

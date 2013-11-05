@@ -7,12 +7,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Selection {
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -78,10 +80,34 @@ class Selection {
             «ELSE»
             $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
-            $objectTemp = new $entityClass(); 
-            $idFields = $objectTemp->get_idFields();
+
+            $meta = $this->entityManager->getClassMetadata($entityClass);
+            if ($this->hasCompositeKeys($objectType)) {
+                $idFields = $meta->getIdentifierFieldNames();
+            } else {
+                $idFields = array($meta->getSingleIdentifierFieldName());
+            }
 
             return $idFields;
+        }
+
+        /**
+         * Checks whether a certain entity type uses composite keys or not.
+         *
+         * @param string $objectType The object type to retrieve.
+         *
+         * @boolean Whether composite keys are used or not.
+         */
+        protected function hasCompositeKeys($objectType)
+        {
+            switch ($objectType) {
+                «FOR entity : getAllEntities»
+                    case '«entity.name.formatForCode»':
+                        return «entity.hasCompositeKeys.displayBool»;
+                «ENDFOR»
+                    default:
+                        return false;
+            }
         }
 
         /**

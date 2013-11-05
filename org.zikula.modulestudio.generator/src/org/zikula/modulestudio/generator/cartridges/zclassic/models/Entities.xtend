@@ -257,11 +257,6 @@ class Entities {
          */
         protected $_objectType = '«name.formatForCode»';
 
-        /**
-         * @var array List of primary key field names.
-         */
-        protected $_idFields = array();
-
         «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
         /**
          * @var «validatorClass» The validator for this entity.
@@ -272,11 +267,6 @@ class Entities {
          * @var boolean Option to bypass validation if needed.
          */
         protected $_bypassValidation = false;
-
-        /**
-         * @var boolean Whether this entity supports unique slugs.
-         */
-        protected $_hasUniqueSlug = «IF hasSluggableFields && slugUnique»true«ELSE»false«ENDIF»;
         «IF hasNotifyPolicy»
 
             /**
@@ -304,10 +294,8 @@ class Entities {
         «constructor(false)»
 
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, '_idFields', 'array', false, true, 'Array()', '')»
         «fh.getterAndSetterMethods(it, '_validator', validatorClass, false, true, 'null', '')»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, '_hasUniqueSlug', 'boolean', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
         «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
         «propertyChangedListener»
@@ -691,10 +679,8 @@ class Entities {
             «ENDFOR»
         «ELSE»
         «ENDIF»
-        $this->_idFields = array(«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»'«pkField.name.formatForCode»'«ENDFOR»);
         $this->initValidator();
         $this->initWorkflow();
-        $this->_hasUniqueSlug = «IF hasSluggableFields && slugUnique»true«ELSE»false«ENDIF»;
         «thAssoc.initCollections(it)»
     '''
 
@@ -862,8 +848,6 @@ class Entities {
                 «ENDFOR»
                 // copy simple fields
                 $entity->set_objectType($this->get_objectType());
-                $entity->set_idFields($this->get_idFields());
-                $entity->set_hasUniqueSlug($this->get_hasUniqueSlug());
                 $entity->set_actions($this->get_actions());
                 $entity->initValidator();
                 «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»
