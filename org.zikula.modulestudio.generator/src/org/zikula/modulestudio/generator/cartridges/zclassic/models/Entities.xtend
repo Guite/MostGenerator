@@ -666,7 +666,7 @@ class Entities {
                 $items = array();
                 $listEntries = $listHelper->get«listField.name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();
                 foreach ($listEntries as $listEntry) {
-                    if ($listEntry['default'] === true){
+                    if ($listEntry['default'] === true) {
                         $items[] = $listEntry['value'];
                     }
                 }
