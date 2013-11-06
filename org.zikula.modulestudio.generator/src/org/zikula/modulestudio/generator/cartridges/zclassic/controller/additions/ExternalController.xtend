@@ -99,21 +99,21 @@ class ExternalController {
          *
          * @return string Desired data output.
          */
-        public function display«IF targets('1.3.5')»()«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
+        public function display«IF targets('1.3.5')»(array $args = array())«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
         {
             «IF targets('1.3.5')»
                 $getData = $this->request->query;
             «ENDIF»
             $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
-            $objectType = «IF targets('1.3.5')»$getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
+            $objectType = «IF targets('1.3.5')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
             $utilArgs = array('controller' => 'external', 'action' => 'display');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
             «IF targets('1.3.5')»
 
-                $id = $getData->filter('id', null, FILTER_SANITIZE_STRING);
+                $id = isset($args['id']) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
             «ENDIF»
 
             $component = $this->name . ':' . ucwords($objectType) . ':';
@@ -122,14 +122,14 @@ class ExternalController {
             }
 
             «IF targets('1.3.5')»
-                $source = $getData->filter('source', '', FILTER_SANITIZE_STRING);
+                $source = isset($args['source']) ? $args['source'] : $getData->filter('source', '', FILTER_SANITIZE_STRING);
             «ENDIF»
             if (!in_array($source, array('contentType', 'scribite'))) {
                 $source = 'contentType';
             }
 
             «IF targets('1.3.5')»
-                $displayMode = $getData->filter('displayMode', 'embed', FILTER_SANITIZE_STRING);
+                $displayMode = isset($args['displayMode']) ? $args['displayMode'] : $getData->filter('displayMode', 'embed', FILTER_SANITIZE_STRING);
             «ENDIF»
             if (!in_array($displayMode, array('link', 'embed'))) {
                 $displayMode = 'embed';

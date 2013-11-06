@@ -808,7 +808,7 @@ class Repository {
          *
          * @return array Created query instance and amount of affected items.
          */
-        protected function getSelectWherePaginatedQuery(QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
+        public function getSelectWherePaginatedQuery(QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
         {
             $qb = $this->addCommonViewFilters($qb);
 
