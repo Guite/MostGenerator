@@ -65,6 +65,10 @@ class EventListener {
          *
          * @see «entityClassName('', false)»::postLoadCallback()
          * @return boolean true if completed successfully else false.
+         «IF !container.application.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if upload file base path retrieval fails
+         «ENDIF»
          */
         protected function performPostLoadCallback()
         {
@@ -126,6 +130,10 @@ class EventListener {
          *
          * @see «entityClassName('', false)»::preRemoveCallback()
          * @return boolean true if completed successfully else false.
+         «IF !container.application.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if workflow deletion fails
+         «ENDIF»
          */
         protected function performPreRemoveCallback()
         {
@@ -152,7 +160,7 @@ class EventListener {
                 «ENDIF»
                 if ($result === false) {
                     $dom = ZLanguage::getModuleDomain('«container.application.appName»');
-                    return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+                    «IF container.application.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
                 }
             }
 
@@ -449,7 +457,7 @@ class EventListener {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
             } catch (\Exception $e) {
-                return LogUtil::registerError($e->getMessage());
+                «IF entity.container.application.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
             }
 
             $fullPath = $basePath .  $this['«realName»'];

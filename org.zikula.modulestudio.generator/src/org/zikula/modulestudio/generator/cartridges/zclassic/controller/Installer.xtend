@@ -153,6 +153,10 @@ class Installer {
          * Install the «appName» application.
          *
          * @return boolean True on success, or false.
+         «IF !targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if database tables can not be created or another error occurs
+         «ENDIF»
          */
         public function install«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»()
         {
@@ -162,13 +166,13 @@ class Installer {
                 DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
-                    LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                    «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
                 $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
                 if (!System::isDevelopmentMode()) {
                     $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                 }
-                return LogUtil::registerError($returnMessage);
+                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($returnMessage);
             }
             «IF !getAllVariableContainers.empty»
 
@@ -247,7 +251,7 @@ class Installer {
                 $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
-                return LogUtil::registerError($e->getMessage());
+                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
             }
         «ENDIF»
     '''
@@ -261,6 +265,10 @@ class Installer {
          * @param integer $oldVersion Version to upgrade from.
          *
          * @return boolean True on success, false otherwise.
+         «IF !targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if database tables can not be updated
+         «ENDIF»
          */
         public function upgrade«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»($oldVersion)
         {
@@ -275,9 +283,9 @@ class Installer {
                         DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                     } catch (\Exception $e) {
                         if (System::isDevelopmentMode()) {
-                            LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                            «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Doctrine Exception: ') . $e->getMessage());
                         }
-                        return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
+                        «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                     }
             }
             «IF !targets('1.3.5')»
@@ -307,22 +315,26 @@ class Installer {
          * Uninstall «appName».
          *
          * @return boolean True on success, false otherwise.
+         «IF !targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if database tables or stored workflows can not be removed
+         «ENDIF»
          */
         public function uninstall«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»()
         {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
-                return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
             }
 
             try {
                 DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
-                    LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                    «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
+                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
             }
 
             // unregister persistent event handlers

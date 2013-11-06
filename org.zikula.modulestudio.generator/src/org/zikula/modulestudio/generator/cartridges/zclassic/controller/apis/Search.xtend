@@ -126,6 +126,8 @@ class Search {
          * @param array $args List of arguments.
          *
          * @return boolean
+         *
+         * @throws RuntimeException Thrown if search results can not be saved
          */
         public function search(array $args = array())
         {
@@ -241,7 +243,7 @@ class Search {
                         $this->entityManager->persist($searchItem);
                         $this->entityManager->flush();
                     } catch (\Exception $e) {
-                        return LogUtil::registerError($this->__('Error! Could not save the search results.'));
+                        throw new \RuntimeException($this->__('Error! Could not save the search results.'));
                     }
                     «ENDIF»
                 }

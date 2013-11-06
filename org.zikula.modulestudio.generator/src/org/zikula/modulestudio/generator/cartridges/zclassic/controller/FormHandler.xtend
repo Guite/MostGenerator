@@ -134,6 +134,9 @@ class FormHandler {
             «ENDIF»
             use «app.appNamespace»\Util\WorkflowUtil;
 
+            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+            use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
             use LogUtil;
             use ModUtil;
             use SecurityUtil;
@@ -412,6 +415,11 @@ class FormHandler {
          * @param Zikula_Form_View $view The form view instance.
          *
          * @return boolean False in case of initialization errors, otherwise true.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws NotFoundHttpException Thrown if item to be edited isn't found
+         * @throws RuntimeException      Thrown if the workflow actions can not be determined
+         «ENDIF»
          */
         public function initialize(Zikula_Form_View $view)
         {
@@ -442,12 +450,16 @@ class FormHandler {
 
             if ($this->mode == 'edit') {
                 if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
-                    return LogUtil::registerPermissionError();
+                    «IF app.targets('1.3.5')»
+                        return LogUtil::registerPermissionError();
+                    «ELSE»
+                        throw new AccessDeniedHttpException();
+                    «ENDIF»
                 }
 
                 $entity = $this->initEntityForEdit();
                 if (!is_object($entity)) {
-                    return LogUtil::registerError($this->__('No such item.'));
+                    «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
                 }
 
                 if ($this->hasPageLockSupport === true && ModUtil::available('PageLock')) {
@@ -458,7 +470,11 @@ class FormHandler {
                 }
             } else {
                 if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
-                    return LogUtil::registerPermissionError();
+                    «IF app.targets('1.3.5')»
+                        return LogUtil::registerPermissionError();
+                    «ELSE»
+                        throw new AccessDeniedHttpException();
+                    «ENDIF»
                 }
 
                 $entity = $this->initEntityForCreation();
@@ -497,7 +513,7 @@ class FormHandler {
             $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
-                return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+                «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Error! Could not determine workflow actions.'));
             }
             // assign list of allowed actions to the view for further processing
             $this->view->assign('actions', $actions);
@@ -544,12 +560,16 @@ class FormHandler {
          * Initialise existing entity for editing.
          *
          * @return Zikula_EntityAccess desired entity instance or null
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws NotFoundHttpException Thrown if item to be edited isn't found
+         «ENDIF»
          */
         protected function initEntityForEdit()
         {
             $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
             if ($entity == null) {
-                return LogUtil::registerError($this->__('No such item.'));
+                «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('No such item.'));
             }
 
             $entity->initWorkflow();
@@ -561,6 +581,10 @@ class FormHandler {
          * Initialise new entity for creation.
          *
          * @return Zikula_EntityAccess desired entity instance or null
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws NotFoundHttpException Thrown if item to be cloned isn't found
+         «ENDIF»
          */
         protected function initEntityForCreation()
         {
@@ -581,7 +605,7 @@ class FormHandler {
                 // reuse existing entity
                 $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
                 if ($entityT == null) {
-                    return LogUtil::registerError($this->__('No such item.'));
+                    «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('No such item.'));
                 }
                 $entity = clone $entityT;
                 $entity->resetWorkflow();
@@ -929,6 +953,10 @@ class FormHandler {
          *
          * @param Array   $args    arguments from handleCommand method.
          * @param Boolean $success true if this is a success, false for default error.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if executing the workflow action fails
+         «ENDIF»
          */
         protected function addDefaultMessage($args, $success = false)
         {
@@ -937,7 +965,7 @@ class FormHandler {
                 if ($success === true) {
                     LogUtil::registerStatus($message);
                 } else {
-                    LogUtil::registerError($message);
+                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($message);
                 }
             }
         }
@@ -1182,6 +1210,8 @@ class FormHandler {
         «ENDIF»
         «IF !app.targets('1.3.5')»
 
+            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
             use FormUtil;
             use LogUtil;
             use ModUtil;
@@ -1271,7 +1301,11 @@ class FormHandler {
                     // only allow editing for the owner or people with higher permissions
                     if (isset($entity['createdUserId']) && $entity['createdUserId'] != UserUtil::getVar('uid')) {
                         if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
-                            return LogUtil::registerPermissionError();
+                            «IF app.targets('1.3.5')»
+                                return LogUtil::registerPermissionError();
+                            «ELSE»
+                                throw new AccessDeniedHttpException();
+                            «ENDIF»
                         }
                     }
 
@@ -1442,6 +1476,10 @@ class FormHandler {
          * @param Array $args Arguments from handleCommand method.
          *
          * @return bool Whether everything worked well or not.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs
+         «ENDIF»
          */
         public function applyAction(array $args = array())
         {
@@ -1478,10 +1516,10 @@ class FormHandler {
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {
-                    LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
             «ENDIF»
             } catch(\Exception $e) {
-                LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
             }
 
             $this->addDefaultMessage($args, $success);

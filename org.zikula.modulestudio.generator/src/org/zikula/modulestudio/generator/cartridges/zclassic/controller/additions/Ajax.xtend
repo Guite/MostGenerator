@@ -326,9 +326,9 @@ class Ajax {
          * @param string $v  The value to be checked for uniqueness.
          * @param string $ex Optional identifier to be excluded from search.
          *
-         * @throws \Zikula_Exception If something fatal occurs.
-         *
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         *
+         * @throws \Zikula_Exception If something fatal occurs.
          */
         public function checkForDuplicate«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
         {
@@ -475,7 +475,11 @@ class Ajax {
          * @param int    $destid    Identifier of destination node for (only for moveNodeTo).
          *
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         *
          * @throws «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
+         «IF !app.targets('1.3.5')»
+         * @throws RuntimeException Thrown if tree verification or executing the workflow action fails
+         «ENDIF»
          */
         public function handleTreeOperation«IF app.targets('1.3.5')»()«ELSE»Action()«ENDIF»
         {
@@ -535,7 +539,7 @@ class Ajax {
             $verificationResult = $repository->verify();
             if (is_array($verificationResult)) {
                 foreach ($verificationResult as $errorMsg) {
-                    LogUtil::registerError($errorMsg);
+                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($errorMsg);
                 }
             }
             $repository->recover();
@@ -584,7 +588,7 @@ class Ajax {
                                         $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                                         $success = $workflowHelper->executeAction($entity, $action);
                                     } catch(\Exception $e) {
-                                        LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                                        «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                                     }
                                 //});
                                 break;
@@ -610,7 +614,7 @@ class Ajax {
                                         $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                                         $success = $workflowHelper->executeAction($childEntity, $action);
                                     } catch(\Exception $e) {
-                                        LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                                        «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                                     }
 
                                     //$childEntity->setParent($parentEntity);
@@ -638,7 +642,7 @@ class Ajax {
                                     $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                                     $success = $workflowHelper->executeAction($entity, $action);
                                 } catch(\Exception $e) {
-                                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                                 }
 
                                 $repository->removeFromTree($entity);

@@ -134,7 +134,7 @@ class UserLogin {
          *         ),
          *     ));
          *
-         *     LogUtil::registerError(__("Your log-in request was not completed. You must change your web site account's password first."));
+         *     «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__("Your log-in request was not completed. You must change your web site account's password first."));
          *
          * In this example, the user will be redirected to the URL pointing to the `changePassword` function. This URL is constructed by calling 
          * `ModUtil::url()` with the modname, type, func, and args specified in the above array. The `changePassword` function also needs access

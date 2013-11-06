@@ -270,6 +270,10 @@ class ControllerLayer {
          * @param array  $items  Identifier list of the items to be processed.
          *
          * @return bool true on sucess, false on failure.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if executing the workflow action fails
+         «ENDIF»
          */
         public function handleSelectedEntries«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
         {
@@ -329,7 +333,7 @@ class ControllerLayer {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
-                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 }
 
                 if (!$success) {

@@ -52,6 +52,8 @@ class Config {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base;
 
+            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
             use LogUtil;
             use ModUtil;
             use SecurityUtil;
@@ -81,12 +83,21 @@ class Config {
              * @param Zikula_Form_View $view The form view instance.
              *
              * @return boolean False in case of initialization errors, otherwise true.
+             «IF !targets('1.3.5')»
+             *
+             * @throws AccessDeniedHttpException Thrown if the user doesn't have admin permissions
+             * @throws RuntimeException          Thrown if persisting configuration vars fails
+             «ENDIF»
              */
             public function initialize(Zikula_Form_View $view)
             {
                 // permission check
                 if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    return $view->registerError(LogUtil::registerPermissionError());
+                    «IF targets('1.3.5')»
+                        return $view->registerError(LogUtil::registerPermissionError());
+                    «ELSE»
+                        throw new AccessDeniedHttpException();
+                    «ENDIF»
                 }
 
                 // retrieve module vars
@@ -158,7 +169,7 @@ class Config {
 
                     // update all module vars
                     if (!$this->setVars($data['config'])) {
-                        return LogUtil::registerError($this->__('Error! Failed to set configuration variables.'));
+                        «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Error! Failed to set configuration variables.'));
                     }
 
                     LogUtil::registerStatus($this->__('Done! Module configuration updated.'));

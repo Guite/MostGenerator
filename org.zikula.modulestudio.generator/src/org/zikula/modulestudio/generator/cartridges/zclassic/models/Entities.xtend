@@ -323,6 +323,10 @@ class Entities {
 
         /**
          * Sets/retrieves the workflow details.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if retrieving the workflow object fails
+         «ENDIF»
          */
         public function initWorkflow()
         {
@@ -353,7 +357,8 @@ class Entities {
          * Start validation and raise exception if invalid data is found.
          *
          * @return void.
-         * @throws Zikula_Exception
+         *
+         * @throws Zikula_Exception Thrown if a validation error occurs
          */
         public function validate()
         {
@@ -565,7 +570,7 @@ class Entities {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
             if (!$result) {
                 $dom = ZLanguage::getModuleDomain('«app.appName»');
-                LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
+                «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! Could not load the associated workflow.', $dom));
             }
         }
 

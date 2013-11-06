@@ -66,6 +66,10 @@ class Operations {
          * @param array  $params Additional arguments.
          *
          * @return bool False on failure or true if everything worked well.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if executing the workflow action fails
+         «ENDIF»
          */
         function «app.appName»_operation_«opName»(&$entity, $params)
         {
@@ -117,7 +121,7 @@ class Operations {
             //});
             $result = true;
         } catch (\Exception $e) {
-            LogUtil::registerError($e->getMessage());
+            «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
         }
     '''
 
@@ -132,7 +136,7 @@ class Operations {
             $entityManager->flush();
             $result = true;
         } catch (\Exception $e) {
-            LogUtil::registerError($e->getMessage());
+            «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
         }
     '''
 }

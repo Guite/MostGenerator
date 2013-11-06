@@ -502,6 +502,8 @@ class Repository {
          * @param integer $userId The userid of the creator to be removed.
          *
          * @return void
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function deleteCreator($userId)
         {
@@ -537,6 +539,8 @@ class Repository {
          * @param integer $userId The userid of the last editor to be removed.
          *
          * @return void
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function deleteLastEditor($userId)
         {
@@ -573,6 +577,8 @@ class Repository {
          * @param integer $newUserId The new userid of the creator as replacement.
          *
          * @return void
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function updateCreator($userId, $newUserId)
         {
@@ -601,6 +607,8 @@ class Repository {
          * @param integer $newUserId The new userid of the last editor as replacement.
          *
          * @return void
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function updateLastEditor($userId, $newUserId)
         {
@@ -634,6 +642,8 @@ class Repository {
          * @param integer $newUserId The new userid as replacement.
          *
          * @return void
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function updateUserField($userFieldName, $userId, $newUserId)
         {
@@ -692,6 +702,8 @@ class Repository {
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return array|«entityClassName('', false)» retrieved data array or «entityClassName('', false)» instance
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
@@ -722,6 +734,8 @@ class Repository {
          * @param integer $excludeId Optional id to be excluded (used for unique validation).
          *
          * @return «entityClassName('', false)» retrieved instance of «entityClassName('', false)»
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
         public function selectBySlug($slugTitle = '', $useJoins = true, $slimMode = false, $excludeId = 0)
         {
@@ -1478,6 +1492,10 @@ class Repository {
          * Update for «nameMultiple.formatForDisplay» becoming archived.
          *
          * @return bool If everything went right or not.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws RuntimeException Thrown if workflow action execution fails
+         «ENDIF»
          */
         public function archiveObjects()
         {
@@ -1536,7 +1554,7 @@ class Repository {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
-                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 }
 
                 if (!$success) {
