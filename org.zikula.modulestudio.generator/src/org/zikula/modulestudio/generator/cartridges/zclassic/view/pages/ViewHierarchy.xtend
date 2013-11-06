@@ -50,26 +50,19 @@ class ViewHierarchy {
                     {gt text='Add root node' assign='addRootTitle'}
                     <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»icon icon-plus hide«ENDIF»">{$addRootTitle}</a>
 
-                        <script type="text/javascript">
+                    <script type="text/javascript">
                     /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                           $('treeAddRoot').observe('click', function(event) {
-                               «appPrefix»PerformTreeOperation('«name.formatForCode»', 1, 'addRootNode');
-                               Event.stop(event);
-                           }).removeClassName('«IF container.application.targets('1.3.5')»z-«ENDIF»hide');
+                        $('treeAddRoot').observe('click', function(event) {
+                            «appPrefix»PerformTreeOperation('«name.formatForCode»', 1, 'addRootNode');
+                            Event.stop(event);
+                        }).removeClassName('«IF container.application.targets('1.3.5')»z-«ENDIF»hide');
                     });
                     /* ]]> */
                     </script>
                     <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
-
-                    {*
-                        {gt text='Create «name.formatForDisplay»' assign='createTitle'}
-                        <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»icon icon-plus«ENDIF»">
-                            {$createTitle}
-                        </a>
-                    *}
-                    {/checkpermissionblock}
-                «ENDIF»
+                {/checkpermissionblock}
+            «ENDIF»
                 {gt text='Switch to table view' assign='switchTitle'}
                 <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»icon icon-table«ENDIF»">{$switchTitle}</a>
             </p>

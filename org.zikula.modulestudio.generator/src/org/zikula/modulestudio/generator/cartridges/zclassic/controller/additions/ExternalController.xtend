@@ -142,7 +142,7 @@ class ExternalController {
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
             «IF targets('1.3.5')»
-                $repository->setControllerArguments(null);
+                $repository->setControllerArguments(array());
             «ELSE»
                 $repository->setRequest($this->request);
             «ENDIF»
@@ -238,7 +238,7 @@ class ExternalController {
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
             «IF targets('1.3.5')»
-                $repository->setControllerArguments(null);
+                $repository->setControllerArguments(array());
             «ELSE»
                 $repository->setRequest($this->request);
             «ENDIF»

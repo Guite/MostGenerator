@@ -150,7 +150,7 @@ class Ajax {
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
             «IF app.targets('1.3.5')»
-                $repository->setControllerArguments(null);
+                $repository->setControllerArguments(array());
             «ELSE»
                 $repository->setRequest($request);
             «ENDIF»
