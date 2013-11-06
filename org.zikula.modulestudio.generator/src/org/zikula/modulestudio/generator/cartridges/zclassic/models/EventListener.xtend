@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.ArrayField
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
@@ -79,6 +80,51 @@ class EventListener {
 
             return true;
         }
+        «IF !getDerivedFields.filter(AbstractStringField).empty»
+
+            /**
+             * Formats a given textual field depending on it's actual kind of content.
+             *
+             * @param string  $fieldName   Name of field to be formatted.
+             * @param string  $currentFunc Name of current controller action.
+             * @param boolean $allowZero   Whether 0 values are allowed or not (defaults to false).
+             */
+            protected function formatTextualField($fieldName, $currentFunc, $allowZero = false)
+            {
+                if ($currentFunc == 'edit') {
+                    // apply no changes when editing the content
+                    return;
+                }
+
+                $string = '';
+                if (isset($this[$fieldName])) {
+                    if (!empty($this[$fieldName]) || ($allowZero && $this['«it.name.formatForCode»'] == 0)) {
+                        $string = $this[$fieldName];
+                        if ($this->containsHtml($string)) {
+                            $string = DataUtil::formatForDisplayHTML($string);
+                        } else {
+                            $string = DataUtil::formatForDisplay($string);
+                            $string = nl2br($string);
+                        }
+                    }
+                }
+
+                $this[$fieldName] = $string;
+            }
+
+            /**
+             * Checks whether any html tags are contained in the given string.
+             * See http://stackoverflow.com/questions/10778035/how-to-check-if-string-contents-have-any-html-in-it for implementation details.
+             *
+             * @param $string string The given input string.
+             *
+             * @return boolean Whether any html tags are found or not.
+             */
+            protected function containsHtml($string)
+            {
+                return preg_match("/<[^<]+>/", $string, $m) != 0;
+            }
+        «ENDIF»
 «/*}*/»«/*    def private eventListenerBaseImpl(PrePersist it) {*/»
         /**
          * Pre-Process the data prior to an insert operation.
@@ -440,15 +486,11 @@ class EventListener {
     }
 
     def private sanitizeForOutputHTML(EntityField it) '''
-        if ($currentFunc != 'edit') {
-            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
-        }
+        formatTextualField('«it.name.formatForCode»', $currentFunc);
     '''
 
     def private sanitizeForOutputHTMLWithZero(EntityField it) '''
-        if ($currentFunc != 'edit') {
-            $this['«it.name.formatForCode»'] = (((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) || $this['«it.name.formatForCode»'] == 0) ? DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
-        }
+        formatTextualField('«it.name.formatForCode»', $currentFunc, true);
     '''
 
     def private sanitizeForOutputUpload(UploadField it) '''
