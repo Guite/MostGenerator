@@ -1528,11 +1528,6 @@ class FormHandler {
                 // store new identifier
                 foreach ($this->idFields as $idField) {
                     $this->idValues[$idField] = $entity[$idField];
-                    /* deprecated: check if the insert has worked, might become obsolete due to exception usage
-                    if (!$this->idValues[$idField]) {
-                        $success = false;
-                        break;
-                    }*/
                 }
             }
 

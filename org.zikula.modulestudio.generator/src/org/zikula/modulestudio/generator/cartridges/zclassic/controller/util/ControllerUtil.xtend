@@ -71,6 +71,8 @@ class ControllerUtil {
 
             «getDefaultObjectType»
 
+            «hasCompositeKeys»
+
             «retrieveIdentifier»
 
             «isValidIdentifier»
@@ -136,6 +138,27 @@ class ControllerUtil {
         }
     '''
 
+    def private hasCompositeKeys(Application it) '''
+        /**
+         * Checks whether a certain entity type uses composite keys or not.
+         *
+         * @param string $objectType The object type to retrieve.
+         *
+         * @boolean Whether composite keys are used or not.
+         */
+        public function hasCompositeKeys($objectType)
+        {
+            switch ($objectType) {
+                «FOR entity : getAllEntities»
+                    case '«entity.name.formatForCode»':
+                        return «entity.hasCompositeKeys.displayBool»;
+                «ENDFOR»
+                    default:
+                        return false;
+            }
+        }
+    '''
+
     def private retrieveIdentifier(Application it) '''
         /**
          * Retrieve identifier parameters for a given object type.
@@ -152,10 +175,14 @@ class ControllerUtil {
             $idValues = array();
             foreach ($idFields as $idField) {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
-                «/*TODO: distinguish between composite keys and other ones (which are always integers)
-                         this is why the $objectType parameter is available*/»
-                «/*$id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);*/»
-                $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.5')», false«ENDIF»);
+                if ($this->hasCompositeKeys($objectType)) {
+                    // composite key may be alphanumeric
+                    $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.5')», false«ENDIF»);
+                } else {
+                    // single identifier
+                    $id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                }
+                // fallback if id has not been found yet
                 if (!$id && $idField != 'id' && count($idFields) == 1) {
                     $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
                     $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);

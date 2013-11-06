@@ -552,13 +552,13 @@ class Ajax {
                     case '«entity.name.formatForCode»':
                         «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language]»
                             $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
-                            «val textFields = entity.fields.filter(TextField).filter[!leading && length >= 50]»
+                            «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
                             «IF !textFields.empty»
-                            $descriptionFieldName = '«textFields.head.name.formatForCode»';
+                                $descriptionFieldName = '«textFields.head.name.formatForCode»';
                             «ELSE»
-                                «val textStringFields = entity.fields.filter(StringField).filter[!leading && length >= 50 && !nospace && !country && !htmlcolour && !language]»
+                                «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !country && !htmlcolour && !language]»
                                 «IF !textStringFields.empty»
-                                $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
+                                    $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
                                 «ENDIF»
                             «ENDIF»
                             break;

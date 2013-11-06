@@ -7,14 +7,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Selection {
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -100,14 +98,9 @@ class Selection {
          */
         protected function hasCompositeKeys($objectType)
         {
-            switch ($objectType) {
-                «FOR entity : getAllEntities»
-                    case '«entity.name.formatForCode»':
-                        return «entity.hasCompositeKeys.displayBool»;
-                «ENDFOR»
-                    default:
-                        return false;
-            }
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+
+            return $controllerHelper->hasCompositeKeys($objectType);
         }
 
         /**

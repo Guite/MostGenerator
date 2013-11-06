@@ -164,16 +164,19 @@ class ExternalController {
 
             $entity->initWorkflow();
 
-            $instance = $id . '::';«/** TODO consider composite keys properly
-            $instanceId = '';
-            foreach ($idFields as $idField) {
-                if (!empty($instanceId)) {
-                    $instanceId .= '_';
+            /*if ($controllerHelper->hasCompositeKeys($objectType)) {
+                «/** TODO consider composite keys properly */»
+                $instanceId = '';
+                foreach ($idFields as $idField) {
+                    if (!empty($instanceId)) {
+                        $instanceId .= '_';
+                    }
+                    $instanceId .= $idValues[$idField];
                 }
-                $instanceId .= $idValues[$idField];
-            }
-            $instance = $instanceId . '::';
-             */»
+                $instance = $instanceId . '::';
+            } else {*/
+                $instance = $id . '::';
+            /*}*/
 
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
