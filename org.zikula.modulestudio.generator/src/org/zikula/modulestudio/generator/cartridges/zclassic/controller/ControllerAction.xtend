@@ -299,6 +299,17 @@ class ControllerAction {
             $showAllEntries = (int) $request->query->filter('all', 0, false, FILTER_VALIDATE_INT);
         «ENDIF»
 
+        if (!$showAllEntries) {
+            «IF app.targets('1.3.5')»
+                $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
+            «ELSE»
+                $csv = (int) $request->query->filter('usecsvext', 0, false, FILTER_VALIDATE_INT);
+            «ENDIF»
+            if ($csv == 1) {
+                $showAllEntries = 1;
+            }
+        }
+
         «IF hasView»
             $this->view->assign('showOwnEntries', $showOwnEntries)
                        ->assign('showAllEntries', $showAllEntries);
@@ -357,12 +368,7 @@ class ControllerAction {
                 $resultsPerPage = (int) $request->query->filter('num', 0, false, FILTER_VALIDATE_INT);
             «ENDIF»
             if ($resultsPerPage == 0) {
-                «IF app.targets('1.3.5')»
-                    $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
-                «ELSE»
-                    $csv = (int) $request->query->filter('usecsvext', 0, false, FILTER_VALIDATE_INT);
-                «ENDIF»
-                $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pageSize', 10);
+                $resultsPerPage = $this->getVar('pageSize', 10);
             }
 
             «IF hasView»
