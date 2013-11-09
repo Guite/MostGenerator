@@ -486,11 +486,11 @@ class EventListener {
     }
 
     def private sanitizeForOutputHTML(EntityField it) '''
-        formatTextualField('«it.name.formatForCode»', $currentFunc);
+        $this->formatTextualField('«it.name.formatForCode»', $currentFunc);
     '''
 
     def private sanitizeForOutputHTMLWithZero(EntityField it) '''
-        formatTextualField('«it.name.formatForCode»', $currentFunc, true);
+        $this->formatTextualField('«it.name.formatForCode»', $currentFunc, true);
     '''
 
     def private sanitizeForOutputUpload(UploadField it) '''
