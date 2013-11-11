@@ -68,7 +68,7 @@ class RelationPresets {
     '''
 
     def private getOwningAssociations(Entity it, Application refApp) {
-        getIncomingJoinRelations
+        getBidirectionalIncomingJoinRelations
             .filter[source.container.application == refApp]
     }
 
