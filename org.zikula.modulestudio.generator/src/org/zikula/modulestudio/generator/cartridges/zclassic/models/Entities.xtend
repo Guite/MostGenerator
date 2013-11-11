@@ -20,6 +20,7 @@ import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ListField
+import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
@@ -403,6 +404,7 @@ class Entities {
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             «val appName = app.appName»
+            «val refedElems = getOutgoingJoinRelations.filter[e|e.target.container.application == it.container.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.container.application == it.container.application]»
             $dom = ZLanguage::getModuleDomain('«appName»');
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentType == '«controller.formattedName»') {
@@ -466,6 +468,53 @@ class Entities {
                                     'linkText' => __('Back to overview', $dom)
                                 );
                             «ENDIF»
+                        }
+                    «ENDIF»
+                    «IF !refedElems.empty && controller.hasActions('edit')»
+
+                        // more actions for adding new related items
+                        $authAdmin = SecurityUtil::checkPermission($component, $instance, ACCESS_ADMIN);
+                        $uid = UserUtil::getVar('uid');
+                        if ($authAdmin || (isset($uid) && isset($this->createdUserId) && $this->createdUserId == $uid)) {
+                            «FOR elem : refedElems»
+
+                                «val useTarget = (elem.source == it)»
+                                «val relationAliasName = elem.getRelationAliasName(useTarget).formatForCode.toFirstLower»
+                                «val relationAliasNameParam = elem.getRelationAliasName(!useTarget).formatForCodeCapital»
+                                «val otherEntity = (if (!useTarget) elem.source else elem.target)»
+                                «val many = elem.isManySideDisplay(useTarget)»
+                                «IF !many»
+                                    if (!isset($this->«relationAliasName») || $this->«relationAliasName» == null) {
+                                        $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
+                                                         '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                                        if ($currentFunc == 'view') {
+                                            $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
+                                        } elseif ($currentFunc == 'display') {
+                                            $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
+                                        }
+                                        $this->_actions[] = array(
+                                            'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                                            'icon' => '«IF app.targets('1.3.5')»add«ELSE»plus«ENDIF»',
+                                            'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
+                                            'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
+                                        );
+                                    }
+                                «ELSE»
+                                    $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
+                                                     '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                                    if ($currentFunc == 'view') {
+                                        $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
+                                    } elseif ($currentFunc == 'display') {
+                                        $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
+                                    }
+                                    $this->_actions[] = array(
+                                        'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                                        'icon' => '«IF app.targets('1.3.5')»add«ELSE»plus«ENDIF»',
+                                        'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
+                                        'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
+                                    );
+                                «ENDIF»
+                            «ENDFOR»
                         }
                     «ENDIF»
                 }
