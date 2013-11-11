@@ -193,7 +193,7 @@ class ContentTypeListView {
                     </span>
                 «ELSE»
                     <span class="help-block">
-                        <a class="icon icon-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
+                        <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
                     </span>
                 «ENDIF»
             «IF !targets('1.3.5')»

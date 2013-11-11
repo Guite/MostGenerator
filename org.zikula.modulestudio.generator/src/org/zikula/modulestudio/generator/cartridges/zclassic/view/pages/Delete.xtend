@@ -52,7 +52,7 @@ class Delete {
                         «ENDIF»
                             {gt text='Delete' assign='deleteTitle'}
                             {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF container.application.targets('1.3.5')»z-btred«ELSE»btn btn-danger«ENDIF»'}
-                            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«name.formatForCode»'}"«IF !container.application.targets('1.3.5')» class="btn btn-default" role="button"«ENDIF»>«IF container.application.targets('1.3.5')»{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'}«ELSE»<span class="icon icon-remove"></span>«ENDIF» {gt text='Cancel'}</a>
+                            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«name.formatForCode»'}"«IF !container.application.targets('1.3.5')» class="btn btn-default" role="button"«ENDIF»>«IF container.application.targets('1.3.5')»{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'}«ELSE»<span class="fa fa-times"></span>«ENDIF» {gt text='Cancel'}</a>
                         «IF !container.application.targets('1.3.5')»
                             </div>
                         «ENDIF»
@@ -76,7 +76,7 @@ class Delete {
                     </div>
                 «ELSE»
                     <h3>
-                        <span class="icon icon-trash"></span>
+                        <span class="fa fa-trash-o"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»

@@ -78,13 +78,13 @@ class Forms {
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «controller.pageIcon('edit')»
+            «controller.pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
         {elseif $mode eq 'create'}
             {gt text='Create «name.formatForDisplay»' assign='templateTitle'}
             «controller.pageIcon(if (app.targets('1.3.5')) 'new' else 'plus')»
         {else}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «controller.pageIcon('edit')»
+            «controller.pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
         {/if}
         <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
             {pagesetvar name='title' value=$templateTitle}
@@ -248,8 +248,8 @@ class Forms {
             {icon type='edit' size='extrasmall' assign='editImageArray'}
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
         «ELSE»
-            {assign var='editImage' value='<span class="icon icon-edit"></span>'}
-            {assign var='deleteImage' value='<span class="icon icon-trash"></span>'}
+            {assign var='editImage' value='<span class="fa fa-pencil-square-o"></span>'}
+            {assign var='deleteImage' value='<span class="fa fa-trash-o"></span>'}
         «ENDIF»
 
         «IF geographical»

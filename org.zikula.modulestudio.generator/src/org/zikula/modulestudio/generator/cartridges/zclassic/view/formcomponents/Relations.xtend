@@ -181,14 +181,14 @@ class Relations {
                 {icon type='edit' size='extrasmall' assign='editImageArray'}
                 {assign var='editImage' value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
             «ELSE»
-                {assign var='editImage' value='<span class="icon icon-edit"></span>'}
+                {assign var='editImage' value='<span class="fa fa-pencil-square-o"></span>'}
             «ENDIF»
         «ENDIF»
         «IF app.targets('1.3.5')»
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
             {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
         «ELSE»
-            {assign var='removeImage' value='<span class="icon icon-trash"></span>'}
+            {assign var='removeImage' value='<span class="fa fa-trash-o"></span>'}
         «ENDIF»
         «IF !many»
 

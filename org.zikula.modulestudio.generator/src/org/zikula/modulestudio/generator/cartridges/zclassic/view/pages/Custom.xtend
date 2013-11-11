@@ -55,7 +55,7 @@ class Custom {
                     </div>
                 «ELSE»
                     <h3>
-                        <span class="icon icon-sign-blank"></span>
+                        <span class="fa fa-square"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»

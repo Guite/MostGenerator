@@ -43,7 +43,7 @@ class Config {
                     </div>
                 «ELSE»
                     <h3>
-                        <span class="icon icon-wrench"></span>
+                        <span class="fa fa-wrench"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»

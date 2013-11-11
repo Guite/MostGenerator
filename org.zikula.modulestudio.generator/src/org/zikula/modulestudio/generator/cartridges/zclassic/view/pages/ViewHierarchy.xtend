@@ -48,7 +48,7 @@ class ViewHierarchy {
             «IF controller.hasActions('edit')»
                 {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_ADD'}
                     {gt text='Add root node' assign='addRootTitle'}
-                    <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»icon icon-plus hide«ENDIF»">{$addRootTitle}</a>
+                    <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»fa fa-plus hide«ENDIF»">{$addRootTitle}</a>
 
                     <script type="text/javascript">
                     /* <![CDATA[ */
@@ -64,7 +64,7 @@ class ViewHierarchy {
                 {/checkpermissionblock}
             «ENDIF»
                 {gt text='Switch to table view' assign='switchTitle'}
-                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»icon icon-table«ENDIF»">{$switchTitle}</a>
+                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-table«ENDIF»">{$switchTitle}</a>
             </p>
 
             {foreach key='rootId' item='treeNodes' from=$trees}
@@ -88,7 +88,7 @@ class ViewHierarchy {
                     </div>
                 «ELSE»
                     <h3>
-                        <span class="icon icon-list"></span>
+                        <span class="fa fa-list"></span>
                         {$templateTitle}
                     </h3>
                 «ENDIF»

@@ -42,11 +42,11 @@ class SimpleFields {
             «ELSE»
                 <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="hide">
                 {if $«objName».«name.formatForCode»}
-                    <span class="cursor-pointer icon icon-ok" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
-                    <span class="cursor-pointer icon icon-remove hide" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
+                    <span class="cursor-pointer fa fa-check" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
+                    <span class="cursor-pointer fa fa-times hide" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
                 {else}
-                    <span class="cursor-pointer icon icon-ok hide" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
-                    <span class="cursor-pointer icon icon-remove" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
+                    <span class="cursor-pointer fa fa-check hide" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
+                    <span class="cursor-pointer fa fa-times" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
                 {/if}
                 </a>
             «ENDIF»
@@ -102,7 +102,7 @@ class SimpleFields {
             «IF entity.container.application.targets('1.3.5')»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
             «ELSE»
-                <a href="mailto:{$«realName»}" title="{gt text='Send an email'}" class="icon icon-envelope"></a>
+                <a href="mailto:{$«realName»}" title="{gt text='Send an email'}" class="fa fa-envelope"></a>
             «ENDIF»
             «IF page == 'display'»
                   {else}
@@ -128,7 +128,7 @@ class SimpleFields {
             «IF entity.container.application.targets('1.3.5')»
                 <a href="{$«realName»}" title="{gt text='Visit this page'}">{icon type='url' size='extrasmall' __alt='Homepage'}</a>
             «ELSE»
-                <a href="{$«realName»}" title="{gt text='Visit this page'}" class="icon icon-external-link-sign"></a>
+                <a href="{$«realName»}" title="{gt text='Visit this page'}" class="fa fa-external-link-square"></a>
             «ENDIF»
             «IF page == 'display'»
                   {else}
