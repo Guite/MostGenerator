@@ -308,7 +308,8 @@ class AbstractObjectSelector {
             $selectionArgs = array(
                 'ot' => $this->objectType,
                 'where' => $this->where,
-                'orderBy' => $this->orderBy
+                'orderBy' => $this->orderBy,
+                'useJoins' => false
             );
 
             if ($this->resultsPerPage < 1) {
