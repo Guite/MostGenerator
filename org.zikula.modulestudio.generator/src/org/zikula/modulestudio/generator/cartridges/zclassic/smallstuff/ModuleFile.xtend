@@ -22,7 +22,7 @@ class ModuleFile {
         if (!shouldBeSkipped(getAppSourceLibPath + 'Base/' + moduleFileName)) {
             fsa.generateFile(getAppSourceLibPath + 'Base/' + moduleFileName, moduleBaseFile)
         }
-        if (!generateOnlyBaseClasses && shouldBeSkipped(getAppSourceLibPath + moduleFileName)) {
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + moduleFileName)) {
             fsa.generateFile(getAppSourceLibPath + moduleFileName, moduleFile)
         }
     }
