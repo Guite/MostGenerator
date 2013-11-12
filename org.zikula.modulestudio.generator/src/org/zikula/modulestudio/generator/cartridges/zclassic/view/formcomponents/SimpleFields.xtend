@@ -31,7 +31,13 @@ class SimpleFields {
 
     def formRow(DerivedField it, String groupSuffix, String idSuffix) '''
         «formLabel(groupSuffix, idSuffix)»
+        «IF !entity.container.application.targets('1.3.5')»
+            <div class="col-lg-9">
+        «ENDIF»
         «formField(groupSuffix, idSuffix)»
+        «IF !entity.container.application.targets('1.3.5')»
+            </div>
+        «ENDIF»
         «validationHelper.mandatoryValidationMessage(it, idSuffix)»
         «validationHelper.additionalValidationMessages(it, idSuffix)»
     '''
