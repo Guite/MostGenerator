@@ -74,7 +74,7 @@ class ViewQuickNavForm {
         «categoriesFields»
         «val incomingRelations = getBidirectionalIncomingJoinRelationsWithOneSource»
         «IF !incomingRelations.empty»
-            «FOR relation: incomingRelations»
+            «FOR relation : incomingRelations»
                 «relation.formField»
             «ENDFOR»
         «ENDIF»
@@ -100,8 +100,14 @@ class ViewQuickNavForm {
         «ENDIF»
         «IF hasAbstractStringFieldsEntity»
             {if !isset($searchFilter) || $searchFilter eq true}
-                <label for="searchTerm">{gt text='Search'}:</label>
-                <input type="text" id="searchTerm" name="searchterm" value="{$searchterm}" />
+                «IF !container.application.targets('1.3.5')»
+                    <div class="form-group">
+                «ENDIF»
+                    <label for="searchTerm">{gt text='Search'}</label>
+                    <input type="text" id="searchTerm" name="searchterm" value="{$searchterm}"«IF !container.application.targets('1.3.5')» class="form-control input-sm"«ENDIF» />
+                «IF !container.application.targets('1.3.5')»
+                    </div>
+                «ENDIF»
             {/if}
         «ENDIF»
         «sortingAndPageSize»
@@ -136,7 +142,7 @@ class ViewQuickNavForm {
                         «ENDIF»
                             <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
                             &nbsp;
-                            {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«container.application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                            {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«container.application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize«IF !container.application.targets('1.3.5')» cssClass='form-control input-sm'«ENDIF»}
                         «IF !container.application.targets('1.3.5')»
                             </div>
                         «ENDIF»
@@ -164,7 +170,7 @@ class ViewQuickNavForm {
         «val fieldName = name.formatForCode»
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
         <label for="«fieldName»">{gt text='«fieldLabel.formatForDisplayCapital»'}</label>
-        <select id="«fieldName»" name="«fieldName»"«IF !entity.container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+        <select id="«fieldName»" name="«fieldName»"«IF !entity.container.application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
             <option value="">{$lblDefault}</option>
         {foreach item='option' from=$«fieldName»Items}
             <option value="{$option.value}"{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
@@ -191,7 +197,7 @@ class ViewQuickNavForm {
     def private dispatch formFieldImpl(ListField it) '''
         «val fieldName = name.formatForCode»
         <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
-        <select id="«fieldName»" name="«fieldName»"«IF !entity.container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+        <select id="«fieldName»" name="«fieldName»"«IF !entity.container.application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
             <option value="">{$lblDefault}</option>
         {foreach item='option' from=$«fieldName»Items}
         «IF multiple»
@@ -212,7 +218,7 @@ class ViewQuickNavForm {
             «ENDIF»
                 <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
                 {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' useJoins=false assign='listEntries'}
-                <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+                <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !container.application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
                     <option value="">{$lblDefault}</option>
                 {foreach item='option' from=$listEntries}
                     «IF source.hasCompositeKeys»
@@ -236,21 +242,21 @@ class ViewQuickNavForm {
             «ENDIF»
                 <label for="sortBy">{gt text='Sort by'}</label>
                 &nbsp;
-                <select id="sortBy" name="sort"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
-                «FOR field : getDerivedFields»
-                    <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
-                «ENDFOR»
-                «IF standardFields»
+                <select id="sortBy" name="sort"«IF !container.application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
+                    «FOR field : getDerivedFields»
+                        <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                    «ENDFOR»
+                    «IF standardFields»
                     <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
                     <option value="createdUserId"{if $sort eq 'createdUserId'} selected="selected"{/if}>{gt text='Creator'}</option>
                     <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
-                «ENDIF»
+                    «ENDIF»
                 </select>
             «IF !container.application.targets('1.3.5')»
                 </div>
                 <div class="form-group">
             «ENDIF»
-                <select id="sortDir" name="sortdir"«IF !container.application.targets('1.3.5')» class="form-control"«ENDIF»>
+                <select id="sortDir" name="sortdir"«IF !container.application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
                     <option value="asc"{if $sdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
                     <option value="desc"{if $sdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
                 </select>
@@ -265,8 +271,7 @@ class ViewQuickNavForm {
             «IF !container.application.targets('1.3.5')»
                 <div class="form-group">
             «ENDIF»
-                <label for="num">{gt text='Page size'}</label>
-                &nbsp;
+                <label for="num"«IF !container.application.targets('1.3.5')» class="form-control input-sm" style="min-width: 70px"«ENDIF»>{gt text='Page size'}</label>
                 <select id="num" name="num">
                     <option value="5"{if $pageSize eq 5} selected="selected"{/if}>5</option>
                     <option value="10"{if $pageSize eq 10} selected="selected"{/if}>10</option>
