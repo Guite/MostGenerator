@@ -55,6 +55,8 @@ class ModelUtil {
             namespace «appNamespace»\Util\Base;
 
             use «appNamespace»\Util\ControllerUtil;
+
+            use ModUtil;
             use Zikula_AbstractBase;
 
         «ENDIF»
