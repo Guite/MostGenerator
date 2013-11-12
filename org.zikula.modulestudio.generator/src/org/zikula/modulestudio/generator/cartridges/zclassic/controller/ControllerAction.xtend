@@ -276,7 +276,7 @@ class ControllerAction {
         «IF app.targets('1.3.5')»
             $sdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
         «ELSE»
-            $dir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
+            $sdir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
         «ENDIF»
         $sdir = strtolower($sdir);
         if ($sdir != 'asc' && $sdir != 'desc') {
