@@ -21,6 +21,9 @@ class Index {
     Application app
 
     def generate(Entity it, Controller controller, IFileSystemAccess fsa) {
+        if (controller.hasActions('view')) {
+            return
+        }
         app = container.application
         val pageName = (if (app.targets('1.3.5')) 'main' else 'index')
         println('Generating ' + controller.formattedName + ' ' + pageName + ' templates for entity "' + name.formatForDisplay + '"')
@@ -34,17 +37,8 @@ class Index {
 
     def private indexView(Entity it, String pageName, Controller controller) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» «pageName» view in «controller.formattedName» area *}
-        «IF controller.hasActions('view')»
-            «IF app.targets('1.3.5')»
-                {modfunc modname='«app.appName»' type='«controller.formattedName»' func='view'}
-            «ELSE»
-                {modfunc modname='«app.appName»' type='«controller.formattedName»' func='view' assign='response'}
-                {$response->getContent()}
-            «ENDIF»
-        «ELSE»
-            {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
-            <p>{gt text='Welcome to the «controller.formattedName» section of the «app.name.formatForDisplayCapital» application.'}</p>
-            {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
-        «ENDIF»
+        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
+        <p>{gt text='Welcome to the «controller.formattedName» section of the «app.name.formatForDisplayCapital» application.'}</p>
+        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
 }

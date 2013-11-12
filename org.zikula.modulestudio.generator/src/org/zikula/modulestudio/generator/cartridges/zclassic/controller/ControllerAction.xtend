@@ -181,44 +181,56 @@ class ControllerAction {
     def private dispatch actionImplBody(MainAction it) {
         switch controller {
             UserController: '''
-                        // set caching id
-                        $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
-
-                        // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
-                        «IF app.targets('1.3.5')»
-                        return $this->view->fetch('«controller.formattedName»/main.tpl');
+                        «IF controller.hasActions('view')»
+                            return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
                         «ELSE»
-                        return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                            // set caching id
+                            $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+
+                            // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
+                            «IF app.targets('1.3.5')»
+                            return $this->view->fetch('«controller.formattedName»/main.tpl');
+                            «ELSE»
+                            return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                            «ENDIF»
                         «ENDIF»
                     '''
             AdminController: '''
-                        // set caching id
-                        $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+                        «IF controller.hasActions('view')»
+                            return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
+                        «ELSE»
+                            // set caching id
+                            $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
-                        «/*
-                        «IF controller.container.application.needsConfig»
-                            // call config method
-                            return $this->config();
-                        «ELSE»
-                        */»
-                        // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
-                        «IF app.targets('1.3.5')»
-                        return $this->view->fetch('«controller.formattedName»/main.tpl');
-                        «ELSE»
-                        return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                            «/*
+                            «IF controller.container.application.needsConfig»
+                                // call config method
+                                return $this->config();
+                            «ELSE»
+                            */»
+                            // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
+                            «IF app.targets('1.3.5')»
+                            return $this->view->fetch('«controller.formattedName»/main.tpl');
+                            «ELSE»
+                            return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                            «ENDIF»
+                            «/*«ENDIF»*/»
                         «ENDIF»
-                        «/*«ENDIF»*/»
                     '''
             AjaxController: ''
             CustomController: '''
-                        // set caching id
-                        $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
-
-                        // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
-                        «IF app.targets('1.3.5')»
-                        return $this->view->fetch('«controller.formattedName»/main.tpl');
+                        «IF controller.hasActions('view')»
+                            return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
                         «ELSE»
-                        return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                            // set caching id
+                            $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+
+                            // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
+                            «IF app.targets('1.3.5')»
+                            return $this->view->fetch('«controller.formattedName»/main.tpl');
+                            «ELSE»
+                            return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                            «ENDIF»
                         «ENDIF»
                     '''
         }
