@@ -1307,7 +1307,7 @@ class Repository {
                     // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
                     // Multiple objects of the same plugin with different configurations are possible.
                     array(
-                        «IF !fields.filter(AbstractDateField).empty»,
+                        «IF !fields.filter(AbstractDateField).empty»
                             new DateFilter(array(«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/))
                         «ENDIF»
                     ),
