@@ -98,7 +98,7 @@ class EventListener {
 
                 $string = '';
                 if (isset($this[$fieldName])) {
-                    if (!empty($this[$fieldName]) || ($allowZero && $this['«it.name.formatForCode»'] == 0)) {
+                    if (!empty($this[$fieldName]) || ($allowZero && $this[$fieldName] == 0)) {
                         $string = $this[$fieldName];
                         if ($this->containsHtml($string)) {
                             $string = DataUtil::formatForDisplayHTML($string);
