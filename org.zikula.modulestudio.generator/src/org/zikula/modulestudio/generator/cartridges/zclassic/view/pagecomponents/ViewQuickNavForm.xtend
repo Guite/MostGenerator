@@ -41,7 +41,7 @@ class ViewQuickNavForm {
         {* purpose of this template: «nameMultiple.formatForDisplay» view filter form in «controller.formattedName» area *}
         {checkpermissionblock component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
         {assign var='objectType' value='«name.formatForCode»'}
-        <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm" class="«app.appName.toLowerCase»-quicknav«IF container.application.targets('1.3.5')»"«ELSE» {*form-inline*}navbar-form navbar-left" role="navigation"«ENDIF»>
+        <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm" class="«app.appName.toLowerCase»-quicknav«IF container.application.targets('1.3.5')»"«ELSE» {*form-inline*}navbar-form" role="navigation"«ENDIF»>
             <fieldset>
                 <h3>{gt text='Quick navigation'}</h3>
                 <input type="hidden" name="module" value="{modgetinfo modname='«app.appName»' info='url'}" />
