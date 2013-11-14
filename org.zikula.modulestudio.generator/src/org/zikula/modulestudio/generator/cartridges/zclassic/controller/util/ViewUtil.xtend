@@ -286,7 +286,7 @@ class ViewUtil {
             $output = $view->fetch($template);
 
             // make local images absolute
-            $output = str_replace('img src="/', 'img src="' . $_SERVER['DOCUMENT_ROOT'] . '/', $output);
+            $output = str_replace('img src="/', 'img src="' . System::serverGetVar('DOCUMENT_ROOT') . '/', $output);
 
             // see http://codeigniter.com/forums/viewthread/69388/P15/#561214
             //$output = utf8_decode($output);
