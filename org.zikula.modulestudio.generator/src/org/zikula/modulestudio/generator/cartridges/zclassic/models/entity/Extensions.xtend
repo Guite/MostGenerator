@@ -140,11 +140,11 @@ class Extensions {
                  * @Gedmo\Translatable
              «ENDIF»
              «IF container.application.targets('1.3.5')»
-             * @Gedmo\Slug(style="«slugStyle.asConstant»", separator="«slugSeparator»"«IF !slugUnique», unique=false«ENDIF»«IF !slugUpdatable», updatable=false«ENDIF»)
+             * @Gedmo\Slug(style="«slugStyle.asConstant»", separator="«slugSeparator»", unique=«slugUnique.displayBool», updatable=«slugUpdatable.displayBool»)
              «ELSE»
-             * @Gedmo\Slug(fields={«FOR field : getSluggableFields SEPARATOR ', '»"«field.name.formatForCode»"«ENDFOR»}«IF !slugUpdatable», updatable=false«ENDIF»«IF !slugUnique», unique=false«ENDIF», separator="«slugSeparator»", style="«slugStyle.asConstant»")
+             * @Gedmo\Slug(fields={«FOR field : getSluggableFields SEPARATOR ', '»"«field.name.formatForCode»"«ENDFOR»}, updatable=«slugUpdatable.displayBool», unique=«slugUnique.displayBool», separator="«slugSeparator»", style="«slugStyle.asConstant»")
              «ENDIF»
-             * @ORM\Column(type="string", length=«slugLength»«IF !slugUnique», unique=false«ENDIF»)
+             * @ORM\Column(type="string", length=«slugLength», unique=«slugUnique.displayBool»)
              * @var string $slug.
              */
             protected $slug;
