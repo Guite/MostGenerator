@@ -170,7 +170,7 @@ class Search {
                             break;
                     «ENDFOR»
                 }
-                $where = «IF targets('1.3.5')»Search_Api_User«ELSE»\Zikula\Module\Search\Api\UserApi«ENDIF»::construct_where($args, $whereArray, $languageField);
+                $where = «IF targets('1.3.5')»Search_Api_User«ELSE»\Zikula\Module\SearchModule\Api\UserApi«ENDIF»::construct_where($args, $whereArray, $languageField);
 
                 «IF targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucwords($objectType);
