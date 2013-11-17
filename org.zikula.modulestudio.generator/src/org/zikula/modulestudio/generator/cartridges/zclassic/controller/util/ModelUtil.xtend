@@ -92,7 +92,7 @@ class ModelUtil {
         {
             $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'canBeCreated')))) {
-                throw new Exception('Error! Invalid object type received.');
+                throw new \Exception('Error! Invalid object type received.');
             }
 
             $result = false;
@@ -151,7 +151,7 @@ class ModelUtil {
         {
             $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'hasExistingInstances')))) {
-                throw new Exception('Error! Invalid object type received.');
+                throw new \Exception('Error! Invalid object type received.');
             }
 
             «IF targets('1.3.5')»
@@ -160,7 +160,6 @@ class ModelUtil {
                 $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
 
-            $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
             $repository = $this->entityManager->getRepository($entityClass);
 
             return ($repository->selectCount() > 0);
