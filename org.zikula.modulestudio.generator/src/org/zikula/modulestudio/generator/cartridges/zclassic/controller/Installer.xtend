@@ -112,6 +112,8 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Controller\Base;
 
+            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
             use LogUtil;
             «IF needsConfig»
                 use ModUtil;

@@ -73,6 +73,17 @@ class ControllerAction {
         «actionDocMethodParams»
          *
          * @return mixed Output.
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «IF it instanceof DisplayAction»
+         * @throws NotFoundHttpException     Thrown if item to be displayed isn't found
+         «ELSEIF it instanceof EditAction»
+         * @throws NotFoundHttpException     Thrown if item to be edited isn't found
+         «ELSEIF it instanceof DeleteAction»
+         * @throws NotFoundHttpException     Thrown if item to be deleted isn't found
+         «ENDIF»
+         «ENDIF»
          */
     '''
 
@@ -155,10 +166,22 @@ class ControllerAction {
     def private permissionCheck(Action it, String objectTypeVar, String instanceId) {
         switch controller {
             AdminController: '''
+                    «IF app.targets('1.3.5')»
                         $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN), LogUtil::getErrorMsgPermission());
+                    «ELSE»
+                        if (!SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN)) {
+                            throw new AccessDeniedHttpException();
+                        }
+                    «ENDIF»
                     '''
             default: '''
+                    «IF app.targets('1.3.5')»
                         $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»), LogUtil::getErrorMsgPermission());
+                    «ELSE»
+                        if (!SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»)) {
+                            throw new AccessDeniedHttpException();
+                        }
+                    «ENDIF»
                     '''
         }
     }
@@ -480,10 +503,22 @@ class ControllerAction {
         $idValues = $controllerHelper->retrieveIdentifier(«IF app.targets('1.3.5')»$this->request, array()«ELSE»$this->request, array()«ENDIF», $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         «controller.checkForSlug»
-        $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
+        «IF app.targets('1.3.5')»
+            $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
+        «ELSE»
+            if (!$hasIdentifier) {
+                throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
+            }
+        «ENDIF»
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
-        $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        «IF app.targets('1.3.5')»
+            $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        «ELSE»
+            if ($entity === null) {
+                throw new NotFoundHttpException($this->__('No such item.'));
+            }
+        «ENDIF»
         unset($idValues);
 
         $entity->initWorkflow();
@@ -612,10 +647,22 @@ class ControllerAction {
             $idValues[$idField] = isset($data[$idField]) ? $data[$idField] : '';
         }
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-        $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
+        «IF app.targets('1.3.5')»
+            $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
+        «ELSE»
+            if (!$hasIdentifier) {
+                throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
+            }
+        «ENDIF»
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
-        $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        «IF app.targets('1.3.5')»
+            $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        «ELSE»
+            if ($entity === null) {
+                throw new NotFoundHttpException($this->__('No such item.'));
+            }
+        «ENDIF»
         unset($idValues);
 
         «prepareDisplayPermissionCheckWithoutCurrentUrlArgs»
@@ -664,10 +711,22 @@ class ControllerAction {
         $idValues = $controllerHelper->retrieveIdentifier(«IF app.targets('1.3.5')»$this->request, array()«ELSE»$this->request, array()«ENDIF», $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
-        $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
+        «IF app.targets('1.3.5')»
+            $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
+        «ELSE»
+            if (!$hasIdentifier) {
+                throw new NotFoundHttpException($this->__('Error! Invalid identifier received.'));
+            }
+        «ENDIF»
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
-        $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        «IF app.targets('1.3.5')»
+            $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        «ELSE»
+            if ($entity === null) {
+                throw new NotFoundHttpException($this->__('No such item.'));
+            }
+        «ENDIF»
 
         $entity->initWorkflow();
 

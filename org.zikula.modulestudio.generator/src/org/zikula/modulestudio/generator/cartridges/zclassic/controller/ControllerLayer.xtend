@@ -146,6 +146,10 @@ class ControllerLayer {
             «ENDIF»
 
             use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+            «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
+                use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+            «ENDIF»
             «IF isAjaxController»
                 «IF !app.getAllUserFields.empty»
                     use Doctrine\ORM\AbstractQuery;
@@ -240,10 +244,20 @@ class ControllerLayer {
                  * This method takes care of the application configuration.
                  *
                  * @return string Output
+                 «IF !app.targets('1.3.5')»
+                 *
+                 * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+                 «ENDIF»
                  */
                 public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
                 {
-                    $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
+                    «IF app.targets('1.3.5')»
+                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
+                    «ELSE»
+                        if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                            throw new AccessDeniedHttpException();
+                        }
+                    «ENDIF»
 
                     // Create new Form reference
                     $view = FormUtil::newForm($this->name, $this);

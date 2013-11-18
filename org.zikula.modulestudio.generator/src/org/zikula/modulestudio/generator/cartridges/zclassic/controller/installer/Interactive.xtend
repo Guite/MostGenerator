@@ -33,10 +33,20 @@ class Interactive {
          * Interactive installation procedure.
          *
          * @return string|boolean Output.
+         «IF !targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function install«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «IF targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «ELSE»
+                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             // fetch and return the appropriate template
             «IF targets('1.3.5')»
@@ -52,10 +62,20 @@ class Interactive {
          * Interactive installation procedure step 2.
          *
          * @return string|boolean Output.
+         «IF !targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function interactiveinitstep2«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «IF targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «ELSE»
+                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             $submit = $this->request->request->get('submit', null);
             if (!$submit) {
@@ -92,10 +112,20 @@ class Interactive {
          * Interactive installation procedure step 3
          *
          * @return string|boolean Output.
+         «IF !targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function interactiveinitstep3«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «IF targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «ELSE»
+                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             $activate = (bool) $this->request->request->filter('activate', false, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
 
@@ -116,10 +146,20 @@ class Interactive {
          * Interactive update procedure
          *
          * @return string|boolean Output.
+         «IF !targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function upgrade«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «IF targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «ELSE»
+                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             // TODO
 
@@ -132,10 +172,20 @@ class Interactive {
          * Interactive delete.
          *
          * @return string Output.
+         «IF !targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function uninstall«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «IF targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            «ELSE»
+                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             // fetch and return the appropriate template
             «IF targets('1.3.5')»

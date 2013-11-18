@@ -53,6 +53,8 @@ class ExternalController {
 
         use «appNamespace»\Util\ControllerUtil;
 
+        use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
         use LogUtil;
         use ModUtil;
         use PageUtil;
@@ -150,7 +152,6 @@ class ExternalController {
             $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
             $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-            //$this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
             if (!$hasIdentifier) {
                 return $this->__('Error! Invalid identifier received.');
             }
@@ -158,7 +159,6 @@ class ExternalController {
             // assign object data fetched from the database
             $entity = $repository->selectById($idValues);
             if ((!is_array($entity) && !is_object($entity)) || !isset($entity[$idFields[0]])) {
-                //$this->throwNotFound($this->__('No such item.'));
                 return $this->__('No such item.');
             }
 
@@ -213,6 +213,10 @@ class ExternalController {
          * @param int    $num        Amount of entries to display.
          *
          * @return output The external item finder page
+         «IF !targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function finder«IF targets('1.3.5')»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
         {
@@ -229,7 +233,13 @@ class ExternalController {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
 
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
+            «IF targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
+            «ELSE»
+                if (!SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);

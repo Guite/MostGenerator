@@ -327,13 +327,21 @@ class Ajax {
          * @param string $ex Optional identifier to be excluded from search.
          *
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         «IF !app.targets('1.3.5')»
          *
-         * @throws \Zikula_Exception If something fatal occurs.
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function checkForDuplicate«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
         {
             $this->checkAjaxToken();
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            «IF app.targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            «ELSE»
+                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
 
@@ -422,10 +430,20 @@ class Ajax {
          * @param int    $id    Identifier of treated entity.
          *
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         «IF !app.targets('1.3.5')»
+         *
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          */
         public function toggleFlag«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
+            «IF app.targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            «ELSE»
+                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
 
@@ -476,6 +494,9 @@ class Ajax {
          *
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          *
+         «IF !app.targets('1.3.5')»
+         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         «ENDIF»
          * @throws «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
          «IF !app.targets('1.3.5')»
          * @throws RuntimeException Thrown if tree verification or executing the workflow action fails
@@ -483,7 +504,13 @@ class Ajax {
          */
         public function handleTreeOperation«IF app.targets('1.3.5')»()«ELSE»Action()«ENDIF»
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            «IF app.targets('1.3.5')»
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            «ELSE»
+                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                    throw new AccessDeniedHttpException();
+                }
+            «ENDIF»
 
             $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
 
