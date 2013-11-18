@@ -50,6 +50,7 @@ class UserInput {
             namespace «appNamespace»\Form\Plugin\Base;
 
             use DataUtil;
+            use System;
             use UserUtil;
             use Zikula_Form_Plugin_TextInput;
             use Zikula_Form_View;
@@ -118,6 +119,7 @@ class UserInput {
                 $dom = ZLanguage::getModuleDomain('«appName»');
 
                 //$result = parent::render($view);
+                $result = '';
 
                 // start code from TextInput base class
                 $titleHtml = ($this->toolTip != null ? ' title="' . $view->translateForDisplay($this->toolTip) . '"' : '');
@@ -129,9 +131,9 @@ class UserInput {
                 $attributes = $this->renderAttributes($view);
                 // end code from TextInput base class
 
-                if ($this->readOnly) {
+                /*if ($this->readOnly) {
                     return $result;
-                }
+                }*/
 
                 $selectorDefaultValue = '';
                 if (intval($this->text) > 0) {
