@@ -117,7 +117,7 @@ class Repository {
 
         «IF !app.targets('1.3.5')»
             use Symfony\Component\HttpFoundation\Request;
-            use Zikula\Component\FilterUtil;
+            use Zikula\Component\FilterUtil\FilterUtil;
             use Zikula\Component\FilterUtil\Config as FilterConfig;
             use Zikula\Component\FilterUtil\PluginManager as FilterPluginManager;
             «IF categorisable»
