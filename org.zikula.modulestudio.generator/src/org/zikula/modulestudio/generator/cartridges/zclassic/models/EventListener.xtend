@@ -85,14 +85,15 @@ class EventListener {
             /**
              * Formats a given textual field depending on it's actual kind of content.
              *
-             * @param string  $fieldName   Name of field to be formatted.
-             * @param string  $currentFunc Name of current controller action.
-             * @param boolean $allowZero   Whether 0 values are allowed or not (defaults to false).
+             * @param string  $fieldName     Name of field to be formatted.
+             * @param string  $currentFunc   Name of current controller action.
+             * @param string  $usesCsvOutput Whether the output is CSV or not (defaults to false).
+             * @param boolean $allowZero     Whether 0 values are allowed or not (defaults to false).
              */
-            protected function formatTextualField($fieldName, $currentFunc, $allowZero = false)
+            protected function formatTextualField($fieldName, $currentFunc, $usesCsvOutput = false, $allowZero = false)
             {
-                if ($currentFunc == 'edit') {
-                    // apply no changes when editing the content
+                if ($currentFunc == 'edit' || $usesCsvOutput === true) {
+                    // apply no changes when editing the content or displaying raw output
                     return;
                 }
 
@@ -445,6 +446,7 @@ class EventListener {
     def private postLoadImpl(Entity it/* PostLoad it */) '''
         «val app = container.application»
         $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+        $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_SANITIZE_STRING);
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
@@ -486,11 +488,11 @@ class EventListener {
     }
 
     def private sanitizeForOutputHTML(EntityField it) '''
-        $this->formatTextualField('«it.name.formatForCode»', $currentFunc);
+        $this->formatTextualField('«it.name.formatForCode»', $currentFunc, $usesCsvOutput);
     '''
 
     def private sanitizeForOutputHTMLWithZero(EntityField it) '''
-        $this->formatTextualField('«it.name.formatForCode»', $currentFunc, true);
+        $this->formatTextualField('«it.name.formatForCode»', $currentFunc, $usesCsvOutput, true);
     '''
 
     def private sanitizeForOutputUpload(UploadField it) '''
