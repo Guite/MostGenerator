@@ -24,7 +24,7 @@ class SimpleFields {
     @Inject extension Utils = new Utils
 
     def dispatch displayField(EntityField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}'''
+        {$«objName».«name.formatForCode»}'''
 
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
@@ -86,7 +86,7 @@ class SimpleFields {
 
     def dispatch displayField(StringField it, String objName, String page) {
         if (!password) '''
-            {$«objName».«name.formatForCode»«IF country»|«entity.container.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language»|getlanguagename|safetext«ENDIF»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}'''
+            {$«objName».«name.formatForCode»«IF country»|«entity.container.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language»|getlanguagename|safetext«ENDIF»}'''
     }
 
     def dispatch displayField(EmailField it, String objName, String page) {
@@ -165,7 +165,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(ListField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|«entity.container.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}'''
+        {$«objName».«name.formatForCode»|«entity.container.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext}'''
 
     def dispatch displayField(DateField it, String objName, String page) '''
         {$«objName».«name.formatForCode»|dateformat:'datebrief'}'''

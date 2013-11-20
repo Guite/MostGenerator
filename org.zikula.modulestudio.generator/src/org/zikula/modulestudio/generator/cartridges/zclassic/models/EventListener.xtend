@@ -92,8 +92,12 @@ class EventListener {
              */
             protected function formatTextualField($fieldName, $currentFunc, $usesCsvOutput = false, $allowZero = false)
             {
-                if ($currentFunc == 'edit' || $usesCsvOutput === true) {
-                    // apply no changes when editing the content or displaying raw output
+                if ($currentFunc == 'edit') {
+                    // apply no changes when editing the content
+                    return;
+                } elseif ($usesCsvOutput === true) {
+                    // strip only quotes when displaying raw output in CSV
+                    $this[$fieldName] = str_replace('"', '""', $string);
                     return;
                 }
 
