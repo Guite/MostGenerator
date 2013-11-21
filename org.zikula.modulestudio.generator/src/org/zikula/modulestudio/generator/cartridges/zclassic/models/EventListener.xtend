@@ -95,21 +95,22 @@ class EventListener {
                 if ($currentFunc == 'edit') {
                     // apply no changes when editing the content
                     return;
-                } elseif ($usesCsvOutput == 1) {
-                    // strip only quotes when displaying raw output in CSV
-                    $this[$fieldName] = str_replace('"', '""', $string);
-                    return;
                 }
 
                 $string = '';
                 if (isset($this[$fieldName])) {
                     if (!empty($this[$fieldName]) || ($allowZero && $this[$fieldName] == 0)) {
                         $string = $this[$fieldName];
-                        if ($this->containsHtml($string)) {
-                            $string = DataUtil::formatForDisplayHTML($string);
+                        if ($usesCsvOutput == 1) {
+                            // strip only quotes when displaying raw output in CSV
+                            $string = str_replace('"', '""', $string);
                         } else {
-                            $string = DataUtil::formatForDisplay($string);
-                            $string = nl2br($string);
+                            if ($this->containsHtml($string)) {
+                                $string = DataUtil::formatForDisplayHTML($string);
+                            } else {
+                                $string = DataUtil::formatForDisplay($string);
+                                $string = nl2br($string);
+                            }
                         }
                     }
                 }
