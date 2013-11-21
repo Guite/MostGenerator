@@ -95,7 +95,7 @@ class EventListener {
                 if ($currentFunc == 'edit') {
                     // apply no changes when editing the content
                     return;
-                } elseif ($usesCsvOutput === true) {
+                } elseif ($usesCsvOutput == 1) {
                     // strip only quotes when displaying raw output in CSV
                     $this[$fieldName] = str_replace('"', '""', $string);
                     return;
