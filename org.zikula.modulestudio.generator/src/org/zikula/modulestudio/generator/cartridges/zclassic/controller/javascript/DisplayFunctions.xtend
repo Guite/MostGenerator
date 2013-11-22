@@ -128,7 +128,7 @@ class DisplayFunctions {
                         icon = '<img src="' + icon + '" width="16" height="16" alt="' + linkText + '" /> ';
                     }
                 «ELSE»
-                    if (elem.hasClassName('icon')) {
+                    if (elem.hasClassName('fa')) {
                         icon = '<span class="' + elem.readAttribute('class') + '"></span>';
                     }
                 «ENDIF»
