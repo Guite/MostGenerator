@@ -100,8 +100,8 @@ class DisplayFunctions {
                 }
 
                 // determine the icon
+                icon = '';
                 «IF targets('1.3.5')»
-                    icon = '';
                     if (func === 'display') {
                         if (elem.hasClassName('z-icon-es-preview')) {
                             icon = 'xeyes.png';
