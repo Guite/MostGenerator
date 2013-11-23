@@ -106,7 +106,7 @@ class Property {
         «new Extensions().columnExtensions(it)»
          * @ORM\Column(«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
-         * @var «type» $«name.formatForCode».
+         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSE»«type»«ENDIF» $«name.formatForCode».
          */
         «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE» = «defaultFieldData»«ENDIF»;
         «/* this last line is on purpose */»
