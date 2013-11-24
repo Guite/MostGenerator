@@ -57,6 +57,7 @@ class Config {
             use LogUtil;
             use ModUtil;
             use SecurityUtil;
+            use System;
             use Zikula_Form_AbstractHandler;
             use Zikula_Form_View;
 
@@ -168,8 +169,14 @@ class Config {
                     $data = $this->view->getValues();
 
                     // update all module vars
-                    if (!$this->setVars($data['config'])) {
-                        «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Error! Failed to set configuration variables.'));
+                    try {
+                        $this->setVars($data['config']);
+                    } catch (\Exception $e) {
+                        $msg = $this->__('Error! Failed to set configuration variables.');
+                        if (System::isDevelopmentMode()) {
+                            $msg .= ' ' . $e->getMessage());
+                        }
+                        «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($msg);
                     }
 
                     LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
