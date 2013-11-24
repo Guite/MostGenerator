@@ -19,17 +19,25 @@ class Bootstrap {
     @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppSourcePath + 'bootstrap.php')) {
+        if (!shouldBeSkipped(getAppSourcePath + 'Base/bootstrap.php')) {
+            fsa.generateFile(getAppSourcePath + 'Base/bootstrap.php', bootstrapBaseFile)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourcePath + 'bootstrap.php')) {
             fsa.generateFile(getAppSourcePath + 'bootstrap.php', bootstrapFile)
         }
     }
+
+    def private bootstrapBaseFile(Application it) '''
+        «new FileHelper().phpFileHeader(it)»
+        «bootstrapBaseImpl»
+    '''
 
     def private bootstrapFile(Application it) '''
         «new FileHelper().phpFileHeader(it)»
         «bootstrapImpl»
     '''
 
-    def private bootstrapImpl(Application it) '''
+    def private bootstrapDocs() '''
         /**
          * Bootstrap called when application is first initialised at runtime.
          *
@@ -40,6 +48,10 @@ class Bootstrap {
          * whereby $namespace is the first part of the PEAR class name
          * and $path is the path to the containing folder.
          */
+    '''
+
+    def private bootstrapBaseImpl(Application it) '''
+        «bootstrapDocs»
         «initExtensions»
         «IF !referredApplications.empty»
 
@@ -130,5 +142,11 @@ class Bootstrap {
                 «ENDFOR»
             }
         «ENDIF»
+    '''
+
+    def private bootstrapImpl(Application it) '''
+        «bootstrapDocs»
+
+        include_once 'Base/bootstrap.php';
     '''
 }
