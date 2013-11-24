@@ -891,6 +891,13 @@ class Repository {
                 return $qb;
             }*/
 
+            «IF !app.targets('1.3.5')»
+                if ($this->getRequest() === null) {
+                    // if no request is set we return (#433)
+                    return $qb;
+                }
+
+            «ENDIF»
             $parameters = $this->getViewQuickNavParameters('', array());
             foreach ($parameters as $k => $v) {
                 if ($k == 'catId') {
