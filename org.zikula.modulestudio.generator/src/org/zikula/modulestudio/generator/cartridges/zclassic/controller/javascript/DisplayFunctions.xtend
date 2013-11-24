@@ -83,6 +83,10 @@ class DisplayFunctions {
 
             // process normal links
             $$('#' + containerId + ' a').each(function (elem) {
+                «IF !targets('1.3.5')»
+                    // save css class before hiding (#428)
+                    var elemClass = elem.readAttribute('class');
+                «ENDIF»
                 // hide it
                 elem.addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                 // determine the link text
@@ -129,7 +133,7 @@ class DisplayFunctions {
                     }
                 «ELSE»
                     if (elem.hasClassName('fa')) {
-                        icon = '<span class="' + elem.readAttribute('class') + '"></span>';
+                        icon = '<span class="' + elemClass + '"></span>';
                     }
                 «ENDIF»
 
