@@ -73,7 +73,7 @@ class Docs {
         result in a very huge output.
 
         Instead use the Doctrine\Common\Util\Debug::dump($data) method which reduces
-        the output to reasonable information.«IF !targets('1.3.5')» Since Zikula 1.3.6 there is also
+        the output to reasonable information.«IF !targets('1.3.5')» Since Zikula 1.3.7 there is also
         a shortcut method available in System::dump($var, $maxDepth = 2, $stripTags = true).«ENDIF»
         
         Read more about Doctrine at http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/index.html
@@ -129,9 +129,9 @@ class Docs {
         «ENDIF»
 
         «IF targets('1.3.5')»
-            This module is intended for being used with Zikula 1.3.5.
+            This module is intended for being used with Zikula 1.3.5 and 1.3.6.
         «ELSE»
-            This module is intended for being used with Zikula 1.3.6 and later.
+            This module is intended for being used with Zikula 1.3.7 and later.
         «ENDIF»
 
         For questions and other remarks visit our homepage «url».
