@@ -174,7 +174,7 @@ class Config {
                     } catch (\Exception $e) {
                         $msg = $this->__('Error! Failed to set configuration variables.');
                         if (System::isDevelopmentMode()) {
-                            $msg .= ' ' . $e->getMessage());
+                            $msg .= ' ' . $e->getMessage();
                         }
                         «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($msg);
                     }
