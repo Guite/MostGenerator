@@ -26,13 +26,22 @@ class Scribite {
             fsa.generateFile(docPath + 'integration.txt', integration)
         }
 
-        docPath = docPath + 'plugins/'
+        if (targets('1.3.5')) {
+            docPath = docPath + 'includes/'
+        } else {
+            docPath = docPath + 'plugins/'
+        }
 
         if (!shouldBeSkipped(docPath + 'Aloha/vendor/aloha/index.html')) {
             //fsa.generateFile(docPath + 'Aloha/vendor/aloha/index.html', msUrl)
         }
 
-        var pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
+        var pluginPath = ''
+        if (targets('1.3.5')) {
+            docPath + 'ckeditor/plugins/' + name.formatForDB + '/'
+        } else {
+            docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
+        }
         if (!shouldBeSkipped(pluginPath + 'plugin.js')) {
             fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
         }
@@ -54,7 +63,11 @@ class Scribite {
             //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
         }
 
-        pluginPath = docPath + (if (targets('1.3.5')) 'TineMCE' else 'TinyMce') + '/vendor/tiny_mce/plugins/' + name.formatForDB + '/'
+        if (targets('1.3.5')) {
+            pluginPath = docPath + 'tinymce/plugins/' + name.formatForDB + '/'
+        } else {
+            pluginPath = docPath + 'TinyMce/vendor/tiny_mce/plugins/' + name.formatForDB + '/'
+        }
         if (!shouldBeSkipped(pluginPath + 'editor_plugin.js')) {
             fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
         }
@@ -77,7 +90,11 @@ class Scribite {
             //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
         }
 
-        pluginPath = docPath + 'Xinha/' + (if (targets('1.3.5')) 'plugins' else 'vendor') + '/xinha/plugins/' + appName + '/'
+        if (targets('1.3.5')) {
+            pluginPath = docPath + 'xinha/plugins/' + appName + '/'
+        } else {
+            pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
+        }
         if (!shouldBeSkipped(pluginPath + appName + '.js')) {
             fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
         }
@@ -107,11 +124,11 @@ class Scribite {
                 if (ModUtil::available('«appName»')) {
                     PageUtil::AddVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
                 }
-          4. Copy or move all files from «IF targets('1.3.5')»modules/«appName»«ELSE»Resources«ENDIF»/docs/scribite/plugins/ into modules/Scribite/plugins/.
+          4. Copy or move all files from «IF targets('1.3.5')»modules/«appName»«ELSE»Resources«ENDIF»/docs/scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
 
         Just follow these few steps to complete the integration for Scribite >= 5.0:
          1. Check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy from
-            modules/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
+            modules/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF» into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''
