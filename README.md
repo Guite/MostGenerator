@@ -15,3 +15,7 @@ To regenerate your application with the latest Git version of the
 generator you can use [the WebGen service][].
 [the WebGen service]: https://github.com/Guite/MostWebGen
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Guite/mostgenerator/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
