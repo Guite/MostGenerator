@@ -75,7 +75,7 @@ class ControllerAction {
          * @return mixed Output.
          «IF !app.targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
          * @throws NotFoundHttpException     Thrown if item to be displayed isn't found
          «ELSEIF it instanceof EditAction»
@@ -170,7 +170,7 @@ class ControllerAction {
                         $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN), LogUtil::getErrorMsgPermission());
                     «ELSE»
                         if (!SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN)) {
-                            throw new AccessDeniedHttpException();
+                            throw new AccessDeniedException();
                         }
                     «ENDIF»
                     '''
@@ -179,7 +179,7 @@ class ControllerAction {
                         $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»), LogUtil::getErrorMsgPermission());
                     «ELSE»
                         if (!SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»)) {
-                            throw new AccessDeniedHttpException();
+                            throw new AccessDeniedException();
                         }
                     «ENDIF»
                     '''

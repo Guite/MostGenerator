@@ -146,7 +146,7 @@ class ControllerLayer {
             «ENDIF»
 
             use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             «ENDIF»
@@ -246,7 +246,7 @@ class ControllerLayer {
                  * @return string Output
                  «IF !app.targets('1.3.5')»
                  *
-                 * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+                 * @throws AccessDeniedException Thrown if the user doesn't have required permissions
                  «ENDIF»
                  */
                 public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
@@ -255,7 +255,7 @@ class ControllerLayer {
                         $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
                     «ELSE»
                         if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                            throw new AccessDeniedHttpException();
+                            throw new AccessDeniedException();
                         }
                     «ENDIF»
 

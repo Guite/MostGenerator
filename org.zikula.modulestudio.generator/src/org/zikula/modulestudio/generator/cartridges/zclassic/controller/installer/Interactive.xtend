@@ -35,7 +35,7 @@ class Interactive {
          * @return string|boolean Output.
          «IF !targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function install«IF !targets('1.3.5')»Action«ENDIF»()
@@ -44,7 +44,7 @@ class Interactive {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
                 if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 
@@ -64,7 +64,7 @@ class Interactive {
          * @return string|boolean Output.
          «IF !targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function interactiveinitstep2«IF !targets('1.3.5')»Action«ENDIF»()
@@ -73,7 +73,7 @@ class Interactive {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
                 if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 
@@ -114,7 +114,7 @@ class Interactive {
          * @return string|boolean Output.
          «IF !targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function interactiveinitstep3«IF !targets('1.3.5')»Action«ENDIF»()
@@ -123,7 +123,7 @@ class Interactive {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
                 if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 
@@ -148,7 +148,7 @@ class Interactive {
          * @return string|boolean Output.
          «IF !targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function upgrade«IF !targets('1.3.5')»Action«ENDIF»()
@@ -157,7 +157,7 @@ class Interactive {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
                 if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 
@@ -174,7 +174,7 @@ class Interactive {
          * @return string Output.
          «IF !targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function uninstall«IF !targets('1.3.5')»Action«ENDIF»()
@@ -183,7 +183,7 @@ class Interactive {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
                 if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 

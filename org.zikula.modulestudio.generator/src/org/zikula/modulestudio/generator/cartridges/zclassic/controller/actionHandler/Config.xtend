@@ -52,7 +52,7 @@ class Config {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base;
 
-            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
             use LogUtil;
             use ModUtil;
@@ -86,7 +86,7 @@ class Config {
              * @return boolean False in case of initialization errors, otherwise true.
              «IF !targets('1.3.5')»
              *
-             * @throws AccessDeniedHttpException Thrown if the user doesn't have admin permissions
+             * @throws AccessDeniedException Thrown if the user doesn't have admin permissions
              * @throws RuntimeException          Thrown if persisting configuration vars fails
              «ENDIF»
              */
@@ -97,7 +97,7 @@ class Config {
                     «IF targets('1.3.5')»
                         return $view->registerError(LogUtil::registerPermissionError());
                     «ELSE»
-                        throw new AccessDeniedHttpException();
+                        throw new AccessDeniedException();
                     «ENDIF»
                 }
 

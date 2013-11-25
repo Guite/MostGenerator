@@ -134,7 +134,7 @@ class FormHandler {
             «ENDIF»
             use «app.appNamespace»\Util\WorkflowUtil;
 
-            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
             use LogUtil;
@@ -453,7 +453,7 @@ class FormHandler {
                     «IF app.targets('1.3.5')»
                         return LogUtil::registerPermissionError();
                     «ELSE»
-                        throw new AccessDeniedHttpException();
+                        throw new AccessDeniedException();
                     «ENDIF»
                 }
 
@@ -473,7 +473,7 @@ class FormHandler {
                     «IF app.targets('1.3.5')»
                         return LogUtil::registerPermissionError();
                     «ELSE»
-                        throw new AccessDeniedHttpException();
+                        throw new AccessDeniedException();
                     «ENDIF»
                 }
 
@@ -1210,7 +1210,7 @@ class FormHandler {
         «ENDIF»
         «IF !app.targets('1.3.5')»
 
-            use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
             use FormUtil;
             use LogUtil;
@@ -1304,7 +1304,7 @@ class FormHandler {
                             «IF app.targets('1.3.5')»
                                 return LogUtil::registerPermissionError();
                             «ELSE»
-                                throw new AccessDeniedHttpException();
+                                throw new AccessDeniedException();
                             «ENDIF»
                         }
                     }

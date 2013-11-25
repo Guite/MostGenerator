@@ -329,7 +329,7 @@ class Ajax {
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          «IF !app.targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function checkForDuplicate«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
@@ -339,7 +339,7 @@ class Ajax {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
             «ELSE»
                 if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 
@@ -432,7 +432,7 @@ class Ajax {
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          «IF !app.targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function toggleFlag«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
@@ -441,7 +441,7 @@ class Ajax {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
             «ELSE»
                 if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 
@@ -495,7 +495,7 @@ class Ajax {
          * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          *
          «IF !app.targets('1.3.5')»
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          * @throws «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
          «IF !app.targets('1.3.5')»
@@ -508,7 +508,7 @@ class Ajax {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
             «ELSE»
                 if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 

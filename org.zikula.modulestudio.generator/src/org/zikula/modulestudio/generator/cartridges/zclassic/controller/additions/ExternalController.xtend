@@ -53,7 +53,7 @@ class ExternalController {
 
         use «appNamespace»\Util\ControllerUtil;
 
-        use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
         use LogUtil;
         use ModUtil;
@@ -215,7 +215,7 @@ class ExternalController {
          * @return output The external item finder page
          «IF !targets('1.3.5')»
          *
-         * @throws AccessDeniedHttpException Thrown if the user doesn't have required permissions
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
         public function finder«IF targets('1.3.5')»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
@@ -237,7 +237,7 @@ class ExternalController {
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
             «ELSE»
                 if (!SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT)) {
-                    throw new AccessDeniedHttpException();
+                    throw new AccessDeniedException();
                 }
             «ENDIF»
 
