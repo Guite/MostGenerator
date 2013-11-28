@@ -41,10 +41,13 @@ class Newsletter {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\NewsletterPlugin;
 
+            use FormUtil;
             use ModUtil;
+            use Newsletter_AbstractPlugin;
             use SecurityUtil;
             use ServiceUtil;
         «ENDIF»
+
         /**
          * Newsletter plugin class.
          */
@@ -155,7 +158,7 @@ class Newsletter {
             ModUtil::initOOModule($this->modname);
 
             // collect data for each activated object type
-            $itemsGrouped = $this->getItemsPerObjectType();
+            $itemsGrouped = $this->getItemsPerObjectType($filtAfterDate);
 
             // now flatten for presentation
             $items = array();
@@ -173,9 +176,11 @@ class Newsletter {
         /**
          * Collects newsletter data for each activated object type.
          *
+         * @param datetime $filtAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
+         *
          * @return array Data grouped by object type.
          */
-        protected function getItemsPerObjectType()
+        protected function getItemsPerObjectType($filtAfterDate = null)
         {
             $objectTypes = $this->getPluginVar('ObjectTypes', array());
             $args = $this->getPluginVar('Args', array());
