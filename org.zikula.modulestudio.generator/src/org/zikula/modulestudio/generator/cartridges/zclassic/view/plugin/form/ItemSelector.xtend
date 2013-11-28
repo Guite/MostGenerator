@@ -53,7 +53,8 @@ class ItemSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin\Base;
 
-            use ModUtil;
+            use FormUtil;
+            «IF hasCategorisableEntities»use ModUtil;«ENDIF»
             use PageUtil;
             use SecurityUtil;
             use ServiceUtil;
