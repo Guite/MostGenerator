@@ -539,6 +539,7 @@ class Validator {
             use «app.appNamespace»\AbstractValidator as BaseAbstractValidator;
 
             use ServiceUtil;
+            use Zikula_EntityAccess;
             use ZLanguage;
 
         «ENDIF»
