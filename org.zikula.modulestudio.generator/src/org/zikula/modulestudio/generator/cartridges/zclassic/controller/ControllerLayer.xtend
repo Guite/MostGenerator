@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
+import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Ajax
@@ -456,7 +457,7 @@ class ControllerLayer {
                     «FOR entity : app.getAllEntities»
                         if (in_array('«entity.name.formatForCode»', $allowedObjectTypes)
                             && SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
-                            $links[] = array('url' => ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»')),
+                            $links[] = array('url' => ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»'«IF entity.tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
                                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
                                              'title' => $this->__('«entity.name.formatForDisplayCapital» list'));
                         }
