@@ -231,10 +231,5 @@ class ContentTypeSingle {
         {
             // feel free to extend the content type here
         }
-
-        function «appName»_Api_ContentTypes_item($args)
-        {
-            return new «appName»_Api_ContentTypes_itemPlugin();
-        }
     '''
 }

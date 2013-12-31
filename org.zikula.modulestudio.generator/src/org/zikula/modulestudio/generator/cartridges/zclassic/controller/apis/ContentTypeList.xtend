@@ -513,10 +513,5 @@ class ContentTypeList {
         {
             // feel free to extend the content type here
         }
-
-        function «appName»_Api_ContentTypes_itemlist($args)
-        {
-            return new «appName»_Api_ContentTypes_itemListPlugin();
-        }
     '''
 }
