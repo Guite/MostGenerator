@@ -28,7 +28,7 @@ class MigrationHelper {
         // drop handlers for obsolete events
         $this->unregisterEventHandlersObsoleteIn136();
 
-        // register two new event handlers
+        // register new event handlers
         $this->registerNewEventHandlersIn136();
 
         // update module name in the hook tables
@@ -160,8 +160,14 @@ class MigrationHelper {
         {
             «val listenerBase = vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\'»
             «val listenerSuffix = 'Listener'»
+            «var callableClass = ''»
 
-            // errors -> «val callableClass = listenerBase + 'Errors' + listenerSuffix»
+            // installer -> «callableClass = listenerBase + 'Installer' + listenerSuffix»
+            EventUtil::unregisterPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'moduleInstalled'));
+            EventUtil::unregisterPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'moduleUpgraded'));
+            EventUtil::unregisterPersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'moduleUninstalled'));
+
+            // errors -> «callableClass = listenerBase + 'Errors' + listenerSuffix»
             EventUtil::unregisterPersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
             EventUtil::unregisterPersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
         }
@@ -178,8 +184,11 @@ class MigrationHelper {
             «val listenerSuffix = 'Listener'»
 
             // installer -> «var callableClass = listenerBase + 'Installer' + listenerSuffix»
-            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.activated', array('«callableClass»', 'moduleActivated'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.deactivated', array('«callableClass»', 'moduleDeactivated'));
+            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_INSTALL, array('«callableClass»', 'moduleInstalled'));
+            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_UPGRADE, array('«callableClass»', 'moduleUpgraded'));
+            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_ENABLE, array('«callableClass»', 'moduleEnabled'));
+            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_DISABLE, array('«callableClass»', 'moduleDisabled'));
+            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_REMOVE, array('«callableClass»', 'moduleRemoved'));
 
             // special purposes and 3rd party api support -> «callableClass = listenerBase + 'ThirdParty' + listenerSuffix»
             EventUtil::registerPersistentModuleHandler('«appName»', 'module.scribite.editorhelpers', array('«callableClass»', 'getEditorHelpers'));

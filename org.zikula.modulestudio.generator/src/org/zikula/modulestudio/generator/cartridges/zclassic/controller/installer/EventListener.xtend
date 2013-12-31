@@ -32,12 +32,16 @@ class EventListener {
             EventUtil::registerPersistentModuleHandler('«appName»', 'frontcontroller.predispatch', array('«callableClass»', 'preDispatch'));
 
             // installer -> «callableClass = listenerBase + 'Installer' + listenerSuffix»
-            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'moduleInstalled'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'moduleUpgraded'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'moduleUninstalled'));
-            «IF !targets('1.3.5')»
-            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.activated', array('«callableClass»', 'moduleActivated'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.deactivated', array('«callableClass»', 'moduleDeactivated'));
+            «IF targets('1.3.5')»
+                EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'moduleInstalled'));
+                EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'moduleUpgraded'));
+                EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'moduleUninstalled'));
+            «ELSE»
+                EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_INSTALL, array('«callableClass»', 'moduleInstalled'));
+                EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_UPGRADE, array('«callableClass»', 'moduleUpgraded'));
+                EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_ENABLE, array('«callableClass»', 'moduleEnabled'));
+                EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_DISABLE, array('«callableClass»', 'moduleDisabled'));
+                EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_REMOVE, array('«callableClass»', 'moduleRemoved'));
             «ENDIF»
             EventUtil::registerPersistentModuleHandler('«appName»', 'installer.subscriberarea.uninstalled', array('«callableClass»', 'subscriberAreaUninstalled'));
 

@@ -85,6 +85,7 @@ class Installer {
             use LogUtil;
             use ModUtil;
             use System;
+            use Zikula\Core\CoreEvents;
             use Zikula_AbstractInstaller;
             use Zikula_Workflow_Util;
 
