@@ -53,7 +53,7 @@ class Extensions {
              * @Gedmo\TreeClosure(class="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('closure', false)»")
             «ENDIF»
          «ENDIF»
-        «IF 3 < 2»dummy for indentation«ENDIF»
+        «IF container.application.name == 'foo'»dummy for indentation«ENDIF»
     '''
 
     /**
