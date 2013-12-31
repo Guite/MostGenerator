@@ -37,7 +37,7 @@
 
    <includes
          id="org.eclipse.emf.mwe2.language.sdk"
-         version="0.0.0"/>
+         version="2.4.1.v201309030840"/>
 
    <includes
          id="org.eclipse.platform"
