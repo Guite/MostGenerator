@@ -95,5 +95,22 @@ class ModuleInstaller {
                 parent::subscriberAreaUninstalled($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    CoreEvents::MODULE_INSTALL              => array('moduleInstalled', 5),
+                    CoreEvents::MODULE_UPGRADE              => array('moduleUpgraded', 5),
+                    CoreEvents::MODULE_ENABLE               => array('moduleEnabled', 5),
+                    CoreEvents::MODULE_DISABLE              => array('moduleDisabled', 5),
+                    CoreEvents::MODULE_REMOVE               => array('moduleRemoved', 5),
+                    'installer.subscriberarea.uninstalled'  => array('subscriberAreaUninstalled', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

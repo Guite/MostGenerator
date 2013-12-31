@@ -39,5 +39,18 @@ class View {
                 parent::postFetch($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'view.init'         => array('init', 5),
+                    'view.postfetch'    => array('postFetch', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

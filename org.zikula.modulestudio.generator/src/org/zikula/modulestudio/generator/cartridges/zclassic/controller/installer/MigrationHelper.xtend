@@ -11,48 +11,44 @@ class MigrationHelper {
 
     def generateUsageExample(Application it) '''
         // rename module for all modvars
-        $this->updateModVarsTo136();
+        $this->updateModVarsTo137();
 
         // update extension information about this app
-        $this->updateExtensionInfoFor136();
+        $this->updateExtensionInfoFor137();
 
         // rename existing permission rules
-        $this->renamePermissionsFor136();
+        $this->renamePermissionsFor137();
 
         // rename existing category registries
-        $this->renameCategoryRegistriesFor136();
+        $this->renameCategoryRegistriesFor137();
 
         // rename all tables
-        $this->renameTablesFor136();
+        $this->renameTablesFor137();
 
-        // drop handlers for obsolete events
-        $this->unregisterEventHandlersObsoleteIn136();
-
-        // register new event handlers
-        $this->registerNewEventHandlersIn136();
+        // remove event handler definitions from database
+        $this->dropEventHandlersFromDatabase();
 
         // update module name in the hook tables
-        $this->updateHookNamesFor136();
+        $this->updateHookNamesFor137();
     '''
 
     def generate(Application it) {
-        updateModVarsTo136
-        updateExtensionInfoFor136
-        renamePermissionsFor136
-        renameCategoryRegistriesFor136
-        renameTablesFor136
-        unregisterEventHandlersObsoleteIn136
-        registerNewEventHandlersIn136
-        updateHookNamesFor136
+        updateModVarsTo137
+        updateExtensionInfoFor137
+        renamePermissionsFor137
+        renameCategoryRegistriesFor137
+        renameTablesFor137
+        dropEventHandlersFromDatabase
+        updateHookNamesFor137
         getConnection
         getDbName
     }
 
-    def private updateModVarsTo136(Application it) '''
+    def private updateModVarsTo137(Application it) '''
         /**
          * Renames the module name for variables in the module_vars table.
          */
-        protected function updateModVarsTo136()
+        protected function updateModVarsTo137()
         {
             $dbName = $this->getDbName();
             $conn = $this->getConnection();
@@ -65,11 +61,11 @@ class MigrationHelper {
 
     '''
 
-    def private updateExtensionInfoFor136(Application it) '''
+    def private updateExtensionInfoFor137(Application it) '''
         /**
          * Renames this application in the core's extensions table.
          */
-        protected function updateExtensionInfoFor136()
+        protected function updateExtensionInfoFor137()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -83,11 +79,11 @@ class MigrationHelper {
 
     '''
 
-    def private renamePermissionsFor136(Application it) '''
+    def private renamePermissionsFor137(Application it) '''
         /**
          * Renames all permission rules stored for this app.
          */
-        protected function renamePermissionsFor136()
+        protected function renamePermissionsFor137()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -102,11 +98,11 @@ class MigrationHelper {
 
     '''
 
-    def private renameCategoryRegistriesFor136(Application it) '''
+    def private renameCategoryRegistriesFor137(Application it) '''
         /**
          * Renames all category registries stored for this app.
          */
-        protected function renameCategoryRegistriesFor136()
+        protected function renameCategoryRegistriesFor137()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -121,11 +117,11 @@ class MigrationHelper {
 
     '''
 
-    def private renameTablesFor136(Application it) '''
+    def private renameTablesFor137(Application it) '''
         /**
          * Renames all (existing) tables of this app.
          */
-        protected function renameTablesFor136()
+        protected function renameTablesFor137()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -152,57 +148,22 @@ class MigrationHelper {
 
     '''
 
-    def private unregisterEventHandlersObsoleteIn136(Application it) '''
+    def private dropEventHandlersFromDatabase(Application it) '''
         /**
-         * Unregisters handlers for events which became obsolete in 1.3.6.
+         * Removes event handlers from database as they are now described by service definitions and managed by dependency injection.
          */
-        protected function unregisterEventHandlersObsoleteIn136()
+        protected function dropEventHandlersFromDatabase()
         {
-            «val listenerBase = vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\'»
-            «val listenerSuffix = 'Listener'»
-            «var callableClass = ''»
-
-            // installer -> «callableClass = listenerBase + 'Installer' + listenerSuffix»
-            EventUtil::unregisterPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'moduleInstalled'));
-            EventUtil::unregisterPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'moduleUpgraded'));
-            EventUtil::unregisterPersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'moduleUninstalled'));
-
-            // errors -> «callableClass = listenerBase + 'Errors' + listenerSuffix»
-            EventUtil::unregisterPersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
-            EventUtil::unregisterPersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
+            EventUtil::unregisterPersistentModuleHandlers('«appName»');
         }
 
     '''
 
-    def private registerNewEventHandlersIn136(Application it) '''
-        /**
-         * Registers new event handlers introduced in 1.3.6.
-         */
-        protected function registerNewEventHandlersIn136()
-        {
-            «val listenerBase = vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\'»
-            «val listenerSuffix = 'Listener'»
-
-            // installer -> «var callableClass = listenerBase + 'Installer' + listenerSuffix»
-            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_INSTALL, array('«callableClass»', 'moduleInstalled'));
-            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_UPGRADE, array('«callableClass»', 'moduleUpgraded'));
-            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_ENABLE, array('«callableClass»', 'moduleEnabled'));
-            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_DISABLE, array('«callableClass»', 'moduleDisabled'));
-            EventUtil::registerPersistentModuleHandler('«appName»', CoreEvents::MODULE_REMOVE, array('«callableClass»', 'moduleRemoved'));
-
-            // special purposes and 3rd party api support -> «callableClass = listenerBase + 'ThirdParty' + listenerSuffix»
-            EventUtil::registerPersistentModuleHandler('«appName»', 'module.scribite.editorhelpers', array('«callableClass»', 'getEditorHelpers'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'moduleplugin.tinymce.externalplugins', array('«callableClass»', 'getTinyMcePlugins'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'moduleplugin.ckeditor.externalplugins', array('«callableClass»', 'getCKEditorPlugins'));
-        }
-
-    '''
-
-    def private updateHookNamesFor136(Application it) '''
+    def private updateHookNamesFor137(Application it) '''
         /**
          * Updates the module name in the hook tables.
          */
-        protected function updateHookNamesFor136()
+        protected function updateHookNamesFor137()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();

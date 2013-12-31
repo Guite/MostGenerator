@@ -25,5 +25,17 @@ class UserLogout {
                 parent::succeeded($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'module.users.ui.logout.succeeded' => array('succeeded', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

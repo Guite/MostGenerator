@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Controll
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
@@ -28,6 +29,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.DependencyInjection
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.GitIgnore
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ModuleFile
@@ -68,6 +70,7 @@ class ZclassicGenerator implements IGenerator {
         println('Generating basic information')
         new ModuleFile().generate(it, fsa)
         new VersionFile().generate(it, fsa)
+        new DependencyInjection().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
         new TravisFile().generate(it, fsa)
@@ -93,6 +96,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Persistent event handlers')
         println('Generating persistent event handlers')
         new Listeners().generate(it, fsa)
+        pm?.subTask('Controller: Service definitions')
+        println('Generating service definitions')
+        new ServiceDefinitions().generate(it, fsa)
         pm?.subTask('Controller: Bootstrapping')
         println('Generating bootstrapping')
         new Bootstrap().generate(it, fsa)

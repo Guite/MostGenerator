@@ -21,5 +21,17 @@ class FrontController {
                 parent::preDispatch($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'frontcontroller.predispatch' => array('preDispatch', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

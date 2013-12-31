@@ -190,6 +190,7 @@ class Listeners {
             «ENDIF»
             «IF isBase»
                 use ModUtil;
+                use Zikula\Core\CoreEvents;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 

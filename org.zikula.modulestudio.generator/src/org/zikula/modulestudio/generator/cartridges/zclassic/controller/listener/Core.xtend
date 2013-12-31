@@ -93,5 +93,21 @@ class Core {
             // You can have multiple of these methods.
             // See system/Extensions/«IF targets('1.3.5')»lib/Extensions/«ENDIF»HookUI.php for an example.
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'api.method_not_found'          => array('apiMethodNotFound', 5),
+                    'core.preinit'                  => array('preInit', 5),
+                    'core.init'                     => array('init', 5),
+                    'core.postinit'                 => array('postInit', 5),
+                    'controller.method_not_found'   => array('controllerMethodNotFound', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

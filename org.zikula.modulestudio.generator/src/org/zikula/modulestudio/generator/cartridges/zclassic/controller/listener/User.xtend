@@ -96,6 +96,21 @@ class User {
                 «ENDIF»
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'user.gettheme'         => array('getTheme', 5),
+                    'user.account.create'   => array('create', 5),
+                    'user.account.update'   => array('update', 5),
+                    'user.account.delete'   => array('delete', 5)
+                );
+            }
+        «ENDIF»
     '''
 
     def private userDelete(Entity it) '''

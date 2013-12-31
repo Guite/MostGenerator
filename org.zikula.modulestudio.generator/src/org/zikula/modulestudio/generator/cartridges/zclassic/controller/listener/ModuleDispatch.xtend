@@ -103,5 +103,21 @@ class ModuleDispatch {
                 // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', 'main'), 'text' => __('Link Text'));
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'module_dispatch.postloadgeneric'   => array('postLoadGeneric', 5),
+                    'module_dispatch.preexecute'        => array('preExecute', 5),
+                    'module_dispatch.postexecute'       => array('postExecute', 5),
+                    'module_dispatch.custom_classname'  => array('customClassname', 5),
+                    'module_dispatch.service_links'     => array('serviceLinks', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

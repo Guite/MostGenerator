@@ -24,5 +24,17 @@ class Mailer {
                 parent::sendMessage($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'module.mailer.api.sendmessage' => array('sendMessage', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

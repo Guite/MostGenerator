@@ -85,7 +85,6 @@ class Installer {
             use LogUtil;
             use ModUtil;
             use System;
-            use Zikula\Core\CoreEvents;
             use Zikula_AbstractInstaller;
             use Zikula_Workflow_Util;
 
@@ -147,8 +146,10 @@ class Installer {
         «funcListEntityClasses»
 
         «new ExampleData().generate(it)»
+        «IF targets('1.3.5')»
 
         «new EventListener().generate(it)»
+        «ENDIF»
     '''
 
     def private funcInit(Application it) '''
@@ -230,9 +231,11 @@ class Installer {
             // create the default data
             $this->createDefaultData($categoryRegistryIdsPerEntity);
 
-            // register persistent event handlers
-            $this->registerPersistentEventHandlers();
+            «IF targets('1.3.5')»
+                // register persistent event handlers
+                $this->registerPersistentEventHandlers();
 
+            «ENDIF»
             // register hook subscriber bundles
             HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
             «/*TODO see #15
@@ -292,10 +295,10 @@ class Installer {
             «IF !targets('1.3.5')»
 
                 // Note there are several helpers available for making migration of your extension easier.
-                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.3.6.
+                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.3.7.
 
                 // here is a possible usage example
-                // of course 1.2.3 should match the number you used for the last stable 1.3.5 module version.
+                // of course 1.2.3 should match the number you used for the last stable 1.3.5/1.3.6 module version.
                 /* if ($oldVersion = 1.2.3) {
                     «new MigrationHelper().generateUsageExample(it)»
                 } * /
@@ -338,9 +341,11 @@ class Installer {
                 «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
             }
 
-            // unregister persistent event handlers
-            EventUtil::unregisterPersistentModuleHandlers($this->name);
+            «IF targets('1.3.5')»
+                // unregister persistent event handlers
+                EventUtil::unregisterPersistentModuleHandlers($this->name);
 
+            «ENDIF»
             // unregister hook subscriber bundles
             HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
             «/*TODO see #15

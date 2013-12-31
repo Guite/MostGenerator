@@ -22,5 +22,17 @@ class Users {
                 parent::configUpdated($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'module.users.config.updated' => array('configUpdated', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

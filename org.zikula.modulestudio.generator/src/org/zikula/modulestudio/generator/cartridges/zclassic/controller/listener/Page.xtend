@@ -48,5 +48,18 @@ class Page {
                 parent::systemOutputFilter($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'pageutil.addvar_filter'        => array('pageutilAddvarFilter', 5),
+                    'system.outputfilter'           => array('systemOutputfilter', 5)
+                );
+            }
+        «ENDIF»
     '''
 }

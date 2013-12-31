@@ -28,6 +28,20 @@ class ThirdParty {
         «getTinyMcePlugins(isBase)»
 
         «getCKEditorPlugins(isBase)»
+
+        /**
+         * Makes our handlers known to the event system.
+         */
+        public static function getSubscribedEvents()
+        {
+            return array(
+                'get.pending_content'                   => array('pendingContentListener', 5),
+                'module.content.gettypes'               => array('contentGetTypes', 5),
+                'module.scribite.editorhelpers'         => array('getEditorHelpers', 5),
+                'moduleplugin.tinymce.externalplugins'  => array('getTinyMcePlugins', 5),
+                'moduleplugin.ckeditor.externalplugins' => array('getCKEditorPlugins', 5)
+            );
+        }
         «ENDIF»
     '''
 

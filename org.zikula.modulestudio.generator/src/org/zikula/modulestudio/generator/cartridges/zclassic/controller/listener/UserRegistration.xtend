@@ -179,5 +179,22 @@ class UserRegistration {
                 parent::delete($event);
             «ENDIF»
         }
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                return array(
+                    'module.users.ui.registration.started'      => array('started', 5),
+                    'module.users.ui.registration.succeeded'    => array('succeeded', 5),
+                    'module.users.ui.registration.failed'       => array('failed', 5),
+                    'user.registration.create'                  => array('create', 5),
+                    'user.registration.update'                  => array('update', 5),
+                    'user.registration.delete'                  => array('delete', 5)
+                );
+            }
+        «ENDIF»
     '''
 }
