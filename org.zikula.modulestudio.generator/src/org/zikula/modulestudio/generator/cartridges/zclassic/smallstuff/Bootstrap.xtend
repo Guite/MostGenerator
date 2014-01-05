@@ -135,7 +135,7 @@ class Bootstrap {
                     «IF targets('1.3.5')»
                         $entityClass = '«appName»_Entity_«entity.name.formatForCodeCapital»';
                     «ELSE»
-                        $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity';
+                        $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:«entity.name.formatForCodeCapital»Entity';
                     «ENDIF»
                     $repository = $entityManager->getRepository($entityClass);
                     $repository->archiveObjects();

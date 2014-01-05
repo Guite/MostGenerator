@@ -289,7 +289,7 @@ class ContentTypeList {
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
             «ELSE»
-                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');

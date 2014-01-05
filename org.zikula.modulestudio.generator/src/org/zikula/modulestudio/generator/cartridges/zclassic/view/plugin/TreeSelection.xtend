@@ -70,7 +70,7 @@ class TreeSelection {
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($params['objectType']);
             «ELSE»
-                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($params['objectType']) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($params['objectType']) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');

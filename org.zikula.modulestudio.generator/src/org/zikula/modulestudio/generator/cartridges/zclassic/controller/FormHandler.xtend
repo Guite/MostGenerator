@@ -387,7 +387,7 @@ class FormHandler {
                 «IF app.targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
                 «ELSE»
-                    $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $repository = $this->entityManager->getRepository($entityClass);
                 $utilArgs = array('controller' => '«formattedName»', 'action' => '«actionName.formatForCode.toFirstLower»', 'mode' => $this->mode);
@@ -436,7 +436,7 @@ class FormHandler {
             «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             «ELSE»
-            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+            $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
 
@@ -613,7 +613,7 @@ class FormHandler {
                 «IF app.targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 «ELSE»
-                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $entity = new $entityClass();
             }

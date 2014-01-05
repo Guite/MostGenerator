@@ -91,7 +91,7 @@ class Tag {
             «IF targets('1.3.5')»
                 $entityClass = $module . '_Entity_' . ucwords($objectType);
             «ELSE»
-                $entityClass = '\\' . $module . '\\Entity\\' . ucwords($objectType) . 'Entity';
+                $entityClass = $module . ':' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');

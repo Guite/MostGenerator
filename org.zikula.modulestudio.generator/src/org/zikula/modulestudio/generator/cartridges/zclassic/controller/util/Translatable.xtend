@@ -140,7 +140,7 @@ class Translatable {
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType) . 'Translation';
             «ELSE»
-                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'TranslationEntity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'TranslationEntity';
             «ENDIF»
             $repository = $entityManager->getRepository($entityClass);
             $entityTranslations = $repository->findTranslations($entity);

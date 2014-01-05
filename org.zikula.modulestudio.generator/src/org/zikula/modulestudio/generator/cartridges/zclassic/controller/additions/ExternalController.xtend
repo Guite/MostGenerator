@@ -140,7 +140,7 @@ class ExternalController {
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
             «ELSE»
-                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
             «IF targets('1.3.5')»
@@ -244,7 +244,7 @@ class ExternalController {
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
             «ELSE»
-                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
             «IF targets('1.3.5')»
