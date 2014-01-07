@@ -19,8 +19,11 @@ class ThirdParty {
 
     def generate(Application it, Boolean isBase) '''
         «pendingContentListener(isBase)»
+        «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
+        «IF generateListContentType || needsDetailContentType»
 
-        «contentGetTypes(isBase)»
+            «contentGetTypes(isBase)»
+        «ENDIF»
         «IF !targets('1.3.5')»
 
         «getEditorHelpers(isBase)»
@@ -118,14 +121,17 @@ class ThirdParty {
     def private contentGetTypesImpl(Application it) '''
         // intended is using the add() method to add a plugin like below
         $types = $event->getSubject();
-        «IF hasUserController && getMainUserController.hasActions('display')»
+
+        «IF generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
 
             // plugin for showing a single item
             $types->add('«appName»_ContentType_Item');
         «ENDIF»
+        «IF generateListContentType»
 
-        // plugin for showing a list of multiple items
-        $types->add('«appName»_ContentType_ItemList');
+            // plugin for showing a list of multiple items
+            $types->add('«appName»_ContentType_ItemList');
+        «ENDIF»
     '''
 
     def private getEditorHelpers(Application it, Boolean isBase) '''
