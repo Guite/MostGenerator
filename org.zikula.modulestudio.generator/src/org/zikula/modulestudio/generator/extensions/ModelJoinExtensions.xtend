@@ -342,7 +342,7 @@ class ModelJoinExtensions {
      * Prints an output string corresponding to the given relation fetch type.
      */
     def asConstant(RelationFetchType fetchType) {
-        switch (fetchType) {
+        switch fetchType {
             case LAZY        : 'LAZY'
             case EAGER       : 'EAGER'
             case EXTRA_LAZY  : 'EXTRA_LAZY'

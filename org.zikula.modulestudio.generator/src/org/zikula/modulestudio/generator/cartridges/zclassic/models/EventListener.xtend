@@ -464,7 +464,7 @@ class EventListener {
     '''
 
     def private sanitizeForOutput(EntityField it) {
-        switch (it) {
+        switch it {
             BooleanField: '''
                              $this['«name.formatForCode»'] = (bool) $this['«name.formatForCode»'];
                          '''

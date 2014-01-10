@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
@@ -14,6 +13,8 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+
+import static de.guite.modulestudio.metamodel.modulestudio.ApplicationDependencyType.*
 
 class VersionFile {
     @Inject extension FormattingExtensions = new FormattingExtensions
@@ -207,8 +208,8 @@ class VersionFile {
 
     def private appDependencyType(ReferredApplication it) {
         switch it.dependencyType {
-            case ApplicationDependencyType::RECOMMENDATION: 'RECOMMENDED'
-            case ApplicationDependencyType::CONFLICT: 'CONFLICTS'
+            case RECOMMENDATION: 'RECOMMENDED'
+            case CONFLICT: 'CONFLICTS'
             default: 'REQUIRED'
         }
     }

@@ -69,10 +69,10 @@ class Definition {
     '''
 
     def workflowDescription(EntityWorkflowType wfType) {
-        switch (wfType) {
-            case EntityWorkflowType::NONE: 'This is like a non-existing workflow. Everything is online immediately after creation.'
-            case EntityWorkflowType::STANDARD: 'This is a two staged workflow with stages for untrusted submissions and finally approved publications. It does not allow corrections of non-editors to published pages.'
-            case EntityWorkflowType::ENTERPRISE: 'This is a three staged workflow with stages for untrusted submissions, acceptance by editors, and approval control by a superior editor; approved publications are handled by authors staff.'
+        switch wfType {
+            case NONE: 'This is like a non-existing workflow. Everything is online immediately after creation.'
+            case STANDARD: 'This is a two staged workflow with stages for untrusted submissions and finally approved publications. It does not allow corrections of non-editors to published pages.'
+            case ENTERPRISE: 'This is a three staged workflow with stages for untrusted submissions, acceptance by editors, and approval control by a superior editor; approved publications are handled by authors staff.'
         }
     }
 
@@ -109,7 +109,7 @@ class Definition {
     '''
 
     def private actionsForStateImpl(ListFieldItem it) {
-        switch (it.value) {
+        switch it.value {
             case 'initial' : actionsForInitial
             case 'deferred' : actionsForDeferred
             case 'waiting' : actionsForWaiting

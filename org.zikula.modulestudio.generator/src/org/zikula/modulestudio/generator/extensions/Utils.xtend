@@ -86,7 +86,7 @@ class Utils {
         // we query '1.3.5' for BC
         val useSymfony = (version != '1.3.5')
 
-        switch (getCoreVersion) {
+        switch getCoreVersion {
             case ZK135:
                 !useSymfony
             case ZK136:

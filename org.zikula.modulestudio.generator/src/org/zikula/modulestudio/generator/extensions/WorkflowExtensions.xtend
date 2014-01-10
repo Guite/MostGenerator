@@ -140,7 +140,7 @@ class WorkflowExtensions {
      * Returns the description for a given workflow action.
      */
     def getWorkflowActionDescription(EntityWorkflowType wfType, String actionTitle) {
-        switch (actionTitle) {
+        switch actionTitle {
             case 'Defer':               return 'Defer content for later submission.'
             case 'Submit':              return if (wfType == EntityWorkflowType.NONE) 'Submit content.' else 'Submit content for acceptance by a moderator.'
             case 'Update':              return 'Update content.'

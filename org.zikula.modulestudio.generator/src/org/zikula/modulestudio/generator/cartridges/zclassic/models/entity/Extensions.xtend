@@ -70,7 +70,7 @@ class Extensions {
         «ENDIF»
     '''
     def columnExtensions(DerivedField it) {
-        switch (it) {
+        switch it {
             AbstractIntegerField: '''
                 «columnExtensionsDefault»
                  «IF it.sortablePosition»

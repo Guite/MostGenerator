@@ -533,7 +533,7 @@ class ModelExtensions {
      * Prints an output number corresponding to the given upload naming scheme.
      */
     def namingSchemeAsInt(UploadField it) {
-        switch (namingScheme) {
+        switch namingScheme {
             case ORIGINALWITHCOUNTER    : '0'
             case RANDOMCHECKSUM         : '1'
             case FIELDNAMEWITHCOUNTER   : '2'
@@ -545,7 +545,7 @@ class ModelExtensions {
      * Prints an output string corresponding to the given identifier strategy.
      */
     def asConstant(EntityIdentifierStrategy strategy) {
-        switch (strategy) {
+        switch strategy {
             case NONE                   : ''
             case AUTO                   : 'AUTO'
             case SEQUENCE               : 'SEQUENCE'
@@ -561,7 +561,7 @@ class ModelExtensions {
      * Prints an output string corresponding to the given change tracking policy.
      */
     def asConstant(EntityChangeTrackingPolicy policy) {
-        switch (policy) {
+        switch policy {
             case DEFERRED_IMPLICIT      : 'DEFERRED_IMPLICIT'
             case DEFERRED_EXPLICIT      : 'DEFERRED_EXPLICIT'
             case NOTIFY                 : 'NOTIFY'
@@ -573,7 +573,7 @@ class ModelExtensions {
      * Prints an output string corresponding to the given entity lock type.
      */
     def asConstant(EntityLockType lockType) {
-        switch (lockType) {
+        switch lockType {
             case NONE                       : ''
             case OPTIMISTIC                 : 'OPTIMISTIC'
             case PESSIMISTIC_READ           : 'PESSIMISTIC_READ'
@@ -656,7 +656,7 @@ class ModelExtensions {
      * Prints an output string describing the type of the given derived field.
      */
     def fieldTypeAsString(DerivedField it) {
-        switch (it) {
+        switch it {
             BooleanField: 'boolean'
             AbstractIntegerField: {
                     // choose mapping type depending on length

@@ -113,7 +113,7 @@ class Property {
     '''
 
     def private persistentPropertyImpl(DerivedField it, String type) {
-        switch (it) {
+        switch it {
             DecimalField: '''type="«type»", precision=«it.length», scale=«it.scale»'''
             TextField: '''type="«type»", length=«it.length»'''
             StringField:
@@ -131,7 +131,7 @@ class Property {
     }
 
     def private persistentPropertyAdditions(DerivedField it) {
-        switch (it) {
+        switch it {
             IntegerField:
                 if (it.version && entity.hasOptimisticLock) '''
                     «''» * @ORM\Version
@@ -144,7 +144,7 @@ class Property {
     }
 
     def private defaultFieldData(EntityField it) {
-        switch (it) {
+        switch it {
             BooleanField:
                 if (it.defaultValue == true || it.defaultValue == 'true') 'true' else 'false'
             AbstractIntegerField:

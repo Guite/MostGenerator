@@ -75,7 +75,7 @@ class ControllerExtensions {
      * Checks whether a controller owns actions of a given type.
      */
     def hasActions(Controller it, String type) {
-        switch (type) {
+        switch type {
             case 'index'    : !actions.filter(MainAction).empty 
             case 'view'     : !actions.filter(ViewAction).empty 
             case 'display'  : !actions.filter(DisplayAction).empty 

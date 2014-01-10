@@ -130,7 +130,7 @@ class DiagramExporter {
     def private saveCurrentDiagramInAllFormats(Diagram inputDiagram) {
         val diagramElement = inputDiagram.element
         inputDiagramType = 0
-        switch (diagramElement) {
+        switch diagramElement {
             Models: {
                 inputDiagramType = 1
                 diagCounterM = diagCounterM + 1

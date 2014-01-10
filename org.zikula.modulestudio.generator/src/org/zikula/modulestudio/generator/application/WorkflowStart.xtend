@@ -56,7 +56,7 @@ class WorkflowStart {
     	
     	var diag = Diagnostician.INSTANCE.validate(getModel.contents.head)
     	
-    	switch  diag.getSeverity {
+    	switch diag.getSeverity {
     		case Diagnostic.ERROR: {
     			progressMonitor.subTask("Errors: \n" + validatorMessage(diag))
     			progressMonitor.done

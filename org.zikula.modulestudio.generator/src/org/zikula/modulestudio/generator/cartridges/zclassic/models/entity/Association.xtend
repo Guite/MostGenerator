@@ -141,14 +141,14 @@ class Association {
     '''
 
     def private dispatch outgoingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
-        switch (it) {
+        switch it {
             OneToOneRelationship: '''One «sourceName» [«source.name.formatForDisplay»] has one «targetName» [«target.name.formatForDisplay»] (INVERSE SIDE)'''
             ManyToOneRelationship: '''Many «sourceName» [«source.nameMultiple.formatForDisplay»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
             default: ''
         }
     }
     def private outgoingMappingType(JoinRelationship it) {
-        switch (it) {
+        switch it {
             OneToOneRelationship: 'OneToOne'
             ManyToOneRelationship: 'ManyToOne'
             default: ''
@@ -360,7 +360,7 @@ class Association {
     '''
 
     def private isManyToMany(JoinRelationship it) {
-        switch (it) {
+        switch it {
             ManyToManyRelationship: true
             default: false
         }

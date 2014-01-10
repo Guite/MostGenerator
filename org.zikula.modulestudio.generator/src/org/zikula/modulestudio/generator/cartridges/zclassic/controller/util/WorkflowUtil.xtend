@@ -112,7 +112,7 @@ class WorkflowUtil {
     }
 
     def private stateIcon135(ListFieldItem it) {
-        switch (it.value) {
+        switch it.value {
             case 'initial': 'red'
             case 'deferred': 'red'
             case 'waiting': 'yellow'
@@ -127,7 +127,7 @@ class WorkflowUtil {
     }
 
     def private stateLabel(ListFieldItem it) {
-        switch (it.value) {
+        switch it.value {
             case 'initial': 'danger'
             case 'deferred': 'danger'
             case 'waiting': 'warning'

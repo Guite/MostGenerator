@@ -837,7 +837,7 @@ class Entities {
     }
 
     def private formatFieldValue(EntityField it, CharSequence value) {
-        switch (it) {
+        switch it {
             DecimalField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
             FloatField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
             ListField: '''$listHelper->resolve(«value», «entity.name.formatForCode»', '«name.formatForCode»')'''

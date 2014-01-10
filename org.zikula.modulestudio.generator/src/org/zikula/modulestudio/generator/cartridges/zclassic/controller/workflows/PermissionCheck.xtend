@@ -160,7 +160,7 @@ class PermissionCheck {
     '''
 
     def private actionsForStateImpl(ListFieldItem it) {
-        switch (it.value) {
+        switch it.value {
             case 'initial' : actionsForInitial
             case 'deferred' : actionsForDeferred
             case 'waiting' : actionsForWaiting
