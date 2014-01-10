@@ -4,7 +4,6 @@ import com.google.common.base.Objects;
 import com.google.inject.Injector;
 import org.eclipse.xtext.junit4.IInjectorProvider;
 import org.eclipse.xtext.junit4.IRegistryConfigurator;
-import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.jnario.lib.AbstractSpecCreator;
 import org.zikula.modulestudio.generator.tests.lib.MostDslInjectorProvider;
 
@@ -36,12 +35,7 @@ import org.zikula.modulestudio.generator.tests.lib.MostDslInjectorProvider;
 public class GuiceSpecCreator extends AbstractSpecCreator {
   private Injector injector;
   
-  private static MostDslInjectorProvider injectorProvider = new Function0<MostDslInjectorProvider>() {
-    public MostDslInjectorProvider apply() {
-      MostDslInjectorProvider _mostDslInjectorProvider = new MostDslInjectorProvider();
-      return _mostDslInjectorProvider;
-    }
-  }.apply();
+  private static MostDslInjectorProvider injectorProvider = new MostDslInjectorProvider();
   
   public <T extends Object> T create(final Class<T> klass) {
     T _xblockexpression = null;
@@ -50,8 +44,7 @@ public class GuiceSpecCreator extends AbstractSpecCreator {
       if (_equals) {
         this.beforeSpecRun();
       }
-      T _instance = this.injector.<T>getInstance(klass);
-      _xblockexpression = (_instance);
+      _xblockexpression = (this.injector.<T>getInstance(klass));
     }
     return _xblockexpression;
   }

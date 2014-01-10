@@ -56,8 +56,8 @@ class ModelInheritanceExtensions {
      */
     def asConstant(InheritanceStrategyType inheritanceType) {
         switch inheritanceType {
-            case InheritanceStrategyType.SINGLE_TABLE   : 'SINGLE_TABLE'
-            case InheritanceStrategyType.JOINED         : 'JOINED'
+            case SINGLE_TABLE   : 'SINGLE_TABLE'
+            case JOINED         : 'JOINED'
             default: ''
         }
     }

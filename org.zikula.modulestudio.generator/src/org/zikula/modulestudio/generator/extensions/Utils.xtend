@@ -2,8 +2,9 @@ package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.CoreVersion
 import java.util.Date
+
+import static de.guite.modulestudio.metamodel.modulestudio.CoreVersion.*
 
 /**
  * Miscellaneous utility methods.
@@ -86,11 +87,11 @@ class Utils {
         val useSymfony = (version != '1.3.5')
 
         switch (getCoreVersion) {
-            case CoreVersion.ZK135:
+            case ZK135:
                 !useSymfony
-            case CoreVersion.ZK136:
+            case ZK136:
                 !useSymfony
-            case CoreVersion.ZKPRE14:
+            case ZKPRE14:
                 useSymfony
             default:
                 useSymfony

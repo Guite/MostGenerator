@@ -166,14 +166,13 @@ public class TestsForGeneratorApplicationClassesSpec {
       Map<String,CharSequence> _textFiles_1 = this.fsa.getTextFiles();
       CharSequence _get = _textFiles_1.get(filePath);
       String _string = _get.toString();
-      boolean _should_be_1 = Should.<String>should_be(_string, content);
       Assert.assertTrue("\nExpected fsa.textFiles.get(filePath).toString should be content but"
        + "\n     fsa.textFiles.get(filePath).toString is " + new org.hamcrest.StringDescription().appendValue(_string).toString()
        + "\n     fsa.textFiles.get(filePath) is " + new org.hamcrest.StringDescription().appendValue(_get).toString()
        + "\n     fsa.textFiles is " + new org.hamcrest.StringDescription().appendValue(_textFiles_1).toString()
        + "\n     fsa is " + new org.hamcrest.StringDescription().appendValue(this.fsa).toString()
        + "\n     filePath is " + new org.hamcrest.StringDescription().appendValue(filePath).toString()
-       + "\n     content is " + new org.hamcrest.StringDescription().appendValue(content).toString() + "\n", _should_be_1);
+       + "\n     content is " + new org.hamcrest.StringDescription().appendValue(content).toString() + "\n", Should.<String>should_be(_string, content));
       
       _xblockexpression = (true);
     }

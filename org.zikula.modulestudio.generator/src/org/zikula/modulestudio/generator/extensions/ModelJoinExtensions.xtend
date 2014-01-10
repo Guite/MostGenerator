@@ -11,9 +11,11 @@ import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.modulestudio.RelationFetchType
 import de.guite.modulestudio.metamodel.modulestudio.Relationship
+
+import static de.guite.modulestudio.metamodel.modulestudio.RelationAutoCompletionUsage.*
+import static de.guite.modulestudio.metamodel.modulestudio.RelationFetchType.*
 
 /**
  * This class contains model join relationship related extension methods.
@@ -239,10 +241,10 @@ class ModelJoinExtensions {
      */
     def usesAutoCompletion(JoinRelationship it, boolean useTarget) {
         switch it.useAutoCompletion {
-            case RelationAutoCompletionUsage.NONE: false
-            case RelationAutoCompletionUsage.ONLY_SOURCE_SIDE: !useTarget
-            case RelationAutoCompletionUsage.ONLY_TARGET_SIDE: useTarget
-            case RelationAutoCompletionUsage.BOTH_SIDES: true
+            case NONE: false
+            case ONLY_SOURCE_SIDE: !useTarget
+            case ONLY_TARGET_SIDE: useTarget
+            case BOTH_SIDES: true
             default: false
         }
     }
@@ -341,9 +343,9 @@ class ModelJoinExtensions {
      */
     def asConstant(RelationFetchType fetchType) {
         switch (fetchType) {
-            case RelationFetchType.LAZY        : 'LAZY'
-            case RelationFetchType.EAGER       : 'EAGER'
-            case RelationFetchType.EXTRA_LAZY  : 'EXTRA_LAZY'
+            case LAZY        : 'LAZY'
+            case EAGER       : 'EAGER'
+            case EXTRA_LAZY  : 'EXTRA_LAZY'
             default: 'LAZY'
         }
     }

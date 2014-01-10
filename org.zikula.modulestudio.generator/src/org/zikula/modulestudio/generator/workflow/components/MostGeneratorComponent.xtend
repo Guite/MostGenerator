@@ -114,19 +114,16 @@ class MostGeneratorComponent extends GeneratorComponent implements
                 throw new IllegalStateException("Slot '" + slot + "' was empty!")
             }
             if (object instanceof Iterable<?>) {
-                val Iterable<?> iterable = object as Iterable<?>
-                for (object2 : iterable) {
+                for (object2 : object) {
                     if (!(object2 instanceof Resource)) {
                         throw new IllegalStateException(
                                 "Slot contents was not a Resource but a '" + object.class.simpleName + "'!")
                     }
                     instance.doGenerate(object2 as Resource, fileSystemAccess)
                 }
-            }
-            else if (object instanceof Resource) {
-                instance.doGenerate(object as Resource, fileSystemAccess)
-            }
-            else {
+            } else if (object instanceof Resource) {
+                instance.doGenerate(object, fileSystemAccess)
+            } else {
                 throw new IllegalStateException(
                         "Slot contents was not a Resource but a '" + object.class.simpleName + "'!")
             }

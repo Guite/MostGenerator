@@ -26,10 +26,14 @@ import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
-import de.guite.modulestudio.metamodel.modulestudio.UploadNamingScheme
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import java.util.List
+
+import static de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy.*
+import static de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy.*
+import static de.guite.modulestudio.metamodel.modulestudio.EntityLockType.*
+import static de.guite.modulestudio.metamodel.modulestudio.UploadNamingScheme.*
 
 /**
  * This class contains model related extension methods.
@@ -530,9 +534,9 @@ class ModelExtensions {
      */
     def namingSchemeAsInt(UploadField it) {
         switch (namingScheme) {
-            case UploadNamingScheme.ORIGINALWITHCOUNTER    : '0'
-            case UploadNamingScheme.RANDOMCHECKSUM         : '1'
-            case UploadNamingScheme.FIELDNAMEWITHCOUNTER   : '2'
+            case ORIGINALWITHCOUNTER    : '0'
+            case RANDOMCHECKSUM         : '1'
+            case FIELDNAMEWITHCOUNTER   : '2'
             default: '0'
         }
     }
@@ -542,13 +546,13 @@ class ModelExtensions {
      */
     def asConstant(EntityIdentifierStrategy strategy) {
         switch (strategy) {
-            case EntityIdentifierStrategy.NONE                     : ''
-            case EntityIdentifierStrategy.AUTO                     : 'AUTO'
-            case EntityIdentifierStrategy.SEQUENCE                 : 'SEQUENCE'
-            case EntityIdentifierStrategy.TABLE                    : 'TABLE'
-            case EntityIdentifierStrategy.IDENTITY                 : 'IDENTITY'
-            case EntityIdentifierStrategy.UUID                     : 'UUID'
-            case EntityIdentifierStrategy.CUSTOM                   : 'CUSTOM'
+            case NONE                   : ''
+            case AUTO                   : 'AUTO'
+            case SEQUENCE               : 'SEQUENCE'
+            case TABLE                  : 'TABLE'
+            case IDENTITY               : 'IDENTITY'
+            case UUID                   : 'UUID'
+            case CUSTOM                 : 'CUSTOM'
             default: ''
         }
     }
@@ -558,9 +562,9 @@ class ModelExtensions {
      */
     def asConstant(EntityChangeTrackingPolicy policy) {
         switch (policy) {
-            case EntityChangeTrackingPolicy.DEFERRED_IMPLICIT      : 'DEFERRED_IMPLICIT'
-            case EntityChangeTrackingPolicy.DEFERRED_EXPLICIT      : 'DEFERRED_EXPLICIT'
-            case EntityChangeTrackingPolicy.NOTIFY                 : 'NOTIFY'
+            case DEFERRED_IMPLICIT      : 'DEFERRED_IMPLICIT'
+            case DEFERRED_EXPLICIT      : 'DEFERRED_EXPLICIT'
+            case NOTIFY                 : 'NOTIFY'
             default: 'DEFERRED_IMPLICIT'
         }
     }
@@ -570,14 +574,14 @@ class ModelExtensions {
      */
     def asConstant(EntityLockType lockType) {
         switch (lockType) {
-            case EntityLockType.NONE                       : ''
-            case EntityLockType.OPTIMISTIC                 : 'OPTIMISTIC'
-            case EntityLockType.PESSIMISTIC_READ           : 'PESSIMISTIC_READ'
-            case EntityLockType.PESSIMISTIC_WRITE          : 'PESSIMISTIC_WRITE'
-            case EntityLockType.PAGELOCK                   : ''
-            case EntityLockType.PAGELOCK_OPTIMISTIC        : 'OPTIMISTIC'
-            case EntityLockType.PAGELOCK_PESSIMISTIC_READ  : 'PESSIMISTIC_READ'
-            case EntityLockType.PAGELOCK_PESSIMISTIC_WRITE : 'PESSIMISTIC_WRITE'
+            case NONE                       : ''
+            case OPTIMISTIC                 : 'OPTIMISTIC'
+            case PESSIMISTIC_READ           : 'PESSIMISTIC_READ'
+            case PESSIMISTIC_WRITE          : 'PESSIMISTIC_WRITE'
+            case PAGELOCK                   : ''
+            case PAGELOCK_OPTIMISTIC        : 'OPTIMISTIC'
+            case PAGELOCK_PESSIMISTIC_READ  : 'PESSIMISTIC_READ'
+            case PAGELOCK_PESSIMISTIC_WRITE : 'PESSIMISTIC_WRITE'
             default: ''
         }
     }

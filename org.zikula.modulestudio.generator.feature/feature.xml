@@ -37,7 +37,7 @@
 
    <includes
          id="org.eclipse.emf.mwe2.language.sdk"
-         version="2.4.1.v201309030840"/>
+         version="0.0.0"/>
 
    <includes
          id="org.eclipse.platform"
@@ -50,41 +50,41 @@
       <import plugin="org.apache.commons.cli" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.logging" version="1.1.1" match="greaterOrEqual"/>
       <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.engine" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.extension" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.pdf" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.svg" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.swt" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.engine.extension" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.reportitem" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.config" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.config.html" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.config.pdf" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.html" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.pdf" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.script.javascript" version="4.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.item.crosstab.core" version="4.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.9.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe2.launch" version="2.4.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.gmf.runtime.diagram.ui.render" version="1.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.8.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.105.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend.core" version="2.4.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend2.lib" version="2.4.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext" version="2.4.3" match="greaterOrEqual"/>
-      <import plugin="org.hamcrest.core" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.junit" version="4.11.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.8.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.datatools.connectivity.oda" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.datatools.connectivity.oda.consumer" version="3.2.6" match="greaterOrEqual"/>
       <import plugin="org.eclipse.datatools.connectivity.oda.design" version="3.3.6" match="greaterOrEqual"/>
       <import plugin="org.eclipse.datatools.connectivity.oda.profile" version="3.2.8" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.xmi" version="2.9.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.query.ocl" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ocl.ecore" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.icu" version="4.4.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore.xmi" version="2.9.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.chart.engine" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.chart.device.extension" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.chart.device.pdf" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.chart.device.svg" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.chart.device.swt" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.chart.engine.extension" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.chart.reportitem" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.engine" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.engine.emitter.config" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.engine.emitter.config.html" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.engine.emitter.config.pdf" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.engine.emitter.html" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.engine.emitter.pdf" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.engine.script.javascript" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.birt.report.item.crosstab.core" version="4.3.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe2.launch" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.8.101" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.core" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend2.lib" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.builder" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.hamcrest.core" version="1.3.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

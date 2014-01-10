@@ -89,9 +89,9 @@ class WorkflowExtensions {
      */
     def textualName(EntityWorkflowType wfType) {
         switch wfType {
-            case EntityWorkflowType.NONE                        : 'none'
-            case EntityWorkflowType.STANDARD                    : 'standard'
-            case EntityWorkflowType.ENTERPRISE                  : 'enterprise'
+            case NONE        : 'none'
+            case STANDARD    : 'standard'
+            case ENTERPRISE  : 'enterprise'
             default: ''
         }
     }
@@ -101,9 +101,9 @@ class WorkflowExtensions {
      */
     def approvalType(EntityWorkflowType wfType) {
         switch wfType {
-            case EntityWorkflowType.NONE                        : 'no'
-            case EntityWorkflowType.STANDARD                    : 'single'
-            case EntityWorkflowType.ENTERPRISE                  : 'double'
+            case NONE        : 'no'
+            case STANDARD    : 'single'
+            case ENTERPRISE  : 'double'
             default: ''
         }
     }

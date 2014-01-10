@@ -111,7 +111,7 @@ class DiagramExporter {
                 // inputDiagram = resource.contents.head as Diagram
                 for (resourceElement : resource.contents) {
                     if (resourceElement instanceof Diagram) {
-                        if (!saveCurrentDiagramInAllFormats((resourceElement as Diagram))) {
+                        if (!saveCurrentDiagramInAllFormats(resourceElement)) {
                             println('An error occurred during exporting the diagram.')
                         }
                     }

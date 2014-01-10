@@ -244,9 +244,9 @@ class ModelBehaviourExtensions {
      */
     def dispatch asConstant(EntitySlugStyle slugStyle) {
         switch slugStyle {
-            case EntitySlugStyle.LOWERCASE  : 'lower'
-            case EntitySlugStyle.UPPERCASE  : 'upper'
-            case EntitySlugStyle.CAMEL      : 'camel'
+            case LOWERCASE  : 'lower'
+            case UPPERCASE  : 'upper'
+            case CAMEL      : 'camel'
             default: 'default'
         }
     }
@@ -256,9 +256,9 @@ class ModelBehaviourExtensions {
      */
     def dispatch asConstant(EntityTimestampableType tsType) {
         switch tsType {
-            case EntityTimestampableType.UPDATE : 'update'
-            case EntityTimestampableType.CREATE : 'create'
-            case EntityTimestampableType.CHANGE : 'change'
+            case UPDATE : 'update'
+            case CREATE : 'create'
+            case CHANGE : 'change'
             default: 'update'
         }
     }
@@ -268,9 +268,9 @@ class ModelBehaviourExtensions {
      */
     def dispatch asConstant(EntityTreeType treeType) {
         switch treeType {
-            case EntityTreeType.NONE    : ''
-            case EntityTreeType.NESTED  : 'nested'
-            case EntityTreeType.CLOSURE : 'closure'
+            case NONE    : ''
+            case NESTED  : 'nested'
+            case CLOSURE : 'closure'
             default: ''
         }
     }

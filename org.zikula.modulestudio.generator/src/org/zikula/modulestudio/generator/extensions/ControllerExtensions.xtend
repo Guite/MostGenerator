@@ -13,9 +13,10 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.MainAction
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.RelationEditType
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import de.guite.modulestudio.metamodel.modulestudio.ViewAction
+
+import static de.guite.modulestudio.metamodel.modulestudio.RelationEditType.*
 
 /**
  * This class contains controller related extension methods.
@@ -172,17 +173,17 @@ class ControllerExtensions {
      */
     def dispatch getEditStageCode(JoinRelationship it, Boolean incoming) {
         switch editType {
-            case RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE:
+            case ACTIVE_NONE_PASSIVE_CHOOSE:
                 if (!incoming) 0 else 1
-            case RelationEditType.ACTIVE_NONE_PASSIVE_EDIT:
+            case ACTIVE_NONE_PASSIVE_EDIT:
                 if (!incoming) 0 else 3
-            case RelationEditType.ACTIVE_CHOOSE_PASSIVE_NONE:
+            case ACTIVE_CHOOSE_PASSIVE_NONE:
                 if (!incoming) 2 else 3 // invalid --> default as fallback
-            case RelationEditType.ACTIVE_EDIT_PASSIVE_CHOOSE:
+            case ACTIVE_EDIT_PASSIVE_CHOOSE:
                 if (!incoming) 2 else 1
-            case RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT:
+            case ACTIVE_EDIT_PASSIVE_EDIT:
                 if (!incoming) 2 else 3 // default
-            case RelationEditType.ACTIVE_EDIT_PASSIVE_NONE:
+            case ACTIVE_EDIT_PASSIVE_NONE:
                 if (!incoming) 2 else 3 // invalid --> default as fallback
             default:
                 if (!incoming) 2 else 3
@@ -200,17 +201,17 @@ class ControllerExtensions {
      */
     def dispatch getEditStageCode(ManyToManyRelationship it, Boolean incoming) {
         switch editType {
-            case RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE:
+            case ACTIVE_NONE_PASSIVE_CHOOSE:
                 if (!incoming) 0 else 1
-            case RelationEditType.ACTIVE_NONE_PASSIVE_EDIT:
+            case ACTIVE_NONE_PASSIVE_EDIT:
                 if (!incoming) 0 else 3
-            case RelationEditType.ACTIVE_CHOOSE_PASSIVE_NONE:
+            case ACTIVE_CHOOSE_PASSIVE_NONE:
                 if (!incoming) 1 else 0
-            case RelationEditType.ACTIVE_EDIT_PASSIVE_CHOOSE:
+            case ACTIVE_EDIT_PASSIVE_CHOOSE:
                 if (!incoming) 3 else 1
-            case RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT:
+            case ACTIVE_EDIT_PASSIVE_EDIT:
                 if (!incoming) 3 else 3 // default
-            case RelationEditType.ACTIVE_EDIT_PASSIVE_NONE:
+            case ACTIVE_EDIT_PASSIVE_NONE:
                 if (!incoming) 3 else 0
             default:
                 if (!incoming) 3 else 3
