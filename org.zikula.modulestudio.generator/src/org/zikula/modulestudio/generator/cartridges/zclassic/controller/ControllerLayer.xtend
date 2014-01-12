@@ -231,7 +231,7 @@ class ControllerLayer {
                                ->assign('jcssConfig', JCSSUtil::getJSConfig());
 
                     «IF app.targets('1.3.5')»
-                    $view->display('«formattedName»/inlineRedirectHandler.tpl');
+                    $this->view->display('«formattedName»/inlineRedirectHandler.tpl');
 
                     return true;
                     «ELSE»
