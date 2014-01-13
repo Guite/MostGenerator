@@ -312,14 +312,14 @@ class Extensions {
             «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, false, '', '')»
             «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, false, '', '')»
             «fh.getterAndSetterMethods(it, 'root', 'integer', false, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'parent', (if (!container.application.targets('1.3.5')) '\\') + entityClassName('', false), false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'parent', (if (!container.application.targets('1.3.5')) '\\' else '') + entityClassName('', false), false, true, 'null', '')»
             «fh.getterAndSetterMethods(it, 'children', 'array', true, false, '', '')»
         «ENDIF»
         «IF hasTranslatableFields»
             «fh.getterAndSetterMethods(it, 'locale', 'string', false, false, '', '')»
         «ENDIF»
         «IF metaData»
-            «fh.getterAndSetterMethods(it, 'metadata', (if (!container.application.targets('1.3.5')) '\\') + entityClassName('metaData', false), false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'metadata', (if (!container.application.targets('1.3.5')) '\\' else '') + entityClassName('metaData', false), false, true, 'null', '')»
         «ENDIF»
         «IF attributable»
             «fh.getterMethod(it, 'attributes', 'array', true)»
