@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Action
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Redirect
@@ -1400,6 +1401,13 @@ class FormHandler {
                         }
                     }
                 }
+            «ENDIF»
+            «val timeFields = getDerivedFields.filter(TimeField)»
+            «IF !timeFields.empty»
+
+                «FOR timeField : timeFields»
+                    $entityData['«timeField.name.formatForCode»'] = $entity['«timeField.name.formatForCode»']->format('H:i:s');
+                «ENDFOR»
             «ENDIF»
 
             // assign data to template as array (makes translatable support easier)
