@@ -38,9 +38,9 @@ class Scribite {
 
         var pluginPath = ''
         if (targets('1.3.5')) {
-            docPath + 'ckeditor/plugins/' + name.formatForDB + '/'
+            pluginPath = docPath + 'ckeditor/plugins/' + name.formatForDB + '/'
         } else {
-            docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
+            pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
         }
         if (!shouldBeSkipped(pluginPath + 'plugin.js')) {
             fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
