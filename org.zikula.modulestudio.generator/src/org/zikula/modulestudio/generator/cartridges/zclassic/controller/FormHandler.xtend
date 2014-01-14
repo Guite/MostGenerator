@@ -707,7 +707,7 @@ class FormHandler {
              */
             protected function initMetaDataForEdit($entity)
             {
-                $metaData = $entity->getMetadata() != null? $entity->getMetadata()->toArray() : array();
+                $metaData = $entity->getMetadata() != null ? $entity->getMetadata()->toArray() : array();
                 $this->view->assign('meta', $metaData);
             }
         «ENDIF»
@@ -1412,6 +1412,11 @@ class FormHandler {
 
             // assign data to template as array (makes translatable support easier)
             $this->view->assign($this->objectTypeLower, $entityData);
+
+            if ($this->mode == 'edit') {
+                // assign formatted title
+                $this->view->assign('formattedEntityTitle', $entity->getTitleFromDisplayPattern();
+            }
 
             // everything okay, no initialization errors occured
             return true;
