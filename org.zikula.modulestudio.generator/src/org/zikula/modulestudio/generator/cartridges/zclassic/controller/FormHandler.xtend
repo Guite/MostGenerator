@@ -1415,7 +1415,7 @@ class FormHandler {
 
             if ($this->mode == 'edit') {
                 // assign formatted title
-                $this->view->assign('formattedEntityTitle', $entity->getTitleFromDisplayPattern();
+                $this->view->assign('formattedEntityTitle', $entity->getTitleFromDisplayPattern());
             }
 
             // everything okay, no initialization errors occured
