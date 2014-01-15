@@ -929,7 +929,7 @@ class Repository {
                 «ENDIF»
                 } else {
                     // field filter
-                    if ($v != '' || (is_numeric($v) && $v > 0)) {
+                    if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
                         if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
                             $qb->andWhere('tbl.' . $k . ' != :' . $k)
                                ->setParameter($k, substr($v, 1, strlen($v)-1));

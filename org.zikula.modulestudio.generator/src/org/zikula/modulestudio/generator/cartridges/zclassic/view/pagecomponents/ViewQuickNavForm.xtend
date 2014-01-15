@@ -182,7 +182,7 @@ class ViewQuickNavForm {
         «val fieldName = name.formatForCode»
         <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
         «IF country»
-            {selector_countries name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault}
+            {selector_countries name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault defaultValue=''}
         «ELSEIF language»
             {html_select_locales name='«fieldName»' selected=$«fieldName»}
         «ENDIF»
