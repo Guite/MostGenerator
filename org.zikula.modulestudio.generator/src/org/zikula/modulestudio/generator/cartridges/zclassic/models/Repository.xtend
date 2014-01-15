@@ -155,7 +155,7 @@ class Repository {
             /**
              * @var string The default sorting field/expression.
              */
-            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else getLeadingField).name.formatForCode»';
+            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else if (getLeadingField !== null) getLeadingField else getDerivedFields.head).name.formatForCode»';
 
             «IF app.targets('1.3.5')»
                 /**
