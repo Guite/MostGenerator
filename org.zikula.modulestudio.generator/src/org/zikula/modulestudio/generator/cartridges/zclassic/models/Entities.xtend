@@ -524,7 +524,7 @@ class Entities {
         /**
          * Creates url arguments array for easy creation of display urls.
          *
-         * @return Array The resulting arguments list. 
+         * @return Array The resulting arguments list.
          */
         public function createUrlArgs()
         {
@@ -840,7 +840,7 @@ class Entities {
         switch it {
             DecimalField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
             FloatField: '''DataUtil::format«IF currency»Currency(«value»)«ELSE»Number(«value», 2)«ENDIF»'''
-            ListField: '''$listHelper->resolve(«value», «entity.name.formatForCode»', '«name.formatForCode»')'''
+            ListField: '''$listHelper->resolve(«value», '«entity.name.formatForCode»', '«name.formatForCode»')'''
             DateField: '''DateUtil::formatDatetime(«value», 'datebrief')'''
             DatetimeField: '''DateUtil::formatDatetime(«value», 'datetimebrief')'''
             TimeField: '''DateUtil::formatDatetime(«value», 'timebrief')'''
@@ -880,7 +880,7 @@ class Entities {
          «IF joinsIn.empty && joinsOut.empty»
          * Performs a quite simple shallow copy.
          «ELSE»
-         * Performs a deep copy. 
+         * Performs a deep copy.
          «ENDIF»
          *
          * See also:
