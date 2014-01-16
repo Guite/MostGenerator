@@ -448,6 +448,11 @@ class AbstractObjectSelector {
                 return $many ? array() : null;
             }
 
+            // fix for #446
+            if (count($inputValue) == 1 && empty($inputValue[0])) {
+                return $many ? array() : null;
+            }
+
             $this->selectedItems = $this->fetchRelatedItems($view, $inputValue);
         }
 
