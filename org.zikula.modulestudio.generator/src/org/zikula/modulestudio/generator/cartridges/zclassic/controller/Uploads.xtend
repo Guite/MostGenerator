@@ -271,6 +271,7 @@ class Uploads {
                 «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! This file type is not allowed. Please choose another file format.', $dom));
             }
 
+            // validate file size
             $maxSize = $this->allowedFileSizes[$objectType][$fieldName];
             if ($maxSize > 0) {
                 $fileSize = filesize($file['tmp_name']);
