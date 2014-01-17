@@ -1,9 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -114,8 +116,8 @@ class Relations {
             «IF !many»
                 {if !isset($«relatedEntity.name.formatForCode».«relationAliasName») || $«relatedEntity.name.formatForCode».«relationAliasName» eq null}
             «ENDIF»
-            {checkpermission component='«appName»:«relatedEntity.name.formatForCodeCapital»:' instance="«relatedEntity.idFieldsAsParameterTemplate»::" level='ACCESS_ADMIN' assign='authAdmin'}
-            {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
+            {checkpermission component='«appName»:«relatedEntity.name.formatForCodeCapital»:' instance="«relatedEntity.idFieldsAsParameterTemplate»::" level='ACCESS_«IF controller instanceof AdminController»ADMIN«ELSE»«IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»«ENDIF»' assign='mayManage'}
+            {if $mayManage || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
             <p class="managelink">
                 {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
                 <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam.formatForDB»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»fa fa-plus«ENDIF»">{$createTitle}</a>

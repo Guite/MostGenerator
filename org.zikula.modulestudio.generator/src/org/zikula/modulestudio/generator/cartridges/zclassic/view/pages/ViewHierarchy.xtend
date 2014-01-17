@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -46,7 +47,7 @@ class ViewHierarchy {
 
             <p>
             «IF controller.hasActions('edit')»
-                {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_ADD'}
+                {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
                     {gt text='Add root node' assign='addRootTitle'}
                     <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»fa fa-plus hide«ENDIF»">{$addRootTitle}</a>
 

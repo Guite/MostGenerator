@@ -79,7 +79,7 @@ class View {
 
             «IF controller.hasActions('edit')»
                 {if $canBeCreated}
-                    {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
+                    {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
                         {gt text='Create «name.formatForDisplay»' assign='createTitle'}
                         <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»fa fa-plus«ENDIF»">{$createTitle}</a>
                     {/checkpermissionblock}

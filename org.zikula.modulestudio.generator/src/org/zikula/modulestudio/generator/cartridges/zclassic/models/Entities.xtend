@@ -474,6 +474,9 @@ class Entities {
 
                         // more actions for adding new related items
                         $authAdmin = SecurityUtil::checkPermission($component, $instance, ACCESS_ADMIN);
+                        «/* TODO review the permission levels and maybe define them for each related entity
+                          * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF» 
+                          */»
                         $uid = UserUtil::getVar('uid');
                         if ($authAdmin || (isset($uid) && isset($this->createdUserId) && $this->createdUserId == $uid)) {
                             «FOR elem : refedElems»
