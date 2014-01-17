@@ -271,8 +271,8 @@ class ViewQuickNavForm {
             «IF !container.application.targets('1.3.5')»
                 <div class="form-group">
             «ENDIF»
-                <label for="num"«IF !container.application.targets('1.3.5')» class="form-control input-sm" style="min-width: 70px"«ENDIF»>{gt text='Page size'}</label>
-                <select id="num" name="num">
+                <label for="num">{gt text='Page size'}</label>
+                <select id="num" name="num"«IF !container.application.targets('1.3.5')» class="form-control input-sm" style="min-width: 70px"«ENDIF»>
                     <option value="5"{if $pageSize eq 5} selected="selected"{/if}>5</option>
                     <option value="10"{if $pageSize eq 10} selected="selected"{/if}>10</option>
                     <option value="15"{if $pageSize eq 15} selected="selected"{/if}>15</option>
