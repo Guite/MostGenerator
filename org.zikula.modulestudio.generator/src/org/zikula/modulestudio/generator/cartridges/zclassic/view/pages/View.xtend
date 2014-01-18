@@ -74,7 +74,7 @@ class View {
             «controller.templateHeader»
             «IF documentation !== null && documentation != ''»
 
-                <p class="«IF container.application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">«documentation»</p>
+                <p class="«IF container.application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replaceAll('\'', '\\\'')»'}</p>
             «ENDIF»
 
             «IF controller.hasActions('edit')»
