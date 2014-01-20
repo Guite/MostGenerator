@@ -13,6 +13,8 @@ Workflow {
     component = @msManual { dir = 'customers/later' name = 'GuiSubscription' }
     component = @msManual { dir = 'customers' name = 'AddressList' }
     component = @msManual { dir = 'customers' name = 'AdShare' }
+    component = @msManual { dir = 'customers' name = 'AgencyClients' }
+    component = @msManual { dir = 'customers' name = 'AgencyJobs' }
     component = @msManual { dir = 'customers' name = 'CandidateCheck' }
     component = @msManual { dir = 'customers' name = 'ConstructionProjects' }
     component = @msManual { dir = 'customers' name = 'ContentPool' }
@@ -22,7 +24,6 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'EjubaMaterials' }
     component = @msManual { dir = 'customers' name = 'FreelancerProjects' }
     component = @msManual { dir = 'customers' name = 'FreestyleModels' }
-    component = @msManual { dir = 'customers' name = 'GastroGuide' }
     component = @msManual { dir = 'customers' name = 'GuiCustomer' }
     component = @msManual { dir = 'customers' name = 'GuiErpSync' }
     component = @msManual { dir = 'customers' name = 'GuiOrder' }
@@ -42,7 +43,9 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'MenuSuggestion' }
     component = @msManual { dir = 'customers' name = 'MwcMath' }
     component = @msManual { dir = 'customers' name = 'MwcPayment' }
+    component = @msManual { dir = 'customers' name = 'OperativeProjects' }
     component = @msManual { dir = 'customers' name = 'PlantManager' }
+    component = @msManual { dir = 'customers' name = 'RideBoard' }
     component = @msManual { dir = 'customers' name = 'SimpleClaims' }
     component = @msManual { dir = 'customers' name = 'SimplePolls' }
     component = @msManual { dir = 'customers' name = 'SimpleProductList' }
