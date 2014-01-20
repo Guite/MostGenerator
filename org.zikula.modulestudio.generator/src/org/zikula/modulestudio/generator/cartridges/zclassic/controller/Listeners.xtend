@@ -163,6 +163,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\InstallerListener as BaseInstallerListener;
+            «ELSE»
+                use Zikula\Core\CoreEvents;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -190,7 +192,6 @@ class Listeners {
             «ENDIF»
             «IF isBase»
                 use ModUtil;
-                use Zikula\Core\CoreEvents;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
