@@ -143,7 +143,7 @@ class SimpleFields {
             {/if}
         «ELSE»
             {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassOptional(it, true)»}
-            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide">{gt text='Reset to empty value'}</a></span>
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF entity.container.application.targets('1.3.5')»z-«ENDIF»hide" «IF entity.container.application.targets('1.3.5')»style="clear:left;"«ENDIF»>{gt text='Reset to empty value'}</a></span>
         «ENDIF»
 
             <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file extensions:'} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
