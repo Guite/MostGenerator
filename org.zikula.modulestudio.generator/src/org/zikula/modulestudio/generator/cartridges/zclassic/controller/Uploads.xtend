@@ -7,14 +7,12 @@ import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Uploads {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -28,12 +26,7 @@ class Uploads {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         createUploadFolders
-        if (!shouldBeSkipped(getAppSourceLibPath + 'Base/UploadHandler.php')) {
-            fsa.generateFile(getAppSourceLibPath + 'Base/UploadHandler.php', uploadHandlerBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + 'UploadHandler.php')) {
-            fsa.generateFile(getAppSourceLibPath + 'UploadHandler.php', uploadHandlerFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + '/UploadHandler.php', uploadHandlerBaseFile, uploadHandlerFile)
     }
 
     def private uploadHandlerBaseFile(Application it) '''

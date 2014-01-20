@@ -5,26 +5,18 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AbstractObjectSelector {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        if (!shouldBeSkipped(formPluginPath + 'Base/AbstractObjectSelector.php')) {
-            fsa.generateFile(formPluginPath + 'Base/AbstractObjectSelector.php', selectorBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'AbstractObjectSelector.php')) {
-            fsa.generateFile(formPluginPath + 'AbstractObjectSelector.php', selectorFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/AbstractObjectSelector.php', selectorBaseFile, selectorFile)
     }
 
     def private selectorBaseFile(Application it) '''

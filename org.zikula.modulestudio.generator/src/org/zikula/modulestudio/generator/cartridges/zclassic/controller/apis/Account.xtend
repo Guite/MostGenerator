@@ -6,7 +6,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Account {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -22,15 +20,7 @@ class Account {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val apiPath = getAppSourceLibPath + 'Api/'
-        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
-        val apiFileName = 'Account' + apiClassSuffix + '.php'
-        if (!shouldBeSkipped(apiPath + 'Base/' + apiFileName)) {
-            fsa.generateFile(apiPath + 'Base/' + apiFileName, accountApiBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(apiPath + apiFileName)) {
-            fsa.generateFile(apiPath + apiFileName, accountApiFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Account' + (if (targets('1.3.5')) '' else 'Api') + '.php', accountApiBaseFile, accountApiFile)
     }
 
     def private accountApiBaseFile(Application it) '''

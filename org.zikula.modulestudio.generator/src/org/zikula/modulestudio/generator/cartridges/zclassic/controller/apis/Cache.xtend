@@ -7,14 +7,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Cache {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -22,15 +20,7 @@ class Cache {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating cache api')
-        val apiPath = getAppSourceLibPath + 'Api/'
-        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
-        val apiFileName = 'Cache' + apiClassSuffix + '.php'
-        if (!shouldBeSkipped(apiPath + 'Base/' + apiFileName)) {
-            fsa.generateFile(apiPath + 'Base/' + apiFileName, cacheApiBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(apiPath + apiFileName)) {
-            fsa.generateFile(apiPath + apiFileName, cacheApiFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Cache' + (if (targets('1.3.5')) '' else 'Api') + '.php', cacheApiBaseFile, cacheApiFile)
     }
 
     def private cacheApiBaseFile(Application it) '''

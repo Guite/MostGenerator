@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -18,7 +17,6 @@ import static de.guite.modulestudio.metamodel.modulestudio.ApplicationDependency
 
 class VersionFile {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -28,14 +26,7 @@ class VersionFile {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val versionPrefix = if (!targets('1.3.5')) name.formatForCodeCapital + 'Module' else ''
-        val versionFileName = versionPrefix + 'Version.php'
-        if (!shouldBeSkipped(getAppSourceLibPath + 'Base/' + versionFileName)) {
-            fsa.generateFile(getAppSourceLibPath + 'Base/' + versionFileName, versionBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + versionFileName)) {
-            fsa.generateFile(getAppSourceLibPath + versionFileName, versionFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + (if (targets('1.3.5')) '' else name.formatForCodeCapital + 'Module') + 'Version.php', versionBaseFile, versionFile)
     }
 
     def private versionBaseFile(Application it) '''

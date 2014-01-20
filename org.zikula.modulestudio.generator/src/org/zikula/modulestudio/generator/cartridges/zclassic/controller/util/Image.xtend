@@ -4,12 +4,10 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Image {
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -20,14 +18,7 @@ class Image {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for image handling')
-        val utilPath = getAppSourceLibPath + 'Util/'
-        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        if (!shouldBeSkipped(utilPath + 'Base/Image' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Base/Image' + utilSuffix + '.php', imageFunctionsBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'Image' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Image' + utilSuffix + '.php', imageFunctionsFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Image' + (if (targets('1.3.5')) '' else 'Util') + '.php', imageFunctionsBaseFile, imageFunctionsFile)
     }
 
     def private imageFunctionsBaseFile(Application it) '''

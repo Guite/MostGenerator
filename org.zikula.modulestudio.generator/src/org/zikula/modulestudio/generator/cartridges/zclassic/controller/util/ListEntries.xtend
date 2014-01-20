@@ -7,14 +7,12 @@ import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ListEntries {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -26,14 +24,7 @@ class ListEntries {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for list entries')
-        val utilPath = getAppSourceLibPath + 'Util/'
-        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        if (!shouldBeSkipped(utilPath + 'Base/ListEntries' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Base/ListEntries' + utilSuffix + '.php', listFieldFunctionsBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'ListEntries' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'ListEntries' + utilSuffix + '.php', listFieldFunctionsFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/ListEntries' + (if (targets('1.3.5')) '' else 'Util') + '.php', listFieldFunctionsBaseFile, listFieldFunctionsFile)
     }
 
     def private listFieldFunctionsBaseFile(Application it) '''

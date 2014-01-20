@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.extensions
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import java.util.Date
+import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static de.guite.modulestudio.metamodel.modulestudio.CoreVersion.*
 
@@ -175,5 +176,28 @@ class Utils {
      */
     def timestamp() {
         new Date(System.currentTimeMillis).toString
+    }
+
+    /**
+     * Generates a base class and an inheriting concrete class with
+     * the corresponding content.
+     *
+     * @param it              The {@link Application} instance.
+     * @param fsa             Given file system access.
+     * @param concretePath    Path to concrete class file.
+     * @param baseContent     Content for base class file.
+     * @param concreteContent Content for concrete class file.
+     */
+    def generateClassPair(Application it, IFileSystemAccess fsa, String concretePath, CharSequence baseContent, CharSequence concreteContent) {
+        var basePathParts = concretePath.split('/') //$NON-NLS-1$
+        basePathParts.add(basePathParts.size-1, 'Base')
+        val basePath = basePathParts.join('/') //$NON-NLS-1$
+
+        if (!shouldBeSkipped(basePath)) {
+            fsa.generateFile(basePath, baseContent)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
+            fsa.generateFile(concretePath, concreteContent)
+        }
     }
 }

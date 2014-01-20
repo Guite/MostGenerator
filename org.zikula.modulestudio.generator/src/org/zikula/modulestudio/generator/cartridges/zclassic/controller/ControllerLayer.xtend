@@ -80,26 +80,10 @@ class ControllerLayer {
      */
     def private generate(Controller it, IFileSystemAccess fsa) {
         println('Generating "' + formattedName + '" controller classes')
-        val controllerPath = app.getAppSourceLibPath + 'Controller/'
-        val controllerClassSuffix = if (!app.targets('1.3.5')) 'Controller' else ''
-        val controllerFileName = name.formatForCodeCapital + controllerClassSuffix + '.php'
-        if (!app.shouldBeSkipped(controllerPath + 'Base/' + controllerFileName)) {
-            fsa.generateFile(controllerPath + 'Base/' + controllerFileName, controllerBaseFile)
-        }
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(controllerPath + controllerFileName)) {
-            fsa.generateFile(controllerPath + controllerFileName, controllerFile)
-        }
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Controller/' + name.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Controller') + '.php', controllerBaseFile, controllerFile)
 
         println('Generating "' + formattedName + '" api classes')
-        val apiPath = app.getAppSourceLibPath + 'Api/'
-        val apiClassSuffix = if (!app.targets('1.3.5')) 'Api' else ''
-        val apiFileName = name.formatForCodeCapital + apiClassSuffix + '.php'
-        if (!app.shouldBeSkipped(apiPath + 'Base/' + apiFileName)) {
-            fsa.generateFile(apiPath + 'Base/' + apiFileName, apiBaseFile)
-        }
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(apiPath + 'Base/' + apiFileName)) {
-            fsa.generateFile(apiPath + apiFileName, apiFile)
-        }
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Api/' + name.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Api') + '.php', apiBaseFile, apiFile)
     }
 
     def private controllerBaseFile(Controller it) '''

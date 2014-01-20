@@ -12,7 +12,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installe
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.InstallerView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -20,7 +19,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Installer {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -33,24 +31,10 @@ class Installer {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         val installerPrefix = if (!targets('1.3.5')) name.formatForCodeCapital + 'Module' else ''
-        val installerFileName = installerPrefix + 'Installer.php'
-        if (!shouldBeSkipped(getAppSourceLibPath + 'Base/' + installerFileName)) {
-            fsa.generateFile(getAppSourceLibPath + 'Base/' + installerFileName, installerBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + installerFileName)) {
-            fsa.generateFile(getAppSourceLibPath + installerFileName, installerFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + installerPrefix + 'Installer.php', installerBaseFile, installerFile)
 
         if (interactiveInstallation == true) {
-            val controllerPath = getAppSourceLibPath + 'Controller/'
-            val controllerClassSuffix = if (!targets('1.3.5')) 'Controller' else ''
-            val controllerFileName = 'InteractiveInstaller' + controllerClassSuffix + '.php'
-            if (!shouldBeSkipped(controllerPath + 'Base/' + controllerFileName)) {
-                fsa.generateFile(controllerPath + 'Base/' + controllerFileName, interactiveBaseFile)
-            }
-            if (!generateOnlyBaseClasses && !shouldBeSkipped(controllerPath + controllerFileName)) {
-                fsa.generateFile(controllerPath + controllerFileName, interactiveFile)
-            }
+            generateClassPair(fsa, getAppSourceLibPath + 'Controller/InteractiveInstaller' + (if (targets('1.3.5')) '' else 'Controller') + '.php', interactiveBaseFile, interactiveFile)
             new InstallerView().generate(it, fsa)
         }
     }

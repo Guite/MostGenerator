@@ -56,12 +56,7 @@ class Validator {
         if (!targets('1.3.5')) {
             fileName = 'Abstract' + fileName
         }
-        if (!shouldBeSkipped(getAppSourceLibPath + 'Base/' + fileName)) {
-            fsa.generateFile(getAppSourceLibPath + 'Base/' + fileName, validatorCommonBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + fileName)) {
-            fsa.generateFile(getAppSourceLibPath + fileName, validatorCommonFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + fileName, validatorCommonBaseFile, validatorCommonFile)
     }
 
     def private validatorCommonBaseFile(Application it) '''

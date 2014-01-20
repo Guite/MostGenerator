@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -16,7 +15,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowUtil {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -29,14 +27,7 @@ class WorkflowUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for workflows')
-        val utilPath = getAppSourceLibPath + 'Util/'
-        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        if (!shouldBeSkipped(utilPath + 'Base/Workflow' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Base/Workflow' + utilSuffix + '.php', workflowFunctionsBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'Workflow' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Workflow' + utilSuffix + '.php', workflowFunctionsFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflows' + (if (targets('1.3.5')) '' else 'Util') + '.php', workflowFunctionsBaseFile, workflowFunctionsFile)
     }
 
     def private workflowFunctionsBaseFile(Application it) '''

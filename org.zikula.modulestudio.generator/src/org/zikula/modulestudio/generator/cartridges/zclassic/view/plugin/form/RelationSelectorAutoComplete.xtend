@@ -20,13 +20,7 @@ class RelationSelectorAutoComplete {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        if (!shouldBeSkipped(formPluginPath + 'Base/RelationSelectorAutoComplete.php')) {
-            fsa.generateFile(formPluginPath + 'Base/RelationSelectorAutoComplete.php', relationSelectorBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'RelationSelectorAutoComplete.php')) {
-            fsa.generateFile(formPluginPath + 'RelationSelectorAutoComplete.php', relationSelectorFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorAutoComplete.php', relationSelectorBaseFile, relationSelectorFile)
         if (!shouldBeSkipped(viewPluginFilePath('function', 'RelationSelectorAutoComplete'))) {
             fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorAutoComplete'), relationSelectorPluginFile)
         }

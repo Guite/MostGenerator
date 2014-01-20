@@ -17,14 +17,12 @@ import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Translatable {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -36,14 +34,7 @@ class Translatable {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for translatable entities')
-        val utilPath = getAppSourceLibPath + 'Util/'
-        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        if (!shouldBeSkipped(utilPath + 'Base/Translatable' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Base/Translatable' + utilSuffix + '.php', translatableFunctionsBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'Translatable' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Translatable' + utilSuffix + '.php', translatableFunctionsFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Translatable' + (if (targets('1.3.5')) '' else 'Util') + '.php', translatableFunctionsBaseFile, translatableFunctionsFile)
     }
 
     def private translatableFunctionsBaseFile(Application it) '''

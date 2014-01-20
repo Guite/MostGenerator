@@ -18,13 +18,7 @@ class ColourInput {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        if (!shouldBeSkipped(formPluginPath + 'Base/ColourInput.php')) {
-            fsa.generateFile(formPluginPath + 'Base/ColourInput.php', formColourInputBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'ColourInput.php')) {
-            fsa.generateFile(formPluginPath + 'ColourInput.php', formColourInputFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ColourInput.php', formColourInputBaseFile, formColourInputFile)
         if (!shouldBeSkipped(viewPluginFilePath('function', 'ColourInput'))) {
             fsa.generateFile(viewPluginFilePath('function', 'ColourInput'), formColourInputPluginFile)
         }

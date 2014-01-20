@@ -14,7 +14,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHa
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -24,7 +23,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class FormHandler {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -72,15 +70,8 @@ class FormHandler {
      */
     def private generate(Controller it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + name + '" form handler base class')
-        val handlerSuffix = (if(app.targets('1.3.5')) '' else 'Handler')
         val formHandlerFolder = app.getAppSourceLibPath + 'Form/Handler/' + name.formatForCodeCapital + '/'
-        val formHandlerFileName = actionName.formatForCodeCapital + handlerSuffix + '.php'
-        if (!app.shouldBeSkipped(formHandlerFolder + 'Base/' + formHandlerFileName)) {
-            fsa.generateFile(formHandlerFolder + 'Base/' + formHandlerFileName, formHandlerCommonBaseFile(app, actionName))
-        }
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(formHandlerFolder + formHandlerFileName)) {
-            fsa.generateFile(formHandlerFolder + formHandlerFileName, formHandlerCommonFile(app, actionName))
-        }
+        app.generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Handler') + '.php', formHandlerCommonBaseFile(app, actionName), formHandlerCommonFile(app, actionName))
     }
 
     def private formHandlerCommonBaseFile(Controller it, Application app, String actionName) '''
@@ -98,15 +89,8 @@ class FormHandler {
      */
     def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + controller.formattedName + '" form handler classes for "' + name + '_' + actionName + '"')
-        val handlerSuffix = (if(app.targets('1.3.5')) '' else 'Handler')
         val formHandlerFolder = app.getAppSourceLibPath + 'Form/Handler/' + controller.name.formatForCodeCapital + '/' + name.formatForCodeCapital + '/'
-        val formHandlerFileName = actionName.formatForCodeCapital + handlerSuffix + '.php'
-        if (!app.shouldBeSkipped(formHandlerFolder + 'Base/' + formHandlerFileName)) {
-            fsa.generateFile(formHandlerFolder + 'Base/' + formHandlerFileName, formHandlerBaseFile(actionName))
-        }
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(formHandlerFolder + formHandlerFileName)) {
-            fsa.generateFile(formHandlerFolder + formHandlerFileName, formHandlerFile(actionName))
-        }
+        app.generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Handler') + '.php', formHandlerBaseFile(actionName), formHandlerFile(actionName))
     }
 
     def private formHandlerBaseFile(Entity it, String actionName) '''

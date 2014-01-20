@@ -6,14 +6,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeSingleView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ContentTypeSingle {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -22,13 +20,7 @@ class ContentTypeSingle {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating content type for single objects')
-        val contentTypePath = getAppSourceLibPath + 'ContentType/'
-        if (!shouldBeSkipped(contentTypePath + 'Base/Item.php')) {
-            fsa.generateFile(contentTypePath + 'Base/Item.php', contentTypeBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(contentTypePath + 'Item.php')) {
-            fsa.generateFile(contentTypePath + 'Item.php', contentTypeFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'ContentType/Item.php', contentTypeBaseFile, contentTypeFile)
         new ContentTypeSingleView().generate(it, fsa)
     }
 

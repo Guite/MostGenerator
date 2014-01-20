@@ -4,13 +4,11 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class DependencyInjection {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -20,13 +18,7 @@ class DependencyInjection {
         if (targets('1.3.5')) {
             return
         }
-        val extensionFileName = vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php'
-        if (!shouldBeSkipped(getAppSourceLibPath + 'DependencyInjection/Base/' + extensionFileName)) {
-            fsa.generateFile(getAppSourceLibPath + 'DependencyInjection/Base/' + extensionFileName, extensionBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourceLibPath + 'DependencyInjection/' + extensionFileName)) {
-            fsa.generateFile(getAppSourceLibPath + 'DependencyInjection/' + extensionFileName, extensionFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'DependencyInjection/' + vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php', extensionBaseFile, extensionFile)
     }
 
     def private extensionBaseFile(Application it) '''

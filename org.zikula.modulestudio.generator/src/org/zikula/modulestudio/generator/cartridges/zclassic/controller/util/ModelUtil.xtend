@@ -9,7 +9,6 @@ import de.guite.modulestudio.metamodel.modulestudio.RelationEditType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,7 +16,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModelUtil {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -30,14 +28,7 @@ class ModelUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for model layer')
-        val utilPath = getAppSourceLibPath + 'Util/'
-        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
-        if (!shouldBeSkipped(utilPath + 'Base/Model' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Base/Model' + utilSuffix + '.php', modelFunctionsBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(utilPath + 'Model' + utilSuffix + '.php')) {
-            fsa.generateFile(utilPath + 'Model' + utilSuffix + '.php', modelFunctionsFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Model' + (if (targets('1.3.5')) '' else 'Util') + '.php', modelFunctionsBaseFile, modelFunctionsFile)
     }
 
     def private modelFunctionsBaseFile(Application it) '''

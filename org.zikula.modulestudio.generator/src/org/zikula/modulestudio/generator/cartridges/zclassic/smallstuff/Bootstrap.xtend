@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,19 +11,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Bootstrap {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppSourcePath + 'Base/bootstrap.php')) {
-            fsa.generateFile(getAppSourcePath + 'Base/bootstrap.php', bootstrapBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(getAppSourcePath + 'bootstrap.php')) {
-            fsa.generateFile(getAppSourcePath + 'bootstrap.php', bootstrapFile)
-        }
+        generateClassPair(fsa, getAppSourcePath + 'bootstrap.php', bootstrapBaseFile, bootstrapFile)
     }
 
     def private bootstrapBaseFile(Application it) '''

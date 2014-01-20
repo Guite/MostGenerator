@@ -22,13 +22,7 @@ class ItemSelector {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        if (!shouldBeSkipped(formPluginPath + 'Base/ItemSelector.php')) {
-            fsa.generateFile(formPluginPath + 'Base/ItemSelector.php', itemSelectorBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'ItemSelector.php')) {
-            fsa.generateFile(formPluginPath + 'ItemSelector.php', itemSelectorFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ItemSelector.php', itemSelectorBaseFile, itemSelectorFile)
         if (!shouldBeSkipped(viewPluginFilePath('function', 'ItemSelector'))) {
             fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), itemSelectorPluginFile)
         }

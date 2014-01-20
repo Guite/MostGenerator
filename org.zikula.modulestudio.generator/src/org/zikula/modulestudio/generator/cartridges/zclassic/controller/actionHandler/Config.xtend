@@ -9,14 +9,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Config {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -26,16 +24,10 @@ class Config {
      * Entry point for config form handler.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (needsConfig) {
-            val formHandlerFolder = getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/'
-            val handlerSuffix = (if(targets('1.3.5')) '' else 'Handler')
-            if (!shouldBeSkipped(formHandlerFolder + 'Base/Config' + handlerSuffix + '.php')) {
-                fsa.generateFile(formHandlerFolder + 'Base/Config' + handlerSuffix + '.php', configHandlerBaseFile)
-            }
-            if (!generateOnlyBaseClasses && !shouldBeSkipped(formHandlerFolder + 'Config' + handlerSuffix + '.php')) {
-                fsa.generateFile(formHandlerFolder + 'Config' + handlerSuffix + '.php', configHandlerFile)
-            }
+        if (!needsConfig) {
+            return
         }
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/Config' + (if (targets('1.3.5')) '' else 'Handler') + '.php', configHandlerBaseFile, configHandlerFile)
     }
 
     def private configHandlerBaseFile(Application it) '''

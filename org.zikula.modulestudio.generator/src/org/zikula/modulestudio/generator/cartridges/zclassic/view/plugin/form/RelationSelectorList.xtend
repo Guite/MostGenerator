@@ -18,13 +18,7 @@ class RelationSelectorList {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
-        if (!shouldBeSkipped(formPluginPath + 'Base/RelationSelectorList.php')) {
-            fsa.generateFile(formPluginPath + 'Base/RelationSelectorList.php', relationSelectorBaseFile)
-        }
-        if (!generateOnlyBaseClasses && !shouldBeSkipped(formPluginPath + 'RelationSelectorList.php')) {
-            fsa.generateFile(formPluginPath + 'RelationSelectorList.php', relationSelectorFile)
-        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorList.php', relationSelectorBaseFile, relationSelectorFile)
         if (!shouldBeSkipped(viewPluginFilePath('function', 'RelationSelectorList'))) {
             fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorList'), relationSelectorPluginFile)
         }
