@@ -144,7 +144,7 @@ class ControllerUtil {
          *
          * @param string $objectType The object type to retrieve.
          *
-         * @boolean Whether composite keys are used or not.
+         * @return boolean Whether composite keys are used or not.
          */
         public function hasCompositeKeys($objectType)
         {
