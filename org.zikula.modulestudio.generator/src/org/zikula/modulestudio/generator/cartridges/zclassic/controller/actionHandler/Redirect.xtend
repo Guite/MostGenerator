@@ -178,7 +178,8 @@ class Redirect {
                 «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
                     «val sourceEntity = incomingRelation.source»
                     «IF sourceEntity.name != it.name»
-                        «FOR someController : app.getAllControllers.filter(AjaxController)»
+                        «FOR someController : app.getAllControllers»
+                        «IF !(someController instanceof AjaxController)»
                             «val controllerName = someController.formattedName»
                             «IF someController.hasActions('view')»
                                 case '«controllerName»View«sourceEntity.name.formatForCodeCapital»':
@@ -192,6 +193,7 @@ class Redirect {
                                     }
                                     return $this->getDefaultReturnUrl($args);
                             «ENDIF»
+                        «ENDIF»
                         «ENDFOR»
                     «ENDIF»
                 «ENDFOR»
