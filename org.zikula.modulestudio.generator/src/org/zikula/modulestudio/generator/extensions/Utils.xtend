@@ -190,8 +190,9 @@ class Utils {
      */
     def generateClassPair(Application it, IFileSystemAccess fsa, String concretePath, CharSequence baseContent, CharSequence concreteContent) {
         var basePathParts = concretePath.split('/') //$NON-NLS-1$
-        basePathParts.add(basePathParts.size-1, 'Base') //$NON-NLS-1$
-        val basePath = basePathParts.join('/') //$NON-NLS-1$
+        var basePathPartsChangeable = newArrayList(basePathParts)
+        basePathPartsChangeable.add(basePathPartsChangeable.size-1, 'Base') //$NON-NLS-1$
+        val basePath = basePathPartsChangeable.join('/') //$NON-NLS-1$
 
         if (!shouldBeSkipped(basePath)) {
             fsa.generateFile(basePath, baseContent)
