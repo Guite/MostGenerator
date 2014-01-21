@@ -152,7 +152,8 @@ class Redirect {
 
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
-                «FOR someController : app.getAllControllers.filter(AjaxController)»
+                «FOR someController : app.getAllControllers»
+                «IF !(someController instanceof AjaxController)»
                     «val controllerName = someController.formattedName»
                     «IF someController.hasActions('index')»
                         case '«controllerName»':
@@ -172,6 +173,7 @@ class Redirect {
                                     }
                                     return $this->getDefaultReturnUrl($args);
                     «ENDIF»
+                «ENDIF»
                 «ENDFOR»
                 «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
                     «val sourceEntity = incomingRelation.source»
