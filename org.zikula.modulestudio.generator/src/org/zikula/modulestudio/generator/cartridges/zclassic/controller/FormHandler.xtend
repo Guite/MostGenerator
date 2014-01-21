@@ -7,10 +7,10 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Config
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Redirect
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.RelationPresets
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.UploadProcessing
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Config
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessing
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

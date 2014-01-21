@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler
+package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AjaxController
