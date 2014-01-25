@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import org.eclipse.xtext.generator.IFileSystemAccess
 
 /**
  * Extension methods for naming classes and building file pathes.
@@ -20,6 +21,11 @@ class NamingExtensions {
      * Extensions used for formatting element names.
      */
     @Inject extension FormattingExtensions = new FormattingExtensions
+
+    /**
+     * Helper methods for generator settings.
+     */
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
      * Additional utility methods.
@@ -106,6 +112,37 @@ class NamingExtensions {
             app.appName + '_Entity_' + (if (isBase) 'Base_' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
         else
             app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\' + (if (isBase) 'Base\\' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
+    }
+
+    /**
+     * Checks whether a certain file path is contained in the blacklist for files to be skipped during generation.
+     */
+    def shouldBeSkipped(Application it, String filePath) {
+        getListOfFilesToBeSkipped.contains(filePath.replace(getAppSourcePath, ''))
+    }
+
+    /**
+     * Generates a base class and an inheriting concrete class with
+     * the corresponding content.
+     *
+     * @param it              The {@link Application} instance.
+     * @param fsa             Given file system access.
+     * @param concretePath    Path to concrete class file.
+     * @param baseContent     Content for base class file.
+     * @param concreteContent Content for concrete class file.
+     */
+    def generateClassPair(Application it, IFileSystemAccess fsa, String concretePath, CharSequence baseContent, CharSequence concreteContent) {
+        var basePathParts = concretePath.split('/') //$NON-NLS-1$
+        var basePathPartsChangeable = newArrayList(basePathParts)
+        basePathPartsChangeable.add(basePathPartsChangeable.size-1, 'Base') //$NON-NLS-1$
+        val basePath = basePathPartsChangeable.join('/') //$NON-NLS-1$
+
+        if (!shouldBeSkipped(basePath)) {
+            fsa.generateFile(basePath, baseContent)
+        }
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
+            fsa.generateFile(concretePath, concreteContent)
+        }
     }
 
     /**

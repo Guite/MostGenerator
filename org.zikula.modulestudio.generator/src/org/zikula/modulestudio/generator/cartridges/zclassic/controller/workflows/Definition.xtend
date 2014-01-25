@@ -7,16 +7,16 @@ import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 import java.util.ArrayList
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
+
+import static de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType.*
 
 /**
  * Workflow definitions in xml format.
  */
 class Definition {
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
