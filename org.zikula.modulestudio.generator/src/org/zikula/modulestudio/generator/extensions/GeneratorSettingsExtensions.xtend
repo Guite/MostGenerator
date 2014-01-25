@@ -1,11 +1,14 @@
 package org.zikula.modulestudio.generator.extensions
 
+import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 
 /**
  * This class contains several helper functions for accessing and using generator settings.
  */
 class GeneratorSettingsExtensions {
+
+    @Inject extension NamingExtensions = new NamingExtensions
 
     /**
      * Retrieves the target core version.
@@ -158,7 +161,7 @@ class GeneratorSettingsExtensions {
      * Checks whether a certain file path is contained in the blacklist for files to be skipped during generation.
      */
     def shouldBeSkipped(Application it, String filePath) {
-        getListOfFilesToBeSkipped.contains(filePath)
+        getListOfFilesToBeSkipped.contains(filePath.replace(getAppSourcePath, ''))
     }
 
     /**
