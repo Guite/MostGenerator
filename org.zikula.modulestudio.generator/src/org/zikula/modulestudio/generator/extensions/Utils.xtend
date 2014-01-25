@@ -47,7 +47,7 @@ class Utils {
      *
      * @return String The formatted name.
      */
-    def appName(Application it) {
+    def String appName(Application it) {
         if (targets('1.3.5')) name.formatForCodeCapital
         else vendor.formatForCodeCapital + name.formatForCodeCapital + 'Module'
     }
@@ -83,7 +83,7 @@ class Utils {
      *
      * @return Boolean The result.
      */
-    def targets(Application it, String version) {
+    def Boolean targets(Application it, String version) {
         // we query '1.3.5' for BC
         val useSymfony = (version != '1.3.5')
 

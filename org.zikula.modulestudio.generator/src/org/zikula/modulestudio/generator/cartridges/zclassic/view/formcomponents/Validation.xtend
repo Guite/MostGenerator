@@ -12,6 +12,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EmailField
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.StringField
+import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
@@ -115,9 +116,8 @@ class Validation {
             UrlField: ' validate-url'
             UploadField: ' validate-upload'
             ListField: ''
-            AbstractDateField: fieldValidationCssClassAdditionsDefault
-            DatetimeField: '''«fieldValidationCssClassAdditionsDefault»«fieldValidationCssClassDateRange»'''
-            DateField: '''«fieldValidationCssClassAdditionsDefault»«fieldValidationCssClassDateRange»'''
+            TimeField: fieldValidationCssClassAdditionsDefault
+            AbstractDateField: '''«fieldValidationCssClassAdditionsDefault»«fieldValidationCssClassDateRange»'''
         }
     }
 
