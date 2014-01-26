@@ -18,19 +18,23 @@ class ThirdParty {
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, Boolean isBase) '''
-        «pendingContentListener(isBase)»
+        «IF generatePendingContentSupport»
+            «pendingContentListener(isBase)»
+        «ENDIF»
         «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
         «IF generateListContentType || needsDetailContentType»
 
             «contentGetTypes(isBase)»
         «ENDIF»
         «IF !targets('1.3.5')»
+            «IF generateScribitePlugins»
 
-        «getEditorHelpers(isBase)»
+                «getEditorHelpers(isBase)»
 
-        «getTinyMcePlugins(isBase)»
+                «getTinyMcePlugins(isBase)»
 
-        «getCKEditorPlugins(isBase)»
+                «getCKEditorPlugins(isBase)»
+            «ENDIF»
 
         /**
          * Makes our handlers known to the event system.
@@ -39,10 +43,10 @@ class ThirdParty {
         {
             return array(
                 'get.pending_content'                   => array('pendingContentListener', 5),
-                'module.content.gettypes'               => array('contentGetTypes', 5),
+                'module.content.gettypes'               => array('contentGetTypes', 5)«IF generateScribitePlugins»,
                 'module.scribite.editorhelpers'         => array('getEditorHelpers', 5),
                 'moduleplugin.tinymce.externalplugins'  => array('getTinyMcePlugins', 5),
-                'moduleplugin.ckeditor.externalplugins' => array('getCKEditorPlugins', 5)
+                'moduleplugin.ckeditor.externalplugins' => array('getCKEditorPlugins', 5)«ENDIF»
             );
         }
         «ENDIF»

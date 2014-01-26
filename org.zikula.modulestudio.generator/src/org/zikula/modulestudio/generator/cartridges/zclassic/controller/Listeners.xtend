@@ -20,6 +20,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Users
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -28,6 +29,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Listeners {
+    @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelExtensions = new ModelExtensions
@@ -72,7 +74,11 @@ class Listeners {
         listenerFile('UserRegistration', listenersUserRegistrationFile)
         listenerFile('Users', listenersUsersFile)
         listenerFile('Group', listenersGroupFile)
-        listenerFile('ThirdParty', listenersThirdPartyFile)
+        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
+        val needsThirdPartyListener = (generatePendingContentSupport || generateListContentType || needsDetailContentType || (!targets('1.3.5') && generateScribitePlugins))
+        if (needsThirdPartyListener) {
+            listenerFile('ThirdParty', listenersThirdPartyFile)
+        }
 
         if (generateOnlyBaseClasses) {
             return
@@ -99,7 +105,9 @@ class Listeners {
         listenerFile('UserRegistration', listenersUserRegistrationFile)
         listenerFile('Users', listenersUsersFile)
         listenerFile('Group', listenersGroupFile)
-        listenerFile('ThirdParty', listenersThirdPartyFile)
+        if (needsThirdPartyListener) {
+            listenerFile('ThirdParty', listenersThirdPartyFile)
+        }
     }
 
     def private listenerFile(String name, CharSequence content) {

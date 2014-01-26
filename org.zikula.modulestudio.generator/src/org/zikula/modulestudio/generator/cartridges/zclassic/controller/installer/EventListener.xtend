@@ -2,9 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.install
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventListener {
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension Utils = new Utils
 
     /**
@@ -97,9 +101,16 @@ class EventListener {
             EventUtil::registerPersistentModuleHandler('«appName»', 'group.adduser', array('«callableClass»', 'addUser'));
             EventUtil::registerPersistentModuleHandler('«appName»', 'group.removeuser', array('«callableClass»', 'removeUser'));
 
-            // special purposes and 3rd party api support -> «callableClass = listenerBase + 'ThirdParty'»
-            EventUtil::registerPersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
-            EventUtil::registerPersistentModuleHandler('«appName»', 'module.content.gettypes', array('«callableClass»', 'contentGetTypes'));
+            «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
+            «IF generatePendingContentSupport || generateListContentType || needsDetailContentType»
+                // special purposes and 3rd party api support -> «callableClass = listenerBase + 'ThirdParty'»
+                «IF generatePendingContentSupport»
+                    EventUtil::registerPersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
+                «ENDIF»
+                «IF generateListContentType || needsDetailContentType»
+                    EventUtil::registerPersistentModuleHandler('«appName»', 'module.content.gettypes', array('«callableClass»', 'contentGetTypes'));
+                «ENDIF»
+            «ENDIF»
         }
     '''
 }
