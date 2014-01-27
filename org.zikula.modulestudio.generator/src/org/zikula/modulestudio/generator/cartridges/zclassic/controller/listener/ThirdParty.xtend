@@ -210,7 +210,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/vendor/tiny_mce/plugins/«appName.formatForDB»/editor_plugin.js'
+                  'path' => 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»/editor_plugin.js'
             )
         );
     '''

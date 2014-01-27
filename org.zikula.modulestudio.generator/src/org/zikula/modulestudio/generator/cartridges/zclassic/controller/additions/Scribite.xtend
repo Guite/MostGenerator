@@ -64,7 +64,7 @@ class Scribite {
         if (targets('1.3.5')) {
             pluginPath = docPath + 'tinymce/plugins/' + name.formatForDB + '/'
         } else {
-            pluginPath = docPath + 'TinyMce/vendor/tiny_mce/plugins/' + name.formatForDB + '/'
+            pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
         }
         if (!shouldBeSkipped(pluginPath + 'editor_plugin.js')) {
             fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
