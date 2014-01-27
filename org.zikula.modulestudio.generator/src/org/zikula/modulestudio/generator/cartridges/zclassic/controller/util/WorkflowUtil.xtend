@@ -27,7 +27,7 @@ class WorkflowUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for workflows')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflows' + (if (targets('1.3.5')) '' else 'Util') + '.php', workflowFunctionsBaseFile, workflowFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflow' + (if (targets('1.3.5')) '' else 'Util') + '.php', workflowFunctionsBaseFile, workflowFunctionsFile)
     }
 
     def private workflowFunctionsBaseFile(Application it) '''
