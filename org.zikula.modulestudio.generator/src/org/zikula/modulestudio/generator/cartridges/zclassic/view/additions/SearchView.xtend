@@ -28,7 +28,7 @@ class SearchView {
         «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
             «val nameMulti = entity.nameMultiple.formatForCodeCapital»
             <div>
-                <input type="checkbox" id="«appLower»«nameMulti»" name="«appLower»SearchTypes[]" value="«entity.name.formatForCode»"{if $active_«entity.name.formatForCode»} checked="checked"{/if} />
+                <input type="checkbox" id="active_«appLower»«nameMulti»" name="«appLower»SearchTypes[]" value="«entity.name.formatForCode»"{if $active_«entity.name.formatForCode»} checked="checked"{/if} />
                 <label for="active_«appLower»«nameMulti»">{gt text='«entity.nameMultiple.formatForDisplayCapital»' domain='module_«appLower.formatForDB»'}</label>
             </div>
         «ENDFOR»
