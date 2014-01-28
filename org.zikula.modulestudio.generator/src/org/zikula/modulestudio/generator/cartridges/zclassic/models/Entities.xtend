@@ -898,7 +898,7 @@ class Entities {
             if («FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR») {
                 // unset identifiers
                 «FOR field : primaryKeyFields»
-                    $this->set«field.name.formatForCodeCapital»(«IF field.init != ''»«field.init»«ELSE» = «field.defaultFieldData»«ENDIF»;);
+                    $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
                 «ENDFOR»
                 // init validator
                 $this->initValidator();

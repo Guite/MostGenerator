@@ -143,7 +143,7 @@ class Property {
         }
     }
 
-    def private defaultFieldData(EntityField it) {
+    def defaultFieldData(EntityField it) {
         switch it {
             BooleanField:
                 if (it.defaultValue == true || it.defaultValue == 'true') 'true' else 'false'
