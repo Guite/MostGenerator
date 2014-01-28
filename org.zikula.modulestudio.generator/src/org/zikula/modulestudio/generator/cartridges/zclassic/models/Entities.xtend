@@ -888,7 +888,7 @@ class Entities {
          *
          * See also:
          * (1) http://docs.doctrine-project.org/en/latest/cookbook/implementing-wakeup-or-clone.html
-         * (2) http://www.sunilb.com/php/php5-oops-tutorial-magic-methods-__clone-method
+         * (2) http://www.php.net/manual/en/language.oop5.cloning.php
          * (3) http://stackoverflow.com/questions/185934/how-do-i-create-a-copy-of-an-object-in-php
          * (4) http://www.pantovic.com/article/26/doctrine2-entity-cloning
          */
@@ -896,20 +896,12 @@ class Entities {
         {
             // If the entity has an identity, proceed as normal.
             if («FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR») {
-                // create new instance
-                «/* TODO: consider custom constructor arguments (indexed, aggregated - see above) */»
-                $entity = new \«entityClassName('', false)»();
                 // unset identifiers
                 «FOR field : primaryKeyFields»
-                    $entity->set«field.name.formatForCodeCapital»(null);
+                    $this->set«field.name.formatForCodeCapital»(«IF field.init != ''»«field.init»«ELSE» = «field.defaultFieldData»«ENDIF»;);
                 «ENDFOR»
-                // copy simple fields
-                $entity->set_objectType($this->get_objectType());
-                $entity->set_actions($this->get_actions());
-                $entity->initValidator();
-                «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»
-                    $entity->set«field.name.formatForCodeCapital»($this->get«field.name.formatForCodeCapital»());
-                «ENDFOR»
+                // init validator
+                $this->initValidator();
 
                 «IF !joinsIn.empty || !joinsOut.empty»
                     // handle related objects
@@ -917,19 +909,13 @@ class Entities {
                     «FOR relation : joinsIn»
                         «var aliasName = relation.getRelationAliasName(false)»
                         if ($this->get«aliasName.toFirstUpper»() != null) {
-                            «IF relation.isManySide(true)»
-                                $this->«aliasName» = clone $this->«aliasName»;
-                            «ENDIF»
-                            $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                            $this->«aliasName» = clone $this->«aliasName»;
                         }
                     «ENDFOR»
                     «FOR relation : joinsOut»
                         «var aliasName = relation.getRelationAliasName(true)»
                         if ($this->get«aliasName.toFirstUpper»() != null) {
-                            «IF relation.isManySide(false)»
-                                $this->«aliasName» = clone $this->«aliasName»;
-                            «ENDIF»
-                            $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                            $this->«aliasName» = clone $this->«aliasName»;
                         }
                     «ENDFOR»
                 «ENDIF»
