@@ -79,7 +79,7 @@ class PermissionCheck {
          */
         function «app.appName»_workflow_«wfType.textualName»_permissioncheck($obj, $permLevel, $currentUser, $actionId)
         {
-            «IF !getAllEntities.filter[hasArchive && getEndDateField !== null].empty»
+            «IF !getAllEntities(app).filter[hasArchive && getEndDateField !== null].empty»
                 // every user is allowed to perform automatic archiving 
                 if (PageUtil::getVar('«app.appName»AutomaticArchiving', false) === true) {
                     return true;

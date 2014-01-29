@@ -121,7 +121,7 @@ class Bootstrap {
                     return;
                 }
 
-                PageUtil::registerVar('«app.appName»AutomaticArchiving', false, true);
+                PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
                 $entityManager = ServiceUtil::getService('doctrine.entitymanager');
                 «FOR entity : entitiesWithArchive»
 
