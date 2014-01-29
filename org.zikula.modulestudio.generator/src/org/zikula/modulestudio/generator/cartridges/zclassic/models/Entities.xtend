@@ -324,12 +324,14 @@ class Entities {
 
         /**
          * Sets/retrieves the workflow details.
+         *
+         * @param boolean $forceLoading load the workflow record.
          «IF !app.targets('1.3.5')»
          *
          * @throws RuntimeException Thrown if retrieving the workflow object fails
          «ENDIF»
          */
-        public function initWorkflow()
+        public function initWorkflow($forceLoading)
         {
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             $isReuse = FormUtil::getPassedValue('astemplate', '', 'GETPOST', FILTER_SANITIZE_STRING);
@@ -618,7 +620,7 @@ class Entities {
             'schemaname' => $schemaName);
 
         // load the real workflow only when required (e. g. when func is edit or delete)
-        if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display')) && empty($isReuse)) {
+        if ((!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display')) && empty($isReuse)) || $forceLoading) {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
             if (!$result) {
                 $dom = ZLanguage::getModuleDomain('«app.appName»');

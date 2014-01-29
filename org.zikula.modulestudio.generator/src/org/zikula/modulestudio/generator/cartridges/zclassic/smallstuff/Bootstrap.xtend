@@ -117,10 +117,11 @@ class Bootstrap {
             
                 $randProbability = mt_rand(1, 1000);
             
-                if ($randProbability < 850) {
+                if ($randProbability < 750) {
                     return;
                 }
 
+                PageUtil::registerVar('«app.appName»AutomaticArchiving', false, true);
                 $entityManager = ServiceUtil::getService('doctrine.entitymanager');
                 «FOR entity : entitiesWithArchive»
 
@@ -133,6 +134,7 @@ class Bootstrap {
                     $repository = $entityManager->getRepository($entityClass);
                     $repository->archiveObjects();
                 «ENDFOR»
+                PageUtil::setVar('«app.appName»AutomaticArchiving', false);
             }
         «ENDIF»
     '''
