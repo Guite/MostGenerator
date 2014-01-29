@@ -134,7 +134,7 @@ class Bootstrap {
                     $repository = $entityManager->getRepository($entityClass);
                     $repository->archiveObjects();
                 «ENDFOR»
-                PageUtil::setVar('«app.appName»AutomaticArchiving', false);
+                PageUtil::setVar('«appName»AutomaticArchiving', false);
             }
         «ENDIF»
     '''
