@@ -38,6 +38,7 @@ class Finder {
 
             pWidth = screen.width * 0.75;
             pHeight = screen.height * 0.66;
+
             return 'width=' + pWidth + ',height=' + pHeight + ',scrollbars,resizable';
         }
 
@@ -249,21 +250,24 @@ class Finder {
                     'sortdir=' + $F(baseId + 'SortDir') + '&' +
                     'searchterm=' + $F(baseId + 'SearchTerm');
 
-            request = new Zikula.Ajax.Request('«IF targets('1.3.5')»ajax«ELSE»index«ENDIF».php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=getItemListFinder', {
-                method: 'post',
-                parameters: pars,
-                onFailure: function(req) {
-                    Zikula.showajaxerror(req.getMessage());
-                },
-                onSuccess: function(req) {
-                    var baseId;
-                    baseId = «name.formatForDB».itemSelector.baseId;
-                    «name.formatForDB».itemSelector.items[baseId] = req.getData();
-                    $('ajax_indicator').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
-                    «name.formatForDB».itemSelector.updateItemDropdownEntries();
-                    «name.formatForDB».itemSelector.updatePreview();
+            request = new Zikula.Ajax.Request(
+                Zikula.Config.baseURL + '«IF targets('1.3.5')»ajax«ELSE»index«ENDIF».php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=getItemListFinder',
+                {
+                    method: 'post',
+                    parameters: pars,
+                    onFailure: function(req) {
+                        Zikula.showajaxerror(req.getMessage());
+                    },
+                    onSuccess: function(req) {
+                        var baseId;
+                        baseId = «name.formatForDB».itemSelector.baseId;
+                        «name.formatForDB».itemSelector.items[baseId] = req.getData();
+                        $('ajax_indicator').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                        «name.formatForDB».itemSelector.updateItemDropdownEntries();
+                        «name.formatForDB».itemSelector.updatePreview();
+                    }
                 }
-            });
+            );
         };
 
         «name.formatForDB».itemSelector.updateItemDropdownEntries = function ()
