@@ -103,30 +103,33 @@ class Validation {
                 /** TODO fix the following call to work within validation context */
                 return true;
 
-                request = new Zikula.Ajax.Request(Zikula.Config.baseURL + '«IF targets('1.3.5')»ajax«ELSE»index«ENDIF».php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=checkForDuplicate', {
-                    method: 'post',
-                    parameters: params,
-                    authid: 'FormAuthid',«/*from the Forms framework*/»
-                    onComplete: function(req) {
-                        // check if request was successful
-                        if (!req.isSuccess()) {
-                            Zikula.showajaxerror(req.getMessage());
-                            return;
-                        }
+                request = new Zikula.Ajax.Request(
+                    Zikula.Config.baseURL + '«IF targets('1.3.5')»ajax«ELSE»index«ENDIF».php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=checkForDuplicate',
+                    {
+                        method: 'post',
+                        parameters: params,
+                        authid: 'FormAuthid',«/*from the Forms framework*/»
+                        onComplete: function(req) {
+                            // check if request was successful
+                            if (!req.isSuccess()) {
+                                Zikula.showajaxerror(req.getMessage());
+                                return;
+                            }
 
-                        // get data returned by module
-                        var data = req.getData();
-                        if (data.isDuplicate !== '1') {
-                            $('advice-validate-unique-' + elem.id).hide();
-                            elem.removeClassName('validation-failed').addClassName('validation-passed');
-                            return true;
-                        } else {
-                            $('advice-validate-unique-' + elem.id).show();
-                            elem.removeClassName('validation-passed').addClassName('validation-failed');
-                            return false;
+                            // get data returned by module
+                            var data = req.getData();
+                            if (data.isDuplicate !== '1') {
+                                $('advice-validate-unique-' + elem.id).hide();
+                                elem.removeClassName('validation-failed').addClassName('validation-passed');
+                                return true;
+                            } else {
+                                $('advice-validate-unique-' + elem.id).show();
+                                elem.removeClassName('validation-passed').addClassName('validation-failed');
+                                return false;
+                            }
                         }
                     }
-                });
+                );
 
                 return true;
             }
