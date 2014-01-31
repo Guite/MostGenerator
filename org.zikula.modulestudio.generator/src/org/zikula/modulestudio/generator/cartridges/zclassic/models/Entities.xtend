@@ -880,7 +880,11 @@ class Entities {
 
     def private relatedObjectsImpl(Entity it, Application app) '''
         /**
-         * TODO
+         * Returns an array of all related objects that need to be persited after clone.
+         * 
+         * @param array $objects The objects are added to this array. Default: array()
+         * 
+         * @return array of entity objects.
          */
         public function getRelatedObjectsToPersist(&$objects = array()) {
             «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
