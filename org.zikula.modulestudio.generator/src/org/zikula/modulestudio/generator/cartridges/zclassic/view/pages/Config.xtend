@@ -95,7 +95,7 @@ class Config {
             <legend>{$tabTitle}</legend>
 
             «IF documentation !== null && documentation != ''»
-                <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replaceAll("'", "")»'|nl2br}</p>
+                <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replace("'", "")»'|nl2br}</p>
             «ELSEIF !hasMultipleConfigSections || isPrimaryVarContainer»
                 <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='Here you can manage all basic settings for this application.'}</p>
             «ENDIF»
@@ -110,7 +110,7 @@ class Config {
     def private formRow(Variable it) '''
         <div class="«IF container.container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             «IF documentation !== null && documentation != ""»
-                {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
+                {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
             «ENDIF»
             {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.container.application.appName.toLowerCase»-form-tooltips «ENDIF»«IF !container.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
             «IF !container.container.application.targets('1.3.5')»

@@ -101,7 +101,7 @@ class ControllerAction {
 
     def private actionDocMethodDocumentation(Action it) {
         if (documentation !== null && documentation != '') {
-            ' * ' + documentation.replaceAll('*/', '*')
+            ' * ' + documentation.replace('*/', '*')
         }
         else ''
     }

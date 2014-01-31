@@ -60,7 +60,7 @@ class SimpleFields {
 
     def private initDocumentationToolTip(DerivedField it) '''
         «IF documentation !== null && documentation != ''»
-            {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
+            {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
         «ENDIF»
     '''
 
