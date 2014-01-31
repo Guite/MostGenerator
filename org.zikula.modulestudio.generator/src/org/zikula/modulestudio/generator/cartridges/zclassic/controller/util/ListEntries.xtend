@@ -234,17 +234,17 @@ class ListEntries {
     '''
 
     def private entryInfo(ListFieldItem it) '''
-        $states[] = array('value'   => '«value.replaceAll("'", "")»',
-                          'text'    => $this->__('«name.formatForDisplayCapital.replaceAll("'", "")»'),
-                          'title'   => «IF documentation !== null && documentation != ''»$this->__('«documentation.replaceAll("'", "")»')«ELSE»''«ENDIF»,
+        $states[] = array('value'   => '«value.replace("'", "")»',
+                          'text'    => $this->__('«name.formatForDisplayCapital.replace("'", "")»'),
+                          'title'   => «IF documentation !== null && documentation != ''»$this->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
                           'image'   => '«IF image !== null && image != ''»«image».png«ENDIF»',
                           'default' => «^default.displayBool»);
     '''
 
     def private entryInfoNegative(ListFieldItem it) '''
-        $states[] = array('value'   => '!«value.replaceAll("'", "")»',
-                          'text'    => $this->__('All except «name.formatForDisplay.replaceAll("'", "")»'),
-                          'title'   => $this->__('Shows all items except these which are «name.formatForDisplay.replaceAll("'", "")»'),
+        $states[] = array('value'   => '!«value.replace("'", "")»',
+                          'text'    => $this->__('All except «name.formatForDisplay.replace("'", "")»'),
+                          'title'   => $this->__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
                           'image'   => '',
                           'default' => false);
     '''

@@ -836,7 +836,7 @@ class Entities {
                 formattedPart = 'number_format($this->get' + patternPart.toFirstUpper + '(), 7, \'.\', \'\')'
             } else {
                 // static part
-                formattedPart = '\'' + patternPart.replaceAll('\'', '') + '\''
+                formattedPart = '\'' + patternPart.replace('\'', '') + '\''
             }
             result = result.concat(formattedPart.toString)
         }

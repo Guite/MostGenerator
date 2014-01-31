@@ -69,7 +69,7 @@ class Uploads {
         # Purpose of file: give access to upload files treated in this directory
         # ----------------------------------------------------------------------
         deny from all
-        <FilesMatch "\.(«allowedExtensions.replaceAll(", ", "|")»)$">
+        <FilesMatch "\.(«allowedExtensions.replace(", ", "|")»)$">
             order allow,deny
             allow from all
         </filesmatch>
@@ -383,14 +383,14 @@ class Uploads {
                     «FOR uploadField : uploadFields»«uploadField.isAllowedFileExtensionFieldCase»«ENDFOR»
                 }
             «ELSE»
-                $allowedExtensions = array('«uploadFields.head.allowedExtensions.replaceAll(', ', "', '")»');
+                $allowedExtensions = array('«uploadFields.head.allowedExtensions.replace(', ', "', '")»');
             «ENDIF»
                 break;
     '''
 
     def private isAllowedFileExtensionFieldCase(UploadField it) '''
         case '«name.formatForCode»':
-            $allowedExtensions = array('«allowedExtensions.replaceAll(', ', "', '")»');
+            $allowedExtensions = array('«allowedExtensions.replace(', ', "', '")»');
             break;
     '''
 
