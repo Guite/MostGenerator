@@ -886,7 +886,7 @@ class Entities {
             «val joinsIn = incomingJoinRelationsForCloning»
             «val joinsOut = outgoingJoinRelationsForCloning»
             «IF !joinsIn.empty || !joinsOut.empty»
-                «FOR out: newArrayList(false, true)»
+                «FOR out : newArrayList(false, true)»
                     «FOR relation : if (out) joinsOut else joinsIn»
                         «var aliasName = relation.getRelationAliasName(out)»
                         foreach ($this->«aliasName» as $rel) {
