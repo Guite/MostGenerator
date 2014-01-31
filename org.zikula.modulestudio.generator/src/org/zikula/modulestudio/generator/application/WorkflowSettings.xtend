@@ -44,6 +44,12 @@ class WorkflowSettings {
     String modelPath = null
 
     /**
+     * The destination path for copying the model.
+     */
+    @Property
+    String modelDestinationPath = null
+
+    /**
      * Reference to current diagram.
      */
     @Property

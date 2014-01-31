@@ -47,10 +47,10 @@ class BlocksView {
             «ENDIF»
         </div>
 
-        {if $properties ne null && is_array($properties)}
+        {if $catIds ne null && is_array($catIds)}
             {gt text='All' assign='lblDefault'}
             {nocache}
-            {foreach key='propertyName' item='propertyId' from=$properties}
+            {foreach key='propertyName' item='propertyId' from=$catIds}
                 <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
                     {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
                     {gt text='Category' assign='categoryLabel'}

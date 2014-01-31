@@ -43,11 +43,11 @@ class WorkflowPostProcess {
         val modelFileName = new File(srcPath).name
         val copier = new ModelFileCopier => [
             sourceModelFile = srcPath
-            targetModelFile = settings.outputPath + '/model/' + modelFileName
+            targetModelFile = settings.modelDestinationPath + modelFileName
             sourceModelFileEnriched = srcPath.replace('.mostapp', '_enriched.mostapp')
-            targetModelFileEnriched = settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '_enriched.mostapp')
+            targetModelFileEnriched = settings.modelDestinationPath + modelFileName.replace('.mostapp', '_enriched.mostapp')
             sourceDiagramFile = srcPath.replace('.mostapp', '.mostdiagram')
-            targetDiagramFile = settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '.mostdiagram')
+            targetDiagramFile = settings.modelDestinationPath + modelFileName.replace('.mostapp', '.mostdiagram')
         ]
         copier.invoke
     }
