@@ -883,8 +883,8 @@ class Entities {
          * TODO
          */
         public function getRelatedObjectsToPersist(&$objects = array()) {
-            «val joinsIn = incomingJoinRelationsForCloning»
-            «val joinsOut = outgoingJoinRelationsForCloning»
+            «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
+            «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «IF !joinsIn.empty || !joinsOut.empty»
                 «FOR out : newArrayList(false, true)»
                     «FOR relation : if (out) joinsOut else joinsIn»
@@ -953,7 +953,7 @@ class Entities {
                             $collection = $this->«aliasName»;
                             $this->«aliasName» = new ArrayCollection();
                             foreach ($collection as $rel) {
-                                $this->add«aliasName.formatForCodeCapital»(clone $rel);
+                                $this->add«aliasName.formatForCodeCapital»(«IF !(relation instanceof ManyToManyRelationship)» clone«ENDIF» $rel);
                             }
                         «ENDFOR»
                     «ENDFOR»
