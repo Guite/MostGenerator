@@ -146,6 +146,8 @@ class Entities {
         {
             «entityInfo(app)»
 
+            «relatedObjectsImpl(app)»
+
             «thEvLi.generateBase(it)»
 
             «getTitleFromDisplayPattern(app)»
@@ -331,7 +333,7 @@ class Entities {
          * @throws RuntimeException Thrown if retrieving the workflow object fails
          «ENDIF»
          */
-        public function initWorkflow($forceLoading)
+        public function initWorkflow($forceLoading = false)
         {
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             $isReuse = FormUtil::getPassedValue('astemplate', '', 'GETPOST', FILTER_SANITIZE_STRING);
@@ -477,7 +479,7 @@ class Entities {
                         // more actions for adding new related items
                         $authAdmin = SecurityUtil::checkPermission($component, $instance, ACCESS_ADMIN);
                         «/* TODO review the permission levels and maybe define them for each related entity
-                          * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF» 
+                          * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
                           */»
                         $uid = UserUtil::getVar('uid');
                         if ($authAdmin || (isset($uid) && isset($this->createdUserId) && $this->createdUserId == $uid)) {
@@ -876,9 +878,36 @@ class Entities {
         }
     '''
 
+    def private relatedObjectsImpl(Entity it, Application app) '''
+        /**
+         * TODO
+         */
+        public function getRelatedObjectsToPersist(&$objects = array()) {
+            «val joinsIn = incomingJoinRelationsForCloning»
+            «val joinsOut = outgoingJoinRelationsForCloning»
+            «IF !joinsIn.empty || !joinsOut.empty»
+                «FOR out: newArrayList(false, true)»
+                    «FOR relation : if (out) joinsOut else joinsIn»
+                        «var aliasName = relation.getRelationAliasName(out)»
+                        foreach ($this->«aliasName» as $rel) {
+                            if (!in_array($rel, $objects, true)) {
+                                $objects[] = $rel;
+                                $rel->getRelatedObjectsToPersist($objects);
+                            }
+                        }
+                    «ENDFOR»
+                «ENDFOR»
+
+                return $objects;
+             «ELSE»
+                return array();
+             «ENDIF»
+         }
+    '''
+
     def private cloneImpl(Entity it, Application app) '''
-        «val joinsIn = getBidirectionalIncomingJoinRelations»
-        «val joinsOut = getOutgoingJoinRelations»
+        «val joinsIn = incomingJoinRelationsForCloning»
+        «val joinsOut = outgoingJoinRelationsForCloning»
         /**
          * Clone interceptor implementation.
          * This method is for example called by the reuse functionality.
@@ -902,27 +931,33 @@ class Entities {
                 «FOR field : primaryKeyFields»
                     $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
                 «ENDFOR»
+
                 // init validator
                 $this->initValidator();
+
+                // reset Workflow
+                $this->resetWorkflow();
+
+                $this->setCreatedDate(null);
+                $this->setCreatedUserId(null);
+                $this->setUpdatedDate(null);
+                $this->setUpdatedUserId(null);
 
                 «IF !joinsIn.empty || !joinsOut.empty»
                     // handle related objects
                     // prevent shared references by doing a deep copy - see (2) and (3) for more information
-                    «FOR relation : joinsIn»
-                        «var aliasName = relation.getRelationAliasName(false)»
-                        if ($this->get«aliasName.toFirstUpper»() != null) {
-                            $this->«aliasName» = clone $this->«aliasName»;
-                        }
-                    «ENDFOR»
-                    «FOR relation : joinsOut»
-                        «var aliasName = relation.getRelationAliasName(true)»
-                        if ($this->get«aliasName.toFirstUpper»() != null) {
-                            $this->«aliasName» = clone $this->«aliasName»;
-                        }
+                    // clone referenced objects only if a new record is necessary
+                    «FOR out: newArrayList(false, true)»
+                        «FOR relation : if (out) joinsOut else joinsIn»
+                            «var aliasName = relation.getRelationAliasName(out)»
+                            $collection = $this->«aliasName»;
+                            $this->«aliasName» = new ArrayCollection();
+                            foreach ($collection as $rel) {
+                                $this->add«aliasName.formatForCodeCapital»(clone $rel);
+                            }
+                        «ENDFOR»
                     «ENDFOR»
                 «ENDIF»
-
-                return $entity;
             }
             // otherwise do nothing, do NOT throw an exception!
         }

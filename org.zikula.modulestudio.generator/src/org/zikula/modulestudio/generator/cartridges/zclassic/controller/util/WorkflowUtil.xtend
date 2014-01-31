@@ -333,11 +333,12 @@ class WorkflowUtil {
          * Executes a certain workflow action for a given entity object.
          *
          * @param \Zikula_EntityAccess $entity   The given entity instance.
-         * @param string               $actionId Name of action to be executed. 
+         * @param string               $actionId Name of action to be executed.
+         * @param bool                 $recursive true if the function called itself.  
          *
          * @return bool False on error or true if everything worked well.
          */
-        public function executeAction($entity, $actionId = '')
+        public function executeAction($entity, $actionId = '', $recursive = false)
         {
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
@@ -351,9 +352,17 @@ class WorkflowUtil {
 
             $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
 
+            if ($result !== false && !$recursive) {
+                $entities = $entity->getRelatedObjectsToPersist();
+                foreach ($entities as $rel) {
+                    if ($rel->getWorkflowState() == 'initial') {
+                        $this->executeAction($rel, $actionId, true);
+                    }
+                }
+            }
+
             return ($result !== false);
         }
-
     '''
 
     def private normaliseWorkflowData(Application it) '''

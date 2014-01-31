@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.CascadeType
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
@@ -109,11 +110,41 @@ class ModelJoinExtensions {
     def getBidirectionalIncomingJoinRelationsWithOneSource(Entity it) {
         getIncomingJoinRelationsWithOneSource.filter[bidirectional]
     }
+    
     /**
      * Returns a list of all incoming join relations which are either one2one, one2many or many2one.
      */
     def getIncomingJoinRelationsWithoutManyToMany(Entity it) {
         getIncomingJoinRelationsWithOneSource + incoming.filter(ManyToOneRelationship)
+    }
+    
+    /**
+     * Returns a list of all incoming bidirectional join relations (excluding inheritance) 
+     * which have the many cardinality on the source side and cascade persist active.
+     */
+    def getIncomingJoinRelationsForCloning(Entity it) {
+        getBidirectionalIncomingJoinRelations.filter[isManySide(false) && hasCascadePersist]
+    }
+
+    /**
+     * Returns a list of all outgoing join relations (excluding inheritance) 
+     * which have the many cardinality on the target side and cascade persist active.
+     */
+    def getOutgoingJoinRelationsForCloning(Entity it) {
+        getOutgoingJoinRelations.filter[isManySide(true) && hasCascadePersist]
+    }
+    
+    def hasCascadePersist(JoinRelationship it) {
+        newArrayList(
+            CascadeType.PERSIST_VALUE,
+            CascadeType.PERSIST_REMOVE_VALUE,
+            CascadeType.PERSIST_MERGE_VALUE,
+            CascadeType.PERSIST_DETACH_VALUE,
+            CascadeType.PERSIST_REMOVE_MERGE_VALUE,
+            CascadeType.PERSIST_REMOVE_DETACH_VALUE,
+            CascadeType.PERSIST_MERGE_DETACH_VALUE,
+            CascadeType.ALL_VALUE
+        ).contains(cascade.value);
     }
 
     /**

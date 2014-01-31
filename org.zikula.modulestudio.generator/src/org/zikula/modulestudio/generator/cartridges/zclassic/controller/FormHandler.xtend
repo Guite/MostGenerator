@@ -593,7 +593,6 @@ class FormHandler {
                     «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('No such item.'));
                 }
                 $entity = clone $entityT;
-                $entity->resetWorkflow();
             } else {
                 «IF app.targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
