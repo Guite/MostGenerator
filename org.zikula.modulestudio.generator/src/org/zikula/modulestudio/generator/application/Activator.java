@@ -6,7 +6,10 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class for this bundle.
  */
+@SuppressWarnings("PMD.UseSingleton")
+// @SuppressWarnings("PMD.UseSingleton") Eclipse plug-in activator.
 public class Activator extends AbstractUIPlugin {
+
     /**
      * The plug-in ID.
      */
@@ -31,6 +34,10 @@ public class Activator extends AbstractUIPlugin {
      * )
      */
     @Override
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    // @SuppressWarnings("PMD.SignatureDeclareThrowsException") We have to use
+    // this signature because this is an override of an Eclipse framework's
+    // method.
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
@@ -43,6 +50,11 @@ public class Activator extends AbstractUIPlugin {
      * )
      */
     @Override
+    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException",
+            "PMD.NullAssignment" })
+    // @SuppressWarnings("PMD.SignatureDeclareThrowsException") Eclipse method
+    // override.
+    // @SuppressWarnings("PMD.NullAssignment") Eclipse pattern.
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
