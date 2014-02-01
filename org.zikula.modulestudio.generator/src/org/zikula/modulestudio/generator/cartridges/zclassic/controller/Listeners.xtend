@@ -124,8 +124,11 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\CoreListener as BaseCoreListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
@@ -133,7 +136,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
         «ELSE»
-        class CoreListener«IF !isBase» extends BaseCoreListener«ENDIF»
+        class CoreListener«IF !isBase» extends BaseCoreListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Core().generate(it, isBase)»
@@ -147,6 +150,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\FrontControllerListener as BaseFrontControllerListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -157,7 +162,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_FrontController extends «ENDIF»«appName»_Listener_Base_FrontController
         «ELSE»
-        class FrontControllerListener«IF !isBase» extends BaseFrontControllerListener«ENDIF»
+        class FrontControllerListener«IF !isBase» extends BaseFrontControllerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new FrontController().generate(it, isBase)»
@@ -172,6 +177,7 @@ class Listeners {
             «IF !isBase»
                 use «appNamespace»\Listener\Base\InstallerListener as BaseInstallerListener;
             «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Zikula\Core\CoreEvents;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
@@ -183,7 +189,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
         «ELSE»
-        class InstallerListener«IF !isBase» extends BaseInstallerListener«ENDIF»
+        class InstallerListener«IF !isBase» extends BaseInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ModuleInstaller().generate(it, isBase)»
@@ -197,9 +203,9 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\ModuleDispatchListener as BaseModuleDispatchListener;
-            «ENDIF»
-            «IF isBase»
+            «ELSE»
                 use ModUtil;
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -210,7 +216,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
         «ELSE»
-        class ModuleDispatchListener«IF !isBase» extends BaseModuleDispatchListener«ENDIF»
+        class ModuleDispatchListener«IF !isBase» extends BaseModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ModuleDispatch().generate(it, isBase)»
@@ -224,6 +230,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\MailerListener as BaseMailerListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -234,7 +242,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
         «ELSE»
-        class MailerListener«IF !isBase» extends BaseMailerListener«ENDIF»
+        class MailerListener«IF !isBase» extends BaseMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Mailer().generate(it, isBase)»
@@ -248,6 +256,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\PageListener as BasePageListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -258,7 +268,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
         «ELSE»
-        class PageListener«IF !isBase» extends BasePageListener«ENDIF»
+        class PageListener«IF !isBase» extends BasePageListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Page().generate(it, isBase)»
@@ -273,6 +283,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\ErrorsListener as BaseErrorsListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -283,7 +295,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
         «ELSE»
-        class ErrorsListener«IF !isBase» extends BaseErrorsListener«ENDIF»
+        class ErrorsListener«IF !isBase» extends BaseErrorsListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Errors().generate(it, isBase)»
@@ -297,6 +309,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\ThemeListener as BaseThemeListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -307,7 +321,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
         «ELSE»
-        class ThemeListener«IF !isBase» extends BaseThemeListener«ENDIF»
+        class ThemeListener«IF !isBase» extends BaseThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Theme().generate(it, isBase)»
@@ -321,6 +335,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\ViewListener as BaseViewListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -331,7 +347,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
         «ELSE»
-        class ViewListener«IF !isBase» extends BaseViewListener«ENDIF»
+        class ViewListener«IF !isBase» extends BaseViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new View().generate(it, isBase)»
@@ -345,6 +361,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\UserLoginListener as BaseUserLoginListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -355,7 +373,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
         «ELSE»
-        class UserLoginListener«IF !isBase» extends BaseUserLoginListener«ENDIF»
+        class UserLoginListener«IF !isBase» extends BaseUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserLogin().generate(it, isBase)»
@@ -369,6 +387,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\UserLogoutListener as BaseUserLogoutListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -379,7 +399,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
         «ELSE»
-        class UserLogoutListener«IF !isBase» extends BaseUserLogoutListener«ENDIF»
+        class UserLogoutListener«IF !isBase» extends BaseUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserLogout().generate(it, isBase)»
@@ -391,13 +411,14 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
-            «IF isBase»
+            «IF !isBase»
+                use «appNamespace»\Listener\Base\UserListener as BaseUserListener;
+            «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
                     use ModUtil;
                     use ServiceUtil;
                 «ENDIF»
-            «ELSE»
-                use «appNamespace»\Listener\Base\UserListener as BaseUserListener;
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -408,7 +429,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
         «ELSE»
-        class UserListener«IF !isBase» extends BaseUserListener«ENDIF»
+        class UserListener«IF !isBase» extends BaseUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new User().generate(it, isBase)»
@@ -422,6 +443,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\UserRegistrationListener as BaseUserRegistrationListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -432,7 +455,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
         «ELSE»
-        class UserRegistrationListener«IF !isBase» extends BaseUserRegistrationListener«ENDIF»
+        class UserRegistrationListener«IF !isBase» extends BaseUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserRegistration().generate(it, isBase)»
@@ -446,6 +469,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\UsersListener as BaseUsersListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -456,7 +481,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
         «ELSE»
-        class UsersListener«IF !isBase» extends BaseUsersListener«ENDIF»
+        class UsersListener«IF !isBase» extends BaseUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Users().generate(it, isBase)»
@@ -470,6 +495,8 @@ class Listeners {
 
             «IF !isBase»
                 use «appNamespace»\Listener\Base\GroupListener as BaseGroupListener;
+            «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -480,7 +507,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
         «ELSE»
-        class GroupListener«IF !isBase» extends BaseGroupListener«ENDIF»
+        class GroupListener«IF !isBase» extends BaseGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Group().generate(it, isBase)»
@@ -495,6 +522,7 @@ class Listeners {
             «IF !isBase»
                 use «appNamespace»\Listener\Base\ThirdPartyListener as BaseThirdPartyListener;
             «ELSE»
+                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 «IF needsApproval»
                     use «appNamespace»\Util\WorkflowUtil;
                     use ServiceUtil;
@@ -515,7 +543,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
         «ELSE»
-        class ThirdPartyListener«IF !isBase» extends BaseThirdPartyListener«ENDIF»
+        class ThirdPartyListener«IF !isBase» extends BaseThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ThirdParty().generate(it, isBase)»
