@@ -87,6 +87,108 @@ class Repository {
     '''
 
     def private modelRepositoryBaseImpl(Entity it) '''
+        «imports»
+        /**
+         * Repository class used to implement own convenience methods for performing certain DQL queries.
+         *
+         * This is the base repository class for «name.formatForDisplay» entities.
+         */
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        «ELSE»
+        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        «ENDIF»
+        {
+            «val stringFields = fields.filter(StringField).filter[!leading && !password]»
+            /**
+             * @var string The default sorting field/expression.
+             */
+            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else if (getLeadingField !== null) getLeadingField else getDerivedFields.head).name.formatForCode»';
+
+            «IF app.targets('1.3.5')»
+                /**
+                 * @var array Additional arguments given by the calling controller.
+                 */
+                protected $controllerArguments = array();
+            «ELSE»
+                /**
+                 * @var Request The request object given by the calling controller.
+                 */
+                protected $request;
+            «ENDIF»
+
+            /**
+             * Retrieves an array with all fields which can be used for sorting instances.
+             *
+             * @return array
+             */
+            public function getAllowedSortingFields()
+            {
+                return array(
+                    «FOR field : fields»«field.singleSortingField»«ENDFOR»
+                    «extensionSortingFields»
+                );
+            }
+
+            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
+            «IF app.targets('1.3.5')»
+                «fh.getterAndSetterMethods(it, 'controllerArguments', 'array', false, true, 'Array()', '')»
+            «ELSE»
+                «fh.getterAndSetterMethods(it, 'request', 'Request', false, false, '', '')»
+            «ENDIF»
+
+            «fieldNameHelpers(stringFields)»
+
+            «getAdditionalTemplateParameters»
+            «getViewQuickNavParameters»
+
+            «truncateTable»
+            «IF standardFields || hasUserFieldsEntity»
+
+                «userDeleteFunctions»
+            «ENDIF»
+
+            «selectById»
+            «IF hasSluggableFields && slugUnique»
+
+                «selectBySlug»
+            «ENDIF»
+
+            «addExclusion»
+
+            «selectWhere»
+
+            «selectWherePaginated»
+
+            «selectSearch»
+
+            «retrieveCollectionResult»
+            «IF !getUniqueDerivedFields.empty»
+
+                «selectCount»
+            «ENDIF»
+
+            «new Tree().generate(it, app)»
+
+            «detectUniqueState»
+
+            «genericBaseQuery»
+
+            «genericBaseQueryWhere»
+
+            «genericBaseQueryOrderBy»
+
+            «intGetQueryFromBuilder»
+
+            «new Joins().generate(it, app)»
+            «IF hasArchive && getEndDateField !== null»
+
+                «archiveObjects(it)»
+            «ENDIF»
+        }
+    '''
+
+    def private imports(Entity it) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository\Base;
 
@@ -140,164 +242,71 @@ class Repository {
             «ENDIF»
 
         «ENDIF»
+    '''
+
+    def private fieldNameHelpers(Entity it, Iterable<StringField> stringFields) '''
         /**
-         * Repository class used to implement own convenience methods for performing certain DQL queries.
+         * Returns name of the field used as title / name for entities of this repository.
          *
-         * This is the base repository class for «name.formatForDisplay» entities.
+         * @return string Name of field to be used as title.
          */
-        «IF app.targets('1.3.5')»
-        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
-        «ELSE»
-        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
-        «ENDIF»
+        public function getTitleFieldName()
         {
-            «val stringFields = fields.filter(StringField).filter[!leading && !password]»
-            /**
-             * @var string The default sorting field/expression.
-             */
-            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else if (getLeadingField !== null) getLeadingField else getDerivedFields.head).name.formatForCode»';
-
-            «IF app.targets('1.3.5')»
-                /**
-                 * @var array Additional arguments given by the calling controller.
-                 */
-                protected $controllerArguments = array();
+            «IF !stringFields.empty»
+                $fieldName = '«stringFields.head.name.formatForCode»';
             «ELSE»
-                /**
-                 * @var Request The request object given by the calling controller.
-                 */
-                protected $request;
+                $fieldName = '';
             «ENDIF»
 
-            /**
-             * Retrieves an array with all fields which can be used for sorting instances.
-             *
-             * @return array
-             */
-            public function getAllowedSortingFields()
-            {
-                return array(
-                    «FOR field : fields»«field.singleSortingField»«ENDFOR»
-                    «extensionSortingFields»
-                );
-            }
+            return $fieldName;
+        }
 
-            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
-            «IF app.targets('1.3.5')»
-                «fh.getterAndSetterMethods(it, 'controllerArguments', 'array', false, true, 'Array()', '')»
-            «ELSE»
-                «fh.getterAndSetterMethods(it, 'request', 'Request', false, false, '', '')»
-            «ENDIF»
-
-            /**
-             * Returns name of the field used as title / name for entities of this repository.
-             *
-             * @return string Name of field to be used as title.
-             */
-            public function getTitleFieldName()
-            {
-                «IF !stringFields.empty»
+        /**
+         * Returns name of the field used for describing entities of this repository.
+         *
+         * @return string Name of field to be used as description.
+         */
+        public function getDescriptionFieldName()
+       {
+            «val textFields = fields.filter(TextField).filter[!leading]»
+            «IF !textFields.empty»
+                $fieldName = '«textFields.head.name.formatForCode»';
+            «ELSEIF !stringFields.empty»
+                «IF stringFields.size > 1»
+                    $fieldName = '«stringFields.get(1).name.formatForCode»';
+                «ELSE»
                     $fieldName = '«stringFields.head.name.formatForCode»';
-                «ELSE»
-                    $fieldName = '';
                 «ENDIF»
-
-                return $fieldName;
-            }
-
-            /**
-             * Returns name of the field used for describing entities of this repository.
-             *
-             * @return string Name of field to be used as description.
-             */
-            public function getDescriptionFieldName()
-           {
-                «val textFields = fields.filter(TextField).filter[!leading]»
-                «IF !textFields.empty»
-                    $fieldName = '«textFields.head.name.formatForCode»';
-                «ELSEIF !stringFields.empty»
-                    «IF stringFields.size > 1»
-                        $fieldName = '«stringFields.get(1).name.formatForCode»';
-                    «ELSE»
-                        $fieldName = '«stringFields.head.name.formatForCode»';
-                    «ENDIF»
-                «ELSE»
-                    $fieldName = '';
-                «ENDIF»
-
-                return $fieldName;
-            }
-
-            /**
-             * Returns name of first upload field which is capable for handling images.
-             *
-             * @return string Name of field to be used for preview images.
-             */
-            public function getPreviewFieldName()
-            {
-                $fieldName = '«IF hasImageFieldsEntity»«getImageFieldsEntity.head.name.formatForCode»«ENDIF»';
-
-                return $fieldName;
-            }
-
-            /**
-             * Returns name of the date(time) field to be used for representing the start
-             * of this object. Used for providing meta data to the tag module.
-             *
-             * @return string Name of field to be used as date.
-             */
-            public function getStartDateFieldName()
-            {
-                $fieldName = '«IF getStartDateField !== null»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
-
-                return $fieldName;
-            }
-
-            «getAdditionalTemplateParameters»
-
-            «truncateTable»
-            «IF standardFields || hasUserFieldsEntity»
-
-                «userDeleteFunctions»
+            «ELSE»
+                $fieldName = '';
             «ENDIF»
 
-            «selectById»
-            «IF hasSluggableFields && slugUnique»
+            return $fieldName;
+        }
 
-                «selectBySlug»
-            «ENDIF»
+        /**
+         * Returns name of first upload field which is capable for handling images.
+         *
+         * @return string Name of field to be used for preview images.
+         */
+        public function getPreviewFieldName()
+        {
+            $fieldName = '«IF hasImageFieldsEntity»«getImageFieldsEntity.head.name.formatForCode»«ENDIF»';
 
-            «addExclusion»
+            return $fieldName;
+        }
 
-            «selectWhere»
+        /**
+         * Returns name of the date(time) field to be used for representing the start
+         * of this object. Used for providing meta data to the tag module.
+         *
+         * @return string Name of field to be used as date.
+         */
+        public function getStartDateFieldName()
+        {
+            $fieldName = '«IF getStartDateField !== null»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
 
-            «selectWherePaginated»
-
-            «selectSearch»
-
-            «retrieveCollectionResult»
-            «IF !getUniqueDerivedFields.empty»
-
-                «selectCount»
-            «ENDIF»
-
-            «new Tree().generate(it, app)»
-
-            «detectUniqueState»
-
-            «genericBaseQuery»
-
-            «genericBaseQueryWhere»
-
-            «genericBaseQueryOrderBy»
-
-            «intGetQueryFromBuilder»
-
-            «new Joins().generate(it, app)»
-            «IF hasArchive && getEndDateField !== null»
-
-                «archiveObjects(it)»
-            «ENDIF»
+            return $fieldName;
         }
     '''
 
@@ -367,7 +376,9 @@ class Repository {
 
             return $templateParameters;
         }
+    '''
 
+    def private getViewQuickNavParameters(Entity it) '''
         /**
          * Returns an array of additional template variables for view quick navigation forms.
          *

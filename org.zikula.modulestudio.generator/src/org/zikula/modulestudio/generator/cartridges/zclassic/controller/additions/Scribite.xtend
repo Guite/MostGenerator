@@ -24,7 +24,7 @@ class Scribite {
         println('Generating Scribite support')
         this.fsa = fsa
 
-        var docPath = getAppDocPath + 'scribite/'
+        docPath = getAppDocPath + 'scribite/'
         if (!shouldBeSkipped(docPath + 'integration.txt')) {
             fsa.generateFile(docPath + 'integration.txt', integration)
         }
