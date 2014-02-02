@@ -60,10 +60,10 @@ class WorkflowPostProcess {
         val bundle = Platform.getBundle(Activator.PLUGIN_ID)
         var resources = FileLocator.findEntries(bundle, new Path('/src/resources/images/MOST_48.png'))
         val resourcesExported = FileLocator.findEntries(bundle, new Path('/resources/images/MOST_48.png'))
-        if (resources.size == 0) {
+        if (resources.empty) {
             resources = resourcesExported
         }
-        if (resources.size > 0) {
+        if (!resources.empty) {
             try {
                 val url = resources.head
                 val fileUrl = FileLocator.toFileURL(url)

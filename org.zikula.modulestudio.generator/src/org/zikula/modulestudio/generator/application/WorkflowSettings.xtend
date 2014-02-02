@@ -129,11 +129,11 @@ class WorkflowSettings {
                         + reportPath))
         val resourcesExported = FileLocator.findEntries(
                 Platform.getBundle(Activator.PLUGIN_ID), new Path(reportPath))
-        if (resources.size == 0) {
+        if (resources.empty) {
             resources = resourcesExported
         }
 
-        if (resources.size == 0) {
+        if (resources.empty) {
             throw new Exception('Could not find report directory.')
         }
 
