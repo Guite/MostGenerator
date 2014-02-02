@@ -237,12 +237,16 @@ class UserLogin {
              */
             public static function getSubscribedEvents()
             {
-                return array(
-                    'module.users.ui.login.started'     => array('started', 5),
-                    'module.users.ui.login.veto'        => array('veto', 5),
-                    'module.users.ui.login.succeeded'   => array('succeeded', 5),
-                    'module.users.ui.login.failed'      => array('failed', 5)
-                );
+                «IF isBase»
+                    return array(
+                        'module.users.ui.login.started'     => array('started', 5),
+                        'module.users.ui.login.veto'        => array('veto', 5),
+                        'module.users.ui.login.succeeded'   => array('succeeded', 5),
+                        'module.users.ui.login.failed'      => array('failed', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
             }
         «ENDIF»
     '''

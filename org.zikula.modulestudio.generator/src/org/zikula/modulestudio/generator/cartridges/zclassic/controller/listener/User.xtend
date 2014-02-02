@@ -103,12 +103,16 @@ class User {
              */
             public static function getSubscribedEvents()
             {
-                return array(
-                    'user.gettheme'         => array('getTheme', 5),
-                    'user.account.create'   => array('create', 5),
-                    'user.account.update'   => array('update', 5),
-                    'user.account.delete'   => array('delete', 5)
-                );
+                «IF isBase»
+                    return array(
+                        'user.gettheme'         => array('getTheme', 5),
+                        'user.account.create'   => array('create', 5),
+                        'user.account.update'   => array('update', 5),
+                        'user.account.delete'   => array('delete', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
             }
         «ENDIF»
     '''

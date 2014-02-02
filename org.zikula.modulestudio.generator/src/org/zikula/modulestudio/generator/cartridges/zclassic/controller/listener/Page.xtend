@@ -55,10 +55,14 @@ class Page {
              */
             public static function getSubscribedEvents()
             {
-                return array(
-                    'pageutil.addvar_filter'        => array('pageutilAddvarFilter', 5),
-                    'system.outputfilter'           => array('systemOutputfilter', 5)
-                );
+                «IF isBase»
+                    return array(
+                        'pageutil.addvar_filter'        => array('pageutilAddvarFilter', 5),
+                        'system.outputfilter'           => array('systemOutputfilter', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
             }
         «ENDIF»
     '''

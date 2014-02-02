@@ -46,10 +46,14 @@ class View {
              */
             public static function getSubscribedEvents()
             {
-                return array(
-                    'view.init'         => array('init', 5),
-                    'view.postfetch'    => array('postFetch', 5)
-                );
+                «IF isBase»
+                    return array(
+                        'view.init'         => array('init', 5),
+                        'view.postfetch'    => array('postFetch', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
             }
         «ENDIF»
     '''

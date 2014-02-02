@@ -110,13 +110,17 @@ class ModuleDispatch {
              */
             public static function getSubscribedEvents()
             {
-                return array(
-                    'module_dispatch.postloadgeneric'   => array('postLoadGeneric', 5),
-                    'module_dispatch.preexecute'        => array('preExecute', 5),
-                    'module_dispatch.postexecute'       => array('postExecute', 5),
-                    'module_dispatch.custom_classname'  => array('customClassname', 5),
-                    'module_dispatch.service_links'     => array('serviceLinks', 5)
-                );
+                «IF isBase»
+                    return array(
+                        'module_dispatch.postloadgeneric'   => array('postLoadGeneric', 5),
+                        'module_dispatch.preexecute'        => array('preExecute', 5),
+                        'module_dispatch.postexecute'       => array('postExecute', 5),
+                        'module_dispatch.custom_classname'  => array('customClassname', 5),
+                        'module_dispatch.service_links'     => array('serviceLinks', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
             }
         «ENDIF»
     '''

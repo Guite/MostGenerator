@@ -28,9 +28,13 @@ class FrontController {
              */
             public static function getSubscribedEvents()
             {
-                return array(
-                    'frontcontroller.predispatch' => array('preDispatch', 5)
-                );
+                «IF isBase»
+                    return array(
+                        'frontcontroller.predispatch' => array('preDispatch', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
             }
         «ENDIF»
     '''

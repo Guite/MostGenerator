@@ -36,19 +36,23 @@ class ThirdParty {
                 «getCKEditorPlugins(isBase)»
             «ENDIF»
 
-        /**
-         * Makes our handlers known to the event system.
-         */
-        public static function getSubscribedEvents()
-        {
-            return array(
-                'get.pending_content'                   => array('pendingContentListener', 5),
-                'module.content.gettypes'               => array('contentGetTypes', 5)«IF generateScribitePlugins»,
-                'module.scribite.editorhelpers'         => array('getEditorHelpers', 5),
-                'moduleplugin.tinymce.externalplugins'  => array('getTinyMcePlugins', 5),
-                'moduleplugin.ckeditor.externalplugins' => array('getCKEditorPlugins', 5)«ENDIF»
-            );
-        }
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(«IF generatePendingContentSupport»
+                        'get.pending_content'                   => array('pendingContentListener', 5),«ENDIF»«IF generateListContentType || needsDetailContentType»
+                        'module.content.gettypes'               => array('contentGetTypes', 5),«ENDIF»«IF generateScribitePlugins»
+                        'module.scribite.editorhelpers'         => array('getEditorHelpers', 5),
+                        'moduleplugin.tinymce.externalplugins'  => array('getTinyMcePlugins', 5),
+                        'moduleplugin.ckeditor.externalplugins' => array('getCKEditorPlugins', 5)«ENDIF»
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
         «ENDIF»
     '''
 

@@ -100,13 +100,17 @@ class Core {
              */
             public static function getSubscribedEvents()
             {
-                return array(
-                    'api.method_not_found'          => array('apiMethodNotFound', 5),
-                    'core.preinit'                  => array('preInit', 5),
-                    'core.init'                     => array('init', 5),
-                    'core.postinit'                 => array('postInit', 5),
-                    'controller.method_not_found'   => array('controllerMethodNotFound', 5)
-                );
+                «IF isBase»
+                    return array(
+                        'api.method_not_found'          => array('apiMethodNotFound', 5),
+                        'core.preinit'                  => array('preInit', 5),
+                        'core.init'                     => array('init', 5),
+                        'core.postinit'                 => array('postInit', 5),
+                        'controller.method_not_found'   => array('controllerMethodNotFound', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
             }
         «ENDIF»
     '''
