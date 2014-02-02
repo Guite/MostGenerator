@@ -76,7 +76,22 @@ class ContentTypeListView {
 
     def private editTemplate(Application it) '''
         {* Purpose of this template: edit view of generic item list content type *}
+        «editTemplateObjectType»
 
+        «editTemplateCategories»
+
+        «editTemplateSorting»
+
+        «editTemplateAmount»
+
+        «editTemplateTemplate»
+
+        «editTemplateFilter»
+
+        «editTemplateJs»
+    '''
+
+    def private editTemplateObjectType(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Object type' domain='module_«appName.formatForDB»' assign='objectTypeSelectorLabel'}
             {formlabel for='«appName.toFirstLower»ObjectType' text=$objectTypeSelectorLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
@@ -90,7 +105,9 @@ class ContentTypeListView {
                 </div>
             «ENDIF»
         </div>
+    '''
 
+    def private editTemplateCategories(Application it) '''
         {formvolatile}
         {if $properties ne null && is_array($properties)}
             {nocache}
@@ -123,7 +140,9 @@ class ContentTypeListView {
             {/nocache}
         {/if}
         {/formvolatile}
+    '''
 
+    def private editTemplateSorting(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Sorting' domain='module_«appName.formatForDB»' assign='sortingLabel'}
             {formlabel text=$sortingLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
@@ -139,7 +158,9 @@ class ContentTypeListView {
                 {formlabel for='«appName.toFirstLower»SortDefault' text=$sortingDefaultLabel}
             </div>
         </div>
+    '''
 
+    def private editTemplateAmount(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Amount' domain='module_«appName.formatForDB»' assign='amountLabel'}
             {formlabel for='«appName.toFirstLower»Amount' text=$amountLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
@@ -151,7 +172,9 @@ class ContentTypeListView {
                 </div>
             «ENDIF»
         </div>
+    '''
 
+    def private editTemplateTemplate(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             {gt text='Template' domain='module_«appName.formatForDB»' assign='templateLabel'}
             {formlabel for='«appName.toFirstLower»Template' text=$templateLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
@@ -177,7 +200,9 @@ class ContentTypeListView {
                 </div>
             «ENDIF»
         </div>
+    '''
 
+    def private editTemplateFilter(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group«ENDIF»">
             {gt text='Filter (expert option)' domain='module_«appName.formatForDB»' assign='filterLabel'}
             {formlabel for='«appName.toFirstLower»Filter' text=$filterLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
@@ -202,7 +227,9 @@ class ContentTypeListView {
 
             {include file='include_filterSyntaxDialog.tpl'}
         «ENDIF»
+    '''
 
+    def private editTemplateJs(Application it) '''
         {pageaddvar name='javascript' value='prototype'}
         <script type="text/javascript">
         /* <![CDATA[ */

@@ -467,30 +467,7 @@ class FormHandler {
 
             $this->view->assign('mode', $this->mode)
                        ->assign('inlineUsage', $this->inlineUsage);
-            «IF app.hasAttributableEntities»
-
-                if ($this->hasAttributes === true) {
-                    $this->initAttributesForEdit($entity);
-                }
-            «ENDIF»
-            «IF app.hasCategorisableEntities»
-
-                if ($this->hasCategories === true) {
-                    $this->initCategoriesForEdit($entity);
-                }
-            «ENDIF»
-            «IF app.hasMetaDataEntities»
-
-                if ($this->hasMetaData === true) {
-                    $this->initMetaDataForEdit($entity);
-                }
-            «ENDIF»
-            «IF app.hasTranslatable»
-
-                if ($this->hasTranslatableFields === true) {
-                    $this->initTranslationsForEdit($entity);
-                }
-            «ENDIF»
+           «initializeExtensions»
 
             // save entity reference for later reuse
             $this->entityRef = $entity;
@@ -507,6 +484,47 @@ class FormHandler {
             return true;
         }
 
+        «createCompositeIdentifier»
+
+        «addIdentifiersToUrlArgs»
+
+        «initEntityForEdit»
+
+        «initEntityForCreation»
+        «initTranslationsForEdit»
+        «initAttributesForEdit»
+        «initCategoriesForEdit»
+        «initMetaDataForEdit»
+    '''
+
+    def private initializeExtensions(Controller it) '''
+        «IF app.hasAttributableEntities»
+
+            if ($this->hasAttributes === true) {
+                $this->initAttributesForEdit($entity);
+            }
+        «ENDIF»
+        «IF app.hasCategorisableEntities»
+
+            if ($this->hasCategories === true) {
+                $this->initCategoriesForEdit($entity);
+            }
+        «ENDIF»
+        «IF app.hasMetaDataEntities»
+
+            if ($this->hasMetaData === true) {
+                $this->initMetaDataForEdit($entity);
+            }
+        «ENDIF»
+        «IF app.hasTranslatable»
+
+            if ($this->hasTranslatableFields === true) {
+                $this->initTranslationsForEdit($entity);
+            }
+        «ENDIF»
+    '''
+
+    def private createCompositeIdentifier(Controller it) '''
         /**
          * Create concatenated identifier string (for composite keys).
          *
@@ -524,7 +542,9 @@ class FormHandler {
 
             return $itemId;
         }
+    '''
 
+    def private addIdentifiersToUrlArgs(Controller it) '''
         /**
          * Enrich a given args array for easy creation of display urls with composite keys.
          *
@@ -540,7 +560,9 @@ class FormHandler {
 
             return $args;
         }
+    '''
 
+    def private initEntityForEdit(Controller it) '''
         /**
          * Initialise existing entity for editing.
          *
@@ -561,7 +583,9 @@ class FormHandler {
 
             return $entity;
         }
+    '''
 
+    def private initEntityForCreation(Controller it) '''
         /**
          * Initialise new entity for creation.
          *
@@ -604,6 +628,9 @@ class FormHandler {
 
             return $entity;
         }
+    '''
+
+    def private initTranslationsForEdit(Controller it) '''
         «IF app.hasTranslatable»
 
             /**
@@ -626,6 +653,9 @@ class FormHandler {
                 $this->view->assign('supportedLocales', ZLanguage::getInstalledLanguages());
             }
         «ENDIF»
+    '''
+
+    def private initAttributesForEdit(Controller it) '''
         «IF app.hasAttributableEntities»
 
             /**
@@ -657,6 +687,9 @@ class FormHandler {
                 return array('field1', 'field2', 'field3');
             }
         «ENDIF»
+    '''
+
+    def private initCategoriesForEdit(Controller it) '''
         «IF app.hasCategorisableEntities»
 
             /**
@@ -681,6 +714,9 @@ class FormHandler {
                            ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
             }
         «ENDIF»
+    '''
+
+    def private initMetaDataForEdit(Controller it) '''
         «IF app.hasMetaDataEntities»
 
             /**
@@ -1174,6 +1210,44 @@ class FormHandler {
 
     def private formHandlerBaseImpl(Entity it, String actionName) '''
         «val app = container.application»
+        «formHandlerBaseImports(actionName)»
+
+        /**
+         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + controller.formattedName + '_' + actionName)»() function.
+         * It aims on the «name.formatForDisplay» object type.
+         *
+         * More documentation is provided in the parent class.
+         */
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»
+        «ELSE»
+        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
+        «ENDIF»
+        {
+            «formHandlerBasePreInitialize»
+
+            «initialize(actionName)»
+
+            «formHandlerBasePostInitialize»
+            «IF ownerPermission && standardFields»
+
+                «formHandlerBaseInitEntityForEdit»
+            «ENDIF»
+
+            «redirectHelper.getRedirectCodes(it, app, controller, actionName)»
+
+            «redirectHelper.getDefaultReturnUrl(it, app, controller, actionName)»
+
+            «handleCommand(it, actionName)»
+
+            «applyAction(it, actionName)»
+
+            «redirectHelper.getRedirectUrl(it, app, controller, actionName)»
+        }
+    '''
+
+    def private formHandlerBaseImports(Entity it, String actionName) '''
+        «val app = container.application»
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base;
 
@@ -1204,111 +1278,89 @@ class FormHandler {
             use UserUtil;
             use Zikula_Form_View;
         «ENDIF»
+    '''
 
+    def private formHandlerBasePreInitialize(Entity it) '''
         /**
-         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + controller.formattedName + '_' + actionName)»() function.
-         * It aims on the «name.formatForDisplay» object type.
+         * Pre-initialise hook.
          *
-         * More documentation is provided in the parent class.
+         * @return void
          */
-        «IF app.targets('1.3.5')»
-        class «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»
-        «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
-        «ENDIF»
+        public function preInitialize()
         {
-            /**
-             * Pre-initialise hook.
-             *
-             * @return void
-             */
-            public function preInitialize()
-            {
-                parent::preInitialize();
+            parent::preInitialize();
 
-                $this->objectType = '«name.formatForCode»';
-                $this->objectTypeCapital = '«name.formatForCodeCapital»';
-                $this->objectTypeLower = '«name.formatForDB»';
+            $this->objectType = '«name.formatForCode»';
+            $this->objectTypeCapital = '«name.formatForCodeCapital»';
+            $this->objectTypeLower = '«name.formatForDB»';
 
-                $this->hasPageLockSupport = «hasPageLockSupport.displayBool»;
-                «IF app.hasAttributableEntities»
-                    $this->hasAttributes = «attributable.displayBool»;
-                «ENDIF»
-                «IF app.hasCategorisableEntities»
-                    $this->hasCategories = «categorisable.displayBool»;
-                «ENDIF»
-                «IF app.hasMetaDataEntities»
-                    $this->hasMetaData = «metaData.displayBool»;
-                «ENDIF»
-                «IF app.hasSluggable»
-                    $this->hasSlugUpdatableField = «(!app.targets('1.3.5') && hasSluggableFields && slugUpdatable).displayBool»;
-                «ENDIF»
-                «IF app.hasTranslatable»
-                    $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
-                «ENDIF»
-                «IF hasUploadFieldsEntity»
-                    // array with upload fields and mandatory flags
-                    $this->uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»);
-                «ENDIF»
-                «IF hasUserFieldsEntity»
-                    // array with user fields and mandatory flags
-                    $this->userFields = array(«FOR userField : getUserFieldsEntity SEPARATOR ', '»'«userField.name.formatForCode»' => «userField.mandatory.displayBool»«ENDFOR»);
-                «ENDIF»
-                «IF hasListFieldsEntity»
-                    // array with list fields and multiple flags
-                    $this->listFields = array(«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»);
-                «ENDIF»
-            }
-
-            «initialize(actionName)»
-
-            /**
-             * Post-initialise hook.
-             *
-             * @return void
-             */
-            public function postInitialize()
-            {
-                parent::postInitialize();
-            }
-            «IF ownerPermission && standardFields»
-
-                /**
-                 * Initialise existing entity for editing.
-                 *
-                 * @return Zikula_EntityAccess desired entity instance or null
-                 */
-                protected function initEntityForEdit()
-                {
-                    $entity = parent::initEntityForEdit();
-
-                    // only allow editing for the owner or people with higher permissions
-                    if (isset($entity['createdUserId']) && $entity['createdUserId'] != UserUtil::getVar('uid')) {
-                        if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
-                            «IF app.targets('1.3.5')»
-                                return LogUtil::registerPermissionError();
-                            «ELSE»
-                                throw new AccessDeniedException();
-                            «ENDIF»
-                        }
-                    }
-
-                    return $entity;
-                }
+            $this->hasPageLockSupport = «hasPageLockSupport.displayBool»;
+            «IF app.hasAttributableEntities»
+                $this->hasAttributes = «attributable.displayBool»;
             «ENDIF»
-
-            «redirectHelper.getRedirectCodes(it, app, controller, actionName)»
-
-            «redirectHelper.getDefaultReturnUrl(it, app, controller, actionName)»
-
-            «handleCommand(it, actionName)»
-
-            «applyAction(it, actionName)»
-
-            «redirectHelper.getRedirectUrl(it, app, controller, actionName)»
+            «IF app.hasCategorisableEntities»
+                $this->hasCategories = «categorisable.displayBool»;
+            «ENDIF»
+            «IF app.hasMetaDataEntities»
+                $this->hasMetaData = «metaData.displayBool»;
+            «ENDIF»
+            «IF app.hasSluggable»
+                $this->hasSlugUpdatableField = «(!app.targets('1.3.5') && hasSluggableFields && slugUpdatable).displayBool»;
+            «ENDIF»
+            «IF app.hasTranslatable»
+                $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
+            «ENDIF»
+            «IF hasUploadFieldsEntity»
+                // array with upload fields and mandatory flags
+                $this->uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»);
+            «ENDIF»
+            «IF hasUserFieldsEntity»
+                // array with user fields and mandatory flags
+                $this->userFields = array(«FOR userField : getUserFieldsEntity SEPARATOR ', '»'«userField.name.formatForCode»' => «userField.mandatory.displayBool»«ENDFOR»);
+            «ENDIF»
+            «IF hasListFieldsEntity»
+                // array with list fields and multiple flags
+                $this->listFields = array(«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»);
+            «ENDIF»
         }
     '''
 
+    def private formHandlerBasePostInitialize(Entity it) '''
+        /**
+         * Post-initialise hook.
+         *
+         * @return void
+         */
+        public function postInitialize()
+        {
+            parent::postInitialize();
+        }
+    '''
+
+    def private formHandlerBaseInitEntityForEdit(Entity it) '''
+        /**
+         * Initialise existing entity for editing.
+         *
+         * @return Zikula_EntityAccess desired entity instance or null
+         */
+        protected function initEntityForEdit()
+        {
+            $entity = parent::initEntityForEdit();
+
+            // only allow editing for the owner or people with higher permissions
+            if (isset($entity['createdUserId']) && $entity['createdUserId'] != UserUtil::getVar('uid')) {
+                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+                    «IF app.targets('1.3.5')»
+                        return LogUtil::registerPermissionError();
+                    «ELSE»
+                        throw new AccessDeniedException();
+                    «ENDIF»
+                }
+            }
+
+            return $entity;
+        }
+    '''
 
     def private formHandlerImpl(Entity it, String actionName) '''
         «val app = container.application»

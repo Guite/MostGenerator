@@ -28,92 +28,13 @@ class NewsletterView {
         {foreach key='objectType' item='objectTypeData' from=$objectTypes}
             <hr />
             <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                «IF targets('1.3.5')»
-                    <label for="plugin_{$i}_enable_{$j}">{$objectTypeData.name|safetext}</label>
-                    <input id="plugin_{$i}_enable_{$j}" type="checkbox" name="«appName»ObjectTypes[{$objectType}]" value="1"{if $objectTypeData.nwactive} checked="checked"{/if} />
-                «ELSE»
-                    <div class="col-lg-offset-3 col-lg-9">
-                        <div class="checkbox">
-                            <label>
-                                <input id="plugin_{$i}_enable_{$j}" type="checkbox" name="«appName»ObjectTypes[{$objectType}]" value="1"{if $objectTypeData.nwactive} checked="checked"{/if} /> {$objectTypeData.name|safetext}
-                            </label>
-                        </div>
-                    </div>
-                «ENDIF»
+                «editTemplateObjectTypes»
             </div>
             <div id="plugin_{$i}_suboption_{$j}">
-                <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                    <label for="«appName.toFirstLower»Args_{$objectType}_sorting"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
-                    «IF !targets('1.3.5')»
-                        <div class="col-lg-9">
-                    «ENDIF»
-                        <select id="«appName.toFirstLower»Args_{$objectType}_sorting" name="«appName»Args[{$objectType}][sorting]"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
-                            <option value="random"{if $pageArgs.$objectType.sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
-                            <option value="newest"{if $pageArgs.$objectType.sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
-                            <option value="alpha"{if $pageArgs.$objectType.sorting eq 'default' || ($pageArgs.$objectType.sorting != 'random' && $pageArgs.$objectType.sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
-                        </select>
-                    «IF !targets('1.3.5')»
-                        </div>
-                    «ENDIF»
-                </div>
-                <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                    <label for="«appName.toFirstLower»Args_{$objectType}_amount"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
-                    «IF !targets('1.3.5')»
-                        <div class="col-lg-9">
-                    «ENDIF»
-                        <input type="text" id="«appName.toFirstLower»Args_{$objectType}_amount" name="«appName»Args[{$objectType}][amount]" value="{$pageArgs.$objectType.amount|default:'5'}" maxlength="2" size="10"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
-                    «IF !targets('1.3.5')»
-                        </div>
-                    «ENDIF»
-                </div>
-«/*
-                <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                    <label for="«appName.toFirstLower»Args_{$objectType}_template"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Template'}:</label>
-                    «IF !targets('1.3.5')»
-                        <div class="col-lg-9">
-                    «ENDIF»
-                        <select id="«appName.toFirstLower»Args_{$objectType}_template" name="«appName»Args[{$objectType}][template]"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
-                            <option value="itemlist_display.tpl"{if $pageArgs.$objectType.template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
-                            <option value="itemlist_display_description.tpl"{if $pageArgs.$objectType.template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
-                            <option value="custom"{if $pageArgs.$objectType.template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
-                        </select>
-                        <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Only for HTML Newsletter'}</span>
-                    «IF !targets('1.3.5')»
-                        </div>
-                    «ENDIF»
-                </div>
-                <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
-                    <label for="«appName.toFirstLower»Args_{$objectType}_customtemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
-                    «IF !targets('1.3.5')»
-                        <div class="col-lg-9">
-                    «ENDIF»
-                        <input type="text" id="«appName.toFirstLower»Args_{$objectType}_customtemplate" name="«appName»Args[{$objectType}][customtemplate]" value="{$pageArgs.$objectType.customtemplate|default:''}" maxlength="80" size="40"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
-                        <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></span>
-                        <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Only for HTML Newsletter'}</span>
-                    «IF !targets('1.3.5')»
-                        </div>
-                    «ENDIF»
-                </div>
-*/»
-                <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group«ENDIF»">
-                    <label for="«appName.toFirstLower»Args_{$objectType}_filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
-                    «IF !targets('1.3.5')»
-                        <div class="col-lg-9">
-                    «ENDIF»
-                        <input type="text" id="«appName.toFirstLower»Args_{$objectType}_filter" name="«appName»Args[{$objectType}][filter]" value="{$pageArgs.$objectType.filter|default:''}" size="40"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
-                        «IF targets('1.3.5')»
-                            <span class="z-sub z-formnote">
-                                ({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)
-                            </span>
-                        «ELSE»
-                            <span class="help-block">
-                                <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
-                            </span>
-                        «ENDIF»
-                    «IF !targets('1.3.5')»
-                        </div>
-                    «ENDIF»
-                </div>
+                «editTemplateSorting»
+                «editTemplateAmount»
+                «/*editTemplateTemplate*/»
+                «editTemplateFilter»
             </div>
             {assign var='j' value=$j+1}
         {foreachelse}
@@ -125,6 +46,110 @@ class NewsletterView {
             {include file='include_filterSyntaxDialog.tpl'}
         «ENDIF»
 
+        «editTemplateJs»
+*/»
+    '''
+
+    def private editTemplateObjectTypes(Application it) '''
+        «IF targets('1.3.5')»
+            <label for="plugin_{$i}_enable_{$j}">{$objectTypeData.name|safetext}</label>
+            <input id="plugin_{$i}_enable_{$j}" type="checkbox" name="«appName»ObjectTypes[{$objectType}]" value="1"{if $objectTypeData.nwactive} checked="checked"{/if} />
+        «ELSE»
+            <div class="col-lg-offset-3 col-lg-9">
+                <div class="checkbox">
+                    <label>
+                        <input id="plugin_{$i}_enable_{$j}" type="checkbox" name="«appName»ObjectTypes[{$objectType}]" value="1"{if $objectTypeData.nwactive} checked="checked"{/if} /> {$objectTypeData.name|safetext}
+                    </label>
+                </div>
+            </div>
+        «ENDIF»
+    '''
+
+    def private editTemplateSorting(Application it) '''
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_sorting"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <select id="«appName.toFirstLower»Args_{$objectType}_sorting" name="«appName»Args[{$objectType}][sorting]"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                    <option value="random"{if $pageArgs.$objectType.sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
+                    <option value="newest"{if $pageArgs.$objectType.sorting eq 'newest'} selected="selected"{/if}>{gt text='Newest'}</option>
+                    <option value="alpha"{if $pageArgs.$objectType.sorting eq 'default' || ($pageArgs.$objectType.sorting != 'random' && $pageArgs.$objectType.sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
+                </select>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
+        </div>
+    '''
+
+    def private editTemplateAmount(Application it) '''
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_amount"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <input type="text" id="«appName.toFirstLower»Args_{$objectType}_amount" name="«appName»Args[{$objectType}][amount]" value="{$pageArgs.$objectType.amount|default:'5'}" maxlength="2" size="10"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
+        </div>
+    '''
+
+/*
+    def private editTemplateTemplate(Application it) '''
+        <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_template"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Template'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <select id="«appName.toFirstLower»Args_{$objectType}_template" name="«appName»Args[{$objectType}][template]"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
+                    <option value="itemlist_display.tpl"{if $pageArgs.$objectType.template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
+                    <option value="itemlist_display_description.tpl"{if $pageArgs.$objectType.template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
+                    <option value="custom"{if $pageArgs.$objectType.template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
+                </select>
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Only for HTML Newsletter'}</span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
+        </div>
+        <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_customtemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <input type="text" id="«appName.toFirstLower»Args_{$objectType}_customtemplate" name="«appName»Args[{$objectType}][customtemplate]" value="{$pageArgs.$objectType.customtemplate|default:''}" maxlength="80" size="40"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></span>
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Only for HTML Newsletter'}</span>
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
+        </div>
+    '''
+*/
+
+    def private editTemplateFilter(Application it) '''
+        <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group«ENDIF»">
+            <label for="«appName.toFirstLower»Args_{$objectType}_filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
+            «IF !targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                <input type="text" id="«appName.toFirstLower»Args_{$objectType}_filter" name="«appName»Args[{$objectType}][filter]" value="{$pageArgs.$objectType.filter|default:''}" size="40"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
+                «IF targets('1.3.5')»
+                    <span class="z-sub z-formnote">
+                        ({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)
+                    </span>
+                «ELSE»
+                    <span class="help-block">
+                        <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
+                    </span>
+                «ENDIF»
+            «IF !targets('1.3.5')»
+                </div>
+            «ENDIF»
+        </div>
+    '''
+/*
+    def private editTemplateJs(Application it) '''
         {pageaddvar name='javascript' value='prototype'}
         <script type="text/javascript">
         /* <![CDATA[ * /
@@ -146,6 +171,6 @@ class NewsletterView {
             });
         /* ]]> * /
         </script>
-*/»
     '''
+*/
 }

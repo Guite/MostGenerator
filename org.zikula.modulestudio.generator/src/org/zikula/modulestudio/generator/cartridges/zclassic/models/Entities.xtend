@@ -191,6 +191,34 @@ class Entities {
         «ENDIF»
         «imports»
 
+        «entityImplClassDocblock(app)»
+        «IF app.targets('1.3.5')»
+        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
+        «ELSE»
+        class «name.formatForCodeCapital»Entity extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»
+        «ENDIF»
+        {
+            // feel free to add your own methods here
+            «IF isInheriting»
+                «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
+                «thExt.additionalProperties(it)»
+
+                «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
+                «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
+                «constructor(true)»
+
+                «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
+                «thExt.additionalAccessors(it)»
+
+                «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
+                «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
+            «ENDIF»
+
+            «thEvLi.generateImpl(it)»
+        }
+    '''
+
+    def private entityImplClassDocblock(Entity it, Application app) '''
         /**
          * Entity class that defines the entity structure and behaviours.
          *
@@ -227,40 +255,42 @@ class Entities {
          «ENDIF»
          * @ORM\HasLifecycleCallbacks
          */
-        «IF app.targets('1.3.5')»
-        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
-        «ELSE»
-        class «name.formatForCodeCapital»Entity extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»
-        «ENDIF»
-        {
-            // feel free to add your own methods here
-            «IF isInheriting»
-                «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
-                «thExt.additionalProperties(it)»
-
-                «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
-                «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
-                «constructor(true)»
-
-                «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
-                «thExt.additionalAccessors(it)»
-
-                «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
-                «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
-            «ENDIF»
-
-            «thEvLi.generateImpl(it)»
-        }
     '''
 
 
     def private entityInfo(Entity it, Application app) '''
+        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
+        «memberVars(validatorClass)»
+
+        «constructor(false)»
+
+        «accessors(validatorClass)»
+
+        «initValidator(validatorClass)»
+
+        «initWorkflow(app)»
+
+        «resetWorkflow(app)»
+
+        «validate»
+
+        «toJson»
+
+        «prepareItemActions(app)»
+
+        «createUrlArgs»
+
+        «createCompositeIdentifier»
+
+        «getHookAreaPrefix»
+    '''
+
+    def private memberVars(Entity it, String validatorClass) '''
         /**
          * @var string The tablename this object maps to.
          */
         protected $_objectType = '«name.formatForCode»';
 
-        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
         /**
          * @var «validatorClass» The validator for this entity.
          */
@@ -293,9 +323,9 @@ class Entities {
 
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
+    '''
 
-        «constructor(false)»
-
+    def private accessors(Entity it, String validatorClass) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_validator', validatorClass, false, true, 'null', '')»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
@@ -308,9 +338,11 @@ class Entities {
 
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
+    '''
 
+    def private initValidator(Entity it, String validatorClass) '''
         /**
-         * Initialise validator and return it's instance.
+         * Initialises the validator and return it's instance.
          *
          * @return «validatorClass» The validator for this entity.
          */
@@ -323,7 +355,9 @@ class Entities {
 
             return $this->_validator;
         }
+    '''
 
+    def private initWorkflow(Entity it, Application app) '''
         /**
          * Sets/retrieves the workflow details.
          *
@@ -340,7 +374,9 @@ class Entities {
 
             «loadWorkflow»
         }
+    '''
 
+    def private resetWorkflow(Entity it, Application app) '''
         /**
          * Resets workflow data back to initial state.
          * To be used after cloning an entity object.
@@ -357,7 +393,9 @@ class Entities {
                 'obj_id' => 0,
                 'schemaname' => $schemaName);
         }
+    '''
 
+    def private validate(Entity it) '''
         /**
          * Start validation and raise exception if invalid data is found.
          *
@@ -385,7 +423,9 @@ class Entities {
                 throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
             }
         }
+    '''
 
+    def private toJson(Entity it) '''
         /**
          * Return entity data in JSON format.
          *
@@ -395,7 +435,9 @@ class Entities {
         {
             return json_encode($this->toArray());
         }
+    '''
 
+    def private prepareItemActions(Entity it, Application app) '''
         /**
          * Collect available actions for this entity.
          */
@@ -527,7 +569,9 @@ class Entities {
                 }
             «ENDFOR»
         }
+    '''
 
+    def private createUrlArgs(Entity it) '''
         /**
          * Creates url arguments array for easy creation of display urls.
          *
@@ -551,7 +595,9 @@ class Entities {
 
             return $args;
         }
+    '''
 
+    def private createCompositeIdentifier(Entity it) '''
         /**
          * Create concatenated identifier string (for composite keys).
          *
@@ -570,7 +616,9 @@ class Entities {
 
             return $itemId;
         }
+    '''
 
+    def private getHookAreaPrefix(Entity it) '''
         /**
          * Return lower case name of multiple items needed for hook areas.
          *
@@ -578,7 +626,7 @@ class Entities {
          */
         public function getHookAreaPrefix()
         {
-            return '«app.name.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
+            return '«container.application.name.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
         }
     '''
 

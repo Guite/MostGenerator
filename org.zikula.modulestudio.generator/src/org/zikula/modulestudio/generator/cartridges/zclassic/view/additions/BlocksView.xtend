@@ -31,6 +31,22 @@ class BlocksView {
 
     def private editTemplate(Application it) '''
         {* Purpose of this template: Edit block for generic item list *}
+        «editTemplateObjectType»
+
+        «editTemplateCategories»
+
+        «editTemplateSorting»
+
+        «editTemplateAmount»
+
+        «editTemplateTemplate»
+
+        «editTemplateFilter»
+
+        «editTemplateJs»
+    '''
+
+    def private editTemplateObjectType(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             <label for="«appName.toFirstLower»ObjectType"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Object type'}:</label>
             «IF !targets('1.3.5')»
@@ -46,7 +62,9 @@ class BlocksView {
                 </div>
             «ENDIF»
         </div>
+    '''
 
+    def private editTemplateCategories(Application it) '''
         {if $catIds ne null && is_array($catIds)}
             {gt text='All' assign='lblDefault'}
             {nocache}
@@ -78,7 +96,9 @@ class BlocksView {
             {/foreach}
             {/nocache}
         {/if}
+    '''
 
+    def private editTemplateSorting(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             <label for="«appName.toFirstLower»Sorting"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
             «IF !targets('1.3.5')»
@@ -93,7 +113,9 @@ class BlocksView {
                 </div>
             «ENDIF»
         </div>
+    '''
 
+    def private editTemplateAmount(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             <label for="«appName.toFirstLower»Amount"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
             «IF !targets('1.3.5')»
@@ -104,7 +126,9 @@ class BlocksView {
                 </div>
             «ENDIF»
         </div>
+    '''
 
+    def private editTemplateTemplate(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             <label for="«appName.toFirstLower»Template"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Template'}:</label>
             «IF !targets('1.3.5')»
@@ -131,7 +155,9 @@ class BlocksView {
                 </div>
             «ENDIF»
         </div>
+    '''
 
+    def private editTemplateFilter(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group«ENDIF»">
             <label for="«appName.toFirstLower»Filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
             «IF !targets('1.3.5')»
@@ -155,7 +181,9 @@ class BlocksView {
 
             {include file='include_filterSyntaxDialog.tpl'}
         «ENDIF»
+    '''
 
+    def private editTemplateJs(Application it) '''
         {pageaddvar name='javascript' value='prototype'}
         <script type="text/javascript">
         /* <![CDATA[ */

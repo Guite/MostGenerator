@@ -152,6 +152,15 @@ class Forms {
     '''
 
     def private fieldDetails(Entity it, Application app, Controller controller) '''
+        «translatableFieldDetails»
+        «IF !hasTranslatableFields
+          || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
+          || geographical»
+            «fieldDetailsFurtherOptions(app)»
+        «ENDIF»
+    '''
+
+    def private translatableFieldDetails(Entity it) '''
         «IF hasTranslatableFields»
             {formvolatile}
                 {assign var='useOnlyCurrentLocale' value=true}
@@ -179,36 +188,6 @@ class Forms {
                 {/if}
             {/formvolatile}
         «ENDIF»
-        «IF !hasTranslatableFields
-          || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
-          || geographical»
-            <fieldset>
-                <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
-                «IF hasTranslatableFields»
-                    «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper('', '')»«ENDFOR»
-                «ELSE»
-                    «FOR field : getEditableFields»«field.fieldWrapper('', '')»«ENDFOR»
-                «ENDIF»
-                «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
-                    «slugField('', '')»
-                «ENDIF»
-                «IF geographical»
-                    «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                        <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                            {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
-                            «IF !app.targets('1.3.5')»
-                                <div class="col-lg-9">
-                            «ENDIF»
-                                {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.5')» form-control«ENDIF»'}
-                                {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
-                            «IF !app.targets('1.3.5')»
-                                </div>
-                            «ENDIF»
-                        </div>
-                    «ENDFOR»
-                «ENDIF»
-            </fieldset>
-        «ENDIF»
     '''
 
     def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
@@ -217,6 +196,35 @@ class Forms {
             «FOR field : getEditableTranslatableFields»«field.fieldWrapper(groupSuffix, idSuffix)»«ENDFOR»
             «IF hasTranslatableSlug»
                 «slugField(groupSuffix, idSuffix)»
+            «ENDIF»
+        </fieldset>
+    '''
+
+    def private fieldDetailsFurtherOptions(Entity it, Application app) '''
+        <fieldset>
+            <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
+            «IF hasTranslatableFields»
+                «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper('', '')»«ENDFOR»
+            «ELSE»
+                «FOR field : getEditableFields»«field.fieldWrapper('', '')»«ENDFOR»
+            «ENDIF»
+            «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
+                «slugField('', '')»
+            «ENDIF»
+            «IF geographical»
+                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
+                    <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                        {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                        «IF !app.targets('1.3.5')»
+                            <div class="col-lg-9">
+                        «ENDIF»
+                            {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.5')» form-control«ENDIF»'}
+                            {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
+                        «IF !app.targets('1.3.5')»
+                            </div>
+                        «ENDIF»
+                    </div>
+                «ENDFOR»
             «ENDIF»
         </fieldset>
     '''
