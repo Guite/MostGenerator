@@ -54,6 +54,16 @@ class BlockModeration {
     '''
 
     def private moderationBlockBaseImpl(Application it) '''
+        «init»
+
+        «info»
+
+        «display»
+
+        «getDisplayTemplate»
+    '''
+
+    def private init(Application it) '''
         /**
          * Initialise the block.
          */
@@ -61,7 +71,9 @@ class BlockModeration {
         {
             SecurityUtil::registerPermissionSchema('«appName»:ModerationBlock:', 'Block title::');
         }
+    '''
 
+    def private info(Application it) '''
         /**
          * Get information on the block.
          *
@@ -85,7 +97,9 @@ class BlockModeration {
                          'admin_tableless' => true,
                          'requirement'     => $requirementMessage);
         }
+    '''
 
+    def private display(Application it) '''
         /**
          * Display the block.
          *
@@ -130,7 +144,9 @@ class BlockModeration {
             // return the block to the theme
             return BlockUtil::themeBlock($blockinfo);
         }
+    '''
 
+    def private getDisplayTemplate(Application it) '''
         /**
          * Returns the template used for output.
          *

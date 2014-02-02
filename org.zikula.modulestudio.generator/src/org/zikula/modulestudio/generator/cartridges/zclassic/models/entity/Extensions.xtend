@@ -473,22 +473,7 @@ class Extensions {
             namespace «app.appNamespace»\Entity\Base;
 
         «ENDIF»
-        «IF classType == 'closure'»
-            use Gedmo\Tree\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractClosure;
-        «ELSEIF classType == 'translation'»
-            use Gedmo\Translatable\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractTranslation;
-        «ELSEIF classType == 'logEntry'»
-            use Gedmo\Loggable\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractLogEntry;
-        «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
-            use Doctrine\ORM\Mapping as ORM;
-            «IF !app.targets('1.3.5')»
-                «IF classType == 'metaData'»
-                    use Zikula\Core\Doctrine\Entity\AbstractEntityMetadata;
-                «ELSEIF classType == 'attribute' || classType == 'category'»
-                    use Zikula\Core\Doctrine\Entity\AbstractEntity«classType.toFirstUpper»;
-                «ENDIF»
-            «ENDIF»
-        «ENDIF»
+        «extensionClassImports(app, classType)»
 
         /**
          * «extensionClassDesc(classType)»
@@ -508,27 +493,28 @@ class Extensions {
              */
             protected $entity;
 
-            /**
-             * Get reference to owning entity.
-             *
-             * @return «IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
-             */
-            public function getEntity()
-            {
-                return $this->entity;
-            }
-
-            /**
-             * Set reference to owning entity.
-             *
-             * @param «IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» $entity
-             */
-            public function setEntity(/*«IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» */$entity)
-            {
-                $this->entity = $entity;
-            }
+            «extensionEntityAccessors(app)»
         «ENDIF»
         }
+    '''
+
+    def private extensionClassImports(Entity it, Application app, String classType) '''
+        «IF classType == 'closure'»
+            use Gedmo\Tree\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractClosure;
+        «ELSEIF classType == 'translation'»
+            use Gedmo\Translatable\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractTranslation;
+        «ELSEIF classType == 'logEntry'»
+            use Gedmo\Loggable\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractLogEntry;
+        «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
+            use Doctrine\ORM\Mapping as ORM;
+            «IF !app.targets('1.3.5')»
+                «IF classType == 'metaData'»
+                    use Zikula\Core\Doctrine\Entity\AbstractEntityMetadata;
+                «ELSEIF classType == 'attribute' || classType == 'category'»
+                    use Zikula\Core\Doctrine\Entity\AbstractEntity«classType.toFirstUpper»;
+                «ENDIF»
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private extensionBaseClass(Entity it, Application app, String classType) '''
@@ -538,6 +524,28 @@ class Extensions {
         «ELSEIF classType == 'metaData'»«IF !app.targets('1.3.5')»AbstractEntityMetadata«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
         «ELSEIF classType == 'attribute' || classType == 'category'»«IF app.targets('1.3.5')»Zikula_Doctrine2_Entity_«ELSE»Abstract«ENDIF»Entity«classType.toFirstUpper»
         «ENDIF»
+    '''
+
+    def private extensionEntityAccessors(Entity it, Application app) '''
+        /**
+         * Get reference to owning entity.
+         *
+         * @return «IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
+         */
+        public function getEntity()
+        {
+            return $this->entity;
+        }
+
+        /**
+         * Set reference to owning entity.
+         *
+         * @param «IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» $entity
+         */
+        public function setEntity(/*«IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» */$entity)
+        {
+            $this->entity = $entity;
+        }
     '''
 
     def private extensionClassImpl(Entity it, Application app, String classType) '''
