@@ -3,7 +3,9 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -11,7 +13,9 @@ import org.zikula.modulestudio.generator.extensions.Utils
  * Service definitions in xml format.
  */
 class ServiceDefinitions {
+    @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -58,7 +62,10 @@ class ServiceDefinitions {
             <parameter key="«modPrefix».userregistration_listener.class">«listenerBase»UserRegistrationListener</parameter>
             <parameter key="«modPrefix».users_listener.class">«listenerBase»UsersListener</parameter>
             <parameter key="«modPrefix».group_listener.class">«listenerBase»GroupListener</parameter>
-            <parameter key="«modPrefix».thirdparty_listener.class">«listenerBase»ThirdPartyListener</parameter>
+            «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
+            «IF generatePendingContentSupport || generateListContentType || needsDetailContentType»
+                <parameter key="«modPrefix».thirdparty_listener.class">«listenerBase»ThirdPartyListener</parameter>
+            «ENDIF»
         </parameters>
     '''
 
