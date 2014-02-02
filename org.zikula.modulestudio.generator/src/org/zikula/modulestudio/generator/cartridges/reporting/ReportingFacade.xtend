@@ -5,12 +5,11 @@ import java.util.logging.Level
 import org.eclipse.birt.core.framework.Platform
 import org.eclipse.birt.report.engine.api.EngineConfig
 import org.eclipse.birt.report.engine.api.EngineConstants
+import org.eclipse.birt.report.engine.api.EngineException
 import org.eclipse.birt.report.engine.api.IReportEngine
 import org.eclipse.birt.report.engine.api.IReportEngineFactory
-import org.eclipse.birt.report.engine.api.IRunAndRenderTask
 import org.eclipse.birt.report.engine.api.RenderOption
 import org.eclipse.birt.report.engine.api.ReportEngine
-import org.eclipse.birt.report.engine.api.EngineException
 
 /**
  * Facade class for the reporting cartridge.
@@ -28,19 +27,9 @@ class ReportingFacade {
     String modelPath
 
     /**
-     * The {@link org.eclipse.birt.report.engine.api.IReportEngine} reference.
+     * The {@link IReportEngine} reference.
      */
     IReportEngine engine = null
-
-    /**
-     * Report engine configuration object.
-     */
-    EngineConfig config = null
-
-    /**
-     * The {@link org.eclipse.birt.report.engine.api.IRunAndRenderTask} reference.
-     */
-    IRunAndRenderTask task = null
 
     /**
      * Sets up prerequisites.
@@ -49,15 +38,15 @@ class ReportingFacade {
         try {
             // http://wiki.eclipse.org/RCP_Example_%28BIRT%29_2.1
             // http://wiki.eclipse.org/Simple_Execute_%28BIRT%29_2.1
-            config = new EngineConfig
+            val config = new EngineConfig
             val hm = config.appContext
             hm.put(EngineConstants.APPCONTEXT_CLASSLOADER_KEY,
                     ReportEngine.classLoader)
             config.appContext = hm
             val reportPath = outputPath + '/reporting/' //$NON-NLS-1$
             val reportPathDir = new File(reportPath)
-            if (!reportPathDir.exists) {
-                reportPathDir.mkdir
+            if (!reportPathDir.exists && !reportPathDir.mkdir) {
+                return
             }
             config.setLogConfig(reportPath, //$NON-NLS-1$
                     Level.WARNING)
@@ -98,7 +87,7 @@ class ReportingFacade {
      *            Desired file format.
      */
     def private singleExport(String reportPath, String outputName, String fileExtension) throws EngineException {
-        task = engine.createRunAndRenderTask(engine.openReportDesign(reportPath))
+        val task = engine.createRunAndRenderTask(engine.openReportDesign(reportPath))
         task.setParameterValue('modelPath', //$NON-NLS-1$
                 'file:' + (modelPath)) //$NON-NLS-1$
         task.setParameterValue('diagramPath', //$NON-NLS-1$

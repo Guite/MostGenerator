@@ -111,7 +111,9 @@ class ModelFileCopier implements IWorkflowComponent {
                         && !target.parentFile.mkdirs) {
                     return
                 }
-                target.createNewFile
+                if (!target.createNewFile) {
+                    return
+                }
             }
 
             var FileChannel sourceChannel = null

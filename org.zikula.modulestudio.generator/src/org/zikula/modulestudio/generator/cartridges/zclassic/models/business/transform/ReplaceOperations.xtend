@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.ReplaceGermanSpecialChars
 
 class ReplaceOperations {
 
-    def Function(ReplaceGermanSpecialChars it, String src, String dest) '''
+    def sampleFunction(ReplaceGermanSpecialChars it, String src, String dest) '''
         // This method is used to transform data acquired from input
         // in such a way that only 7-bit ASCII characters remain. 
 

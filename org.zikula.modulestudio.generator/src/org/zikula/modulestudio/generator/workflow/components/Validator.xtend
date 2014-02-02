@@ -32,8 +32,8 @@ class Validator extends WorkflowComponentWithSlot {
         val theModel = resource.getContents().head
         val diagnostic = Diagnostician.INSTANCE.validate(theModel)
         if (diagnostic.severity == Diagnostic.ERROR) {
-            System.err.println('Model has errors: ' + diagnostic)
-            throw new IllegalStateException('Abort the workflow')
+            println('Model has errors: ' + diagnostic)
+            throw new IllegalStateException('Aborting generation as the model has errors: ' + diagnostic)
         } else if (diagnostic.severity == Diagnostic.WARNING) {
             println('Model has warnings: ' + diagnostic)
         }

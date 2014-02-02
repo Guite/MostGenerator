@@ -18,14 +18,14 @@ class WorkflowPreProcess {
     }
 
     def private cartridgeTasks() throws NoCartridgesSelected {
-        if (settings.getSelectedCartridges.size == 0) {
+        if (settings.getSelectedCartridges.empty) {
             throw new NoCartridgesSelected
         }
     }
 
     def private directoryTasks() throws DirectoryNotEmptyException {
         val existingFiles = settings.getOutputDir.listFiles
-        if (existingFiles.size > 0) {
+        if (!existingFiles.empty) {
             throw new DirectoryNotEmptyException
         }
     }
@@ -34,15 +34,19 @@ class WorkflowPreProcess {
         emptyDir(this.settings.getOutputDir)
     }
 
-    def private void emptyDir(File dir) {
+    def private Boolean emptyDir(File dir) {
+        var hasErrors = false
         val files = dir.listFiles
         if (files !== null) {
             for (file : files) {
                 if (file.isDirectory) {
                     emptyDir(file)
                 }
-                file.delete
+                if (!file.delete) {
+                    hasErrors = true
+                }
             }
         }
+        hasErrors
     }
 }

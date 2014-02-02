@@ -25,8 +25,7 @@ class DirectoryCreator implements IWorkflowComponent {
         if (!directory.empty) {
             val dirHandle = new File(directory)
             if (!dirHandle.mkdirs) {
-                System.err.println('Error during directory creation.')
-                throw new IllegalStateException('Abort the workflow')
+                throw new IllegalStateException('Error during creation of directory "' + directory + '".')
             }
         }
     }
