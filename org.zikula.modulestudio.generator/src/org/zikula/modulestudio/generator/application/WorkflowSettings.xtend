@@ -1,8 +1,6 @@
 package org.zikula.modulestudio.generator.application
 
 import java.io.File
-import java.io.IOException
-import java.net.URISyntaxException
 import java.util.ArrayList
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.IProgressMonitor
@@ -139,18 +137,9 @@ class WorkflowSettings {
             throw new Exception('Could not find report directory.')
         }
 
-        try {
-            val reportDir = new File(FileLocator.toFileURL(resources.head).toURI)
-            for (file : reportDir.list(new ReportFilenameFilter)) {
-                availableReports.add(file.replace('.rptdesign', '')) //$NON-NLS-1$ //$NON-NLS-2$
-            }
-
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace
+        val reportDir = new File(FileLocator.toFileURL(resources.head).toURI)
+        for (file : reportDir.list(new ReportFilenameFilter)) {
+            availableReports.add(file.replace('.rptdesign', '')) //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

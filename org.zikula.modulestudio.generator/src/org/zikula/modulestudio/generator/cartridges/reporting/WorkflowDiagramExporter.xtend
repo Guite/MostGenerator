@@ -22,12 +22,7 @@ class WorkflowDiagramExporter {
      * Start exporting the diagrams by delegating to DiagramExporter instance.
      */
     def run() {
-        try {
-            val diagramExporter = new DiagramExporter(settings)
-            diagramExporter.processDiagram(settings.getDiagram, settings.getOutputPath, settings.getDiagramPreferencesHint)
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace
-        }
+        val diagramExporter = new DiagramExporter(settings)
+        diagramExporter.processDiagram(settings.getDiagram, settings.getOutputPath, settings.getDiagramPreferencesHint)
     }
 }
