@@ -142,11 +142,14 @@ class ServiceDefinitions {
             <service id="«modPrefix».group_listener" class="%«modPrefix».group_listener.class%">
                 <tag name="kernel.event_subscriber" />
             </service>
+            «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
+            «IF generatePendingContentSupport || generateListContentType || needsDetailContentType»
 
-            <!-- special purposes and 3rd party api support -->
-            <service id="«modPrefix».thirdparty_listener" class="%«modPrefix».thirdparty_listener.class%">
-                <tag name="kernel.event_subscriber" />
-            </service>
+                <!-- special purposes and 3rd party api support -->
+                <service id="«modPrefix».thirdparty_listener" class="%«modPrefix».thirdparty_listener.class%">
+                    <tag name="kernel.event_subscriber" />
+                </service>
+            «ENDIF»
 
         </services>
     '''
