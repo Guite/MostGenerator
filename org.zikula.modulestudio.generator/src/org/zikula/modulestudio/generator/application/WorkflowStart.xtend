@@ -95,7 +95,7 @@ class WorkflowStart {
      * Workflow facade executing the actual model-to-text workflows.
      */
     def private performM2T() throws ExceptionBase {
-        if (settings.selectedCartridges.size == 1 && settings.selectedCartridges.head == 'reporting') {
+        if (settings.selectedCartridges.size == 1 && 'reporting'.equals(settings.selectedCartridges.head)) {
             return false
         }
 

@@ -64,7 +64,7 @@ class ModelReader extends WorkflowComponentWithSlot {
                 Boolean.TRUE)
 
         val uri = getUri
-        val fileURI = if (uri.substring(0, 4).equals('file')) URI
+        val fileURI = if ('file'.equals(uri.substring(0, 4))) URI
                 .createURI(uri) else URI.createFileURI(uri)
         val resource = resourceSet.getResource(fileURI, true)
 
