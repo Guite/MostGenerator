@@ -207,20 +207,7 @@ class ControllerLayer {
             «IF app.needsConfig && isConfigController»
                 use «app.appNamespace»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
             «ENDIF»
-            use «app.appNamespace»\Util\ControllerUtil;
-            «IF isAjaxController && app.hasImageFields»
-                use «app.appNamespace»\Util\ImageUtil;
-            «ENDIF»
-            «IF isAjaxController && app.hasListFields»
-                use «app.appNamespace»\Util\ListEntriesUtil;
-            «ENDIF»
-            «IF hasActions('view')»
-                use «app.appNamespace»\Util\ModelUtil;
-            «ENDIF»
-            use «app.appNamespace»\Util\ViewUtil;
-            «IF (isAjaxController && app.hasTrees) || (hasActions('view') && isAdminController) || hasActions('delete')»
-                use «app.appNamespace»\Util\WorkflowUtil;
-            «ENDIF»
+            «controllerBaseImportsUtil»
 
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -252,15 +239,37 @@ class ControllerLayer {
                 use Zikula\Core\Hook\ValidationProviders;
             «ENDIF»
             use Zikula\Core\ModUrl;
-            «IF isAjaxController»
-                use Zikula\Core\Response\Ajax\AjaxResponse;
-                use Zikula\Core\Response\Ajax\BadDataResponse;
-                use Zikula\Core\Response\Ajax\FatalResponse;
-                use Zikula\Core\Response\Ajax\NotFoundResponse;
-            «ENDIF»
-            use Zikula\Core\Response\PlainResponse;
+            «controllerBaseImportsResponse»
 
         «ENDIF»
+    '''
+
+    def private controllerBaseImportsUtil(Controller it) '''
+        «val isAjaxController = (it instanceof AjaxController)»
+        use «app.appNamespace»\Util\ControllerUtil;
+        «IF isAjaxController && app.hasImageFields»
+            use «app.appNamespace»\Util\ImageUtil;
+        «ENDIF»
+        «IF isAjaxController && app.hasListFields»
+            use «app.appNamespace»\Util\ListEntriesUtil;
+        «ENDIF»
+        «IF hasActions('view')»
+            use «app.appNamespace»\Util\ModelUtil;
+        «ENDIF»
+        use «app.appNamespace»\Util\ViewUtil;
+        «IF (isAjaxController && app.hasTrees) || (hasActions('view') && it instanceof AdminController) || hasActions('delete')»
+            use «app.appNamespace»\Util\WorkflowUtil;
+        «ENDIF»
+    '''
+
+    def private controllerBaseImportsResponse(Controller it) '''
+        «IF it instanceof AjaxController»
+            use Zikula\Core\Response\Ajax\AjaxResponse;
+            use Zikula\Core\Response\Ajax\BadDataResponse;
+            use Zikula\Core\Response\Ajax\FatalResponse;
+            use Zikula\Core\Response\Ajax\NotFoundResponse;
+        «ENDIF»
+        use Zikula\Core\Response\PlainResponse;
     '''
 
     def private handleSelectedObjects(Controller it) '''

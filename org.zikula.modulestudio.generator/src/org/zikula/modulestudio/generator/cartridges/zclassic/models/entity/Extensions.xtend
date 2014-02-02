@@ -93,6 +93,18 @@ class Extensions {
      * Additional column definitions.
      */
     def additionalProperties(Entity it) '''
+        «additionalPropertiesGeographical»
+        «additionalPropertiesSoftDeleteable»
+        «additionalPropertiesSluggable»
+        «additionalPropertiesTranslatable»
+        «additionalPropertiesTree»
+        «additionalPropertiesMetaData»
+        «additionalPropertiesAttributable»
+        «additionalPropertiesCategorisable»
+        «additionalPropertiesStandardFields»
+    '''
+
+    def private additionalPropertiesGeographical(Entity it) '''
         «IF geographical»
 
             /**
@@ -117,6 +129,9 @@ class Extensions {
              */
             protected $longitude = 0.00;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesSoftDeleteable(Entity it) '''
         «IF softDeleteable»
 
             /**
@@ -130,6 +145,9 @@ class Extensions {
              */
             protected $deletedAt;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesSluggable(Entity it) '''
         «IF hasSluggableFields»
 
             /**
@@ -149,6 +167,9 @@ class Extensions {
              */
             protected $slug;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesTranslatable(Entity it) '''
         «IF hasTranslatableFields»
 
             /**
@@ -163,6 +184,9 @@ class Extensions {
              */
             protected $locale;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesTree(Entity it) '''
         «IF tree != EntityTreeType::NONE»
 
             /**
@@ -224,6 +248,9 @@ class Extensions {
              */
             protected $children;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesMetaData(Entity it) '''
         «IF metaData»
 
             /**
@@ -234,6 +261,9 @@ class Extensions {
              */
             protected $metadata = null;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesAttributable(Entity it) '''
         «IF attributable»
 
             /**
@@ -244,6 +274,9 @@ class Extensions {
              */
             protected $attributes = null;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesCategorisable(Entity it) '''
         «IF categorisable»
 
             /**
@@ -254,6 +287,9 @@ class Extensions {
              */
             protected $categories = null;
         «ENDIF»
+    '''
+
+    def private additionalPropertiesStandardFields(Entity it) '''
         «IF standardFields»
 
             /**
@@ -262,7 +298,7 @@ class Extensions {
              * @var integer $createdUserId.
              */
             protected $createdUserId;
-
+    
             /**
              «IF loggable»
                  * @Gedmo\Versioned
@@ -272,14 +308,14 @@ class Extensions {
              * @var integer $updatedUserId.
              */
             protected $updatedUserId;
-
+    
             /**
              * @ORM\Column(type="datetime")
              * @Gedmo\Timestampable(on="create")
              * @var datetime $createdDate.
              */
             protected $createdDate;
-
+    
             /**
              «IF loggable»
                  * @Gedmo\Versioned

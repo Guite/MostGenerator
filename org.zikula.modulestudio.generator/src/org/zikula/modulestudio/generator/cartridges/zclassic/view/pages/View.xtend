@@ -63,7 +63,6 @@ class View {
     }
 
     def private viewView(Entity it, String appName, Controller controller) '''
-        «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» view view in «controller.formattedName» area *}
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
@@ -75,33 +74,7 @@ class View {
                 <p class="«IF container.application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replace('\'', '\\\'')»'}</p>
             «ENDIF»
 
-            «IF controller.hasActions('edit')»
-                {if $canBeCreated}
-                    {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
-                        {gt text='Create «name.formatForDisplay»' assign='createTitle'}
-                        <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»fa fa-plus«ENDIF»">{$createTitle}</a>
-                    {/checkpermissionblock}
-                {/if}
-            «ENDIF»
-            {assign var='own' value=0}
-            {if isset($showOwnEntries) && $showOwnEntries eq 1}
-                {assign var='own' value=1}
-            {/if}
-            {assign var='all' value=0}
-            {if isset($showAllEntries) && $showAllEntries eq 1}
-                {gt text='Back to paginated view' assign='linkTitle'}
-                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$linkTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-table«ENDIF»">
-                    {$linkTitle}
-                </a>
-                {assign var='all' value=1}
-            {else}
-                {gt text='Show all entries' assign='linkTitle'}
-                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»' all=1}" title="{$linkTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-table«ENDIF»">{$linkTitle}</a>
-            {/if}
-            «IF tree != EntityTreeType::NONE»
-                {gt text='Switch to hierarchy view' assign='linkTitle'}
-                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»' tpl='tree'}" title="{$linkTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-code-fork«ENDIF»">{$linkTitle}</a>
-            «ENDIF»
+            «pageNavLinks(appName, controller)»
 
             {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/view_quickNav.tpl' all=$all own=$own«IF !hasVisibleWorkflow» workflowStateFilter=false«ENDIF»}{* see template file for available options *}
 
@@ -110,31 +83,37 @@ class View {
             «callDisplayHooks(appName, controller)»
         </div>
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
-        «IF hasBooleansWithAjaxToggleEntity || (listType == 3 && controller.tableClass == 'admin')»
+        «ajaxToggle(controller)»
+    '''
 
-            <script type="text/javascript">
-            /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                «IF hasBooleansWithAjaxToggleEntity»
-                    {{foreach item='«objName»' from=$items}}
-                        {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
-                        «FOR field : getBooleansWithAjaxToggleEntity»
-                            «container.application.prefix»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
-                        «ENDFOR»
-                    {{/foreach}}
-                «ENDIF»
-                «IF listType == 3 && controller.tableClass == 'admin'»
-                    {{* init the "toggle all" functionality *}}
-                    if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
-                        $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
-                            Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
-                            e.stop()
-                        });
-                    }
-                «ENDIF»
-                });
-            /* ]]> */
-            </script>
+    def private pageNavLinks(Entity it, String appName, Controller controller) '''
+        «val objName = name.formatForCode»
+        «IF controller.hasActions('edit')»
+            {if $canBeCreated}
+                {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
+                    {gt text='Create «name.formatForDisplay»' assign='createTitle'}
+                    <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»fa fa-plus«ENDIF»">{$createTitle}</a>
+                {/checkpermissionblock}
+            {/if}
+        «ENDIF»
+        {assign var='own' value=0}
+        {if isset($showOwnEntries) && $showOwnEntries eq 1}
+            {assign var='own' value=1}
+        {/if}
+        {assign var='all' value=0}
+        {if isset($showAllEntries) && $showAllEntries eq 1}
+            {gt text='Back to paginated view' assign='linkTitle'}
+            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$linkTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-table«ENDIF»">
+                {$linkTitle}
+            </a>
+            {assign var='all' value=1}
+        {else}
+            {gt text='Show all entries' assign='linkTitle'}
+            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»' all=1}" title="{$linkTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-table«ENDIF»">{$linkTitle}</a>
+        {/if}
+        «IF tree != EntityTreeType::NONE»
+            {gt text='Switch to hierarchy view' assign='linkTitle'}
+            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»' tpl='tree'}" title="{$linkTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-code-fork«ENDIF»">{$linkTitle}</a>
         «ENDIF»
     '''
 
@@ -307,6 +286,36 @@ class View {
             default: ''
         }
     }
+
+    def private ajaxToggle(Entity it, Controller controller) '''
+        «IF hasBooleansWithAjaxToggleEntity || (listType == 3 && controller.tableClass == 'admin')»
+
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                document.observe('dom:loaded', function() {
+                «IF hasBooleansWithAjaxToggleEntity»
+                    «val objName = name.formatForCode»
+                    {{foreach item='«objName»' from=$items}}
+                        {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
+                        «FOR field : getBooleansWithAjaxToggleEntity»
+                            «container.application.prefix»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
+                        «ENDFOR»
+                    {{/foreach}}
+                «ENDIF»
+                «IF listType == 3 && controller.tableClass == 'admin'»
+                    {{* init the "toggle all" functionality *}}
+                    if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
+                        $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
+                            Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
+                            e.stop()
+                        });
+                    }
+                «ENDIF»
+                });
+            /* ]]> */
+            </script>
+        «ENDIF»
+    '''
 
     def private templateHeader(Controller it) {
         switch it {

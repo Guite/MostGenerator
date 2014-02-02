@@ -68,7 +68,7 @@ class ZclassicGenerator implements IGenerator {
 
     def generate(Application it, IFileSystemAccess fsa, IProgressMonitor pm) {
         this.fsa = fsa
-        this.pm = null
+        this.pm = pm
         generateApp
     }
 
@@ -127,6 +127,11 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Workflows')
         println('Generating workflows')
         new Workflow().generate(it, fsa)
+        if (hasUploads) {
+            pm?.subTask('Controller: Upload handlers')
+            println('Generating upload handlers')
+            new Uploads().generate(it, fsa)
+        }
     }
 
     def private generateView(Application it) {
@@ -148,6 +153,13 @@ class ZclassicGenerator implements IGenerator {
     }
 
     def private generateIntegration(Application it) {
+        generateIntegrationBlocks
+        generateIntegrationContentTypes
+        generateIntegrationApis
+        generateIntegrationThirdParty
+    }
+
+    def private generateIntegrationBlocks(Application it) {
         val needsModerationBlock = generateModerationBlock && needsApproval
         if (generateListBlock || needsModerationBlock) {
             pm?.subTask('Integration: Blocks')
@@ -159,6 +171,9 @@ class ZclassicGenerator implements IGenerator {
                 new BlockModeration().generate(it, fsa)
             }
         }
+    }
+
+    def private generateIntegrationContentTypes(Application it) {
         val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
         if (generateListContentType || needsDetailContentType) {
             pm?.subTask('Integration: Content types')
@@ -170,6 +185,9 @@ class ZclassicGenerator implements IGenerator {
                 new ContentTypeSingle().generate(it, fsa)
             }
         }
+    }
+
+    def private generateIntegrationApis(Application it) {
         if (generateAccountApi) {
             pm?.subTask('Integration: Account api')
             println('Generating account api')
@@ -194,11 +212,9 @@ class ZclassicGenerator implements IGenerator {
             println('Generating search api')
             new Search().generate(it, fsa)
         }
-        if (hasUploads) {
-            pm?.subTask('Integration: Upload handlers')
-            println('Generating upload handlers')
-            new Uploads().generate(it, fsa)
-        }
+    }
+
+    def private generateIntegrationThirdParty(Application it) {
         if (generateNewsletterPlugin) {
             pm?.subTask('Integration: Newsletter plugin')
             println('Generating newsletter plugin')

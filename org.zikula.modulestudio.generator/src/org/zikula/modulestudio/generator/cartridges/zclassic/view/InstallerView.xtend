@@ -73,8 +73,7 @@ class InstallerView {
     '''
 
     def private tplInitStep1Additions(Application it) '''
-        «IF hasAttributableEntities || hasCategorisableEntities || !hasGeographical
-         || hasLoggable || hasMetaDataEntities || hasSortable || hasStandardFieldEntities || hasTranslatable || hasTrees»
+        «IF tplInitStep1HasAdditions»
             <dt>{gt text='Behaviours and extensions'}</dt>
         «IF hasAttributableEntities»
             <dd>{gt text='Automatic handling of generic attributes.'}</dd>
@@ -102,6 +101,11 @@ class InstallerView {
         «ENDIF»
         «ENDIF»
     '''
+
+    def private tplInitStep1HasAdditions(Application it) {
+        (hasAttributableEntities || hasCategorisableEntities || !hasGeographical
+         || hasLoggable || hasMetaDataEntities || hasSortable || hasStandardFieldEntities || hasTranslatable || hasTrees)
+    }
 
     def private tplInitStep2(Application it) '''
         {* Purpose of this template: 2nd step of init process: initial settings *}

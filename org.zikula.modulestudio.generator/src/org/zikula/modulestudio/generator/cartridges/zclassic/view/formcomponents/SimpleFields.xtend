@@ -80,24 +80,32 @@ class SimpleFields {
         {formintinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' maxLength=«length»«IF minValue.toString != '0'» minValue=«minValue»«ENDIF»«IF maxValue.toString != '0'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
     '''
 
+    def private dispatch showCurrency(DecimalField it) {
+        !entity.container.application.targets('1.3.5') && currency
+    }
+
+    def private dispatch showCurrency(FloatField it) {
+        !entity.container.application.targets('1.3.5') && currency
+    }
+
     def private dispatch formField(DecimalField it, String groupSuffix, String idSuffix) '''
-        «IF !entity.container.application.targets('1.3.5') && currency»
+        «IF showCurrency»
             <div class="input-group">
                 <span class="input-group-addon">{gt text='$' comment='Currency symbol'}</span>
         «ENDIF»
             {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
-        «IF !entity.container.application.targets('1.3.5') && currency»
+        «IF showCurrency»
             </div>
         «ENDIF»
     '''
 
     def private dispatch formField(FloatField it, String groupSuffix, String idSuffix) '''
-        «IF !entity.container.application.targets('1.3.5') && currency»
+        «IF showCurrency»
             <div class="input-group">
                 <span class="input-group-addon">{gt text='$' comment='Currency symbol'}</span>
         «ENDIF»
             {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
-        «IF !entity.container.application.targets('1.3.5') && currency»
+        «IF showCurrency»
             </div>
         «ENDIF»
     '''

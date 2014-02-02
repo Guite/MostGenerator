@@ -526,24 +526,12 @@ class Ajax {
                 $objectType = '«treeEntities.head.name.formatForCode»';
             }
 
+            «prepareTreeOperationParameters(app)»
+
             $returnValue = array(
                 'data'    => array(),
                 'message' => ''
             );
-
-            $op = DataUtil::convertFromUTF8($postData->filter('op', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING));
-            if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
-                throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid operation.'));
-            }
-
-            // Get id of treated node
-            $id = 0;
-            if (!in_array($op, array('addRootNode', 'addChildNode'))) {
-                $id = (int) $postData->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-                if (!$id) {
-                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid node.'));
-                }
-            }
 
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
@@ -576,47 +564,9 @@ class Ajax {
             $repository->recover();
             $this->entityManager->clear(); // clear cached nodes
 
-            $titleFieldName = $descriptionFieldName = '';
+            «treeOperationDetermineEntityFields(app)»
 
-            switch ($objectType) {
-                «FOR entity : app.getTreeEntities»
-                    case '«entity.name.formatForCode»':
-                        «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language]»
-                            $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
-                            «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
-                            «IF !textFields.empty»
-                                $descriptionFieldName = '«textFields.head.name.formatForCode»';
-                            «ELSE»
-                                «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !country && !htmlcolour && !language]»
-                                «IF !textStringFields.empty»
-                                    $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
-                                «ENDIF»
-                            «ENDIF»
-                            break;
-                «ENDFOR»
-            }
-
-            switch ($op) {
-                case 'addRootNode':
-                                «treeOperationAddRootNode(app)»
-
-                                break;
-                case 'addChildNode':
-                                «treeOperationAddChildNode(app)»
-                                break;
-                case 'deleteNode':
-                                «treeOperationDeleteNode(app)»
-
-                                break;
-                case 'moveNode':
-                                «treeOperationMoveNode(app)»
-
-                                break;
-                case 'moveNodeTo':
-                                «treeOperationMoveNodeTo(app)»
-
-                                break;
-            }
+            «treeOperationSwitch(app)»
 
             $returnValue['message'] = $this->__('The operation was successful.');
 
@@ -626,6 +576,68 @@ class Ajax {
             */
 
             return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($returnValue);
+        }
+    '''
+
+    def private prepareTreeOperationParameters(AjaxController it, Application app) '''
+        $op = DataUtil::convertFromUTF8($postData->filter('op', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING));
+        if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
+            throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid operation.'));
+        }
+
+        // Get id of treated node
+        $id = 0;
+        if (!in_array($op, array('addRootNode', 'addChildNode'))) {
+            $id = (int) $postData->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+            if (!$id) {
+                throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid node.'));
+            }
+        }
+    '''
+
+    def private treeOperationDetermineEntityFields(AjaxController it, Application app) '''
+        $titleFieldName = $descriptionFieldName = '';
+
+        switch ($objectType) {
+            «FOR entity : app.getTreeEntities»
+                case '«entity.name.formatForCode»':
+                    «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language]»
+                        $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
+                        «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
+                        «IF !textFields.empty»
+                            $descriptionFieldName = '«textFields.head.name.formatForCode»';
+                        «ELSE»
+                            «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !country && !htmlcolour && !language]»
+                            «IF !textStringFields.empty»
+                                $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
+                            «ENDIF»
+                        «ENDIF»
+                        break;
+            «ENDFOR»
+        }
+    '''
+
+    def private treeOperationSwitch(AjaxController it, Application app) '''
+        switch ($op) {
+            case 'addRootNode':
+                            «treeOperationAddRootNode(app)»
+
+                            break;
+            case 'addChildNode':
+                            «treeOperationAddChildNode(app)»
+                            break;
+            case 'deleteNode':
+                            «treeOperationDeleteNode(app)»
+
+                            break;
+            case 'moveNode':
+                            «treeOperationMoveNode(app)»
+
+                            break;
+            case 'moveNodeTo':
+                            «treeOperationMoveNodeTo(app)»
+
+                            break;
         }
     '''
 

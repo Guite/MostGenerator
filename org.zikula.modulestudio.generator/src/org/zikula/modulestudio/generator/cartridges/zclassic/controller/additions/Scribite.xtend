@@ -17,8 +17,13 @@ class Scribite {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
+    IFileSystemAccess fsa
+    String docPath
+
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating Scribite support')
+        this.fsa = fsa
+
         var docPath = getAppDocPath + 'scribite/'
         if (!shouldBeSkipped(docPath + 'integration.txt')) {
             fsa.generateFile(docPath + 'integration.txt', integration)
@@ -30,16 +35,32 @@ class Scribite {
             docPath = docPath + 'plugins/'
         }
 
+        pluginAloha
+        pluginCk
+        pluginMarkItUp
+        pluginNicEdit
+        pluginTinyMce
+        pluginWym
+        pluginWysi
+        pluginXinha
+        pluginYui
+    }
+
+    def private pluginAloha(Application it) {
         if (!shouldBeSkipped(docPath + 'Aloha/vendor/aloha/index.html')) {
             //fsa.generateFile(docPath + 'Aloha/vendor/aloha/index.html', msUrl)
         }
+    }
 
+    def private pluginCk(Application it) {
         var pluginPath = ''
+
         if (targets('1.3.5')) {
             pluginPath = docPath + 'ckeditor/plugins/' + name.formatForDB + '/'
         } else {
             pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
         }
+
         if (!shouldBeSkipped(pluginPath + 'plugin.js')) {
             fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
         }
@@ -52,20 +73,29 @@ class Scribite {
         if (!shouldBeSkipped(pluginPath + 'lang/nl.js')) {
             fsa.generateFile(pluginPath + 'lang/nl.js', ckLangNl)
         }
+    }
 
+    def private pluginMarkItUp(Application it) {
         if (!shouldBeSkipped(docPath + 'MarkItUp/vendor/markitup/index.html')) {
             //fsa.generateFile(docPath + 'MarkItUp/vendor/markitup/index.html', msUrl)
         }
+    }
 
+    def private pluginNicEdit(Application it) {
         if (!shouldBeSkipped(docPath + 'NicEdit/vendor/nicedit/index.html')) {
             //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
         }
+    }
+
+    def private pluginTinyMce(Application it) {
+        var pluginPath = ''
 
         if (targets('1.3.5')) {
             pluginPath = docPath + 'tinymce/plugins/' + name.formatForDB + '/'
         } else {
             pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
         }
+
         if (!shouldBeSkipped(pluginPath + 'editor_plugin.js')) {
             fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
         }
@@ -78,25 +108,38 @@ class Scribite {
         if (!shouldBeSkipped(pluginPath + 'langs/nl.js')) {
             fsa.generateFile(pluginPath + 'langs/nl.js', tinyLangNl)
         }
+    }
+
+    def private pluginWym(Application it) {
+        var pluginPath = ''
 
         pluginPath = docPath + 'WYMeditor/vendor/wymeditor/plugins/' + name.formatForDB + '/'
         if (!shouldBeSkipped(pluginPath + 'index.html')) {
             //fsa.generateFile(pluginPath + 'index.html', msUrl)
         }
+    }
 
+    def private pluginWysi(Application it) {
         if (!shouldBeSkipped(docPath + 'Wysihtml5/javascript/index.html')) {
             //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
         }
+    }
+
+    def private pluginXinha(Application it) {
+        var pluginPath = ''
 
         if (targets('1.3.5')) {
             pluginPath = docPath + 'xinha/plugins/' + appName + '/'
         } else {
             pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
         }
+
         if (!shouldBeSkipped(pluginPath + appName + '.js')) {
             fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
         }
+    }
 
+    def private pluginYui(Application it) {
         if (!shouldBeSkipped(docPath + 'YUI/index.html')) {
             //fsa.generateFile(docPath + 'YUI/index.html', msUrl)
         }

@@ -60,46 +60,82 @@ class Bootstrap {
     '''
 
     def private initExtensions(Application it) '''
-        «IF hasTrees || hasLoggable || hasSluggable || hasSortable || hasTimestampable || hasTranslatable || hasStandardFieldEntities»
+        «IF needsExtensionListener»
             // initialise doctrine extension listeners
             $helper = ServiceUtil::getService('doctrine_extensions');
-            «IF hasTrees»
-                $helper->getListener('tree');
-            «ENDIF»
-            «IF hasLoggable»
-                $loggableListener = $helper->getListener('loggable');
-                // set current user name to loggable listener
-                $userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
-                $loggableListener->setUsername($userName);
-            «ENDIF»
-            «IF hasSluggable»
-                $helper->getListener('sluggable');
-            «ENDIF»
-            «IF hasSoftDeleteable && !targets('1.3.5')»
-                $helper->getListener('softdeleteable');
-            «ENDIF»
-            «IF hasSortable»
-                $helper->getListener('sortable');
-            «ENDIF»
-            «IF hasTimestampable || hasStandardFieldEntities»
-                $helper->getListener('timestampable');
-            «ENDIF»
-            «IF hasStandardFieldEntities»
-                $helper->getListener('standardfields');
-            «ENDIF»
-            «IF hasTranslatable»
-                $translatableListener = $helper->getListener('translatable');
-                //$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
-                $currentLanguage = preg_replace('#[^a-z-].#', '', FormUtil::getPassedValue('lang', System::getVar('language_i18n', 'en'), 'GET'));
-                $translatableListener->setTranslatableLocale($currentLanguage);
-                /**
-                 * Sometimes it is desired to set a default translation as a fallback if record does not have a translation
-                 * on used locale. In that case Translation Listener takes the current value of Entity.
-                 * But there is a way to specify a default locale which would force Entity to not update it`s field
-                 * if current locale is not a default.
-                 */
-                //$translatableListener->setDefaultLocale(System::getVar('language_i18n', 'en'));
-            «ENDIF»
+            «initTree»
+            «initLoggable»
+            «initSluggable»
+            «initSoftDeleteable»
+            «initSortable»
+            «initTimestampable»
+            «initStandardFields»
+            «initTranslatable»
+        «ENDIF»
+    '''
+
+    def private needsExtensionListener(Application it) {
+        (hasTrees || hasLoggable || hasSluggable || hasSortable || hasTimestampable || hasTranslatable || hasStandardFieldEntities)
+    }
+
+    def private initTree(Application it) '''
+        «IF hasTrees»
+            $helper->getListener('tree');
+        «ENDIF»
+    '''
+
+    def private initLoggable(Application it) '''
+        «IF hasLoggable»
+            $loggableListener = $helper->getListener('loggable');
+            // set current user name to loggable listener
+            $userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
+            $loggableListener->setUsername($userName);
+        «ENDIF»
+    '''
+
+    def private initSluggable(Application it) '''
+        «IF hasSluggable»
+            $helper->getListener('sluggable');
+        «ENDIF»
+    '''
+
+    def private initSoftDeleteable(Application it) '''
+        «IF hasSoftDeleteable && !targets('1.3.5')»
+            $helper->getListener('softdeleteable');
+        «ENDIF»
+    '''
+
+    def private initSortable(Application it) '''
+        «IF hasSortable»
+            $helper->getListener('sortable');
+        «ENDIF»
+    '''
+
+    def private initTimestampable(Application it) '''
+        «IF hasTimestampable || hasStandardFieldEntities»
+            $helper->getListener('timestampable');
+        «ENDIF»
+    '''
+
+    def private initStandardFields(Application it) '''
+        «IF hasStandardFieldEntities»
+            $helper->getListener('standardfields');
+        «ENDIF»
+    '''
+
+    def private initTranslatable(Application it) '''
+        «IF hasTranslatable»
+            $translatableListener = $helper->getListener('translatable');
+            //$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
+            $currentLanguage = preg_replace('#[^a-z-].#', '', FormUtil::getPassedValue('lang', System::getVar('language_i18n', 'en'), 'GET'));
+            $translatableListener->setTranslatableLocale($currentLanguage);
+            /**
+             * Sometimes it is desired to set a default translation as a fallback if record does not have a translation
+             * on used locale. In that case Translation Listener takes the current value of Entity.
+             * But there is a way to specify a default locale which would force Entity to not update it`s field
+             * if current locale is not a default.
+             */
+            //$translatableListener->setDefaultLocale(System::getVar('language_i18n', 'en'));
         «ENDIF»
     '''
 
