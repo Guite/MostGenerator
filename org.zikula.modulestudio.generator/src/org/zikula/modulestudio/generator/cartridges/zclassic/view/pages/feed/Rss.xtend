@@ -28,7 +28,6 @@ class Rss {
     }
 
     def private rssView(Entity it, String appName, Controller controller) '''
-        «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» rss feed in «controller.formattedName» area *}
         {«appName.formatForDB»TemplateHeaders contentType='application/rss+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
         <rss version="2.0"
@@ -58,6 +57,7 @@ class Rss {
                 <copyright>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</copyright>
                 <webMaster>{$modvars.ZConfig.adminmail|escape:'html'} ({usergetvar name='uname' uid=2})</webMaster>
 
+        «val objName = name.formatForCode»
         {foreach item='«objName»' from=$items}
             <item>
                 <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName»->getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}]]></title>
@@ -85,27 +85,31 @@ class Rss {
                     <category><![CDATA[{gt text='Categories'}: {foreach name='categoryLoop' key='propName' item='catMapping' from=$«objName».categories}{$catMapping.category.name|safetext}{if !$smarty.foreach.categoryLoop.last}, {/if}{/foreach}]]></category>
                 «ENDIF»
 
-                «val textFields = fields.filter(TextField).filter[!leading]»
-                «val stringFields = fields.filter(StringField).filter[!leading]»
-                <description>
-                    <![CDATA[
-                    «IF !textFields.empty»
-                        {$«objName».«textFields.head.name.formatForCode»|replace:'<br>':'<br />'}
-                    «ELSEIF !stringFields.empty»
-                        {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
-                    «ELSE»
-                        {$«objName»->getTitleFromDisplayPattern()|replace:'<br>':'<br />'}
-                    «ENDIF»
-                    ]]>
-                </description>
-                «IF standardFields»
-                    {if isset($«objName».createdDate) && $«objName».createdDate ne null}
-                        <pubDate>{$«objName».createdDate|dateformat:"%a, %d %b %Y %T +0100"}</pubDate>
-                    {/if}
-                «ENDIF»
+                «description(objName)»
             </item>
         {/foreach}
             </channel>
         </rss>
+    '''
+
+    def private description(Entity it, String objName) '''
+        «val textFields = fields.filter(TextField).filter[!leading]»
+        «val stringFields = fields.filter(StringField).filter[!leading]»
+        <description>
+            <![CDATA[
+            «IF !textFields.empty»
+                {$«objName».«textFields.head.name.formatForCode»|replace:'<br>':'<br />'}
+            «ELSEIF !stringFields.empty»
+                {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
+            «ELSE»
+                {$«objName»->getTitleFromDisplayPattern()|replace:'<br>':'<br />'}
+            «ENDIF»
+            ]]>
+        </description>
+        «IF standardFields»
+            {if isset($«objName».createdDate) && $«objName».createdDate ne null}
+                <pubDate>{$«objName».createdDate|dateformat:"%a, %d %b %Y %T +0100"}</pubDate>
+            {/if}
+        «ENDIF»
     '''
 }

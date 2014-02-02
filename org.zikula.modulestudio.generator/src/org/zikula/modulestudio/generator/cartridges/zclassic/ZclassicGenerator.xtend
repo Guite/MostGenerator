@@ -57,15 +57,33 @@ class ZclassicGenerator implements IGenerator {
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
-    override doGenerate(Resource resource, IFileSystemAccess fsa) {
-        generate(resource.contents.head as Application, fsa)
-    }
+    IFileSystemAccess fsa
+    IProgressMonitor pm
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        generate(fsa, null)
+    override doGenerate(Resource resource, IFileSystemAccess fsa) {
+        this.fsa = fsa
+        this.pm = null
+        generateApp(resource.contents.head as Application)
     }
 
     def generate(Application it, IFileSystemAccess fsa, IProgressMonitor pm) {
+        this.fsa = fsa
+        this.pm = null
+        generateApp
+    }
+
+    def private generateApp(Application it) {
+        generateBasicFiles
+
+        generateModel
+        generateController
+        generateView
+
+        generateIntegration
+        generateAdditions
+    }
+
+    def private generateBasicFiles(Application it) {
         pm?.subTask('Basic information')
         println('Generating basic information')
         new ModuleFile().generate(it, fsa)
@@ -75,7 +93,9 @@ class ZclassicGenerator implements IGenerator {
         new GitIgnore().generate(it, fsa)
         new TravisFile().generate(it, fsa)
         new PhpUnitXmlDist().generate(it, fsa)
+    }
 
+    def private generateModel(Application it) {
         pm?.subTask('Model: Entity classes')
         println('Generating entity classes')
         new Entities().generate(it, fsa)
@@ -83,7 +103,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Model: Repository classes')
         println('Generating repository classes')
         new Repository().generate(it, fsa)
+    }
 
+    def private generateController(Application it) {
         pm?.subTask('Controller: Application installer')
         println('Generating application installer')
         new Installer().generate(it, fsa)
@@ -105,7 +127,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Workflows')
         println('Generating workflows')
         new Workflow().generate(it, fsa)
+    }
 
+    def private generateView(Application it) {
         pm?.subTask('View: Rendering templates')
         println('Generating view templates')
         new Views().generate(it, fsa)
@@ -121,10 +145,12 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('View: Images')
         println('Generating images')
         new Images().generate(it, fsa)
+    }
 
+    def private generateIntegration(Application it) {
         val needsModerationBlock = generateModerationBlock && needsApproval
         if (generateListBlock || needsModerationBlock) {
-            pm?.subTask('Additions: Blocks')
+            pm?.subTask('Integration: Blocks')
             println('Generating blocks')
             if (generateListBlock) {
                 new BlockList().generate(it, fsa)
@@ -135,7 +161,7 @@ class ZclassicGenerator implements IGenerator {
         }
         val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
         if (generateListContentType || needsDetailContentType) {
-            pm?.subTask('Additions: Content types')
+            pm?.subTask('Integration: Content types')
             println('Generating content types')
             if (generateListContentType) {
                 new ContentTypeList().generate(it, fsa)
@@ -145,52 +171,54 @@ class ZclassicGenerator implements IGenerator {
             }
         }
         if (generateAccountApi) {
-            pm?.subTask('Additions: Account api')
+            pm?.subTask('Integration: Account api')
             println('Generating account api')
             new Account().generate(it, fsa)
         }
 
-        pm?.subTask('Additions: Cache api')
+        pm?.subTask('Integration: Cache api')
         println('Generating cache api')
         new Cache().generate(it, fsa)
 
-        pm?.subTask('Additions: Selection api')
+        pm?.subTask('Integration: Selection api')
         println('Generating selection api')
         new Selection().generate(it, fsa)
 
         if (hasCategorisableEntities) {
-            pm?.subTask('Additions: Category api')
+            pm?.subTask('Integration: Category api')
             println('Generating category api')
             new Category().generate(it, fsa)
         }
         if (generateSearchApi && !getAllEntities.filter[hasAbstractStringFieldsEntity].empty) {
-            pm?.subTask('Additions: Search api')
+            pm?.subTask('Integration: Search api')
             println('Generating search api')
             new Search().generate(it, fsa)
         }
         if (hasUploads) {
-            pm?.subTask('Additions: Upload handlers')
+            pm?.subTask('Integration: Upload handlers')
             println('Generating upload handlers')
             new Uploads().generate(it, fsa)
         }
         if (generateNewsletterPlugin) {
-            pm?.subTask('Additions: Newsletter plugin')
+            pm?.subTask('Integration: Newsletter plugin')
             println('Generating newsletter plugin')
             new Newsletter().generate(it, fsa)
         }
         if (generateMailzApi) {
-            pm?.subTask('Additions: Mailz api')
+            pm?.subTask('Integration: Mailz api')
             println('Generating mailz api')
             new Mailz().generate(it, fsa)
         }
         if (generateTagSupport &&
             ((hasUserController && getMainUserController.hasActions('display'))
             || (!getAllAdminControllers.empty && getAllAdminControllers.head.hasActions('display')))) {
-            pm?.subTask('Additions: Tag support')
+            pm?.subTask('Integration: Tag support')
             println('Generating tag support')
             new Tag().generate(it, fsa)
         }
+    }
 
+    def private generateAdditions(Application it) {
         pm?.subTask('Additions: Translations')
         println('Generating translations')
         new Translations().generate(it, fsa)

@@ -46,69 +46,14 @@ class Views {
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
+    Relations relationHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
-        val relationHelper = new Relations()
+        relationHelper = new Relations()
         for (controller : getAllControllers) {
             if (controller.tempIsUserController || controller.tempIsAdminController) {
-                headerFooterFile(controller)
-                if (controller.hasActions('index')) {
-                    var pageHelper = new Index()
-                    for (entity : getAllEntities) pageHelper.generate(entity, controller, fsa)
-                }
-                if (controller.hasActions('view')) {
-                    var pageHelperView = new View()
-                    for (entity : getAllEntities) pageHelperView.generate(entity, appName, controller, 3, fsa)
-                    var pageHelperViewTree = new ViewHierarchy()
-                    for (entity : getTreeEntities) pageHelperViewTree.generate(entity, appName, controller, fsa)
-                    if (generateCsvTemplates) {
-                        var pageHelperCsv = new Csv()
-                        for (entity : getAllEntities) pageHelperCsv.generate(entity, appName, controller, fsa)
-                    }
-                    if (generateRssTemplates) {
-                        var pageHelperRss = new Rss()
-                        for (entity : getAllEntities) pageHelperRss.generate(entity, appName, controller, fsa)
-                    }
-                    if (generateAtomTemplates) {
-                        var pageHelperAtom = new Atom()
-                        for (entity : getAllEntities) pageHelperAtom.generate(entity, appName, controller, fsa)
-                    }
-                }
-                if (controller.hasActions('view') || controller.hasActions('display')) {
-                    if (generateXmlTemplates) {
-                        var pageHelperXml = new Xml()
-                        for (entity : getAllEntities) pageHelperXml.generate(entity, appName, controller, fsa)
-                    }
-                    if (generateJsonTemplates) {
-                        var pageHelperJson = new Json()
-                        for (entity : getAllEntities) pageHelperJson.generate(entity, appName, controller, fsa)
-                    }
-                    if (generateKmlTemplates && hasGeographical) {
-                        var pageHelperKml = new Kml()
-                        for (entity : getAllEntities) pageHelperKml.generate(entity, appName, controller, fsa)
-                    }
-                }
-                if (controller.hasActions('display')) {
-                    var pageHelper = new Display()
-                    for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
-                }
-                if (controller.hasActions('delete')) {
-                    var pageHelper = new Delete()
-                    for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
-                }
-                var customHelper = new Custom()
-                for (action : controller.getCustomActions) {
-                    customHelper.generate(action, it, controller, fsa)
-                }
-
-                if (controller.hasActions('display')) {
-                    // TODO: use relations to generate only required ones (???)
-                    for (entity : getAllEntities) {
-                        relationHelper.displayItemList(entity, it, controller, false, fsa)
-                        relationHelper.displayItemList(entity, it, controller, true, fsa)
-                    }
-                }
+                generateViews(controller)
             }
             if (hasAttributableEntities) {
                 new Attributes().generate(it, controller, fsa)
@@ -130,6 +75,66 @@ class Views {
             new Config().generate(it, fsa)
         }
         pdfHeaderFile
+    }
+
+    def private generateViews(Application it, Controller controller) {
+        headerFooterFile(controller)
+        if (controller.hasActions('index')) {
+            var pageHelper = new Index()
+            for (entity : getAllEntities) pageHelper.generate(entity, controller, fsa)
+        }
+        if (controller.hasActions('view')) {
+            var pageHelperView = new View()
+            for (entity : getAllEntities) pageHelperView.generate(entity, appName, controller, 3, fsa)
+            var pageHelperViewTree = new ViewHierarchy()
+            for (entity : getTreeEntities) pageHelperViewTree.generate(entity, appName, controller, fsa)
+            if (generateCsvTemplates) {
+                var pageHelperCsv = new Csv()
+                for (entity : getAllEntities) pageHelperCsv.generate(entity, appName, controller, fsa)
+            }
+            if (generateRssTemplates) {
+                var pageHelperRss = new Rss()
+                for (entity : getAllEntities) pageHelperRss.generate(entity, appName, controller, fsa)
+            }
+            if (generateAtomTemplates) {
+                var pageHelperAtom = new Atom()
+                for (entity : getAllEntities) pageHelperAtom.generate(entity, appName, controller, fsa)
+            }
+        }
+        if (controller.hasActions('view') || controller.hasActions('display')) {
+            if (generateXmlTemplates) {
+                var pageHelperXml = new Xml()
+                for (entity : getAllEntities) pageHelperXml.generate(entity, appName, controller, fsa)
+            }
+            if (generateJsonTemplates) {
+                var pageHelperJson = new Json()
+                for (entity : getAllEntities) pageHelperJson.generate(entity, appName, controller, fsa)
+            }
+            if (generateKmlTemplates && hasGeographical) {
+                var pageHelperKml = new Kml()
+                for (entity : getAllEntities) pageHelperKml.generate(entity, appName, controller, fsa)
+            }
+        }
+        if (controller.hasActions('display')) {
+            var pageHelper = new Display()
+            for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
+        }
+        if (controller.hasActions('delete')) {
+            var pageHelper = new Delete()
+            for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
+        }
+        var customHelper = new Custom()
+        for (action : controller.getCustomActions) {
+            customHelper.generate(action, it, controller, fsa)
+        }
+
+        if (controller.hasActions('display')) {
+            // TODO: use relations to generate only required ones (???)
+            for (entity : getAllEntities) {
+                relationHelper.displayItemList(entity, it, controller, false, fsa)
+                relationHelper.displayItemList(entity, it, controller, true, fsa)
+            }
+        }
     }
 
     def private tempIsAdminController(Controller it) {

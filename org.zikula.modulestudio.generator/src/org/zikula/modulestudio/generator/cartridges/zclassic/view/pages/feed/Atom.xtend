@@ -28,7 +28,6 @@ class Atom {
     }
 
     def private atomView(Entity it, String appName, Controller controller) '''
-        «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» atom feed in «controller.formattedName» area *}
         {«appName.formatForDB»TemplateHeaders contentType='application/atom+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
@@ -49,6 +48,7 @@ class Atom {
             <link rel="self" type="application/atom+xml" href="{php}echo substr(\System::getBaseURL(), 0, strlen(\System::getBaseURL())-1);{/php}{getcurrenturi}" />
             <rights>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</rights>
 
+        «val objName = name.formatForCode»
         {foreach item='«objName»' from=$items}
             <entry>
                 <title type="html">{$«objName»->getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}</title>
@@ -86,34 +86,38 @@ class Atom {
                     {/if}
                 «ENDIF»
 
-                «val textFields = fields.filter(TextField).filter[!leading]»
-                «val stringFields = fields.filter(StringField).filter[!leading]»
-                <summary type="html">
-                    <![CDATA[
-                    «IF !textFields.empty»
-                        {$«objName».«textFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
-                    «ELSEIF !stringFields.empty»
-                        {$«objName».«stringFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
-                    «ELSE»
-                        {$«objName»->getTitleFromDisplayPattern()|truncate:150:"&hellip;"|default:'-'}
-                    «ENDIF»
-                    ]]>
-                </summary>
-                <content type="html">
-                    <![CDATA[
-                    «IF textFields.size > 1»
-                        {$«objName».«textFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}
-                    «ELSEIF !textFields.empty && !stringFields.empty»
-                        {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
-                    «ELSEIF stringFields.size > 1»
-                        {$«objName».«stringFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}
-                    «ELSE»
-                        {$«objName»->getTitleFromDisplayPattern()|replace:'<br>':'<br />'}
-                    «ENDIF»
-                    ]]>
-                </content>
+                «description(objName)»
             </entry>
         {/foreach}
         </feed>
+    '''
+
+    def private description(Entity it, String objName) '''
+        «val textFields = fields.filter(TextField).filter[!leading]»
+        «val stringFields = fields.filter(StringField).filter[!leading]»
+        <summary type="html">
+            <![CDATA[
+            «IF !textFields.empty»
+                {$«objName».«textFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
+            «ELSEIF !stringFields.empty»
+                {$«objName».«stringFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
+            «ELSE»
+                {$«objName»->getTitleFromDisplayPattern()|truncate:150:"&hellip;"|default:'-'}
+            «ENDIF»
+            ]]>
+        </summary>
+        <content type="html">
+            <![CDATA[
+            «IF textFields.size > 1»
+                {$«objName».«textFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}
+            «ELSEIF !textFields.empty && !stringFields.empty»
+                {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
+            «ELSEIF stringFields.size > 1»
+                {$«objName».«stringFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}
+            «ELSE»
+                {$«objName»->getTitleFromDisplayPattern()|replace:'<br>':'<br />'}
+            «ENDIF»
+            ]]>
+        </content>
     '''
 }

@@ -343,44 +343,7 @@ class Ajax {
                 }
             «ENDIF»
 
-            $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
-
-            $objectType = $postData->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-            $utilArgs = array('controller' => '«formattedName»', 'action' => 'checkForDuplicate');
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
-            }
-
-            $fieldName = $postData->filter('fn', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $value = $postData->get('v', '');
-
-            if (empty($fieldName) || empty($value)) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
-            }
-
-            // check if the given field is existing and unique
-            $uniqueFields = array();
-            switch ($objectType) {
-                «FOR entity : app.getAllEntities»
-                    «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
-                    «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
-                        case '«entity.name.formatForCode»':
-                                $uniqueFields = array(«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»);
-                                break;
-                    «ENDIF»
-                «ENDFOR»
-            }
-            if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
-            }
-
-            $exclude = $postData->get('ex', '');
-            «IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»
-            if (strpos($exclude, '_') !== false) {
-                $exclude = explode('_', $exclude);
-            }
-            «ENDIF» 
+            «prepareDuplicateCheckParameters(app)»
 
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
@@ -419,6 +382,47 @@ class Ajax {
 
             return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
         }
+    '''
+
+    def private prepareDuplicateCheckParameters(AjaxController it, Application app) '''
+        $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
+
+        $objectType = $postData->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        $utilArgs = array('controller' => '«formattedName»', 'action' => 'checkForDuplicate');
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
+        }
+
+        $fieldName = $postData->filter('fn', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        $value = $postData->get('v', '');
+
+        if (empty($fieldName) || empty($value)) {
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
+        }
+
+        // check if the given field is existing and unique
+        $uniqueFields = array();
+        switch ($objectType) {
+            «FOR entity : app.getAllEntities»
+                «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
+                «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
+                    case '«entity.name.formatForCode»':
+                            $uniqueFields = array(«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»);
+                            break;
+                «ENDIF»
+            «ENDFOR»
+        }
+        if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
+        }
+
+        $exclude = $postData->get('ex', '');
+        «IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»
+            if (strpos($exclude, '_') !== false) {
+                $exclude = explode('_', $exclude);
+            }
+        «ENDIF» 
     '''
 
     def private toggleFlag(AjaxController it, Application app) '''
@@ -594,133 +598,23 @@ class Ajax {
 
             switch ($op) {
                 case 'addRootNode':
-                                //$this->entityManager->transactional(function($entityManager) {
-                                    $entity = new $entityClass();
-                                    $entityData = array();
-                                    if (!empty($titleFieldName)) {
-                                        $entityData[$titleFieldName] = $this->__('New root node');
-                                    }
-                                    if (!empty($descriptionFieldName)) {
-                                        $entityData[$descriptionFieldName] = $this->__('This is a new root node');
-                                    }
-                                    $entity->merge($entityData);
-                                    «/*IF hasTranslatableFields»
-                                        $entity->setLocale(ZLanguage::getLanguageCode());
-                                    «ENDIF*/»
+                                «treeOperationAddRootNode(app)»
 
-                                    // save new object to set the root id
-                                    $action = 'submit';
-                                    try {
-                                        // execute the workflow action
-                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-                                        $success = $workflowHelper->executeAction($entity, $action);
-                                    } catch(\Exception $e) {
-                                        «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
-                                    }
-                                //});
                                 break;
                 case 'addChildNode':
-                                $parentId = (int) $postData->filter('pid', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-                                if (!$parentId) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid parent node.'));
-                                }
-
-                                //$this->entityManager->transactional(function($entityManager) {
-                                    $childEntity = new $entityClass();
-                                    $entityData = array();
-                                    $entityData[$titleFieldName] = $this->__('New child node');
-                                    if (!empty($descriptionFieldName)) {
-                                        $entityData[$descriptionFieldName] = $this->__('This is a new child node');
-                                    }
-                                    $childEntity->merge($entityData);
-
-                                    // save new object
-                                    $action = 'submit';
-                                    try {
-                                        // execute the workflow action
-                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-                                        $success = $workflowHelper->executeAction($childEntity, $action);
-                                    } catch(\Exception $e) {
-                                        «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
-                                    }
-
-                                    //$childEntity->setParent($parentEntity);
-                                    $parentEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
-                                    if ($parentEntity == null) {
-                                        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
-                                    }
-                                    $repository->persistAsLastChildOf($childEntity, $parentEntity);
-                                //});
-                                $this->entityManager->flush();
+                                «treeOperationAddChildNode(app)»
                                 break;
                 case 'deleteNode':
-                                // remove node from tree and reparent all children
-                                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
-                                if ($entity == null) {
-                                    return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
-                                }
+                                «treeOperationDeleteNode(app)»
 
-                                $entity->initWorkflow();
-
-                                // delete the object
-                                $action = 'delete';
-                                try {
-                                    // execute the workflow action
-                                    $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-                                    $success = $workflowHelper->executeAction($entity, $action);
-                                } catch(\Exception $e) {
-                                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
-                                }
-
-                                $repository->removeFromTree($entity);
-                                $this->entityManager->clear(); // clear cached nodes
                                 break;
                 case 'moveNode':
-                                $moveDirection = $postData->filter('direction', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-                                if (!in_array($moveDirection, array('up', 'down'))) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
-                                }
-
-                                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
-                                if ($entity == null) {
-                                    return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
-                                }
-
-                                if ($moveDirection == 'up') {
-                                    $repository->moveUp($entity, 1);
-                                } else if ($moveDirection == 'down') {
-                                    $repository->moveDown($entity, 1);
-                                }
-                                $this->entityManager->flush();
+                                «treeOperationMoveNode(app)»
 
                                 break;
                 case 'moveNodeTo':
-                                $moveDirection = $postData->filter('direction', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-                                if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
-                                }
+                                «treeOperationMoveNodeTo(app)»
 
-                                $destId = (int) $postData->filter('destid', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-                                if (!$destId) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid destination node.'));
-                                }
-
-                                //$this->entityManager->transactional(function($entityManager) {
-                                    $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
-                                    $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
-                                    if ($entity == null || $destEntity == null) {
-                                        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
-                                    }
-
-                                    if ($moveDirection == 'after') {
-                                        $repository->persistAsNextSiblingOf($entity, $destEntity);
-                                    } elseif ($moveDirection == 'before') {
-                                        $repository->persistAsPrevSiblingOf($entity, $destEntity);
-                                    } elseif ($moveDirection == 'bottom') {
-                                        $repository->persistAsLastChildOf($entity, $destEntity);
-                                    }
-                                    $this->entityManager->flush();
-                                //});
                                 break;
             }
 
@@ -733,5 +627,138 @@ class Ajax {
 
             return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($returnValue);
         }
+    '''
+
+    def private treeOperationAddRootNode(AjaxController it, Application app) '''
+        //$this->entityManager->transactional(function($entityManager) {
+            $entity = new $entityClass();
+            $entityData = array();
+            if (!empty($titleFieldName)) {
+                $entityData[$titleFieldName] = $this->__('New root node');
+            }
+            if (!empty($descriptionFieldName)) {
+                $entityData[$descriptionFieldName] = $this->__('This is a new root node');
+            }
+            $entity->merge($entityData);
+            «/*IF hasTranslatableFields»
+                $entity->setLocale(ZLanguage::getLanguageCode());
+            «ENDIF*/»
+
+            // save new object to set the root id
+            $action = 'submit';
+            try {
+                // execute the workflow action
+                $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                $success = $workflowHelper->executeAction($entity, $action);
+            } catch(\Exception $e) {
+                «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+            }
+        //});
+    '''
+
+    def private treeOperationAddChildNode(AjaxController it, Application app) '''
+        $parentId = (int) $postData->filter('pid', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+        if (!$parentId) {
+            throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid parent node.'));
+        }
+
+        //$this->entityManager->transactional(function($entityManager) {
+            $childEntity = new $entityClass();
+            $entityData = array();
+            $entityData[$titleFieldName] = $this->__('New child node');
+            if (!empty($descriptionFieldName)) {
+                $entityData[$descriptionFieldName] = $this->__('This is a new child node');
+            }
+            $childEntity->merge($entityData);
+
+            // save new object
+            $action = 'submit';
+            try {
+                // execute the workflow action
+                $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                $success = $workflowHelper->executeAction($childEntity, $action);
+            } catch(\Exception $e) {
+                «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+            }
+
+            //$childEntity->setParent($parentEntity);
+            $parentEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
+            if ($parentEntity == null) {
+                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
+            }
+            $repository->persistAsLastChildOf($childEntity, $parentEntity);
+        //});
+        $this->entityManager->flush();
+    '''
+
+    def private treeOperationDeleteNode(AjaxController it, Application app) '''
+        // remove node from tree and reparent all children
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+        if ($entity == null) {
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
+        }
+
+        $entity->initWorkflow();
+
+        // delete the object
+        $action = 'delete';
+        try {
+            // execute the workflow action
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $success = $workflowHelper->executeAction($entity, $action);
+        } catch(\Exception $e) {
+            «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+        }
+
+        $repository->removeFromTree($entity);
+        $this->entityManager->clear(); // clear cached nodes
+    '''
+
+    def private treeOperationMoveNode(AjaxController it, Application app) '''
+        $moveDirection = $postData->filter('direction', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        if (!in_array($moveDirection, array('up', 'down'))) {
+            throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
+        }
+
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+        if ($entity == null) {
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
+        }
+
+        if ($moveDirection == 'up') {
+            $repository->moveUp($entity, 1);
+        } else if ($moveDirection == 'down') {
+            $repository->moveDown($entity, 1);
+        }
+        $this->entityManager->flush();
+    '''
+
+    def private treeOperationMoveNodeTo(AjaxController it, Application app) '''
+        $moveDirection = $postData->filter('direction', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
+            throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
+        }
+
+        $destId = (int) $postData->filter('destid', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+        if (!$destId) {
+            throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid destination node.'));
+        }
+
+        //$this->entityManager->transactional(function($entityManager) {
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+            $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
+            if ($entity == null || $destEntity == null) {
+                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
+            }
+
+            if ($moveDirection == 'after') {
+                $repository->persistAsNextSiblingOf($entity, $destEntity);
+            } elseif ($moveDirection == 'before') {
+                $repository->persistAsPrevSiblingOf($entity, $destEntity);
+            } elseif ($moveDirection == 'bottom') {
+                $repository->persistAsLastChildOf($entity, $destEntity);
+            }
+            $this->entityManager->flush();
+        //});
     '''
 }

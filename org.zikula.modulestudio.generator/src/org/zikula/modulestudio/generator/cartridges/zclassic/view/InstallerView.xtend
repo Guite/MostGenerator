@@ -48,6 +48,31 @@ class InstallerView {
             <dt>{gt text='«getLeadingEntity.name.formatForDisplayCapital» management.'}</dt>
             <dd>{gt text='Easy management of «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size > 1» and «IF models.map[relations].size > 1»related«ELSE»other«ENDIF» artifacts«ENDIF».'}</dd>
             <dd>{gt text='Included workflow support.'}</dd>
+        «tplInitStep1Additions»
+        «IF !getAllControllers.filter[hasActions('view') || hasActions('display')].empty»
+            <dt>{gt text='Output formats'}</dt>
+            <dd>{gt text='Beside the normal templates «appName» includes also templates for various other output formats, like for example xml (which is only accessible for administrators per default), json«IF !getAllControllers.filter[hasActions('view')].empty», rss, atom«ENDIF»«IF !getAllControllers.filter[hasActions('display')].empty», csv«ENDIF».'}</dd>
+        «ENDIF»
+            <dt>{gt text='Integration'}</dt>
+            <dd>{gt text='«appName» offers a generic block allowing you to display arbitrary content elements in a block.'}</dd>
+            <dd>{gt text='It is possible to integrate «appName» with Content. There is a corresponding content type available.'}</dd>
+            «IF targets('1.3.5')»
+            <dd>{gt text='There is also a Mailz plugin for getting «appName» content into mailings and newsletters.'}</dd>
+            «ELSE»
+            <dd>{gt text='There are also Newsletter and Mailz plugins for getting «appName» content into mailings and newsletters.'}</dd>
+            «ENDIF»
+            <dd>{gt text='All these artifacts reuse the same templates for easier customisation. They can be extended by overriding and the addition of other template sets.'}</dd>
+            <dd>{gt text='«appName» integrates into the Zikula search module, too, of course.'}</dd>
+            <dt>{gt text='State-of-the-art technology'}</dt>
+            <dd>{gt text='All parts of «appName» are always up to the latest version of the Zikula core.'}</dd>
+            <dd>{gt text='Entities, controllers, hooks, templates, plugins and more.'}</dd>
+        </dl>
+        <p>
+            <a href="{modurl modname='«appName»' type='init' func='interactiveinitstep«IF needsConfig»2«ELSE»3«ENDIF»'}" title="{gt text='Continue'}">{gt text='Continue'}</a>
+        </p>
+    '''
+
+    def private tplInitStep1Additions(Application it) '''
         «IF hasAttributableEntities || hasCategorisableEntities || !hasGeographical
          || hasLoggable || hasMetaDataEntities || hasSortable || hasStandardFieldEntities || hasTranslatable || hasTrees»
             <dt>{gt text='Behaviours and extensions'}</dt>
@@ -76,27 +101,6 @@ class InstallerView {
             <dd>{gt text='Tree structures can be managed in a hierarchy view with the help of ajax.'}</dd>
         «ENDIF»
         «ENDIF»
-        «IF !getAllControllers.filter[hasActions('view') || hasActions('display')].empty»
-            <dt>{gt text='Output formats'}</dt>
-            <dd>{gt text='Beside the normal templates «appName» includes also templates for various other output formats, like for example xml (which is only accessible for administrators per default), json«IF !getAllControllers.filter[hasActions('view')].empty», rss, atom«ENDIF»«IF !getAllControllers.filter[hasActions('display')].empty», csv«ENDIF».'}</dd>
-        «ENDIF»
-            <dt>{gt text='Integration'}</dt>
-            <dd>{gt text='«appName» offers a generic block allowing you to display arbitrary content elements in a block.'}</dd>
-            <dd>{gt text='It is possible to integrate «appName» with Content. There is a corresponding content type available.'}</dd>
-            «IF targets('1.3.5')»
-            <dd>{gt text='There is also a Mailz plugin for getting «appName» content into mailings and newsletters.'}</dd>
-            «ELSE»
-            <dd>{gt text='There are also Newsletter and Mailz plugins for getting «appName» content into mailings and newsletters.'}</dd>
-            «ENDIF»
-            <dd>{gt text='All these artifacts reuse the same templates for easier customisation. They can be extended by overriding and the addition of other template sets.'}</dd>
-            <dd>{gt text='«appName» integrates into the Zikula search module, too, of course.'}</dd>
-            <dt>{gt text='State-of-the-art technology'}</dt>
-            <dd>{gt text='All parts of «appName» are always up to the latest version of the Zikula core.'}</dd>
-            <dd>{gt text='Entities, controllers, hooks, templates, plugins and more.'}</dd>
-        </dl>
-        <p>
-            <a href="{modurl modname='«appName»' type='init' func='interactiveinitstep«IF needsConfig»2«ELSE»3«ENDIF»'}" title="{gt text='Continue'}">{gt text='Continue'}</a>
-        </p>
     '''
 
     def private tplInitStep2(Application it) '''

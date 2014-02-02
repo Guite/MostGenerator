@@ -326,35 +326,7 @@ class ControllerAction {
             'orderBy' => $sort . ' ' . $sdir
         );
 
-        «IF app.targets('1.3.5')»
-            $showOwnEntries = (int) $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
-            $showAllEntries = (int) $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
-        «ELSE»
-            $showOwnEntries = (int) $request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), false, FILTER_VALIDATE_INT);
-            $showAllEntries = (int) $request->query->filter('all', 0, false, FILTER_VALIDATE_INT);
-        «ENDIF»
-
-        if (!$showAllEntries) {
-            «IF app.targets('1.3.5')»
-                $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
-            «ELSE»
-                $csv = (int) $request->query->filter('usecsvext', 0, false, FILTER_VALIDATE_INT);
-            «ENDIF»
-            if ($csv == 1) {
-                $showAllEntries = 1;
-            }
-        }
-
-        «IF hasView»
-            $this->view->assign('showOwnEntries', $showOwnEntries)
-                       ->assign('showAllEntries', $showAllEntries);
-        «ENDIF»
-        if ($showOwnEntries == 1) {
-            $currentUrlArgs['own'] = 1;
-        }
-        if ($showAllEntries == 1) {
-            $currentUrlArgs['all'] = 1;
-        }
+        «prepareViewUrlArgs(hasView)»
 
         // prepare access level for cache id
         $accessLevel = ACCESS_READ;
@@ -431,57 +403,93 @@ class ControllerAction {
         foreach ($entities as $k => $entity) {
             $entity->initWorkflow();
         }
-        «IF hasView»
+        «prepareViewItems(controller)»
+    '''
 
-            // build ModUrl instance for display hooks
-            $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«controller.formattedName»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
-
-            // assign the object data, sorting information and details for creating the pager
-            $this->view->assign('items', $entities)
-                       ->assign('sort', $sort)
-                       ->assign('sdir', $sdir)
-                       ->assign('pageSize', $resultsPerPage)
-                       ->assign('currentUrlObject', $currentUrlObject)
-                       ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
-
-            $modelHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Model«ELSE»ModelUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-            $this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
-
-            // fetch and return the appropriate template
-            return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF», $templateFile);
+    def private prepareViewUrlArgs(ViewAction it, Boolean hasView) '''
+        «IF app.targets('1.3.5')»
+            $showOwnEntries = (int) $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
+            $showAllEntries = (int) $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
         «ELSE»
-            $items = array();
-            «IF app.hasListFields»
-                $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-                $listObjectTypes = array(«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
-                $hasListFields = (in_array($objectType, $listObjectTypes));
-
-                foreach ($entities as $item) {
-                    $currItem = $item->toArray();
-                    if ($hasListFields) {
-                        // convert list field values to their corresponding labels
-                        switch ($objectType) {
-                            «FOR entity : app.getListEntities»
-                                case '«entity.name.formatForCode»':
-                                    «FOR field : entity.getListFieldsEntity»
-                                        $currItem['«field.name.formatForCode»'] = $listHelper->resolve($currItem['«field.name.formatForCode»'], $objectType, '«field.name.formatForCode»', ', ');
-                                    «ENDFOR»
-                                    break;
-                            «ENDFOR»
-                        }
-                    }
-                    $items[] = $currItem;
-                }
-            «ELSE»
-                foreach ($entities as $item) {
-                    $items[] = $item->toArray();
-                }
-            «ENDIF»
-
-            $result = array('objectCount' => $objectCount, 'items' => $items);
-
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+            $showOwnEntries = (int) $request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), false, FILTER_VALIDATE_INT);
+            $showAllEntries = (int) $request->query->filter('all', 0, false, FILTER_VALIDATE_INT);
         «ENDIF»
+
+        if (!$showAllEntries) {
+            «IF app.targets('1.3.5')»
+                $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
+            «ELSE»
+                $csv = (int) $request->query->filter('usecsvext', 0, false, FILTER_VALIDATE_INT);
+            «ENDIF»
+            if ($csv == 1) {
+                $showAllEntries = 1;
+            }
+        }
+
+        «IF hasView»
+            $this->view->assign('showOwnEntries', $showOwnEntries)
+                       ->assign('showAllEntries', $showAllEntries);
+        «ENDIF»
+        if ($showOwnEntries == 1) {
+            $currentUrlArgs['own'] = 1;
+        }
+        if ($showAllEntries == 1) {
+            $currentUrlArgs['all'] = 1;
+        }
+    '''
+
+    def private dispatch prepareViewItems(Controller it) '''
+
+        // build ModUrl instance for display hooks
+        $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«it.formattedName»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+
+        // assign the object data, sorting information and details for creating the pager
+        $this->view->assign('items', $entities)
+                   ->assign('sort', $sort)
+                   ->assign('sdir', $sdir)
+                   ->assign('pageSize', $resultsPerPage)
+                   ->assign('currentUrlObject', $currentUrlObject)
+                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+
+        $modelHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Model«ELSE»ModelUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        $this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
+
+        // fetch and return the appropriate template
+        return $viewHelper->processTemplate($this->view, '«it.formattedName»', $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF», $templateFile);
+    '''
+
+    def private dispatch prepareViewItems(AjaxController it) '''
+        $items = array();
+        «IF app.hasListFields»
+            $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $listObjectTypes = array(«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+            $hasListFields = (in_array($objectType, $listObjectTypes));
+
+            foreach ($entities as $item) {
+                $currItem = $item->toArray();
+                if ($hasListFields) {
+                    // convert list field values to their corresponding labels
+                    switch ($objectType) {
+                        «FOR entity : app.getListEntities»
+                            case '«entity.name.formatForCode»':
+                                «FOR field : entity.getListFieldsEntity»
+                                    $currItem['«field.name.formatForCode»'] = $listHelper->resolve($currItem['«field.name.formatForCode»'], $objectType, '«field.name.formatForCode»', ', ');
+                                «ENDFOR»
+                                break;
+                        «ENDFOR»
+                    }
+                }
+                $items[] = $currItem;
+            }
+        «ELSE»
+            foreach ($entities as $item) {
+                $items[] = $item->toArray();
+            }
+        «ENDIF»
+
+        $result = array('objectCount' => $objectCount, 'items' => $items);
+
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
     '''
 
     def private dispatch actionImplBody(DisplayAction it) '''

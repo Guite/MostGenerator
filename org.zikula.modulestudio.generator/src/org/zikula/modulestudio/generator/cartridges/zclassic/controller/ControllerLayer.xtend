@@ -109,66 +109,7 @@ class ControllerLayer {
     def private controllerBaseImpl(Controller it) '''
         «val isAdminController = (it instanceof AdminController)»
         «val isAjaxController = (it instanceof AjaxController)»
-        «IF !app.targets('1.3.5')»
-            namespace «app.appNamespace»\Controller\Base;
-
-            «IF app.needsConfig && isConfigController»
-                use «app.appNamespace»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
-            «ENDIF»
-            use «app.appNamespace»\Util\ControllerUtil;
-            «IF isAjaxController && app.hasImageFields»
-                use «app.appNamespace»\Util\ImageUtil;
-            «ENDIF»
-            «IF isAjaxController && app.hasListFields»
-                use «app.appNamespace»\Util\ListEntriesUtil;
-            «ENDIF»
-            «IF hasActions('view')»
-                use «app.appNamespace»\Util\ModelUtil;
-            «ENDIF»
-            use «app.appNamespace»\Util\ViewUtil;
-            «IF (isAjaxController && app.hasTrees) || (hasActions('view') && isAdminController) || hasActions('delete')»
-                use «app.appNamespace»\Util\WorkflowUtil;
-            «ENDIF»
-
-            use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-            «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
-                use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-            «ENDIF»
-            «IF isAjaxController»
-                «IF !app.getAllUserFields.empty»
-                    use Doctrine\ORM\AbstractQuery;
-                «ENDIF»
-                use DataUtil;
-            «ENDIF»
-            use FormUtil;
-            «IF hasActions('edit')»
-                use JCSSUtil;
-            «ENDIF»
-            use LogUtil;
-            use ModUtil;
-            use SecurityUtil;
-            «IF hasActions('view') && isAdminController»
-                use System;
-            «ENDIF»
-            use Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»;
-            use Zikula_View;
-            use ZLanguage;
-            «IF (hasActions('view') && isAdminController) || hasActions('delete')»
-                use Zikula\Core\Hook\ProcessHook;
-                use Zikula\Core\Hook\ValidationHook;
-                use Zikula\Core\Hook\ValidationProviders;
-            «ENDIF»
-            use Zikula\Core\ModUrl;
-            «IF isAjaxController»
-                use Zikula\Core\Response\Ajax\AjaxResponse;
-                use Zikula\Core\Response\Ajax\BadDataResponse;
-                use Zikula\Core\Response\Ajax\FatalResponse;
-                use Zikula\Core\Response\Ajax\NotFoundResponse;
-            «ENDIF»
-            use Zikula\Core\Response\PlainResponse;
-
-        «ENDIF»
+        «controllerBaseImports»
         /**
          * «name» controller class.
          */
@@ -255,6 +196,71 @@ class ControllerLayer {
             «ENDIF»
             «new Ajax().additionalAjaxFunctions(it, app)»
         }
+    '''
+
+    def private controllerBaseImports(Controller it) '''
+        «val isAdminController = (it instanceof AdminController)»
+        «val isAjaxController = (it instanceof AjaxController)»
+        «IF !app.targets('1.3.5')»
+            namespace «app.appNamespace»\Controller\Base;
+
+            «IF app.needsConfig && isConfigController»
+                use «app.appNamespace»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
+            «ENDIF»
+            use «app.appNamespace»\Util\ControllerUtil;
+            «IF isAjaxController && app.hasImageFields»
+                use «app.appNamespace»\Util\ImageUtil;
+            «ENDIF»
+            «IF isAjaxController && app.hasListFields»
+                use «app.appNamespace»\Util\ListEntriesUtil;
+            «ENDIF»
+            «IF hasActions('view')»
+                use «app.appNamespace»\Util\ModelUtil;
+            «ENDIF»
+            use «app.appNamespace»\Util\ViewUtil;
+            «IF (isAjaxController && app.hasTrees) || (hasActions('view') && isAdminController) || hasActions('delete')»
+                use «app.appNamespace»\Util\WorkflowUtil;
+            «ENDIF»
+
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+            «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
+                use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+            «ENDIF»
+            «IF isAjaxController»
+                «IF !app.getAllUserFields.empty»
+                    use Doctrine\ORM\AbstractQuery;
+                «ENDIF»
+                use DataUtil;
+            «ENDIF»
+            use FormUtil;
+            «IF hasActions('edit')»
+                use JCSSUtil;
+            «ENDIF»
+            use LogUtil;
+            use ModUtil;
+            use SecurityUtil;
+            «IF hasActions('view') && isAdminController»
+                use System;
+            «ENDIF»
+            use Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»;
+            use Zikula_View;
+            use ZLanguage;
+            «IF (hasActions('view') && isAdminController) || hasActions('delete')»
+                use Zikula\Core\Hook\ProcessHook;
+                use Zikula\Core\Hook\ValidationHook;
+                use Zikula\Core\Hook\ValidationProviders;
+            «ENDIF»
+            use Zikula\Core\ModUrl;
+            «IF isAjaxController»
+                use Zikula\Core\Response\Ajax\AjaxResponse;
+                use Zikula\Core\Response\Ajax\BadDataResponse;
+                use Zikula\Core\Response\Ajax\FatalResponse;
+                use Zikula\Core\Response\Ajax\NotFoundResponse;
+            «ENDIF»
+            use Zikula\Core\Response\PlainResponse;
+
+        «ENDIF»
     '''
 
     def private handleSelectedObjects(Controller it) '''
