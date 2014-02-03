@@ -989,11 +989,13 @@ class Entities {
 
                 // reset Workflow
                 $this->resetWorkflow();
+                «IF standardFields»
 
-                $this->setCreatedDate(null);
-                $this->setCreatedUserId(null);
-                $this->setUpdatedDate(null);
-                $this->setUpdatedUserId(null);
+                    $this->setCreatedDate(null);
+                    $this->setCreatedUserId(null);
+                    $this->setUpdatedDate(null);
+                    $this->setUpdatedUserId(null);
+                «ENDIF»
 
                 «IF !joinsIn.empty || !joinsOut.empty»
                     // handle related objects
