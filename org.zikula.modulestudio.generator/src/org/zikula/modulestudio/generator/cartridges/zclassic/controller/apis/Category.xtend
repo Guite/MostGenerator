@@ -190,8 +190,8 @@ class Category {
                 if (count($filtersPerRegistry) == 1) {
                     $qb->andWhere($filtersPerRegistry[0]);
                 } else {
-«/* See http://stackoverflow.com/questions/9815047/chaining-orx-in-doctrine2-query-builder */»
-                    $qb->andWhere($qb->expr()->orX()->addMultiple($filtersPerRegistry));
+                    «/* See http://stackoverflow.com/questions/9815047/chaining-orx-in-doctrine2-query-builder
+                    $qb->andWhere($qb->expr()->orX()->addMultiple($filtersPerRegistry));*/»$qb->andWhere('(' . implode(' OR ', $filtersPerRegistry) . ')');
                 }
                 foreach ($filterParameters['values'] as $propertyName => $filterValue) {
                     $qb->setParameter('propName' . $propertyName, $filterValue)
