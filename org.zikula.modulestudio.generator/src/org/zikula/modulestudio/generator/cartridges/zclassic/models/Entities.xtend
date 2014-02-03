@@ -989,6 +989,14 @@ class Entities {
 
                 // reset Workflow
                 $this->resetWorkflow();
+                «IF hasUploadFieldsEntity»
+
+                    // reset upload fields
+                    «FOR field : getUploadFieldsEntity»
+                        $this->set«field.name.formatForCodeCapital»('');
+                        $this->set«field.name.formatForCodeCapital»Meta(array());
+                    «ENDFOR»
+                «ENDIF»
                 «IF standardFields»
 
                     $this->setCreatedDate(null);
