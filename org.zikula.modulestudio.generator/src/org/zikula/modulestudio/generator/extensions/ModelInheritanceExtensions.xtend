@@ -54,7 +54,7 @@ class ModelInheritanceExtensions {
     /**
      * Prints an output string corresponding to the given inheritance type.
      */
-    def asConstant(InheritanceStrategyType inheritanceType) {
+    def strategyConstant(InheritanceStrategyType inheritanceType) {
         switch inheritanceType {
             case SINGLE_TABLE   : 'SINGLE_TABLE'
             case JOINED         : 'JOINED'
