@@ -675,7 +675,7 @@ class Validator {
             return $errorInfo;
         }
     '''
-/** replace by switch ? */
+
     def private validationCallsNumeric(DerivedField it) '''
         if (!$this->isValidNumber('«name.formatForCode»')) {
             $errorInfo['message'] = __f('Error! Field value must be numeric (%s).', array('«name.formatForDisplay»'), $dom);

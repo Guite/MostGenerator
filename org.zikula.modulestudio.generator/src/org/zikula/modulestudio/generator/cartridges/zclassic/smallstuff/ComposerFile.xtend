@@ -57,7 +57,7 @@ class ComposerFile {
 
     // Reference: http://www.spdx.org/licenses/
     def private licenseSPDX(Application it) {
-        switch (license) {
+        switch license {
             case 'Academic Free License v1.1': 'AFL-1.1'
             case 'AFL-1.1': 'AFL-1.1'
             case 'Academic Free License v1.2': 'AFL-1.2'
