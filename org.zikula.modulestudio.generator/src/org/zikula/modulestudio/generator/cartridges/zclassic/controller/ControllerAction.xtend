@@ -205,22 +205,30 @@ class ControllerAction {
         switch controller {
             UserController: '''
                         «IF controller.hasActions('view')»
-                            return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
+                            «IF app.targets('1.3.5')»
+                                return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
+                            «ELSE»
+                                return new RedirectResponse(System::normalizeUrl(ModUtil::url($this->name, '«controller.formattedName»', 'view')));
+                            «ENDIF»
                         «ELSE»
                             // set caching id
                             $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
                             // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
                             «IF app.targets('1.3.5')»
-                            return $this->view->fetch('«controller.formattedName»/main.tpl');
+                                return $this->view->fetch('«controller.formattedName»/main.tpl');
                             «ELSE»
-                            return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                                return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
                             «ENDIF»
                         «ENDIF»
                     '''
             AdminController: '''
                         «IF controller.hasActions('view')»
-                            return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
+                            «IF app.targets('1.3.5')»
+                                return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
+                            «ELSE»
+                                return new RedirectResponse(System::normalizeUrl(ModUtil::url($this->name, '«controller.formattedName»', 'view')));
+                            «ENDIF»
                         «ELSE»
                             // set caching id
                             $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
@@ -233,9 +241,9 @@ class ControllerAction {
                             */»
                             // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
                             «IF app.targets('1.3.5')»
-                            return $this->view->fetch('«controller.formattedName»/main.tpl');
+                                return $this->view->fetch('«controller.formattedName»/main.tpl');
                             «ELSE»
-                            return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                                return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
                             «ENDIF»
                             «/*«ENDIF»*/»
                         «ENDIF»
@@ -243,16 +251,20 @@ class ControllerAction {
             AjaxController: ''
             CustomController: '''
                         «IF controller.hasActions('view')»
-                            return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
+                            «IF app.targets('1.3.5')»
+                                return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
+                            «ELSE»
+                                return new RedirectResponse(System::normalizeUrl(ModUtil::url($this->name, '«controller.formattedName»', 'view')));
+                            «ENDIF»
                         «ELSE»
                             // set caching id
                             $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
                             // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
                             «IF app.targets('1.3.5')»
-                            return $this->view->fetch('«controller.formattedName»/main.tpl');
+                                return $this->view->fetch('«controller.formattedName»/main.tpl');
                             «ELSE»
-                            return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
+                                return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
                             «ENDIF»
                         «ENDIF»
                     '''
@@ -780,11 +792,11 @@ class ControllerAction {
                 // Let any hooks know that we have created, updated or deleted an item
                 $hookType = 'process_delete';
                 «IF app.targets('1.3.5')»
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
-                $this->notifyHooks($hook);
+                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
+                    $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new ProcessHook($entity->createCompositeIdentifier());
-                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                    $hook = new ProcessHook($entity->createCompositeIdentifier());
+                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was deleted, so we clear all cached pages this item.
@@ -792,8 +804,13 @@ class ControllerAction {
                 ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
                 // redirect to the «IF controller.hasActions('view')»list of the current object type«ELSE»«IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page«ENDIF»
-                $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
-                                                                                            array('ot' => $objectType)«ELSE»'«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'«ENDIF»));
+                «IF app.targets('1.3.5')»
+                    return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
+                                                                                                array('ot' => $objectType)«ELSE»'«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'«ENDIF»));
+                «ELSE»
+                    return new RedirectResponse(System::normalizeUrl(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
+                                                                                                array('ot' => $objectType)«ELSE»'«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'«ENDIF»)));
+                «ENDIF»
             }
         }
 

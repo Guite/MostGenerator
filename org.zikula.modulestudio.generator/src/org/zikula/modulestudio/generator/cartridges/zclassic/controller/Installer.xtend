@@ -96,6 +96,7 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Controller\Base;
 
+            use Symfony\Component\HttpFoundation\RedirectResponse;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
             use LogUtil;
@@ -103,6 +104,7 @@ class Installer {
                 use ModUtil;
             «ENDIF»
             use SecurityUtil;
+            use System;
             use Zikula_Controller_AbstractInteractiveInstaller;
             use ZLanguage;
 

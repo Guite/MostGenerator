@@ -214,6 +214,9 @@ class ControllerLayer {
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             «ENDIF»
+            «IF hasActions('main') || hasActions('delete')»
+                use Symfony\Component\HttpFoundation\RedirectResponse;
+            «ENDIF»
             «IF isAjaxController»
                 «IF !app.getAllUserFields.empty»
                     use Doctrine\ORM\AbstractQuery;
@@ -227,7 +230,7 @@ class ControllerLayer {
             use LogUtil;
             use ModUtil;
             use SecurityUtil;
-            «IF hasActions('view') && isAdminController»
+            «IF (hasActions('view') && isAdminController) || hasActions('main') || hasActions('delete')»
                 use System;
             «ENDIF»
             use Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»;
