@@ -123,7 +123,7 @@ class WorkflowSettings {
      * @throws Exception
      *             In case something goes wrong.
      */
-    def private collectAvailableReports() throws Exception {
+    def private final collectAvailableReports() throws Exception {
         var resources = FileLocator.findEntries(
                 Platform.getBundle(Activator.PLUGIN_ID), new Path('/src' //$NON-NLS-1$
                         + reportPath))

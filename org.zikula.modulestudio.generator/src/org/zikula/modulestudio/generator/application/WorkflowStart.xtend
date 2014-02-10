@@ -109,7 +109,7 @@ class WorkflowStart {
                 // The generator cartridge to execute (zclassic, reporting)
                 currentCartridge = singleCartridge.toString
 
-                if (!currentCartridge.equals('reporting')) {
+                if (!'reporting'.equals(currentCartridge)) {
                     val generator = new MostGenerator
                     generator.setCartridge(currentCartridge)
                     generator.setMonitor(settings.progressMonitor)

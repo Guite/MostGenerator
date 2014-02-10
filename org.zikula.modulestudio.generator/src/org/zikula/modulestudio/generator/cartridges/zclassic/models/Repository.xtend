@@ -245,6 +245,16 @@ class Repository {
     '''
 
     def private fieldNameHelpers(Entity it, Iterable<StringField> stringFields) '''
+        «getTitleFieldName(stringFields)»
+
+        «getDescriptionFieldName(stringFields)»
+
+        «getPreviewFieldName»
+
+        «getStartDateFieldName»
+    '''
+
+    def private getTitleFieldName(Entity it, Iterable<StringField> stringFields) '''
         /**
          * Returns name of the field used as title / name for entities of this repository.
          *
@@ -260,14 +270,16 @@ class Repository {
 
             return $fieldName;
         }
+    '''
 
+    def private getDescriptionFieldName(Entity it, Iterable<StringField> stringFields) '''
         /**
          * Returns name of the field used for describing entities of this repository.
          *
          * @return string Name of field to be used as description.
          */
         public function getDescriptionFieldName()
-       {
+        {
             «val textFields = fields.filter(TextField).filter[!leading]»
             «IF !textFields.empty»
                 $fieldName = '«textFields.head.name.formatForCode»';
@@ -283,7 +295,9 @@ class Repository {
 
             return $fieldName;
         }
+    '''
 
+    def private getPreviewFieldName(Entity it) '''
         /**
          * Returns name of first upload field which is capable for handling images.
          *
@@ -295,7 +309,9 @@ class Repository {
 
             return $fieldName;
         }
+    '''
 
+    def private getStartDateFieldName(Entity it) '''
         /**
          * Returns name of the date(time) field to be used for representing the start
          * of this object. Used for providing meta data to the tag module.
