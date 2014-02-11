@@ -150,7 +150,7 @@ class BlocksView {
                 <div class="col-lg-9">
             «ENDIF»
                 <input type="text" id="«appName.toFirstLower»CustomTemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
-                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example'}: <em>itemlist_[objecttype]_display.tpl</em></span>
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example'}: <em>itemlist_[objectType]_display.tpl</em></span>
             «IF !targets('1.3.5')»
                 </div>
             «ENDIF»
