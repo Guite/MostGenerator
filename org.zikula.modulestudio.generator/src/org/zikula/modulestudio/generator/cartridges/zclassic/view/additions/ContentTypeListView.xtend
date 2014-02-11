@@ -195,7 +195,7 @@ class ContentTypeListView {
                 <div class="col-lg-9">
             «ENDIF»
                 {formtextinput id='«appName.toFirstLower»CustomTemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
-                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objecttype]_display.tpl</em></span>
+                <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objectType]_display.tpl</em></span>
             «IF !targets('1.3.5')»
                 </div>
             «ENDIF»
