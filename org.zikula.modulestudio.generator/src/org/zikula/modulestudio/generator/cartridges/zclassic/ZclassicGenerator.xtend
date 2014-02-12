@@ -37,6 +37,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.PhpUnitX
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.TravisFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.VersionFile
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ZikulaManifest
 import org.zikula.modulestudio.generator.cartridges.zclassic.tests.Tests
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Forms
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Images
@@ -90,6 +91,7 @@ class ZclassicGenerator implements IGenerator {
         new VersionFile().generate(it, fsa)
         new DependencyInjection().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
+        new ZikulaManifest().generate(it, fsa)
         new GitIgnore().generate(it, fsa)
         new TravisFile().generate(it, fsa)
         new PhpUnitXmlDist().generate(it, fsa)

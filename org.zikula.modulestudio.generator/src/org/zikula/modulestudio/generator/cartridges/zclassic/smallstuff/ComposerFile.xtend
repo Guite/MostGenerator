@@ -38,7 +38,7 @@ class ComposerFile {
                 "name": "«author»",
                 "email": "«email»",
                 "homepage": "«url»",
-                "rolw": "owner"
+                "role": "owner"
             }
         ],
         "autoload": {»
