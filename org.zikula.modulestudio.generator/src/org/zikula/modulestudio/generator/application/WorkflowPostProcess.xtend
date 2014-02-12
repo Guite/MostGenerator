@@ -71,7 +71,7 @@ class WorkflowPostProcess {
                 fileCopy.sourceFile = file.absolutePath
 
                 val targetBasePath = settings.outputPath + '/zclassic/' + settings.appName.toFirstUpper + '/'
-                var imageFolder = settings.appVendor.toFirstUpper + '/' + settings.appName.toFirstUpper + 'Module/Resources/public/images'
+                var imageFolder = 'Resources/public/images'
                 var targetFolder = new File(targetBasePath + imageFolder)
                 if (!targetFolder.exists) {
                     imageFolder = 'src/modules/' + settings.appName.toFirstUpper + '/images' // BC support for 1.3.5

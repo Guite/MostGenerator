@@ -152,7 +152,7 @@ class NamingExtensions {
         if (targets('1.3.5'))
             'src/modules/' + appName + '/'
         else
-            vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module/'
+            ''
     }
 
     /**
