@@ -99,7 +99,7 @@ class Association {
              * @ORM\Id
          «ENDIF»
          * @ORM\OneToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»")
-        «joinDetails(false)»
+        «/* no need to generate @JoinTable for @ManyToOne      joinDetails(false)*/»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
