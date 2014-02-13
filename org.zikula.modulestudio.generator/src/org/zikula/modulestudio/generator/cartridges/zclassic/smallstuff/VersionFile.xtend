@@ -76,10 +76,10 @@ class VersionFile {
                 // core requirement
                 «IF targets('1.3.5')»
                     $meta['core_min']             = '1.3.5'; // requires minimum 1.3.5
-                    $meta['core_max']             = '1.3.6'; // not ready for 1.3.7 yet
-                «ELSE»
-                    $meta['core_min']             = '1.3.7'; // requires minimum 1.3.7 or later
                     $meta['core_max']             = '1.3.99'; // not ready for 1.4.0 yet
+                «ELSE»
+                    $meta['core_min']             = '1.4.0'; // requires minimum 1.4.0 or later
+                    $meta['core_max']             = '1.4.99'; // not ready for 1.5.0 yet
                 «ENDIF»
 
                 // define special capabilities of this module
