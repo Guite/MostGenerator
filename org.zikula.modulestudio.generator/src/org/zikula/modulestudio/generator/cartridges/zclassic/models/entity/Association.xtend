@@ -63,7 +63,7 @@ class Association {
          *
         «incomingMappingDetails»
          * @ORM\«incomingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
-        «joinDetails(false)»
+        «IF !(it instanceof OneToManyRelationship)»«joinDetails(false)»«ENDIF»«/* @JoinTable is not required for @ManyToOne relationships */»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
@@ -99,7 +99,7 @@ class Association {
              * @ORM\Id
          «ENDIF»
          * @ORM\OneToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»")
-        «/* no need to generate @JoinTable for @ManyToOne      joinDetails(false)*/»
+        «joinDetails(false)»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
