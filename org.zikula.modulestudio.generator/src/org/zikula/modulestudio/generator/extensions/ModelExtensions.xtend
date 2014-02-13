@@ -316,7 +316,7 @@ class ModelExtensions {
     def getEditableFields(Entity it) {
         var fields = getDerivedFields.filter[name != 'workflowState']
         if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
-            fields = fields.filter[!primaryKey || name !== 'id']
+            fields = fields.filter[!primaryKey]
         }
         val wantedFields = fields.exclude(ArrayField).exclude(ObjectField)
         wantedFields.toList as List<DerivedField>
