@@ -61,7 +61,7 @@ class EditFunctions {
              */
             function «prefix»InitUserField(fieldName, getterName)
             {
-                if ($(fieldName + 'LiveSearch') === undefined) {
+                if ($(fieldName + 'LiveSearch') === null) {
                     return;
                 }
                 $(fieldName + 'LiveSearch').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
@@ -89,7 +89,7 @@ class EditFunctions {
          */
         function «prefix»ResetUploadField(fieldName)
         {
-            if ($(fieldName) != undefined) {
+            if ($(fieldName) != null) {
                 $(fieldName).setAttribute('type', 'input');
                 $(fieldName).setAttribute('type', 'file');
             }
@@ -102,7 +102,7 @@ class EditFunctions {
          */
         function «prefix»InitUploadField(fieldName)
         {
-            if ($('reset' + fieldName.capitalize() + 'Val') != undefined) {
+            if ($('reset' + fieldName.capitalize() + 'Val') != null) {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
                     «prefix»ResetUploadField(fieldName);
@@ -117,10 +117,10 @@ class EditFunctions {
          */
         function «prefix»ResetDateField(fieldName)
         {
-            if ($(fieldName) != undefined) {
+            if ($(fieldName) != null) {
                 $(fieldName).value = '';
             }
-            if ($(fieldName + 'cal') != undefined) {
+            if ($(fieldName + 'cal') != null) {
                 $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName»'));
             }
         }
@@ -132,7 +132,7 @@ class EditFunctions {
          */
         function «prefix»InitDateField(fieldName)
         {
-            if ($('reset' + fieldName.capitalize() + 'Val') != undefined) {
+            if ($('reset' + fieldName.capitalize() + 'Val') != null) {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
                     «prefix»ResetDateField(fieldName);
@@ -190,7 +190,7 @@ class EditFunctions {
                     if (!choices || choices == '<ul></ul>') {
                         this.stopIndicator();
                         var idPrefix = this.options.indicator.replace('Indicator', '');
-                        if ($(idPrefix + 'NoResultsHint') != undefined) {
+                        if ($(idPrefix + 'NoResultsHint') != null) {
                             $(idPrefix + 'NoResultsHint').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                         }
                     } else {
@@ -251,7 +251,7 @@ class EditFunctions {
         function «prefix»ToggleRelatedItemForm(idPrefix)
         {
             // if we don't have a toggle link do nothing
-            if ($(idPrefix + 'AddLink') === undefined) {
+            if ($(idPrefix + 'AddLink') === null) {
                 return;
             }
 
@@ -446,13 +446,13 @@ class EditFunctions {
             var acOptions, itemIds, itemIdsArr;
 
             // add handling for the toggle link if existing
-            if ($(idPrefix + 'AddLink') !== undefined) {
+            if ($(idPrefix + 'AddLink') !== null) {
                 $(idPrefix + 'AddLink').observe('click', function (e) {
                     «prefixSmall»ToggleRelatedItemForm(idPrefix);
                 });
             }
             // add handling for the cancel button
-            if ($(idPrefix + 'SelectorDoCancel') !== undefined) {
+            if ($(idPrefix + 'SelectorDoCancel') !== null) {
                 $(idPrefix + 'SelectorDoCancel').observe('click', function (e) {
                     «prefixSmall»ResetRelatedItemForm(idPrefix);
                 });
@@ -469,11 +469,11 @@ class EditFunctions {
 
                     // modify the query string before the request
                     queryString = defaultQueryString + '&ot=' + objectType;
-                    if ($(idPrefix + 'ItemList') !== undefined) {
+                    if ($(idPrefix + 'ItemList') !== null) {
                         queryString += '&exclude=' + $F(idPrefix + 'ItemList');
                     }
 
-                    if ($(idPrefix + 'NoResultsHint') != undefined) {
+                    if ($(idPrefix + 'NoResultsHint') != null) {
                         $(idPrefix + 'NoResultsHint').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
                     }
 
@@ -496,7 +496,7 @@ class EditFunctions {
                 }
             });
 
-            if (!includeEditing || $(idPrefix + 'SelectorDoNew') === undefined) {
+            if (!includeEditing || $(idPrefix + 'SelectorDoNew') === null) {
                 return;
             }
 
