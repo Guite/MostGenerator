@@ -164,7 +164,7 @@ class RelationSelectorAutoComplete {
                 $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="«IF targets('1.3.5')»z-«ENDIF»hide">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
                 }
 
                 $alias = $this->id;
