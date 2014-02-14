@@ -1,11 +1,12 @@
 # Commands for generating a module or another artifact with the generator
 
+# set path to target platform
 setpref targetPlatformPath=${WORKSPACE}../../MOST-1_Prepare-1_Target_Platform/lastSuccessful/archive/targetPlatform
 
 # materialise stuff by cquery/rmap
 resolve --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build.applications/most.cquery"
 
-# build workspace
+# clean and build workspace
 build --clean
 
 # execute mwe2 workflow
