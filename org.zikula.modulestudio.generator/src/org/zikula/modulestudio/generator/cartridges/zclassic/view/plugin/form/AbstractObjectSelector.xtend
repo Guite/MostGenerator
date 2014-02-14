@@ -471,7 +471,7 @@ class AbstractObjectSelector {
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
-            $qb = $repository->genericBaseQuery('', $this->orderBy, false);
+            $qb = $repository->genericBaseQuery('', '', false);
             $qb = $this->buildWhereClause($inputValue, $qb);
             //$qb = $repository->addCommonViewFilters($qb);
 
