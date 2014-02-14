@@ -258,12 +258,12 @@ class AbstractObjectSelector {
         
             if ($fetchItemsDuringLoad) {
                 $items = $this->loadItems($params);
-    
+
                 foreach ($items as $item) {
                     if (!$this->isIncluded($item)) {
                         continue;
                     }
-    
+
                     $itemLabel = $this->createItemLabel($item);
                     $itemId = $this->createItemIdentifier($item);
                     $this->addItem($itemLabel, $itemId);
@@ -638,7 +638,7 @@ class AbstractObjectSelector {
          *
          * @param Array $itemIds List of concatenated identifiers.
          *
-         * @return Array with list of single identifiers. 
+         * @return Array with list of single identifiers.
          */
         protected function decodeCompositeIdentifier($itemIds)
         {
