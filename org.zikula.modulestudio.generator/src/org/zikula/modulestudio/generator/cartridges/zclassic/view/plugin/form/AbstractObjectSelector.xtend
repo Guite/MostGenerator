@@ -253,17 +253,21 @@ class AbstractObjectSelector {
             if ($this->showEmptyValue != false) {
                 $this->addItem('- - -', 0);
             }
-
-            $items = $this->loadItems($params);
-
-            foreach ($items as $item) {
-                if (!$this->isIncluded($item)) {
-                    continue;
+            
+            $fetchItemsDuringLoad = isset($params['fetchItemsDuringLoad']) ? $params['fetchItemsDuringLoad'] : true;
+        
+            if ($fetchItemsDuringLoad) {
+                $items = $this->loadItems($params);
+    
+                foreach ($items as $item) {
+                    if (!$this->isIncluded($item)) {
+                        continue;
+                    }
+    
+                    $itemLabel = $this->createItemLabel($item);
+                    $itemId = $this->createItemIdentifier($item);
+                    $this->addItem($itemLabel, $itemId);
                 }
-
-                $itemLabel = $this->createItemLabel($item);
-                $itemId = $this->createItemIdentifier($item);
-                $this->addItem($itemLabel, $itemId);
             }
 
             parent::load($view, $params);
