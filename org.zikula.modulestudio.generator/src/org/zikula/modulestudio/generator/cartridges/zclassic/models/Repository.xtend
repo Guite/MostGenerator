@@ -709,15 +709,41 @@ class Repository {
          */
         protected function addIdFilter($id, QueryBuilder $qb)
         {
-            if (is_array($id)) {
-                foreach ($id as $fieldName => $fieldValue) {
-                    $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                       ->setParameter($fieldName, $fieldValue);
+            return $this->addIdListFilter(array($id), $qb);
+        }
+        
+        /**
+         * Adds an array of id filters to given query instance.
+         *
+         * @param mixed                     $id The array of ids to use to retrieve the object.
+         * @param Doctrine\ORM\QueryBuilder $qb Query builder to be enhanced.
+         *
+         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         */
+        protected function addIdListFilter($idList, QueryBuilder $qb)
+        {
+            $orx = $qb->expr()->orX();
+            
+            foreach ($idList as $id) {
+                // check id parameter
+                if ($id == 0) {
+                    throw new \InvalidArgumentException(__('Invalid identifier received.'));
                 }
-            } else {
-                $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
-                   ->setParameter('id', $id);
+                
+                if (is_array($id)) {
+                    $andx = $qb->expr()->andX();
+                    foreach ($id as $fieldName => $fieldValue) {
+                        $andx->add($qb->expr()->eq('tbl.' . $fieldName, $fieldValue));
+                    }
+                    $orx->add($andx);
+                } else {
+                    $orx->add($qb->expr()->eq('tbl.«getFirstPrimaryKey.name.formatForCode»', $id));
+                }
+                
             }
+            
+            $qb->andWhere($orx);
+            
             return $qb;
         }
 
@@ -734,22 +760,33 @@ class Repository {
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
-            // check id parameter
-            if ($id == 0) {
-                throw new \InvalidArgumentException(__('Invalid identifier received.'));
-            }
-
-            $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
-
-            $qb = $this->addIdFilter($id, $qb);
-
-            $query = $this->getQueryFromBuilder($qb);
-
-            $results = $query->getResult();//OneOrNullResult();
-
+            $results = $this->selectByIdList(array($id));
             return (count($results) > 0) ? $results[0] : null;
         }
-    '''
+        
+        /**
+         * Selects a list of objects with an array of ids
+         *
+         * @param mixed   $id       The array of ids to use to retrieve the objects (optional) (default=0).
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
+         *
+         * @return ArrayCollection collection containing retrieved «entityClassName('', false)» instances
+         *
+         * @throws InvalidArgumentException Thrown if invalid parameters are received
+         */
+        public function selectByIdList($idList = array(0), $useJoins = true, $slimMode = false)
+        {
+    
+            $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
+            $qb = $this->addIdListFilter($idList, $qb);
+            
+            $query = $this->getQueryFromBuilder($qb);
+        
+            $results = $query->getResult();//OneOrNullResult();
+            
+            return (count($results) > 0) ? $results : null;
+        }
 
     def private selectBySlug(Entity it) '''
         /**

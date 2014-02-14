@@ -189,9 +189,12 @@ class Relations {
             {assign var='removeImage' value='<span class="fa fa-trash-o"></span>'}
         «ENDIF»
         «IF !many»
-
         {if isset($item) && is_array($item) && isset($item[0]) && !is_object($item[0])}
             {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
+        {/if}
+        «ELSE»
+        {if isset($items) && is_array($items)}
+            {modapifunc modname='«app.appName»' type='selection' func='getEntities' ot='«targetEntity.name.formatForCode»' idList=$items assign='items'}
         {/if}
         «ENDIF»
 
