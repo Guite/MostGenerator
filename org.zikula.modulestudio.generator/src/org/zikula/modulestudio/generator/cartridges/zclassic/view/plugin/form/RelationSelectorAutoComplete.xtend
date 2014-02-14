@@ -102,7 +102,8 @@ class RelationSelectorAutoComplete {
             public function load(Zikula_Form_View $view, &$params)
             {
                 $this->processRequestData($view, 'GET');
-
+    
+                $params['fetchItemsDuringLoad'] = false;
                 // load list items
                 parent::load($view, $params);
 
