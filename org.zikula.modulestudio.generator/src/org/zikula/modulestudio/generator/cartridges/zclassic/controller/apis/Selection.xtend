@@ -158,9 +158,11 @@ class Selection {
             $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
             $slimMode = isset($args['slimMode']) ? ((bool) $args['slimMode']) : false;
 
-            if(!empty($idList)){
+            if(!empty($idList))
+            {
                return $repository->selectByIdList($idList, $useJoins, $slimMode);
-            }else{
+            }else
+            {
                 return $repository->selectWhere($where, $orderBy, $useJoins, $slimMode);
             }
         }

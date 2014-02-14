@@ -787,7 +787,7 @@ class Repository {
             
             return (count($results) > 0) ? $results : null;
         }
-        '''
+    '''
 
     def private selectBySlug(Entity it) '''
         /**
