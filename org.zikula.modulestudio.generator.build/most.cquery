@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><cq:componentQuery xmlns:cq="http://www.eclipse.org/buckminster/CQuery-1.0" resourceMap="../../refProduct/de.guite.modulestudio.build/build.rmap">
     <cq:rootRequest name="org.zikula.modulestudio.generator.build" componentType="eclipse.feature"/>
-    <cq:advisorNode namePattern="^org\.zikula\.modulestudio\.generator$" componentType="osgi.bundle" useTargetPlatform="false">
+    <cq:advisorNode namePattern="^org\.zikula\.modulestudio\.generator(\..*)?$" componentType="osgi.bundle" useTargetPlatform="false">
         <cq:documentation xmlns="http://www.w3.org/1999/xhtml">Force bundle to be fetched from the workspace</cq:documentation>
     </cq:advisorNode>
 </cq:componentQuery>
