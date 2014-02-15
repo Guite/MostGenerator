@@ -7,7 +7,7 @@ setpref targetPlatformPath=${WORKSPACE}../../MOST-1_Prepare-1_Target_Platform/la
 resolve --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build/most.cquery"
 
 # clean the workspace
-clean
+build --clean
 
 # this first Java build will fail with compilation errors, since Xtend
 # classes have not been compiled yet.  However, it will compile some
