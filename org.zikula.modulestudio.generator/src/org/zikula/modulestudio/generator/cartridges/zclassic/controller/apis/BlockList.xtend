@@ -334,7 +334,7 @@ class BlockList {
                         if (!empty($sortParam)) {
                             $sortParam .= ', ';
                         }
-                        $sortParam .= $idField . ' ASC';
+                        $sortParam .= $idField . ' DESC';
                     }
                 }
             } elseif ($vars['sorting'] == 'default') {

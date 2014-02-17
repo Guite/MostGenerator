@@ -305,7 +305,7 @@ class Newsletter {
                         if (!empty($sortParam)) {
                             $sortParam .= ', ';
                         }
-                        $sortParam .= $idField . ' ASC';
+                        $sortParam .= $idField . ' DESC';
                     }
                 }
             } elseif ($args['sorting'] == 'default') {

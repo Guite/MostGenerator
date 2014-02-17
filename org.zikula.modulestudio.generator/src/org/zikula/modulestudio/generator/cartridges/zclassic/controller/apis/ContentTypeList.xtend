@@ -404,7 +404,7 @@ class ContentTypeList {
                         if (!empty($sortParam)) {
                             $sortParam .= ', ';
                         }
-                        $sortParam .= $idField . ' ASC';
+                        $sortParam .= $idField . ' DESC';
                     }
                 }
             } elseif ($this->sorting == 'default') {
