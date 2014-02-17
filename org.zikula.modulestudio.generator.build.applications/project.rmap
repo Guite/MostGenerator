@@ -37,7 +37,7 @@
         </provider>
     </searchPath>
 
-    <locator searchPathRef="local.sources" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
+    <locator searchPathRef="local.sources" pattern="^org\.zikula\.modulestudio\.generator\.applications" />
     <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
     <locator searchPathRef="most.textual" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..*)?" />
