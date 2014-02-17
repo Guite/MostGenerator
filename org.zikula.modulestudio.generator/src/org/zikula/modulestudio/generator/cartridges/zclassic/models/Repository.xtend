@@ -1161,7 +1161,7 @@ class Repository {
          *
          * @return Array with retrieved collection«IF !app.targets('1.3.5')» and (for paginated queries) the amount of total records affected«ENDIF».
          */
-        protected function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
+        public function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
         {
             «IF app.targets('1.3.5')»
                 $result = $query->getResult();
