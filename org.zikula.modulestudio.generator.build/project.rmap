@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rmap xmlns="http://www.eclipse.org/buckminster/RMap-1.0"
+    xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0">
+
+    <property key="projects.location" value="${workspace.root}" />
+
+    <searchPath name="local.sources">
+        <provider readerType="local" componentTypes="eclipse.feature,osgi.bundle,buckminster" mutable="false">
+            <property key="buckminster.mutable" value="false" />
+            <uri format="{0}/scm/{1}">
+                <bc:propertyRef key="projects.location" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
+    </searchPath>
+    <searchPath name="most.metamodel">
+        <provider readerType="p2" componentTypes="eclipse.feature,osgi.bundle" mutable="false" source="false">
+            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/site.p2.artifact" />
+        </provider>
+    </searchPath>
+    <searchPath name="most.textual">
+        <provider readerType="p2" componentTypes="eclipse.feature,osgi.bundle" mutable="false" source="false">
+            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-3_TextualEditor/lastSuccessful/archive/site.p2.artifact" />
+        </provider>
+    </searchPath>
+    <searchPath name="most.product">
+        <provider readerType="local" componentTypes="eclipse.feature,osgi.bundle,buckminster" mutable="false">
+            <uri format="{0}/refProduct/{1}">
+                <bc:propertyRef key="projects.location" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
+    </searchPath>
+    <searchPath name="most.product.helpers.reporting">
+        <provider readerType="local" componentTypes="osgi.bundle" mutable="false">
+            <uri format="{0}/refProduct/tools/reporting/{1}">
+                <bc:propertyRef key="workspace.root" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
+    </searchPath>
+
+    <locator searchPathRef="local.sources" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
+    <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
+    <locator searchPathRef="most.textual" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
+    <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio\.branding" />
+    <locator searchPathRef="most.product.helpers.reporting" pattern="org\.eclipse\.datatools\.enablement\.oda\.ecore" />
+</rmap>
