@@ -6,18 +6,18 @@ package org.zikula.modulestudio.generator.exceptions
 class ExceptionBase extends Exception {
 
     /**
-     * The constructor.
-     */
-    new() {
-        super()
-    }
-
-    /**
-     * Alternative constructor.
+     * Constructor with given message.
      *
      * @param s The given error message.
      */
     new(String s) {
         super(s)
+    }
+
+    /**
+     * Constructor without given message.
+     */
+    new() {
+        super()
     }
 }

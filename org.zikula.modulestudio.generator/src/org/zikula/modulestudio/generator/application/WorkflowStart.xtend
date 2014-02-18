@@ -122,10 +122,10 @@ class WorkflowStart {
             }
             success = true
         } catch (IOException e) {
-            throw new M2TFailedGeneratorResourceNotFound
+            throw new M2TFailedGeneratorResourceNotFound(e.message)
         } catch (Exception e) {
             e.printStackTrace
-            throw new M2TUnknownException
+            throw new M2TUnknownException(e.message)
         } finally {
         }
 
@@ -163,7 +163,7 @@ class WorkflowStart {
         val app = model.contents.head as Application
         settings.appName = app.name?.formatForCodeCapital ?: 'Module' //$NON-NLS-1$
         settings.appVendor = app.vendor?.formatForCodeCapital ?: 'Vendor' //$NON-NLS-1$
-        settings.appVersion = if (app.version !== null) app.version else '1.0.0'
+        settings.appVersion = if (app.version !== null) app.version else '1.0.0' //$NON-NLS-1$
 
         // compute destination path for model files
         var modelDestinationPath = '/model/' //$NON-NLS-1$
