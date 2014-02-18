@@ -200,7 +200,7 @@ class ModelJoinExtensions {
         if (isDefaultIdFieldName(refField))
             name.formatForDB + '_id'
         else
-            fields.findFirst[name == refField]?.name.formatForCode ?: ''
+            fields.findFirst[name == refField]?.name?.formatForCode ?: ''
     }
 
     /**
