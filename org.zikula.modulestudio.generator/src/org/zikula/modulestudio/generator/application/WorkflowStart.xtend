@@ -161,9 +161,9 @@ class WorkflowStart {
     def readSettingsFromModel() {
         val model = getModel
         val app = model.contents.head as Application
-        settings.appName = app.name.formatForCodeCapital
-        settings.appVendor = app.vendor.formatForCodeCapital
-        settings.appVersion = app.version
+        settings.appName = app.name?.formatForCodeCapital ?: 'Module' //$NON-NLS-1$
+        settings.appVendor = app.vendor?.formatForCodeCapital ?: 'Vendor' //$NON-NLS-1$
+        settings.appVersion = if (app.version !== null) app.version else '1.0.0'
 
         // compute destination path for model files
         var modelDestinationPath = '/model/' //$NON-NLS-1$
@@ -172,10 +172,10 @@ class WorkflowStart {
             if (genSettings.writeModelToDocs) {
                 val targetVersion = genSettings.targetCoreVersion
                 if (targetVersion == CoreVersion.ZK135 || targetVersion == CoreVersion.ZK136) {
-                    modelDestinationPath = '/zclassic/' + app.name.formatForCodeCapital + '/src/modules/' + app.name.formatForCodeCapital + '/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    modelDestinationPath = '/zclassic/' + settings.appName + '/src/modules/' + settings.appName + '/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 else {
-                    modelDestinationPath = '/zclassic/' + app.name.formatForCodeCapital + '/' + app.vendor.formatForCodeCapital + '/' + app.name.formatForCodeCapital + 'Module/Resources/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    modelDestinationPath = '/zclassic/' + settings.appName + '/' + settings.appVendor + '/' + settings.appName + 'Module/Resources/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
             }
         }
