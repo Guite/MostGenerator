@@ -233,10 +233,7 @@ class Association {
     '''
 
     def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
-        switch it {
-            ManyToManyRelationship case columnName == 'id': (if (useTarget) target else source).name.formatForDB + '_id'
-            default: columnName
-        }
+        (if (useTarget) target else source).name.formatForDB + '_' + columnName //$NON-NLS-1$ $NON-NLS-2$
     }
 
     def private additionalOptions(JoinRelationship it, Boolean useReverse) '''«cascadeOptions(useReverse)»«fetchTypeTag»'''
