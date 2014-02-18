@@ -49,40 +49,40 @@ class WorkflowStart {
     @Property
     private Injector injector = null
 
-	/**
-	 * Validates the model.
-	 */
-	def validate() {
-		val progressMonitor = settings.progressMonitor
-		progressMonitor.beginTask('Validating "' + settings.appName + ' ' + settings.appVersion + '" ...', -1)
-    	
-    	var diag = Diagnostician.INSTANCE.validate(getModel.contents.head)
-    	
-    	switch diag.getSeverity {
-    		case Diagnostic.ERROR: {
-    			progressMonitor.subTask("Errors: \n" + validatorMessage(diag))
-    			progressMonitor.done
-    			return ErrorState.ERROR
-    		}
-    		case Diagnostic.WARNING: {
-    			progressMonitor.subTask("Warnings: \n" + validatorMessage(diag))
-    			progressMonitor.done
-    			return ErrorState.WARN
-    		}
-    		default: {
-    			progressMonitor.subTask('Valid')
-    			progressMonitor.done
-    			return ErrorState.OK
-    		}
-    	}
-	}
+    /**
+     * Validates the model.
+     */
+    def validate() {
+        val progressMonitor = settings.progressMonitor
+        progressMonitor.beginTask('Validating "' + settings.appName + ' ' + settings.appVersion + '" ...', -1)
+        
+        var diag = Diagnostician.INSTANCE.validate(getModel.contents.head)
+        
+        switch diag.getSeverity {
+            case Diagnostic.ERROR: {
+                progressMonitor.subTask("Errors: \n" + validatorMessage(diag))
+                progressMonitor.done
+                return ErrorState.ERROR
+            }
+            case Diagnostic.WARNING: {
+                progressMonitor.subTask("Warnings: \n" + validatorMessage(diag))
+                progressMonitor.done
+                return ErrorState.WARN
+            }
+            default: {
+                progressMonitor.subTask('Valid')
+                progressMonitor.done
+                return ErrorState.OK
+            }
+        }
+    }
 
-	def validatorMessage(Diagnostic diag) 
-		'''
-		«FOR c: diag.children»
-		- «c.message» at «EmfFormatter.objPath((c as FeatureBasedDiagnostic).sourceEObject)»
-		«ENDFOR»
-		'''
+    def validatorMessage(Diagnostic diag) 
+        '''
+        «FOR c: diag.children»
+        - «c.message» at «EmfFormatter.objPath((c as FeatureBasedDiagnostic).sourceEObject)»
+        «ENDFOR»
+        '''
 
     /**
      * Executes the workflow, preProcess.run() has already been called.
@@ -147,23 +147,23 @@ class WorkflowStart {
     
     def private getModel() {
         // do not read in the model again after validation did it already
-    	if (model === null) {
-        	val reader = new ModelReader
-        	reader.uri = settings.modelPath
-        	if (injector !== null) {
-        	   reader.injector = injector
-        	}
-        	model = reader.invoke
-    	}
-    	model
+        if (model === null) {
+            val reader = new ModelReader
+            reader.uri = settings.modelPath
+            if (injector !== null) {
+               reader.injector = injector
+            }
+            model = reader.invoke
+        }
+        model
     }
 
     def readSettingsFromModel() {
-    	val model = getModel
-    	val app = model.contents.head as Application
-    	settings.appName = app.name.formatForCodeCapital
+        val model = getModel
+        val app = model.contents.head as Application
+        settings.appName = app.name.formatForCodeCapital
         settings.appVendor = app.vendor.formatForCodeCapital
-		settings.appVersion = app.version
+        settings.appVersion = app.version
 
         // compute destination path for model files
         var modelDestinationPath = '/model/' //$NON-NLS-1$
@@ -181,7 +181,7 @@ class WorkflowStart {
         }
         settings.modelDestinationPath = settings.outputPath + modelDestinationPath
 
-    	return
+        return
     }
 
     /**
