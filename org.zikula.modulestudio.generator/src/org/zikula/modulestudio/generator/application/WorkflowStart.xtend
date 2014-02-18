@@ -46,7 +46,8 @@ class WorkflowStart {
      * The Guice injector instance which may be provided
      * if the generator is executed inside MOST.
      */
-    public Injector injector = null
+    @Property
+    private Injector injector = null
 
 	/**
 	 * Validates the model.
