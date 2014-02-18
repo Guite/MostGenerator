@@ -233,7 +233,7 @@ class Association {
     '''
 
     def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
-        (if (useTarget) target else source).name.formatForDB + '_' + columnName //$NON-NLS-1$ $NON-NLS-2$
+        (if (useTarget) target else source).name.formatForDB + '_' + columnName //$NON-NLS-1$
     }
 
     def private additionalOptions(JoinRelationship it, Boolean useReverse) '''«cascadeOptions(useReverse)»«fetchTypeTag»'''

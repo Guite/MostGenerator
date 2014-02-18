@@ -26,11 +26,11 @@ class WorkflowPostProcess {
      */
     def run() {
         copyModelFiles
-        if (settings.getSelectedCartridges.contains('zclassic')) {
+        if (settings.getSelectedCartridges.contains('zclassic')) { //$NON-NLS-1$
             copyAdminImage
         }
 
-        if (settings.getSelectedCartridges.contains('reporting')) {
+        if (settings.getSelectedCartridges.contains('reporting')) { //$NON-NLS-1$
             exportBirtReports
         }
     }
@@ -39,15 +39,15 @@ class WorkflowPostProcess {
      * Copies the model files into the output folder.
      */
     def private copyModelFiles() {
-        val srcPath = settings.modelPath.replaceFirst("file:", "")
+        val srcPath = settings.modelPath.replaceFirst('file:', '') //$NON-NLS-1$ $NON-NLS-2$
         val modelFileName = new File(srcPath).name
         val copier = new ModelFileCopier => [
             sourceModelFile = srcPath
             targetModelFile = settings.modelDestinationPath + modelFileName
-            sourceModelFileEnriched = srcPath.replace('.mostapp', '_enriched.mostapp')
-            targetModelFileEnriched = settings.modelDestinationPath + modelFileName.replace('.mostapp', '_enriched.mostapp')
-            sourceDiagramFile = srcPath.replace('.mostapp', '.mostdiagram')
-            targetDiagramFile = settings.modelDestinationPath + modelFileName.replace('.mostapp', '.mostdiagram')
+            sourceModelFileEnriched = srcPath.replace('.mostapp', '_enriched.mostapp') //$NON-NLS-1$ $NON-NLS-2$
+            targetModelFileEnriched = settings.modelDestinationPath + modelFileName.replace('.mostapp', '_enriched.mostapp') //$NON-NLS-1$ $NON-NLS-2$
+            sourceDiagramFile = srcPath.replace('.mostapp', '.mostdiagram') //$NON-NLS-1$ $NON-NLS-2$
+            targetDiagramFile = settings.modelDestinationPath + modelFileName.replace('.mostapp', '.mostdiagram') //$NON-NLS-1$ $NON-NLS-2$
         ]
         copier.invoke
     }
@@ -58,8 +58,8 @@ class WorkflowPostProcess {
     def private copyAdminImage() {
         val fileCopy = new FileCopy
         val bundle = Platform.getBundle(Activator.PLUGIN_ID)
-        var resources = FileLocator.findEntries(bundle, new Path('/src/resources/images/MOST_48.png'))
-        val resourcesExported = FileLocator.findEntries(bundle, new Path('/resources/images/MOST_48.png'))
+        var resources = FileLocator.findEntries(bundle, new Path('/src/resources/images/MOST_48.png')) //$NON-NLS-1$
+        val resourcesExported = FileLocator.findEntries(bundle, new Path('/resources/images/MOST_48.png')) //$NON-NLS-1$
         if (resources.empty) {
             resources = resourcesExported
         }
@@ -70,15 +70,16 @@ class WorkflowPostProcess {
                 val file = new File(fileUrl.getPath)
                 fileCopy.sourceFile = file.absolutePath
 
-                val targetBasePath = settings.outputPath + '/zclassic/' + settings.appName.toFirstUpper + '/'
-                var imageFolder = 'Resources/public/images'
+                val targetBasePath = settings.outputPath + '/zclassic/' + settings.appName.toFirstUpper + '/' //$NON-NLS-1$ $NON-NLS-2$
+                var imageFolder = 'Resources/public/images' //$NON-NLS-1$
                 var targetFolder = new File(targetBasePath + imageFolder)
                 if (!targetFolder.exists) {
-                    imageFolder = 'src/modules/' + settings.appName.toFirstUpper + '/images' // BC support for 1.3.5
+                    // BC support for 1.3.x
+                    imageFolder = 'src/modules/' + settings.appName.toFirstUpper + '/images' //$NON-NLS-1$
                     targetFolder = new File(targetBasePath + imageFolder)
                 }
                 if (targetFolder.exists) {
-                    fileCopy.targetFile = targetBasePath + imageFolder + '/admin.png'
+                    fileCopy.targetFile = targetBasePath + imageFolder + '/admin.png' //$NON-NLS-1$
                     fileCopy.invoke(null)
                 }
             } catch (IOException e) {
@@ -95,7 +96,7 @@ class WorkflowPostProcess {
         try {
             val bundle = Platform.getBundle(Activator.PLUGIN_ID)
             var resources = FileLocator.findEntries(bundle, new Path(settings.getReportPath))
-            val resourcesExported = FileLocator.findEntries(bundle, new Path('src/' + settings.getReportPath))
+            val resourcesExported = FileLocator.findEntries(bundle, new Path('src/' + settings.getReportPath)) //$NON-NLS-1$
             if (resources.size < 1) {
                 resources = resourcesExported
             }
@@ -103,11 +104,11 @@ class WorkflowPostProcess {
 
             val reportingFacade = new ReportingFacade
             reportingFacade.outputPath = settings.getOutputPath
-            reportingFacade.modelPath = settings.getModelPath.replaceFirst('file:', '')
+            reportingFacade.modelPath = settings.getModelPath.replaceFirst('file:', '') //$NON-NLS-1$ $NON-NLS-2$
             reportingFacade.setUp
             for (report : settings.getSelectedReports) {
-                settings.getProgressMonitor.subTask('Reporting: ' + report.toString)
-                reportingFacade.startExport(dir.toString + '/' + report.toString + '.rptdesign', report.toString)
+                settings.getProgressMonitor.subTask('Reporting: ' + report.toString) //$NON-NLS-1$
+                reportingFacade.startExport(dir.toString + '/' + report.toString + '.rptdesign', report.toString) //$NON-NLS-1$ $NON-NLS-2$
                 settings.getProgressMonitor.subTask('')
             }
             reportingFacade.shutDown
