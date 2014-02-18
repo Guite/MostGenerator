@@ -477,8 +477,9 @@ class WorkflowUtil {
             $repository = $entityManager->getRepository($entityClass);
 
             $where = 'tbl.workflowState = \'' . $state . '\'';
+            $parameters = array('workflowState' => $state);
             $useJoins = false;
-            $amount = $repository->selectCount($where, $useJoins);
+            $amount = $repository->selectCount($where, $useJoins, $parameters);
 
             return $amount;
         }

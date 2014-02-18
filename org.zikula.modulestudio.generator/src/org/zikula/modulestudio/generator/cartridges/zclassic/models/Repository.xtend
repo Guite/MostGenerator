@@ -163,10 +163,8 @@ class Repository {
             «selectSearch»
 
             «retrieveCollectionResult»
-            «IF !getUniqueDerivedFields.empty»
 
-                «selectCount»
-            «ENDIF»
+            «selectCount»
 
             «new Tree().generate(it, app)»
 
@@ -1236,16 +1234,16 @@ class Repository {
         /**
          * Selects entity count with a given where clause.
          *
-         * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+         * @param string  $where      The where clause to use when retrieving the object count (optional) (default='').
+         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=true).
+         * @param array   $parameters List of determined filter options.
          *
          * @return integer amount of affected records
          */
-        public function selectCount($where = '', $useJoins = true)
+        public function selectCount($where = '', $useJoins = true, $parameters = array())
         {
             $qb = $this->getCountQuery($where, $useJoins);
 
-            $parameters = array();
             $qb = $this->applyDefaultFilters($qb, $parameters);
 
             $query = $qb->getQuery();
