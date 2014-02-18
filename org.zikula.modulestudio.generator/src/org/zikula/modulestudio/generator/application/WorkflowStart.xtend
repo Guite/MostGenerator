@@ -163,7 +163,7 @@ class WorkflowStart {
     	val app = model.contents.head as Application
     	settings.appName = app.name.formatForCodeCapital
         settings.appVendor = app.vendor.formatForCodeCapital
-		settings.appVersion = app.version.formatForCodeCapital
+		settings.appVersion = app.version
 
         // compute destination path for model files
         var modelDestinationPath = '/model/' //$NON-NLS-1$
