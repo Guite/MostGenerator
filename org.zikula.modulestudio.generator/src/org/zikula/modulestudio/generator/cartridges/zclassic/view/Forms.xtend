@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Action
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
+import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DateField
@@ -41,7 +42,9 @@ class Forms {
 
     def generate(Application it, IFileSystemAccess fsa) {
         for (controller : getAllControllers) {
-            for (action : controller.actions.filter(EditAction)) action.generate(it, fsa)
+            if (!(controller instanceof AjaxController)) {
+                for (action : controller.actions.filter(EditAction)) action.generate(it, fsa)
+            }
         }
     }
 
