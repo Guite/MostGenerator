@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
+import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.UserController
@@ -52,20 +53,22 @@ class Views {
         this.fsa = fsa
         relationHelper = new Relations()
         for (controller : getAllControllers) {
-            if (controller.tempIsUserController || controller.tempIsAdminController) {
-                generateViews(controller)
-            }
-            if (hasAttributableEntities) {
-                new Attributes().generate(it, controller, fsa)
-            }
-            if (hasCategorisableEntities) {
-                new Categories().generate(it, controller, fsa)
-            }
-            if (hasStandardFieldEntities) {
-                new StandardFields().generate(it, controller, fsa)
-            }
-            if (hasMetaDataEntities) {
-                new MetaData().generate(it, controller, fsa)
+            if (!(controller instanceof AjaxController)) {
+                if (controller.tempIsUserController || controller.tempIsAdminController) {
+                    generateViews(controller)
+                }
+                if (hasAttributableEntities) {
+                    new Attributes().generate(it, controller, fsa)
+                }
+                if (hasCategorisableEntities) {
+                    new Categories().generate(it, controller, fsa)
+                }
+                if (hasStandardFieldEntities) {
+                    new StandardFields().generate(it, controller, fsa)
+                }
+                if (hasMetaDataEntities) {
+                    new MetaData().generate(it, controller, fsa)
+                }
             }
         }
         if (!targets('1.3.5')) {
