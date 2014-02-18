@@ -17,6 +17,7 @@ import de.guite.modulestudio.metamodel.modulestudio.NamedObject
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.UserController
+import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
@@ -138,88 +139,100 @@ class View {
             «val listItemsFields = getDisplayFieldsForView»
             «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional]»
             «val listItemsOut = outgoing.filter(OneToOneRelationship)»
-            «IF listType != 3»
-                <«listType.asListTag»>
-            «ELSE»
-                <table class="«IF container.application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0)) > 7» table-condensed«ENDIF»{* table-responsive*}«ENDIF»">
-                    <colgroup>
-                        «IF controller.tableClass == 'admin'»
-                            <col id="cSelect" />
-                        «ENDIF»
-                        «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
-                        «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
-                        «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
-                        <col id="cItemActions" />
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        «IF categorisable»
-                            {assign var='catIdListMainString' value=','|implode:$catIdList.Main}
-                        «ENDIF»
-                        «IF controller.tableClass == 'admin'»
-                            <th id="hSelect" scope="col" align="center" valign="middle">
-                                <input type="checkbox" id="toggle«nameMultiple.formatForCodeCapital»" />
-                            </th>
-                        «ENDIF»
-                        «FOR field : listItemsFields»«field.headerLine(controller)»«ENDFOR»
-                        «FOR relation : listItemsIn»«relation.headerLine(controller, false)»«ENDFOR»
-                        «FOR relation : listItemsOut»«relation.headerLine(controller, true)»«ENDFOR»
-                        <th id="hItemActions" scope="col" class="«IF container.application.targets('1.3.5')»z-right «ENDIF»z-order-unsorted">{gt text='Actions'}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-            «ENDIF»
+            «viewItemListHeader(appName, controller, listItemsFields, listItemsIn, listItemsOut)»
 
-            {foreach item='«name.formatForCode»' from=$items}
-                «IF listType < 2»
-                    <li><ul>
-                «ELSEIF listType == 2»
-                    <dt>
-                «ELSEIF listType == 3»
-                    <tr«IF container.application.targets('1.3.5')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
-                        «IF controller.tableClass == 'admin'»
-                            <td headers="hselect" align="center" valign="top">
-                                <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
-                            </td>
-                        «ENDIF»
-                «ENDIF»
-                    «FOR field : listItemsFields»«field.displayEntry(controller, false)»«ENDFOR»
-                    «FOR relation : listItemsIn»«relation.displayEntry(controller, false)»«ENDFOR»
-                    «FOR relation : listItemsOut»«relation.displayEntry(controller, true)»«ENDFOR»
-                    «itemActions(appName, controller)»
-                «IF listType < 2»
-                    </ul></li>
-                «ELSEIF listType == 2»
-                    </dt>
-                «ELSEIF listType == 3»
-                    </tr>
-                «ENDIF»
-            {foreachelse}
-                «IF listType < 2»
-                    <li>
-                «ELSEIF listType == 2»
-                    <dt>
-                «ELSEIF listType == 3»
-                    <tr class="z-«controller.tableClass»tableempty">
-                      <td class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-left" colspan="«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0))»">
-                «ENDIF»
-                {gt text='No «nameMultiple.formatForDisplay» found.'}
-                «IF listType < 2»
-                    </li>
-                «ELSEIF listType == 2»
-                    </dt>
-                «ELSEIF listType == 3»
-                      </td>
-                    </tr>
-                «ENDIF»
-            {/foreach}
+            «viewItemListBody(appName, controller, listItemsFields, listItemsIn, listItemsOut)»
 
-            «IF listType != 3»
-                <«listType.asListTag»>
-            «ELSE»
-                    </tbody>
-                </table>
+            «viewItemListFooter»
+    '''
+
+    def private viewItemListHeader(Entity it, String appName, Controller controller, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
+        «IF listType != 3»
+            <«listType.asListTag»>
+        «ELSE»
+            <table class="«IF container.application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0)) > 7» table-condensed«ENDIF»{* table-responsive*}«ENDIF»">
+                <colgroup>
+                    «IF controller.tableClass == 'admin'»
+                        <col id="cSelect" />
+                    «ENDIF»
+                    «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
+                    «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
+                    «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
+                    <col id="cItemActions" />
+                </colgroup>
+                <thead>
+                <tr>
+                    «IF categorisable»
+                        {assign var='catIdListMainString' value=','|implode:$catIdList.Main}
+                    «ENDIF»
+                    «IF controller.tableClass == 'admin'»
+                        <th id="hSelect" scope="col" align="center" valign="middle">
+                            <input type="checkbox" id="toggle«nameMultiple.formatForCodeCapital»" />
+                        </th>
+                    «ENDIF»
+                    «FOR field : listItemsFields»«field.headerLine(controller)»«ENDFOR»
+                    «FOR relation : listItemsIn»«relation.headerLine(controller, false)»«ENDFOR»
+                    «FOR relation : listItemsOut»«relation.headerLine(controller, true)»«ENDFOR»
+                    <th id="hItemActions" scope="col" class="«IF container.application.targets('1.3.5')»z-right «ENDIF»z-order-unsorted">{gt text='Actions'}</th>
+                </tr>
+                </thead>
+                <tbody>
+        «ENDIF»
+    '''
+
+    def private viewItemListBody(Entity it, String appName, Controller controller, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
+        {foreach item='«name.formatForCode»' from=$items}
+            «IF listType < 2»
+                <li><ul>
+            «ELSEIF listType == 2»
+                <dt>
+            «ELSEIF listType == 3»
+                <tr«IF container.application.targets('1.3.5')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
+                    «IF controller.tableClass == 'admin'»
+                        <td headers="hselect" align="center" valign="top">
+                            <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
+                        </td>
+                    «ENDIF»
             «ENDIF»
+                «FOR field : listItemsFields»«field.displayEntry(controller, false)»«ENDFOR»
+                «FOR relation : listItemsIn»«relation.displayEntry(controller, false)»«ENDFOR»
+                «FOR relation : listItemsOut»«relation.displayEntry(controller, true)»«ENDFOR»
+                «itemActions(appName, controller)»
+            «IF listType < 2»
+                </ul></li>
+            «ELSEIF listType == 2»
+                </dt>
+            «ELSEIF listType == 3»
+                </tr>
+            «ENDIF»
+        {foreachelse}
+            «IF listType < 2»
+                <li>
+            «ELSEIF listType == 2»
+                <dt>
+            «ELSEIF listType == 3»
+                <tr class="z-«controller.tableClass»tableempty">
+                  <td class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-left" colspan="«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0))»">
+            «ENDIF»
+            {gt text='No «nameMultiple.formatForDisplay» found.'}
+            «IF listType < 2»
+                </li>
+            «ELSEIF listType == 2»
+                </dt>
+            «ELSEIF listType == 3»
+                  </td>
+                </tr>
+            «ENDIF»
+        {/foreach}
+    '''
+
+    def private viewItemListFooter(Entity it) '''
+        «IF listType != 3»
+            <«listType.asListTag»>
+        «ELSE»
+                </tbody>
+            </table>
+        «ENDIF»
     '''
 
     def private pagerCall(Entity it, String appName, Controller controller) '''
