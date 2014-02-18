@@ -193,7 +193,7 @@ class Relations {
             {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
         {/if}
         «ELSE»
-        {if isset($items) && is_array($items)}
+        {if isset($items) && is_array($items) && !empty($items)}
             {modapifunc modname='«app.appName»' type='selection' func='getEntities' ot='«targetEntity.name.formatForCode»' idList=$items assign='items'}
         {/if}
         «ENDIF»
