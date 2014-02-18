@@ -122,10 +122,10 @@ class WorkflowStart {
             }
             success = true
         } catch (IOException e) {
-            throw new M2TFailedGeneratorResourceNotFound(e.message)
+            throw new M2TFailedGeneratorResourceNotFound(e)
         } catch (Exception e) {
             e.printStackTrace
-            throw new M2TUnknownException(e.message)
+            throw new M2TUnknownException(e)
         } finally {
         }
 

@@ -15,6 +15,15 @@ class M2TUnknownException extends ExceptionBase {
     }
 
     /**
+     * Constructor with given exception.
+     *
+     * @param s The given error message.
+     */
+    new(Exception e) {
+        super(e.message)
+    }
+
+    /**
      * Constructor without given message.
      */
     new() {
