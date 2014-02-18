@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Action
+import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -41,7 +42,11 @@ class FormHandler {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
-        for (action : getEditActions) action.generate(fsa)
+        for (action : getEditActions) {
+            if (!(action.controller instanceof AjaxController)) {
+                action.generate(fsa)
+            }
+        }
         new Config().generate(it, fsa)
     }
 
