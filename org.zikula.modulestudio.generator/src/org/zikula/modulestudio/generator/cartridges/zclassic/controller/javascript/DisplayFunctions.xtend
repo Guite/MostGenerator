@@ -288,7 +288,7 @@ class DisplayFunctions {
          */
         function «prefix()»InitToggle(objectType, fieldName, itemId)
         {
-            var idSuffix = fieldName + itemId;
+            var idSuffix = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + itemId;
             if ($('toggle' + idSuffix) == undefined) {
                 return;
             }
