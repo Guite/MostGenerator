@@ -50,13 +50,13 @@ class ContentTypeListView {
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty»
                     {if $«name.formatForCode».«textFields.head.name.formatForCode»}
-                        <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|strip_tags|truncate:200:"..."}</dd>
+                        <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|strip_tags|truncate:200:'&hellip;'}</dd>
                     {/if}
                 «ELSE»
                     «val stringFields = fields.filter(StringField).filter[!leading && !password]»
                     «IF !stringFields.empty»
                         {if $«name.formatForCode».«stringFields.head.name.formatForCode»}
-                            <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|strip_tags|truncate:200:"..."}</dd>
+                            <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|strip_tags|truncate:200:'&hellip;'}</dd>
                         {/if}
                     «ENDIF»
                 «ENDIF»
