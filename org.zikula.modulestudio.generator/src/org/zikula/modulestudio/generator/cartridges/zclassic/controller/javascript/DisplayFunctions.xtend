@@ -305,6 +305,7 @@ class DisplayFunctions {
          */
         function «prefix()»ToggleFlag(objectType, fieldName, itemId)
         {
+            fieldName = fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
             var pars = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
             new Zikula.Ajax.Request(
@@ -323,6 +324,7 @@ class DisplayFunctions {
                         }*/
 
                         var idSuffix = fieldName + '_' + itemId;
+                        idSuffix = idSuffix.toLowerCase();
                         var state = data.state;
                         if (state === true) {
                             $('no' + idSuffix).addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
