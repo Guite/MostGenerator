@@ -34,6 +34,9 @@ class ContentTypeListView {
                 fsa.generateFile(entityTemplate, entity.displayTemplate(it))
             }
         }
+        if (!shouldBeSkipped(templatePath + 'itemlist_display.tpl')) {
+            fsa.generateFile(templatePath + 'itemlist_display.tpl', fallbackDisplayTemplate)
+        }
         if (!shouldBeSkipped(templatePath + 'itemlist_edit.tpl')) {
             fsa.generateFile(templatePath + 'itemlist_edit.tpl', editTemplate)
         }
@@ -47,13 +50,13 @@ class ContentTypeListView {
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty»
                     {if $«name.formatForCode».«textFields.head.name.formatForCode»}
-                        <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|truncate:200:"..."}</dd>
+                        <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|strip_tags|truncate:200:"..."}</dd>
                     {/if}
                 «ELSE»
                     «val stringFields = fields.filter(StringField).filter[!leading && !password]»
                     «IF !stringFields.empty»
                         {if $«name.formatForCode».«stringFields.head.name.formatForCode»}
-                            <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|truncate:200:"..."}</dd>
+                            <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|strip_tags|truncate:200:"..."}</dd>
                         {/if}
                     «ENDIF»
                 «ENDIF»
@@ -72,6 +75,10 @@ class ContentTypeListView {
                 <p>«detailLink(app.appName)»</p>
             «ENDIF»
         {/foreach}
+    '''
+
+    def private fallbackDisplayTemplate(Application it) '''
+        {* Purpose of this template: Display objects within an external context *}
     '''
 
     def private editTemplate(Application it) '''
