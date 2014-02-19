@@ -121,7 +121,7 @@ class EditFunctions {
                 $(fieldName).value = '';
             }
             if ($(fieldName + 'cal') != null) {
-                $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName»'));
+                $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
             }
         }
     '''
@@ -165,7 +165,7 @@ class EditFunctions {
             geocoder.geocode(address);
 
             function «prefix»GeoCodeErrorCallback (status) {
-                Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName»') + ' ' + status);
+                Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
             }
 
             function «prefix»GeoCodeReturn (location) {
@@ -546,7 +546,7 @@ class EditFunctions {
                             // activate it
                             relationHandler.acInstance.activate();
                             // show a message 
-                            Zikula.UI.Alert(Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), Zikula.__('Information','module_«appName.formatForDB»_js'), {
+                            Zikula.UI.Alert(Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), {
                                 autoClose: 3 // time in seconds
                             });
                         }

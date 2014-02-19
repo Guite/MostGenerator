@@ -327,7 +327,7 @@ class Forms {
                         }
 
                         function handlePositionError(evt) {
-                            Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»'));
+                            Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
                         }
                         {{*
                             Initialise geocoding functionality.

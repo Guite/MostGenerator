@@ -314,12 +314,12 @@ class DisplayFunctions {
                     parameters: pars,
                     onComplete: function(req) {
                         if (!req.isSuccess()) {
-                            Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName»'));
+                            Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                             return;
                         }
                         var data = req.getData();
                         /*if (data.message) {
-                            Zikula.UI.Alert(data.message, Zikula.__('Success', 'module_«appName»'));
+                            Zikula.UI.Alert(data.message, Zikula.__('Success', 'module_«appName.formatForDB»_js'));
                         }*/
 
                         var idSuffix = fieldName + '_' + itemId;
