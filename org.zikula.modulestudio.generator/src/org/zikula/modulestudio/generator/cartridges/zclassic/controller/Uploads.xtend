@@ -426,7 +426,7 @@ class Uploads {
                     $fileNameCharCount = strlen($fileName);
                     for ($y = 0; $y < $fileNameCharCount; $y++) {
                         if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
-                        $fileName[$y] = '_';
+                            $fileName[$y] = '_';
                         }
                     }
                     // append incremented number
