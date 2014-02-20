@@ -197,8 +197,8 @@ class Redirect {
                         «ENDFOR»
                     «ENDIF»
                 «ENDFOR»
-                        default:
-                            return $this->getDefaultReturnUrl($args);
+                default:
+                    return $this->getDefaultReturnUrl($args);
             }
         }
     '''
