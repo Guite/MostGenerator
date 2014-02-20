@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -32,6 +33,10 @@ class Relations {
         if (!app.shouldBeSkipped(templatePath)) {
             fsa.generateFile(templatePath, '''
                 {* purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay» in «controller.formattedName» area *}
+                «IF controller instanceof UserController»
+                    {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasAdminPermission'}
+                    {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasEditPermission'}
+                «ENDIF»
                 «IF controller.hasActions('display')»
                     {if !isset($nolink)}
                         {assign var='nolink' value=false}
@@ -43,6 +48,9 @@ class Relations {
                     {if isset($items) && $items ne null && count($items) gt 0}
                     <ul class="«app.appName.toLowerCase»-related-item-list «name.formatForCode»">
                     {foreach name='relLoop' item='item' from=$items}
+                    «IF controller instanceof UserController»
+                        {if $hasAdminPermission || $item.workflowState eq 'approved'«IF ownerPermission» || ($item.workflowState eq 'defered' && $hasEditPermission && isset($uid) && $item.createdUserId eq $uid)«ENDIF»}
+                    «ENDIF»
                         <li>
                 «ENDIF»
                 «IF controller.hasActions('display')»
@@ -85,6 +93,9 @@ class Relations {
                 «ENDIF»
                 «IF many»
                         </li>
+                    «IF controller instanceof UserController»
+                        {/if}
+                    «ENDIF»
                     {/foreach}
                     </ul>
                     {/if}
