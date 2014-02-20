@@ -157,21 +157,21 @@ class Redirect {
                     «val controllerName = someController.formattedName»
                     «IF someController.hasActions('index')»
                         case '«controllerName»':
-                                    return ModUtil::url($this->name, '«controllerName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+                            return ModUtil::url($this->name, '«controllerName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
                     «ENDIF»
                     «IF someController.hasActions('view')»
                         case '«controllerName»View':
-                                    return ModUtil::url($this->name, '«controllerName»', 'view',
-                                                             array('ot' => $this->objectType));
+                            return ModUtil::url($this->name, '«controllerName»', 'view',
+                                                            array('ot' => $this->objectType));
                     «ENDIF»
                     «IF someController.hasActions('display')»
                         case '«controllerName»Display':
-                                    if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
-                                        $urlArgs = $this->addIdentifiersToUrlArgs();
-                                        $urlArgs['ot'] = $this->objectType;
-                                        return ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
-                                    }
-                                    return $this->getDefaultReturnUrl($args);
+                            if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
+                                $urlArgs = $this->addIdentifiersToUrlArgs();
+                                $urlArgs['ot'] = $this->objectType;
+                                return ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
+                            }
+                            return $this->getDefaultReturnUrl($args);
                     «ENDIF»
                 «ENDIF»
                 «ENDFOR»
