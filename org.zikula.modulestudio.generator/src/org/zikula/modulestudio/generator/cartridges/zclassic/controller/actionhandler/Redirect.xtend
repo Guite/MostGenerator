@@ -188,8 +188,8 @@ class Redirect {
                             «ENDIF»
                             «IF someController.hasActions('display')»
                                 case '«controllerName»Display«sourceEntity.name.formatForCodeCapital»':
-                                    if (!empty($this->«incomingRelation.getRelationAliasName(false)»)) {
-                                        return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
+                                    if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
+                                        return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                     }
                                     return $this->getDefaultReturnUrl($args);
                             «ENDIF»
