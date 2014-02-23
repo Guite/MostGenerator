@@ -1037,6 +1037,17 @@ class Entities {
                         «ENDFOR»
                     «ENDFOR»
                 «ENDIF»
+
+                «IF categorisable»
+                    // clone categories
+                    $categories = $this->categories;
+                    $this->categories = new ArrayCollection();
+                    foreach ($categories as $c) {
+                        $newcat = clone $c;
+                        $this->categories->add($newcat);
+                        $newcat->setEntity($this);
+                    }
+                «ENDIF»
             }
             // otherwise do nothing, do NOT throw an exception!
         }
