@@ -1037,17 +1037,29 @@ class Entities {
                         «ENDFOR»
                     «ENDFOR»
                 «ENDIF»
-
                 «IF categorisable»
+
                     // clone categories
                     $categories = $this->categories;
                     $this->categories = new ArrayCollection();
                     foreach ($categories as $c) {
-                        $newcat = clone $c;
-                        $this->categories->add($newcat);
-                        $newcat->setEntity($this);
+                        $newCat = clone $c;
+                        $this->categories->add($newCat);
+                        $newCat->setEntity($this);
                     }
                 «ENDIF»
+                «IF attributable»
+
+                    // clone attributes
+                    $attributes = $this->attributes;
+                    $this->attributes = new ArrayCollection();
+                    foreach ($attributes as $a) {
+                        $newAttr = clone $a;
+                        $this->attributes->add($newAttr);
+                        $newAttr->setEntity($this);
+                    }
+                «ENDIF»
+                «/* TODO consider other extensions here (meta data, translatable, loggable, maybe more) */»
             }
             // otherwise do nothing, do NOT throw an exception!
         }
