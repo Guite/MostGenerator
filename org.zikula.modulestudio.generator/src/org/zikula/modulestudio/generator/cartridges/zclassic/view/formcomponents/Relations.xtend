@@ -189,8 +189,12 @@ class Relations {
             {assign var='removeImage' value='<span class="fa fa-trash-o"></span>'}
         «ENDIF»
         «IF !many»
-        {if isset($item) && is_array($item) && isset($item[0]) && !is_object($item[0])}
-            {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
+        {if isset($item) && is_array($item)}
+            {if isset($item[0]) && !is_object($item[0])}
+                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
+            {elseif «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item['«pkField.name.formatForCode»'])«ENDFOR»}
+                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' «targetEntity.modUrlPrimaryKeyParams('item', true)» assign='item'}
+            {/if}
         {/if}
         «ELSE»
         {if isset($items) && is_array($items) && !empty($items)}
