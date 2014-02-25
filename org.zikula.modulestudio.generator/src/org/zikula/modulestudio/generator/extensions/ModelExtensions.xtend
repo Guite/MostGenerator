@@ -178,7 +178,7 @@ class ModelExtensions {
 
     /**
      * Prepends the application database prefix to a given string.
-     * Beginning with Zikula 1.3.6 the vendor is prefixed, too.
+     * Beginning with Zikula 1.4.0 the vendor is prefixed, too.
      */
     def tableNameWithPrefix(Application it, String inputString) {
         if (targets('1.3.5')) {
