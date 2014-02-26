@@ -193,7 +193,7 @@ class Relations {
             {if isset($item[0]) && !is_object($item[0])}
                 {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
             {elseif «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item['«pkField.name.formatForCode»'])«ENDFOR»}
-                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' «targetEntity.modUrlPrimaryKeyParams('item', true)» assign='item'}
+                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' «IF targetEntity.hasCompositeKeys»«targetEntity.modUrlPrimaryKeyParams('item', true)»«ELSE»«targetEntity.modUrlPrimaryKeyParams('item', true, 'id')»«/* getEntity expects id as argument */»«ENDIF» assign='item'}
             {/if}
         {/if}
         «ELSE»
