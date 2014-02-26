@@ -198,7 +198,18 @@ class Relations {
         {/if}
         «ELSE»
         {if isset($items) && is_array($items) && !empty($items)}
-            {modapifunc modname='«app.appName»' type='selection' func='getEntities' ot='«targetEntity.name.formatForCode»' idList=$items assign='items'}
+            {php}
+                // build list of ids for selection of related items
+                $items = $this->get_template_vars('items');
+                $idList = array();
+                foreach ($items as $item) {
+                    if (isset($item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'])) {
+                        $idList[] = $item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'];
+                    }
+                }
+                $this->assign('relatedIdList', $idList);
+            {/php}
+            {modapifunc modname='«app.appName»' type='selection' func='getEntities' ot='«targetEntity.name.formatForCode»' idList=$relatedIdList assign='items'}
         {/if}
         «ENDIF»
 

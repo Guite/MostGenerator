@@ -720,28 +720,28 @@ class Repository {
          */
         protected function addIdListFilter($idList, QueryBuilder $qb)
         {
-            $orx = $qb->expr()->orX();
-            
+            $orX = $qb->expr()->orX();
+
             foreach ($idList as $id) {
                 // check id parameter
                 if ($id == 0) {
                     throw new \InvalidArgumentException(__('Invalid identifier received.'));
                 }
-                
+
                 if (is_array($id)) {
-                    $andx = $qb->expr()->andX();
+                    $andX = $qb->expr()->andX();
                     foreach ($id as $fieldName => $fieldValue) {
-                        $andx->add($qb->expr()->eq('tbl.' . $fieldName, $fieldValue));
+                        $andX->add($qb->expr()->eq('tbl.' . $fieldName, $fieldValue));
                     }
-                    $orx->add($andx);
+                    $orX->add($andX);
                 } else {
-                    $orx->add($qb->expr()->eq('tbl.«getFirstPrimaryKey.name.formatForCode»', $id));
+                    $orX->add($qb->expr()->eq('tbl.«getFirstPrimaryKey.name.formatForCode»', $id));
                 }
                 
             }
-            
-            $qb->andWhere($orx);
-            
+
+            $qb->andWhere($orX);
+
             return $qb;
         }
 
@@ -759,6 +759,7 @@ class Repository {
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
             $results = $this->selectByIdList(array($id));
+
             return (count($results) > 0) ? $results[0] : null;
         }
         
@@ -775,14 +776,13 @@ class Repository {
          */
         public function selectByIdList($idList = array(0), $useJoins = true, $slimMode = false)
         {
-    
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
             $qb = $this->addIdListFilter($idList, $qb);
             
             $query = $this->getQueryFromBuilder($qb);
         
             $results = $query->getResult();//OneOrNullResult();
-            
+
             return (count($results) > 0) ? $results : null;
         }
     '''
