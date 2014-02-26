@@ -129,7 +129,7 @@ class Relations {
                 «IF !app.targets('1.3.5')»
                     </div>
                 «ENDIF»
-            {else if $displayMode eq 'autocomplete'}
+            {elseif $displayMode eq 'autocomplete'}
                 «IF !isManyToMany && !incoming»
                     «component_ParentEditing(ownEntity, many)»
                 «ELSE»
@@ -192,7 +192,7 @@ class Relations {
         {if isset($item) && is_array($item)}
             {if isset($item[0]) && !is_object($item[0])}
                 {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
-            {else if «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item['«pkField.name.formatForCode»'])«ENDFOR»}
+            {elseif «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item['«pkField.name.formatForCode»'])«ENDFOR»}
                 {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' «targetEntity.modUrlPrimaryKeyParams('item', true)» assign='item'}
             {/if}
         {/if}
