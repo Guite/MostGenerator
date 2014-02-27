@@ -400,7 +400,7 @@ class AbstractObjectSelector {
                 $this->preselectedItems = $relatedItems;
             }
 
-            $entityData[$alias] = $itemIds;
+            //$entityData[$alias] = $itemIds;«/* commented out to prevent further problems when identifiers are available where entities are expected */»
             $view->assign('linkingItem', $entityData);
         }
     '''

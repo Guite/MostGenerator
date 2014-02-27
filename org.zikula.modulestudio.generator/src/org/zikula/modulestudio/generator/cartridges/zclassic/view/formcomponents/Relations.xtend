@@ -104,6 +104,7 @@ class Relations {
     def private includedEditTemplate(JoinRelationship it, Application app, Controller controller, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
         {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» in «controller.formattedName» area *}
+        «includedEditTemplateIdCollection(app, ownEntity, many)»
         {if !isset($displayMode)}
             {assign var='displayMode' value='dropdown'}
         {/if}
@@ -143,6 +144,43 @@ class Relations {
             {/if}
             </div>
         </fieldset>
+    '''
+
+    def private includedEditTemplateIdCollection(JoinRelationship it, Application app, Entity ownEntity, Boolean many) '''
+        {php}
+            «includedEditTemplateIdCollectionImpl(app, ownEntity, many)»
+        {/php}
+    '''
+
+    def private includedEditTemplateIdCollectionImpl(JoinRelationship it, Application app, Entity ownEntity, Boolean many) '''
+        // build list of ids for selection of related items
+        $tplVars = $this->get_template_vars();
+        $relItem«IF many»s«ENDIF» = $tplVars[$tplVars['group']][$tplVars['alias']];
+
+        «IF !many»
+            $item = $relItem;
+            «includedEditTemplateIdCollectionAssignSingleId»
+        «ELSE»
+            $items = $relItems;
+            foreach ($items as $item) {
+                «includedEditTemplateIdCollectionAssignSingleId»
+            }
+        «ENDIF»
+
+        $entities = ModUtil::apiFunc('«app.appName»', 'selection', 'getEntities', array('ot' => '«ownEntity.name.formatForCode»', 'idList' => $idList));
+
+        $tplVars[$tplVars['group']][$tplVars['alias']] = (count($entities)) > 0 ? $entities[0]: '';
+        $this->assign($tplVars['group'], $tplVars[$tplVars['group']]);
+    '''
+    
+    def private includedEditTemplateIdCollectionAssignSingleId() '''
+        if (is_array($item) && array_key_exists('id', $item) && isset($item['id'])) {
+            $idList[] = $item['id'];
+        } else if (is_array($item) && array_key_exists('0', $item) && isset($item[0])) {
+            $idList[] = $item[0];
+        } else {
+            $idList[] = $item;
+        }
     '''
 
     def private formPluginAttributes(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
