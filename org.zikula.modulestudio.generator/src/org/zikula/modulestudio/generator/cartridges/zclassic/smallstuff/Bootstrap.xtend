@@ -147,7 +147,7 @@ class Bootstrap {
             function «prefix()»PerformRegularAmendments()
             {
                 $currentFunc = FormUtil::getPassedValue('func', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
-                if ($currentFunc == 'edit') {
+                if ($currentFunc == 'edit' || $currentFunc == 'initialize') {
                     return;
                 }
             
