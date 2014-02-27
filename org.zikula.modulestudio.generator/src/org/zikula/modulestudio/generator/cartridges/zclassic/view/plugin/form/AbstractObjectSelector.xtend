@@ -407,7 +407,7 @@ class AbstractObjectSelector {
                 $this->preselectedItems = $relatedItems;
             }
 
-            if (count($itemIds) == 1) {
+            if ($this->selectionMode == 'multiple') {
                 $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $alias, 'id' => $itemIds[0]));
             } else {
                 $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => $alias, 'idList' => $itemIds));
