@@ -104,7 +104,6 @@ class Relations {
     def private includedEditTemplate(JoinRelationship it, Application app, Controller controller, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
         {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» in «controller.formattedName» area *}
-        «includedEditTemplateIdCollection(app, ownEntity, many)»
         {if !isset($displayMode)}
             {assign var='displayMode' value='dropdown'}
         {/if}
@@ -144,43 +143,6 @@ class Relations {
             {/if}
             </div>
         </fieldset>
-    '''
-
-    def private includedEditTemplateIdCollection(JoinRelationship it, Application app, Entity ownEntity, Boolean many) '''
-        {php}
-            «includedEditTemplateIdCollectionImpl(app, ownEntity, many)»
-        {/php}
-    '''
-
-    def private includedEditTemplateIdCollectionImpl(JoinRelationship it, Application app, Entity ownEntity, Boolean many) '''
-        // build list of ids for selection of related items
-        $tplVars = $this->get_template_vars();
-        $relItem«IF many»s«ENDIF» = $tplVars[$tplVars['group']][$tplVars['alias']];
-
-        «IF !many»
-            $item = $relItem;
-            «includedEditTemplateIdCollectionAssignSingleId»
-        «ELSE»
-            $items = $relItems;
-            foreach ($items as $item) {
-                «includedEditTemplateIdCollectionAssignSingleId»
-            }
-        «ENDIF»
-
-        $entities = ModUtil::apiFunc('«app.appName»', 'selection', 'getEntities', array('ot' => '«ownEntity.name.formatForCode»', 'idList' => $idList));
-
-        $tplVars[$tplVars['group']][$tplVars['alias']] = (count($entities)) > 0 ? $entities[0]: '';
-        $this->assign($tplVars['group'], $tplVars[$tplVars['group']]);
-    '''
-    
-    def private includedEditTemplateIdCollectionAssignSingleId() '''
-        if (is_array($item) && array_key_exists('id', $item) && isset($item['id'])) {
-            $idList[] = $item['id'];
-        } else if (is_array($item) && array_key_exists('0', $item) && isset($item[0])) {
-            $idList[] = $item[0];
-        } else {
-            $idList[] = $item;
-        }
     '''
 
     def private formPluginAttributes(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
@@ -225,32 +187,6 @@ class Relations {
             {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
         «ELSE»
             {assign var='removeImage' value='<span class="fa fa-trash-o"></span>'}
-        «ENDIF»
-        «IF !many»
-        {if isset($item) && is_array($item)}
-            {if isset($item[0]) && !is_object($item[0])}
-                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
-            {elseif «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item.«pkField.name.formatForCode»)«ENDFOR»}
-                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' «IF targetEntity.hasCompositeKeys»«targetEntity.modUrlPrimaryKeyParams('item', true)»«ELSE»«targetEntity.modUrlPrimaryKeyParams('item', true, 'id')»«/* getEntity expects id as argument */»«ENDIF» assign='item'}
-            {/if}
-        {/if}
-        «ELSE»
-        {if isset($items) && is_array($items) && !empty($items)}
-            {php}
-                // build list of ids for selection of related items
-                $items = $this->get_template_vars('items');
-                $idList = array();
-                foreach ($items as $item) {
-                    if (is_array($item) && array_key_exists('«targetEntity.getFirstPrimaryKey.name.formatForCode»', $item) && isset($item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'])) {
-                        $idList[] = $item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'];
-                    } else {
-                        $idList[] = $item;
-                    }
-                }
-                $this->assign('relatedIdList', $idList);
-            {/php}
-            {modapifunc modname='«app.appName»' type='selection' func='getEntities' ot='«targetEntity.name.formatForCode»' idList=$relatedIdList assign='items'}
-        {/if}
         «ENDIF»
 
         <input type="hidden" id="{$idPrefix}ItemList" name="{$idPrefix}ItemList" value="{if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
