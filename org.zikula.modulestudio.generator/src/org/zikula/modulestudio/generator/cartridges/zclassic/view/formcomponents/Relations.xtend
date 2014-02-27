@@ -192,7 +192,7 @@ class Relations {
         {if isset($item) && is_array($item)}
             {if isset($item[0]) && !is_object($item[0])}
                 {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
-            {elseif «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item['«pkField.name.formatForCode»'])«ENDFOR»}
+            {elseif «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item.«pkField.name.formatForCode»)«ENDFOR»}
                 {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' «IF targetEntity.hasCompositeKeys»«targetEntity.modUrlPrimaryKeyParams('item', true)»«ELSE»«targetEntity.modUrlPrimaryKeyParams('item', true, 'id')»«/* getEntity expects id as argument */»«ENDIF» assign='item'}
             {/if}
         {/if}
@@ -203,8 +203,10 @@ class Relations {
                 $items = $this->get_template_vars('items');
                 $idList = array();
                 foreach ($items as $item) {
-                    if (isset($item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'])) {
+                    if (is_array($item) && array_key_exists('«targetEntity.getFirstPrimaryKey.name.formatForCode»', $item) && isset($item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'])) {
                         $idList[] = $item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'];
+                    }else{
+                        $idList[] = $item;
                     }
                 }
                 $this->assign('relatedIdList', $idList);
