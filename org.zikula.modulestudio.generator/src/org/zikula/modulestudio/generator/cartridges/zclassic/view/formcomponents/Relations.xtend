@@ -205,7 +205,7 @@ class Relations {
                 foreach ($items as $item) {
                     if (is_array($item) && array_key_exists('«targetEntity.getFirstPrimaryKey.name.formatForCode»', $item) && isset($item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'])) {
                         $idList[] = $item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'];
-                    }else{
+                    } else {
                         $idList[] = $item;
                     }
                 }
