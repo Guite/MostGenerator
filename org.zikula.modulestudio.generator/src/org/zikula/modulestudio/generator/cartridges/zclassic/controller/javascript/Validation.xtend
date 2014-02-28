@@ -239,9 +239,17 @@ class Validation {
                                 $('advice-«validateClass»-«endFieldName»').hide();
                                 $('«startFieldName»').removeClassName('validation-failed').addClassName('validation-passed');
                                 $('«endFieldName»').removeClassName('validation-failed').addClassName('validation-passed');
+                            } else {
+                                $('advice-«validateClass»-«startFieldName»').innerHTML = Zikula.__('The start must be before the end.', 'module_ejubaworkshops_js');
+                                $('advice-«validateClass»-«endFieldName»').innerHTML = Zikula.__('The start must be before the end.', 'module_ejubaworkshops_js');
+                                
+                                $('advice-«validateClass»-«startFieldName»').show();
+                                $('advice-«validateClass»-«endFieldName»').show();
+                                $('«startFieldName»').removeClassName('validation-passed').addClassName('validation-failed');
+                                $('«endFieldName»').removeClassName('validation-passed').addClassName('validation-failed');
                             }
 
-                            return false;
+                            return result;
                         }],
                     «ENDIF»
                 «ENDFOR»

@@ -86,9 +86,9 @@ class Validation {
     '''
     def private additionalValidationMessagesDefault(AbstractDateField it, String idSuffix) '''
         «IF past»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString»-past'}
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-past'}
         «ELSEIF future»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString»-past'}
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-future'}
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DatetimeField it, String idSuffix) '''
@@ -121,7 +121,7 @@ class Validation {
         }
     }
 
-    def private fieldValidationCssClassAdditionsDefault(AbstractDateField it) '''«IF it.past» validate-«fieldTypeAsString»-past«ELSEIF it.future» validate-«fieldTypeAsString»-future«ENDIF»'''
+    def private fieldValidationCssClassAdditionsDefault(AbstractDateField it) '''«IF it.past» validate-«fieldTypeAsString.toLowerCase»-past«ELSEIF it.future» validate-«fieldTypeAsString.toLowerCase»-future«ENDIF»'''
 
     def private dispatch fieldValidationCssClassDateRange(DatetimeField it) '''«IF entity.getStartDateField !== null && entity.getEndDateField !== null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
     def private dispatch fieldValidationCssClassDateRange(DateField it) '''«IF entity.getStartDateField !== null && entity.getEndDateField !== null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
