@@ -188,32 +188,6 @@ class Relations {
         «ELSE»
             {assign var='removeImage' value='<span class="fa fa-trash-o"></span>'}
         «ENDIF»
-        «IF !many»
-        {if isset($item) && is_array($item)}
-            {if isset($item[0]) && !is_object($item[0])}
-                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
-            {elseif «FOR pkField: targetEntity.primaryKeyFields SEPARATOR '&&'»isset($item.«pkField.name.formatForCode»)«ENDFOR»}
-                {modapifunc modname='«app.appName»' type='selection' func='getEntity' ot='«targetEntity.name.formatForCode»' «IF targetEntity.hasCompositeKeys»«targetEntity.modUrlPrimaryKeyParams('item', true)»«ELSE»«targetEntity.modUrlPrimaryKeyParams('item', true, 'id')»«/* getEntity expects id as argument */»«ENDIF» assign='item'}
-            {/if}
-        {/if}
-        «ELSE»
-        {if isset($items) && is_array($items) && !empty($items)}
-            {php}
-                // build list of ids for selection of related items
-                $items = $this->get_template_vars('items');
-                $idList = array();
-                foreach ($items as $item) {
-                    if (is_array($item) && array_key_exists('«targetEntity.getFirstPrimaryKey.name.formatForCode»', $item) && isset($item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'])) {
-                        $idList[] = $item['«targetEntity.getFirstPrimaryKey.name.formatForCode»'];
-                    } else {
-                        $idList[] = $item;
-                    }
-                }
-                $this->assign('relatedIdList', $idList);
-            {/php}
-            {modapifunc modname='«app.appName»' type='selection' func='getEntities' ot='«targetEntity.name.formatForCode»' idList=$relatedIdList assign='items'}
-        {/if}
-        «ENDIF»
 
         <input type="hidden" id="{$idPrefix}ItemList" name="{$idPrefix}ItemList" value="{if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
         <input type="hidden" id="{$idPrefix}Mode" name="{$idPrefix}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />

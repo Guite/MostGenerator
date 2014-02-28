@@ -350,9 +350,13 @@ class AbstractObjectSelector {
         public function setSelectedValue($value)
         {
             $newValue = null;
+
             if ($this->selectionMode == 'single') {
                 if ($value instanceof Zikula_EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
                     $newValue = $value->createCompositeIdentifier();
+                } elseif (is_array($value)) {
+                    $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $value['_objectType']));
+                    $newValue = $value[$idFields[0]];
                 }
             } else {
                 $newValue = array();
@@ -360,6 +364,9 @@ class AbstractObjectSelector {
                     foreach ($value as $entity) {
                         if ($entity instanceof Zikula_EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
                             $newValue[] = $entity->createCompositeIdentifier();
+                        } elseif (is_array($value)) {
+                            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $value['_objectType']));
+                            $newValue[] = $value[$idFields[0]];
                         }
                     }
                 }
@@ -400,7 +407,12 @@ class AbstractObjectSelector {
                 $this->preselectedItems = $relatedItems;
             }
 
-            $entityData[$alias] = $itemIds;
+            if ($this->selectionMode != 'multiple') {
+                $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $alias, 'id' => $itemIds[0]));
+            } else {
+                $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => $alias, 'idList' => $itemIds));
+            }
+
             $view->assign('linkingItem', $entityData);
         }
     '''
