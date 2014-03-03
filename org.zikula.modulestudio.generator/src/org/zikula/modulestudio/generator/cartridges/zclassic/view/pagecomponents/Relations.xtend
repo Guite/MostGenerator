@@ -108,7 +108,7 @@ class Relations {
         «val incoming = (if (target == relatedEntity) true else false)»
         «val useTarget = !incoming»
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
-        «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCodeCapital»
+        «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»
         «val otherEntity = (if (!useTarget) source else target)»
         «val many = isManySideDisplay(useTarget)»
         «IF controller.name.formatForDB == 'admin'»
@@ -129,7 +129,7 @@ class Relations {
             {if $mayManage || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
             <p class="managelink">
                 {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
-                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam.formatForDB»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»fa fa-plus«ENDIF»">{$createTitle}</a>
+                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add«ELSE»fa fa-plus«ENDIF»">{$createTitle}</a>
             </p>
             {/if}
             «IF !many»
