@@ -181,6 +181,7 @@ class Listeners {
                 use Zikula\Core\CoreEvents;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            use Zikula\Core\Event\ModuleStateEvent;
 
         «ENDIF»
         /**

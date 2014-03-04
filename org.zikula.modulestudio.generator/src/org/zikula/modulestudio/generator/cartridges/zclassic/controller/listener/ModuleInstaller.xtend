@@ -14,9 +14,9 @@ class ModuleInstaller {
          * Called after a module has been successfully installed.
          * Receives `$modinfo` as args.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
          */
-        public static function moduleInstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public static function moduleInstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::moduleInstalled($event);
@@ -29,9 +29,9 @@ class ModuleInstaller {
          * Called after a module has been successfully upgraded.
          * Receives `$modinfo` as args.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
          */
-        public static function moduleUpgraded(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public static function moduleUpgraded(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::moduleUpgraded($event);
@@ -45,7 +45,7 @@ class ModuleInstaller {
              * Called after a module has been successfully enabled.
              * Receives `$modinfo` as args.
              */
-            public static function moduleEnabled(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+            public static function moduleEnabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
             {
                 «IF !isBase»
                     parent::moduleActivated($event);
@@ -58,7 +58,7 @@ class ModuleInstaller {
              * Called after a module has been successfully disabled.
              * Receives `$modinfo` as args.
              */
-            public static function moduleDisabled(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+            public static function moduleDisabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
             {
                 «IF !isBase»
                     parent::moduleDeactivated($event);
@@ -74,7 +74,7 @@ class ModuleInstaller {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public static function module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::moduleUninstalled($event);
