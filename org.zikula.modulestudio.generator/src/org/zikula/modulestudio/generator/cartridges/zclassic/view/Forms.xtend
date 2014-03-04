@@ -74,8 +74,8 @@ class Forms {
     def private formTemplateHeader(Entity it, Application app, Controller controller, String actionName) '''
         {* purpose of this template: build the Form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» *}
         {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
-        {pageaddvar name='javascript' value='modules/«IF app.targets('1.3.5')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js'}
-        {pageaddvar name='javascript' value='modules/«IF app.targets('1.3.5')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_validation.js'}
+        {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js'}
+        {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_validation.js'}
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
@@ -453,7 +453,7 @@ class Forms {
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
-                <script type="text/javascript" src="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/javascript«ELSE»«app.getAppJsPath»«ENDIF»/«app.appName»_editFunctions.js"></script>
+                <script type="text/javascript" src="{$baseurl}modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">
