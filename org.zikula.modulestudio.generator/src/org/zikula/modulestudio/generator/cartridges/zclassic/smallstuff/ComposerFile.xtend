@@ -41,7 +41,7 @@ class ComposerFile {
                 "role": "owner"
             }
         ],
-        "autoload": {»
+        "autoload": {
             "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\": "" }
         },
         "require": {
