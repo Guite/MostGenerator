@@ -214,7 +214,7 @@ class ControllerLayer {
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             «ENDIF»
-            «IF hasActions('main') || hasActions('delete')»
+            «IF hasActions('main') || hasActions('view') || hasActions('delete')»
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
             «IF isAjaxController»

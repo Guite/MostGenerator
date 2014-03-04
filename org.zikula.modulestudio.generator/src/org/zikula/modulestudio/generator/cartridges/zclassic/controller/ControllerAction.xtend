@@ -205,6 +205,7 @@ class ControllerAction {
         switch controller {
             UserController: '''
                         «IF controller.hasActions('view')»
+
                             «IF app.targets('1.3.5')»
                                 return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
                             «ELSE»
@@ -224,6 +225,7 @@ class ControllerAction {
                     '''
             AdminController: '''
                         «IF controller.hasActions('view')»
+
                             «IF app.targets('1.3.5')»
                                 return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
                             «ELSE»
@@ -251,6 +253,7 @@ class ControllerAction {
             AjaxController: ''
             CustomController: '''
                         «IF controller.hasActions('view')»
+
                             «IF app.targets('1.3.5')»
                                 return $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', 'view'));
                             «ELSE»
