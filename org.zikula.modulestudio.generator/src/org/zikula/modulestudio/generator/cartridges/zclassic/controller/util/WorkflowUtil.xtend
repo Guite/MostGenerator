@@ -386,6 +386,7 @@ class WorkflowUtil {
             }
 
             $entity['__WORKFLOW__'] = array(
+                'module'        => '«appName»',
                 'id'            => $workflow->getId(),
                 'state'         => $workflow->getState(),
                 'obj_table'     => $workflow->getObjTable(),
