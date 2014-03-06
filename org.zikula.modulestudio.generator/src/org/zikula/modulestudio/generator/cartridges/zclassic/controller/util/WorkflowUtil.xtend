@@ -369,11 +369,11 @@ class WorkflowUtil {
         /**
          * Performs a conversion of the workflow object back to an array.
          *
-         * @param \Zikula_EntityAccess $entity The given entity instance.
+         * @param \Zikula_EntityAccess $entity The given entity instance (excplicitly assigned by reference as form handlers use arrays).
          *
          * @return bool False on error or true if everything worked well.
          */
-        public function normaliseWorkflowData($entity)
+        public function normaliseWorkflowData(&$entity)
         {
             $workflow = $entity['__WORKFLOW__'];
             if (!isset($workflow[0])) {
