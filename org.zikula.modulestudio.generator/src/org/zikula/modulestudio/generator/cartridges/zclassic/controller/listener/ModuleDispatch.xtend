@@ -100,7 +100,7 @@ class ModuleDispatch {
                 parent::customClassName($event);
 
                 // Format data like so:
-                // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', 'main'), 'text' => __('Link Text'));
+                // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»'), 'text' => __('Link Text'));
             «ENDIF»
         }
         «IF !targets('1.3.5')»

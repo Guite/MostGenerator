@@ -950,7 +950,7 @@ class Repository {
         {
             /* commented out to allow default filters also for other calls, like content types and mailz
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
-            if (!in_array($currentFunc, array('main', 'view', 'finder'))) {
+            if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'finder'))) {
                 return $qb;
             }*/
 
