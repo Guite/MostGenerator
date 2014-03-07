@@ -216,7 +216,7 @@ class WorkflowUtil {
             $objectType = $entity['_objectType'];
             «IF !targets('1.3.5')»
 
-                $entity = $this->normaliseWorkflowData($entity);
+                $this->normaliseWorkflowData($entity);
             «ENDIF»
 
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
