@@ -214,10 +214,9 @@ class WorkflowUtil {
         {
             // get possible actions for this object in it's current workflow state
             $objectType = $entity['_objectType'];
-            $schemaName = $this->getWorkflowName($objectType);
             «IF !targets('1.3.5')»
 
-                $this->normaliseWorkflowData($entity);
+                $entity = $this->normaliseWorkflowData($entity);
             «ENDIF»
 
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
@@ -376,13 +375,19 @@ class WorkflowUtil {
         public function normaliseWorkflowData(&$entity)
         {
             $workflow = $entity['__WORKFLOW__'];
-            if (!isset($workflow[0])) {
+            if (!isset($workflow[0]) && isset($workflow['module'])) {
                 return;
             }
 
-            $workflow = $workflow[0];
+            if (isset($workflow[0])) {
+                $workflow = $workflow[0];
+            }
+
             if (!is_object($workflow)) {
-                return;
+                $workflow['module'] = 'GuiteKnowledgeBaseModule';
+                $entity['__WORKFLOW__'] = $workflow;
+
+                return true;
             }
 
             $entity['__WORKFLOW__'] = array(
@@ -394,6 +399,8 @@ class WorkflowUtil {
                 'obj_id'        => $workflow->getObjId(),
                 'schemaname'    => $workflow->getSchemaname()
             );
+
+            return true;
         }
 
     '''
