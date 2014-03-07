@@ -472,10 +472,11 @@ class FormHandler {
 
             $this->view->assign('mode', $this->mode)
                        ->assign('inlineUsage', $this->inlineUsage);
-           «initializeExtensions»
 
             // save entity reference for later reuse
             $this->entityRef = $entity;
+            
+            «initializeExtensions»
 
             $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $actions = $workflowHelper->getActionsForObject($entity);
