@@ -357,6 +357,8 @@ class AbstractObjectSelector {
                 } elseif (is_array($value)) {
                     $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $value['_objectType']));
                     $newValue = $value[$idFields[0]];
+                } else {
+                    $newValue[] = $value;
                 }
             } else {
                 $newValue = array();
@@ -364,9 +366,11 @@ class AbstractObjectSelector {
                     foreach ($value as $entity) {
                         if ($entity instanceof Zikula_EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
                             $newValue[] = $entity->createCompositeIdentifier();
-                        } elseif (is_array($value)) {
-                            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $value['_objectType']));
-                            $newValue[] = $value[$idFields[0]];
+                        } elseif (is_array($entity)) {
+                            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $entity['_objectType']));
+                            $newValue[] = $entity[$idFields[0]];
+                        } else {
+                            $newValue[] = $entity;
                         }
                     }
                 }
