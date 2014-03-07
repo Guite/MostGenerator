@@ -384,7 +384,7 @@ class WorkflowUtil {
             }
 
             if (!is_object($workflow)) {
-                $workflow['module'] = 'GuiteKnowledgeBaseModule';
+                $workflow['module'] = '«appName»';
                 $entity['__WORKFLOW__'] = $workflow;
 
                 return true;
