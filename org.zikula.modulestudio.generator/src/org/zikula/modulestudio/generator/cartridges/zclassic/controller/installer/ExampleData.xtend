@@ -137,7 +137,7 @@ class ExampleData {
         «val entityName = name.formatForCode»
         «IF categorisable»
             $categoryId = 41; // Business and work
-            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»\Core\Doctrine\Entity\CategoryEntity«ENDIF»', $categoryId);
+            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»\Module\CategoriesModule\Entity\CategoryEntity«ENDIF»', $categoryId);
         «ENDIF»
         «FOR number : 1..container.numExampleRows»
             «IF isInheriting»
