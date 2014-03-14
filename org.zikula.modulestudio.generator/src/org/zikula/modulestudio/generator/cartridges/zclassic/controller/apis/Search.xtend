@@ -212,6 +212,7 @@ class Search {
                     $description = ($descriptionField != '') ? $entity[$descriptionField] : '';
                     $created = (isset($entity['createdDate'])) ? $entity['createdDate']->format('Y-m-d H:i:s') : '';
 
+                    «IF targets('1.3.5')»
                     $searchItemData = array(
                         'title'   => $title,
                         'text'    => $description,
@@ -221,16 +222,18 @@ class Search {
                         'session' => $sessionId
                     );
 
-                    «IF targets('1.3.5')»
                     if (!DBUtil::insertObject($searchItemData, 'search_result')) {
                         return LogUtil::registerError($this->__('Error! Could not save the search results.'));
                     }
                     «ELSE»
                     $searchItem = new SearchResultEntity();
-                    foreach ($searchItemData as $k => $v) {
-                        $fieldName = ($k == 'session') ? 'sesid' : $k;
-                        $searchItem[$fieldName] = $v;
-                    }
+                    $searchItem->setTitle($title);
+                    $searchItem->setText($description);
+                    $searchItem->setModule($this->name);
+                    $searchItem->setExtra(serialize($urlArgs));
+                    $searchItem->setCreated($created);
+                    $searchItem->setSesid($sessionId);
+
                     try {
                         $this->entityManager->persist($searchItem);
                         $this->entityManager->flush();
