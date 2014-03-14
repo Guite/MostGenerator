@@ -60,7 +60,7 @@ class ViewQuickNavForm {
                 «app.prefix»InitQuickNavigation('«name.formatForCode»', '«controller.formattedName»');
                 {{if isset($searchFilter) && $searchFilter eq false}}
                     {{* we can hide the submit button if we have no quick search field *}}
-                    $('quicknavSubmit').addClassName('«IF app.targets('1.3.5')»z-«ENDIF»hide');
+                    $('quicknavSubmit').addClassName('«IF app.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                 {{/if}}
             });
         /* ]]> */

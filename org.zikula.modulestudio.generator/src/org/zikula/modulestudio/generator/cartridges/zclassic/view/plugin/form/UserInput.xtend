@@ -134,11 +134,11 @@ class UserInput {
 
                 $searchTitle = __('Search user', $dom);
                 $selectorAttributes = $titleHtml . $sizeHtml . $maxLengthHtml . $readOnlyHtml . ' value="' . $selectorDefaultValue . '" class="' . $class . '"' . $attributes;
-                $result = '<div id="' . $this->getId() . 'LiveSearch" class="«appName.toLowerCase»-livesearch-user «IF targets('1.3.5')»z-«ENDIF»hide">
+                $result = '<div id="' . $this->getId() . 'LiveSearch" class="«appName.toLowerCase»-livesearch-user «IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»">
                         <img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchTitle . '" title="' . $searchTitle . '" />
                         <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector"' . $selectorAttributes . ' />
                         <img src="' . System::getBaseUrl() . 'images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $this->getId() . 'Indicator" style="display: none" />
-                        <span id="' . $this->getId() . 'NoResultsHint" class="«IF targets('1.3.5')»z-«ENDIF»hide">' . __('No results found!', $dom) . '</span>
+                        <span id="' . $this->getId() . 'NoResultsHint" class="«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»">' . __('No results found!', $dom) . '</span>
                         <div id="' . $this->getId() . 'SelectorChoices" class="«appName.toLowerCase»-autocomplete-user"></div>';
 
                 if ($this->mandatory && $this->mandatorysym) {

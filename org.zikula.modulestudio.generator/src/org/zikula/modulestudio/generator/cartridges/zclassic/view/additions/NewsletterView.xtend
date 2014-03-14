@@ -112,7 +112,7 @@ class NewsletterView {
                 </div>
             «ENDIF»
         </div>
-        <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
+        <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»">
             <label for="«appName.toFirstLower»Args_{$objectType}_customtemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
@@ -155,9 +155,9 @@ class NewsletterView {
         /* <![CDATA[ * /
             function «prefix()»ToggleCustomTemplate(objectType) {
                 if ($F('«appName.toFirstLower»Args_' + objectType + '_template') == 'custom') {
-                    $('customTemplateArea_' + objectType).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                    $('customTemplateArea_' + objectType).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                 } else {
-                    $('customTemplateArea_' + objectType).addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                    $('customTemplateArea_' + objectType).addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                 }
             }
 

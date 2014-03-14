@@ -64,7 +64,7 @@ class EditFunctions {
                 if ($(fieldName + 'LiveSearch') === null) {
                     return;
                 }
-                $(fieldName + 'LiveSearch').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                $(fieldName + 'LiveSearch').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                 new Ajax.Autocompleter(
                     fieldName + 'Selector',
                     fieldName + 'SelectorChoices',
@@ -106,7 +106,7 @@ class EditFunctions {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
                     «prefix»ResetUploadField(fieldName);
-                }).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
             }
         }
     '''
@@ -136,7 +136,7 @@ class EditFunctions {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
                     «prefix»ResetDateField(fieldName);
-                }).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
             }
         }
     '''
@@ -191,7 +191,7 @@ class EditFunctions {
                         this.stopIndicator();
                         var idPrefix = this.options.indicator.replace('Indicator', '');
                         if ($(idPrefix + 'NoResultsHint') != null) {
-                            $(idPrefix + 'NoResultsHint').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                            $(idPrefix + 'NoResultsHint').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                         }
                     } else {
                         this.update.innerHTML = choices;
@@ -256,10 +256,10 @@ class EditFunctions {
             }
 
             // show/hide the toggle link
-            $(idPrefix + 'AddLink').toggleClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $(idPrefix + 'AddLink').toggleClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
 
             // hide/show the fields
-            $(idPrefix + 'AddFields').toggleClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $(idPrefix + 'AddFields').toggleClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
         }
     '''
 
@@ -474,7 +474,7 @@ class EditFunctions {
                     }
 
                     if ($(idPrefix + 'NoResultsHint') != null) {
-                        $(idPrefix + 'NoResultsHint').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                        $(idPrefix + 'NoResultsHint').addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                     }
 
                     return queryString;

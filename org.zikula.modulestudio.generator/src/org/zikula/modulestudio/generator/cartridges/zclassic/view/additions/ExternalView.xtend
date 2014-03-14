@@ -377,7 +377,7 @@ class ExternalView {
         {assign var='baseID' value='«name.formatForCode»'}
         <div id="{$baseID}Preview" style="float: right; width: 300px; border: 1px dotted #a3a3a3; padding: .2em .5em; margin-right: 1em">
             <p><strong>{gt text='«name.formatForDisplayCapital» information'}</strong></p>
-            {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='«IF app.targets('1.3.5')»z-«ENDIF»hide'}
+            {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='«IF app.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»'}
             <div id="{$baseID}PreviewContainer">&nbsp;</div>
         </div>
         <br />

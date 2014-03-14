@@ -40,12 +40,12 @@ class SimpleFields {
                 {/if}
                 </a>
             «ELSE»
-                <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="hide">
+                <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="hidden">
                 {if $«objName».«name.formatForCode»}
                     <span class="cursor-pointer fa fa-check" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
-                    <span class="cursor-pointer fa fa-times hide" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
+                    <span class="cursor-pointer fa fa-times hidden" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
                 {else}
-                    <span class="cursor-pointer fa fa-check hide" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
+                    <span class="cursor-pointer fa fa-check hidden" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
                     <span class="cursor-pointer fa fa-times" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
                 {/if}
                 </a>

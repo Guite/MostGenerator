@@ -47,7 +47,7 @@ class ViewHierarchy {
             «IF controller.hasActions('edit')»
                 {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
                     {gt text='Add root node' assign='addRootTitle'}
-                    <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»fa fa-plus hide«ENDIF»">{$addRootTitle}</a>
+                    <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»fa fa-plus hidden«ENDIF»">{$addRootTitle}</a>
 
                     <script type="text/javascript">
                     /* <![CDATA[ */
@@ -55,7 +55,7 @@ class ViewHierarchy {
                         $('treeAddRoot').observe('click', function(event) {
                             «appPrefix»PerformTreeOperation('«name.formatForCode»', 1, 'addRootNode');
                             Event.stop(event);
-                        }).removeClassName('«IF container.application.targets('1.3.5')»z-«ENDIF»hide');
+                        }).removeClassName('«IF container.application.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                     });
                     /* ]]> */
                     </script>

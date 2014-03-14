@@ -85,7 +85,7 @@ class Finder {
             $('«appName.toFirstLower»PageSize').observe('change', «name.formatForDB».finder.onParamChanged);
             $('«appName.toFirstLower»SearchGo').observe('click', «name.formatForDB».finder.onParamChanged);
             $('«appName.toFirstLower»SearchGo').observe('keypress', «name.formatForDB».finder.onParamChanged);
-            $('«appName.toFirstLower»Submit').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $('«appName.toFirstLower»Submit').addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
             $('«appName.toFirstLower»Cancel').observe('click', «name.formatForDB».finder.handleCancel);
         };
 
@@ -230,7 +230,7 @@ class Finder {
 
         «name.formatForDB».itemSelector.onParamChanged = function ()
         {
-            $('ajax_indicator').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $('ajax_indicator').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
 
             «name.formatForDB».itemSelector.getItemList();
         };
@@ -262,7 +262,7 @@ class Finder {
                         var baseId;
                         baseId = «name.formatForDB».itemSelector.baseId;
                         «name.formatForDB».itemSelector.items[baseId] = req.getData();
-                        $('ajax_indicator').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                        $('ajax_indicator').addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                         «name.formatForDB».itemSelector.updateItemDropdownEntries();
                         «name.formatForDB».itemSelector.updatePreview();
                     }
@@ -296,7 +296,7 @@ class Finder {
             baseId = «name.formatForDB».itemSelector.baseId;
             items = «name.formatForDB».itemSelector.items[baseId];
 
-            $(baseId + 'PreviewContainer').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $(baseId + 'PreviewContainer').addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
 
             if (items.length === 0) {
                 return;
@@ -314,7 +314,7 @@ class Finder {
 
             if (selectedElement !== null) {
                 $(baseId + 'PreviewContainer').update(window.atob(selectedElement.previewInfo))
-                                              .removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                                              .removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
             }
         };
 

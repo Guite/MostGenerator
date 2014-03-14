@@ -195,7 +195,7 @@ class ContentTypeListView {
             «ENDIF»
         </div>
 
-        <div id="customTemplateArea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hide«ENDIF»">
+        <div id="customTemplateArea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»">
             {gt text='Custom template' domain='module_«appName.formatForDB»' assign='customTemplateLabel'}
             {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
             «IF !targets('1.3.5')»
@@ -242,9 +242,9 @@ class ContentTypeListView {
         /* <![CDATA[ */
             function «prefix()»ToggleCustomTemplate() {
                 if ($F('«appName.toFirstLower»Template') == 'custom') {
-                    $('customTemplateArea').removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                    $('customTemplateArea').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                 } else {
-                    $('customTemplateArea').addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                    $('customTemplateArea').addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                 }
             }
 

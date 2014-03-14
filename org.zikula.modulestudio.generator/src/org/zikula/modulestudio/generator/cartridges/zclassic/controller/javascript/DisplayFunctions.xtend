@@ -86,7 +86,7 @@ class DisplayFunctions {
                     var elemClass = elem.readAttribute('class');
                 «ENDIF»
                 // hide it
-                elem.addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                elem.addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                 // determine the link text
                 var linkText = '';
                 if (func === 'display') {
@@ -149,7 +149,7 @@ class DisplayFunctions {
                     }
                 });
             });
-            $(triggerId).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            $(triggerId).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
         }
     '''
 
@@ -260,7 +260,7 @@ class DisplayFunctions {
             var newWindow;
 
             // show the container (hidden for users without JavaScript)
-            containerElem.removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            containerElem.removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
 
             // define the new window instance
             newWindow = new Zikula.UI.Window(
@@ -294,7 +294,7 @@ class DisplayFunctions {
             }
             $('toggle' + idSuffix).observe('click', function() {
                 «prefix()»ToggleFlag(objectType, fieldName, itemId);
-            }).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+            }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
         }
 
     '''
@@ -327,11 +327,11 @@ class DisplayFunctions {
                         idSuffix = idSuffix.toLowerCase();
                         var state = data.state;
                         if (state === true) {
-                            $('no' + idSuffix).addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
-                            $('yes' + idSuffix).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                            $('no' + idSuffix).addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                            $('yes' + idSuffix).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                         } else {
-                            $('yes' + idSuffix).addClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
-                            $('no' + idSuffix).removeClassName('«IF targets('1.3.5')»z-«ENDIF»hide');
+                            $('yes' + idSuffix).addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                            $('no' + idSuffix).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                         }
                     }
                 }

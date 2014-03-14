@@ -358,7 +358,7 @@ class Forms {
                 } else {
                     // hide form buttons to prevent double submits by accident
                     formButtons.each(function (btn) {
-                        btn.addClassName('«IF app.targets('1.3.5')»z-«ENDIF»hide');
+                        btn.addClassName('«IF app.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                     });
                 }
 
