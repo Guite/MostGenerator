@@ -21,7 +21,11 @@ class Search {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Search' + (if (targets('1.3.5')) '' else 'Api') + '.php', searchApiBaseFile, searchApiFile)
+        if (targets('1.3.5')) {
+            generateClassPair(fsa, getAppSourceLibPath + 'Api/Search.php', searchApiBaseFile, searchApiFile)
+        } else {
+            generateClassPair(fsa, getAppSourceLibPath + 'Helper/SearchHelper.php', searchHelperBaseFile, searchHelperFile)
+        }
         new SearchView().generate(it, fsa)
     }
 
@@ -35,43 +39,66 @@ class Search {
         «searchApiImpl»
     '''
 
+    def private searchHelperBaseFile(Application it) '''
+        «fh.phpFileHeader(it)»
+        «searchHelperBaseClass»
+    '''
+
+    def private searchHelperFile(Application it) '''
+        «fh.phpFileHeader(it)»
+        «searchHelperImpl»
+    '''
+
     def private searchApiBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
-            namespace «appNamespace»\Api\Base;
-
-            use «appNamespace»\Util\ControllerUtil;
-
-            use FormUtil;
-            use LogUtil;
-            use ModUtil;
-            use SecurityUtil;
-            use ServiceUtil;
-            use Zikula_AbstractApi;
-            use Zikula_View;
-
-            use Zikula\Module\SearchModule\Entity\SearchResultEntity;
-
-        «ENDIF»
         /**
          * Search api base class.
          */
-        class «IF targets('1.3.5')»«appName»_Api_Base_Search«ELSE»SearchApi«ENDIF» extends Zikula_AbstractApi
+        class «appName»_Api_Base_Search extends Zikula_AbstractApi
         {
             «searchApiBaseImpl»
         }
     '''
 
-    def private searchApiBaseImpl(Application it) '''
-        «info»
-        
-        «options»
-        
-        «search»
-        
-        «searchCheck»
+    def private searchHelperBaseClass(Application it) '''
+        namespace «appNamespace»\Api\Base;
+
+        use «appNamespace»\Util\ControllerUtil;
+
+        use ModUtil;
+        use SecurityUtil;
+        use ServiceUtil;
+        use ZLanguage;
+
+        use Zikula\Core\ModUrl;
+        use Zikula\Module\SearchModule\AbstractSearchable;
+        use Zikula\Module\SearchModule\Entity\SearchResultEntity;
+
+        /**
+         * Search helper base class.
+         */
+        class SearchHelper extends AbstractSearchable
+        {
+            «searchHelperBaseImpl»
+        }
     '''
 
-    def private info(Application it) '''
+    def private searchApiBaseImpl(Application it) '''
+        «infoLegacy»
+
+        «optionsLegacy»
+
+        «searchLegacy»
+
+        «searchCheckLegacy»
+    '''
+
+    def private searchHelperBaseImpl(Application it) '''
+        «getOptions»
+
+        «getResults»
+    '''
+
+    def private infoLegacy(Application it) '''
         /**
          * Get search plugin information.
          *
@@ -84,13 +111,13 @@ class Search {
         }
     '''
 
-    def private options(Application it) '''
+    def private optionsLegacy(Application it) '''
         /**
          * Display the search form.
          *
          * @param array $args List of arguments.
          *
-         * @return string template output
+         * @return string Template output
          */
         public function options(array $args = array())
         {
@@ -105,11 +132,35 @@ class Search {
                 $view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
             «ENDFOR»
 
-            return $view->fetch('«IF targets('1.3.5')»search«ELSE»Search«ENDIF»/options.tpl');
+            return $view->fetch('search/options.tpl');
         }
     '''
 
-    def private search(Application it) '''
+    def private getOptions(Application it) '''
+        /**
+         * Display the search form.
+         *
+         * @param boolean    $active
+         * @param array|null $modVars
+         *
+         * @return string Template output
+         */
+        public function getOptions($active, $modVars = null)
+        {
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+                return '';
+            }
+
+            «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
+                «val fieldName = 'active_' + entity.name.formatForCode»
+                $this->view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
+            «ENDFOR»
+
+            return $this->view->fetch('Search/options.tpl');
+        }
+    '''
+
+    def private searchLegacy(Application it) '''
         /**
          * Executes the actual search process.
          *
@@ -134,7 +185,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array) FormUtil::getPassedValue('«appName.toFirstLower»SearchTypes', array(), 'GETPOST');
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
             $entityManager = ServiceUtil::getService('doctrine.entitymanager');
@@ -160,13 +211,9 @@ class Search {
                             break;
                     «ENDFOR»
                 }
-                $where = «IF targets('1.3.5')»Search_Api_User«ELSE»\Zikula\Module\SearchModule\Api\UserApi«ENDIF»::construct_where($args, $whereArray, $languageField);
+                $where = Search_Api_User::construct_where($args, $whereArray, $languageField);
 
-                «IF targets('1.3.5')»
-                    $entityClass = $this->name . '_Entity_' . ucwords($objectType);
-                «ELSE»
-                    $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
-                «ENDIF»
+                $entityClass = $this->name . '_Entity_' . ucwords($objectType);
                 $repository = $entityManager->getRepository($entityClass);
 
                 // get objects from database
@@ -196,21 +243,19 @@ class Search {
                     }
                     «IF hasUserDisplay»
                         $urlArgs['id'] = $instanceId;
-                        «IF targets('1.3.5')»
-                            /* commented out as it could exceed the maximum length of the 'extra' field
-                        «ENDIF»
+                        /* commented out as it could exceed the maximum length of the 'extra' field
                         if (isset($entity['slug'])) {
                             $urlArgs['slug'] = $entity['slug'];
-                        }«IF targets('1.3.5')»*/«ENDIF»
-
+                        }*/
                     «ENDIF»
+
+                    // perform permission check
                     if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
 
                     $title = $entity->getTitleFromDisplayPattern();
                     $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
-                    «IF targets('1.3.5')»
                     $created = isset($entity['createdDate']) ? $entity['createdDate']->format('Y-m-d H:i:s') : '';
 
                     $searchItemData = array(
@@ -225,24 +270,6 @@ class Search {
                     if (!DBUtil::insertObject($searchItemData, 'search_result')) {
                         return LogUtil::registerError($this->__('Error! Could not save the search results.'));
                     }
-                    «ELSE»
-                    $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
-
-                    $searchItem = new SearchResultEntity();
-                    $searchItem->setTitle($title);
-                    $searchItem->setText($description);
-                    $searchItem->setModule($this->name);
-                    $searchItem->setExtra(serialize($urlArgs));
-                    $searchItem->setCreated($created);
-                    $searchItem->setSesid($sessionId);
-
-                    try {
-                        $this->entityManager->persist($searchItem);
-                        $this->entityManager->flush();
-                    } catch (\Exception $e) {
-                        throw new \RuntimeException($this->__('Error! Could not save the search results.'));
-                    }
-                    «ENDIF»
                 }
             }
 
@@ -250,7 +277,7 @@ class Search {
         }
     '''
 
-    def private searchCheck(Application it) '''
+    def private searchCheckLegacy(Application it) '''
         /**
          * Assign URL to items.
          *
@@ -268,27 +295,161 @@ class Search {
             «ELSE»
                 // nothing to do as we have no display pages which could be linked
             «ENDIF»
+
             return true;
         }
     '''
 
+    def private getResults(Application it) '''
+        /**
+         * Returns the search results.
+         *
+         * @param array      $words      Array of words to search for
+         * @param string     $searchType AND|OR|EXACT (defaults to AND)
+         * @param array|null $modVars    Module form vars passed though
+         *
+         * @return array List of fetched results.
+         */
+        public function getResults(array $words, $searchType = 'AND', $modVars = null)
+        {
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+                return array();
+            }
+
+            // save session id as it is used when inserting search results below
+            $sessionId  = session_id();
+
+            // save current language
+            $languageCode = ZLanguage::getLanguageCode();
+
+            // initialise array for results
+            $records = array();
+
+            // retrieve list of activated object types
+            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : array();
+
+            $controllerHelper = new ControllerUtil($this->serviceManager, ModUtil::getModule($this->name));
+            $utilArgs = array('helper' => 'search', 'action' => 'getResults');
+            $allowedTypes = $controllerHelper->getObjectTypes('helper', $utilArgs);
+
+            foreach ($searchTypes as $objectType) {
+                if (!in_array($objectType, $allowedTypes)) {
+                    continue;
+                }
+
+                $whereArray = array();
+                $languageField = null;
+                switch ($objectType) {
+                    «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
+                        case '«entity.name.formatForCode»':
+                            «FOR field : entity.getAbstractStringFieldsEntity»
+                                $whereArray[] = 'tbl.«field.name.formatForCode»';
+                            «ENDFOR»
+                            «IF entity.hasLanguageFieldsEntity»
+                            $languageField = '«entity.getLanguageFieldsEntity.head»';
+                            «ENDIF»
+                            break;
+                    «ENDFOR»
+                }
+
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
+                $repository = $this->entityManager->getRepository($entityClass);
+
+                // build the search query without any joins
+                $qb = $repository->genericBaseQuery('', '', false);
+
+                // build where expression for given search type
+                $whereExpr = $this->formatWhere($qb, $words, $whereArray, $searchType);
+                $qb->andWhere($whereExpr);
+
+                $query = $qb->getQuery();
+
+                // set a sensitive limit
+                $query->setFirstResult(0)
+                      ->setMaxResults(250);
+
+                // fetch the results
+                $entities = $query->getResult();
+
+                if (count($entities) == 0) {
+                    continue;
+                }
+
+                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+                $descriptionField = $repository->getDescriptionFieldName();
+                «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
+
+                foreach ($entities as $entity) {
+                    «IF hasUserDisplay»
+                        $urlArgs = array('ot' => $objectType);
+                    «ENDIF»
+                    // create identifier for permission check
+                    $instanceId = '';
+                    foreach ($idFields as $idField) {
+                        «IF hasUserDisplay»
+                            $urlArgs[$idField] = $entity[$idField];
+                        «ENDIF»
+                        if (!empty($instanceId)) {
+                            $instanceId .= '_';
+                        }
+                        $instanceId .= $entity[$idField];
+                    }
+                    «IF hasUserDisplay»
+                        $urlArgs['id'] = $instanceId;
+                        if (isset($entity['slug'])) {
+                            $urlArgs['slug'] = $entity['slug'];
+                        }
+                    «ENDIF»
+
+                    // perform permission check
+                    if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                        continue;
+                    }
+
+                    $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
+                    $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
+
+                    // override language if required
+                    if ($languageField != null) {
+                        $languageCode = $entity[$languageField];
+                    }
+
+                    $records[] = array(
+                        'title' => $entity->getTitleFromDisplayPattern(),
+                        'text' => $description,
+                        'module' => $this->name,
+                        'sesid' => $sessionId,
+                        'created' => $created«IF hasUserDisplay»,
+                        'url' => new ModUrl($this->name, 'user', 'display', $languageCode, $urlArgs)«ENDIF»
+                    );
+                }
+            }
+
+            return $records;
+        }
+    '''
+
     def private searchApiImpl(Application it) '''
-        «IF !targets('1.3.5')»
-            namespace «appNamespace»\Api;
-
-            use «appNamespace»\Api\Base\SearchApi as BaseSearchApi;
-
-        «ENDIF»
         /**
          * Search api implementation class.
          */
-        «IF targets('1.3.5')»
         class «appName»_Api_Search extends «appName»_Api_Base_Search
-        «ELSE»
-        class SearchApi extends BaseSearchApi
-        «ENDIF»
         {
             // feel free to extend the search api here
+        }
+    '''
+
+    def private searchHelperImpl(Application it) '''
+        namespace «appNamespace»\Api;
+
+        use «appNamespace»\Helper\Base\SearchHelper as BaseSearchHelper;
+
+        /**
+         * Search helper implementation class.
+         */
+        class SearchHelper extends BaseSearchHelper
+        {
+            // feel free to extend the search helper here
         }
     '''
 }

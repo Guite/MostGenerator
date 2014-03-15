@@ -88,14 +88,14 @@ class ControllerUtil {
         /**
          * Returns an array of all allowed object types in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType, util).
+         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.5')», helper«ENDIF», actionHandler, block, contentType, util).
          * @param array  $args    Additional arguments.
          *
          * @return array List of allowed object types.
          */
         public function getObjectTypes($context = '', $args = array())
         {
-            if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'util'))) {
+            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.5')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
                 $context = 'controllerAction';
             }
 
@@ -112,14 +112,14 @@ class ControllerUtil {
         /**
          * Returns the default object type in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType, util).
+         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.5')», helper«ENDIF», actionHandler, block, contentType, util).
          * @param array  $args    Additional arguments.
          *
          * @return string The name of the default object type.
          */
         public function getDefaultObjectType($context = '', $args = array())
         {
-            if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'util'))) {
+            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.5')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
                 $context = 'controllerAction';
             }
 

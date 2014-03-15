@@ -50,6 +50,7 @@ class VersionFile {
             use Zikula_AbstractVersion;
             use Zikula\Component\HookDispatcher\ProviderBundle;
             use Zikula\Component\HookDispatcher\SubscriberBundle;
+            use Zikula\Module\SearchModule\AbstractSearchable;
 
         «ENDIF»
         /**
@@ -84,7 +85,9 @@ class VersionFile {
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
-                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
+                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.5')»,
+                                  AbstractSearchable::SEARCHABLE => array('class' => '«appNamespace»\Helper\SearchHelper'),
+                                  «ENDIF»
         /*,
                                   HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
                                   'authentication' => array('version' => '1.0'),
