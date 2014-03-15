@@ -148,6 +148,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether ics templates should be generated or not.
+     */
+    def generateIcsTemplates(Application it) {
+        if (hasSettings) getSettings.generateIcsTemplates else true
+    }
+
+    /**
      * Determines whether only base classes should be generated.
      */
     def generateOnlyBaseClasses(Application it) {

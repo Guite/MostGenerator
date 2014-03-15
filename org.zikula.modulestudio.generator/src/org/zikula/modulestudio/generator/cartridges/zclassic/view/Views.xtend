@@ -22,6 +22,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Index
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.ViewHierarchy
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Csv
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Ics
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Json
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Kml
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Xml
@@ -115,7 +116,17 @@ class Views {
             }
             if (generateKmlTemplates && hasGeographical) {
                 var pageHelperKml = new Kml()
-                for (entity : getAllEntities) pageHelperKml.generate(entity, appName, controller, fsa)
+                for (entity : getAllEntities.filter[geographical]) {
+                    pageHelperKml.generate(entity, appName, controller, fsa)
+                }
+            }
+        }
+        if (controller.hasActions('display')) {
+            if (generateIcsTemplates) {
+                var pageHelperIcs = new Ics()
+                for (entity : getAllEntities.filter[getStartDateField !== null && getEndDateField !== null]) {
+                    pageHelperIcs.generate(entity, appName, controller, fsa)
+                }
             }
         }
         if (controller.hasActions('display')) {

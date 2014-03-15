@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ActionUrl
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatIcalText
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetListEntry
@@ -75,6 +76,9 @@ class Plugins {
         }
         if (generateModerationPanel && needsApproval) {
             new ModerationObjects().generate(it, fsa)
+        }
+        if (generateIcsTemplates && !getAllEntities.filter[getStartDateField !== null && getEndDateField !== null].empty) {
+            new FormatIcalText().generate(it, fsa)
         }
     }
 

@@ -158,7 +158,7 @@ class ViewUtil {
                     $raw = (bool) $request->query->filter('raw', false, false, FILTER_VALIDATE_BOOLEAN);
                 }
             «ENDIF»
-            if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical', 'json', 'kml'))) {
+            if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ics', 'json', 'kml'))) {
                 $raw = true;
             }
 
@@ -254,7 +254,9 @@ class ViewUtil {
                 }
             } elseif ($func == 'display') {
                 if ($hasAdminAccess) {
-                    $extParams = array('xml', 'json', 'kml'/*, 'pdf'*/);
+                    $extParams = array('xml', 'json', 'kml', 'ics'/*, 'pdf'*/);
+                } else {
+                    $extParams = array('ics');
                 }
             }
 
