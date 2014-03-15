@@ -60,7 +60,7 @@ class Search {
     '''
 
     def private searchHelperBaseClass(Application it) '''
-        namespace «appNamespace»\Api\Base;
+        namespace «appNamespace»\Helper\Base;
 
         use «appNamespace»\Util\ControllerUtil;
 
@@ -71,7 +71,6 @@ class Search {
 
         use Zikula\Core\ModUrl;
         use Zikula\Module\SearchModule\AbstractSearchable;
-        use Zikula\Module\SearchModule\Entity\SearchResultEntity;
 
         /**
          * Search helper base class.
@@ -440,7 +439,7 @@ class Search {
     '''
 
     def private searchHelperImpl(Application it) '''
-        namespace «appNamespace»\Api;
+        namespace «appNamespace»\Helper;
 
         use «appNamespace»\Helper\Base\SearchHelper as BaseSearchHelper;
 
