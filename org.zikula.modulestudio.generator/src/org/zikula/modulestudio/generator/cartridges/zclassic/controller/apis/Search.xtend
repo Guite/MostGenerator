@@ -209,10 +209,10 @@ class Search {
                     }
 
                     $title = $entity->getTitleFromDisplayPattern();
-                    $description = ($descriptionField != '') ? $entity[$descriptionField] : '';
-                    $created = (isset($entity['createdDate'])) ? $entity['createdDate']->format('Y-m-d H:i:s') : '';
-
+                    $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
                     «IF targets('1.3.5')»
+                    $created = isset($entity['createdDate']) ? $entity['createdDate']->format('Y-m-d H:i:s') : '';
+
                     $searchItemData = array(
                         'title'   => $title,
                         'text'    => $description,
@@ -226,6 +226,8 @@ class Search {
                         return LogUtil::registerError($this->__('Error! Could not save the search results.'));
                     }
                     «ELSE»
+                    $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
+
                     $searchItem = new SearchResultEntity();
                     $searchItem->setTitle($title);
                     $searchItem->setText($description);
