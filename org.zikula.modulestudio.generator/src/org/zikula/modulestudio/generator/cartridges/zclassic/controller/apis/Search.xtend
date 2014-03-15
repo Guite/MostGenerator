@@ -328,7 +328,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : array();
 
-            $controllerHelper = new ControllerUtil($this->serviceManager, ModUtil::getModule($this->name));
+            $controllerHelper = new ControllerUtil(ServiceUtil::getManager(), ModUtil::getModule($this->name));
             $utilArgs = array('helper' => 'search', 'action' => 'getResults');
             $allowedTypes = $controllerHelper->getObjectTypes('helper', $utilArgs);
 
