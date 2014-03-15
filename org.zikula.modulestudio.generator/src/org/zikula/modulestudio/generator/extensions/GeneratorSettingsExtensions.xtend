@@ -165,7 +165,11 @@ class GeneratorSettingsExtensions {
      * Determines a blacklist with each entry representing a file which should not be generated.
      */
     def getListOfFilesToBeSkipped(Application it) {
-        if (hasSettings && getSettings.skipFiles !== null) getSettings.skipFiles.split(',').toList else newArrayList('')
+        if (hasSettings && getSettings.skipFiles !== null) {
+            getSettings.skipFiles.replace(', ', ',').split(',').toList
+        } else {
+            newArrayList('')
+        }
     }
 
     /**
