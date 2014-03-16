@@ -27,9 +27,12 @@ class Index {
         println('Generating ' + controller.formattedName + ' ' + pageName + ' templates for entity "' + name.formatForDisplay + '"')
         val app = container.application
         val templatePath = app.getViewPath + (if (app.targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
-        val templateFilePath = templatePath + pageName + '.tpl'
-        if (!app.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, indexView(pageName, controller))
+        var fileName = pageName + '.tpl'
+        if (!app.shouldBeSkipped(templatePath + fileName)) {
+            if (app.shouldBeMarked(templatePath + fileName)) {
+                fileName = pageName + '.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, indexView(pageName, controller))
         }
     }
 

@@ -437,8 +437,12 @@ class Forms {
 
     def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.5')) formattedName else formattedName.toFirstUpper) + '/'
-        if (!app.shouldBeSkipped(templatePath + 'inlineRedirectHandler.tpl')) {
-            fsa.generateFile(templatePath + 'inlineRedirectHandler.tpl', inlineRedirectHandlerImpl(app))
+        var fileName = 'inlineRedirectHandler.tpl'
+        if (!app.shouldBeSkipped(templatePath + fileName)) {
+            if (app.shouldBeMarked(templatePath + fileName)) {
+                fileName = 'inlineRedirectHandler.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, inlineRedirectHandlerImpl(app))
         }
     }
 

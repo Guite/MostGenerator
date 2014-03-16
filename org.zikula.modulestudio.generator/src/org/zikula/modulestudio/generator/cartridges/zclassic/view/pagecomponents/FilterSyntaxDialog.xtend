@@ -9,9 +9,13 @@ class FilterSyntaxDialog {
     @Inject extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getViewPath + 'include_filterSyntaxDialog.tpl')) {
+        var fileName = 'include_filterSyntaxDialog.tpl'
+        if (!shouldBeSkipped(getViewPath + fileName)) {
             println('Generating filter syntax dialog')
-            fsa.generateFile(getViewPath + 'include_filterSyntaxDialog.tpl', dialogTemplate)
+            if (shouldBeMarked(getViewPath + fileName)) {
+                fileName = 'include_filterSyntaxDialog.generated.tpl'
+            }
+            fsa.generateFile(getViewPath + fileName, dialogTemplate)
         }
     }
 

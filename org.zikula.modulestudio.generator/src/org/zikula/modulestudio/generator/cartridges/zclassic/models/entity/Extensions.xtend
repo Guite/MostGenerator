@@ -425,25 +425,43 @@ class Extensions {
      */
     def private extensionClasses(Entity it, Application app, String classType, IFileSystemAccess fsa) {
         val entityPath = app.getAppSourceLibPath + 'Entity/'
-        val entityPrefix = if (app.targets('1.3.5')) '' else 'Abstract'
         val entitySuffix = if (app.targets('1.3.5')) '' else 'Entity'
-        val entityFileName = name.formatForCodeCapital + classType.formatForCodeCapital + entitySuffix + '.php'
+        var classPrefix = name.formatForCodeCapital + classType.formatForCodeCapital
         val repositoryPath = entityPath + 'Repository/'
-        val repositoryFileName = name.formatForCodeCapital + classType.formatForCodeCapital + '.php'
+        var fileName = ''
         if (!isInheriting) {
-            if (!app.shouldBeSkipped(entityPath + 'Base/' + entityPrefix + entityFileName)) {
-                fsa.generateFile(entityPath + 'Base/' + entityPrefix + entityFileName, extensionClassBaseFile(it, app, classType))
+            val entityPrefix = if (app.targets('1.3.5')) '' else 'Abstract'
+            fileName = 'Base/' + entityPrefix + classPrefix + entitySuffix + '.php'
+            if (!app.shouldBeSkipped(entityPath + fileName)) {
+                if (app.shouldBeMarked(entityPath + fileName)) {
+                    fileName = 'Base/' + entityPrefix + classPrefix + entitySuffix + '.generated.php'
+                }
+                fsa.generateFile(entityPath + fileName, extensionClassBaseFile(it, app, classType))
             }
-            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + 'Base/' + repositoryFileName)) {
-                fsa.generateFile(repositoryPath + 'Base/' + repositoryFileName, extensionClassRepositoryBaseFile(it, app, classType))
+
+            fileName = 'Base/' + classPrefix + '.php'
+            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + fileName)) {
+                if (app.shouldBeMarked(repositoryPath + fileName)) {
+                    fileName = 'Base/' + classPrefix + '.generated.php'
+                }
+                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseFile(it, app, classType))
             }
         }
         if (!app.generateOnlyBaseClasses) {
-            if (!app.shouldBeSkipped(entityPath + entityFileName)) {
-                fsa.generateFile(entityPath + entityFileName, extensionClassFile(it, app, classType))
+            fileName = classPrefix + entitySuffix + '.php'
+            if (!app.shouldBeSkipped(entityPath + fileName)) {
+                if (app.shouldBeMarked(entityPath + fileName)) {
+                    fileName = classPrefix + entitySuffix + '.generated.php'
+                }
+                fsa.generateFile(entityPath + fileName, extensionClassFile(it, app, classType))
             }
-            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + repositoryFileName)) {
-                fsa.generateFile(repositoryPath + repositoryFileName, extensionClassRepositoryFile(it, app, classType))
+
+            fileName = classPrefix + '.php'
+            if (classType != 'closure' && !app.shouldBeSkipped(repositoryPath + fileName)) {
+                if (app.shouldBeMarked(repositoryPath + fileName)) {
+                    fileName = classPrefix + '.generated.php'
+                }
+                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryFile(it, app, classType))
             }
         }
     }

@@ -60,7 +60,11 @@ class NamingExtensions {
      * Returns the full template file path for given controller action and entity.
      */
     def templateFile(Controller it, String entityName, String actionName) {
-        templateFileBase(entityName, actionName) + templateSuffix
+        var filePath = templateFileBase(entityName, actionName) + templateSuffix
+        if (container.application.shouldBeMarked(filePath)) {
+            filePath = templateFileBase(entityName, actionName) + '.generated' + templateSuffix
+        }
+        filePath
     }
 
     /**
@@ -68,7 +72,11 @@ class NamingExtensions {
      * using a custom template extension (like xml instead of tpl).
      */
     def templateFileWithExtension(Controller it, String entityName, String actionName, String templateExtension) {
-        templateFileBase(entityName, actionName) + '.' + templateExtension + templateSuffix
+        var filePath = templateFileBase(entityName, actionName) + '.' + templateExtension + templateSuffix
+        if (container.application.shouldBeMarked(filePath)) {
+            filePath = templateFileBase(entityName, actionName) + '.' + templateExtension + '.generated' + templateSuffix
+        }
+        filePath
     }
 
     /**
@@ -83,7 +91,11 @@ class NamingExtensions {
      * Returns the full file path for a view plugin file.
      */
     def viewPluginFilePath(Application it, String pluginType, String pluginName) {
-        getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
+        var filePath = getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
+        if (shouldBeMarked(filePath)) {
+            filePath = getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.generated.php'
+        }
+        filePath
     }
 
 
@@ -122,6 +134,13 @@ class NamingExtensions {
     }
 
     /**
+     * Checks whether a certain file path is contained in the list for files to be marked during generation.
+     */
+    def shouldBeMarked(Application it, String filePath) {
+        getListOfFilesToBeMarked.contains(filePath.replace(getAppSourcePath, ''))
+    }
+
+    /**
      * Generates a base class and an inheriting concrete class with
      * the corresponding content.
      *
@@ -138,10 +157,19 @@ class NamingExtensions {
         val basePath = basePathPartsChangeable.join('/') //$NON-NLS-1$
 
         if (!shouldBeSkipped(basePath)) {
-            fsa.generateFile(basePath, baseContent)
+            if (shouldBeMarked(basePath)) {
+                fsa.generateFile(basePath.replace('.php', '.generated.php'), baseContent)
+            } else {
+                fsa.generateFile(basePath, baseContent)
+            }
         }
+
         if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
-            fsa.generateFile(concretePath, concreteContent)
+            if (shouldBeMarked(concretePath)) {
+                fsa.generateFile(concretePath.replace('.php', '.generated.php'), concreteContent)
+            } else {
+                fsa.generateFile(concretePath, concreteContent)
+            }
         }
     }
 

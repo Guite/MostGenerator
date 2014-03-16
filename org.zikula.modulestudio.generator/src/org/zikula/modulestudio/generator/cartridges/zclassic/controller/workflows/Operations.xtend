@@ -51,8 +51,12 @@ class Operations {
     }
 
     def private operation(String opName) {
-        if (!app.shouldBeSkipped(outputPath + 'function.' + opName + '.php')) {
-            fsa.generateFile(outputPath + 'function.' + opName + '.php', operationFile(opName))
+        var fileName = 'function.' + opName + '.php'
+        if (!app.shouldBeSkipped(outputPath + fileName)) {
+            if (app.shouldBeMarked(outputPath + fileName)) {
+                fileName = 'function.' + opName + '.generated.php'
+            }
+            fsa.generateFile(outputPath + fileName, operationFile(opName))
         }
     }
 

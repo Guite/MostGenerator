@@ -18,11 +18,21 @@ class Tests {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         var testsPath = getAppTestsPath
-        if (!shouldBeSkipped(testsPath + 'bootstrap.php')) {
-            fsa.generateFile(testsPath + 'bootstrap.php', bootstrapFile)
+
+        var fileName = 'bootstrap.php'
+        if (!shouldBeSkipped(testsPath + fileName)) {
+            if (shouldBeMarked(testsPath + fileName)) {
+                fileName = 'bootstrap.generated.php'
+            }
+            fsa.generateFile(testsPath + fileName, bootstrapFile)
         }
-        if (!shouldBeSkipped(testsPath + 'AllTests.php')) {
-            fsa.generateFile(testsPath + 'AllTests.php', testSuiteFile)
+
+        fileName = 'AllTests.php'
+        if (!shouldBeSkipped(testsPath + fileName)) {
+            if (shouldBeMarked(testsPath + fileName)) {
+                fileName = 'AllTests.generated.php'
+            }
+            fsa.generateFile(testsPath + fileName, testSuiteFile)
         }
     }
 

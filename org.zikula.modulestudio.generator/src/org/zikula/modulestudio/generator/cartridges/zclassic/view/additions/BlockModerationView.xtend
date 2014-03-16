@@ -12,8 +12,12 @@ class BlockModerationView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'block' else 'Block') + '/'
-        if (!shouldBeSkipped(templatePath + 'moderation.tpl')) {
-            fsa.generateFile(templatePath + 'moderation.tpl', displayTemplate)
+        var fileName = 'moderation.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'moderation.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, displayTemplate)
         }
     }
 

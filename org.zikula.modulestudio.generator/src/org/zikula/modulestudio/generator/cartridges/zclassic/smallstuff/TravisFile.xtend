@@ -14,8 +14,12 @@ class TravisFile {
         if (targets('1.3.5')) {
             return
         }
-        if (!shouldBeSkipped(getAppSourcePath + '.travis.yml')) {
-            fsa.generateFile(getAppSourcePath + '.travis.yml', travisFile)
+        var fileName = '.travis.yml'
+        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
+            if (shouldBeMarked(getAppSourcePath + fileName)) {
+                fileName = '.travis.generated.yml'
+            }
+            fsa.generateFile(getAppSourcePath + fileName, travisFile)
         }
     }
 

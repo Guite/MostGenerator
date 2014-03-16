@@ -16,11 +16,19 @@ class BlocksView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'block' else 'Block') + '/'
-        if (!shouldBeSkipped(templatePath + 'itemlist.tpl')) {
-            fsa.generateFile(templatePath + 'itemlist.tpl', displayTemplate)
+        var fileName = 'itemlist.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'itemlist.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, displayTemplate)
         }
-        if (!shouldBeSkipped(templatePath + 'itemlist_modify.tpl')) {
-            fsa.generateFile(templatePath + 'itemlist_modify.tpl', editTemplate)
+        fileName = 'itemlist_modify.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'itemlist_modify.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, editTemplate)
         }
     }
 

@@ -23,22 +23,36 @@ class ContentTypeListView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'contenttype' else 'ContentType') + '/'
-        var entityTemplate = ''
+        var fileName = ''
         for (entity : getAllEntities) {
-            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_display_description.tpl'
-            if (!shouldBeSkipped(entityTemplate)) {
-                fsa.generateFile(entityTemplate, entity.displayDescTemplate(it))
+            fileName = 'itemlist_' + entity.name.formatForCode + '_display_description.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'itemlist_' + entity.name.formatForCode + '_display_description.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, entity.displayDescTemplate(it))
             }
-            entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_display.tpl'
-            if (!shouldBeSkipped(entityTemplate)) {
-                fsa.generateFile(entityTemplate, entity.displayTemplate(it))
+            fileName = 'itemlist_' + entity.name.formatForCode + '_display.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'itemlist_' + entity.name.formatForCode + '_display.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
             }
         }
-        if (!shouldBeSkipped(templatePath + 'itemlist_display.tpl')) {
-            fsa.generateFile(templatePath + 'itemlist_display.tpl', fallbackDisplayTemplate)
+        fileName = 'itemlist_display.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'itemlist_display.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, fallbackDisplayTemplate)
         }
-        if (!shouldBeSkipped(templatePath + 'itemlist_edit.tpl')) {
-            fsa.generateFile(templatePath + 'itemlist_edit.tpl', editTemplate)
+        fileName = 'itemlist_edit.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'itemlist_edit.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, editTemplate)
         }
     }
 

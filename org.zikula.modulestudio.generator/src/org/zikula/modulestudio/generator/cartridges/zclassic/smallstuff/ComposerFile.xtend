@@ -16,8 +16,12 @@ class ComposerFile {
         if (targets('1.3.5')) {
             return
         }
-        if (!shouldBeSkipped(getAppSourcePath + 'composer.json')) {
-            fsa.generateFile(getAppSourcePath + 'composer.json', composerFile)
+        var fileName = 'composer.json'
+        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
+            if (shouldBeMarked(getAppSourcePath + fileName)) {
+                fileName = 'composer.generated.json'
+            }
+            fsa.generateFile(getAppSourcePath + fileName, composerFile)
         }
     }
 

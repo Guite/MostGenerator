@@ -18,12 +18,16 @@ class Validation {
     @Inject extension Utils = new Utils
 
     /**
-     * Entry point for the javascript file with validation functionality.
+     * Entry point for the JavaScript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppJsPath + appName + '_validation.js')) {
-            println('Generating javascript for validation')
-            fsa.generateFile(getAppJsPath + appName + '_validation.js', generate)
+        var fileName = appName + '_validation.js'
+        if (!shouldBeSkipped(getAppJsPath + fileName)) {
+            println('Generating JavaScript for validation')
+            if (shouldBeMarked(getAppJsPath + fileName)) {
+                fileName = appName + '_validation.generated.js'
+            }
+            fsa.generateFile(getAppJsPath + fileName, generate)
         }
     }
 

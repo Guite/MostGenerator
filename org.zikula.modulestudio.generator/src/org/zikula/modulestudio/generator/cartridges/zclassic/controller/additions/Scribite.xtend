@@ -25,8 +25,12 @@ class Scribite {
         this.fsa = fsa
 
         docPath = getAppDocPath + 'scribite/'
-        if (!shouldBeSkipped(docPath + 'integration.txt')) {
-            fsa.generateFile(docPath + 'integration.txt', integration)
+        var fileName = 'integration.txt'
+        if (!shouldBeSkipped(docPath + fileName)) {
+            if (shouldBeMarked(docPath + fileName)) {
+                fileName = 'integration.generated.txt'
+            }
+            fsa.generateFile(docPath + fileName, integration)
         }
 
         if (targets('1.3.5')) {
@@ -61,17 +65,33 @@ class Scribite {
             pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
         }
 
-        if (!shouldBeSkipped(pluginPath + 'plugin.js')) {
-            fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
+        var fileName = 'plugin.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'plugin.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, ckPlugin)
         }
-        if (!shouldBeSkipped(pluginPath + 'lang/de.js')) {
-            fsa.generateFile(pluginPath + 'lang/de.js', ckLangDe)
+        fileName = 'lang/de.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'lang/de.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, ckLangDe)
         }
-        if (!shouldBeSkipped(pluginPath + 'lang/en.js')) {
-            fsa.generateFile(pluginPath + 'lang/en.js', ckLangEn)
+        fileName = 'lang/en.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'lang/en.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, ckLangEn)
         }
-        if (!shouldBeSkipped(pluginPath + 'lang/nl.js')) {
-            fsa.generateFile(pluginPath + 'lang/nl.js', ckLangNl)
+        fileName = 'lang/nl.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'lang/nl.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, ckLangNl)
         }
     }
 
@@ -96,17 +116,33 @@ class Scribite {
             pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
         }
 
-        if (!shouldBeSkipped(pluginPath + 'editor_plugin.js')) {
-            fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
+        var fileName = 'editor_plugin.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'editor_plugin.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, tinyPlugin)
         }
-        if (!shouldBeSkipped(pluginPath + 'langs/de.js')) {
-            fsa.generateFile(pluginPath + 'langs/de.js', tinyLangDe)
+        fileName = 'langs/de.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'langs/de.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, tinyLangDe)
         }
-        if (!shouldBeSkipped(pluginPath + 'langs/en.js')) {
-            fsa.generateFile(pluginPath + 'langs/en.js', tinyLangEn)
+        fileName = 'langs/en.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'langs/en.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, tinyLangEn)
         }
-        if (!shouldBeSkipped(pluginPath + 'langs/nl.js')) {
-            fsa.generateFile(pluginPath + 'langs/nl.js', tinyLangNl)
+        fileName = 'langs/nl.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'langs/nl.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, tinyLangNl)
         }
     }
 
@@ -134,8 +170,12 @@ class Scribite {
             pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
         }
 
-        if (!shouldBeSkipped(pluginPath + appName + '.js')) {
-            fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
+        var fileName = appName + '.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = appName + '.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, xinhaPlugin)
         }
     }
 

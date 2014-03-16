@@ -23,9 +23,13 @@ class Custom {
 
     def dispatch generate(CustomAction it, Application app, Controller controller, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
-        if (!app.shouldBeSkipped(templatePath + name.formatForCode.toFirstLower + '.tpl')) {
+        var fileName = name.formatForCode.toFirstLower + '.tpl'
+        if (!app.shouldBeSkipped(templatePath + fileName)) {
             println('Generating ' + controller.formattedName + ' templates for custom action "' + name.formatForDisplay + '"')
-            fsa.generateFile(templatePath + name.formatForCode.toFirstLower + '.tpl', customView(it, app, controller))
+            if (app.shouldBeMarked(templatePath + fileName)) {
+                fileName = name.formatForCode.toFirstLower + '.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, customView(it, app, controller))
         }
         ''' '''
     }

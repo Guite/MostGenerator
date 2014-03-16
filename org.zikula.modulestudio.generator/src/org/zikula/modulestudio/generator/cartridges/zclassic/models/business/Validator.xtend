@@ -509,11 +509,19 @@ class Validator {
         val validatorFileName = name.formatForCodeCapital + validatorSuffix + '.php'
         if (!isInheriting) {
             if (!app.shouldBeSkipped(validatorPath + 'Base/' + validatorFileName)) {
-                fsa.generateFile(validatorPath + 'Base/' + validatorFileName, validatorBaseFile)
+                var fileName = validatorFileName
+                if (app.shouldBeMarked(validatorPath + 'Base/' + validatorFileName)) {
+                    fileName = name.formatForCodeCapital + validatorSuffix + '.generated.php'
+                }
+                fsa.generateFile(validatorPath + 'Base/' + fileName, validatorBaseFile)
             }
         }
         if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(validatorPath + validatorFileName)) {
-            fsa.generateFile(validatorPath + validatorFileName, validatorFile)
+            var fileName = validatorFileName
+            if (app.shouldBeMarked(validatorPath + validatorFileName)) {
+                fileName = name.formatForCodeCapital + validatorSuffix + '.generated.php'
+            }
+            fsa.generateFile(validatorPath + fileName, validatorFile)
         }
     }
 

@@ -14,8 +14,12 @@ class PhpUnitXmlDist {
         if (targets('1.3.5')) {
             return
         }
-        if (!shouldBeSkipped(getAppSourcePath + 'phpunit.xml.dist')) {
-            fsa.generateFile(getAppSourcePath + 'phpunit.xml.dist', phpUnitXml)
+        var fileName = 'phpunit.xml.dist'
+        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
+            if (shouldBeMarked(getAppSourcePath + fileName)) {
+                fileName = 'phpunit.xml.generated.dist'
+            }
+            fsa.generateFile(getAppSourcePath + fileName, phpUnitXml)
         }
     }
 

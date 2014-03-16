@@ -49,8 +49,13 @@ class Definition {
         this.wfType = wfType
         // generate only those states which are required by any entity using this workflow type
         this.states = getRequiredStateList(app, wfType)
-        if (!app.shouldBeSkipped(outputPath + wfType.textualName + '.xml')) {
-            fsa.generateFile(outputPath + wfType.textualName + '.xml', xmlSchema)
+
+        var fileName = wfType.textualName + '.xml'
+        if (!app.shouldBeSkipped(outputPath + fileName)) {
+            if (app.shouldBeMarked(outputPath + fileName)) {
+                fileName = wfType.textualName + '.generated.xml'
+            }
+            fsa.generateFile(outputPath + fileName, xmlSchema)
         }
     }
 

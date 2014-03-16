@@ -13,12 +13,16 @@ class TreeFunctions {
     @Inject extension Utils = new Utils
 
     /**
-     * Entry point for tree-related javascript functions.
+     * Entry point for tree-related JavaScript functions.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppJsPath + appName + '_tree.js')) {
-            println('Generating javascript for tree functions')
-            fsa.generateFile(getAppJsPath + appName + '_tree.js', generate)
+        var fileName = appName + '_tree.js'
+        if (!shouldBeSkipped(getAppJsPath + fileName)) {
+            println('Generating JavaScript for tree functions')
+            if (shouldBeMarked(getAppJsPath + fileName)) {
+                fileName = appName + '_tree.generated.js'
+            }
+            fsa.generateFile(getAppJsPath + fileName, generate)
         }
     }
 

@@ -21,9 +21,13 @@ class Config {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) configController.formatForDB else configController.formatForDB.toFirstUpper) + '/'
-        if (!shouldBeSkipped(templatePath + 'config.tpl')) {
+        var fileName = 'config.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
             println('Generating config template')
-            fsa.generateFile(templatePath + 'config.tpl', configView)
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'config.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, configView)
         }
     }
 

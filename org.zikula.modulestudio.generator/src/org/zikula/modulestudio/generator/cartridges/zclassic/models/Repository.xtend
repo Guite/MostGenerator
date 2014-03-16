@@ -67,12 +67,21 @@ class Repository {
     def private generate(Entity it) {
         println('Generating repository classes for entity "' + name.formatForDisplay + '"')
         val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository/'
-        val repositoryFileName = name.formatForCodeCapital + '.php'
-        if (!isInheriting && !app.shouldBeSkipped(repositoryPath + 'Base/' + repositoryFileName)) {
-            fsa.generateFile(repositoryPath + 'Base/' + repositoryFileName, modelRepositoryBaseFile)
+
+        var fileName = 'Base/' + name.formatForCodeCapital + '.php'
+        if (!isInheriting && !app.shouldBeSkipped(repositoryPath + fileName)) {
+            if (app.shouldBeMarked(repositoryPath + fileName)) {
+                fileName = 'Base/' + name.formatForCodeCapital + '.generated.php'
+            }
+            fsa.generateFile(repositoryPath + fileName, modelRepositoryBaseFile)
         }
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(repositoryPath + repositoryFileName)) {
-            fsa.generateFile(repositoryPath + repositoryFileName, modelRepositoryFile)
+
+        fileName = name.formatForCodeCapital + '.php'
+        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(repositoryPath + fileName)) {
+            if (app.shouldBeMarked(repositoryPath + fileName)) {
+                fileName = name.formatForCodeCapital + '.generated.php'
+            }
+            fsa.generateFile(repositoryPath + fileName, modelRepositoryFile)
         }
     }
 

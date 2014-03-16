@@ -29,11 +29,19 @@ class Styles {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         cssPrefix = appName.toLowerCase
-        if (!shouldBeSkipped(getAppCssPath + 'style.css')) {
-            fsa.generateFile(getAppCssPath + 'style.css', appStyles)
+        var fileName = 'style.css'
+        if (!shouldBeSkipped(getAppCssPath + fileName)) {
+            if (shouldBeMarked(getAppCssPath + fileName)) {
+                fileName = 'style.generated.css'
+            }
+            fsa.generateFile(getAppCssPath + fileName, appStyles)
         }
-        if (generateExternalControllerAndFinder && !shouldBeSkipped(getAppCssPath + 'finder.css')) {
-            fsa.generateFile(getAppCssPath + 'finder.css', finderStyles)
+        fileName = 'finder.css'
+        if (generateExternalControllerAndFinder && !shouldBeSkipped(getAppCssPath + fileName)) {
+            if (shouldBeMarked(getAppCssPath + fileName)) {
+                fileName = 'finder.generated.css'
+            }
+            fsa.generateFile(getAppCssPath + fileName, finderStyles)
         }
     }
 

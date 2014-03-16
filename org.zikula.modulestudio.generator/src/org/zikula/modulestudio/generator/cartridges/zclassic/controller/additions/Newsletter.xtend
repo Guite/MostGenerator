@@ -25,8 +25,11 @@ class Newsletter {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginPath = getAppSourceLibPath + 'NewsletterPlugin/'
         val pluginClassSuffix = if (!targets('1.3.5')) 'Plugin' else ''
-        val pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
+        var pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
         if (!generateOnlyBaseClasses && !shouldBeSkipped(pluginPath + pluginFileName)) {
+            if (shouldBeMarked(pluginPath + pluginFileName)) {
+                pluginFileName = 'ItemList' + pluginClassSuffix + '.generated.php'
+            }
             fsa.generateFile(pluginPath + pluginFileName, newsletterFile)
         }
         new NewsletterView().generate(it, fsa)

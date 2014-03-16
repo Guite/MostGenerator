@@ -14,8 +14,12 @@ class ContentTypeSingleView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'contenttype' else 'ContentType') + '/'
-        if (!shouldBeSkipped(templatePath + 'item_edit.tpl')) {
-            fsa.generateFile(templatePath + 'item_edit.tpl', editTemplate)
+        var fileName = 'item_edit.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'item_edit.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, editTemplate)
         }
     }
 

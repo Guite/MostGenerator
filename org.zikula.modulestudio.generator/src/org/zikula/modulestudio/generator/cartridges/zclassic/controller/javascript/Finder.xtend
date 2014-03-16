@@ -13,12 +13,16 @@ class Finder {
     @Inject extension Utils = new Utils
 
     /**
-     * Entry point for the javascript file with validation functionality.
+     * Entry point for the JavaScript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppJsPath + appName + '_finder.js')) {
-            println('Generating javascript for finder component')
-            fsa.generateFile(getAppJsPath + appName + '_finder.js', generate)
+        var fileName = appName + '_finder.js'
+        if (!shouldBeSkipped(getAppJsPath + fileName)) {
+            println('Generating JavaScript for finder component')
+            if (shouldBeMarked(getAppJsPath + fileName)) {
+                fileName = appName + '_finder.generated.js'
+            }
+            fsa.generateFile(getAppJsPath + fileName, generate)
         }
     }
 

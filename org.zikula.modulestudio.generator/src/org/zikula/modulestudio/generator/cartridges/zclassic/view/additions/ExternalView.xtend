@@ -23,19 +23,40 @@ class ExternalView {
     private SimpleFields fieldHelper = new SimpleFields
 
     def generate(Application it, IFileSystemAccess fsa) {
+        var fileName = ''
         for (entity : getAllEntities) {
             val templatePath = getViewPath + (if (targets('1.3.5')) 'external/' + entity.name.formatForCode else 'External/' + entity.name.formatForCodeCapital) + '/'
-            if (!shouldBeSkipped(templatePath + 'display.tpl')) {
-                fsa.generateFile(templatePath + 'display.tpl', entity.displayTemplate(it))
+
+            fileName = 'display.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'display.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
             }
-            if (!shouldBeSkipped(templatePath + 'info.tpl')) {
-                fsa.generateFile(templatePath + 'info.tpl', entity.itemInfoTemplate(it))
+
+            fileName = 'info.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'info.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, entity.itemInfoTemplate(it))
             }
-            if (!shouldBeSkipped(templatePath + 'find.tpl')) {
-                fsa.generateFile(templatePath + 'find.tpl', entity.findTemplate(it))
+
+            fileName = 'find.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'find.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, entity.findTemplate(it))
             }
-            if (!shouldBeSkipped(templatePath + 'select.tpl')) {
-                fsa.generateFile(templatePath + 'select.tpl', entity.selectTemplate(it))
+
+            fileName = 'select.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'select.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, entity.selectTemplate(it))
             }
         }
     }

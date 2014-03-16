@@ -79,16 +79,28 @@ class Entities {
         println('Generating entity classes for entity "' + name.formatForDisplay + '"')
         val entityPath = app.getAppSourceLibPath + 'Entity/'
         val entityClassSuffix = if (!app.targets('1.3.5')) 'Entity' else ''
-        val entityFileName = name.formatForCodeCapital + entityClassSuffix + '.php'
+        val entityFileName = name.formatForCodeCapital + entityClassSuffix
+        var fileName = ''
         if (!isInheriting) {
-            if (app.targets('1.3.5') && !app.shouldBeSkipped(entityPath + 'Base/' + entityFileName)) {
-                fsa.generateFile(entityPath + 'Base/' + entityFileName, modelEntityBaseFile(app))
-            } else if (!app.shouldBeSkipped(entityPath + 'Base/Abstract' + entityFileName)) {
-                fsa.generateFile(entityPath + 'Base/Abstract' + entityFileName, modelEntityBaseFile(app))
+            fileName = entityFileName + '.php'
+            if (app.targets('1.3.5') && !app.shouldBeSkipped(entityPath + 'Base/' + fileName)) {
+                if (app.shouldBeMarked(entityPath + 'Base/' + fileName)) {
+                    fileName = entityFileName + '.generated.php'
+                }
+                fsa.generateFile(entityPath + 'Base/' + fileName, modelEntityBaseFile(app))
+            } else if (!app.shouldBeSkipped(entityPath + 'Base/Abstract' + fileName)) {
+                if (app.shouldBeMarked(entityPath + 'Base/Abstract' + fileName)) {
+                    fileName = entityFileName + '.generated.php'
+                }
+                fsa.generateFile(entityPath + 'Base/Abstract' + fileName, modelEntityBaseFile(app))
             }
         }
-        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(entityPath + entityFileName)) {
-            fsa.generateFile(entityPath + entityFileName, modelEntityFile(app))
+        fileName = entityFileName + '.php'
+        if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(entityPath + fileName)) {
+            if (app.shouldBeMarked(entityPath + fileName)) {
+                fileName = entityFileName + '.generated.php'
+            }
+            fsa.generateFile(entityPath + fileName, modelEntityFile(app))
         }
     }
 

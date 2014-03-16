@@ -111,8 +111,11 @@ class Listeners {
     }
 
     def private listenerFile(String name, CharSequence content) {
-        val filePath = listenerPath + name + listenerSuffix
+        var filePath = listenerPath + name + listenerSuffix
         if (!app.shouldBeSkipped(filePath)) {
+            if (app.shouldBeMarked(filePath)) {
+                filePath = listenerPath + name + listenerSuffix.replace('.php', '.generated.php')
+            }
             fsa.generateFile(filePath, content)
         }
     }

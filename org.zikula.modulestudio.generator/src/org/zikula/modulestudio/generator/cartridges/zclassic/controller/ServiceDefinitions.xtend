@@ -27,8 +27,11 @@ class ServiceDefinitions {
         if (targets('1.3.5')) {
             return
         }
-        val definitionFileName = getResourcesPath + 'config/services.xml'
+        var definitionFileName = getResourcesPath + 'config/services.xml'
         if (!shouldBeSkipped(definitionFileName)) {
+            if (shouldBeMarked(definitionFileName)) {
+                definitionFileName = getResourcesPath + 'config/services.generated.xml'
+            }
             fsa.generateFile(definitionFileName, xmlContent)
         }
     }

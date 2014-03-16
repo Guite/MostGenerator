@@ -15,14 +15,23 @@ class Attributes {
 
     def generate (Application it, Controller controller, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+        var fileName = ''
         if (controller.hasActions('view') || controller.hasActions('display')) {
-            if (!shouldBeSkipped(templatePath + 'include_attributes_display.tpl')) {
-                fsa.generateFile(templatePath + 'include_attributes_display.tpl', attributesViewImpl(controller))
+            fileName = 'include_attributes_display.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'include_attributes_display.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, attributesViewImpl(controller))
             }
         }
         if (controller.hasActions('edit')) {
-            if (!shouldBeSkipped(templatePath + 'include_attributes_edit.tpl')) {
-                fsa.generateFile(templatePath + 'include_attributes_edit.tpl', attributesEditImpl(controller))
+            fileName = 'include_attributes_edit.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'include_attributes_edit.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, attributesEditImpl(controller))
             }
         }
     }

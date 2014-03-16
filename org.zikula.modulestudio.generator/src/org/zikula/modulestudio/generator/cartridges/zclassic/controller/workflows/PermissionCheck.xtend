@@ -52,8 +52,13 @@ class PermissionCheck {
         this.wfType = wfType
         // generate only those states which are required by any entity using this workflow type
         this.states = getRequiredStateList(app, wfType)
-        if (!app.shouldBeSkipped(outputPath + 'function.' + wfType.textualName + '_permissioncheck.php')) {
-            fsa.generateFile(outputPath + 'function.' + wfType.textualName + '_permissioncheck.php', permissionCheckFile)
+
+        var fileName = 'function.' + wfType.textualName + '_permissioncheck.php'
+        if (!app.shouldBeSkipped(outputPath + fileName)) {
+            if (app.shouldBeMarked(outputPath + fileName)) {
+                fileName = 'function.' + wfType.textualName + '_permissioncheck.generated.php'
+            }
+            fsa.generateFile(outputPath + fileName, permissionCheckFile)
         }
     }
 

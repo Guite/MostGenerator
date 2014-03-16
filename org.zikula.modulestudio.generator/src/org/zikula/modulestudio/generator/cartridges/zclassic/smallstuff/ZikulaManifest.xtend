@@ -16,8 +16,12 @@ class ZikulaManifest {
         if (targets('1.3.5')) {
             return
         }
-        if (!shouldBeSkipped(getAppSourcePath + 'zikula.manifest.json')) {
-            fsa.generateFile(getAppSourcePath + 'zikula.manifest.json', manifestFile)
+        var fileName = 'zikula.manifest.json'
+        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
+            if (shouldBeMarked(getAppSourcePath + fileName)) {
+                fileName = 'zikula.manifest.generated.json'
+            }
+            fsa.generateFile(getAppSourcePath + fileName, manifestFile)
         }
     }
 

@@ -16,8 +16,12 @@ class SearchView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'search' else 'Search') + '/'
-        if (!shouldBeSkipped(templatePath + 'options.tpl')) {
-            fsa.generateFile(templatePath + 'options.tpl', optionsTemplate)
+        var fileName = 'options.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'options.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, optionsTemplate)
         }
     }
 

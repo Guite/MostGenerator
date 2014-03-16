@@ -16,8 +16,12 @@ class Frame {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppSourceLibPath + 'Form/Plugin/FormFrame.php')) {
-            fsa.generateFile(getAppSourceLibPath + 'Form/Plugin/FormFrame.php', formFrameFile)
+        var fileName = 'Form/Plugin/FormFrame.php'
+        if (!shouldBeSkipped(getAppSourceLibPath + fileName)) {
+            if (shouldBeMarked(getAppSourceLibPath + fileName)) {
+                fileName = 'Form/Plugin/FormFrame.generated.php'
+            }
+            fsa.generateFile(getAppSourceLibPath + fileName, formFrameFile)
         }
         if (!shouldBeSkipped(viewPluginFilePath('block', 'FormFrame'))) {
             fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), formFramePluginFile)

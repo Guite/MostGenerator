@@ -20,12 +20,16 @@ class EditFunctions {
     @Inject extension Utils = new Utils
 
     /**
-     * Entry point for the javascript file with edit functionality.
+     * Entry point for the JavaScript file with edit functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppJsPath + appName + '_editFunctions.js')) {
-            println('Generating javascript for edit functions')
-            fsa.generateFile(getAppJsPath + appName + '_editFunctions.js', generate)
+        var fileName = appName + '_editFunctions.js'
+        if (!shouldBeSkipped(getAppJsPath + fileName)) {
+            println('Generating JavaScript for edit functions')
+            if (shouldBeMarked(getAppJsPath + fileName)) {
+                fileName = appName + '_editFunctions.generated.js'
+            }
+            fsa.generateFile(getAppJsPath + fileName, generate)
         }
     }
 

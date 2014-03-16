@@ -22,12 +22,16 @@ class DisplayFunctions {
     @Inject extension Utils = new Utils
 
     /**
-     * Entry point for the javascript file with display functionality.
+     * Entry point for the JavaScript file with display functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppJsPath + appName + '.js')) {
-            println('Generating javascript for display functions')
-            fsa.generateFile(getAppJsPath + appName + '.js', generate)
+        var fileName = appName + '.js'
+        if (!shouldBeSkipped(getAppJsPath + fileName)) {
+            println('Generating JavaScript for display functions')
+            if (shouldBeMarked(getAppJsPath + fileName)) {
+                fileName = appName + '.generated.js'
+            }
+            fsa.generateFile(getAppJsPath + fileName, generate)
         }
     }
 

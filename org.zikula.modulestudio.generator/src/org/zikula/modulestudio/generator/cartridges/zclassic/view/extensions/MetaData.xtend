@@ -20,14 +20,23 @@ class MetaData {
     def generate (Application it, Controller controller, IFileSystemAccess fsa) {
         this.app = it
         val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+        var fileName = ''
         if (controller.hasActions('view') || controller.hasActions('display')) {
-            if (!shouldBeSkipped(templatePath + 'include_metadata_display.tpl')) {
-                fsa.generateFile(templatePath + 'include_metadata_display.tpl', metaDataViewImpl(controller))
+            fileName = 'include_metadata_display.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'include_metadata_display.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, metaDataViewImpl(controller))
             }
         }
         if (controller.hasActions('edit')) {
-            if (!shouldBeSkipped(templatePath + 'include_metadata_edit.tpl')) {
-                fsa.generateFile(templatePath + 'include_metadata_edit.tpl', metaDataEditImpl(controller))
+            fileName = 'include_metadata_edit.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'include_metadata_edit.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, metaDataEditImpl(controller))
             }
         }
     }

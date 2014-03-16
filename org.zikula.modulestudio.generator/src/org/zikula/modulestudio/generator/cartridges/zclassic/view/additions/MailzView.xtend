@@ -25,10 +25,16 @@ class MailzView {
         for (entity : getAllEntities) {
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_text.tpl'
             if (!shouldBeSkipped(entityTemplate)) {
+                if (shouldBeMarked(entityTemplate)) {
+                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_text.generated.tpl'
+                }
                 fsa.generateFile(entityTemplate, entity.textTemplate(it))
             }
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_html.tpl'
             if (!shouldBeSkipped(entityTemplate)) {
+                if (shouldBeMarked(entityTemplate)) {
+                    entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_html.generated.tpl'
+                }
                 fsa.generateFile(entityTemplate, entity.htmlTemplate(it))
             }
         }

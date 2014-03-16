@@ -15,14 +15,23 @@ class StandardFields {
 
     def generate (Application it, Controller controller, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+        var fileName = ''
         if (controller.hasActions('view') || controller.hasActions('display')) {
-            if (!shouldBeSkipped(templatePath + 'include_standardfields_display.tpl')) {
-                fsa.generateFile(templatePath + 'include_standardfields_display.tpl', standardFieldsViewImpl(controller))
+            fileName = 'include_standardfields_display.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'include_standardfields_display.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, standardFieldsViewImpl(controller))
             }
         }
         if (controller.hasActions('edit')) {
-            if (!shouldBeSkipped(templatePath + 'include_standardfields_edit.tpl')) {
-                fsa.generateFile(templatePath + 'include_standardfields_edit.tpl', standardFieldsEditImpl(controller))
+            fileName = 'include_standardfields_edit.tpl'
+            if (!shouldBeSkipped(templatePath + fileName)) {
+                if (shouldBeMarked(templatePath + fileName)) {
+                    fileName = 'include_standardfields_edit.generated.tpl'
+                }
+                fsa.generateFile(templatePath + fileName, standardFieldsEditImpl(controller))
             }
         }
     }

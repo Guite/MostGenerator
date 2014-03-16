@@ -12,10 +12,13 @@ class NewsletterView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginClassSuffix = if (!targets('1.3.5')) 'Plugin' else ''
-        val templateFileName = 'ItemList' + pluginClassSuffix + '.tpl'
         val templatePath = getViewPath + 'plugin_config/'
-        if (!shouldBeSkipped(templatePath + templateFileName)) {
-            fsa.generateFile(templatePath + templateFileName, editTemplate)
+        var fileName = 'ItemList' + pluginClassSuffix + '.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'ItemList' + pluginClassSuffix + '.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, editTemplate)
         }
     }
 

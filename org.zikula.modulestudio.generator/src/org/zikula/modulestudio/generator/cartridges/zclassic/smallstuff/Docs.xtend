@@ -21,30 +21,63 @@ class Docs {
      * Entry point for module documentation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!shouldBeSkipped(getAppSourcePath + 'CHANGELOG.md')) {
-            fsa.generateFile(getAppSourcePath + 'CHANGELOG.md', Changelog)
+        var fileName = 'CHANGELOG.md'
+        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
+            if (shouldBeMarked(getAppSourcePath + fileName)) {
+                fileName = 'CHANGELOG.generated.md'
+            }
+            fsa.generateFile(getAppSourcePath + fileName, Changelog)
         }
-        if (!shouldBeSkipped(getAppSourcePath + 'README.md')) {
-            fsa.generateFile(getAppSourcePath + 'README.md', ReadmeMarkup)
+        fileName = 'README.md'
+        if (!shouldBeSkipped(getAppSourcePath + fileName)) {
+            if (shouldBeMarked(getAppSourcePath + fileName)) {
+                fileName = 'README.generated.md'
+            }
+            fsa.generateFile(getAppSourcePath + fileName, ReadmeMarkup)
         }
+
         val docPath = getAppDocPath
+        fileName = 'credits.md'
         if (!shouldBeSkipped(docPath + 'credits.md')) {
-            fsa.generateFile(docPath + 'credits.md', Credits)
+            if (shouldBeMarked(docPath + fileName)) {
+                fileName = 'credits.generated.md'
+            }
+            fsa.generateFile(docPath + fileName, Credits)
         }
-        if (!shouldBeSkipped(docPath + 'developers.md')) {
-            fsa.generateFile(docPath + 'developers.md', new DeveloperHints().generate(it))
+        fileName = 'developers.md'
+        if (!shouldBeSkipped(docPath + fileName)) {
+            if (shouldBeMarked(docPath + fileName)) {
+                fileName = 'developers.generated.md'
+            }
+            fsa.generateFile(docPath + fileName, new DeveloperHints().generate(it))
         }
-        if (!shouldBeSkipped(docPath + 'doctrine.md')) {
-            fsa.generateFile(docPath + 'doctrine.md', DoctrineHints)
+        fileName = 'doctrine.md'
+        if (!shouldBeSkipped(docPath + fileName)) {
+            if (shouldBeMarked(docPath + fileName)) {
+                fileName = 'doctrine.generated.md'
+            }
+            fsa.generateFile(docPath + fileName, DoctrineHints)
         }
-        if (!shouldBeSkipped(docPath + 'modulestudio.md')) {
-            fsa.generateFile(docPath + 'modulestudio.md', MostText)
+        fileName = 'modulestudio.md'
+        if (!shouldBeSkipped(docPath + fileName)) {
+            if (shouldBeMarked(docPath + fileName)) {
+                fileName = 'modulestudio.generated.md'
+            }
+            fsa.generateFile(docPath + fileName, MostText)
         }
-        if (!shouldBeSkipped(docPath + 'install.md')) {
-            fsa.generateFile(docPath + 'install.md', Install)
+        fileName = 'install.md'
+        if (!shouldBeSkipped(docPath + fileName)) {
+            if (shouldBeMarked(docPath + fileName)) {
+                fileName = 'install.generated.md'
+            }
+            fsa.generateFile(docPath + fileName, Install)
         }
-        if (!shouldBeSkipped(docPath + 'license.md')) {
-            fsa.generateFile(docPath + 'license.md', License)
+        fileName = 'license.md'
+        if (!shouldBeSkipped(docPath + fileName)) {
+            if (shouldBeMarked(docPath + fileName)) {
+                fileName = 'license.generated.md'
+            }
+            fsa.generateFile(docPath + fileName, License)
         }
     }
 

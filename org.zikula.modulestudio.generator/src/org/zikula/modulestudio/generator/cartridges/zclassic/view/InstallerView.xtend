@@ -21,20 +21,45 @@ class InstallerView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'init' else 'Init') + '/'
-        if (!shouldBeSkipped(templatePath + 'interactive.tpl')) {
-            fsa.generateFile(templatePath + 'interactive.tpl', tplInit)
+
+        var fileName = 'interactive.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'interactive.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, tplInit)
         }
-        if (needsConfig && !shouldBeSkipped(templatePath + 'step2.tpl')) {
-            fsa.generateFile(templatePath + 'step2.tpl', tplInitStep2)
+
+        fileName = 'step2.tpl'
+        if (needsConfig && !shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'step2.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, tplInitStep2)
         }
-        if (!shouldBeSkipped(templatePath + 'step3.tpl')) {
-            fsa.generateFile(templatePath + 'step3.tpl', tplInitStep3)
+
+        fileName = 'step3.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'step3.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, tplInitStep3)
         }
-        if (!shouldBeSkipped(templatePath + 'update.tpl')) {
-            fsa.generateFile(templatePath + 'update.tpl', tplUpdate)
+
+        fileName = 'update.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'update.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, tplUpdate)
         }
-        if (!shouldBeSkipped(templatePath + 'delete.tpl')) {
-            fsa.generateFile(templatePath + 'delete.tpl', tplDelete)
+
+        fileName = 'delete.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'delete.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, tplDelete)
         }
     }
 

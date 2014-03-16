@@ -167,8 +167,20 @@ class Views {
 
     def private headerFooterFile(Application it, Controller controller) {
         val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
-        fsa.generateFile(templatePath + 'header.tpl', headerImpl(controller))
-        fsa.generateFile(templatePath + 'footer.tpl', footerImpl(controller))
+        var fileName = 'header.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'header.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, headerImpl(controller))
+        }
+        fileName = 'footer.tpl'
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'footer.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, footerImpl(controller))
+        }
     }
 
     def private headerImpl(Application it, Controller controller) '''
@@ -250,7 +262,13 @@ class Views {
     '''
 
     def private pdfHeaderFile(Application it) {
-        fsa.generateFile(getViewPath + 'include_pdfheader.tpl', pdfHeaderImpl)
+        var fileName = 'include_pdfheader.tpl'
+        if (!shouldBeSkipped(getViewPath + fileName)) {
+            if (shouldBeMarked(getViewPath + fileName)) {
+                fileName = 'include_pdfheader.generated.tpl'
+            }
+            fsa.generateFile(getViewPath + fileName, pdfHeaderImpl)
+        }
     }
 
     def private pdfHeaderImpl(Application it) '''
