@@ -97,7 +97,7 @@ class Property {
              «IF !entity.hasCompositeKeys»«/* || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»*/»
               * @ORM\Id
               «IF entity.identifierStrategy != EntityIdentifierStrategy::NONE»
-               * @ORM\GeneratedValue(strategy="«entity.identifierStrategy.asConstant()»")
+               * @ORM\GeneratedValue(strategy="«entity.identifierStrategy.literal»")
               «ENDIF»
             «ELSE»
               * @ORM\Id
@@ -122,6 +122,8 @@ class Property {
                 '''«/*type="«type»", */»length=«it.length»'''
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
+            ArrayField:
+                '''type="«arrayType.literal»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:

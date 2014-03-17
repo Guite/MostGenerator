@@ -48,7 +48,7 @@ class Extensions {
          * @Gedmo\TranslationEntity(class="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('translation', false)»")
          «ENDIF»
          «IF tree != EntityTreeType::NONE»
-         * @Gedmo\Tree(type="«tree.asConstant»")
+         * @Gedmo\Tree(type="«tree.literal.toLowerCase»")
             «IF tree == EntityTreeType::CLOSURE»
              * @Gedmo\TreeClosure(class="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('closure', false)»")
             «ENDIF»
@@ -80,7 +80,7 @@ class Extensions {
             AbstractDateField: '''
                 «columnExtensionsDefault»
                  «IF it.timestampable != EntityTimestampableType::NONE»
-                  * @Gedmo\Timestampable(on="«it.timestampable.asConstant»"«timestampableDetails»)
+                  * @Gedmo\Timestampable(on="«it.timestampable.literal»"«timestampableDetails»)
                  «ENDIF»
             '''
             default: columnExtensionsDefault
@@ -158,9 +158,9 @@ class Extensions {
                  * @Gedmo\Translatable
              «ENDIF»
              «IF container.application.targets('1.3.5')»
-             * @Gedmo\Slug(style="«slugStyle.asConstant»", separator="«slugSeparator»", unique=«slugUnique.displayBool», updatable=«slugUpdatable.displayBool»)
+             * @Gedmo\Slug(style="«slugStyle.slugStyleAsConstant»", separator="«slugSeparator»", unique=«slugUnique.displayBool», updatable=«slugUpdatable.displayBool»)
              «ELSE»
-             * @Gedmo\Slug(fields={«FOR field : getSluggableFields SEPARATOR ', '»"«field.name.formatForCode»"«ENDFOR»}, updatable=«slugUpdatable.displayBool», unique=«slugUnique.displayBool», separator="«slugSeparator»", style="«slugStyle.asConstant»")
+             * @Gedmo\Slug(fields={«FOR field : getSluggableFields SEPARATOR ', '»"«field.name.formatForCode»"«ENDFOR»}, updatable=«slugUpdatable.displayBool», unique=«slugUnique.displayBool», separator="«slugSeparator»", style="«slugStyle.slugStyleAsConstant»")
              «ENDIF»
              * @ORM\Column(type="string", length=«slugLength», unique=«slugUnique.displayBool»)
              * @var string $slug.

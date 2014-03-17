@@ -243,7 +243,7 @@ class Association {
         else ''', cascade={«cascadeOptionsImpl(useReverse)»}'''
     }
 
-    def private fetchTypeTag(JoinRelationship it) { if (fetchType != RelationFetchType::LAZY) ''', fetch="«fetchType.asConstant»"''' }
+    def private fetchTypeTag(JoinRelationship it) { if (fetchType != RelationFetchType::LAZY) ''', fetch="«fetchType.literal»"''' }
 
     def private cascadeOptionsImpl(JoinRelationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }

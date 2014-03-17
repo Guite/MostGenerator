@@ -1560,7 +1560,7 @@ class FormHandler {
                         «IF hasOptimisticLock»
                             $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
                         «ELSEIF hasPessimisticWriteLock»
-                            $this->entityManager->lock($entity, LockMode::«lockType.asConstant»);
+                            $this->entityManager->lock($entity, LockMode::«lockType.lockTypeAsConstant»);
                         «ENDIF»
                     }
 

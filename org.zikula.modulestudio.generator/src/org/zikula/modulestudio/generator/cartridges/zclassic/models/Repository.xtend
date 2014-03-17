@@ -103,9 +103,9 @@ class Repository {
          * This is the base repository class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.5')»
-        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
             «val stringFields = fields.filter(StringField).filter[!leading && !password]»
@@ -208,7 +208,7 @@ class Repository {
             use «app.appNamespace»\Util\WorkflowUtil;
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
-            use Gedmo\Tree\Entity\Repository\«tree.asConstant.toFirstUpper»TreeRepository;
+            use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
         «ELSE»
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
@@ -521,7 +521,7 @@ class Repository {
             «ENDIF»
             «IF hasPessimisticWriteLock»
 
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
 
             $query->execute();
@@ -561,7 +561,7 @@ class Repository {
             «ENDIF»
             «IF hasPessimisticWriteLock»
 
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
 
             $query->execute();
@@ -598,7 +598,7 @@ class Repository {
             «ENDIF»
             «IF hasPessimisticWriteLock»
 
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
 
             $query->execute();
@@ -629,7 +629,7 @@ class Repository {
                ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
         }
@@ -659,7 +659,7 @@ class Repository {
                ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
         }
@@ -698,7 +698,7 @@ class Repository {
                ->setParameter('user', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
         }
@@ -1257,7 +1257,7 @@ class Repository {
 
             $query = $qb->getQuery();
             «IF hasPessimisticReadLock»
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
 
             return $query->getSingleScalarResult();
@@ -1285,7 +1285,7 @@ class Repository {
             $query = $qb->getQuery();
 
             «IF hasPessimisticReadLock»
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $count = $query->getSingleScalarResult();
 
@@ -1497,7 +1497,7 @@ class Repository {
             «ENDIF»
             «IF hasPessimisticReadLock»
 
-                $query->setLockMode(LockMode::«lockType.asConstant»);
+                $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
 
             return $query;

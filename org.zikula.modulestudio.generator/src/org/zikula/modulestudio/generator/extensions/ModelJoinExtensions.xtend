@@ -12,11 +12,9 @@ import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.RelationFetchType
 import de.guite.modulestudio.metamodel.modulestudio.Relationship
 
 import static de.guite.modulestudio.metamodel.modulestudio.RelationAutoCompletionUsage.*
-import static de.guite.modulestudio.metamodel.modulestudio.RelationFetchType.*
 
 /**
  * This class contains model join relationship related extension methods.
@@ -367,17 +365,5 @@ class ModelJoinExtensions {
      */
     def isAggregated(Entity it) {
         !getAggregators.empty
-    }
-
-    /**
-     * Prints an output string corresponding to the given relation fetch type.
-     */
-    def asConstant(RelationFetchType fetchType) {
-        switch fetchType {
-            case LAZY        : 'LAZY'
-            case EAGER       : 'EAGER'
-            case EXTRA_LAZY  : 'EXTRA_LAZY'
-            default: 'LAZY'
-        }
     }
 }

@@ -258,12 +258,12 @@ class Entities {
           * )
          «ENDIF»
          «IF isTopSuperClass»
-          * @ORM\InheritanceType("«getChildRelations.head.strategy.asConstant»")
+          * @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
           * @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
           * @ORM\Discriminatormap[{"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
-          * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant»")
+          * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
          «ENDIF»
          * @ORM\HasLifecycleCallbacks
          */

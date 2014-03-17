@@ -242,36 +242,12 @@ class ModelBehaviourExtensions {
     /**
      * Prints an output string corresponding to the given slug style.
      */
-    def dispatch asConstant(EntitySlugStyle slugStyle) {
+    def slugStyleAsConstant(EntitySlugStyle slugStyle) {
         switch slugStyle {
             case LOWERCASE  : 'lower'
             case UPPERCASE  : 'upper'
             case CAMEL      : 'camel'
             default: 'default'
-        }
-    }
-
-    /**
-     * Prints an output string corresponding to the given timestampable type.
-     */
-    def dispatch asConstant(EntityTimestampableType tsType) {
-        switch tsType {
-            case UPDATE : 'update'
-            case CREATE : 'create'
-            case CHANGE : 'change'
-            default: 'update'
-        }
-    }
-
-    /**
-     * Prints an output string corresponding to the given tree type.
-     */
-    def dispatch asConstant(EntityTreeType treeType) {
-        switch treeType {
-            case NONE    : ''
-            case NESTED  : 'nested'
-            case CLOSURE : 'closure'
-            default: ''
         }
     }
 }

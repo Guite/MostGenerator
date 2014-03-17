@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
-import de.guite.modulestudio.metamodel.modulestudio.InheritanceStrategyType
 
 /**
  * This class contains model inheritance related extension methods.
@@ -49,16 +48,5 @@ class ModelInheritanceExtensions {
      */
     def getChildRelations(Entity it) {
         incoming.filter(InheritanceRelationship)
-    }
-
-    /**
-     * Prints an output string corresponding to the given inheritance type.
-     */
-    def strategyConstant(InheritanceStrategyType inheritanceType) {
-        switch inheritanceType {
-            case SINGLE_TABLE   : 'SINGLE_TABLE'
-            case JOINED         : 'JOINED'
-            default: ''
-        }
     }
 }

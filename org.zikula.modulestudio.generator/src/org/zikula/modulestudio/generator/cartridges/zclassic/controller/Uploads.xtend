@@ -463,14 +463,14 @@ class Uploads {
                     «FOR uploadField : uploadFields»«uploadField.determineFileNameFieldCase»«ENDFOR»
                 }
             «ELSE»
-                $namingScheme = «uploadFields.head.namingSchemeAsInt»;
+                $namingScheme = «uploadFields.head.namingScheme.value»;
             «ENDIF»
                 break;
     '''
 
     def private determineFileNameFieldCase(UploadField it) '''
         case '«name.formatForCode»':
-            $namingScheme = «namingSchemeAsInt»;
+            $namingScheme = «it.namingScheme.value»;
             break;
     '''
 
