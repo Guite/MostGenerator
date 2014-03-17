@@ -104,7 +104,7 @@ class Property {
           «ENDIF»
         «ENDIF»
         «new Extensions().columnExtensions(it)»
-         * @ORM\Column(«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+         * @ORM\Column(«IF dbName !== null && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
          * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSE»«type»«ENDIF» $«name.formatForCode».
          */
