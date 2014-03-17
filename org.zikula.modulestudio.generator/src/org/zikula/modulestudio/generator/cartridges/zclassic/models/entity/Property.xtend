@@ -123,7 +123,7 @@ class Property {
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ArrayField:
-                '''type="«arrayType.literal»"«/*», length=«it.length*/»'''
+                '''type="«IF entity.container.application.targets('1.3.5')»array«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:
