@@ -97,20 +97,20 @@ class EventListener {
                     return;
                 }
 
+                if ($usesCsvOutput == 1) {
+                    // apply no changes for CSV output
+                    return;
+                }
+
                 $string = '';
                 if (isset($this[$fieldName])) {
                     if (!empty($this[$fieldName]) || ($allowZero && $this[$fieldName] == 0)) {
                         $string = $this[$fieldName];
-                        if ($usesCsvOutput == 1) {
-                            // strip only quotes when displaying raw output in CSV
-                            $string = str_replace('"', '""', $string);
+                        if ($this->containsHtml($string)) {
+                            $string = DataUtil::formatForDisplayHTML($string);
                         } else {
-                            if ($this->containsHtml($string)) {
-                                $string = DataUtil::formatForDisplayHTML($string);
-                            } else {
-                                $string = DataUtil::formatForDisplay($string);
-                                $string = nl2br($string);
-                            }
+                            $string = DataUtil::formatForDisplay($string);
+                            $string = nl2br($string);
                         }
                     }
                 }
