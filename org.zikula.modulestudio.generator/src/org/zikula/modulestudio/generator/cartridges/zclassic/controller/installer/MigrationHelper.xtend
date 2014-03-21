@@ -32,17 +32,25 @@ class MigrationHelper {
         $this->updateHookNamesFor140();
     '''
 
-    def generate(Application it) {
-        updateModVarsTo140
-        updateExtensionInfoFor140
-        renamePermissionsFor140
-        renameCategoryRegistriesFor140
-        renameTablesFor140
-        dropEventHandlersFromDatabase
-        updateHookNamesFor140
-        getConnection
-        getDbName
-    }
+    def generate(Application it) '''
+        «updateModVarsTo140»
+
+        «updateExtensionInfoFor140»
+
+        «renamePermissionsFor140»
+
+        «renameCategoryRegistriesFor140»
+
+        «renameTablesFor140»
+
+        «dropEventHandlersFromDatabase»
+
+        «updateHookNamesFor140»
+
+        «getConnection»
+
+        «getDbName»
+    '''
 
     def private updateModVarsTo140(Application it) '''
         /**
@@ -58,7 +66,6 @@ class MigrationHelper {
                                  WHERE modname = '«name.formatForCodeCapital»';
             ");
         }
-
     '''
 
     def private updateExtensionInfoFor140(Application it) '''
@@ -76,7 +83,6 @@ class MigrationHelper {
                                  WHERE name = '«name.formatForCodeCapital»';
             ");
         }
-
     '''
 
     def private renamePermissionsFor140(Application it) '''
@@ -95,7 +101,6 @@ class MigrationHelper {
                                  WHERE component LIKE '«name.formatForCodeCapital»%';
             ");
         }
-
     '''
 
     def private renameCategoryRegistriesFor140(Application it) '''
@@ -114,7 +119,6 @@ class MigrationHelper {
                                  WHERE modname LIKE '«name.formatForCodeCapital»%';
             ");
         }
-
     '''
 
     def private renameTablesFor140(Application it) '''
@@ -145,7 +149,6 @@ class MigrationHelper {
                 ");
             }
         }
-
     '''
 
     def private dropEventHandlersFromDatabase(Application it) '''
@@ -156,7 +159,6 @@ class MigrationHelper {
         {
             EventUtil::unregisterPersistentModuleHandlers('«appName»');
         }
-
     '''
 
     def private updateHookNamesFor140(Application it) '''
@@ -206,7 +208,6 @@ class MigrationHelper {
                                  WHERE eventname LIKE '«name.formatForDB»%';
             ");
         }
-
     '''
 
     def private getConnection(Application it) '''
@@ -222,7 +223,6 @@ class MigrationHelper {
 
             return $conn;
         }
-
     '''
 
     def private getDbName(Application it) '''
@@ -235,6 +235,5 @@ class MigrationHelper {
         {
             return $this->getContainer()->getParameter('database_name');
         }
-
     '''
 }
