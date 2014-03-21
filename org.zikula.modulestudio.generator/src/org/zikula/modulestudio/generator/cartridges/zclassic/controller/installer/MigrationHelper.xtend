@@ -11,44 +11,44 @@ class MigrationHelper {
 
     def generateUsageExample(Application it) '''
         // rename module for all modvars
-        $this->updateModVarsTo137();
+        $this->updateModVarsTo140();
 
         // update extension information about this app
-        $this->updateExtensionInfoFor137();
+        $this->updateExtensionInfoFor140();
 
         // rename existing permission rules
-        $this->renamePermissionsFor137();
+        $this->renamePermissionsFor140();
 
         // rename existing category registries
-        $this->renameCategoryRegistriesFor137();
+        $this->renameCategoryRegistriesFor140();
 
         // rename all tables
-        $this->renameTablesFor137();
+        $this->renameTablesFor140();
 
         // remove event handler definitions from database
         $this->dropEventHandlersFromDatabase();
 
         // update module name in the hook tables
-        $this->updateHookNamesFor137();
+        $this->updateHookNamesFor140();
     '''
 
     def generate(Application it) {
-        updateModVarsTo137
-        updateExtensionInfoFor137
-        renamePermissionsFor137
-        renameCategoryRegistriesFor137
-        renameTablesFor137
+        updateModVarsTo140
+        updateExtensionInfoFor140
+        renamePermissionsFor140
+        renameCategoryRegistriesFor140
+        renameTablesFor140
         dropEventHandlersFromDatabase
-        updateHookNamesFor137
+        updateHookNamesFor140
         getConnection
         getDbName
     }
 
-    def private updateModVarsTo137(Application it) '''
+    def private updateModVarsTo140(Application it) '''
         /**
          * Renames the module name for variables in the module_vars table.
          */
-        protected function updateModVarsTo137()
+        protected function updateModVarsTo140()
         {
             $dbName = $this->getDbName();
             $conn = $this->getConnection();
@@ -61,11 +61,11 @@ class MigrationHelper {
 
     '''
 
-    def private updateExtensionInfoFor137(Application it) '''
+    def private updateExtensionInfoFor140(Application it) '''
         /**
          * Renames this application in the core's extensions table.
          */
-        protected function updateExtensionInfoFor137()
+        protected function updateExtensionInfoFor140()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -79,11 +79,11 @@ class MigrationHelper {
 
     '''
 
-    def private renamePermissionsFor137(Application it) '''
+    def private renamePermissionsFor140(Application it) '''
         /**
          * Renames all permission rules stored for this app.
          */
-        protected function renamePermissionsFor137()
+        protected function renamePermissionsFor140()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -98,11 +98,11 @@ class MigrationHelper {
 
     '''
 
-    def private renameCategoryRegistriesFor137(Application it) '''
+    def private renameCategoryRegistriesFor140(Application it) '''
         /**
          * Renames all category registries stored for this app.
          */
-        protected function renameCategoryRegistriesFor137()
+        protected function renameCategoryRegistriesFor140()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -117,11 +117,11 @@ class MigrationHelper {
 
     '''
 
-    def private renameTablesFor137(Application it) '''
+    def private renameTablesFor140(Application it) '''
         /**
          * Renames all (existing) tables of this app.
          */
-        protected function renameTablesFor137()
+        protected function renameTablesFor140()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
@@ -159,11 +159,11 @@ class MigrationHelper {
 
     '''
 
-    def private updateHookNamesFor137(Application it) '''
+    def private updateHookNamesFor140(Application it) '''
         /**
          * Updates the module name in the hook tables.
          */
-        protected function updateHookNamesFor137()
+        protected function updateHookNamesFor140()
         {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
