@@ -627,7 +627,7 @@ class FormHandler {
                 «IF app.targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 «ELSE»
-                $entityClass = '«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $entity = new $entityClass();
             }
