@@ -329,14 +329,23 @@ class Forms {
                         function handlePositionError(evt) {
                             Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
                         }
+
                         {{*
                             Initialise geocoding functionality.
                             In contrast to the map picker this one determines coordinates for a given address.
-                            To use this please customise the form field names inside the function to your needs.
-                            You can find it in «app.getAppJsPath»«app.appName»_editFunctions.js
+                            To use this please customise the following method for assembling the address.
                             Furthermore you will need a link or a button with id="linkGetCoordinates" which will
                             be used by the script for adding a corresponding click event handler.
-                            «app.prefix»InitGeoCoding();
+
+                            var determineAddressForGeoCoding = function () {
+                                var address = {
+                                    address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
+                                };
+
+                                return address;
+                            }
+
+                            «app.prefix»InitGeoCoding(determineAddressForGeoCoding);
                         *}}
                     });
                 /* ]]> */

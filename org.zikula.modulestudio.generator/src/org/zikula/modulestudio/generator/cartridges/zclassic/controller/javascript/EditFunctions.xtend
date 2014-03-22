@@ -149,23 +149,31 @@ class EditFunctions {
         /**
          * Example method for initialising geo coding functionality in JavaScript.
          * In contrast to the map picker this one determines coordinates for a given address.
-         * To use this please customise the form field names to your needs.
+         * Uses a callback function for retrieving the address to be converted, so that it can be easily customised in each edit template.
          * There is also a method on PHP level available in the \«IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Util\ControllerUtil«ENDIF» class.
          */
-        function «prefix»InitGeoCoding()
+        function «prefix»InitGeoCoding(addressCallback)
         {
             $('linkGetCoordinates').observe('click', function (evt) {
-                «prefix»DoGeoCoding();
+                «prefix»DoGeoCoding(addressCallback);
             });
         }
 
-        function «prefix»DoGeoCoding()
+        /**
+         * Performs the actual geo coding using Mapstraction.
+         */
+        function «prefix»DoGeoCoding(addressCallback)
         {
-            var geocoder = new mxn.Geocoder('googlev3', «prefix»GeoCodeReturn, «prefix»GeoCodeErrorCallback);
-
             var address = {
                 address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
             };
+
+            // Check whether the given callback is executable
+            if (typeof addressCallback !== 'function') {
+                address = addressCallback();
+            }
+
+            var geocoder = new mxn.Geocoder('googlev3', «prefix»GeoCodeReturn, «prefix»GeoCodeErrorCallback);
             geocoder.geocode(address);
 
             function «prefix»GeoCodeErrorCallback (status) {
