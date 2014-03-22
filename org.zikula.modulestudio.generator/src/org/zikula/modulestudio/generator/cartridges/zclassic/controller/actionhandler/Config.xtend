@@ -171,6 +171,7 @@ class Config {
                             return LogUtil::registerError($msg);
                         «ELSE»
                             $this->request->getSession()->getFlashBag()->add('error', $msg);
+                            return false;
                         «ENDIF»
                     }
 

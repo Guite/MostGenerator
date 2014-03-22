@@ -484,6 +484,7 @@ class FormHandler {
                     return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                    return false;
                 «ENDIF»
             }
             // assign list of allowed actions to the view for further processing
