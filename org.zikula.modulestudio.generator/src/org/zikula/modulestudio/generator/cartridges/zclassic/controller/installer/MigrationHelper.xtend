@@ -142,7 +142,7 @@ class MigrationHelper {
                     continue;
                 }
 
-                $newTableName = str_replace($oldPrefix, $newPrefix, $tableName)
+                $newTableName = str_replace($oldPrefix, $newPrefix, $tableName);
 
                 $conn->executeQuery("RENAME TABLE $dbName.$tableName
                                      TO $dbName.$newTableName;
