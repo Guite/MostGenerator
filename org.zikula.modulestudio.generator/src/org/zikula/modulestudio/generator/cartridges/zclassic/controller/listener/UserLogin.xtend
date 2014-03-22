@@ -144,8 +144,8 @@ class UserLogin {
          «IF targets('1.3.5')»
          *     SessionUtil::setVar('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users');
          «ELSE»
-         *     $request = ServiceUtil::getService('request');
-         *     $request->session->set('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users');
+         *     $session = ServiceUtil::getService('session');
+         *     $session->set('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users');
          «ENDIF»
          *
          * where `$sessionVars` contains the information discussed previously.

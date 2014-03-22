@@ -315,8 +315,11 @@ class Search {
                 return array();
             }
 
+            $serviceManager = ServiceUtil::getManager();
+
             // save session id as it is used when inserting search results below
-            $sessionId  = session_id();
+            $session = $serviceManager->get('session');
+            $sessionId = $session->getId();
 
             // save current language
             $languageCode = ZLanguage::getLanguageCode();
@@ -327,7 +330,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : array();
 
-            $controllerHelper = new ControllerUtil(ServiceUtil::getManager(), ModUtil::getModule($this->name));
+            $controllerHelper = new ControllerUtil($serviceManager, ModUtil::getModule($this->name));
             $utilArgs = array('helper' => 'search', 'action' => 'getResults');
             $allowedTypes = $controllerHelper->getObjectTypes('helper', $utilArgs);
 

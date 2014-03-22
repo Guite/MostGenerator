@@ -101,7 +101,7 @@ class Interactive {
             «ENDFOR»
 
             $activate = (bool) $this->request->request->filter('activate', false, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
-            $activate = (!empty($activate)) ? true : false;
+            $activate = !empty($activate) ? true : false;
 
             «IF targets('1.3.5')»
                 return $this->redirect(ModUtil::url('«appName»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
