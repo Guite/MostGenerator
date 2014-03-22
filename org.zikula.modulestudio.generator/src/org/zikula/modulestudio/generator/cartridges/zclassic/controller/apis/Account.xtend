@@ -37,7 +37,6 @@ class Account {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api\Base;
 
-            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             use UserUtil;

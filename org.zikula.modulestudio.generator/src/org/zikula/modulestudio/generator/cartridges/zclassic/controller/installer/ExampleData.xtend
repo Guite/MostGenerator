@@ -137,7 +137,7 @@ class ExampleData {
         «val entityName = name.formatForCode»
         «IF categorisable»
             $categoryId = 41; // Business and work
-            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»\Module\CategoriesModule\Entity\CategoryEntity«ENDIF»', $categoryId);
+            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»CategoriesModule:CategoryEntity«ENDIF»', $categoryId);
         «ENDIF»
         «FOR number : 1..container.numExampleRows»
             «IF isInheriting»
@@ -204,7 +204,11 @@ class ExampleData {
         try {
             «FOR entity : entities»«entity.persistEntities(application)»«ENDFOR»
         } catch(\Exception $e) {
-            LogUtil::register«IF application.targets('1.3.5')»Error«ELSE»Warning«ENDIF»($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+            «IF application.targets('1.3.5')»
+                LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+            «ELSE»
+                $this->request->getSession()->getFlashBag()->add('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+            «ENDIF»
         }
     '''
 

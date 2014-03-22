@@ -227,7 +227,6 @@ class ControllerLayer {
             «IF hasActions('edit')»
                 use JCSSUtil;
             «ENDIF»
-            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             «IF (hasActions('view') && isAdminController) || hasActions('main') || hasActions('delete')»
@@ -350,7 +349,11 @@ class ControllerLayer {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
-                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    «IF app.targets('1.3.5')»
+                        LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    «ENDIF»
                 }
 
                 if (!$success) {
@@ -358,9 +361,17 @@ class ControllerLayer {
                 }
 
                 if ($action == 'delete') {
-                    LogUtil::registerStatus($this->__('Done! Item deleted.'));
+                    «IF app.targets('1.3.5')»
+                        LogUtil::registerStatus($this->__('Done! Item deleted.'));
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
+                    «ENDIF»
                 } else {
-                    LogUtil::registerStatus($this->__('Done! Item updated.'));
+                    «IF app.targets('1.3.5')»
+                        LogUtil::registerStatus($this->__('Done! Item updated.'));
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item updated.'));
+                    «ENDIF»
                 }
 
                 // Let any hooks know that we have updated or deleted an item
@@ -425,7 +436,6 @@ class ControllerLayer {
                 use «app.appNamespace»\RouterFacade;
             «ENDIF»
             use «app.appNamespace»\Util\ControllerUtil;
-            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             «IF isUserController»

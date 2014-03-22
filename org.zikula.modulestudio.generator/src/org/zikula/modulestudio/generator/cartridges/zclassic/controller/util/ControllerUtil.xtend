@@ -44,7 +44,6 @@ class ControllerUtil {
             use DataUtil;
             «IF hasUploads»
                 use FileUtil;
-                use LogUtil;
             «ENDIF»
             use Zikula_AbstractBase;
             use Zikula_Request_Http;
@@ -316,15 +315,27 @@ class ControllerUtil {
         {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName, true);
 
+            «IF !targets('1.3.5')»
+                $session = $this->serviceManager->get('session');
+            «ENDIF»
+
             // Check if directory exist and try to create it if needed
             if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
-                LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+                «IF targets('1.3.5')»
+                    LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+                «ELSE»
+                    $session->getFlashBag()->add('error', $this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+                «ENDIF»
                 return false;
             }
 
             // Check if directory is writable and change permissions if needed
             if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
-                LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                «IF targets('1.3.5')»
+                    LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                «ELSE»
+                    $session->getFlashBag()->add('warning', $this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                «ENDIF»
                 return false;
             }
 
@@ -335,7 +346,11 @@ class ControllerUtil {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                 $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
                 if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
-                    LogUtil::registerStatus($this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+                    «IF targets('1.3.5')»
+                        LogUtil::registerStatus($this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+                    «ELSE»
+                        $session->getFlashBag()->add('warning', $this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+                    «ENDIF»
                     return false;
                 }
             }

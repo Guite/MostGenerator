@@ -212,7 +212,13 @@ class EventListener {
                 «ENDIF»
                 if ($result === false) {
                     $dom = ZLanguage::getModuleDomain('«container.application.appName»');
-                    «IF container.application.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+                    «IF container.application.targets('1.3.5')»
+                        return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+                    «ELSE»
+                        $session = $serviceManager->get('session');
+                        $session->getFlashBag()->add('error', __('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+                        return false;
+                    «ENDIF»
                 }
             }
 
@@ -506,7 +512,14 @@ class EventListener {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
             } catch (\Exception $e) {
-                «IF entity.container.application.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+                «IF entity.container.application.targets('1.3.5')»
+                    return LogUtil::registerError($e->getMessage());
+                «ELSE»
+                    $serviceManager = ServiceUtil::getManager();
+                    $session = $serviceManager->get('session');
+                    $session->getFlashBag()->add('error', $e->getMessage());
+                    return false;
+                «ENDIF»
             }
 
             $fullPath = $basePath .  $this['«realName»'];

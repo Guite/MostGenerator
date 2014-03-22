@@ -127,7 +127,6 @@ class FormHandler {
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             use System;
@@ -481,7 +480,11 @@ class FormHandler {
             $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
-                «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Error! Could not determine workflow actions.'));
+                «IF app.targets('1.3.5')»
+                    return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                «ENDIF»
             }
             // assign list of allowed actions to the view for further processing
             $this->view->assign('actions', $actions);
@@ -582,7 +585,7 @@ class FormHandler {
         {
             $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
             if ($entity == null) {
-                «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('No such item.'));
+                «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
             }
 
             $entity->initWorkflow();
@@ -620,7 +623,7 @@ class FormHandler {
                 // reuse existing entity
                 $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
                 if ($entityT == null) {
-                    «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('No such item.'));
+                    «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
                 }
                 $entity = clone $entityT;
             } else {
@@ -976,10 +979,16 @@ class FormHandler {
         {
             $message = $this->getDefaultMessage($args, $success);
             if (!empty($message)) {
-                if ($success === true) {
-                    LogUtil::registerStatus($message);
-                } else {
-                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($message);
+                «IF app.targets('1.3.5')»
+                    if ($success === true) {
+                        LogUtil::registerStatus($message);
+                    } else {
+                        LogUtil::registerError($message);
+                    }
+                «ELSE»
+                    $flashType = ($success === true) ? 'status' : 'error';
+                    $this->request->getSession()->getFlashBag()->add($flashType, $message);
+                «ENDIF»
                 }
             }
         }
@@ -1265,7 +1274,6 @@ class FormHandler {
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
             use FormUtil;
-            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             use System;
@@ -1396,7 +1404,11 @@ class FormHandler {
             if ($this->mode == 'create') {
                 $modelHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Model«ELSE»ModelUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 if (!$modelHelper->canBeCreated($this->objectType)) {
-                    LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                    «IF app.targets('1.3.5')»
+                        LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                    «ENDIF»
 
                     return $this->view->redirect($this->getRedirectUrl(null));
                 }
@@ -1409,7 +1421,7 @@ class FormHandler {
                     «IF app.targets('1.3.5')»
                         SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
                     «ELSE»
-                        $this->request->session->set($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
+                        $this->request->getSession()->set($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
                     «ENDIF»
                 }
             «ENDIF»
@@ -1536,7 +1548,7 @@ class FormHandler {
                     «IF app.targets('1.3.5')»
                         $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
                     «ELSE»
-                        $expectedVersion = $this->request->session->get($this->name . 'EntityVersion', 1);
+                        $expectedVersion = $this->request->getSession()->get($this->name . 'EntityVersion', 1);
                     «ENDIF»
                 «ENDIF»
             «ENDIF»
@@ -1558,10 +1570,18 @@ class FormHandler {
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {
-                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                    «IF app.targets('1.3.5')»
+                        LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                    «ENDIF»
             «ENDIF»
             } catch(\Exception $e) {
-                «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                «IF app.targets('1.3.5')»
+                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                «ENDIF»
             }
 
             $this->addDefaultMessage($args, $success);

@@ -38,7 +38,6 @@ class Selection {
 
             use «appNamespace»\Util\ControllerUtil;
 
-            use LogUtil;
             use ModUtil;
             use Zikula_AbstractApi;
 

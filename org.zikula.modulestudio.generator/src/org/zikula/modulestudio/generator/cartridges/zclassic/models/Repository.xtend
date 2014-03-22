@@ -236,7 +236,6 @@ class Repository {
                 use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
             «ENDIF»
             use FormUtil;
-            use LogUtil;
             use ModUtil;
             use ServiceUtil;
             use UserUtil;
@@ -1634,7 +1633,13 @@ class Repository {
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
                 	$dom = ZLanguage::getModuleDomain($this->name);
-                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
+                    «IF app.targets('1.3.5')»
+                        LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
+                    «ELSE»
+                        $serviceManager = ServiceUtil::getManager();
+                        $session = $serviceManager->get('session');
+                        $session->getFlashBag()->add('error', __f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
+                    «ENDIF»
                 }
 
                 if (!$success) {

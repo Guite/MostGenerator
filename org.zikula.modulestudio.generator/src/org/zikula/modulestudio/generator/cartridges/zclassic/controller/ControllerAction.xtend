@@ -758,7 +758,12 @@ class ControllerAction {
         $deleteAllowed = false;
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {
-            «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Error! Could not determine workflow actions.'));
+            «IF app.targets('1.3.5')»
+                return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+            «ELSE»
+                $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                return false;
+            «ENDIF»
         }
         foreach ($actions as $actionId => $action) {
             if ($actionId != $deleteActionId) {
@@ -768,7 +773,12 @@ class ControllerAction {
             break;
         }
         if (!$deleteAllowed) {
-            «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Error! It is not allowed to delete this entity.'));
+            «IF app.targets('1.3.5')»
+                return LogUtil::registerError($this->__('Error! It is not allowed to delete this entity.'));
+            «ELSE»
+                $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! It is not allowed to delete this entity.'));
+                return false;
+            «ENDIF»
         }
 
         $confirmation = (bool) $this->request->request->filter('confirmation', false, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);

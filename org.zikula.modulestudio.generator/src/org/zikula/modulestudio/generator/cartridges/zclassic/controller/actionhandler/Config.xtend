@@ -46,7 +46,6 @@ class Config {
 
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             use System;
@@ -168,10 +167,18 @@ class Config {
                         if (System::isDevelopmentMode()) {
                             $msg .= ' ' . $e->getMessage();
                         }
-                        «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($msg);
+                        «IF targets('1.3.5')»
+                            return LogUtil::registerError($msg);
+                        «ELSE»
+                            $this->request->getSession()->getFlashBag()->add('error', $msg);
+                        «ENDIF»
                     }
 
-                    LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
+                    «IF targets('1.3.5')»
+                        LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Module configuration updated.'));
+                    «ENDIF»
                 } else if ($args['commandName'] == 'cancel') {
                     // nothing to do there
                 }

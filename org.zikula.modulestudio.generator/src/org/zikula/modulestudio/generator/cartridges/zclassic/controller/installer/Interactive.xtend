@@ -95,7 +95,7 @@ class Interactive {
                 «IF targets('1.3.5')»
                     SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
                 «ELSE»
-                    $this->session->set('«formatForCode(name + '_' + modvar.name)»', $formValue);
+                    $this->request->getSession()->set('«formatForCode(name + '_' + modvar.name)»', $formValue);
                 «ENDIF»
 
             «ENDFOR»

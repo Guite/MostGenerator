@@ -66,7 +66,6 @@ class Installer {
                 use FileUtil;
             «ENDIF»
             use HookUtil;
-            use LogUtil;
             use ModUtil;
             use System;
             use Zikula_AbstractInstaller;
@@ -99,7 +98,6 @@ class Installer {
             use Symfony\Component\HttpFoundation\RedirectResponse;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-            use LogUtil;
             «IF needsConfig»
                 use ModUtil;
             «ENDIF»
@@ -107,6 +105,9 @@ class Installer {
             use System;
             use Zikula_Controller_AbstractInteractiveInstaller;
             use ZLanguage;
+            «IF hasCategorisableEntities»
+                use Zikula\Module\CategoriesModule\Entity\CategoryRegistryEntity;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -156,13 +157,23 @@ class Installer {
                 DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
-                    «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Doctrine Exception: ') . $e->getMessage());
+                    «IF targets('1.3.5')»
+                        return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
+                        return false;
+                    «ENDIF»
                 }
                 $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
                 if (!System::isDevelopmentMode()) {
                     $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                 }
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($returnMessage);
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError($returnMessage);
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('error', $returnMessage);
+                    return false;
+                «ENDIF»
             }
             «IF !getAllVariableContainers.empty»
 
@@ -173,13 +184,13 @@ class Installer {
                         «IF targets('1.3.5')»
                             $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
                         «ELSE»
-                            $sessionValue = $this->session->get('«formatForCode(name + '_' + modvar.name)»');
+                            $sessionValue = $this->request->getSession()->get('«formatForCode(name + '_' + modvar.name)»');
                         «ENDIF»
                         $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
                         «IF targets('1.3.5')»
                             SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
                         «ELSE»
-                            $this->session->del(«formatForCode(name + '_' + modvar.name)»);
+                            $this->request->getSession()->del(«formatForCode(name + '_' + modvar.name)»);
                         «ENDIF»
                     «ELSE»
                         $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
@@ -198,20 +209,39 @@ class Installer {
                 «ELSE»
                     $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi($this->serviceManager);
                 «ENDIF»
-                «FOR entity : getCategorisableEntities»
+                $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                «IF targets('1.3.5')»
+                    «FOR entity : getCategorisableEntities»
 
-                    $registryData = array();
-                    $registryData['modname'] = $this->name;
-                    $registryData['table'] = '«entity.name.formatForCodeCapital»';
-                    $registryData['property'] = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
-                    $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
-                    $registryData['category_id'] = $categoryGlobal['id'];
-                    $registryData['id'] = false;
-                    if (!DBUtil::insertObject($registryData, 'categories_registry')) {
-                        LogUtil::registerError($this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
-                    }
-                    $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registryData['id'];
-                «ENDFOR»
+                        $registryData = array();
+                        $registryData['modname'] = $this->name;
+                        $registryData['table'] = '«entity.name.formatForCodeCapital»';
+                        $registryData['property'] = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
+                        $registryData['category_id'] = $categoryGlobal['id'];
+                        $registryData['id'] = false;
+                        if (!DBUtil::insertObject($registryData, 'categories_registry')) {
+                            LogUtil::registerError($this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
+                        }
+                        $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registryData['id'];
+                    «ENDFOR»
+                «ELSE»
+                    «FOR entity : getCategorisableEntities»
+
+                        $registry = new CategoryRegistryEntity();
+                        $registry->setModname($this->name);
+                        $registry->setEntityname('«entity.name.formatForCodeCapital»');
+                        $registry->setProperty($categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»')));
+                        $registry->setCategory_Id($categoryGlobal['id']);
+
+                        try {
+                            $this->entityManager->persist($registry);
+                            $this->entityManager->flush();
+                        } catch (\Exception $e) {
+                            $this->request->getSession()->getFlashBag()->add('error', $this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
+                        }
+                        $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
+                    «ENDFOR»
+                «ENDIF»
             «ENDIF»
 
             // create the default data
@@ -241,7 +271,12 @@ class Installer {
                 $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError($e->getMessage());
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('error', $e->getMessage());
+                    return false;
+                «ENDIF»
             }
         «ENDIF»
     '''
@@ -273,9 +308,19 @@ class Installer {
                         DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                     } catch (\Exception $e) {
                         if (System::isDevelopmentMode()) {
-                            «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Doctrine Exception: ') . $e->getMessage());
+                            «IF targets('1.3.5')»
+                                return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                            «ELSE»
+                                $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
+                                return false;
+                            «ENDIF»
                         }
-                        «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
+                        «IF targets('1.3.5')»
+                            return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
+                        «ELSE»
+                            $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
+                            return false;
+                        «ENDIF»
                     }
             }
             «IF !targets('1.3.5')»
@@ -315,16 +360,31 @@ class Installer {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                    return false;
+                «ENDIF»
             }
 
             try {
                 DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
-                    «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__('Doctrine Exception: ') . $e->getMessage());
+                    «IF targets('1.3.5')»
+                        return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
+                        return false;
+                    «ENDIF»
                 }
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
+                    return false;
+                «ENDIF»
             }
 
             «IF targets('1.3.5')»
@@ -358,7 +418,11 @@ class Installer {
 
                 // remind user about upload folders not being deleted
                 $uploadPath = FileUtil::getDataDirectory() . '/' . $this->name . '/';
-                LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
+                «IF targets('1.3.5')»
+                    LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
+                «ELSE»
+                    $this->request->getSession()-getFlashBag()->add('status', $this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
+                «ENDIF»
             «ENDIF»
 
             // uninstallation successful

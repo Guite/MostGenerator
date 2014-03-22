@@ -134,7 +134,13 @@ class UserLogin {
          *         ),
          *     ));
          *
-         *     «IF targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__("Your log-in request was not completed. You must change your web site account's password first."));
+         «IF targets('1.3.5')»
+         *     LogUtil::registerError(__("Your log-in request was not completed. You must change your web site account's password first."));
+         «ELSE»
+         *     $serviceManager = ServiceUtil::getManager();
+         *     $session = $serviceManager->get('session');
+         *     $session->getFlashBag()->add('error', __("Your log-in request was not completed. You must change your web site account's password first."));
+         «ENDIF»
          *
          * In this example, the user will be redirected to the URL pointing to the `changePassword` function. This URL is constructed by calling 
          * `ModUtil::url()` with the modname, type, func, and args specified in the above array. The `changePassword` function also needs access
@@ -144,7 +150,8 @@ class UserLogin {
          «IF targets('1.3.5')»
          *     SessionUtil::setVar('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users');
          «ELSE»
-         *     $session = ServiceUtil::getService('session');
+         *     $serviceManager = ServiceUtil::getManager();
+         *     $session = $serviceManager->get('session');
          *     $session->set('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users');
          «ENDIF»
          *

@@ -95,7 +95,6 @@ class Uploads {
 
             use DataUtil;
             use FileUtil;
-            use LogUtil;
             use ModUtil;
             use ServiceUtil;
             use ZLanguage;
@@ -210,12 +209,24 @@ class Uploads {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             } catch (\Exception $e) {
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError($e->getMessage());
+                «ELSE»
+                    $session = $serviceManager->get('session');
+                    $session->getFlashBag()->add('error', $e->getMessage());
+                    return false;
+                «ENDIF»
             }
             $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
             if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! Could not move your file to the destination folder.', $dom));
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
+                «ELSE»
+                    $session = $serviceManager->get('session');
+                    $session->getFlashBag()->add('error', __('Error! Could not move your file to the destination folder.', $dom));
+                    return false;
+                «ENDIF»
             }
 
             // collect data to return
@@ -244,12 +255,20 @@ class Uploads {
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
 
+            $serviceManager = ServiceUtil::getManager();
+
             // check if a file has been uploaded properly without errors
             if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
                 if (is_array($file)) {
                     return $this->handleError($file);
                 }
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! No file found.', $dom));
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError(__('Error! No file found.', $dom));
+                «ELSE»
+                    $session = $serviceManager->get('session');
+                    $session->getFlashBag()->add('error', __('Error! No file found.', $dom));
+                    return false;
+                «ENDIF»
             }
 
             // extract file extension
@@ -261,7 +280,13 @@ class Uploads {
             // validate extension
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
             if ($isValidExtension === false) {
-                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! This file type is not allowed. Please choose another file format.', $dom));
+                «IF targets('1.3.5')»
+                    return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
+                «ELSE»
+                    $session = $serviceManager->get('session');
+                    $session->getFlashBag()->add('error', __('Error! This file type is not allowed. Please choose another file format.', $dom));
+                    return false;
+                «ENDIF»
             }
 
             // validate file size
@@ -272,11 +297,23 @@ class Uploads {
                     $maxSizeKB = $maxSize / 1024;
                     if ($maxSizeKB < 1024) {
                         $maxSizeKB = DataUtil::formatNumber($maxSizeKB); 
-                        «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                        «IF targets('1.3.5')»
+                            return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                        «ELSE»
+                            $session = $serviceManager->get('session');
+                            $session->getFlashBag()->add('error', __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                            return false;
+                        «ENDIF»
                     }
                     $maxSizeMB = $maxSizeKB / 1024;
                     $maxSizeMB = DataUtil::formatNumber($maxSizeMB); 
-                    «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                    «IF targets('1.3.5')»
+                        return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                    «ELSE»
+                        $session = $serviceManager->get('session');
+                        $session->getFlashBag()->add('error', __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                        return false;
+                    «ENDIF»
                 }
             }
 
@@ -285,7 +322,13 @@ class Uploads {
             if ($isImage) {
                 $imgInfo = getimagesize($file['tmp_name']);
                 if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
-                    «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! This file type seems not to be a valid image.', $dom));
+                    «IF targets('1.3.5')»
+                        return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
+                    «ELSE»
+                        $session = $serviceManager->get('session');
+                        $session->getFlashBag()->add('error', __('Error! This file type seems not to be a valid image.', $dom));
+                        return false;
+                    «ENDIF»
                 }
             }
 
@@ -514,7 +557,14 @@ class Uploads {
                     break;
             }
 
-            «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error with upload: ', $dom) . $errmsg);
+            «IF targets('1.3.5')»
+                return LogUtil::registerError(__('Error with upload: ', $dom) . $errmsg);
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+                $session = $serviceManager->get('session');
+                $session->getFlashBag()->add('error', __('Error with upload: ', $dom) . $errmsg);
+                return false;
+            «ENDIF»
         }
     '''
 

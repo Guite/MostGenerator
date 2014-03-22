@@ -45,7 +45,6 @@ class ExternalController {
 
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-        use LogUtil;
         use ModUtil;
         use PageUtil;
         use SecurityUtil;

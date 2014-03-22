@@ -130,7 +130,6 @@ class Entities {
 
             use DataUtil;
             use FormUtil;
-            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             use ServiceUtil;
@@ -704,7 +703,13 @@ class Entities {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
             if (!$result) {
                 $dom = ZLanguage::getModuleDomain('«app.appName»');
-                «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»(__('Error! Could not load the associated workflow.', $dom));
+                «IF app.targets('1.3.5')»
+                    LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
+                «ELSE»
+                    $serviceManager = ServiceUtil::getManager();
+                    $session = $serviceManager->get('session');
+                    $session->getFlashBag()->add('error', __('Error! Could not load the associated workflow.', $dom));
+                «ENDIF»
             }
         }
 
