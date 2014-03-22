@@ -475,7 +475,7 @@ class FormHandler {
 
             // save entity reference for later reuse
             $this->entityRef = $entity;
-            
+
             «initializeExtensions»
 
             $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
@@ -507,25 +507,25 @@ class FormHandler {
         «IF app.hasAttributableEntities»
 
             if ($this->hasAttributes === true) {
-                $this->initAttributesForEdit($entity);
+                $this->initAttributesForEdit();
             }
         «ENDIF»
         «IF app.hasCategorisableEntities»
 
             if ($this->hasCategories === true) {
-                $this->initCategoriesForEdit($entity);
+                $this->initCategoriesForEdit();
             }
         «ENDIF»
         «IF app.hasMetaDataEntities»
 
             if ($this->hasMetaData === true) {
-                $this->initMetaDataForEdit($entity);
+                $this->initMetaDataForEdit();
             }
         «ENDIF»
         «IF app.hasTranslatable»
 
             if ($this->hasTranslatableFields === true) {
-                $this->initTranslationsForEdit($entity);
+                $this->initTranslationsForEdit();
             }
         «ENDIF»
     '''
@@ -641,11 +641,11 @@ class FormHandler {
 
             /**
              * Initialise translations.
-             *
-             * @param Zikula_EntityAccess $entity treated entity instance.
              */
-            protected function initTranslationsForEdit($entity)
+            protected function initTranslationsForEdit()
             {
+                $entity = $this->entityRef;
+
                 // retrieve translated fields
                 $translatableHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
@@ -666,11 +666,11 @@ class FormHandler {
 
             /**
              * Initialise attributes.
-             *
-             * @param Zikula_EntityAccess $entity treated entity instance.
              */
-            protected function initAttributesForEdit($entity)
+            protected function initAttributesForEdit()
             {
+                $entity = $this->entityRef;
+
                 $entityData = array();«/*$entity->toArray(); not required probably*/»
 
                 // overwrite attributes array entry with a form compatible format
@@ -700,11 +700,11 @@ class FormHandler {
 
             /**
              * Initialise categories.
-             *
-             * @param Zikula_EntityAccess $entity treated entity instance.
              */
-            protected function initCategoriesForEdit($entity)
+            protected function initCategoriesForEdit()
             {
+                $entity = $this->entityRef;
+
                 // assign the actual object for categories listener
                 $this->view->assign($this->objectTypeLower . 'Obj', $entity);
 
@@ -727,11 +727,11 @@ class FormHandler {
 
             /**
              * Initialise meta data.
-             *
-             * @param Zikula_EntityAccess $entity treated entity instance.
              */
-            protected function initMetaDataForEdit($entity)
+            protected function initMetaDataForEdit()
             {
+                $entity = $this->entityRef;
+
                 $metaData = $entity->getMetadata() != null ? $entity->getMetadata()->toArray() : array();
                 $this->view->assign('meta', $metaData);
             }
@@ -866,27 +866,15 @@ class FormHandler {
                 unset($formData['attributes']);
             }
         «ENDIF»
-        «IF app.hasCategorisableEntities»
-
-            /**
-             * Prepare update of categories.
-             *
-             * @param Zikula_EntityAccess $entity     currently treated entity instance.
-             * @param Array               $entityData form data to be merged.
-             */
-            protected function processCategoriesForUpdate($entity, $entityData)
-            {
-            }
-        «ENDIF»
         «IF app.hasMetaDataEntities»
 
             /**
              * Prepare update of meta data.
              *
-             * @param Zikula_EntityAccess $entity     currently treated entity instance.
-             * @param Array               $entityData form data to be merged.
+             * @param Zikula_EntityAccess $entity   currently treated entity instance.
+             * @param Array               $formData form data to be merged.
              */
-            protected function processMetaDataForUpdate($entity, $entityData)
+            protected function processMetaDataForUpdate($entity, $formData)
             {
                 $metaData = $entity->getMetadata();
                 if (is_null($metaData)) {
@@ -898,12 +886,12 @@ class FormHandler {
                     $metaData = new $metaDataEntityClass($entity);
                 }
 
-                $metaData->merge($entityData['meta']);
+                $metaData->merge($formData['meta']);
                 «/*
                 $metaData->setKeywords('a,b,c');
                 */»
                 $entity->setMetadata($metaData);
-                unset($entityData['meta']);
+                unset($formData['meta']);
             }
         «ENDIF»
         «IF app.hasTranslatable»
@@ -1090,7 +1078,7 @@ class FormHandler {
             «IF app.hasMetaDataEntities»
 
                 if ($this->hasMetaData === true) {
-                    $this->processMetaDataForUpdate($entity, $entityData);
+                    $this->processMetaDataForUpdate($entity, $formData);
                 }
             «ENDIF»
 
