@@ -990,7 +990,6 @@ class FormHandler {
                     $flashType = ($success === true) ? 'status' : 'error';
                     $this->request->getSession()->getFlashBag()->add($flashType, $message);
                 «ENDIF»
-                }
             }
         }
     '''
