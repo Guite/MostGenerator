@@ -27,7 +27,7 @@ import de.guite.modulestudio.metamodel.modulestudio.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidatorLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Extensions
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -55,9 +55,9 @@ class Entities {
 
     FileHelper fh = new FileHelper
     Association thAssoc = new Association
-    Extensions thExt = new Extensions
+    ExtensionManager extMan
     EventListener thEvLi = new EventListener
-    Property thProp = new Property
+    Property thProp
 
     /**
      * Entry point for Doctrine entity classes.
@@ -73,7 +73,10 @@ class Entities {
             }
         }
 
-        thExt.extensionClasses(it, fsa)
+        for (entity : getAllEntities) {
+            extMan = new ExtensionManager(entity)
+            extMan.extensionClasses(fsa)
+        }
     }
 
     /**
@@ -81,6 +84,8 @@ class Entities {
      */
     def private generate(Entity it, Application app, IFileSystemAccess fsa) {
         println('Generating entity classes for entity "' + name.formatForDisplay + '"')
+        extMan = new ExtensionManager(it)
+        thProp = new Property(extMan)
         val entityPath = app.getAppSourceLibPath + 'Entity/'
         val entityClassSuffix = if (!app.targets('1.3.5')) 'Entity' else ''
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
@@ -178,7 +183,7 @@ class Entities {
         «IF hasCollections || attributable || categorisable»
             use Doctrine\Common\Collections\ArrayCollection;
         «ENDIF»
-        «thExt.imports(it)»
+        use Gedmo\Mapping\Annotation as Gedmo;
         «IF hasNotifyPolicy»
             use Doctrine\Common\NotifyPropertyChanged;
             use Doctrine\Common\PropertyChangedListener;
@@ -216,14 +221,14 @@ class Entities {
             // feel free to add your own methods here
             «IF isInheriting»
                 «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
-                «thExt.additionalProperties(it)»
+                «extMan.additionalProperties»
 
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
                 «constructor(true)»
 
                 «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
-                «thExt.additionalAccessors(it)»
+                «extMan.additionalAccessors»
 
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
@@ -238,7 +243,7 @@ class Entities {
          * Entity class that defines the entity structure and behaviours.
          *
          * This is the concrete entity class for «name.formatForDisplay» entities.
-         «thExt.classExtensions(it)»
+         «extMan.classAnnotations»
          «IF mappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSE»
@@ -338,7 +343,7 @@ class Entities {
         protected $__WORKFLOW__ = array();
 
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
-        «thExt.additionalProperties(it)»
+        «extMan.additionalProperties»
 
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
@@ -355,7 +360,7 @@ class Entities {
         «propertyChangedListener»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
-        «thExt.additionalAccessors(it)»
+        «extMan.additionalAccessors»
 
         «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»

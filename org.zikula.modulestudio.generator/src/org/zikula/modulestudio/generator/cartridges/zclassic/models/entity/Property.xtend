@@ -34,7 +34,12 @@ class Property {
     @Inject extension Utils = new Utils
 
     FileHelper fh = new FileHelper
+    ExtensionManager extMan
     ValidationConstraints thVal = new ValidationConstraints
+
+    new(ExtensionManager extMan) {
+        this.extMan = extMan
+    }
 
     def dispatch persistentProperty(DerivedField it) {
         persistentProperty(name.formatForCode, fieldTypeAsString, '')
@@ -48,10 +53,11 @@ class Property {
      * can be removed completely as the define for DerivedField can be used then instead.
      */
     def dispatch persistentProperty(IntegerField it) {
-        if (version && entity.hasOptimisticLock && entity.container.application.targets('1.3.5'))
+        if (version && entity.hasOptimisticLock && entity.container.application.targets('1.3.5')) {
             persistentProperty(name.formatForCode, 'integer', '')
-        else
+        } else {
             persistentProperty(name.formatForCode, fieldTypeAsString, '')
+        }
     }
 
     def dispatch persistentProperty(UploadField it) '''
@@ -106,7 +112,7 @@ class Property {
               * @ORM\Id
           «ENDIF»
         «ENDIF»
-        «new Extensions().columnExtensions(it)»
+        «extMan.columnAnnotations(it)»
          * @ORM\Column(«IF dbName !== null && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
          * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSE»«type»«ENDIF» $«name.formatForCode».
