@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTimestampableType
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -29,9 +30,10 @@ class Extensions {
     @Inject extension Utils = new Utils
 
     FileHelper fh = new FileHelper
+    ValidationConstraints thVal = new ValidationConstraints
 
     def imports(Entity it) '''
-        use Gedmo\Mapping\Annotation as Gedmo;
+        «thVal.dummy»use Gedmo\Mapping\Annotation as Gedmo;
     '''
 
     /**

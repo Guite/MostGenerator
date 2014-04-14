@@ -20,6 +20,7 @@ import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -33,9 +34,11 @@ class Property {
     @Inject extension Utils = new Utils
 
     FileHelper fh = new FileHelper
+    ValidationConstraints thVal = new ValidationConstraints
 
     def dispatch persistentProperty(DerivedField it) {
         persistentProperty(name.formatForCode, fieldTypeAsString, '')
+        thVal.dummy
     }
 
     /**

@@ -25,7 +25,7 @@ import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.Validator
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidatorLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Extensions
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
@@ -65,9 +65,13 @@ class Entities {
     def generate(Application it, IFileSystemAccess fsa) {
         getAllEntities.forEach(e|e.generate(it, fsa))
 
-        val validator = new Validator()
-        validator.generateCommon(it, fsa)
-        for (entity : getAllEntities) validator.generateWrapper(entity, fsa)
+        if (targets('1.3.5')) {
+            val validator = new ValidatorLegacy()
+            validator.generateCommon(it, fsa)
+            for (entity : getAllEntities) {
+                validator.generateWrapper(entity, fsa)
+            }
+        }
 
         thExt.extensionClasses(it, fsa)
     }
@@ -276,8 +280,10 @@ class Entities {
         «constructor(false)»
 
         «accessors(validatorClass)»
+        «IF app.targets('1.3.5')»
 
-        «initValidator(validatorClass)»
+            «initValidator(validatorClass)»
+        «ENDIF»
 
         «initWorkflow(app)»
 
@@ -301,16 +307,18 @@ class Entities {
          * @var string The tablename this object maps to.
          */
         protected $_objectType = '«name.formatForCode»';
+        «IF container.application.targets('1.3.5')»
 
-        /**
-         * @var «validatorClass» The validator for this entity.
-         */
-        protected $_validator = null;
+            /**
+             * @var «validatorClass» The validator for this entity.
+             */
+            protected $_validator = null;
+        «ENDIF»
 
-        /**
-         * @var boolean Option to bypass validation if needed.
-         */
-        protected $_bypassValidation = false;
+            /**
+             * @var boolean Option to bypass validation if needed.
+             */
+            protected $_bypassValidation = false;
         «IF hasNotifyPolicy»
 
             /**
@@ -338,7 +346,9 @@ class Entities {
 
     def private accessors(Entity it, String validatorClass) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, '_validator', validatorClass, false, true, 'null', '')»
+        «IF container.application.targets('1.3.5')»
+            «fh.getterAndSetterMethods(it, '_validator', validatorClass, false, true, 'null', '')»
+        «ENDIF»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
         «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
@@ -351,6 +361,9 @@ class Entities {
         «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
     '''
 
+    /**
+     * Initialises the validator instance. Used for 1.3.x target only, replaced by Symfony Validator in 1.4.x.
+     */
     def private initValidator(Entity it, String validatorClass) '''
         /**
          * Initialises the validator and return it's instance.
@@ -407,6 +420,9 @@ class Entities {
         }
     '''
 
+    /**
+     * Performs validation.
+     */
     def private validate(Entity it) '''
         /**
          * Start validation and raise exception if invalid data is found.
@@ -430,10 +446,24 @@ class Entities {
                 }
             «ENDFOR»
         «ENDIF»
+        «IF container.application.targets('1.3.5')»
             $result = $this->initValidator()->validateAll();
             if (is_array($result)) {
                 throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
             }
+        «ELSE»
+            $serviceManager = ServiceUtil::getManager();
+
+            $validator = $serviceManager->get('validator');
+            $errors = $validator->validate($this);
+
+            if (count($errors) > 0) {
+                $session = $serviceManager->get('session');
+                foreach ($errors as $error) {
+                    $session->getFlashBag()->add('error', $error['message']);
+                }
+            }
+        «ENDIF»
         }
     '''
 
@@ -823,7 +853,9 @@ class Entities {
             «ENDFOR»
         «ELSE»
         «ENDIF»
-        $this->initValidator();
+        «IF container.application.targets('1.3.5')»
+            $this->initValidator();
+        «ENDIF»
         $this->initWorkflow();
         «thAssoc.initCollections(it)»
     '''
@@ -1018,9 +1050,11 @@ class Entities {
                 «FOR field : primaryKeyFields»
                     $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
                 «ENDFOR»
+                «IF app.targets('1.3.5')»
 
-                // init validator
-                $this->initValidator();
+                    // init validator
+                    $this->initValidator();
+                «ENDIF»
 
                 // reset Workflow
                 $this->resetWorkflow();
