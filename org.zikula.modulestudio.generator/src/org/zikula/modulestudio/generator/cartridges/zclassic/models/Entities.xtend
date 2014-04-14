@@ -315,10 +315,10 @@ class Entities {
             protected $_validator = null;
         «ENDIF»
 
-            /**
-             * @var boolean Option to bypass validation if needed.
-             */
-            protected $_bypassValidation = false;
+        /**
+         * @var boolean Option to bypass validation if needed.
+         */
+        protected $_bypassValidation = false;
         «IF hasNotifyPolicy»
 
             /**
