@@ -927,7 +927,7 @@ class Entities {
             «ELSE»
                 «IF hasListFieldsEntity»
                     $serviceManager = ServiceUtil::getManager();
-                    $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»«app.appNamespace»\Util\ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+                    $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»\«app.appNamespace»\Util\ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
 
                 «ENDIF»
                 $formattedTitle = «parseDisplayPattern»;
