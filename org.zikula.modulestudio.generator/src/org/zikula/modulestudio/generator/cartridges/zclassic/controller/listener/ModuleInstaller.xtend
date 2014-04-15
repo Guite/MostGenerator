@@ -61,7 +61,7 @@ class ModuleInstaller {
             public static function moduleDisabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
             {
                 «IF !isBase»
-                    parent::moduleDeactivated($event);
+                    parent::moduleDisabled($event);
                 «ENDIF»
             }
         «ENDIF»
