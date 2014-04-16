@@ -77,7 +77,7 @@ class ModuleInstaller {
         public static function module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
-                parent::moduleUninstalled($event);
+                parent::module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»($event);
             «ENDIF»
         }
 
