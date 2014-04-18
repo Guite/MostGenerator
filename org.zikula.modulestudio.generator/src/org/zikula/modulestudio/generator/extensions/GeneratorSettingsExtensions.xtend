@@ -166,7 +166,9 @@ class GeneratorSettingsExtensions {
      */
     def getListOfFilesToBeSkipped(Application it) {
         if (hasSettings && getSettings.skipFiles !== null) {
-            getSettings.skipFiles.replace(', ', ',').split(',').toList
+            val list = getSettings.skipFiles.replace("\t", '').replace("\n", '').split(',').toList
+            list.forEach[trim]
+            list
         } else {
             newArrayList('')
         }
@@ -177,7 +179,9 @@ class GeneratorSettingsExtensions {
      */
     def getListOfFilesToBeMarked(Application it) {
         if (hasSettings && getSettings.markFiles !== null) {
-            getSettings.markFiles.replace(', ', ',').split(',').toList
+            val list = getSettings.markFiles.replace("\t", '').replace("\n", '').split(',').toList
+            list.forEach[trim]
+            list
         } else {
             newArrayList('')
         }
