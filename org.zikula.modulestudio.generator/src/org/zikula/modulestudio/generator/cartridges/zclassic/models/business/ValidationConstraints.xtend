@@ -139,7 +139,7 @@ class ValidationConstraints {
     }
     def dispatch fieldAnnotations(StringField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»)
+        «' '»* @Assert\Length(min="«minLength»", max="«length»")
         «IF fixed»
             «' '»@Assert\Length(min="«length»", max="«length»")
         «ENDIF»
