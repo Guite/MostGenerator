@@ -166,14 +166,14 @@ class SimpleFields {
         «ELSE»
             {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it, true)»}
         «ENDIF»
-        «IF regexp != ''»
+        «IF regexp !== null && regexp != ''»
             <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
         «ENDIF»
     '''
 
     def private dispatch formField(TextField it, String groupSuffix, String idSuffix) '''
         {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='multiline'«IF minLength > 0» minLength=«minLength»«ENDIF» rows='6«/*8*/»'«IF entity.container.application.targets('1.3.5')» cols='50'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
-        «IF regexp != ''»
+        «IF regexp !== null && regexp != ''»
             <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
         «ENDIF»
     '''
