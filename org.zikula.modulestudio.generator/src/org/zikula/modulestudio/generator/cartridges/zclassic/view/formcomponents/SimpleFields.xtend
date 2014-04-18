@@ -18,6 +18,7 @@ import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
+import java.math.BigInteger
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -78,6 +79,21 @@ class SimpleFields {
 
     def private dispatch formField(IntegerField it, String groupSuffix, String idSuffix) '''
         {formintinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' maxLength=«length»«IF minValue.toString != '0'» minValue=«minValue»«ENDIF»«IF maxValue.toString != '0'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
+        «val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0»
+        «val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0»
+        «IF hasMin || hasMax»
+            «IF hasMin && hasMax»
+                «IF minValue == maxValue»
+                    <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must exactly be %s.' tag1='«minValue»'}</span>
+                «ELSE»
+                    <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be between %1$s and %2$s.' tag1='«minValue»' tag2='«maxValue»'}</span>
+                «ENDIF»
+            «ELSEIF hasMin»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be greater than %s.' tag1='«minValue»'}</span>
+            «ELSEIF hasMax»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be less than %s.' tag1='«maxValue»'}</span>
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private dispatch showCurrency(DecimalField it) {
@@ -97,6 +113,21 @@ class SimpleFields {
         «IF showCurrency»
             </div>
         «ENDIF»
+        «val hasMin = minValue > 0»
+        «val hasMax = maxValue > 0»
+        «IF hasMin || hasMax»
+            «IF hasMin && hasMax»
+                «IF minValue == maxValue»
+                    <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must exactly be %s.' tag1='«minValue»'}</span>
+                «ELSE»
+                    <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be between %1$s and %2$s.' tag1='«minValue»' tag2='«maxValue»'}</span>
+                «ENDIF»
+            «ELSEIF hasMin»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be greater than %s.' tag1='«minValue»'}</span>
+            «ELSEIF hasMax»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be less than %s.' tag1='«maxValue»'}</span>
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private dispatch formField(FloatField it, String groupSuffix, String idSuffix) '''
@@ -108,22 +139,43 @@ class SimpleFields {
         «IF showCurrency»
             </div>
         «ENDIF»
+        «val hasMin = minValue > 0»
+        «val hasMax = maxValue > 0»
+        «IF hasMin || hasMax»
+            «IF hasMin && hasMax»
+                «IF minValue == maxValue»
+                    <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must exactly be %s.' tag1='«minValue»'}</span>
+                «ELSE»
+                    <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be between %1$s and %2$s.' tag1='«minValue»' tag2='«maxValue»'}</span>
+                «ENDIF»
+            «ELSEIF hasMin»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be greater than %s.' tag1='«minValue»'}</span>
+            «ELSEIF hasMax»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be less than %s.' tag1='«maxValue»'}</span>
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private dispatch formField(StringField it, String groupSuffix, String idSuffix) '''
         «IF country»
             {«entity.container.application.appName.formatForDB»CountrySelector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
-        «ELSEIF language»
+        «ELSEIF language || locale»
             {formlanguageselector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool»«IF mandatory» addAllOption=false«ENDIF» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSEIF htmlcolour»
             {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it, true)»}
         «ELSE»
             {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it, true)»}
         «ENDIF»
+        «IF regexp != ''»
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
+        «ENDIF»
     '''
 
     def private dispatch formField(TextField it, String groupSuffix, String idSuffix) '''
         {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='multiline'«IF minLength > 0» minLength=«minLength»«ENDIF» rows='6«/*8*/»'«IF entity.container.application.targets('1.3.5')» cols='50'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
+        «IF regexp != ''»
+            <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
+        «ENDIF»
     '''
 
     def private dispatch formField(EmailField it, String groupSuffix, String idSuffix) '''
@@ -197,6 +249,13 @@ class SimpleFields {
             {formcheckboxlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' repeatColumns=2«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSE»
             {formdropdownlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' selectionMode='«IF multiple»multiple«ELSE»single«ENDIF»'«IF !entity.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+        «ENDIF»
+        «IF multiple && min > 0 && max > 0»
+            «IF min == max»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: you must select exactly %s choices.' tag1='«min»'}</span>
+            «ELSE»
+                <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: you must select between %1$s and %2$s choices.' tag1='«min»' tag2='«max»'}</span>
+            «ENDIF»
         «ENDIF»
     '''
 

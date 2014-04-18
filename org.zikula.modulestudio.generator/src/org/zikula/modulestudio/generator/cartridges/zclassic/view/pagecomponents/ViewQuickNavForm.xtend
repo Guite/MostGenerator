@@ -96,6 +96,11 @@ class ViewQuickNavForm {
                 «field.formField»
             «ENDFOR»
         «ENDIF»
+        «IF hasLocaleFieldsEntity»
+            «FOR field : getLocaleFieldsEntity»
+                «field.formField»
+            «ENDFOR»
+        «ENDIF»
         «IF hasAbstractStringFieldsEntity»
             {if !isset($searchFilter) || $searchFilter eq true}
                 «IF !container.application.targets('1.3.5')»
@@ -181,7 +186,7 @@ class ViewQuickNavForm {
         <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
         «IF country»
             {selector_countries name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault defaultValue=''}
-        «ELSEIF language»
+        «ELSEIF language || locale»
             {html_select_locales name='«fieldName»' selected=$«fieldName»}
         «ENDIF»
     '''

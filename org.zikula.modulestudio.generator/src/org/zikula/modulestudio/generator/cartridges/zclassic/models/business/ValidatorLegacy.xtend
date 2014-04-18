@@ -17,7 +17,9 @@ import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ListField
+import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ObjectField
+import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
@@ -771,8 +773,8 @@ class ValidatorLegacy {
             }
         «ENDIF»
         «IF regexp !== null && regexp != ''»
-            if (!$this->isValidRegExp('«name.formatForCode»', '«regexp»')) {
-                $errorInfo['message'] = __f('Error! Field value must conform to regular expression [%2$s] (%1$s).', array('«name.formatForDisplay»', '«regexp»'), $dom);
+            if («IF !regexpOpposite»!«ENDIF»$this->isValidRegExp('«name.formatForCode»', '«regexp»')) {
+                $errorInfo['message'] = __f('Error! Field value must «IF regexpOpposite»not «ENDIF»conform to regular expression [%2$s] (%1$s).', array('«name.formatForDisplay»', '«regexp»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -853,11 +855,54 @@ class ValidatorLegacy {
                 return $errorInfo;
             }
         «ENDIF»
+        «IF multiple && (min > 0 || max > 0)»
+            $serviceManager = ServiceUtil::getManager();
+            $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $listValues = $helper->extractMultiList($this->entity['«name.formatForCode»']);
+            $amountOfValues = count($listValues);
+            «IF min == max»
+                if ($amountOfValues != «min») {
+                    $errorInfo['message'] = __f('Error! You must select exactly %s choices.', array('«min»'), $dom);
+                    return $errorInfo;
+                }
+            «ELSE»
+                «IF min > 0»
+                    if ($amountOfValues < «min») {
+                        $errorInfo['message'] = __f('Error! You must select at least %s choices.', array('«min»'), $dom);
+                        return $errorInfo;
+                    }
+                «ENDIF»
+                «IF max > 0»
+                    if ($amountOfValues > «max») {
+                        $errorInfo['message'] = __f('Error! You must select at most %s choices.', array('«max»'), $dom);
+                        return $errorInfo;
+                    }
+                «ENDIF»
+            «ENDIF»
+        «ENDIF»
     '''
-    def private dispatch validationCalls(ArrayField it) {
-    }
-    def private dispatch validationCalls(ObjectField it) {
-    }
+    def private dispatch validationCalls(ArrayField it) '''
+        «IF min > 0 && max > 0»
+            $amountOfItems = count($this->entity['«name.formatForCode»']);
+            «IF min == max»
+                if ($amountOfItems != «min») {
+                    $errorInfo['message'] = __f('Error! This collection should contain exactly %s elements.', array('«min»'), $dom);
+                    return $errorInfo;
+                }
+            «ELSE»
+                if ($amountOfItems < «min») {
+                    $errorInfo['message'] = __f('Error! This collection should contain %s elements or more.', array('«min»'), $dom);
+                    return $errorInfo;
+                }
+                if ($amountOfItems > «max») {
+                    $errorInfo['message'] = __f('Error! This collection should contain %s elements or less.', array('«max»'), $dom);
+                    return $errorInfo;
+                }
+            «ENDIF»
+        «ENDIF»
+    '''
+    def private dispatch validationCalls(ObjectField it) '''
+    '''
     def private validationCallsDateTime(AbstractDateField it) '''
         «IF mandatory»
             if (!$this->isValidDateTime('«name.formatForCode»')) {
@@ -935,5 +980,72 @@ class ValidatorLegacy {
                 }
             «ENDFOR»
         «ENDIF»
+        «FOR rel : getBidirectionalIncomingJoinRelations»
+            «IF rel instanceof ManyToManyRelationship»
+                «IF rel.minSource > 0 && rel.maxSource > 0»
+                    «val aliasName = rel.getRelationAliasName(false).toFirstLower»
+                    $amountOfItems = count($this->entity['«aliasName.formatForCode»']);
+                    «IF rel.minSource == rel.maxSource»
+                        if ($amountOfItems != «rel.minSource») {
+                            $errorInfo['message'] = __f('Error! This collection should contain exactly %s «aliasName.formatForDisplay».', array('«rel.minSource»'), $dom);
+                            return $errorInfo;
+                        }
+                    «ELSE»
+                        if ($amountOfItems < «rel.minSource») {
+                            $errorInfo['message'] = __f('Error! This collection should contain %s «aliasName.formatForDisplay» or more.', array('«rel.minSource»'), $dom);
+                            return $errorInfo;
+                        }
+                        if ($amountOfItems > «rel.maxSource») {
+                            $errorInfo['message'] = __f('Error! This collection should contain %s «aliasName.formatForDisplay» or less.', array('«rel.maxSource»'), $dom);
+                            return $errorInfo;
+                        }
+                    «ENDIF»
+                «ENDIF»
+            «ENDIF»
+        «ENDFOR»
+        «FOR rel : outgoing»
+            «IF rel instanceof OneToManyRelationship»
+                «IF rel.minTarget > 0 && rel.maxTarget > 0»
+                    «val aliasName = rel.getRelationAliasName(true).toFirstLower»
+                    $amountOfItems = count($this->entity['«aliasName.formatForCode»']);
+                    «IF rel.minTarget == rel.maxTarget»
+                        if ($amountOfItems != «rel.minTarget») {
+                            $errorInfo['message'] = __f('Error! This collection should contain exactly %s «aliasName.formatForDisplay».', array('«rel.minTarget»'), $dom);
+                            return $errorInfo;
+                        }
+                    «ELSE»
+                        if ($amountOfItems < «rel.minTarget») {
+                            $errorInfo['message'] = __f('Error! This collection should contain %s «aliasName.formatForDisplay» or more.', array('«rel.minTarget»'), $dom);
+                            return $errorInfo;
+                        }
+                        if ($amountOfItems > «rel.maxTarget») {
+                            $errorInfo['message'] = __f('Error! This collection should contain %s «aliasName.formatForDisplay» or less.', array('«rel.maxTarget»'), $dom);
+                            return $errorInfo;
+                        }
+                    «ENDIF»
+                «ENDIF»
+            «ENDIF»
+            «IF rel instanceof ManyToManyRelationship»
+                «IF rel.minTarget > 0 && rel.maxTarget > 0»
+                    «val aliasName = rel.getRelationAliasName(true).toFirstLower»
+                    $amountOfItems = count($this->entity['«aliasName.formatForCode»']);
+                    «IF rel.minTarget == rel.maxTarget»
+                        if ($amountOfItems != «rel.minTarget») {
+                            $errorInfo['message'] = __f('Error! This collection should contain exactly %s «aliasName.formatForDisplay».', array('«rel.minTarget»'), $dom);
+                            return $errorInfo;
+                        }
+                    «ELSE»
+                        if ($amountOfItems < «rel.minTarget») {
+                            $errorInfo['message'] = __f('Error! This collection should contain %s «aliasName.formatForDisplay» or more.', array('«rel.minTarget»'), $dom);
+                            return $errorInfo;
+                        }
+                        if ($amountOfItems > «rel.maxTarget») {
+                            $errorInfo['message'] = __f('Error! This collection should contain %s «aliasName.formatForDisplay» or less.', array('«rel.maxTarget»'), $dom);
+                            return $errorInfo;
+                        }
+                    «ENDIF»
+                «ENDIF»
+            «ENDIF»
+        «ENDFOR»
     '''
 }

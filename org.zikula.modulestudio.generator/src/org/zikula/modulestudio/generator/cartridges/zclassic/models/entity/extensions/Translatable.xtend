@@ -43,6 +43,9 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
+         «IF !container.application.targets('1.3.5')»
+             * Assert\Locale()
+         «ENDIF»
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
          * @var string $locale.
          */

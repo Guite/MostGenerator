@@ -121,9 +121,9 @@ class ListEntries {
         public function extractMultiList($value)
         {
             $listValues = explode('###', $value);
-            $numValues = count($listValues);
-            if ($numValues > 1 && $listValues[$numValues-1] == '') {
-                unset($listValues[$numValues-1]);
+            $amountOfValues = count($listValues);
+            if ($amountOfValues > 1 && $listValues[$amountOfValues - 1] == '') {
+                unset($listValues[$amountOfValues - 1]);
             }
             if ($listValues[0] == '') {
                 // use array_shift instead of unset for proper key reindexing

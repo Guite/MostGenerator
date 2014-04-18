@@ -37,6 +37,9 @@ class SoftDeleteable extends AbstractExtension implements EntityExtensionInterfa
              * @Gedmo\Versioned
          «ENDIF»
          * @ORM\Column(type="datetime", nullable=true)
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\DateTime()
+         «ENDIF»
          * @var datetime $deletedAt.
          */
         protected $deletedAt;

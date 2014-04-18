@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.EntityExtensionInterface
@@ -28,11 +27,7 @@ class ExtensionManager {
     Entity entity
     List<EntityExtensionInterface> extensions
 
-    ValidationConstraints thVal = new ValidationConstraints
-
     new(Entity entity) {
-        thVal.dummy /** TODO */
-
         this.entity = entity
 
         this.extensions = newArrayList()

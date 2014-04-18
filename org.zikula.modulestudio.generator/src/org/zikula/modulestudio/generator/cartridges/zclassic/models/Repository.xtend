@@ -469,6 +469,16 @@ class Repository {
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
+            «IF hasLocaleFieldsEntity»
+                «FOR field : getLocaleFieldsEntity»
+                    «val fieldName = field.name.formatForCode»
+                    «IF app.targets('1.3.5')»
+                        $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    «ELSE»
+                        $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                    «ENDIF»
+                «ENDFOR»
+            «ENDIF»
             «IF hasAbstractStringFieldsEntity»
                 «IF app.targets('1.3.5')»
                     $parameters['searchterm'] = isset($this->controllerArguments['searchterm']) ? $this->controllerArguments['searchterm'] : FormUtil::getPassedValue('searchterm', '', 'GET');

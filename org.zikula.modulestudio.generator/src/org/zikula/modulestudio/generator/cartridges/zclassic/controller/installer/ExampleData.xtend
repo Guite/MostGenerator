@@ -298,7 +298,7 @@ class ExampleData {
             BooleanField: if (defaultValue == true || defaultValue == 'true') 'true' else 'false'
             IntegerField: exampleRowValueNumber(dataEntity, number)
             DecimalField: exampleRowValueNumber(dataEntity, number)
-            StringField: if (it.country || it.language) 'ZLanguage::getLanguageCode()' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
+            StringField: if (it.country || it.language || it.locale) 'ZLanguage::getLanguageCode()' else if (it.currency) 'EUR' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
             EmailField: '\'' + entity.container.application.email + '\''
             UrlField: '\'' + entity.container.application.url + '\''

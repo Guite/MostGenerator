@@ -25,6 +25,7 @@ import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidatorLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Association
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
@@ -171,6 +172,26 @@ class Entities {
             «thEvLi.generateBase(it)»
 
             «getTitleFromDisplayPattern(app)»
+            «val thVal = new ValidationConstraints»
+            «IF hasListFieldsEntity»
+                «FOR listField : getListFieldsEntity»
+
+                    «thVal.validationMethods(listField)»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasUserFieldsEntity»
+                «FOR userField : getUserFieldsEntity»
+
+                    «thVal.validationMethods(userField)»
+                «ENDFOR»
+            «ENDIF»
+            «val dateTimeFields = fields.filter(AbstractDateField)»
+            «IF !dateTimeFields.empty»
+                «FOR dateField : dateTimeFields»
+
+                    «thVal.validationMethods(dateField)»
+                «ENDFOR»
+            «ENDIF»
 
             «toStringImpl(app)»
 
@@ -190,6 +211,12 @@ class Entities {
         «ENDIF»
         «IF standardFields»
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
+        «ENDIF»
+        «IF !container.application.targets('1.3.5')»
+            use Symfony\Component\Validator\Constraints as Assert;
+            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
+                use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -274,6 +301,10 @@ class Entities {
           * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
          «ENDIF»
          * @ORM\HasLifecycleCallbacks
+        «IF !app.targets('1.3.5')»
+            «val thVal = new ValidationConstraints»
+            «thVal.classAnnotations(it)»
+        «ENDIF»
          */
     '''
 
@@ -321,18 +352,27 @@ class Entities {
         «ENDIF»
 
         /**
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="bool")
+         «ENDIF»
          * @var boolean Option to bypass validation if needed.
          */
         protected $_bypassValidation = false;
         «IF hasNotifyPolicy»
 
             /**
+             «IF !container.application.targets('1.3.5')»
+             * @Assert\Type(type="array")
+             «ENDIF»
              * @var array List of change notification listeners.
              */
             protected $_propertyChangedListeners = array();
         «ENDIF»
 
         /**
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="array")
+         «ENDIF»
          * @var array List of available item actions.
          */
         protected $_actions = array();

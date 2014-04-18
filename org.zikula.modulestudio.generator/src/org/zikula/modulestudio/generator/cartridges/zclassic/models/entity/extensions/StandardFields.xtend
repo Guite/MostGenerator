@@ -1,10 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
+import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class StandardFields extends AbstractExtension implements EntityExtensionInterface {
+
+    @Inject extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.
@@ -26,6 +30,9 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
         /**
          * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="create")
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="integer")
+         «ENDIF»
          * @var integer $createdUserId.
          */
         protected $createdUserId;
@@ -36,6 +43,9 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «ENDIF»
          * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="update")
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="integer")
+         «ENDIF»
          * @var integer $updatedUserId.
          */
         protected $updatedUserId;
@@ -43,6 +53,9 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
         /**
          * @ORM\Column(type="datetime")
          * @Gedmo\Timestampable(on="create")
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\DateTime()
+         «ENDIF»
          * @var datetime $createdDate.
          */
         protected $createdDate;
@@ -53,6 +66,9 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «ENDIF»
          * @ORM\Column(type="datetime")
          * @Gedmo\Timestampable(on="update")
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\DateTime()
+         «ENDIF»
          * @var datetime $updatedDate.
          */
         protected $updatedDate;

@@ -601,13 +601,13 @@ class Ajax {
         switch ($objectType) {
             «FOR entity : app.getTreeEntities»
                 case '«entity.name.formatForCode»':
-                    «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language]»
+                    «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language && !locale]»
                         $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
                         «val textFields = entity.fields.filter(TextField).filter[mandatory && length >= 50]»
                         «IF !textFields.empty»
                             $descriptionFieldName = '«textFields.head.name.formatForCode»';
                         «ELSE»
-                            «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !country && !htmlcolour && !language]»
+                            «val textStringFields = entity.fields.filter(StringField).filter[mandatory && length >= 50 && !nospace && !country && !htmlcolour && !language && !locale]»
                             «IF !textStringFields.empty»
                                 $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
                             «ENDIF»

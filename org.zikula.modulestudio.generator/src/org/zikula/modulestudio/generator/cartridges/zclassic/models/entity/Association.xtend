@@ -64,7 +64,21 @@ class Association {
         «incomingMappingDetails»
          * @ORM\«incomingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
         «IF it instanceof OneToManyRelationship && getSourceFields.length == 1» * «joinColumn(getSourceFields.head, source.getFirstPrimaryKey.name.formatForDB, false)»«ELSE»«joinDetails(false)»«ENDIF»«/* @JoinTable is not required for most @ManyToOne relationships */»
-         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
+        «IF !container.application.targets('1.3.5')»
+            «IF !nullable»
+                «val aliasName = getRelationAliasName(false).toFirstLower»
+                «IF !isManySide(false)»
+                    «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
+                «ELSE»
+                    «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
+                «ENDIF»
+            «ENDIF»
+            «IF !isManySide(false)»
+                «' '»* @Assert\Type(type="\«entityClass»")
+            «ENDIF»
+            «' '»* @Assert\Valid()
+        «ENDIF»
+         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -100,6 +114,14 @@ class Association {
          «ENDIF»
          * @ORM\OneToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»")
         «joinDetails(false)»
+        «IF !container.application.targets('1.3.5')»
+            «IF !nullable»
+                «val aliasName = getRelationAliasName(false).toFirstLower»
+                «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
+            «ENDIF»
+            «' '»* @Assert\Type(type="\«entityClass»")
+            «' '»* @Assert\Valid()
+        «ENDIF»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
@@ -117,6 +139,16 @@ class Association {
              «IF orderByReverse !== null && orderByReverse != ''»
               * @ORM\OrderBy({"«orderByReverse»" = "ASC"})
              «ENDIF»
+            «IF !container.application.targets('1.3.5')»
+                «IF !nullable»
+                    «val aliasName = getRelationAliasName(false).toFirstLower»
+                    «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
+                «ENDIF»
+                «IF minSource > 0 && maxSource > 0»
+                    «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
+                «ENDIF»
+                «' '»* @Assert\Valid()
+            «ENDIF»
              * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«sourceName».
              */
             protected $«sourceName» = null;
@@ -134,6 +166,20 @@ class Association {
          *
          * @ORM\«outgoingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«fetchTypeTag»«outgoingMappingAdditions»)
         «joinDetails(true)»
+        «IF !container.application.targets('1.3.5')»
+            «IF !nullable»
+                «val aliasName = getRelationAliasName(true).toFirstLower»
+                «IF !isManySide(true)»
+                    «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
+                «ELSE»
+                    «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
+                «ENDIF»
+            «ENDIF»
+            «IF !isManySide(true)»
+                «' '»* @Assert\Type(type="\«entityClass»")
+            «ENDIF»
+            «' '»* @Assert\Valid()
+        «ENDIF»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«targetName».
          */
         protected $«targetName»;
@@ -173,6 +219,16 @@ class Association {
          «IF orderBy !== null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
+        «IF !container.application.targets('1.3.5')»
+            «IF !nullable»
+                «val aliasName = getRelationAliasName(true).toFirstLower»
+                «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
+            «ENDIF»
+            «IF minTarget > 0 && maxTarget > 0»
+                «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
+            «ENDIF»
+            «' '»* @Assert\Valid()
+        «ENDIF»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
@@ -190,6 +246,16 @@ class Association {
          «IF orderBy !== null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
+        «IF !container.application.targets('1.3.5')»
+            «IF !nullable»
+                «val aliasName = getRelationAliasName(true).toFirstLower»
+                «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
+            «ENDIF»
+            «IF minTarget > 0 && maxTarget > 0»
+                «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
+            «ENDIF»
+            «' '»* @Assert\Valid()
+        «ENDIF»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;

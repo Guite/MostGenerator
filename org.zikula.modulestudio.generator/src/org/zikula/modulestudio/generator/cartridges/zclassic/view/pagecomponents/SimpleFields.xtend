@@ -86,7 +86,7 @@ class SimpleFields {
 
     def dispatch displayField(StringField it, String objName, String page) {
         if (!password) '''
-            {$«objName».«name.formatForCode»«IF country»|«entity.container.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language»|getlanguagename|safetext«ENDIF»}'''
+            {$«objName».«name.formatForCode»«IF country»|«entity.container.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language || locale»|getlanguagename|safetext«ENDIF»}'''
     }
 
     def dispatch displayField(EmailField it, String objName, String page) {

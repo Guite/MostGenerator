@@ -55,7 +55,7 @@ class Validation {
         «ENDIF»
     '''
     def dispatch additionalValidationMessages(StringField it, String idSuffix) '''
-        «IF nospace && !country && !language»
+        «IF nospace && !country && !language && !locale»
             {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
         «ENDIF»
         «IF htmlcolour»

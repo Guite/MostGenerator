@@ -232,6 +232,11 @@ class DisplayFunctions {
                     «field.jsInit»
                 «ENDFOR»
             «ENDIF»
+            «IF hasLocaleFieldsEntity»
+                «FOR field : getLocaleFieldsEntity»
+                    «field.jsInit»
+                «ENDFOR»
+            «ENDIF»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «field.jsInit»

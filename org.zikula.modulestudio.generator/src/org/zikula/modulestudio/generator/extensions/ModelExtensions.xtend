@@ -18,6 +18,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityIndexType
 import de.guite.modulestudio.metamodel.modulestudio.EntityLockType
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
+import de.guite.modulestudio.metamodel.modulestudio.IpAddressScope
 import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.ListVar
 import de.guite.modulestudio.metamodel.modulestudio.Models
@@ -30,7 +31,6 @@ import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import java.util.List
 
-import static de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy.*
 import static de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy.*
 import static de.guite.modulestudio.metamodel.modulestudio.EntityLockType.*
 
@@ -443,6 +443,20 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether this entity has at least one locale field.
+     */
+    def hasLocaleFieldsEntity(Entity it) {
+        !getLocaleFieldsEntity.empty
+    }
+
+    /**
+     * Returns a list of all locale fields of this entity.
+     */
+    def getLocaleFieldsEntity(Entity it) {
+        getDerivedFields.filter(StringField).filter[locale]
+    }
+
+    /**
      * Checks whether this entity has at least one textual field.
      */
     def hasAbstractStringFieldsEntity(Entity it) {
@@ -606,6 +620,28 @@ class ModelExtensions {
             val dateFields = fields.filter(DateField).filter[endDate]
             if (!dateFields.empty)
                 dateFields.head
+        }
+    }
+
+    /**
+     * Prints an output string corresponding to the given entity lock type.
+     */
+    def ipScopeAsConstant(IpAddressScope scope) {
+        switch scope {
+            case NONE           : ''
+            case IP4            : '4'
+            case IP6            : '6'
+            case ALL            : 'all'
+            case IP4_NO_PRIV    : '4_no_priv'
+            case IP6_NO_PRIV    : '6_no_priv'
+            case ALL_NO_PRIV    : 'all_no_priv'
+            case IP4_NO_RES     : '4_no_res'
+            case IP6_NO_RES     : '6_no_res'
+            case ALL_NO_RES     : 'all_no_res'
+            case IP4_PUBLIC     : '4_public'
+            case IP6_PUBLIC     : '6_public'
+            case ALL_PUBLIC     : 'all_public'
+            default: ''
         }
     }
 

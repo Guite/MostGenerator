@@ -44,6 +44,9 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\TreeLeft
          * @ORM\Column(type="integer")
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="integer")
+         «ENDIF»
          * @var integer $lft.
          */
         protected $lft;
@@ -54,6 +57,9 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\TreeLevel
          * @ORM\Column(type="integer")
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="integer")
+         «ENDIF»
          * @var integer $lvl.
          */
         protected $lvl;
@@ -64,6 +70,9 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\TreeRight
          * @ORM\Column(type="integer")
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="integer")
+         «ENDIF»
          * @var integer $rgt.
          */
         protected $rgt;
