@@ -12,6 +12,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.EmailField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityIndex
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.IpAddressScope
@@ -415,5 +416,21 @@ class ValidationConstraints {
                 «' '»* @Assert\UniqueEntity(fields="«aliasName.formatForCode»", ignoreNull="«rel.nullable.displayBool»")
             «ENDFOR»
         «ENDIF»
+        «IF !getUniqueIndexes.empty»
+            «FOR index : getUniqueIndexes»
+                «index.uniqueAnnotation»
+            «ENDFOR»
+        «ENDIF»
+    '''
+
+    def private uniqueAnnotation(EntityIndex it) '''
+        «var includesNotNullableField = false»
+        «FOR item : items SEPARATOR ', '»
+            «val referencedField = entity.getDerivedFields.filter[name == item.name]?.head»
+            «IF referencedField !== null && !referencedField.nullable»
+                «includesNotNullableField = true»
+            «ENDIF»
+        «ENDFOR»
+        «' '»* @Assert\UniqueEntity(fields={«FOR item : items SEPARATOR ', '»"«item.name.formatForCode»"«ENDFOR»}, ignoreNull="«(!includesNotNullableField).displayBool»")
     '''
 }

@@ -214,7 +214,7 @@ class Entities {
         «ENDIF»
         «IF !container.application.targets('1.3.5')»
             use Symfony\Component\Validator\Constraints as Assert;
-            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
+            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             «ENDIF»
         «ENDIF»
