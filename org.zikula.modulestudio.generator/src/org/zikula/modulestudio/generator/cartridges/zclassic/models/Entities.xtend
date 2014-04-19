@@ -136,6 +136,9 @@ class Entities {
                 use «app.appNamespace»\UploadHandler;
                 use «app.appNamespace»\Util\ControllerUtil;
             «ENDIF»
+            «IF hasListFieldsEntity»
+                use «app.appNamespace»\Util\ListEntriesUtil;
+            «ENDIF»
             use «app.appNamespace»\Util\WorkflowUtil;
 
             use DataUtil;
@@ -473,8 +476,10 @@ class Entities {
          * Start validation and raise exception if invalid data is found.
          *
          * @return void.
-         *
-         * @throws Zikula_Exception Thrown if a validation error occurs
+        «IF container.application.targets('1.3.5')»
+            «' '»*
+            «' '»* @throws Zikula_Exception Thrown if a validation error occurs
+        «ENDIF»
          */
         public function validate()
         {
@@ -483,32 +488,32 @@ class Entities {
             }
 
         «val emailFields = getDerivedFields.filter(EmailField)»
-        «IF emailFields.size > 0»
+            «IF emailFields.size > 0»
                 // decode possibly encoded mail addresses (#201)
-            «FOR emailField : emailFields»
-                if (strpos($this['«emailField.name.formatForCode»'], '&#') !== false) {
-                    $this['«emailField.name.formatForCode»'] = html_entity_decode($this['«emailField.name.formatForCode»']);
+                «FOR emailField : emailFields»
+                    if (strpos($this['«emailField.name.formatForCode»'], '&#') !== false) {
+                        $this['«emailField.name.formatForCode»'] = html_entity_decode($this['«emailField.name.formatForCode»']);
+                    }
+                «ENDFOR»
+            «ENDIF»
+            «IF container.application.targets('1.3.5')»
+                $result = $this->initValidator()->validateAll();
+                if (is_array($result)) {
+                    throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
                 }
-            «ENDFOR»
-        «ENDIF»
-        «IF container.application.targets('1.3.5')»
-            $result = $this->initValidator()->validateAll();
-            if (is_array($result)) {
-                throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
-            }
-        «ELSE»
-            $serviceManager = ServiceUtil::getManager();
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
 
-            $validator = $serviceManager->get('validator');
-            $errors = $validator->validate($this);
+                $validator = $serviceManager->get('validator');
+                $errors = $validator->validate($this);
 
-            if (count($errors) > 0) {
-                $session = $serviceManager->get('session');
-                foreach ($errors as $error) {
-                    $session->getFlashBag()->add('error', $error['message']);
+                if (count($errors) > 0) {
+                    $session = $serviceManager->get('session');
+                    foreach ($errors as $error) {
+                        $session->getFlashBag()->add('error', $error->getMessage());
+                    }
                 }
-            }
-        «ENDIF»
+            «ENDIF»
         }
     '''
 

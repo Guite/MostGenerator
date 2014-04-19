@@ -221,11 +221,11 @@ class ValidationConstraints {
          * Returns a list of possible choices for the «name.formatForCode» list field.
          * This method is used for validation.
          */
-        static public get«name.formatForCodeCapital»AllowedValues()
+        static public function get«name.formatForCodeCapital»AllowedValues()
         {
             $serviceManager = ServiceUtil::getManager();
-            $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-            $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();
+            $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+            $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
             $allowedValues = array();
             foreach ($listEntries as $entry) {
