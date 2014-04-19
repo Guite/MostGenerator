@@ -205,7 +205,7 @@ class Search {
                                 $whereArray[] = 'tbl.«field.name.formatForCode»';
                             «ENDFOR»
                             «IF entity.hasLanguageFieldsEntity»
-                            $languageField = '«entity.getLanguageFieldsEntity.head»';
+                                $languageField = '«entity.getLanguageFieldsEntity.head.name.formatForCode»';
                             «ENDIF»
                             break;
                     «ENDFOR»
@@ -348,7 +348,7 @@ class Search {
                                 $whereArray[] = 'tbl.«field.name.formatForCode»';
                             «ENDFOR»
                             «IF entity.hasLanguageFieldsEntity»
-                            $languageField = '«entity.getLanguageFieldsEntity.head»';
+                                $languageField = '«entity.getLanguageFieldsEntity.head.name.formatForCode»';
                             «ENDIF»
                             break;
                     «ENDFOR»
