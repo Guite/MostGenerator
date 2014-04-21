@@ -22,12 +22,12 @@ class DependencyInjection {
     }
 
     def private extensionBaseFile(Application it) '''
-        «fh.phpFileHeaderVersionClass(it)»
+        «fh.phpFileHeader(it)»
         «extensionBaseImpl»
     '''
 
     def private extensionFile(Application it) '''
-        «fh.phpFileHeaderVersionClass(it)»
+        «fh.phpFileHeader(it)»
         «extensionImpl»
     '''
 
