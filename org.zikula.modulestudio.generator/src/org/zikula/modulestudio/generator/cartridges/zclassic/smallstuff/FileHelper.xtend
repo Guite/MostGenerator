@@ -70,7 +70,7 @@ class FileHelper {
         /**
          * Get «name.formatForDisplay».
          *
-         * @return «type»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
+         * @return «IF type == 'smallint' || type == 'bigint'»integer«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
          */
         public function get«name.formatForCodeCapital»()
         {
@@ -83,7 +83,7 @@ class FileHelper {
         /**
          * Set «name.formatForDisplay».
          *
-         * @param «type»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF» $«name».
+         * @param «IF type == 'smallint' || type == 'bigint'»integer«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF» $«name».
          *
          * @return void
          */
