@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,6 +18,7 @@ import static de.guite.modulestudio.metamodel.modulestudio.ApplicationDependency
 
 class VersionFile {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions 
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -85,7 +87,7 @@ class VersionFile {
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
-                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.5')»,
+                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.5') && generateSearchApi»,
                                   AbstractSearchable::SEARCHABLE => array('class' => '«appNamespace»\Helper\SearchHelper'),
                                   «ENDIF»
         /*,
