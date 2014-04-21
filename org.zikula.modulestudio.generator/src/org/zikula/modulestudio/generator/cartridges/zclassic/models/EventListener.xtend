@@ -12,6 +12,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityField
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.ListField
+import de.guite.modulestudio.metamodel.modulestudio.ObjectField
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
@@ -129,6 +130,30 @@ class EventListener {
             protected function containsHtml($string)
             {
                 return preg_match("/<[^<]+>/", $string, $m) != 0;
+            }
+        «ENDIF»
+        «IF !getDerivedFields.filter(ObjectField).empty»
+
+            /**
+             * Formats a given object field.
+             *
+             * @param string  $fieldName     Name of field to be formatted.
+             * @param string  $currentFunc   Name of current controller action.
+             * @param string  $usesCsvOutput Whether the output is CSV or not (defaults to false).
+             */
+            protected function formatObjectField($fieldName, $currentFunc, $usesCsvOutput = false)
+            {
+                if ($currentFunc == 'edit') {
+                    // apply no changes when editing the content
+                    return;
+                }
+
+                if ($usesCsvOutput == 1) {
+                    // apply no changes for CSV output
+                    return;
+                }
+
+                $this[$fieldName] = (isset($this[$fieldName]) && !empty($this[$fieldName])) ? DataUtil::formatForDisplay($this[$fieldName]) : '';
             }
         «ENDIF»
 «/*}*/»«/*    def private eventListenerBaseImpl(PrePersist it) {*/»
@@ -486,14 +511,17 @@ class EventListener {
             ListField: sanitizeForOutputHTMLWithZero
             UploadField: sanitizeForOutputUpload
             ArrayField: '''
-                             $this['«name.formatForCode»'] = ((isset($this['«name.formatForCode»']) && is_array($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : array());
+                            $this['«name.formatForCode»'] = ((isset($this['«name.formatForCode»']) && is_array($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : array());
                          '''
+            ObjectField: '''
+                            $this->formatObjectField('«it.name.formatForCode»', $currentFunc, $usesCsvOutput);
+            '''
             AbstractDateField: ''
             FloatField: '''
-                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
+                            $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
                          '''
             default: '''
-                        $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«it.name.formatForCode»']) : '');
+                            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«it.name.formatForCode»']) : '');
                     '''
         }
     }
