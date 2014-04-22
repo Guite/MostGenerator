@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.modulestudio.TextField
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -17,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Ajax {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
@@ -27,8 +29,10 @@ class Ajax {
 
     def dispatch additionalAjaxFunctions(AjaxController it, Application app) '''
         «userSelectors(app)»
+        «IF app.generateExternalControllerAndFinder»
 
-        «getItemListFinder(app)»
+            «getItemListFinder(app)»
+        «ENDIF»
         «val joinRelations = app.getJoinRelations»
         «IF !joinRelations.empty»
 
