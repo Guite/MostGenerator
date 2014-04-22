@@ -374,34 +374,47 @@ class ControllerUtil {
         public function performGeoCoding($address)
         {
             $lang = ZLanguage::getLanguageCode();
-            $url = 'http://maps.google.com/maps/api/geocode/xml?address=' . urlencode($address);
+            $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
+
+            $json = '';
 
             // we can either use Snoopy if available
             //require_once('modules/«IF targets('1.3.5')»«appName»/lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
-            //$xmlContent = $snoopy->results;
+            //$json = $snoopy->results;
 
             // we can also use curl
-            /** TODO example to be done */
-
-            // or we can use the plain file_get_contents method
-            // requires allow_url_fopen = true in php.ini which is NOT good for security
-            $xmlContent = file_get_contents($url);
-
-            // parse the markup
-            $xml = new SimpleXMLElement($xmlContent);
-            //$xml = simplexml_load_string($xmlContent, 'SimpleXMLElement', LIBXML_NOCDATA);
+            if (function_exists('curl_version')) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // can cause problems with open_basedir
+                curl_setopt($ch, CURLOPT_URL, $url);
+                $json = curl_exec($ch);
+                curl_close($ch);
+            } else {
+                // or we can use the plain file_get_contents method
+                // requires allow_url_fopen = true in php.ini which is NOT good for security
+                $json = file_get_contents($url);
+            }
 
             // create the result array
-            $result = array('latitude' => 0, 'longitude' => 0);
+            $result = array('latitude' => 0,
+                            'longitude' => 0);
 
-            $lat = $xml->xpath('result/geometry/location/lat');
-            $result['latitude'] = (float)$lat[0];
+            if ($json != '') {
+                $data = json_decode($json);
 
-            $lng = $xml->xpath('result/geometry/location/lng');
-            $result['longitude'] = (float)$lng[0];
+                if (json_last_error() == JSON_ERROR_NONE && $data->status == 'OK') {
+                    $jsonResult = reset($data->results);
+                    $location = $jsonResult->geometry->location;
+
+                    $result['latitude'] = str_replace(',', '.', $location->lat);
+                    $result['longitude'] = str_replace(',', '.', $location->lng);
+                }
+            }
 
             return $result;
         }
