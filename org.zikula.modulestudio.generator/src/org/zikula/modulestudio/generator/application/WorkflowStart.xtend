@@ -175,7 +175,7 @@ class WorkflowStart {
                     modelDestinationPath = '/zclassic/' + settings.appName + '/src/modules/' + settings.appName + '/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 else {
-                    modelDestinationPath = '/zclassic/' + settings.appName + '/' + settings.appVendor + '/' + settings.appName + 'Module/Resources/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    modelDestinationPath = '/zclassic/' + settings.appName + '/Resources/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
