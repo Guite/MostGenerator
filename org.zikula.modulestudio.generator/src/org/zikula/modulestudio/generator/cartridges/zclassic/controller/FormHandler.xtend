@@ -260,9 +260,9 @@ class FormHandler {
             protected $idPrefix = '';
 
             /**
-             * @Whether an existing item is used as template for a new one.
+             * Whether an existing item is used as template for a new one.
              *
-             * var boolean
+             * @var boolean
              */
             protected $hasTemplateId = false;
 
