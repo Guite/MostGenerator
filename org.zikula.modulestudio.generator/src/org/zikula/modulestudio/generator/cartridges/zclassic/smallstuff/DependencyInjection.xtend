@@ -18,7 +18,8 @@ class DependencyInjection {
         if (targets('1.3.5')) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'DependencyInjection/' + vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php', extensionBaseFile, extensionFile)
+        val extensionFileName = vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php'
+        generateClassPair(fsa, getAppSourceLibPath + 'DependencyInjection/' + extensionFileName, extensionBaseFile, extensionFile)
     }
 
     def private extensionBaseFile(Application it) '''
@@ -36,7 +37,7 @@ class DependencyInjection {
 
         use Symfony\Component\Config\FileLocator;
         use Symfony\Component\DependencyInjection\ContainerBuilder;
-        use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+        use Symfony\Component\DependencyInjection\Loader\YmlFileLoader;
         use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
         /**
@@ -53,9 +54,9 @@ class DependencyInjection {
              */
             public function load(array $configs, ContainerBuilder $container)
             {
-                $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../../Resources/config'));
+                $loader = new YmlFileLoader($container, new FileLocator(__DIR__ . '/../../Resources/config'));
         
-                $loader->load('services.xml');
+                $loader->load('services.yml');
             }
         }
     '''
