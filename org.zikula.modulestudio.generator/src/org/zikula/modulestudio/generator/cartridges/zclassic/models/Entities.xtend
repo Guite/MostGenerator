@@ -175,25 +175,27 @@ class Entities {
             «thEvLi.generateBase(it)»
 
             «getTitleFromDisplayPattern(app)»
-            «val thVal = new ValidationConstraints»
-            «IF hasListFieldsEntity»
-                «FOR listField : getListFieldsEntity»
+            «IF !app.targets('1.3.5')»
+                «val thVal = new ValidationConstraints»
+                «IF hasListFieldsEntity»
+                    «FOR listField : getListFieldsEntity»
 
-                    «thVal.validationMethods(listField)»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasUserFieldsEntity»
-                «FOR userField : getUserFieldsEntity»
+                        «thVal.validationMethods(listField)»
+                    «ENDFOR»
+                «ENDIF»
+                «IF hasUserFieldsEntity»
+                    «FOR userField : getUserFieldsEntity»
 
-                    «thVal.validationMethods(userField)»
-                «ENDFOR»
-            «ENDIF»
-            «val dateTimeFields = fields.filter(AbstractDateField)»
-            «IF !dateTimeFields.empty»
-                «FOR dateField : dateTimeFields»
+                        «thVal.validationMethods(userField)»
+                    «ENDFOR»
+                «ENDIF»
+                «val dateTimeFields = fields.filter(AbstractDateField)»
+                «IF !dateTimeFields.empty»
+                    «FOR dateField : dateTimeFields»
 
-                    «thVal.validationMethods(dateField)»
-                «ENDFOR»
+                        «thVal.validationMethods(dateField)»
+                    «ENDFOR»
+                «ENDIF»
             «ENDIF»
 
             «toStringImpl(app)»

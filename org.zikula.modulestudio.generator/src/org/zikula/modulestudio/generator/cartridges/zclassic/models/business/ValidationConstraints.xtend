@@ -243,7 +243,7 @@ class ValidationConstraints {
          *
          * @Assert\True(message="This value must be a valid user id.")
          */
-        public is«name.formatForCodeCapital»UserValid()
+        public function is«name.formatForCodeCapital»UserValid()
         {
             «IF !mandatory»
                 if ($this['«name.formatForCode»'] < 1) {
@@ -266,7 +266,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="This value must be a date in the past.")
                  */
-                public is«name.formatForCodeCapital»DateTimeValidPast()
+                public function is«name.formatForCodeCapital»DateTimeValidPast()
                 {
                     $format = 'U';
                     return $this['«name.formatForCode»']->format($format) < date($format);
@@ -282,7 +282,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="This value must be a date in the future.")
                  */
-                public is«name.formatForCodeCapital»DateTimeValidFuture()
+                public function is«name.formatForCodeCapital»DateTimeValidFuture()
                 {
                     $format = 'U';
                     return $this['«name.formatForCode»']->format($format) > date($format);
@@ -301,7 +301,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="The start date must be before the end date.")
                  */
-                public is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
+                public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
                 {
                     return ($this['«name.formatForCode»'] < $this['«endDateField.name.formatForCode»']);
                 }
@@ -318,7 +318,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="This value must be a date in the past.")
                  */
-                public is«name.formatForCodeCapital»DateValidPast()
+                public function is«name.formatForCodeCapital»DateValidPast()
                 {
                     $format = 'Ymd';
                     return $this['«name.formatForCode»']->format($format) < date($format);
@@ -334,7 +334,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="This value must be a date in the future.")
                  */
-                public is«name.formatForCodeCapital»DateValidFuture()
+                public function is«name.formatForCodeCapital»DateValidFuture()
                 {
                     $format = 'Ymd';
                     return $this['«name.formatForCode»']->format($format) > date($format);
@@ -353,7 +353,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="The start date must be before the end date.")
                  */
-                public is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
+                public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
                 {
                     return ($this['«name.formatForCode»'] < $this['«endDateField.name.formatForCode»']);
                 }
@@ -370,7 +370,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="This value must be a time in the past.")
                  */
-                public is«name.formatForCodeCapital»TimeValidPast()
+                public function is«name.formatForCodeCapital»TimeValidPast()
                 {
                     $format = 'His';
                     return $this['«name.formatForCode»']->format($format) < date($format);
@@ -386,7 +386,7 @@ class ValidationConstraints {
                  *
                  * @Assert\True(message="This value must be a time in the future.")
                  */
-                public is«name.formatForCodeCapital»TimeValidFuture()
+                public function is«name.formatForCodeCapital»TimeValidFuture()
                 {
                     $format = 'His';
                     return $this['«name.formatForCode»']->format($format) > date($format);
