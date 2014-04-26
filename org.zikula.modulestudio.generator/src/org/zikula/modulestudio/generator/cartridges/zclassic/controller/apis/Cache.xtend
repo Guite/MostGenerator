@@ -20,18 +20,10 @@ class Cache {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating cache api')
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Cache' + (if (targets('1.3.5')) '' else 'Api') + '.php', cacheApiBaseFile, cacheApiFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Cache' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+            fh.phpFileContent(it, cacheApiBaseClass), fh.phpFileContent(it, cacheApiImpl)
+        )
     }
-
-    def private cacheApiBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «cacheApiBaseClass»
-    '''
-
-    def private cacheApiFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «cacheApiImpl»
-    '''
 
     def private cacheApiBaseClass(Application it) '''
         «IF !targets('1.3.5')»

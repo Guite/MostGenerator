@@ -174,7 +174,7 @@ class DisplayFunctions {
         /**
          * Initialise the quick navigation panel in list views.
          */
-        function «prefix()»InitQuickNavigation(objectType, controller)
+        function «prefix()»InitQuickNavigation(objectType)
         {
             if ($('«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
                 return;

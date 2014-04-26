@@ -16,26 +16,13 @@ class UserInput {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/UserInput.php', formUserInputBaseFile, formUserInputFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/UserInput.php',
+            fh.phpFileContent(it, formUserInputBaseImpl), fh.phpFileContent(it, formUserInputImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'UserInput'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'UserInput'), formUserInputPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'UserInput'), fh.phpFileContent(it, formUserInputPluginImpl))
         }
     }
-
-    def private formUserInputBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formUserInputBaseImpl»
-    '''
-
-    def private formUserInputFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formUserInputImpl»
-    '''
-
-    def private formUserInputPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formUserInputPluginImpl»
-    '''
 
     def private formUserInputBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

@@ -58,12 +58,11 @@ class PermissionCheck {
             if (app.shouldBeMarked(outputPath + fileName)) {
                 fileName = 'function.' + wfType.textualName + '_permissioncheck.generated.php'
             }
-            fsa.generateFile(outputPath + fileName, permissionCheckFile)
+            fsa.generateFile(outputPath + fileName, fh.phpFileContent(app, permissionCheckFile))
         }
     }
 
     def private permissionCheckFile() '''
-        «fh.phpFileHeader(app)»
         «permissionCheckImpl»
 
         «gettextStrings»

@@ -16,14 +16,9 @@ class TreeSelection {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('function', 'TreeSelection')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, treeSelectionFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, treeSelectionImpl))
         }
     }
-
-    def private treeSelectionFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «treeSelectionImpl»
-    '''
 
     def private treeSelectionImpl(Application it) '''
         /**
@@ -74,7 +69,7 @@ class TreeSelection {
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($params['objectType']) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
             $titleFieldName = $repository->getTitleFieldName();
 

@@ -7,11 +7,13 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewUtil {
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
+    @Inject extension ViewExtensions = new ViewExtensions
 
     FileHelper fh = new FileHelper
 
@@ -20,18 +22,10 @@ class ViewUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for view layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/View' + (if (targets('1.3.5')) '' else 'Util') + '.php', viewFunctionsBaseFile, viewFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/View' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+            fh.phpFileContent(it, viewFunctionsBaseImpl), fh.phpFileContent(it, viewFunctionsImpl)
+        )
     }
-
-    def private viewFunctionsBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «viewFunctionsBaseImpl»
-    '''
-
-    def private viewFunctionsFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «viewFunctionsImpl»
-    '''
 
     def private viewFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -77,25 +71,29 @@ class ViewUtil {
         /**
          * Determines the view template for a certain method with given parameters.
          *
-         * @param Zikula_View $view       Reference to view object.
-         * @param string      $type       Current type (admin, user, ...).
-         * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         * @param Zikula_View $view    Reference to view object.
+         * @param string      $type    Current controller (name of currently treated entity).
+         * @param string      $func    Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          «IF targets('1.3.5')»
-         * @param array       $args       Additional arguments.
+         * @param array       $args    Additional arguments.
          «ELSE»
-         * @param Request     $request    Current request.
+         * @param Request     $request Current request.
          «ENDIF»
          *
          * @return string name of template file.
          */
-        public function getViewTemplate(Zikula_View $view, $type, $objectType, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
+        public function getViewTemplate(Zikula_View $view, $type, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
         {
+            if (FormUtil::getPassedValue('lct', 'user', 'GETPOST') == 'admin') {
+                // load Smarty plugins of Admin module
+                $view->addPluginDir('system/«IF targets('1.3.5')»Admin/templates«ELSE»Zikula/Module/AdminModule/Resources/views«ENDIF»/plugins');
+            }
+
             // create the base template name
-            $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type . '/' . $objectType«ELSE»ucwords($type) . '/' . ucwords($objectType)«ENDIF» . '/' . $func);
+            $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type«ELSE»ucwords($type)«ENDIF» . '/' . $func);
 
             // check for template extension
-            $templateExtension = $this->determineExtension($view, $type, $objectType, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
+            $templateExtension = $this->determineExtension($view, $type, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
 
             // check whether a special template is used
             «IF targets('1.3.5')»
@@ -127,24 +125,23 @@ class ViewUtil {
         /**
          * Utility method for managing view templates.
          *
-         * @param Zikula_View $view       Reference to view object.
-         * @param string      $type       Current type (admin, user, ...).
-         * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
-         * @param string      $template   Optional assignment of precalculated template file.
+         * @param Zikula_View $view     Reference to view object.
+         * @param string      $type     Current controller (name of currently treated entity).
+         * @param string      $func     Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         * @param string      $template Optional assignment of precalculated template file.
          «IF targets('1.3.5')»
-         * @param array       $args       Additional arguments.
+         * @param array       $args     Additional arguments.
          «ELSE»
-         * @param Request     $request    Current request.
+         * @param Request     $request  Current request.
          «ENDIF»
          *
          * @return mixed Output.
          */
-        public function processTemplate(Zikula_View $view, $type, $objectType, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF», $template = '')
+        public function processTemplate(Zikula_View $view, $type, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF», $template = '')
         {
-            $templateExtension = $this->determineExtension($view, $type, $objectType, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
+            $templateExtension = $this->determineExtension($view, $type, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
             if (empty($template)) {
-                $template = $this->getViewTemplate($view, $type, $objectType, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
+                $template = $this->getViewTemplate($view, $type, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
             }
 
             // look whether we need output with or without the theme
@@ -158,7 +155,7 @@ class ViewUtil {
                     $raw = (bool) $request->query->filter('raw', false, false, FILTER_VALIDATE_BOOLEAN);
                 }
             «ENDIF»
-            if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ics', 'json', 'kml'))) {
+            if (!$raw && $templateExtension != 'tpl') {
                 $raw = true;
             }
 
@@ -169,21 +166,21 @@ class ViewUtil {
                     return $this->processPdf($view, $template);
                 } else {
                     «IF targets('1.3.5')»
-                    $view->display($template);
+                        $view->display($template);
                     «ELSE»
-                    return new PlainResponse($view->display($template));
+                        return new PlainResponse($view->display($template));
                     «ENDIF»
                 }
                 «IF targets('1.3.5')»
-                System::shutDown();
+                    System::shutDown();
                 «ENDIF»
             }
 
             // normal output
             «IF targets('1.3.5')»
-            return $view->fetch($template);
+                return $view->fetch($template);
             «ELSE»
-            return new Response($view->fetch($template));
+                return new Response($view->fetch($template));
             «ENDIF»
         }
     '''
@@ -192,41 +189,43 @@ class ViewUtil {
         /**
          * Get extension of the currently treated template.
          *
-         * @param Zikula_View $view       Reference to view object.
-         * @param string      $type       Current type (admin, user, ...).
-         * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         * @param Zikula_View $view    Reference to view object.
+         * @param string      $type    Current controller (name of currently treated entity).
+         * @param string      $func    Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          «IF targets('1.3.5')»
-         * @param array       $args       Additional arguments.
+         * @param array       $args    Additional arguments.
          «ELSE»
-         * @param Request     $request    Current request.
+         * @param Request     $request Current request.
          «ENDIF»
          *
          * @return array List of allowed template extensions.
          */
-        protected function determineExtension(Zikula_View $view, $type, $objectType, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
+        protected function determineExtension(Zikula_View $view, $type, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
         {
             $templateExtension = 'tpl';
             if (!in_array($func, array('view', 'display'))) {
                 return $templateExtension;
             }
 
-            $extParams = $this->availableExtensions($type, $objectType, $func);
-            foreach ($extParams as $extension) {
-                $extensionVar = 'use' . $extension . 'ext';
-                «IF targets('1.3.5')»
+            $extensions = $this->availableExtensions($type, $func);
+            «IF targets('1.3.5')»
+                foreach ($extensions as $extension) {
+                    $extensionVar = 'use' . $extension . 'ext';
                     $extensionCheck = (isset($args[$extensionVar]) && !empty($extensionVar)) ? $extensionVar : 0;
                     if ($extensionCheck != 1) {
                         $extensionCheck = (int)FormUtil::getPassedValue($extensionVar, 0, 'GET', FILTER_VALIDATE_INT);
                     }
-                «ELSE»
-                    $extensionCheck = $request->query->filter($extensionVar, 0, false, FILTER_VALIDATE_INT);
-                «ENDIF»
-                if ($extensionCheck == 1) {
-                    $templateExtension = $extension;
-                    break;
+                    if ($extensionCheck == 1) {
+                        $templateExtension = $extension;
+                        break;
+                    }
                 }
-            }
+            «ELSE»
+                $format = $request->query->filter('_format', 'html', false, FILTER_SANITIZE_STRING);
+                if ($format != 'html' && in_array($format, $extensions)) {
+                    $templateExtension = $format;
+                }
+            «ENDIF»
 
             return $templateExtension;
         }
@@ -236,31 +235,30 @@ class ViewUtil {
         /**
          * Get list of available template extensions.
          *
-         * @param string $type       Current type (admin, user, ...).
-         * @param string $objectType Name of treated entity type.
-         * @param string $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         * @param string $type Current controller (name of currently treated entity).
+         * @param string $func Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          *
          * @return array List of allowed template extensions.
          */
-        public function availableExtensions($type, $objectType, $func)
+        public function availableExtensions($type, $func)
         {
-            $extParams = array();
-            $hasAdminAccess = SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN);
+            $extensions = array();
+            $hasAdminAccess = SecurityUtil::checkPermission('«appName»:' . ucwords($type) . ':', '::', ACCESS_ADMIN);
             if ($func == 'view') {
                 if ($hasAdminAccess) {
-                    $extParams = array('csv', 'rss', 'atom', 'xml', 'json', 'kml'/*, 'pdf'*/);
+                    $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»);
                 } else {
-                    $extParams = array('rss', 'atom'/*, 'pdf'*/);
+                    $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»«IF format == 'rss' || format == 'atom' || format == 'pdf'»'«format»'«ENDIF»«ENDFOR»);
                 }
             } elseif ($func == 'display') {
                 if ($hasAdminAccess) {
-                    $extParams = array('xml', 'json', 'kml', 'ics'/*, 'pdf'*/);
+                    $extensions = array(«FOR format : getListOfDisplayFormats SEPARATOR ', '»'«format»'«ENDFOR»);
                 } else {
-                    $extParams = array('ics');
+                    $extensions = array(«FOR format : getListOfDisplayFormats SEPARATOR ', '»«IF format == 'ics' || format == 'pdf'»'«format»'«ENDIF»«ENDFOR»);
                 }
             }
 
-            return $extParams;
+            return $extensions;
         }
     '''
 

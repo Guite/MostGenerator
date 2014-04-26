@@ -57,7 +57,7 @@ class TreeFunctions {
         /**
          * Initialise event handlers for all nodes of a given tree root.
          */
-        function «prefix»InitTreeNodes(objectType, controller, rootId, hasDisplay, hasEdit)
+        function «prefix»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
         {
             $$('#itemTree' + rootId + ' a').each(function (elem) {
                 var liRef, isRoot, contextMenu;
@@ -79,7 +79,7 @@ class TreeFunctions {
                             var url;
 
                             currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                            url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + controller + '&func=display&ot=' + objectType + '&id=' + currentNodeId;
+                            url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=display&id=' + currentNodeId;
 
                             if (isRightClick) {
                                 window.open(url);
@@ -97,7 +97,7 @@ class TreeFunctions {
                             var url;
 
                             currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                            url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + controller + '&func=edit&ot=' + objectType + '&id=' + currentNodeId;
+                            url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=edit&id=' + currentNodeId;
 
                             if (isRightClick) {
                                 window.open(url);

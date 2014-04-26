@@ -21,26 +21,13 @@ class TreeSelector {
         if (!hasTrees) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/TreeSelector.php', treeSelectorBaseFile, treeSelectorFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/TreeSelector.php',
+            fh.phpFileContent(it, treeSelectorBaseImpl), fh.phpFileContent(it, treeSelectorImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'TreeSelector'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'TreeSelector'), treeSelectorPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'TreeSelector'), fh.phpFileContent(it, treeSelectorPluginImpl))
         }
     }
-
-    def private treeSelectorBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «treeSelectorBaseImpl»
-    '''
-
-    def private treeSelectorFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «treeSelectorImpl»
-    '''
-
-    def private treeSelectorPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «treeSelectorPluginImpl»
-    '''
 
     def private treeSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -126,7 +113,7 @@ class TreeSelector {
                     $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
                 $this->repository = $entityManager->getRepository($entityClass);
             }
 

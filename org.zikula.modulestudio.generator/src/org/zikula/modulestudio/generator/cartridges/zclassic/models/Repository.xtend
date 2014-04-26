@@ -73,7 +73,7 @@ class Repository {
             if (app.shouldBeMarked(repositoryPath + fileName)) {
                 fileName = 'Base/' + name.formatForCodeCapital + '.generated.php'
             }
-            fsa.generateFile(repositoryPath + fileName, modelRepositoryBaseFile)
+            fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, modelRepositoryBaseImpl))
         }
 
         fileName = name.formatForCodeCapital + '.php'
@@ -81,19 +81,9 @@ class Repository {
             if (app.shouldBeMarked(repositoryPath + fileName)) {
                 fileName = name.formatForCodeCapital + '.generated.php'
             }
-            fsa.generateFile(repositoryPath + fileName, modelRepositoryFile)
+            fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, modelRepositoryImpl))
         }
     }
-
-    def private modelRepositoryBaseFile(Entity it) '''
-        «fh.phpFileHeader(app)»
-        «modelRepositoryBaseImpl»
-    '''
-
-    def private modelRepositoryFile(Entity it) '''
-        «fh.phpFileHeader(app)»
-        «modelRepositoryImpl»
-    '''
 
     def private modelRepositoryBaseImpl(Entity it) '''
         «imports»
@@ -1043,8 +1033,8 @@ class Repository {
         protected function applyDefaultFilters(QueryBuilder $qb, $parameters = array())
         {
             $currentModule = ModUtil::getName();//FormUtil::getPassedValue('module', '', 'GETPOST');
-            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
-            if ($currentType == 'admin' && $currentModule == '«app.appName»') {
+            $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
+            if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
                 return $qb;
             }
 
@@ -1617,7 +1607,7 @@ class Repository {
 
             $serviceManager = ServiceUtil::getManager();
 
-            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
+            $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             $action = 'archive';
             $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
 
@@ -1629,11 +1619,11 @@ class Repository {
                 // Let any hooks perform additional validation actions
                 $hookType = 'validate_edit';
                 «IF app.targets('1.3.5')»
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                $validators = $serviceManager->getService('zikula.hookmanager')->notify($hook)->getValidators();
+                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                    $validators = $serviceManager->getService('zikula.hookmanager')->notify($hook)->getValidators();
                 «ELSE»
-                $hook = new ValidationHook(new ValidationProviders());
-                $validators = $serviceManager->getService('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                    $hook = new ValidationHook(new ValidationProviders());
+                    $validators = $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
                     continue;
@@ -1661,13 +1651,13 @@ class Repository {
                 // Let any hooks know that we have updated an item
                 $hookType = 'process_edit';
                 $urlArgs = $entity->createUrlArgs();
-                $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, $currentType, 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 «IF app.targets('1.3.5')»
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                $serviceManager->getService('zikula.hookmanager')->notify($hook);
+                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                    $serviceManager->getService('zikula.hookmanager')->notify($hook);
                 «ELSE»
-                $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                $serviceManager->getService('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
+                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
+                    $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was updated, so we clear all cached pages for this item.

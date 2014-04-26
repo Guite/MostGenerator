@@ -1,8 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
@@ -23,6 +21,7 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Display {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
@@ -33,36 +32,44 @@ class Display {
     @Inject extension ViewExtensions = new ViewExtensions
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
-    def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
-        println('Generating ' + controller.formattedName + ' display templates for entity "' + name.formatForDisplay + '"')
-        var templateFilePath = templateFile(controller, name, 'display')
+    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+        println('Generating display templates for entity "' + name.formatForDisplay + '"')
+        var templateFilePath = templateFile('display')
         if (!container.application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, displayView(appName, controller))
+            fsa.generateFile(templateFilePath, displayView(appName))
         }
         if (tree != EntityTreeType::NONE) {
-            templateFilePath = templateFile(controller, name, 'display_treeRelatives')
+            templateFilePath = templateFile('display_treeRelatives')
             if (!container.application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, treeRelatives(appName, controller))
+                fsa.generateFile(templateFilePath, treeRelatives(appName))
             }
         }
     }
 
-    def private displayView(Entity it, String appName, Controller controller) '''
-        {* purpose of this template: «nameMultiple.formatForDisplay» display view in «controller.formattedName» area *}
-        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
+    def private displayView(Entity it, String appName) '''
+        {* purpose of this template: «nameMultiple.formatForDisplay» display view *}
+        {assign var='lct' value='user'}
+        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+            {assign var='lct' value='admin'}
+        {/if}
+        «IF container.application.targets('1.3.5')»
+            {include file="`$lct`/header.tpl"}
+        «ELSE»
+            {include file="`ucfirst($lct)`/header.tpl"}
+        «ENDIF»
         «val refedElems = getOutgoingJoinRelations.filter[e|e.target.container.application == it.container.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.container.application == it.container.application]»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» with-rightbox«ENDIF»">
             «val objName = name.formatForCode»
             {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
             {assign var='templateTitle' value=$«objName»->getTitleFromDisplayPattern()|default:$templateTitle}
             {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
-            «controller.templateHeader(it, appName)»
+            «templateHeader(appName)»
             «IF !refedElems.empty»
 
                 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
                     <div class="«appName.toLowerCase»-rightbox">
                         «val relationHelper = new Relations»
-                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, controller, it)»«ENDFOR»
+                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
                     </div>
                 {/if}
             «ENDIF»
@@ -75,17 +82,17 @@ class Display {
             {/if}
             «ENDIF»
 
-            «fieldDetails(appName, controller)»
+            «fieldDetails(appName)»
             «IF useGroupingPanels('display')»
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
                 </div>«/* fields panel */»
             {/if}
             «ENDIF»
-            «displayExtensions(controller, objName)»
+            «displayExtensions(objName)»
 
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                «callDisplayHooks(appName, controller)»
-                «itemActions(appName, controller)»
+                «callDisplayHooks(appName)»
+                «itemActions(appName)»
                 «IF useGroupingPanels('display')»
                     </div>«/* panels */»
                 «ENDIF»
@@ -94,7 +101,11 @@ class Display {
                 «ENDIF»
             {/if}
         </div>
-        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
+        «IF container.application.targets('1.3.5')»
+            {include file="`$lct`/footer.tpl"}
+        «ELSE»
+            {include file="`ucfirst($lct)`/footer.tpl"}
+        «ENDIF»
         «IF hasBooleansWithAjaxToggleEntity || useGroupingPanels('display')»
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
@@ -122,9 +133,9 @@ class Display {
         «ENDIF»
     '''
 
-    def private fieldDetails(Entity it, String appName, Controller controller) '''
+    def private fieldDetails(Entity it, String appName) '''
         <dl>
-            «FOR field : getDisplayFields»«field.displayEntry(controller)»«ENDFOR»
+            «FOR field : getDisplayFields»«field.displayEntry»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     <dt>{gt text='«geoFieldName.toFirstUpper»'}</dt>
@@ -135,35 +146,32 @@ class Display {
                 <dt>{gt text='Deleted at'}</dt>
                 <dd>{$«name.formatForCode».deletedAt|dateformat:'datebrief'}</dd>
             «ENDIF»
-            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayEntry(controller, false)»«ENDFOR»
-            «/*«FOR relation : outgoing.filter[OneToOneRelationship)»«relation.displayEntry(controller, true)»«ENDFOR»*/»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayEntry(false)»«ENDFOR»
+            «/*«FOR relation : outgoing.filter[OneToOneRelationship)»«relation.displayEntry(true)»«ENDFOR»*/»
         </dl>
     '''
 
-    def private templateHeader(Controller it, Entity entity, String appName) {
-        switch it {
-            AdminController: '''
-                «IF container.application.targets('1.3.5')»
-                    <div class="z-admin-content-pagetitle">
-                        {icon type='display' size='small' __alt='Details'}
-                        <h3>«templateHeading(entity, appName)»</h3>
-                    </div>
-                «ELSE»
-                    <h3>
-                        <span class="fa fa-eye"></span>
-                        «templateHeading(entity, appName)»
-                    </h3>
-                «ENDIF»
-            '''
-            default: '''
-                <h2>«templateHeading(entity, appName)»</h2>
-            '''
-        }
-    }
+    def private templateHeader(Entity it, String appName) '''
+        {if $lct eq 'admin'}
+            «IF container.application.targets('1.3.5')»
+                <div class="z-admin-content-pagetitle">
+                    {icon type='display' size='small' __alt='Details'}
+                    <h3>«templateHeading(appName)»</h3>
+                </div>
+            «ELSE»
+                <h3>
+                    <span class="fa fa-eye"></span>
+                    «templateHeading(appName)»
+                </h3>
+            «ENDIF»
+        {else}
+            <h2>«templateHeading(appName)»</h2>
+        {/if}
+    '''
 
     def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»{icon id='itemActionsTrigger' type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hidden«ENDIF»'}'''
 
-    def private displayEntry(DerivedField it, Controller controller) '''
+    def private displayEntry(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
         <dt>{gt text='«fieldLabel.formatForDisplayCapital»'}</dt>
         <dd>«displayEntryImpl»</dd>
@@ -173,7 +181,7 @@ class Display {
         new SimpleFields().displayField(it, entity.name.formatForCode, 'display')
     }
 
-    def private displayEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
+    def private displayEntry(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val mainEntity = (if (useTarget) source else target)»
         «val linkEntity = (if (useTarget) target else source)»
@@ -182,17 +190,20 @@ class Display {
         <dd>
         {if isset($«relObjName») && $«relObjName» ne null}
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-          «var linkController = getLinkController(container.application, controller, linkEntity)»
-          «IF linkController !== null»
-              <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">{strip}
+          «IF linkEntity.hasActions('display')»
+              «IF container.application.targets('1.3.5')»
+                  <a href="{modurl modname='«linkEntity.container.application.appName»' type=$lct «linkEntity.modUrlDisplay(relObjName, true)» ot='«linkEntity.name.formatForCode»'}">{strip}
+              «ELSE»
+                  <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkEntity.name.formatForCode»' «linkEntity.modUrlDisplay(relObjName, true)» lct=$lct}">{strip}
+              «ENDIF»
           «ENDIF»
             {$«relObjName»->getTitleFromDisplayPattern()|default:""}
-          «IF linkController !== null»
+          «IF linkEntity.hasActions('display')»
             {/strip}</a>
             «IF container.application.targets('1.3.5')»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type=$lct «linkEntity.modUrlDisplay(relObjName, true)» ot='«linkEntity.name.formatForCode»' theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             «ELSE»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkEntity.name.formatForCode»' «linkEntity.modUrlDisplay(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
             «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
@@ -211,13 +222,13 @@ class Display {
         </dd>
     '''
 
-    def private itemActions(Entity it, String appName, Controller controller) '''
+    def private itemActions(Entity it, String appName) '''
         {if count($«name.formatForCode»._actions) gt 0}
-            «itemActionsImpl(appName, controller)»
+            «itemActionsImpl(appName)»
         {/if}
     '''
 
-    def private itemActionsImpl(Entity it, String appName, Controller controller) '''
+    def private itemActionsImpl(Entity it, String appName) '''
         <p id="itemActions">
         {foreach item='option' from=$«name.formatForCode»._actions}
             <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="«IF container.application.targets('1.3.5')»z-icon-es«ELSE»fa fa«ENDIF»-{$option.icon}">{$option.linkText|safetext}</a>
@@ -232,7 +243,7 @@ class Display {
         </script>
     '''
 
-    def private displayExtensions(Entity it, Controller controller, String objName) '''
+    def private displayExtensions(Entity it, String objName) '''
         «IF geographical»
             «IF useGroupingPanels('display')»
                 <h3 class="«container.application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
@@ -267,14 +278,14 @@ class Display {
                 /* ]]> */
                 </script>
             {/pageaddvarblock}
-            <div id="mapContainer" class="«controller.container.application.appName.toLowerCase»-mapcontainer">
+            <div id="mapContainer" class="«container.application.appName.toLowerCase»-mapcontainer">
             </div>
         «ENDIF»
         «IF attributable»
-            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF categorisable»
-            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             «IF useGroupingPanels('display')»
@@ -283,20 +294,20 @@ class Display {
             «ELSE»
                 <h3 class="relatives">{gt text='Relatives'}</h3>
             «ENDIF»
-                    {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
+                    {include file='«IF container.application.targets('1.3.5')»«name.formatForCode»«ELSE»«name.formatForCodeCapital»«ENDIF»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
             «IF useGroupingPanels('display')»
                 </div>
             «ENDIF»
         «ENDIF»
         «IF metaData»
-            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF standardFields»
-            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
     '''
 
-    def private callDisplayHooks(Entity it, String appName, Controller controller) '''
+    def private callDisplayHooks(Entity it, String appName) '''
         {* include display hooks *}
         {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' id=«displayHookId» urlobject=$currentUrlObject assign='hooks'}
         {foreach key='providerArea' item='hook' from=$hooks}
@@ -311,7 +322,7 @@ class Display {
 
     def private displayHookId(Entity it) '''«IF !hasCompositeKeys»$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF»'''
 
-    def private treeRelatives(Entity it, String appName, Controller controller) '''
+    def private treeRelatives(Entity it, String appName) '''
         «val objName = name.formatForCode»
         «val pluginPrefix = container.application.appName.formatForDB»
         {* purpose of this template: show different forms of relatives for a given tree node *}
@@ -323,7 +334,7 @@ class Display {
                     <h4>{gt text='All parents'}</h4>
                     <ul>
                     {foreach item='node' from=$allParents}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -333,7 +344,7 @@ class Display {
                 {if $directParent ne null}
                     <h4>{gt text='Direct parent'}</h4>
                     <ul>
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('directParent', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
                     </ul>
                 {/if}
             {/if}
@@ -344,7 +355,7 @@ class Display {
                 <h4>{gt text='All children'}</h4>
                 <ul>
                 {foreach item='node' from=$allChildren}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                    <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                 {/foreach}
                 </ul>
             {/if}
@@ -355,7 +366,7 @@ class Display {
                 <h4>{gt text='Direct children'}</h4>
                 <ul>
                 {foreach item='node' from=$directChildren}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                    <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                 {/foreach}
                 </ul>
             {/if}
@@ -367,7 +378,7 @@ class Display {
                     <h4>{gt text='Predecessors'}</h4>
                     <ul>
                     {foreach item='node' from=$predecessors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -378,7 +389,7 @@ class Display {
                     <h4>{gt text='Successors'}</h4>
                     <ul>
                     {foreach item='node' from=$successors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -389,7 +400,7 @@ class Display {
                     <h4>{gt text='Siblings'}</h4>
                     <ul>
                     {foreach item='node' from=$preandsuccessors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
                     {/foreach}
                     </ul>
                 {/if}

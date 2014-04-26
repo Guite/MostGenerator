@@ -24,18 +24,10 @@ class ListEntries {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for list entries')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/ListEntries' + (if (targets('1.3.5')) '' else 'Util') + '.php', listFieldFunctionsBaseFile, listFieldFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/ListEntries' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+            fh.phpFileContent(it, listFieldFunctionsBaseImpl), fh.phpFileContent(it, listFieldFunctionsImpl)
+        )
     }
-
-    def private listFieldFunctionsBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «listFieldFunctionsBaseImpl»
-    '''
-
-    def private listFieldFunctionsFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «listFieldFunctionsImpl»
-    '''
 
     def private listFieldFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

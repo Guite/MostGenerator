@@ -1,35 +1,37 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Ics {
-    @Inject extension ControllerExtensions = new ControllerExtensions
+
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
-        println('Generating ' + controller.formattedName + ' ics view templates for entity "' + name.formatForDisplay + '"')
-        val templateFilePath = templateFileWithExtension(controller, name, 'display', 'ics')
+    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+        println('Generating ics view templates for entity "' + name.formatForDisplay + '"')
+        val templateFilePath = templateFileWithExtension('display', 'ics')
         if (!container.application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, icsDisplay(appName, controller))
+            fsa.generateFile(templateFilePath, icsDisplay(appName))
         }
     }
 
-    def private icsDisplay(Entity it, String appName, Controller controller) '''
+    def private icsDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        {* purpose of this template: «nameMultiple.formatForDisplay» display ics view in «controller.formattedName» area *}
-        {«appName.formatForDB»TemplateHeaders contentType='text/calendar; charset=iso-8859-15'}{*charset=utf-8'*}
+        {* purpose of this template: «nameMultiple.formatForDisplay» display ics view *}
+        «IF container.application.targets('1.3.5')»
+            {«appName.formatForDB»TemplateHeaders contentType='text/calendar; charset=iso-8859-15'}{*charset=utf-8'*}
+        «ENDIF»
         {php}
             $«objName» = $this->get_template_vars('«objName»');
             «IF hasSluggableFields»

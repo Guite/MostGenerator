@@ -34,18 +34,10 @@ class Translatable {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for translatable entities')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Translatable' + (if (targets('1.3.5')) '' else 'Util') + '.php', translatableFunctionsBaseFile, translatableFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Translatable' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+            fh.phpFileContent(it, translatableFunctionsBaseImpl), fh.phpFileContent(it, translatableFunctionsImpl)
+        )
     }
-
-    def private translatableFunctionsBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «translatableFunctionsBaseImpl»
-    '''
-
-    def private translatableFunctionsFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «translatableFunctionsImpl»
-    '''
 
     def private translatableFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -125,7 +117,7 @@ class Translatable {
             }
 
             // prepare form data to edit multiple translations at once
-            $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
 
             // get translations
             «IF targets('1.3.5')»

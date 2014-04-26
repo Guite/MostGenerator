@@ -97,12 +97,12 @@ class Entities {
                 if (app.shouldBeMarked(entityPath + 'Base/' + fileName)) {
                     fileName = entityFileName + '.generated.php'
                 }
-                fsa.generateFile(entityPath + 'Base/' + fileName, modelEntityBaseFile(app))
+                fsa.generateFile(entityPath + 'Base/' + fileName, fh.phpFileContent(app, modelEntityBaseImpl(app)))
             } else if (!app.shouldBeSkipped(entityPath + 'Base/Abstract' + fileName)) {
                 if (app.shouldBeMarked(entityPath + 'Base/Abstract' + fileName)) {
                     fileName = entityFileName + '.generated.php'
                 }
-                fsa.generateFile(entityPath + 'Base/Abstract' + fileName, modelEntityBaseFile(app))
+                fsa.generateFile(entityPath + 'Base/Abstract' + fileName, fh.phpFileContent(app, modelEntityBaseImpl(app)))
             }
         }
         fileName = entityFileName + '.php'
@@ -110,19 +110,9 @@ class Entities {
             if (app.shouldBeMarked(entityPath + fileName)) {
                 fileName = entityFileName + '.generated.php'
             }
-            fsa.generateFile(entityPath + fileName, modelEntityFile(app))
+            fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, modelEntityImpl(app)))
         }
     }
-
-    def private modelEntityBaseFile(Entity it, Application app) '''
-        «fh.phpFileHeader(app)»
-        «modelEntityBaseImpl(app)»
-    '''
-
-    def private modelEntityFile(Entity it, Application app) '''
-        «fh.phpFileHeader(app)»
-        «modelEntityImpl(app)»
-    '''
 
     def private modelEntityBaseImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
@@ -541,12 +531,12 @@ class Entities {
                 return;
             }
 
-            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             «val appName = app.appName»
             $dom = ZLanguage::getModuleDomain('«appName»');
             «FOR controller : app.getAdminAndUserControllers»
-                if ($currentType == '«controller.formattedName»') {
+                if ($currentLegacyControllerType == '«controller.formattedName»') {
                     «itemActionsTargetingDisplay(app, controller)»
                     «itemActionsTargetingEdit(app, controller)»
                     «itemActionsTargetingView(app, controller)»
@@ -561,7 +551,11 @@ class Entities {
             if (in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                 «IF controller.tempIsAdminController && container.application.hasUserController && container.application.getMainUserController.hasActions('display')»
                     $this->_actions[] = array(
-                        'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                        «IF app.targets('1.3.5')»
+                            'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                        «ELSE»
+                            'url' => array('type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => array('lct' => 'user'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                        «ENDIF»
                         'icon' => '«IF app.targets('1.3.5')»preview«ELSE»search-plus«ENDIF»',
                         'linkTitle' => __('Open preview page', $dom),
                         'linkText' => __('Preview', $dom)
@@ -569,7 +563,11 @@ class Entities {
                 «ENDIF»
                 «IF controller.hasActions('display')»
                     $this->_actions[] = array(
-                        'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                        «IF app.targets('1.3.5')»
+                            'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                        «ELSE»
+                            'url' => array('type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => array('lct' => '«controller.formattedName»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                        «ENDIF»
                         'icon' => '«IF app.targets('1.3.5')»display«ELSE»eye«ENDIF»',
                         'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern())«/*__('Open detail page', $dom)*/»,
                         'linkText' => __('Details', $dom)
@@ -601,7 +599,11 @@ class Entities {
                 «IF controller.hasActions('delete')»
                     if (SecurityUtil::checkPermission($component, $instance, ACCESS_DELETE)) {
                         $this->_actions[] = array(
-                            'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
+                            «IF app.targets('1.3.5')»
+                                'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                            «ELSE»
+                                'url' => array('type' => '«name.formatForCode»', 'func' => 'delete', 'arguments' => array('lct' => '«controller.formattedName»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                            «ENDIF»
                             'icon' => '«IF app.targets('1.3.5')»delete«ELSE»trash-o«ENDIF»',
                             'linkTitle' => __('Delete', $dom),
                             'linkText' => __('Delete', $dom)
@@ -617,7 +619,11 @@ class Entities {
             if ($currentFunc == 'display') {
                 «IF controller.hasActions('view')»
                     $this->_actions[] = array(
-                        'url' => array('type' => '«controller.formattedName»', 'func' => 'view', 'arguments' => array('ot' => '«name.formatForCode»')),
+                        «IF app.targets('1.3.5')»
+                            'url' => array('type' => '«controller.formattedName»', 'func' => 'view', 'arguments' => array('ot' => '«name.formatForCode»')),
+                        «ELSE»
+                            'url' => array('type' => '«name.formatForCode»', 'func' => 'view', 'arguments' => array('lct' => '«controller.formattedName»')),
+                        «ENDIF»
                         'icon' => '«IF app.targets('1.3.5')»back«ELSE»reply«ENDIF»',
                         'linkTitle' => __('Back to overview', $dom),
                         'linkText' => __('Back to overview', $dom)
@@ -647,30 +653,48 @@ class Entities {
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
                         if (!isset($this->«relationAliasName») || $this->«relationAliasName» == null) {
-                            $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
-                                             '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                            «IF app.targets('1.3.5')»
+                                $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
+                                                 '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                            «ELSE»
+                                $urlArgs = array('lct' => '«controller.formattedName»',
+                                                 '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                            «ENDIF»
                             if ($currentFunc == 'view') {
                                 $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
                             } elseif ($currentFunc == 'display') {
                                 $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
                             }
                             $this->_actions[] = array(
-                                'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                                «IF app.targets('1.3.5')»
+                                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                                «ELSE»
+                                    'url' => array('type' => '«otherEntity.name.formatForCode»', 'func' => 'edit', 'arguments' => $urlArgs),
+                                «ENDIF»
                                 'icon' => '«IF app.targets('1.3.5')»add«ELSE»plus«ENDIF»',
                                 'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
                                 'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
                             );
                         }
                     «ELSE»
-                        $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
-                                         '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                        «IF app.targets('1.3.5')»
+                            $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
+                                             '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                        «ELSE»
+                            $urlArgs = array('lct' => '«controller.formattedName»',
+                                             '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                        «ENDIF»
                         if ($currentFunc == 'view') {
                             $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
                         } elseif ($currentFunc == 'display') {
                             $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
                         }
                         $this->_actions[] = array(
-                            'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                            «IF app.targets('1.3.5')»
+                                'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                            «ELSE»
+                                'url' => array('type' => '«otherEntity.name.formatForCode»', 'func' => 'edit', 'arguments' => $urlArgs),
+                            «ENDIF»
                             'icon' => '«IF app.targets('1.3.5')»add«ELSE»plus«ENDIF»',
                             'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
                             'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
@@ -689,7 +713,7 @@ class Entities {
          */
         public function createUrlArgs()
         {
-            $args = array('ot' => $this['_objectType']);
+            $args = array(«IF container.application.targets('1.3.5')»'ot' => $this['_objectType']«ENDIF»);
 
             «IF hasCompositeKeys»
                 «FOR pkField : getPrimaryKeyFields»
@@ -750,7 +774,11 @@ class Entities {
     def private itemActionsForEditAction(Entity it, Controller controller) '''
         «IF !readOnly»«/*create is allowed, but editing not*/»
             $this->_actions[] = array(
-                'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
+                «IF container.application.targets('1.3.5')»
+                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
+                «ELSE»
+                    'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»'«modUrlPrimaryKeyParams('this', false)»)),
+                «ENDIF»
                 'icon' => '«IF container.application.targets('1.3.5')»edit«ELSE»pencil-square-o«ENDIF»',
                 'linkTitle' => __('Edit', $dom),
                 'linkText' => __('Edit', $dom)
@@ -758,7 +786,11 @@ class Entities {
         «ENDIF»
         «IF tree == EntityTreeType::NONE»
                 $this->_actions[] = array(
-                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
+                    «IF container.application.targets('1.3.5')»
+                        'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
+                    «ELSE»
+                        'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
+                    «ENDIF»
                     'icon' => '«IF container.application.targets('1.3.5')»saveas«ELSE»files-o«ENDIF»',
                     'linkTitle' => __('Reuse for new item', $dom),
                     'linkText' => __('Reuse', $dom)

@@ -1,38 +1,42 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Json {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
-        println('Generating ' + controller.formattedName + ' json view templates for entity "' + name.formatForDisplay + '"')
+    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+        println('Generating json view templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = ''
-        if (controller.hasActions('view')) {
-            templateFilePath = templateFileWithExtension(controller, name, 'view', 'json')
+        if (hasActions('view')) {
+            templateFilePath = templateFileWithExtension('view', 'json')
             if (!container.application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, jsonView(appName, controller))
+                fsa.generateFile(templateFilePath, jsonView(appName))
             }
         }
-        if (controller.hasActions('display')) {
-            templateFilePath = templateFileWithExtension(controller, name, 'display', 'json')
+        if (hasActions('display')) {
+            templateFilePath = templateFileWithExtension('display', 'json')
             if (!container.application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, jsonDisplay(appName, controller))
+                fsa.generateFile(templateFilePath, jsonDisplay(appName))
             }
         }
     }
 
-    def private jsonView(Entity it, String appName, Controller controller) '''
-        {* purpose of this template: «nameMultiple.formatForDisplay» view json view in «controller.formattedName» area *}
-        {«appName.formatForDB»TemplateHeaders contentType='application/json'}
+    def private jsonView(Entity it, String appName) '''
+        {* purpose of this template: «nameMultiple.formatForDisplay» view json view *}
+        «IF container.application.targets('1.3.5')»
+            {«appName.formatForDB»TemplateHeaders contentType='application/json'}
+        «ENDIF»
         [
         {foreach item='item' from=$items name='«nameMultiple.formatForCode»'}
             {if not $smarty.foreach.«nameMultiple.formatForCode».first},{/if}
@@ -41,10 +45,12 @@ class Json {
         ]
     '''
 
-    def private jsonDisplay(Entity it, String appName, Controller controller) '''
+    def private jsonDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        {* purpose of this template: «nameMultiple.formatForDisplay» display json view in «controller.formattedName» area *}
-        {«appName.formatForDB»TemplateHeaders contentType='application/json'}
+        {* purpose of this template: «nameMultiple.formatForDisplay» display json view *}
+        «IF container.application.targets('1.3.5')»
+            {«appName.formatForDB»TemplateHeaders contentType='application/json'}
+        «ENDIF»
         {$«objName»->toJson()}
     '''
 }

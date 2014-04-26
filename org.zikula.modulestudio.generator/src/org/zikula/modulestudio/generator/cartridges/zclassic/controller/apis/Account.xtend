@@ -20,18 +20,10 @@ class Account {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Account' + (if (targets('1.3.5')) '' else 'Api') + '.php', accountApiBaseFile, accountApiFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Account' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+            fh.phpFileContent(it, accountApiBaseClass), fh.phpFileContent(it, accountApiImpl)
+        )
     }
-
-    def private accountApiBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «accountApiBaseClass»
-    '''
-
-    def private accountApiFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «accountApiImpl»
-    '''
 
     def private accountApiBaseClass(Application it) '''
         «IF !targets('1.3.5')»
@@ -39,6 +31,7 @@ class Account {
 
             use ModUtil;
             use SecurityUtil;
+            use ServiceUtil;
             use UserUtil;
             use Zikula_AbstractApi;
 
@@ -81,13 +74,21 @@ class Account {
                 return $items;
             }
 
+            «IF !targets('1.3.5')»
+                $serviceManager = ServiceUtil::getManager();
+            «ENDIF»
+
             // Create an array of links to return
             «IF !getAllUserControllers.empty && getMainUserController.hasActions('view')»
                 «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
                     $objectType = '«entity.name.formatForCode»';
                     if (SecurityUtil::checkPermission($this->name . ':' . ucwords($objectType) . ':', '::', ACCESS_READ)) {
                         $items[] = array(
-                            'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
+                            «IF targets('1.3.5')»
+                                'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
+                            «ELSE»
+                                'url' => $serviceManager->get('router')->generate('«appName.formatForDB»_' . $objectType . '_view', array('lct' => 'user', 'own' => 1)),
+                            «ENDIF»
                             'title'   => $this->__('My «entity.nameMultiple.formatForDisplay»'),
                             'icon'    => 'windowlist.png',
                             'module'  => 'core',

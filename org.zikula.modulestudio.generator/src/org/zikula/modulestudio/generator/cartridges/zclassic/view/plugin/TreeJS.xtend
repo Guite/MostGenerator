@@ -18,14 +18,9 @@ class TreeJS {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('function', 'TreeJS')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, treeJsFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, treeJsImpl))
         }
     }
-
-    def private treeJsFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «treeJsImpl»
-    '''
 
     def private treeJsImpl(Application it) '''
         /**
@@ -78,7 +73,7 @@ class TreeJS {
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($params['objectType']) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
@@ -87,7 +82,12 @@ class TreeJS {
             $result = array();
 
             foreach ($params['tree'] as $item) {
-                $url = (($controllerHasEditAction) ? ModUtil::url('«appName»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '');
+                «IF targets('1.3.5')»
+                    $url = $controllerHasEditAction ? ModUtil::url('«appName»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '';
+                «ELSE»
+                    $urlArgs = $item->createUrlArgs();
+                    $url = $controllerHasEditAction ? $serviceManager->get('router')->generate('«appName.formatForDB»_' . $params['objectType'] . '_edit', $urlArgs) : '';
+                «ENDIF»
 
                 $parentItem = $item->getParent();
 

@@ -20,26 +20,13 @@ class ItemSelector {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ItemSelector.php', itemSelectorBaseFile, itemSelectorFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ItemSelector.php',
+            fh.phpFileContent(it, itemSelectorBaseImpl), fh.phpFileContent(it, itemSelectorImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'ItemSelector'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), itemSelectorPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), fh.phpFileContent(it, itemSelectorPluginImpl))
         }
     }
-
-    def private itemSelectorBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «itemSelectorBaseImpl»
-    '''
-
-    def private itemSelectorFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «itemSelectorImpl»
-    '''
-
-    def private itemSelectorPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «itemSelectorPluginImpl»
-    '''
 
     def private itemSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -161,7 +148,7 @@ class ItemSelector {
                     $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
 
                 $sort = $repository->getDefaultSortingField();

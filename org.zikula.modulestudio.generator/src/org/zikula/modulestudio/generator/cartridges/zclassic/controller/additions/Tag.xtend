@@ -18,18 +18,10 @@ class Tag {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'TaggedObjectMeta/' + appName + '.php', tagBaseFile, tagFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'TaggedObjectMeta/' + appName + '.php',
+            fh.phpFileContent(it, tagBaseClass), fh.phpFileContent(it, tagImpl)
+        )
     }
-
-    def private tagBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «tagBaseClass»
-    '''
-
-    def private tagFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «tagImpl»
-    '''
 
     def private tagBaseClass(Application it) '''
         «IF !targets('1.3.5')»
@@ -86,7 +78,7 @@ class Tag {
                 $entityClass = $module . ':' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
             $useJoins = false;
 

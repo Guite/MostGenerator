@@ -56,12 +56,11 @@ class Operations {
             if (app.shouldBeMarked(outputPath + fileName)) {
                 fileName = 'function.' + opName + '.generated.php'
             }
-            fsa.generateFile(outputPath + fileName, operationFile(opName))
+            fsa.generateFile(outputPath + fileName, fh.phpFileContent(app, operationFile(opName)))
         }
     }
 
     def private operationFile(String opName) '''
-        «fh.phpFileHeader(app)»
         /**
          * «opName.formatForDisplayCapital» operation.
          * @param object $entity The treated object.
@@ -113,7 +112,7 @@ class Operations {
 
         // get entity manager
         $serviceManager = ServiceUtil::getManager();
-        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+        $entityManager = $serviceManager->get«IF app.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
 
         // save entity data
         try {
@@ -130,7 +129,7 @@ class Operations {
     def private deleteImpl() '''
         // get entity manager
         $serviceManager = ServiceUtil::getManager();
-        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+        $entityManager = $serviceManager->get«IF app.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
 
         // delete entity
         try {

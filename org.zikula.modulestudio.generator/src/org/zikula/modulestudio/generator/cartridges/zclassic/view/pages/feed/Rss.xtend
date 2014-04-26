@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
@@ -13,23 +12,28 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Rss {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
     @Inject extension Utils = new Utils
 
-    def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
-        val templateFilePath = templateFileWithExtension(controller, name, 'view', 'rss')
+    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+        val templateFilePath = templateFileWithExtension('view', 'rss')
         if (!container.application.shouldBeSkipped(templateFilePath)) {
-            println('Generating ' + controller.formattedName + ' rss view templates for entity "' + name.formatForDisplay + '"')
-            fsa.generateFile(templateFilePath, rssView(appName, controller))
+            println('Generating rss view templates for entity "' + name.formatForDisplay + '"')
+            fsa.generateFile(templateFilePath, rssView(appName))
         }
     }
 
-    def private rssView(Entity it, String appName, Controller controller) '''
-        {* purpose of this template: «nameMultiple.formatForDisplay» rss feed in «controller.formattedName» area *}
-        {«appName.formatForDB»TemplateHeaders contentType='application/rss+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+    def private rssView(Entity it, String appName) '''
+        {* purpose of this template: «nameMultiple.formatForDisplay» rss feed *}
+        {assign var='lct' value='user'}
+        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+            {assign var='lct' value='admin'}
+        {/if}
+        «IF container.application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='application/rss+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
         <rss version="2.0"
             xmlns:dc="http://purl.org/dc/elements/1.1/"
             xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
@@ -43,7 +47,7 @@ class Rss {
             <channel>
                 <title>{$channelTitle}</title>
                 <link>{$baseurl|escape:'html'}</link>
-                <atom:link href="{php}echo substr(\System::getBaseURL(), 0, strlen(\System::getBaseURL())-1);{/php}{getcurrenturi}" rel="self" type="application/rss+xml" />
+                <atom:link href="{php}echo substr(\System::getBaseUrl(), 0, strlen(\System::getBaseUrl())-1);{/php}{getcurrenturi}" rel="self" type="application/rss+xml" />
                 <description>{$channelDesc} - {$modvars.ZConfig.slogan}</description>
                 <language>{lang}</language>
                 {* commented out as $imagepath is not defined and we can't know whether this logo exists or not
@@ -61,8 +65,13 @@ class Rss {
         {foreach item='«objName»' from=$items}
             <item>
                 <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName»->getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}]]></title>
-                <link>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</link>
-                <guid>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</guid>
+                «IF container.application.targets('1.3.5')»
+                    <link>{modurl modname='«appName»' type=$lct «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</link>
+                    <guid>{modurl modname='«appName»' type=$lct «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</guid>
+                «ELSE»
+                    <link>{modurl modname='«appName»' type='«name.formatForCode»' «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»index«ENDIF»'«ENDIF» lct=$lct fqurl='1'}</link>
+                    <guid>{modurl modname='«appName»' type='«name.formatForCode»' «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»index«ENDIF»'«ENDIF» lct=$lct fqurl='1'}</guid>
+                «ENDIF»
                 «IF !standardFields»
                     «IF metaData»
                         {if isset($«objName».__META__) && isset($«objName».__META__.author)}

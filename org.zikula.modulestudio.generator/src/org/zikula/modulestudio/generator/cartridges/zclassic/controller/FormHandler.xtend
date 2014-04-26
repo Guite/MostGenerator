@@ -2,9 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Action
-import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -35,28 +33,24 @@ class FormHandler {
     RelationPresets relationPresetsHelper = new RelationPresets
 
     Application app
-    Controller controller
 
     /**
      * Entry point for Form handler classes.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
-        for (action : getEditActions) {
-            if (!(action.controller instanceof AjaxController)) {
-                action.generate(fsa)
+        if (hasEditActions()) {
+            generateCommon('edit', fsa)
+            for (entity : getAllEntities) {
+                if (entity.hasActions('edit')) {
+                    entity.generate('edit', fsa)
+                }
             }
         }
         new Config().generate(it, fsa)
     }
 
-    def private generate(Action it, IFileSystemAccess fsa) {
-        this.controller = it.controller
-        this.controller.generate('edit', fsa)
-        for (entity : app.getAllEntities) entity.generate('edit', fsa)
-    }
-
-    def formCreate(Action it, String appName, Controller controller, String actionName) '''
+    def formCreate(Action it, String appName, String actionName) '''
         // Create new Form reference
         $view = FormUtil::newForm('«appName.formatForCode»', $this);
 
@@ -73,56 +67,38 @@ class FormHandler {
     /**
      * Entry point for generic Form handler base classes.
      */
-    def private generate(Controller it, String actionName, IFileSystemAccess fsa) {
+    def private generateCommon(Application it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + name + '" form handler base class')
-        val formHandlerFolder = app.getAppSourceLibPath + 'Form/Handler/' + name.formatForCodeCapital + '/'
-        app.generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Handler') + '.php', formHandlerCommonBaseFile(app, actionName), formHandlerCommonFile(app, actionName))
+        val formHandlerFolder = getAppSourceLibPath + 'Form/Handler/Common/'
+        generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (targets('1.3.5')) '' else 'Handler') + '.php',
+            fh.phpFileContent(it, formHandlerCommonBaseImpl(actionName)), fh.phpFileContent(app, formHandlerCommonImpl(actionName))
+        )
     }
-
-    def private formHandlerCommonBaseFile(Controller it, Application app, String actionName) '''
-        «fh.phpFileHeader(app)»
-        «formHandlerCommonBaseImpl(actionName)»
-    '''
-
-    def private formHandlerCommonFile(Controller it, Application app, String actionName) '''
-        «fh.phpFileHeader(app)»
-        «formHandlerCommonImpl(actionName)»
-    '''
 
     /**
      * Entry point for Form handler classes per entity.
      */
     def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
-        println('Generating "' + controller.formattedName + '" form handler classes for "' + name + '_' + actionName + '"')
-        val formHandlerFolder = app.getAppSourceLibPath + 'Form/Handler/' + controller.name.formatForCodeCapital + '/' + name.formatForCodeCapital + '/'
-        app.generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Handler') + '.php', formHandlerBaseFile(actionName), formHandlerFile(actionName))
+        println('Generating form handler classes for "' + name + '_' + actionName + '"')
+        val formHandlerFolder = app.getAppSourceLibPath + 'Form/Handler/' + name.formatForCodeCapital + '/'
+        app.generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Handler') + '.php',
+            fh.phpFileContent(app, formHandlerBaseImpl(actionName)), fh.phpFileContent(app, formHandlerImpl(actionName))
+        )
     }
 
-    def private formHandlerBaseFile(Entity it, String actionName) '''
-        «fh.phpFileHeader(app)»
-        «formHandlerBaseImpl(actionName)»
-    '''
+    def private formHandlerCommonBaseImpl(Application it, String actionName) '''
+        «IF !targets('1.3.5')»
+            namespace «appNamespace»\Form\Handler\Common\Base;
 
-    def private formHandlerFile(Entity it, String actionName) '''
-        «fh.phpFileHeader(app)»
-        «formHandlerImpl(actionName)»
-    '''
-
-
-    def private formHandlerCommonBaseImpl(Controller it, String actionName) '''
-        «val app = container.application»
-        «IF !app.targets('1.3.5')»
-            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
-
-            use «app.appNamespace»\Form\Plugin\AbstractObjectSelector;
-            «IF app.hasUploads»
-                use «app.appNamespace»\UploadHandler;
+            use «appNamespace»\Form\Plugin\AbstractObjectSelector;
+            «IF hasUploads»
+                use «appNamespace»\UploadHandler;
             «ENDIF»
-            use «app.appNamespace»\Util\ControllerUtil;
-            «IF app.hasTranslatable»
-                use «app.appNamespace»\Util\TranslatableUtil;
+            use «appNamespace»\Util\ControllerUtil;
+            «IF hasTranslatable»
+                use «appNamespace»\Util\TranslatableUtil;
             «ENDIF»
-            use «app.appNamespace»\Util\WorkflowUtil;
+            use «appNamespace»\Util\WorkflowUtil;
 
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -141,7 +117,7 @@ class FormHandler {
 
         «ENDIF»
         /**
-         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + formattedName + '_' + actionName)»() function.
+         * This handler class handles the page events of editing forms.
          * It collects common functionality required by different object types.
          *
          * Member variables in a form handler object are persisted across different page requests. This means
@@ -161,8 +137,8 @@ class FormHandler {
          * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
          *   Zikula_Form_Plugin_Button plugin to signal that the user activated a button.
          */
-        «IF app.targets('1.3.5')»
-        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends Zikula_Form_AbstractHandler
+        «IF targets('1.3.5')»
+        class «appName»_Form_Handler_Common_Base_«actionName.formatForCodeCapital» extends Zikula_Form_AbstractHandler
         «ELSE»
         class «actionName.formatForCodeCapital»Handler extends Zikula_Form_AbstractHandler
         «ENDIF»
@@ -272,7 +248,7 @@ class FormHandler {
              * @var boolean
              */
             protected $hasPageLockSupport = false;
-            «IF app.hasAttributableEntities»
+            «IF hasAttributableEntities»
 
                 /**
                  * Whether the entity has attributes or not.
@@ -281,7 +257,7 @@ class FormHandler {
                  */
                 protected $hasAttributes = false;
             «ENDIF»
-            «IF app.hasCategorisableEntities»
+            «IF hasCategorisableEntities»
 
                 /**
                  * Whether the entity is categorisable or not.
@@ -290,7 +266,7 @@ class FormHandler {
                  */
                 protected $hasCategories = false;
             «ENDIF»
-            «IF app.hasMetaDataEntities»
+            «IF hasMetaDataEntities»
 
                 /**
                  * Whether the entity has meta data or not.
@@ -299,7 +275,7 @@ class FormHandler {
                  */
                 protected $hasMetaData = false;
             «ENDIF»
-            «IF app.hasSluggable»
+            «IF hasSluggable»
 
                 /**
                  * Whether the entity has an editable slug or not.
@@ -308,7 +284,7 @@ class FormHandler {
                  */
                 protected $hasSlugUpdatableField = false;
             «ENDIF»
-            «IF app.hasTranslatable»
+            «IF hasTranslatable»
 
                 /**
                  * Whether the entity has translatable fields or not.
@@ -317,7 +293,7 @@ class FormHandler {
                  */
                 protected $hasTranslatableFields = false;
             «ENDIF»
-            «IF app.hasUploads»
+            «IF hasUploads»
 
                 /**
                  * Array with upload field names and mandatory flags.
@@ -326,7 +302,7 @@ class FormHandler {
                  */
                 protected $uploadFields = array();
             «ENDIF»
-            «IF app.hasUserFields»
+            «IF hasUserFields»
 
                 /**
                  * Array with user field names and mandatory flags.
@@ -335,7 +311,7 @@ class FormHandler {
                  */
                 protected $userFields = array();
             «ENDIF»
-            «IF app.hasListFields»
+            «IF hasListFields»
 
                 /**
                  * Array with list field names and multiple flags.
@@ -373,17 +349,19 @@ class FormHandler {
              */
             public function postInitialize()
             {
-                «IF app.targets('1.3.5')»
+                «IF targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
                 «ELSE»
-                    $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $repository = $this->entityManager->getRepository($entityClass);
-                $utilArgs = array('controller' => '«formattedName»', 'action' => '«actionName.formatForCode.toFirstLower»', 'mode' => $this->mode);
+                $utilArgs = array('controller' => FormUtil::getPassedValue('type', 'user', 'GETPOST'),
+                                  'action' => '«actionName.formatForCode.toFirstLower»',
+                                  'mode' => $this->mode);
                 $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
             }
 
-            «redirectHelper.getRedirectCodes(it, app, actionName)»
+            «redirectHelper.getRedirectCodes(it, actionName)»
 
             «handleCommand(actionName)»
 
@@ -395,7 +373,7 @@ class FormHandler {
         }
     '''
 
-    def private initialize(Controller it, String actionName) '''
+    def private initialize(Application it, String actionName) '''
         /**
          * Initialize form handler.
          *
@@ -404,7 +382,7 @@ class FormHandler {
          * @param Zikula_Form_View $view The form view instance.
          *
          * @return boolean False in case of initialization errors, otherwise true.
-         «IF !app.targets('1.3.5')»
+         «IF !targets('1.3.5')»
          *
          * @throws NotFoundHttpException Thrown if item to be edited isn't found
          * @throws RuntimeException      Thrown if the workflow actions can not be determined
@@ -413,24 +391,24 @@ class FormHandler {
         public function initialize(Zikula_Form_View $view)
         {
             $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
-            $this->idPrefix = $this->request->query->filter('idp', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $this->idPrefix = $this->request->query->filter('idp', '', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
 
             // initialise redirect goal
-            $this->returnTo = $this->request->query->filter('returnTo', null, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $this->returnTo = $this->request->query->filter('returnTo', null, «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
             // store current uri for repeated creations
             $this->repeatReturnUrl = System::getCurrentURI();
 
             $this->permissionComponent = $this->name . ':' . $this->objectTypeCapital . ':';
 
-            «IF app.targets('1.3.5')»
-            $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
+            «IF targets('1.3.5')»
+                $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             «ELSE»
-            $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
 
             // retrieve identifier of the object we wish to view
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
@@ -439,7 +417,7 @@ class FormHandler {
 
             if ($this->mode == 'edit') {
                 if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
-                    «IF app.targets('1.3.5')»
+                    «IF targets('1.3.5')»
                         return LogUtil::registerPermissionError();
                     «ELSE»
                         throw new AccessDeniedException();
@@ -448,7 +426,7 @@ class FormHandler {
 
                 $entity = $this->initEntityForEdit();
                 if (!is_object($entity)) {
-                    «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
+                    «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
                 }
 
                 if ($this->hasPageLockSupport === true && ModUtil::available('PageLock')) {
@@ -459,7 +437,7 @@ class FormHandler {
                 }
             } else {
                 if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
-                    «IF app.targets('1.3.5')»
+                    «IF targets('1.3.5')»
                         return LogUtil::registerPermissionError();
                     «ELSE»
                         throw new AccessDeniedException();
@@ -477,10 +455,10 @@ class FormHandler {
 
             «initializeExtensions»
 
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
-                «IF app.targets('1.3.5')»
+                «IF targets('1.3.5')»
                     return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
@@ -496,8 +474,6 @@ class FormHandler {
 
         «createCompositeIdentifier»
 
-        «addIdentifiersToUrlArgs»
-
         «initEntityForEdit»
 
         «initEntityForCreation»
@@ -507,26 +483,26 @@ class FormHandler {
         «initMetaDataForEdit»
     '''
 
-    def private initializeExtensions(Controller it) '''
-        «IF app.hasAttributableEntities»
+    def private initializeExtensions(Application it) '''
+        «IF hasAttributableEntities»
 
             if ($this->hasAttributes === true) {
                 $this->initAttributesForEdit();
             }
         «ENDIF»
-        «IF app.hasCategorisableEntities»
+        «IF hasCategorisableEntities»
 
             if ($this->hasCategories === true) {
                 $this->initCategoriesForEdit();
             }
         «ENDIF»
-        «IF app.hasMetaDataEntities»
+        «IF hasMetaDataEntities»
 
             if ($this->hasMetaData === true) {
                 $this->initMetaDataForEdit();
             }
         «ENDIF»
-        «IF app.hasTranslatable»
+        «IF hasTranslatable»
 
             if ($this->hasTranslatableFields === true) {
                 $this->initTranslationsForEdit();
@@ -534,7 +510,7 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private createCompositeIdentifier(Controller it) '''
+    def private createCompositeIdentifier(Application it) '''
         /**
          * Create concatenated identifier string (for composite keys).
          *
@@ -554,30 +530,12 @@ class FormHandler {
         }
     '''
 
-    def private addIdentifiersToUrlArgs(Controller it) '''
-        /**
-         * Enrich a given args array for easy creation of display urls with composite keys.
-         *
-         * @param Array $args List of arguments to be extended.
-         *
-         * @return Array Enriched arguments list. 
-         */
-        protected function addIdentifiersToUrlArgs($args = array())
-        {
-            foreach ($this->idFields as $idField) {
-                $args[$idField] = $this->idValues[$idField];
-            }
-
-            return $args;
-        }
-    '''
-
-    def private initEntityForEdit(Controller it) '''
+    def private initEntityForEdit(Application it) '''
         /**
          * Initialise existing entity for editing.
          *
          * @return Zikula_EntityAccess desired entity instance or null
-         «IF !app.targets('1.3.5')»
+         «IF !targets('1.3.5')»
          *
          * @throws NotFoundHttpException Thrown if item to be edited isn't found
          «ENDIF»
@@ -586,7 +544,7 @@ class FormHandler {
         {
             $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
             if ($entity == null) {
-                «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
+                «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
             }
 
             $entity->initWorkflow();
@@ -595,12 +553,12 @@ class FormHandler {
         }
     '''
 
-    def private initEntityForCreation(Controller it) '''
+    def private initEntityForCreation(Application it) '''
         /**
          * Initialise new entity for creation.
          *
          * @return Zikula_EntityAccess desired entity instance or null
-         «IF !app.targets('1.3.5')»
+         «IF !targets('1.3.5')»
          *
          * @throws NotFoundHttpException Thrown if item to be cloned isn't found
          «ENDIF»
@@ -624,14 +582,14 @@ class FormHandler {
                 // reuse existing entity
                 $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
                 if ($entityT == null) {
-                    «IF app.targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
+                    «IF targets('1.3.5')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
                 }
                 $entity = clone $entityT;
             } else {
-                «IF app.targets('1.3.5')»
+                «IF targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 «ELSE»
-                $entityClass = '«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $entity = new $entityClass();
             }
@@ -640,8 +598,8 @@ class FormHandler {
         }
     '''
 
-    def private initTranslationsForEdit(Controller it) '''
-        «IF app.hasTranslatable»
+    def private initTranslationsForEdit(Application it) '''
+        «IF hasTranslatable»
 
             /**
              * Initialise translations.
@@ -651,7 +609,7 @@ class FormHandler {
                 $entity = $this->entityRef;
 
                 // retrieve translated fields
-                $translatableHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                $translatableHelper = new «IF targets('1.3.5')»«appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
@@ -665,8 +623,8 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private initAttributesForEdit(Controller it) '''
-        «IF app.hasAttributableEntities»
+    def private initAttributesForEdit(Application it) '''
+        «IF hasAttributableEntities»
 
             /**
              * Initialise attributes.
@@ -699,8 +657,8 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private initCategoriesForEdit(Controller it) '''
-        «IF app.hasCategorisableEntities»
+    def private initCategoriesForEdit(Application it) '''
+        «IF hasCategorisableEntities»
 
             /**
              * Initialise categories.
@@ -726,8 +684,8 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private initMetaDataForEdit(Controller it) '''
-        «IF app.hasMetaDataEntities»
+    def private initMetaDataForEdit(Application it) '''
+        «IF hasMetaDataEntities»
 
             /**
              * Initialise meta data.
@@ -742,7 +700,7 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private handleCommand(Controller it, String actionName) '''
+    def private handleCommand(Application it, String actionName) '''
         /**
          * Command event handler.
          *
@@ -787,18 +745,18 @@ class FormHandler {
                 $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
 
                 // Let any hooks perform additional validation actions
-                «IF app.targets('1.3.5')»
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
+                «IF targets('1.3.5')»
+                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                    $validators = $this->notifyHooks($hook)->getValidators();
                 «ELSE»
-                $hook = new ValidationHook(new ValidationProviders());
-                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                    $hook = new ValidationHook(new ValidationProviders());
+                    $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
                     return false;
                 }
             }
-            «IF app.hasTranslatable»
+            «IF hasTranslatable»
 
                 if ($isRegularAction && $this->hasTranslatableFields === true) {
                     $this->processTranslationsForUpdate($entity, $otherFormData);
@@ -816,19 +774,15 @@ class FormHandler {
                 $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
                 $url = null;
                 if ($action != 'delete') {
-                    $urlArgs = array('ot' => $this->objectType);
-                    $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
-                    if (isset($this->entityRef['slug'])) {
-                        $urlArgs['slug'] = $this->entityRef['slug'];
-                    }
-                    $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    $urlArgs = $entity->createUrlArgs();
+                    $url = new «IF targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, «IF targets('1.3.5')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$this->objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 }
-                «IF app.targets('1.3.5')»
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $this->createCompositeIdentifier(), $url);
-                $this->notifyHooks($hook);
+                «IF targets('1.3.5')»
+                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                    $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new ProcessHook($this->createCompositeIdentifier(), $url);
-                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
+                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was created, updated or deleted, so we clear all cached pages for this item.
@@ -846,7 +800,7 @@ class FormHandler {
 
             return $this->view->redirect($this->getRedirectUrl($args));
         }
-        «IF app.hasAttributableEntities»
+        «IF hasAttributableEntities»
 
             /**
              * Prepare update of attributes.
@@ -870,7 +824,7 @@ class FormHandler {
                 unset($formData['attributes']);
             }
         «ENDIF»
-        «IF app.hasMetaDataEntities»
+        «IF hasMetaDataEntities»
 
             /**
              * Prepare update of meta data.
@@ -882,10 +836,10 @@ class FormHandler {
             {
                 $metaData = $entity->getMetadata();
                 if (is_null($metaData)) {
-                    «IF app.targets('1.3.5')»
-                    $metaDataEntityClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'MetaData';
+                    «IF targets('1.3.5')»
+                        $metaDataEntityClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'MetaData';
                     «ELSE»
-                    $metaDataEntityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'MetaDataEntity';
+                        $metaDataEntityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'MetaDataEntity';
                     «ENDIF»
                     $metaData = new $metaDataEntityClass($entity);
                 }
@@ -898,7 +852,7 @@ class FormHandler {
                 unset($formData['meta']);
             }
         «ENDIF»
-        «IF app.hasTranslatable»
+        «IF hasTranslatable»
 
             /**
              * Prepare update of translations.
@@ -908,14 +862,14 @@ class FormHandler {
              */
             protected function processTranslationsForUpdate($entity, $formData)
             {
-                «IF app.targets('1.3.5')»
+                «IF targets('1.3.5')»
                     $entityTransClass = $this->name . '_Entity_' . ucwords($this->objectType) . 'Translation';
                 «ELSE»
-                    $entityTransClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'TranslationEntity';
+                    $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'TranslationEntity';
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
-                $translatableHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                $translatableHelper = new «IF targets('1.3.5')»«appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);
 
                 foreach ($translations as $translation) {
@@ -971,7 +925,7 @@ class FormHandler {
          *
          * @param Array   $args    arguments from handleCommand method.
          * @param Boolean $success true if this is a success, false for default error.
-         «IF !app.targets('1.3.5')»
+         «IF !targets('1.3.5')»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ENDIF»
@@ -980,7 +934,7 @@ class FormHandler {
         {
             $message = $this->getDefaultMessage($args, $success);
             if (!empty($message)) {
-                «IF app.targets('1.3.5')»
+                «IF targets('1.3.5')»
                     if ($success === true) {
                         LogUtil::registerStatus($message);
                     } else {
@@ -994,7 +948,7 @@ class FormHandler {
         }
     '''
 
-    def private fetchInputData(Controller it, String actionName) '''
+    def private fetchInputData(Application it, String actionName) '''
         /**
          * Input data processing called by handleCommand method.
          *
@@ -1014,19 +968,19 @@ class FormHandler {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
-            «IF app.hasUserFields || app.hasUploads || app.hasListFields || (app.hasSluggable && !app.getAllEntities.filter[slugUpdatable].empty)»
+            «IF hasUserFields || hasUploads || hasListFields || (hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
 
                 if ($args['commandName'] != 'cancel') {
-                    «IF app.hasUserFields»
+                    «IF hasUserFields»
                         if (count($this->userFields) > 0) {
                             foreach ($this->userFields as $userField => $isMandatory) {
-                                $entityData[$userField] = (int) $this->request->request->filter($userField, 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                                $entityData[$userField] = (int) $this->request->request->filter($userField, 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                                 unset($entityData[$userField . 'Selector']);
                             }
                         }
 
                     «ENDIF»
-                    «IF app.hasUploads»
+                    «IF hasUploads»
                         if (count($this->uploadFields) > 0) {
                             $entityData = $this->handleUploads($entityData, $entity);
                             if ($entityData == false) {
@@ -1035,7 +989,7 @@ class FormHandler {
                         }
 
                     «ENDIF»
-                    «IF app.hasListFields»
+                    «IF hasListFields»
                         if (count($this->listFields) > 0) {
                             foreach ($this->listFields as $listField => $multiple) {
                                 if (!$multiple) {
@@ -1051,14 +1005,14 @@ class FormHandler {
                             }
                         }
                     «ENDIF»
-                    «IF !app.targets('1.3.5') && app.hasSluggable»
+                    «IF !targets('1.3.5') && hasSluggable»
 
                         if ($this->hasSlugUpdatableField === true && isset($entityData['slug'])) {
                             $controllerHelper = new ControllerUtil($this->view->getServiceManager());
                             $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                         }
                     «ENDIF»
-                «IF app.hasUploads»
+                «IF hasUploads»
                 } else {
                     // remove fields for form options to prevent them being merged into the entity object
                     if (count($this->uploadFields) > 0) {
@@ -1078,13 +1032,13 @@ class FormHandler {
                 }
                 unset($entityData['repeatCreation']);
             }
-            «IF app.hasAttributableEntities»
+            «IF hasAttributableEntities»
 
                 if ($this->hasAttributes === true) {
                     $this->processAttributesForUpdate($entity, $formData);
                 }
             «ENDIF»
-            «IF app.hasMetaDataEntities»
+            «IF hasMetaDataEntities»
 
                 if ($this->hasMetaData === true) {
                     $this->processMetaDataForUpdate($entity, $formData);
@@ -1137,7 +1091,7 @@ class FormHandler {
         protected function writeRelationDataToEntity_rec($entity, $entityData, $plugins)
         {
             foreach ($plugins as $plugin) {
-                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'assignRelatedItemsToEntity')) {
+                if ($plugin instanceof «IF targets('1.3.5')»«appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'assignRelatedItemsToEntity')) {
                     $entityData = $plugin->assignRelatedItemsToEntity($entity, $entityData);
                 }
                 $entityData = $this->writeRelationDataToEntity_rec($entity, $entityData, $plugin->plugins);
@@ -1162,7 +1116,7 @@ class FormHandler {
         protected function persistRelationData_rec($plugins)
         {
             foreach ($plugins as $plugin) {
-                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'persistRelatedItems')) {
+                if ($plugin instanceof «IF targets('1.3.5')»«appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'persistRelatedItems')) {
                     $plugin->persistRelatedItems();
                 }
                 $this->persistRelationData_rec($plugin->plugins);
@@ -1170,7 +1124,7 @@ class FormHandler {
         }
     '''
 
-    def private applyAction(Controller it, String actionName) '''
+    def private applyAction(Application it, String actionName) '''
         /**
          * This method executes a certain workflow action.
          *
@@ -1186,20 +1140,19 @@ class FormHandler {
     '''
 
 
-    def private formHandlerCommonImpl(Controller it, String actionName) '''
-        «val app = container.application»
-        «IF !app.targets('1.3.5')»
-            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
+    def private formHandlerCommonImpl(Application it, String actionName) '''
+        «IF !targets('1.3.5')»
+            namespace «appNamespace»\Form\Handler\Common;
 
-            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «appNamespace»\Form\Handler\Common\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         /**
-         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + formattedName + '_' + actionName)»() function.
+         * This handler class handles the page events of editing forms.
          * It collects common functionality required by different object types.
          */
-        «IF app.targets('1.3.5')»
-        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital»
+        «IF targets('1.3.5')»
+        class «appName»_Form_Handler_Common_«actionName.formatForCodeCapital» extends «appName»_Form_Handler_Common_Base_«actionName.formatForCodeCapital»
         «ELSE»
         class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
         «ENDIF»
@@ -1216,13 +1169,13 @@ class FormHandler {
         «formHandlerBaseImports(actionName)»
 
         /**
-         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + controller.formattedName + '_' + actionName)»() function.
+         * This handler class handles the page events of editing forms.
          * It aims on the «name.formatForDisplay» object type.
          *
          * More documentation is provided in the parent class.
          */
         «IF app.targets('1.3.5')»
-        class «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»
+        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_Common_«actionName.formatForCodeCapital»
         «ELSE»
         class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
         «ENDIF»
@@ -1237,24 +1190,24 @@ class FormHandler {
                 «formHandlerBaseInitEntityForEdit»
             «ENDIF»
 
-            «redirectHelper.getRedirectCodes(it, app, controller, actionName)»
+            «redirectHelper.getRedirectCodes(it, app, actionName)»
 
-            «redirectHelper.getDefaultReturnUrl(it, app, controller, actionName)»
+            «redirectHelper.getDefaultReturnUrl(it, app, actionName)»
 
             «handleCommand(it, actionName)»
 
             «applyAction(it, actionName)»
 
-            «redirectHelper.getRedirectUrl(it, app, controller, actionName)»
+            «redirectHelper.getRedirectUrl(it, app, actionName)»
         }
     '''
 
     def private formHandlerBaseImports(Entity it, String actionName) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base;
+            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
-            use «app.appNamespace»\Form\Handler\«controller.formattedName.toFirstUpper»\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
             use «app.appNamespace»\Util\ControllerUtil;
             «IF app.hasListFields»
                 use «app.appNamespace»\Util\ListEntriesUtil;
@@ -1367,17 +1320,17 @@ class FormHandler {
     def private formHandlerImpl(Entity it, String actionName) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»;
+            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
 
-            use «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         /**
-         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + controller.formattedName + '_' + actionName)»() function.
+         * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + name + '_' + actionName)»() function.
          * It aims on the «name.formatForDisplay» object type.
          */
         «IF app.targets('1.3.5')»
-        class «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital»
+        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital»
         «ELSE»
         class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
         «ENDIF»

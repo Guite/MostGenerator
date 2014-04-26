@@ -16,18 +16,10 @@ class AbstractObjectSelector {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/AbstractObjectSelector.php', selectorBaseFile, selectorFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/AbstractObjectSelector.php',
+            fh.phpFileContent(it, selectorBaseImpl), fh.phpFileContent(it, selectorImpl)
+        )
     }
-
-    def private selectorBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «selectorBaseImpl»
-    '''
-
-    def private selectorFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «selectorImpl»
-    '''
 
     def private selectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -443,7 +435,7 @@ class AbstractObjectSelector {
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             $inputValue = $this->getSelectedValue();
@@ -486,7 +478,7 @@ class AbstractObjectSelector {
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             $qb = $repository->genericBaseQuery('', '', false);
@@ -557,7 +549,7 @@ class AbstractObjectSelector {
         public function persistRelatedItems()
         {
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
         
             foreach ($this->selectedItems as $relatedItem) {
                 $entityManager->persist($relatedItem);

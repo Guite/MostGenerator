@@ -18,18 +18,10 @@ class Image {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for image handling')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Image' + (if (targets('1.3.5')) '' else 'Util') + '.php', imageFunctionsBaseFile, imageFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Image' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+            fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
+        )
     }
-
-    def private imageFunctionsBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «imageFunctionsBaseImpl»
-    '''
-
-    def private imageFunctionsFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «imageFunctionsImpl»
-    '''
 
     def private imageFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

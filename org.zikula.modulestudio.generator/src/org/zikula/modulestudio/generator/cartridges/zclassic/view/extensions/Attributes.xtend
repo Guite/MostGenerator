@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,30 +12,31 @@ class Attributes {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
-    def generate (Application it, Controller controller, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+    def generate (Application it, IFileSystemAccess fsa) {
+        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+
         var fileName = ''
-        if (controller.hasActions('view') || controller.hasActions('display')) {
+        if (hasViewActions || hasDisplayActions) {
             fileName = 'include_attributes_display.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_attributes_display.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, attributesViewImpl(controller))
+                fsa.generateFile(templatePath + fileName, attributesViewImpl)
             }
         }
-        if (controller.hasActions('edit')) {
+        if (hasEditActions) {
             fileName = 'include_attributes_edit.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_attributes_edit.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, attributesEditImpl(controller))
+                fsa.generateFile(templatePath + fileName, attributesEditImpl)
             }
         }
     }
 
-    def private attributesViewImpl(Application it, Controller controller) '''
+    def private attributesViewImpl(Application it) '''
         {* purpose of this template: reusable display of entity attributes *}
         {if isset($obj.attributes)}
             {if isset($panel) && $panel eq true}
@@ -57,7 +57,7 @@ class Attributes {
         {/if}
     '''
 
-    def private attributesEditImpl(Application it, Controller controller) '''
+    def private attributesEditImpl(Application it) '''
         {* purpose of this template: reusable editing of entity attributes *}
             {if isset($panel) && $panel eq true}
                 <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>

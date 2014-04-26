@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
@@ -10,7 +9,6 @@ import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -18,34 +16,36 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewQuickNavForm {
-    @Inject extension ControllerExtensions = new ControllerExtensions
+
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
-    def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
-        val templatePath = templateFile(controller, name, 'view_quickNav')
+    def generate(Entity it, String appName, IFileSystemAccess fsa) {
+        val templatePath = templateFile('view_quickNav')
         if (!container.application.shouldBeSkipped(templatePath)) {
-            println('Generating ' + controller.formattedName + ' view filter form templates for entity "' + name.formatForDisplay + '"')
-            fsa.generateFile(templatePath, quickNavForm(controller))
+            println('Generating view filter form templates for entity "' + name.formatForDisplay + '"')
+            fsa.generateFile(templatePath, quickNavForm)
         }
     }
 
-    def private quickNavForm(Entity it, Controller controller) '''
+    def private quickNavForm(Entity it) '''
         «val app = container.application»
         «val objName = name.formatForCode»
-        {* purpose of this template: «nameMultiple.formatForDisplay» view filter form in «controller.formattedName» area *}
+        {* purpose of this template: «nameMultiple.formatForDisplay» view filter form *}
         {checkpermissionblock component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
         {assign var='objectType' value='«name.formatForCode»'}
         <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm" class="«app.appName.toLowerCase»-quicknav«IF container.application.targets('1.3.5')»"«ELSE» {*form-inline*}navbar-form" role="navigation"«ENDIF»>
             <fieldset>
                 <h3>{gt text='Quick navigation'}</h3>
                 <input type="hidden" name="module" value="{modgetinfo modname='«app.appName»' info='url'}" />
-                <input type="hidden" name="type" value="«controller.formattedName»" />
+                <input type="hidden" name="type" value="«IF app.targets('1.3.5')»{$lct}«ELSE»«objName»«ENDIF»" />
+                «IF app.targets('1.3.5')»
+                    <input type="hidden" name="ot" value="«objName»" />
+                «ENDIF»
                 <input type="hidden" name="func" value="view" />
-                <input type="hidden" name="ot" value="«objName»" />
                 <input type="hidden" name="all" value="{$all|default:0}" />
                 <input type="hidden" name="own" value="{$own|default:0}" />
                 {gt text='All' assign='lblDefault'}
@@ -57,7 +57,7 @@ class ViewQuickNavForm {
         <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
-                «app.prefix»InitQuickNavigation('«name.formatForCode»', '«controller.formattedName»');
+                «app.prefix»InitQuickNavigation('«name.formatForCode»');
                 {{if isset($searchFilter) && $searchFilter eq false}}
                     {{* we can hide the submit button if we have no quick search field *}}
                     $('quicknavSubmit').addClassName('«IF app.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');

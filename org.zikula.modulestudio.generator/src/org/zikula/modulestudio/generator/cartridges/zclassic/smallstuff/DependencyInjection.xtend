@@ -19,18 +19,10 @@ class DependencyInjection {
             return
         }
         val extensionFileName = vendor.formatForCodeCapital + name.formatForCodeCapital + 'Extension.php'
-        generateClassPair(fsa, getAppSourceLibPath + 'DependencyInjection/' + extensionFileName, extensionBaseFile, extensionFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'DependencyInjection/' + extensionFileName,
+            fh.phpFileContent(it, extensionBaseImpl), fh.phpFileContent(it, extensionImpl)
+        )
     }
-
-    def private extensionBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «extensionBaseImpl»
-    '''
-
-    def private extensionFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «extensionImpl»
-    '''
 
     def private extensionBaseImpl(Application it) '''
         namespace «appNamespace»\DependencyInjection\Base;

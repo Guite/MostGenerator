@@ -30,6 +30,11 @@ class FileHelper {
 
     '''
 
+    def phpFileContent(Application it, CharSequence content) '''
+        «phpFileHeader»
+        «content»
+    '''
+
     def phpFileHeaderVersionClass(Application it) '''
         <?php
         /**

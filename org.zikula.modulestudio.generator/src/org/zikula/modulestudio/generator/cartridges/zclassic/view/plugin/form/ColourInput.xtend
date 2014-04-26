@@ -16,26 +16,13 @@ class ColourInput {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ColourInput.php', formColourInputBaseFile, formColourInputFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ColourInput.php',
+            fh.phpFileContent(it, formColourInputBaseImpl), fh.phpFileContent(it, formColourInputImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'ColourInput'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'ColourInput'), formColourInputPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'ColourInput'), fh.phpFileContent(it, formColourInputPluginImpl))
         }
     }
-
-    def private formColourInputBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formColourInputBaseImpl»
-    '''
-
-    def private formColourInputFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formColourInputImpl»
-    '''
-
-    def private formColourInputPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formColourInputPluginImpl»
-    '''
 
     def private formColourInputBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

@@ -19,18 +19,10 @@ class Category {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating category api')
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Category' + (if (targets('1.3.5')) '' else 'Api') + '.php', categoryBaseFile, categoryFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Category' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+            fh.phpFileContent(it, categoryBaseClass), fh.phpFileContent(it, categoryImpl)
+        )
     }
-
-    def private categoryBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «categoryBaseClass»
-    '''
-
-    def private categoryFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «categoryImpl»
-    '''
 
     def private categoryBaseClass(Application it) '''
         «IF !targets('1.3.5')»

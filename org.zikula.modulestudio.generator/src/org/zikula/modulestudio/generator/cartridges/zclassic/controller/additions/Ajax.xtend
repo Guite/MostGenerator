@@ -111,9 +111,9 @@ class Ajax {
                 $out .= '</ul>';
 
                 «IF app.targets('1.3.5')»
-                return new Zikula_Response_Ajax_Plain($out);
+                    return new Zikula_Response_Ajax_Plain($out);
                 «ELSE»
-                return new PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+                    return new PlainResponse($out);
                 «ENDIF»
             }
         «ENDIF»

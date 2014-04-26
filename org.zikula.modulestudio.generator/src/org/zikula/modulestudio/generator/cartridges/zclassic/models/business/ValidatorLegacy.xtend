@@ -58,18 +58,10 @@ class ValidatorLegacy {
         if (!targets('1.3.5')) {
             fileName = 'Abstract' + fileName
         }
-        generateClassPair(fsa, getAppSourceLibPath + fileName, validatorCommonBaseFile, validatorCommonFile)
+        generateClassPair(fsa, getAppSourceLibPath + fileName,
+            fh.phpFileContent(it, validatorCommonBaseImpl), fh.phpFileContent(it, validatorCommonImpl)
+        )
     }
-
-    def private validatorCommonBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «validatorCommonBaseImpl»
-    '''
-
-    def private validatorCommonFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «validatorCommonImpl»
-    '''
 
     def private validatorCommonBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -515,7 +507,7 @@ class ValidatorLegacy {
                 if (app.shouldBeMarked(validatorPath + 'Base/' + validatorFileName)) {
                     fileName = name.formatForCodeCapital + validatorSuffix + '.generated.php'
                 }
-                fsa.generateFile(validatorPath + 'Base/' + fileName, validatorBaseFile)
+                fsa.generateFile(validatorPath + 'Base/' + fileName, fh.phpFileContent(app, validatorBaseImpl))
             }
         }
         if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(validatorPath + validatorFileName)) {
@@ -523,19 +515,9 @@ class ValidatorLegacy {
             if (app.shouldBeMarked(validatorPath + validatorFileName)) {
                 fileName = name.formatForCodeCapital + validatorSuffix + '.generated.php'
             }
-            fsa.generateFile(validatorPath + fileName, validatorFile)
+            fsa.generateFile(validatorPath + fileName, fh.phpFileContent(app, validatorImpl))
         }
     }
-
-    def private validatorBaseFile(Entity it) '''
-        «fh.phpFileHeader(app)»
-        «validatorBaseImpl»
-    '''
-
-    def private validatorFile(Entity it) '''
-        «fh.phpFileHeader(app)»
-        «validatorImpl»
-    '''
 
     def private validatorBaseImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
@@ -648,7 +630,7 @@ class ValidatorLegacy {
                 $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:«name.formatForCodeCapital»Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF app.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             $excludeid = $this->entity['«getFirstPrimaryKey.name.formatForCode»'];

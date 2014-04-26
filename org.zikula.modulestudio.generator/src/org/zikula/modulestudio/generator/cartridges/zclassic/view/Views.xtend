@@ -2,9 +2,10 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
-import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
+import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -38,6 +39,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Views {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -53,25 +55,34 @@ class Views {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         relationHelper = new Relations()
-        for (controller : getAllControllers) {
-            if (!(controller instanceof AjaxController)) {
-                if (controller.tempIsUserController || controller.tempIsAdminController) {
-                    generateViews(controller)
-                }
-                if (hasAttributableEntities) {
-                    new Attributes().generate(it, controller, fsa)
-                }
-                if (hasCategorisableEntities) {
-                    new Categories().generate(it, controller, fsa)
-                }
-                if (hasStandardFieldEntities) {
-                    new StandardFields().generate(it, controller, fsa)
-                }
-                if (hasMetaDataEntities) {
-                    new MetaData().generate(it, controller, fsa)
-                }
+
+        // main action templates
+        for (entity : getAllEntities) {
+            generateViews(entity)
+        }
+
+        // helper templates
+        var customHelper = new Custom()
+        for (controller : adminAndUserControllers) {
+            headerFooterFile(controller)
+            for (action : controller.getCustomActions) {
+                customHelper.generate(action, it, controller, fsa)
             }
         }
+
+        if (hasAttributableEntities) {
+            new Attributes().generate(it, fsa)
+        }
+        if (hasCategorisableEntities) {
+            new Categories().generate(it, fsa)
+        }
+        if (hasStandardFieldEntities) {
+            new StandardFields().generate(it, fsa)
+        }
+        if (hasMetaDataEntities) {
+            new MetaData().generate(it, fsa)
+        }
+
         if (!targets('1.3.5')) {
             new FilterSyntaxDialog().generate(it, fsa)
         }
@@ -81,87 +92,52 @@ class Views {
         pdfHeaderFile
     }
 
-    def private generateViews(Application it, Controller controller) {
-        headerFooterFile(controller)
-        if (controller.hasActions('index')) {
-            var pageHelper = new Index()
-            for (entity : getAllEntities) pageHelper.generate(entity, controller, fsa)
+    def private generateViews(Application it, Entity entity) {
+        if (entity.hasActions('index')) {
+            new Index().generate(entity, fsa)
         }
-        if (controller.hasActions('view')) {
-            var pageHelperView = new View()
-            for (entity : getAllEntities) pageHelperView.generate(entity, appName, controller, 3, fsa)
-            var pageHelperViewTree = new ViewHierarchy()
-            for (entity : getTreeEntities) pageHelperViewTree.generate(entity, appName, controller, fsa)
+        if (entity.hasActions('view')) {
+            new View().generate(entity, appName, 3, fsa)
+            if (entity.tree != EntityTreeType.NONE) {
+                new ViewHierarchy().generate(entity, appName, fsa)
+            }
             if (generateCsvTemplates) {
-                var pageHelperCsv = new Csv()
-                for (entity : getAllEntities) pageHelperCsv.generate(entity, appName, controller, fsa)
+                new Csv().generate(entity, appName, fsa)
             }
             if (generateRssTemplates) {
-                var pageHelperRss = new Rss()
-                for (entity : getAllEntities) pageHelperRss.generate(entity, appName, controller, fsa)
+                new Rss().generate(entity, appName, fsa)
             }
             if (generateAtomTemplates) {
-                var pageHelperAtom = new Atom()
-                for (entity : getAllEntities) pageHelperAtom.generate(entity, appName, controller, fsa)
+                new Atom().generate(entity, appName, fsa)
             }
         }
-        if (controller.hasActions('view') || controller.hasActions('display')) {
+        if (entity.hasActions('view') || entity.hasActions('display')) {
             if (generateXmlTemplates) {
-                var pageHelperXml = new Xml()
-                for (entity : getAllEntities) pageHelperXml.generate(entity, appName, controller, fsa)
+                new Xml().generate(entity, appName, fsa)
             }
             if (generateJsonTemplates) {
-                var pageHelperJson = new Json()
-                for (entity : getAllEntities) pageHelperJson.generate(entity, appName, controller, fsa)
+                new Json().generate(entity, appName, fsa)
             }
-            if (generateKmlTemplates && hasGeographical) {
-                var pageHelperKml = new Kml()
-                for (entity : getAllEntities.filter[geographical]) {
-                    pageHelperKml.generate(entity, appName, controller, fsa)
-                }
+            if (generateKmlTemplates && entity.geographical) {
+                new Kml().generate(entity, appName, fsa)
             }
         }
-        if (controller.hasActions('display')) {
-            if (generateIcsTemplates) {
-                var pageHelperIcs = new Ics()
-                for (entity : getAllEntities.filter[getStartDateField !== null && getEndDateField !== null]) {
-                    pageHelperIcs.generate(entity, appName, controller, fsa)
-                }
+        if (entity.hasActions('display')) {
+            if (generateIcsTemplates && entity.getStartDateField !== null && entity.getEndDateField !== null) {
+                new Ics().generate(entity, appName, fsa)
             }
         }
-        if (controller.hasActions('display')) {
-            var pageHelper = new Display()
-            for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
+        if (entity.hasActions('display')) {
+            new Display().generate(entity, appName, fsa)
         }
-        if (controller.hasActions('delete')) {
-            var pageHelper = new Delete()
-            for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
-        }
-        var customHelper = new Custom()
-        for (action : controller.getCustomActions) {
-            customHelper.generate(action, it, controller, fsa)
+        if (entity.hasActions('delete')) {
+            new Delete().generate(entity, appName, fsa)
         }
 
-        if (controller.hasActions('display')) {
+        if (entity.hasActions('display')) {
             // TODO: use relations to generate only required ones (???)
-            for (entity : getAllEntities) {
-                relationHelper.displayItemList(entity, it, controller, false, fsa)
-                relationHelper.displayItemList(entity, it, controller, true, fsa)
-            }
-        }
-    }
-
-    def private tempIsAdminController(Controller it) {
-        switch it {
-            AdminController: true
-            default: false
-        }
-    }
-
-    def private tempIsUserController(Controller it) {
-        switch it {
-            UserController: true
-            default: false
+            relationHelper.displayItemList(entity, it, false, fsa)
+            relationHelper.displayItemList(entity, it, true, fsa)
         }
     }
 
@@ -194,7 +170,7 @@ class Views {
         {pageaddvar name='javascript' value='modules/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName».js'}
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            «IF controller.tempIsAdminController»
+            «IF controller instanceof AdminController»
                 {adminheader}
             «ELSE»
                 «IF targets('1.3.5')»
@@ -207,7 +183,7 @@ class Views {
                     {modulelinks modname='«appName»' type='«controller.formattedName»'}
                 «ENDIF»
             «ENDIF»
-            «IF generateModerationPanel && needsApproval && controller.tempIsUserController»
+            «IF generateModerationPanel && needsApproval && controller instanceof UserController»
                 {nocache}
                     {«appName.formatForDB»ModerationObjects assign='moderationObjects'}
                     {if count($moderationObjects) gt 0}
@@ -216,14 +192,14 @@ class Views {
                                 «IF !targets('1.3.5')»
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 «ENDIF»
-                                <a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="«IF targets('1.3.5')»z-«ENDIF»bold«IF !targets('1.3.5')» alert-link«ENDIF»">{$modItem.message}</a>
+                                <a href="{modurl modname='«appName»' type=«IF targets('1.3.5')»'admin'«ELSE»$modItem.objectType«ENDIF» func='view'«IF targets('1.3.5')» ot=$modItem.objectType«ELSE» lct='admin'«ENDIF» workflowState=$modItem.state}" class="«IF targets('1.3.5')»z-«ENDIF»bold«IF !targets('1.3.5')» alert-link«ENDIF»">{$modItem.message}</a>
                             </p>
                         {/foreach}
                     {/if}
                 {/nocache}
             «ENDIF»
         {/if}
-        «IF controller.tempIsAdminController»
+        «IF controller instanceof AdminController»
         «ELSE»
             {insert name='getstatusmsg'}
         «ENDIF»
@@ -235,7 +211,7 @@ class Views {
             «IF generatePoweredByBacklinksIntoFooterTemplates»
                 «new FileHelper().msWeblink(it)»
             «ENDIF»
-            «IF controller.tempIsAdminController»
+            «IF controller instanceof AdminController»
                 {adminfooter}
             «ENDIF»
         «IF hasEditActions»
@@ -243,11 +219,11 @@ class Views {
             {pageaddvar name='stylesheet' value='style/core.css'}
             {pageaddvar name='stylesheet' value='modules/«appName»/«IF targets('1.3.5')»style/«ELSE»«getAppCssPath»«ENDIF»style.css'}
             «IF targets('1.3.5')»
-            {pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
-            {pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}
+                {pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
+                {pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}
             «ELSE»
-            {pageaddvar name='stylesheet' value='system/Zikula/Module/ThemeModule/Resources/public/css/form/style.css'}
-            {pageaddvar name='stylesheet' value='themes/Zikula/Theme/Andreas08Theme/Resources/public/css/fluid960gs/reset.css'}
+                {pageaddvar name='stylesheet' value='system/Zikula/Module/ThemeModule/Resources/public/css/form/style.css'}
+                {pageaddvar name='stylesheet' value='themes/Zikula/Theme/Andreas08Theme/Resources/public/css/fluid960gs/reset.css'}
             «ENDIF»
             {capture assign='pageStyles'}
             <style type="text/css">

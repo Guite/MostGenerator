@@ -22,32 +22,16 @@ class Search {
 
     def generate(Application it, IFileSystemAccess fsa) {
         if (targets('1.3.5')) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Api/Search.php', searchApiBaseFile, searchApiFile)
+            generateClassPair(fsa, getAppSourceLibPath + 'Api/Search.php',
+                fh.phpFileContent(it, searchApiBaseClass), fh.phpFileContent(it, searchApiImpl)
+            )
         } else {
-            generateClassPair(fsa, getAppSourceLibPath + 'Helper/SearchHelper.php', searchHelperBaseFile, searchHelperFile)
+            generateClassPair(fsa, getAppSourceLibPath + 'Helper/SearchHelper.php',
+                fh.phpFileContent(it, searchHelperBaseClass), fh.phpFileContent(it, searchHelperImpl)
+            )
         }
         new SearchView().generate(it, fsa)
     }
-
-    def private searchApiBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «searchApiBaseClass»
-    '''
-
-    def private searchApiFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «searchApiImpl»
-    '''
-
-    def private searchHelperBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «searchHelperBaseClass»
-    '''
-
-    def private searchHelperFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «searchHelperImpl»
-    '''
 
     def private searchApiBaseClass(Application it) '''
         /**
@@ -187,7 +171,7 @@ class Search {
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
-            $entityManager = ServiceUtil::getService('doctrine.entitymanager');
+            $entityManager = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $currentPage = 1;
             $resultsPerPage = 50;
 
@@ -227,25 +211,14 @@ class Search {
                 «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
                 foreach ($entities as $entity) {
                     «IF hasUserDisplay»
-                        $urlArgs = array('ot' => $objectType);
+                        $urlArgs = $entity->createUrlArgs();
                     «ENDIF»
-                    // create identifier for permission check
-                    $instanceId = '';
-                    foreach ($idFields as $idField) {
-                        «IF hasUserDisplay»
-                            $urlArgs[$idField] = $entity[$idField];
-                        «ENDIF»
-                        if (!empty($instanceId)) {
-                            $instanceId .= '_';
-                        }
-                        $instanceId .= $entity[$idField];
-                    }
+                    $instanceId = $entity->createCompositeIdentifier();
                     «IF hasUserDisplay»
-                        $urlArgs['id'] = $instanceId;
-                        /* commented out as it could exceed the maximum length of the 'extra' field
-                        if (isset($entity['slug'])) {
-                            $urlArgs['slug'] = $entity['slug'];
-                        }*/
+                        // could exceed the maximum length of the 'extra' field, improved in 1.4.0
+                        if (isset($urlArgs['slug'])) {
+                            unset($urlArgs['slug']);
+                        }
                     «ENDIF»
 
                     // perform permission check
@@ -383,25 +356,9 @@ class Search {
 
                 foreach ($entities as $entity) {
                     «IF hasUserDisplay»
-                        $urlArgs = array('ot' => $objectType);
+                        $urlArgs = $entity->createUrlArgs();
                     «ENDIF»
-                    // create identifier for permission check
-                    $instanceId = '';
-                    foreach ($idFields as $idField) {
-                        «IF hasUserDisplay»
-                            $urlArgs[$idField] = $entity[$idField];
-                        «ENDIF»
-                        if (!empty($instanceId)) {
-                            $instanceId .= '_';
-                        }
-                        $instanceId .= $entity[$idField];
-                    }
-                    «IF hasUserDisplay»
-                        $urlArgs['id'] = $instanceId;
-                        if (isset($entity['slug'])) {
-                            $urlArgs['slug'] = $entity['slug'];
-                        }
-                    «ENDIF»
+                    $instanceId = $entity->createCompositeIdentifier();
 
                     // perform permission check
                     if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
@@ -422,7 +379,7 @@ class Search {
                         'module' => $this->name,
                         'sesid' => $sessionId,
                         'created' => $created«IF hasUserDisplay»,
-                        'url' => new ModUrl($this->name, 'user', 'display', $languageCode, $urlArgs)«ENDIF»
+                        'url' => new ModUrl($this->name, $objectType, 'display', $languageCode, $urlArgs)«ENDIF»
                     );
                 }
             }

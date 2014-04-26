@@ -23,19 +23,11 @@ class ExternalController {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating external controller')
-        generateClassPair(fsa, getAppSourceLibPath + 'Controller/External' + (if (targets('1.3.5')) '' else 'Controller') + '.php', externalBaseFile, externalFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Controller/External' + (if (targets('1.3.5')) '' else 'Controller') + '.php',
+            fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
+        )
         new ExternalView().generate(it, fsa)
     }
-
-    def private externalBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «externalBaseClass»
-    '''
-
-    def private externalFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «externalImpl»
-    '''
 
     def private externalBaseClass(Application it) '''
     «IF !targets('1.3.5')»
@@ -44,6 +36,7 @@ class ExternalController {
         use «appNamespace»\Util\ControllerUtil;
 
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
         use ModUtil;
         use PageUtil;
@@ -56,6 +49,10 @@ class ExternalController {
     «ENDIF»
     /**
      * Controller for external calls base class.
+     «IF !targets('1.3.5')»
+     *
+     * @Route("/%«appName.formatForDB».routing.external%")
+     «ENDIF»
      */
     class «IF targets('1.3.5')»«appName»_Controller_Base_External«ELSE»ExternalController«ENDIF» extends Zikula_AbstractController
     {
@@ -82,9 +79,18 @@ class ExternalController {
     def private externalBaseImpl(Application it) '''
         /**
          * Displays one item of a certain object type using a separate template for external usages.
+         «IF !targets('1.3.5')»
          *
-         * @param string $ot          The object type.
-         * @param int    $id          Identifier of the item to be shown.
+         * @Route("/display/{ot}/{id}/{source}/{displayMode}",
+         *        name = "«appName.formatForDB»_external_display",
+         *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
+         *        defaults = {"source" = "contentType", "contentType" = "embed"},
+         *        methods = {"GET"}
+         * )
+         «ENDIF»
+         *
+         * @param string $ot          The currently treated object type.
+         * @param int    $id          Identifier of the entity to be shown.
          * @param string $source      Source of this call (contentType or scribite).
          * @param string $displayMode Display mode (link or embed).
          *
@@ -184,15 +190,24 @@ class ExternalController {
                       ->assign('displayMode', $displayMode);
 
             «IF targets('1.3.5')»
-            return $this->view->fetch('external/' . $objectType . '/display.tpl');
+                return $this->view->fetch('external/' . $objectType . '/display.tpl');
             «ELSE»
-            return $this->response($this->view->fetch('External/' . ucwords($objectType) . '/display.tpl'));
+                return $this->response($this->view->fetch('External/' . ucwords($objectType) . '/display.tpl'));
             «ENDIF»
         }
 
         /**
          * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
+         «IF !targets('1.3.5')»
+         *
+         * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
+         *        name = "«appName.formatForDB»_external_finder",
+         *        requirements = {"editor" = "xinha|tinymce«/* |ckeditor */»", "sortdir" = "asc|desc", "pos" => "\d+", "num" => "\d+"},
+         *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
+         *        methods = {"GET"}
+         * )
+         «ENDIF»
          *
          * @param string $objectType The object type.
          * @param string $editor     Name of used Scribite editor.
@@ -308,9 +323,9 @@ class ExternalController {
             «ENDIF»
 
             «IF targets('1.3.5')»
-            return $view->display('external/' . $objectType . '/find.tpl');
+                return $view->display('external/' . $objectType . '/find.tpl');
             «ELSE»
-            return new PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+                return new PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
             «ENDIF»
         }
     '''

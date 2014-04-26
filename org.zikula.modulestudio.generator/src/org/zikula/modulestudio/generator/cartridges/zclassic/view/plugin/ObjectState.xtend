@@ -16,14 +16,9 @@ class ObjectState {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'ObjectState')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, objectStateFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, objectStateImpl))
         }
     }
-
-    def private objectStateFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «objectStateImpl»
-    '''
 
     def private objectStateImpl(Application it) '''
         /**

@@ -18,26 +18,13 @@ class RelationSelectorAutoComplete {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorAutoComplete.php', relationSelectorBaseFile, relationSelectorFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorAutoComplete.php',
+            fh.phpFileContent(it, relationSelectorBaseImpl), fh.phpFileContent(it, relationSelectorImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'RelationSelectorAutoComplete'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorAutoComplete'), relationSelectorPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorAutoComplete'), fh.phpFileContent(it, relationSelectorPluginImpl))
         }
     }
-
-    def private relationSelectorBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «relationSelectorBaseImpl»
-    '''
-
-    def private relationSelectorFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «relationSelectorImpl»
-    '''
-
-    def private relationSelectorPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «relationSelectorPluginImpl»
-    '''
 
     def private relationSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

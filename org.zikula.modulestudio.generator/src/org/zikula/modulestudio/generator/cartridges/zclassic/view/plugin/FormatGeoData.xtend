@@ -16,14 +16,9 @@ class FormatGeoData {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'FormatGeoData')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, formatGeoDataFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, formatGeoDataImpl))
         }
     }
-
-    def private formatGeoDataFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «formatGeoDataImpl»
-    '''
 
     def private formatGeoDataImpl(Application it) '''
         /**

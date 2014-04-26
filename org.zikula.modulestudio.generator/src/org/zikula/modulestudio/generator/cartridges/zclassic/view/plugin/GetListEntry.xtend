@@ -16,14 +16,9 @@ class GetListEntry {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'GetListEntry')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, getListEntryFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, getListEntryImpl))
         }
     }
-
-    def private getListEntryFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «getListEntryImpl»
-    '''
 
     def private getListEntryImpl(Application it) '''
         /**

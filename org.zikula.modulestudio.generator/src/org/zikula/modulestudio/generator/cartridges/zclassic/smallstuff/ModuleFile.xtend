@@ -16,18 +16,10 @@ class ModuleFile {
         if (targets('1.3.5')) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + appName + '.php', moduleBaseFile, moduleFile)
+        generateClassPair(fsa, getAppSourceLibPath + appName + '.php',
+            fh.phpFileContent(it, moduleBaseImpl), fh.phpFileContent(it, moduleInfoImpl)
+        )
     }
-
-    def private moduleBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «moduleBaseImpl»
-    '''
-
-    def private moduleFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «moduleInfoImpl»
-    '''
 
     def private moduleBaseImpl(Application it) '''
         namespace «appNamespace»\Base;

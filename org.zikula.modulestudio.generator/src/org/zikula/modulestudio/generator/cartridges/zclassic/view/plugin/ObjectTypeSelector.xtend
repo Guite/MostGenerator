@@ -18,14 +18,9 @@ class ObjectTypeSelector {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('function', 'ObjectTypeSelector')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, selectorObjectTypesFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, selectorObjectTypesImpl))
         }
     }
-
-    def private selectorObjectTypesFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «selectorObjectTypesImpl»
-    '''
 
     def private selectorObjectTypesImpl(Application it) '''
         /**

@@ -26,18 +26,10 @@ class Uploads {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         createUploadFolders
-        generateClassPair(fsa, getAppSourceLibPath + '/UploadHandler.php', uploadHandlerBaseFile, uploadHandlerFile)
+        generateClassPair(fsa, getAppSourceLibPath + '/UploadHandler.php',
+            fh.phpFileContent(it, uploadHandlerBaseImpl), fh.phpFileContent(it, uploadHandlerImpl)
+        )
     }
-
-    def private uploadHandlerBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «uploadHandlerBaseImpl»
-    '''
-
-    def private uploadHandlerFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «uploadHandlerImpl»
-    '''
 
     def private createUploadFolders(Application it) {
         /* This index.html files will be removed later. At the moment we need them to create according directories. */
@@ -609,7 +601,7 @@ class Uploads {
             $fileExtension = FileUtil::getExtension($fileName, false);
             if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
                 // remove thumbnail images as well
-                $manager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
+                $manager = ServiceUtil::getManager()->get«IF targets('1.3.5')»Service«ENDIF»('systemplugin.imagine.manager');
                 $manager->setModule('«appName»');
                 $fullObjectId = $objectType . '-' . $objectId;
                 $manager->removeImageThumbs($filePath, $fullObjectId);

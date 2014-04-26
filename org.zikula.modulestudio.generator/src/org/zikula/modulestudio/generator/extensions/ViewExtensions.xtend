@@ -1,37 +1,23 @@
 package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.Controller
+import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.UserController
 
 /**
  * This class contains view related extension methods.
  */
 class ViewExtensions {
-    @Inject extension ControllerExtensions = new ControllerExtensions
 
-    /**
-     * Temporary hack due to Zikula core bug with theme parameter in short urls
-     * as we use the Printer theme for the quick view.
-     *
-     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.Controller} instance.
-     *
-     * @return String The output of this method.
-     */
-    def additionalUrlParametersForQuickViewLink(Controller it) {
-        switch it {
-            UserController: ' forcelongurl=true'
-            default: ''
-        }
-    }
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
      * Determines whether grouping panels with JavaScript for
      * toggling their visibility state are generated or not.
      *
-     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
+     * @param it Given {@link Entity} instance.
      * @param page The page template name.
      *
      * @return Boolean The result.
@@ -45,7 +31,7 @@ class ViewExtensions {
      * Determines if a given relationship is part
      * of an edit form or not.
      *
-     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.JoinRelationship} instance.
+     * @param it Given {@link JoinRelationship} instance.
      * @param useTarget Whether the target side or the source side should be used.
      *
      * @return Boolean The determined result.
@@ -55,10 +41,10 @@ class ViewExtensions {
     }
 
     /**
-     * Counts the amount of visible groups of a given {@link de.guite.modulestudio.metamodel.modulestudio.Entity}
+     * Counts the amount of visible groups of a given {@link Entity}
      * for display and edit pages.
      *
-     * @param it Given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
+     * @param it Given {@link Entity} instance.
      * @param page The page template name.
      *
      * @return Integer The resulting panel weight.
@@ -77,5 +63,57 @@ class ViewExtensions {
         if (geographical) weight = weight + 1
         //if (tree != EntityTreeType.NONE) weight = weight + 1
         weight
+    }
+
+    /**
+     * Returns a list of view formats supported by an application.
+     */
+    def getListOfViewFormats(Application it) {
+        var formats = newArrayList()
+        if (generateCsvTemplates) {
+            formats.add('csv')
+        }
+        if (generateRssTemplates) {
+            formats.add('rss')
+        }
+        if (generateAtomTemplates) {
+            formats.add('atom')
+        }
+        if (generateXmlTemplates) {
+            formats.add('xml')
+        }
+        if (generateJsonTemplates) {
+            formats.add('json')
+        }
+        if (generateKmlTemplates) {
+            formats.add('kml')
+        }
+        /*if (generatePdfTemplates) {
+            formats.add('pdf')
+        }*/
+        formats
+    }
+
+    /**
+     * Returns a list of display formats supported by an application.
+     */
+    def getListOfDisplayFormats(Application it) {
+        var formats = newArrayList()
+        if (generateXmlTemplates) {
+            formats.add('xml')
+        }
+        if (generateJsonTemplates) {
+            formats.add('json')
+        }
+        if (generateKmlTemplates) {
+            formats.add('kml')
+        }
+        if (generateIcsTemplates) {
+            formats.add('ics')
+        }
+        /*if (generatePdfTemplates) {
+            formats.add('pdf')
+        }*/
+        formats
     }
 }

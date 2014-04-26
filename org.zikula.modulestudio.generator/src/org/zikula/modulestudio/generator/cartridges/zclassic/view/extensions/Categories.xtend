@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,30 +12,31 @@ class Categories {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
-    def generate (Application it, Controller controller, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+    def generate (Application it, IFileSystemAccess fsa) {
+        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+
         var fileName = ''
-        if (controller.hasActions('view') || controller.hasActions('display')) {
+        if (hasViewActions || hasDisplayActions) {
             fileName = 'include_categories_display.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_categories_display.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, categoriesViewImpl(controller))
+                fsa.generateFile(templatePath + fileName, categoriesViewImpl)
             }
         }
-        if (controller.hasActions('edit')) {
+        if (hasEditActions) {
             fileName = 'include_categories_edit.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_categories_edit.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, categoriesEditImpl(controller))
+                fsa.generateFile(templatePath + fileName, categoriesEditImpl)
             }
         }
     }
 
-    def private categoriesViewImpl(Application it, Controller controller) '''
+    def private categoriesViewImpl(Application it) '''
         {* purpose of this template: reusable display of entity categories *}
         {if isset($obj.categories)}
             {if isset($panel) && $panel eq true}
@@ -60,7 +60,7 @@ class Categories {
         {/if}
     '''
 
-    def private categoriesEditImpl(Application it, Controller controller) '''
+    def private categoriesEditImpl(Application it) '''
         {* purpose of this template: reusable editing of entity attributes *}
         {if isset($panel) && $panel eq true}
             <h3 class="categories z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Categories'}</h3>

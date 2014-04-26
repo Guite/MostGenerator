@@ -225,7 +225,7 @@ class EventListener {
                     $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
-                    $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                    $entityManager = $serviceManager->get«IF container.application.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
                     $result = true;
                     try {
                         $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
@@ -482,7 +482,11 @@ class EventListener {
     def private postLoadImpl(Entity it/* PostLoad it */) '''
         «val app = container.application»
         $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
-        $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_SANITIZE_STRING);
+        «IF app.targets('1.3.5')»
+            $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
+        «ELSE»
+            $usesCsvOutput = (FormUtil::getPassedValue('_format', 'html', 'GETPOST', FILTER_SANITIZE_STRING) == 'csv') ? true : false;
+        «ENDIF»
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler

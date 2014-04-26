@@ -19,14 +19,9 @@ class ModerationObjects {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('function', 'ModerationObjects')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, moderationObjectsFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, moderationObjectsImpl))
         }
     }
-
-    def private moderationObjectsFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «moderationObjectsImpl»
-    '''
 
     def private moderationObjectsImpl(Application it) '''
         /**

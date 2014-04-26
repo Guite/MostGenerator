@@ -30,15 +30,10 @@ class Newsletter {
             if (shouldBeMarked(pluginPath + pluginFileName)) {
                 pluginFileName = 'ItemList' + pluginClassSuffix + '.generated.php'
             }
-            fsa.generateFile(pluginPath + pluginFileName, newsletterFile)
+            fsa.generateFile(pluginPath + pluginFileName, fh.phpFileContent(it, newsletterClass))
         }
         new NewsletterView().generate(it, fsa)
     }
-
-    def private newsletterFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «newsletterClass»
-    '''
 
     def private newsletterClass(Application it) '''
         «IF !targets('1.3.5')»
@@ -223,7 +218,7 @@ class Newsletter {
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             // create query
@@ -262,7 +257,11 @@ class Newsletter {
                     // Set (full qualified) link of title
                     $urlArgs = $item->createUrlArgs();
                     $urlArgs['lang'] = $this->lang;
-                    $items[$k]['nl_url_title'] = ModUtil::url($this->modname, 'user', 'display', $urlArgs, null, null, true);
+                    «IF targets('1.3.5')»
+                        $items[$k]['nl_url_title'] = ModUtil::url($this->modname, 'user', 'display', $urlArgs, null, null, true);
+                    «ELSE»
+                        $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $objectType . '_display', $urlArgs, true);
+                    «ENDIF»
                 «ELSE»
                     $items[$k]['nl_url_title'] = null;
                 «ENDIF»

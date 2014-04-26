@@ -57,7 +57,9 @@ class Plugins {
     def private viewPlugins(Application it, IFileSystemAccess fsa) {
         new ActionUrl().generate(it, fsa)
         new ObjectState().generate(it, fsa)
-        new TemplateHeaders().generate(it, fsa)
+        if (targets('1.3.5')) {
+            new TemplateHeaders().generate(it, fsa)
+        }
         if (hasCountryFields) {
             new GetCountryName().generate(it, fsa)
         }

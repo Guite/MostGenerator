@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionh
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
@@ -17,7 +16,7 @@ class RelationPresets {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
 
-    def memberFields(Controller it) '''
+    def memberFields(Application it) '''
 
         /**
          * List of identifiers for predefined relationships.

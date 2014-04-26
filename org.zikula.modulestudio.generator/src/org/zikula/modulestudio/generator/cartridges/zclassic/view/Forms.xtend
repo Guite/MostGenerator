@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Action
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
@@ -28,6 +27,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Forms {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
@@ -52,77 +52,82 @@ class Forms {
      * Entry point for form templates for each action.
      */
     def private generate(Action it, Application app, IFileSystemAccess fsa) {
-        for (entity : app.getAllEntities) entity.generate(app, it.controller, 'edit', fsa)
+        for (entity : app.getAllEntities) {
+            entity.generate(app, 'edit', fsa)
+            entity.entityInlineRedirectHandlerFile(app, fsa)
+        }
         controller.inlineRedirectHandlerFile(app, fsa)
     }
 
     /**
      * Entry point for form templates for each entity.
      */
-    def private generate(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) {
-        val templatePath = editTemplateFile(controller, name, actionName)
+    def private generate(Entity it, Application app, String actionName, IFileSystemAccess fsa) {
+        val templatePath = editTemplateFile(actionName)
         if (!app.shouldBeSkipped(templatePath)) {
-            println('Generating ' + controller.formattedName + ' edit form templates for entity "' + name.formatForDisplay + '"')
+            println('Generating edit form templates for entity "' + name.formatForDisplay + '"')
             fsa.generateFile(templatePath, '''
-                «formTemplateHeader(app, controller, actionName)»
-                «formTemplateBody(app, controller, actionName, fsa)»
+                «formTemplateHeader(app, actionName)»
+                «formTemplateBody(app, actionName, fsa)»
             ''')
         }
-        relationHelper.generateInclusionTemplate(it, app, controller, fsa)
+        relationHelper.generateInclusionTemplate(it, app, fsa)
     }
 
-    def private formTemplateHeader(Entity it, Application app, Controller controller, String actionName) '''
+    def private formTemplateHeader(Entity it, Application app, String actionName) '''
         {* purpose of this template: build the Form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» *}
-        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
+        {assign var='lct' value='user'}
+        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+            {assign var='lct' value='admin'}
+        {/if}
+        «IF app.targets('1.3.5')»
+            {include file="`$lct`/header.tpl"}
+        «ELSE»
+            {include file="`ucfirst($lct)`/header.tpl"}
+        «ENDIF»
         {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js'}
         {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_validation.js'}
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «controller.pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
+            «pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
         {elseif $mode eq 'create'}
             {gt text='Create «name.formatForDisplay»' assign='templateTitle'}
-            «controller.pageIcon(if (app.targets('1.3.5')) 'new' else 'plus')»
+            «pageIcon(if (app.targets('1.3.5')) 'new' else 'plus')»
         {else}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «controller.pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
+            «pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
         {/if}
         <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
             {pagesetvar name='title' value=$templateTitle}
-            «controller.templateHeader»
+            «templateHeader»
     '''
 
-    def private pageIcon(Controller it, String iconName) {
-        switch it {
-            AdminController: '''
-                        {assign var='adminPageIcon' value='«iconName»'}
-                    '''
-            default: ''
-        }
-    }
+    def private pageIcon(Entity it, String iconName) '''
+        {if $lcq eq 'admin'}
+            {assign var='adminPageIcon' value='«iconName»'}
+        {/if}
+    '''
 
-    def private templateHeader(Controller it) {
-        switch it {
-            AdminController: '''
-                «IF container.application.targets('1.3.5')»
-                    <div class="z-admin-content-pagetitle">
-                        {icon type=$adminPageIcon size='small' alt=$templateTitle}
-                        <h3>{$templateTitle}</h3>
-                    </div>
-                «ELSE»
-                    <h3>
-                        <span class="icon icon-{$adminPageIcon}"></span>
-                        {$templateTitle}
-                    </h3>
-                «ENDIF»
-            '''
-            default: '''
-                <h2>{$templateTitle}</h2>
-            '''
-        }
-    }
+    def private templateHeader(Entity it) '''
+        {if $lcq eq 'admin'}
+            «IF container.application.targets('1.3.5')»
+                <div class="z-admin-content-pagetitle">
+                    {icon type=$adminPageIcon size='small' alt=$templateTitle}
+                    <h3>{$templateTitle}</h3>
+                </div>
+            «ELSE»
+                <h3>
+                    <span class="icon icon-{$adminPageIcon}"></span>
+                    {$templateTitle}
+                </h3>
+            «ENDIF»
+        {else}
+            <h2>{$templateTitle}</h2>
+        {/if}
+    '''
 
-    def private formTemplateBody(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) '''
+    def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
         {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.5')» role='form'«ENDIF»}
             {* add validation summary and a <div> element for styling the form *}
             {«app.appName.formatForDB»FormFrame}
@@ -138,23 +143,27 @@ class Forms {
                 <div id="«app.appName.toFirstLower»Panel" class="z-panels">
                     <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
                     <div class="z-panel-content z-panel-active" style="overflow: visible">
-                        «fieldDetails(app, controller)»
+                        «fieldDetails(app)»
                     </div>
-                    «new Section().generate(it, app, controller, fsa)»
+                    «new Section().generate(it, app, fsa)»
                 </div>
             «ELSE»
-                «fieldDetails(app, controller)»
-                «new Section().generate(it, app, controller, fsa)»
+                «fieldDetails(app)»
+                «new Section().generate(it, app, fsa)»
             «ENDIF»
             {/«app.appName.formatForDB»FormFrame}
         {/form}
         </div>
-        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
+        «IF app.targets('1.3.5')»
+            {include file="`$lct`/footer.tpl"}
+        «ELSE»
+            {include file="`ucfirst($lct)`/footer.tpl"}
+        «ENDIF»
 
-        «formTemplateJS(app, controller, actionName)»
+        «formTemplateJS(app, actionName)»
     '''
 
-    def private fieldDetails(Entity it, Application app, Controller controller) '''
+    def private fieldDetails(Entity it, Application app) '''
         «translatableFieldDetails»
         «IF !hasTranslatableFields
           || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
@@ -252,7 +261,7 @@ class Forms {
         «ENDIF»
     '''
 
-    def private formTemplateJS(Entity it, Application app, Controller controller, String actionName) '''
+    def private formTemplateJS(Entity it, Application app, String actionName) '''
         «IF app.targets('1.3.5')»
             {icon type='edit' size='extrasmall' assign='editImageArray'}
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
@@ -444,6 +453,17 @@ class Forms {
         «ENDIF»
     '''
 
+    def private entityInlineRedirectHandlerFile(Entity it, Application app, IFileSystemAccess fsa) {
+        val templatePath = app.getViewPath + (if (app.targets('1.3.5')) name.formatForCode else name.formatForCodeCapital) + '/'
+        var fileName = 'inlineRedirectHandler.tpl'
+        if (!app.shouldBeSkipped(templatePath + fileName)) {
+            if (app.shouldBeMarked(templatePath + fileName)) {
+                fileName = 'inlineRedirectHandler.generated.tpl'
+            }
+            fsa.generateFile(templatePath + fileName, app.inlineRedirectHandlerImpl)
+        }
+    }
+
     def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.5')) formattedName else formattedName.toFirstUpper) + '/'
         var fileName = 'inlineRedirectHandler.tpl'
@@ -451,11 +471,11 @@ class Forms {
             if (app.shouldBeMarked(templatePath + fileName)) {
                 fileName = 'inlineRedirectHandler.generated.tpl'
             }
-            fsa.generateFile(templatePath + fileName, inlineRedirectHandlerImpl(app))
+            fsa.generateFile(templatePath + fileName, app.inlineRedirectHandlerImpl)
         }
     }
 
-    def private inlineRedirectHandlerImpl(Controller it, Application app) '''
+    def private inlineRedirectHandlerImpl(Application app) '''
         {* purpose of this template: close an iframe from within this iframe *}
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml">
@@ -480,11 +500,4 @@ class Forms {
             </body>
         </html>
     '''
-
-    /*
-        A 'zparameters' parameter was added as a direct way to assign the values of
-        the form plugins attributes. For instance:
-        $attributes = {class:«IF app.targets('1.3.5')»z-btred«ELSE»btn btn-danger; confirmMessage:Are you sure?}
-        {formbutton commandName='delete' __text='Delete' zparameters=$attributes}
-    */
 }

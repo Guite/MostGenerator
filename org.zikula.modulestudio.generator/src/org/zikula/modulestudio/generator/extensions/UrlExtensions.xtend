@@ -30,16 +30,15 @@ class UrlExtensions {
      *
      * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param func The function to be called by the url
-     * @param ot The treated object type
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
      */
-    def modUrlGeneric(Entity it, String func, String ot, String objName, Boolean template) {
+    def modUrlGeneric(Entity it, String func, String objName, Boolean template) {
         if (template)
-            "func='" + func + "' ot='" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template) + (if (func == 'display') appendSlug(objName, template) else '')
+            "func='" + func + "'" + modUrlPrimaryKeyParams(objName, template) + (if (func == 'display') appendSlug(objName, template) else '')
         else
-            "'" + func + "', array('ot' => '" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template) + (if (func == 'display') appendSlug(objName, template) else '') + ")"
+            "'" + func + "', array(" + modUrlPrimaryKeyParams(objName, template) + (if (func == 'display') appendSlug(objName, template) else '') + ")"
     }
 
     /**
@@ -48,17 +47,16 @@ class UrlExtensions {
      *
      * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param func The function to be called by the url
-     * @param ot The treated object type
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param customVarName Custom name for using another field name as url parameter
      * @return String collected url parameter string.
      */
-    def modUrlGeneric(Entity it, String func, String ot, String objName, Boolean template, String customVarName) {
+    def modUrlGeneric(Entity it, String func, String objName, Boolean template, String customVarName) {
         if (template)
-            "func='" + func + "' ot='" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template, customVarName)
+            "func='" + func + "'" + modUrlPrimaryKeyParams(objName, template, customVarName)
         else
-            "'" + func + "', array('ot' => '" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template, customVarName) + ")"
+            "'" + func + "', array(" + modUrlPrimaryKeyParams(objName, template, customVarName) + ")"
     }
 
     /**
@@ -68,14 +66,13 @@ class UrlExtensions {
      * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
-     * @param otVar Custom name for the object type parameter
      * @return String collected url parameter string.
      */
-    def modUrlDisplayWithFreeOt(Entity it, String objName, Boolean template, String otVar) {
+    def modUrlDisplayWithFreeOt(Entity it, String objName, Boolean template) {
         if (template) {
-            "func='display' ot=" + otVar + modUrlPrimaryKeyParams(objName, template) + appendSlug(objName, template)
+            "func='display'" + modUrlPrimaryKeyParams(objName, template) + appendSlug(objName, template)
         } else {
-            "'display', array('ot' => " + otVar + modUrlPrimaryKeyParams(objName, template) + appendSlug(objName, template) + ')'
+            "'display', array(" + modUrlPrimaryKeyParams(objName, template) + appendSlug(objName, template) + ')'
         }
     }
 
@@ -89,7 +86,7 @@ class UrlExtensions {
      * @return String collected url parameter string.
      */
     def modUrlDisplay(Entity it, String objName, Boolean template) {
-        modUrlGeneric('display', name, objName, template)
+        modUrlGeneric('display', objName, template)
     }
 
     /**
@@ -117,7 +114,7 @@ class UrlExtensions {
      * @return String collected url parameter string.
      */
     def modUrlEdit(Entity it, String objName, Boolean template) {
-        modUrlGeneric('edit', name, objName, template)
+        modUrlGeneric('edit', objName, template)
     }
 
     /**
@@ -131,7 +128,7 @@ class UrlExtensions {
      * @return String collected url parameter string.
      */
     def modUrlEdit(Entity it, String objName, Boolean template, String customVarName) {
-        modUrlGeneric('edit', name, objName, template, customVarName)
+        modUrlGeneric('edit', objName, template, customVarName)
     }
 
     /**
@@ -144,7 +141,7 @@ class UrlExtensions {
      * @return String collected url parameter string.
      */
     def modUrlDelete(Entity it, String objName, Boolean template) {
-        modUrlGeneric('delete', name, objName, template)
+        modUrlGeneric('delete', objName, template)
     }
 
     /**

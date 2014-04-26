@@ -2,17 +2,15 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponent
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Section {
-    @Inject extension ControllerExtensions = new ControllerExtensions
+
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ViewExtensions = new ViewExtensions
@@ -23,9 +21,9 @@ class Section {
     /**
      * Entry point for edit sections beside the actual fields.
      */
-    def generate(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
+    def generate(Entity it, Application app, IFileSystemAccess fsa) '''
 
-        «extensionsAndRelations(app, controller, fsa)»
+        «extensionsAndRelations(app, fsa)»
 
         «displayHooks(app)»
 
@@ -34,7 +32,7 @@ class Section {
         «submitActions»
     '''
 
-    def private extensionsAndRelations(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
+    def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa) '''
         «IF geographical»
             «IF useGroupingPanels('edit')»
             <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
@@ -49,18 +47,18 @@ class Section {
 
         «ENDIF»
         «IF attributable»
-            {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_attributes_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_attributes_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «IF categorisable»
-            {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
-        «relationHelper.generateIncludeStatement(it, app, controller, fsa)»
+        «relationHelper.generateIncludeStatement(it, app, fsa)»
         «IF metaData»
-            {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «IF standardFields»
             {if $mode ne 'create'}
-                {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_standardfields_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+                {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_standardfields_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
             {/if}
         «ENDIF»
     '''

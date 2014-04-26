@@ -16,14 +16,9 @@ class GetCountryName {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'GetCountryName')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, getCountryNameFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, getCountryNameImpl))
         }
     }
-
-    def private getCountryNameFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «getCountryNameImpl»
-    '''
 
     def private getCountryNameImpl(Application it) '''
         /**

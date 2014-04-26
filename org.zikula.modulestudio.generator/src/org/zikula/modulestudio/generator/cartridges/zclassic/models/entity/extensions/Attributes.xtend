@@ -124,7 +124,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="«IF !container.application.targets('1.3.5')»\«ENDIF»«repositoryClass(container.application, extensionClassType)»")
+         «' '»* @ORM\Entity(repositoryClass="«IF !container.application.targets('1.3.5')»\«ENDIF»«repositoryClass(extensionClassType)»")
          «' '»* @ORM\Table(name="«fullEntityTableName»_attribute",
          «' '»*     uniqueConstraints={
          «' '»*         @ORM\UniqueConstraint(name="cat_unq", columns={"name", "entityId"})

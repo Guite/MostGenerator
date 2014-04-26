@@ -27,18 +27,10 @@ class WorkflowUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for workflows')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflow' + (if (targets('1.3.5')) '' else 'Util') + '.php', workflowFunctionsBaseFile, workflowFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflow' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+            fh.phpFileContent(it, workflowFunctionsBaseImpl), fh.phpFileContent(it, workflowFunctionsImpl)
+        )
     }
-
-    def private workflowFunctionsBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «workflowFunctionsBaseImpl»
-    '''
-
-    def private workflowFunctionsFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «workflowFunctionsImpl»
-    '''
 
     def private workflowFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -480,7 +472,7 @@ class WorkflowUtil {
             «ELSE»
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
             «ENDIF»
-            $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
 
             $repository = $entityManager->getRepository($entityClass);
 

@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponent
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
@@ -17,6 +16,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Relations {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
@@ -29,21 +29,21 @@ class Relations {
     /**
      * This method creates the templates to be included into the edit forms.
      */
-    def generateInclusionTemplate(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, controller, false, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, controller, false, false, fsa)»«ENDFOR»
+    def generateInclusionTemplate(Entity it, Application app, IFileSystemAccess fsa) '''
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, false, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, false, false, fsa)»«ENDFOR»
     '''
 
     /**
      * Entry point for form sections treating related objects.
      * This method creates the Smarty include statement.
      */
-    def generateIncludeStatement(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, controller, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, controller, true, false, fsa)»«ENDFOR»
+    def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa) '''
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, true, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, true, false, fsa)»«ENDFOR»
     '''
 
-    def private generate(JoinRelationship it, Application app, Controller controller, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
+    def private generate(JoinRelationship it, Application app, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
         val stageCode = getEditStageCode(incoming)
         if (stageCode < 1) {
             return ''''''
@@ -69,19 +69,19 @@ class Relations {
             val relationAliasReverse = getRelationAliasName(!useTarget).formatForCodeCapital
             val incomingForUniqueRelationName = if (!isManyToMany) useTarget else incoming
             val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incomingForUniqueRelationName, relationAliasName)
-            return includeStatementForEditTemplate(templateName, controller, ownEntity, otherEntity, incoming, relationAliasName, relationAliasReverse, uniqueNameForJs, hasEdit)
+            return includeStatementForEditTemplate(templateName, ownEntity, otherEntity, incoming, relationAliasName, relationAliasReverse, uniqueNameForJs, hasEdit)
         }
 
         // onlyInclude is false here, lets create the templates
-        println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"')
+        println('Generating edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"')
         var templateNameItemList = 'include_select' + editSnippet + 'ItemList' + getTargetMultiplicity(useTarget)
-        val templateFileName = templateFile(controller, ownEntity.name, templateName)
-        val templateFileNameItemList = templateFile(controller, ownEntity.name, templateNameItemList)
+        val templateFileName = templateFile(ownEntity, templateName)
+        val templateFileNameItemList = templateFile(ownEntity, templateNameItemList)
         if (!app.shouldBeSkipped(templateFileName)) {
-            fsa.generateFile(templateFileName, includedEditTemplate(app, controller, ownEntity, otherEntity, incoming, hasEdit, many))
+            fsa.generateFile(templateFileName, includedEditTemplate(app, ownEntity, otherEntity, incoming, hasEdit, many))
         }
         if (!app.shouldBeSkipped(templateFileNameItemList)) {
-            fsa.generateFile(templateFileNameItemList, component_ItemList(app, controller, ownEntity, many, incoming, hasEdit))
+            fsa.generateFile(templateFileNameItemList, component_ItemList(app, ownEntity, many, incoming, hasEdit))
         }
     }
 
@@ -97,13 +97,13 @@ class Relations {
         templateName
     }
 
-    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Controller controller, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
-        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«ownEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
+    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
+        {include file='«IF container.application.targets('1.3.5')»«ownEntity.name.formatForCode»«ELSE»«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
     '''
 
-    def private includedEditTemplate(JoinRelationship it, Application app, Controller controller, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
+    def private includedEditTemplate(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» in «controller.formattedName» area *}
+        {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» *}
         {if !isset($displayMode)}
             {assign var='displayMode' value='dropdown'}
         {/if}
@@ -135,10 +135,14 @@ class Relations {
                 «ELSE»
                     {assign var='createLink' value=''}
                     {if $allowEditing eq true}
-                        {modurl modname='«app.appName»' type='«controller.formattedName»' func='edit' ot='«ownEntity.name.formatForCode»'«controller.additionalUrlParametersForQuickViewLink» assign='createLink'}
+                        «IF app.targets('1.3.5')»
+                            {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
+                        «ELSE»
+                            {modurl modname='«app.appName»' type='«ownEntity.name.formatForCode»' func='edit' lct=$lct assign='createLink'}
+                        «ENDIF»
                     {/if}
                     {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
-                    «component_AutoComplete(app, controller, ownEntity, many, incoming, hasEdit)»
+                    «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
                 «ENDIF»
             {/if}
             </div>
@@ -157,9 +161,9 @@ class Relations {
         */»
     '''
 
-    def private component_AutoComplete(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
+    def private component_AutoComplete(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         <div class="«app.appName.toLowerCase»-relation-leftside">
-            «val includeStatement = component_IncludeStatementForAutoCompleterItemList(controller, targetEntity, many, incoming, includeEditing)»
+            «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, incoming, includeEditing)»
             {if isset($linkingItem.$alias)}
                 {«includeStatement» item«IF many»s«ENDIF»=$linkingItem.$alias}
             {else}
@@ -169,11 +173,11 @@ class Relations {
         <br «IF app.targets('1.3.5')»class="z-clearer"«ELSE»style="clear: both"«ENDIF» />
     '''
 
-    def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«targetEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
+    def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
+        include file='«IF container.application.targets('1.3.5')»«targetEntity.name.formatForCode»«ELSE»«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
 
-    def private component_ItemList(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» in «controller.formattedName» area *}
+    def private component_ItemList(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
+        {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» *}
         «IF includeEditing»
             «IF app.targets('1.3.5')»
                 {icon type='edit' size='extrasmall' assign='editImageArray'}
@@ -201,7 +205,11 @@ class Relations {
         <li id="{$idPrefixItem}">
             {$item->getTitleFromDisplayPattern()}
             «IF includeEditing»
-             <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «targetEntity.modUrlEdit('item', true)»«IF controller.formattedName == 'user'» forcelongurl=true«ENDIF»}">{$editImage}</a>
+                «IF app.targets('1.3.5')»
+                    <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type=$lct «targetEntity.modUrlEdit('item', true)» ot='«targetEntity.name.formatForCode»' forcelongurl=true}">{$editImage}</a>
+                «ELSE»
+                    <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type='«targetEntity.name.formatForCode»' «targetEntity.modUrlEdit('item', true)» lct=$lct}">{$editImage}</a>
+                «ENDIF»
             «ENDIF»
              <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>
             «IF targetEntity.hasImageFieldsEntity»

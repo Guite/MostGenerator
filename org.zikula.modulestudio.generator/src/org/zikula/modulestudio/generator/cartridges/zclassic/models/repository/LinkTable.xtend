@@ -20,18 +20,10 @@ class LinkTable {
      * Creates a reference table class file for every many-to-many relationship instance.
      */
     def generate(ManyToManyRelationship it, Application app, IFileSystemAccess fsa) {
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Entity/Repository/' + refClass.formatForCodeCapital + '.php', modelRefRepositoryBaseFile(app), modelRefRepositoryFile(app))
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Entity/Repository/' + refClass.formatForCodeCapital + '.php',
+            fh.phpFileContent(app, modelRefRepositoryBaseImpl(app)), fh.phpFileContent(app, modelRefRepositoryImpl(app))
+        )
     }
-
-    def private modelRefRepositoryBaseFile(ManyToManyRelationship it, Application app) '''
-        «fh.phpFileHeader(app)»
-        «modelRefRepositoryBaseImpl(app)»
-    '''
-
-    def private modelRefRepositoryFile(ManyToManyRelationship it, Application app) '''
-        «fh.phpFileHeader(app)»
-        «modelRefRepositoryImpl(app)»
-    '''
 
     def private modelRefRepositoryBaseImpl(ManyToManyRelationship it, Application app) '''
         «IF !app.targets('1.3.5')»

@@ -21,22 +21,12 @@ class Frame {
             if (shouldBeMarked(getAppSourceLibPath + fileName)) {
                 fileName = 'Form/Plugin/FormFrame.generated.php'
             }
-            fsa.generateFile(getAppSourceLibPath + fileName, formFrameFile)
+            fsa.generateFile(getAppSourceLibPath + fileName, fh.phpFileContent(it, formFrameImpl))
         }
         if (!shouldBeSkipped(viewPluginFilePath('block', 'FormFrame'))) {
-            fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), formFramePluginFile)
+            fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), fh.phpFileContent(it, formFramePluginImpl))
         }
     }
-
-    def private formFrameFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formFrameImpl»
-    '''
-
-    def private formFramePluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formFramePluginImpl»
-    '''
 
     def private formFrameImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -92,7 +82,7 @@ class Frame {
              */
             public function create(Zikula_Form_View $view, &$params)
             {
-                $this->useTabs = (array_key_exists('useTabs', $params) ? $params['useTabs'] : false);
+                $this->useTabs = array_key_exists('useTabs', $params) ? $params['useTabs'] : false;
             }
 
             /**

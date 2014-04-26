@@ -6,18 +6,23 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 /**
  * Service definitions in xml format.
  */
 class ServiceDefinitions {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
+    @Inject extension ViewExtensions = new ViewExtensions
 
     /**
      * Entry point for workflow definitions.
@@ -47,7 +52,16 @@ class ServiceDefinitions {
     def private parameters(Application it) '''
         «val modPrefix = appName.formatForDB»
         «val listenerBase = vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\'»
+        # Route parts
+        «modPrefix».routing.external: external
+        «FOR entity : getAllEntities»
+            «modPrefix».routing.«entity.name.formatForCode».singular: «entity.name.formatForCode»
+            «modPrefix».routing.«entity.name.formatForCode».plural: «entity.nameMultiple.formatForCode»
+        «ENDFOR»
+        «modPrefix».routing.formats.view: html«IF getListOfViewFormats.size > 0»|«FOR format : getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
+        «modPrefix».routing.formats.display: html«IF getListOfDisplayFormats.size > 0»|«FOR format : getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
 
+        # Listener classes
         «modPrefix».core_listener.class: «listenerBase»CoreListener
         «modPrefix».frontcontroller_listener.class: «listenerBase»FrontControllerListener
         «modPrefix».installer_listener.class: «listenerBase»InstallerListener

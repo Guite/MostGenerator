@@ -14,16 +14,14 @@ class TemplateHeaders {
     @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.5')) {
+            return
+        }
         val pluginFilePath = viewPluginFilePath('function', 'TemplateHeaders')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, templateHeadersFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, templateHeadersImpl))
         }
     }
-
-    def private templateHeadersFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «templateHeadersImpl»
-    '''
 
     def private templateHeadersImpl(Application it) '''
         /**

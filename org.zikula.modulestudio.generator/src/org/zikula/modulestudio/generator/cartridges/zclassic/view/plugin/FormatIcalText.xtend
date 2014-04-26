@@ -16,14 +16,9 @@ class FormatIcalText {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'FormatIcalText')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, formatIcalTextFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, formatIcalTextImpl))
         }
     }
-
-    def private formatIcalTextFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «formatIcalTextImpl»
-    '''
 
     def private formatIcalTextImpl(Application it) '''
         /**
@@ -39,7 +34,7 @@ class FormatIcalText {
             $result = str_replace("€", "Euro", $result);
             $result = ereg_replace("(\r\n|\n|\r)", "=0D=0A", $result);
 
-            return ';LANGUAGE=de;ENCODING=QUOTED-PRINTABLE:' . $result . "\r\n";
+            return ';LANGUAGE={usergetlang};ENCODING=QUOTED-PRINTABLE:' . $result . "\r\n";
         }
     '''
 }

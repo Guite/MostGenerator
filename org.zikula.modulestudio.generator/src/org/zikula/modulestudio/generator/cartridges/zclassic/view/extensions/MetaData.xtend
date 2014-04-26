@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -17,31 +16,32 @@ class MetaData {
 
     Application app
 
-    def generate (Application it, Controller controller, IFileSystemAccess fsa) {
+    def generate (Application it, IFileSystemAccess fsa) {
         this.app = it
-        val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+
         var fileName = ''
-        if (controller.hasActions('view') || controller.hasActions('display')) {
+        if (hasViewActions || hasDisplayActions) {
             fileName = 'include_metadata_display.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_metadata_display.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, metaDataViewImpl(controller))
+                fsa.generateFile(templatePath + fileName, metaDataViewImpl)
             }
         }
-        if (controller.hasActions('edit')) {
+        if (hasEditActions) {
             fileName = 'include_metadata_edit.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_metadata_edit.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, metaDataEditImpl(controller))
+                fsa.generateFile(templatePath + fileName, metaDataEditImpl)
             }
         }
     }
 
-    def private metaDataViewImpl(Application it, Controller controller) '''
+    def private metaDataViewImpl(Application it) '''
         {* purpose of this template: reusable display of meta data fields *}
         {if isset($obj.metadata)}
             {if isset($panel) && $panel eq true}
@@ -93,7 +93,7 @@ class MetaData {
         {/if}
     '''
 
-    def private metaDataEditImpl(Application it, Controller controller) '''
+    def private metaDataEditImpl(Application it) '''
         {* purpose of this template: reusable editing of meta data fields *}
         {if isset($panel) && $panel eq true}
             <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>

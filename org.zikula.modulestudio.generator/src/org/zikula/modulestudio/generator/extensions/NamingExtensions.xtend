@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -11,11 +10,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
  * Extension methods for naming classes and building file pathes.
  */
 class NamingExtensions {
-
-    /**
-     * Extensions related to the controller layer.
-     */
-    @Inject extension ControllerExtensions = new ControllerExtensions
 
     /**
      * Extensions used for formatting element names.
@@ -49,20 +43,20 @@ class NamingExtensions {
     /**
      * Returns the base path for a certain template file.
      */
-    def templateFileBase(Controller it, String entityName, String actionName) {
+    def templateFileBase(Entity it, String actionName) {
         if (container.application.targets('1.3.5'))
-            container.application.getViewPath + formattedName + '/' + entityName.formatForCode + '/' + actionName
+            container.application.getViewPath + name.formatForCode + '/' + actionName
         else
-            container.application.getViewPath + formattedName.toFirstUpper + '/' + entityName.formatForCodeCapital + '/' + actionName
+            container.application.getViewPath + name.formatForCodeCapital + '/' + actionName
     }
 
     /**
      * Returns the full template file path for given controller action and entity.
      */
-    def templateFile(Controller it, String entityName, String actionName) {
-        var filePath = templateFileBase(entityName, actionName) + templateSuffix
+    def templateFile(Entity it, String actionName) {
+        var filePath = templateFileBase(actionName) + templateSuffix
         if (container.application.shouldBeMarked(filePath)) {
-            filePath = templateFileBase(entityName, actionName) + '.generated' + templateSuffix
+            filePath = templateFileBase(actionName) + '.generated' + templateSuffix
         }
         filePath
     }
@@ -71,10 +65,10 @@ class NamingExtensions {
      * Returns the full template file path for given controller action and entity,
      * using a custom template extension (like xml instead of tpl).
      */
-    def templateFileWithExtension(Controller it, String entityName, String actionName, String templateExtension) {
-        var filePath = templateFileBase(entityName, actionName) + '.' + templateExtension + templateSuffix
+    def templateFileWithExtension(Entity it, String actionName, String templateExtension) {
+        var filePath = templateFileBase(actionName) + '.' + templateExtension + templateSuffix
         if (container.application.shouldBeMarked(filePath)) {
-            filePath = templateFileBase(entityName, actionName) + '.' + templateExtension + '.generated' + templateSuffix
+            filePath = templateFileBase(actionName) + '.' + templateExtension + '.generated' + templateSuffix
         }
         filePath
     }
@@ -82,8 +76,8 @@ class NamingExtensions {
     /**
      * Returns the full template file path for given controller edit action and entity.
      */
-    def editTemplateFile(Controller it, String entityName, String actionName) {
-        templateFile(entityName, actionName)
+    def editTemplateFile(Entity it, String actionName) {
+        templateFile(actionName)
     }
     
 

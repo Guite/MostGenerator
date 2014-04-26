@@ -18,14 +18,9 @@ class ValidationError {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('function', 'ValidationError')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, validationErrorFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, validationErrorImpl))
         }
     }
-
-    def private validationErrorFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «validationErrorImpl»
-    '''
 
     def private validationErrorImpl(Application it) '''
         /**

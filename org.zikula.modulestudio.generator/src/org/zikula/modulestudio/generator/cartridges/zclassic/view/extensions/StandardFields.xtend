@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,30 +12,31 @@ class StandardFields {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
-    def generate (Application it, Controller controller, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+    def generate (Application it, IFileSystemAccess fsa) {
+        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+
         var fileName = ''
-        if (controller.hasActions('view') || controller.hasActions('display')) {
+        if (hasViewActions || hasDisplayActions) {
             fileName = 'include_standardfields_display.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_standardfields_display.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, standardFieldsViewImpl(controller))
+                fsa.generateFile(templatePath + fileName, standardFieldsViewImpl)
             }
         }
-        if (controller.hasActions('edit')) {
+        if (hasEditActions) {
             fileName = 'include_standardfields_edit.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'include_standardfields_edit.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, standardFieldsEditImpl(controller))
+                fsa.generateFile(templatePath + fileName, standardFieldsEditImpl)
             }
         }
     }
 
-    def private standardFieldsViewImpl(Application it, Controller controller) '''
+    def private standardFieldsViewImpl(Application it) '''
         {* purpose of this template: reusable display of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}
@@ -81,7 +81,7 @@ class StandardFields {
         {/if}
     '''
 
-    def private standardFieldsEditImpl(Application it, Controller controller) '''
+    def private standardFieldsEditImpl(Application it) '''
         {* purpose of this template: reusable editing of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}

@@ -16,26 +16,13 @@ class RelationSelectorList {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorList.php', relationSelectorBaseFile, relationSelectorFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorList.php',
+            fh.phpFileContent(it, relationSelectorBaseImpl), fh.phpFileContent(it, relationSelectorImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'RelationSelectorList'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorList'), relationSelectorPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorList'), fh.phpFileContent(it, relationSelectorPluginImpl))
         }
     }
-
-    def private relationSelectorBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «relationSelectorBaseImpl»
-    '''
-
-    def private relationSelectorFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «relationSelectorImpl»
-    '''
-
-    def private relationSelectorPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «relationSelectorPluginImpl»
-    '''
 
     def private relationSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

@@ -16,14 +16,9 @@ class ActionUrl {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'ActionUrl')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, actionUrlFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, actionUrlImpl))
         }
     }
-
-    def private actionUrlFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «actionUrlImpl»
-    '''
 
     def private actionUrlImpl(Application it) '''
         /**

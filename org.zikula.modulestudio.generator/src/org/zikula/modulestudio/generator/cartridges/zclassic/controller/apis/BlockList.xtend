@@ -22,19 +22,11 @@ class BlockList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for multiple objects')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemList' + (if (targets('1.3.5')) '' else 'Block') + '.php', listBlockBaseFile, listBlockFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemList' + (if (targets('1.3.5')) '' else 'Block') + '.php',
+            fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
+        )
         new BlocksView().generate(it, fsa)
     }
-
-    def private listBlockBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «listBlockBaseClass»
-    '''
-
-    def private listBlockFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «listBlockImpl»
-    '''
 
     def private listBlockBaseClass(Application it) '''
         «IF !targets('1.3.5')»
@@ -203,7 +195,7 @@ class BlockList {
             «ELSE»
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
             «ENDIF»
-            $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);

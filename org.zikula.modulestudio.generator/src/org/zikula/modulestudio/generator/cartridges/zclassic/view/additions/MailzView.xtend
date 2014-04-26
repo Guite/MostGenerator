@@ -69,7 +69,7 @@ class MailzView {
 
     def private mailzEntryText(Entity it, String appName) '''
         {$«name.formatForCode»->getTitleFromDisplayPattern()}
-        {modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')» fqurl=true}
+        {modurl modname='«appName»' type='«IF container.application.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' «modUrlDisplayWithFreeOt('$objectType', true)» fqurl=true}
     '''
 
     def private mailzEntryHtml(Entity it, Application app) '''
@@ -81,16 +81,16 @@ class MailzView {
     '''
 
     def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
-        {modurl modname='«app.appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')» fqurl=true}'''
+        {modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' «modUrlDisplayWithFreeOt('$objectType', true)» fqurl=true}'''
 
     def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
         «IF app.hasUserController»
             «IF app.getMainUserController.hasActions('view')»
-                {modurl modname='«app.appName»' type='user' func='view' fqurl=true}
+                {modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' func='view' fqurl=true}
             «ELSEIF app.getMainUserController.hasActions('index')»
-                {modurl modname='«app.appName»' type='user' func='«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»' fqurl=true}
+                {modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' func='«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»' fqurl=true}
             «ELSE»
-                {modurl modname='«app.appName»' type='user' func='«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»' fqurl=true}
+                {modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' func='«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»' fqurl=true}
             «ENDIF»
         «ELSE»
             {homepage}

@@ -16,19 +16,11 @@ class BlockModeration {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for moderation')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/Moderation' + (if (targets('1.3.5')) '' else 'Block') + '.php', moderationBlockBaseFile, moderationBlockFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Block/Moderation' + (if (targets('1.3.5')) '' else 'Block') + '.php',
+            fh.phpFileContent(it, moderationBlockBaseClass), fh.phpFileContent(it, moderationBlockImpl)
+        )
         new BlockModerationView().generate(it, fsa)
     }
-
-    def private moderationBlockBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «moderationBlockBaseClass»
-    '''
-
-    def private moderationBlockFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «moderationBlockImpl»
-    '''
 
     def private moderationBlockBaseClass(Application it) '''
         «IF !targets('1.3.5')»

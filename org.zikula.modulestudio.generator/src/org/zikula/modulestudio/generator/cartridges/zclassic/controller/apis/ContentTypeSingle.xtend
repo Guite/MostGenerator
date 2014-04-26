@@ -20,19 +20,11 @@ class ContentTypeSingle {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating content type for single objects')
-        generateClassPair(fsa, getAppSourceLibPath + 'ContentType/Item.php', contentTypeBaseFile, contentTypeFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'ContentType/Item.php',
+            fh.phpFileContent(it, contentTypeBaseClass), fh.phpFileContent(it, contentTypeImpl)
+        )
         new ContentTypeSingleView().generate(it, fsa)
     }
-
-    def private contentTypeBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «contentTypeBaseClass»
-    '''
-
-    def private contentTypeFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «contentTypeImpl»
-    '''
 
     def private contentTypeBaseClass(Application it) '''
         «IF !targets('1.3.5')»

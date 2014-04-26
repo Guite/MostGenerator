@@ -19,6 +19,8 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
+    Application app
+    String classType = ''
     FileHelper fh = new FileHelper
     protected IFileSystemAccess fsa
 
@@ -36,7 +38,9 @@ abstract class AbstractExtension implements EntityExtensionInterface {
      * Single extension class.
      */
     def protected extensionClasses(Entity it, String classType) {
-        val app = container.application
+        this.app = container.application
+        this.classType = classType
+
         val entityPath = app.getAppSourceLibPath + 'Entity/'
         val entitySuffix = if (app.targets('1.3.5')) '' else 'Entity'
         var classPrefix = name.formatForCodeCapital + classType.formatForCodeCapital
@@ -49,7 +53,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
                 if (app.shouldBeMarked(entityPath + fileName)) {
                     fileName = 'Base/' + entityPrefix + classPrefix + entitySuffix + '.generated.php'
                 }
-                fsa.generateFile(entityPath + fileName, extensionClassBaseFile(it, app, classType))
+                fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, extensionClassBaseImpl))
             }
 
             fileName = 'Base/' + classPrefix + '.php'
@@ -57,7 +61,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
                 if (app.shouldBeMarked(repositoryPath + fileName)) {
                     fileName = 'Base/' + classPrefix + '.generated.php'
                 }
-                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryBaseFile(it, app, classType))
+                fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, extensionClassRepositoryBaseImpl))
             }
         }
         if (!app.generateOnlyBaseClasses) {
@@ -66,7 +70,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
                 if (app.shouldBeMarked(entityPath + fileName)) {
                     fileName = classPrefix + entitySuffix + '.generated.php'
                 }
-                fsa.generateFile(entityPath + fileName, extensionClassFile(it, app, classType))
+                fsa.generateFile(entityPath + fileName, fh.phpFileContent(app, extensionClassImpl))
             }
 
             fileName = classPrefix + '.php'
@@ -74,32 +78,12 @@ abstract class AbstractExtension implements EntityExtensionInterface {
                 if (app.shouldBeMarked(repositoryPath + fileName)) {
                     fileName = classPrefix + '.generated.php'
                 }
-                fsa.generateFile(repositoryPath + fileName, extensionClassRepositoryFile(it, app, classType))
+                fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, extensionClassRepositoryImpl))
             }
         }
     }
 
-    def protected extensionClassBaseFile(Entity it, Application app, String classType) '''
-        «fh.phpFileHeader(app)»
-        «extensionClassBaseImpl(it, app, classType)»
-    '''
-
-    def protected extensionClassFile(Entity it, Application app, String classType) '''
-        «fh.phpFileHeader(app)»
-        «extensionClassImpl(it, app, classType)»
-    '''
-
-    def protected extensionClassRepositoryBaseFile(Entity it, Application app, String classType) '''
-        «fh.phpFileHeader(app)»
-        «extensionClassRepositoryBaseImpl(it, app, classType)»
-    '''
-
-    def protected extensionClassRepositoryFile(Entity it, Application app, String classType) '''
-        «fh.phpFileHeader(app)»
-        «extensionClassRepositoryImpl(it, app, classType)»
-    '''
-
-    def protected extensionClassBaseImpl(Entity it, Application app, String classType) '''
+    def protected extensionClassBaseImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Base;
 
@@ -175,7 +159,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         }
     '''
 
-    def protected extensionClassImpl(Entity it, Application app, String classType) '''
+    def protected extensionClassImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity;
 
@@ -207,11 +191,14 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         ''
     }
 
-    def protected repositoryClass(Entity it, Application app, String classType) {
+    def protected repositoryClass(Entity it, String classType) {
+        if (app === null) {
+            app = container.application
+        }
         (if (app.targets('1.3.5')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital
     }
 
-    def protected extensionClassRepositoryBaseImpl(Entity it, Application app, String classType) '''
+    def protected extensionClassRepositoryBaseImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository\Base;
 
@@ -238,7 +225,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         }
     '''
 
-    def protected extensionClassRepositoryImpl(Entity it, Application app, String classType) '''
+    def protected extensionClassRepositoryImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository;
 

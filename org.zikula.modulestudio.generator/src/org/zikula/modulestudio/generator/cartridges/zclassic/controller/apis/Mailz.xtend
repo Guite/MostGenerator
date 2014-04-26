@@ -19,19 +19,11 @@ class Mailz {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Mailz' + (if (targets('1.3.5')) '' else 'Api') + '.php', mailzBaseFile, mailzFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Mailz' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+            fh.phpFileContent(it, mailzBaseClass), fh.phpFileContent(it, mailzImpl)
+        )
         new MailzView().generate(it, fsa)
     }
-
-    def private mailzBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «mailzBaseClass»
-    '''
-
-    def private mailzFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «mailzImpl»
-    '''
 
     def private mailzBaseClass(Application it) '''
         «IF !targets('1.3.5')»
@@ -105,7 +97,7 @@ class Mailz {
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));

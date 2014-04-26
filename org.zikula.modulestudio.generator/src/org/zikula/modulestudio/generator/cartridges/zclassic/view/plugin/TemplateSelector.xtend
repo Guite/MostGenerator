@@ -16,14 +16,9 @@ class TemplateSelector {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('function', 'TemplateSelector')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, selectorTemplatesFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, selectorTemplatesImpl))
         }
     }
-
-    def private selectorTemplatesFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «selectorTemplatesImpl»
-    '''
 
     def private selectorTemplatesImpl(Application it) '''
         /**

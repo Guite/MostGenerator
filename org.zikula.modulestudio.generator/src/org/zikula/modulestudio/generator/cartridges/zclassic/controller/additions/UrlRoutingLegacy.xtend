@@ -11,14 +11,16 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
-class UrlRouting {
+class UrlRoutingLegacy {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
+    @Inject extension ViewExtensions = new ViewExtensions
 
     FileHelper fh = new FileHelper
 
@@ -27,18 +29,10 @@ class UrlRouting {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating router facade for short url resolution')
-        generateClassPair(fsa, getAppSourceLibPath + 'RouterFacade.php', routerFacadeBaseFile, routerFacadeFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'RouterFacade.php',
+            fh.phpFileContent(it, routerFacadeBaseImpl), fh.phpFileContent(it, routerFacadeImpl)
+        )
     }
-
-    def private routerFacadeBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «routerFacadeBaseImpl»
-    '''
-
-    def private routerFacadeFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «routerFacadeImpl»
-    '''
 
     def private routerFacadeBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -80,8 +74,8 @@ class UrlRouting {
                     'func'          => '\w+',
                     'ot'            => '\w+',
                     'slug'          => '[^/.]+', // slugs ([^/.]+ = all chars except / and .)
-                    'displayending' => '(?:' . $displayDefaultEnding . '|xml|pdf|json|kml)',
-                    'viewending'    => '(?:\.csv|\.rss|\.atom|\.xml|\.pdf|\.json|\.kml)?',
+                    'displayending' => '(?:' . $displayDefaultEnding . '«IF getListOfDisplayFormats.size > 0»|«FOR format : getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»)',
+                    'viewending'    => '(?:«FOR format : getListOfViewFormats SEPARATOR '|'»\.«format»«ENDFOR»)?',
                     'id'            => '\d+'
                 );
 
@@ -162,11 +156,13 @@ class UrlRouting {
         protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
         {
             // entities with unique slug (slug only)
-            $this->router->set($prefix . 'a', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.' . $patternEnd,        $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'a', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.' . $patternEnd,     $defaults, $fieldRequirements));
+
             // entities with non-unique slug (slug and id)
-            $this->router->set($prefix . 'b', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.:id.' . $patternEnd,    $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'b', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.:id.' . $patternEnd, $defaults, $fieldRequirements));
+
             // entities without slug (id)
-            $this->router->set($prefix . 'c', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . 'id.:id.' . $patternEnd,        $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'c', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . 'id.:id.' . $patternEnd,    $defaults, $fieldRequirements));
         }
     '''
 
@@ -231,15 +227,15 @@ class UrlRouting {
     '''
 
     def private getGroupingFolderFromObjectType(Entity it, Boolean plural) '''
-                case '«name.formatForCode»':
-                            $groupFolder = '«getEntityNameSingularPlural(plural).formatForDB»';
-                            break;
+        case '«name.formatForCode»':
+                    $groupFolder = '«getEntityNameSingularPlural(plural).formatForDB»';
+                    break;
     '''
 
     def private getObjectTypeFromGroupingFolder(Entity it, Boolean plural) '''
-                case '«getEntityNameSingularPlural(plural).formatForDB»':
-                            $objectType = '«name.formatForCode»';
-                            break;
+        case '«getEntityNameSingularPlural(plural).formatForDB»':
+                    $objectType = '«name.formatForCode»';
+                    break;
     '''
 
     def private getFormattedSlug(Application it) '''
@@ -266,26 +262,26 @@ class UrlRouting {
     '''
 
     def private getSlugForItem(Entity it) '''
-            case '«name.formatForCode»':
-                «IF hasSluggableFields»
-                        $item = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
-                        «IF slugUnique»
-                            $slug = $item['slug'];
-                        «ELSE»
-                            // make non-unique slug unique by adding the identifier
-                            $idFields = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+        case '«name.formatForCode»':
+            «IF hasSluggableFields»
+                    $item = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
+                    «IF slugUnique»
+                        $slug = $item['slug'];
+                    «ELSE»
+                        // make non-unique slug unique by adding the identifier
+                        $idFields = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
 
-                            // concatenate identifiers (for composite keys)
-                            $itemId = '';
-                            foreach ($idFields as $idField) {
-                                $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
-                            }
-                            $slug = $item['slug'] . '.' . $itemId;
-                        «ENDIF»
-                «ELSE»
-                        $slug = $itemid;
-                «ENDIF»
-                        break;
+                        // concatenate identifiers (for composite keys)
+                        $itemId = '';
+                        foreach ($idFields as $idField) {
+                            $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
+                        }
+                        $slug = $item['slug'] . '.' . $itemId;
+                    «ENDIF»
+            «ELSE»
+                    $slug = $itemid;
+            «ENDIF»
+                    break;
     '''
 
     def private routerFacadeImpl(Application it) '''

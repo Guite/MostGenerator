@@ -16,19 +16,13 @@ class Bootstrap {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
+    FileHelper fh = new FileHelper
+
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourcePath + 'bootstrap.php', bootstrapBaseFile, bootstrapFile)
+        generateClassPair(fsa, getAppSourcePath + 'bootstrap.php',
+            fh.phpFileContent(it, bootstrapBaseImpl), fh.phpFileContent(it, bootstrapImpl)
+        )
     }
-
-    def private bootstrapBaseFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «bootstrapBaseImpl»
-    '''
-
-    def private bootstrapFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «bootstrapImpl»
-    '''
 
     def private bootstrapDocs() '''
         /**
@@ -62,7 +56,7 @@ class Bootstrap {
     def private initExtensions(Application it) '''
         «IF needsExtensionListener»
             // initialise doctrine extension listeners
-            $helper = ServiceUtil::getService('doctrine_extensions');
+            $helper = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine_extensions');
             «initTree»
             «initLoggable»
             «initSluggable»
@@ -158,7 +152,7 @@ class Bootstrap {
                 }
 
                 PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
-                $entityManager = ServiceUtil::getService('doctrine.entitymanager');
+                $entityManager = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
                 «FOR entity : entitiesWithArchive»
 
                     // update for «entity.nameMultiple.formatForDisplay» becoming archived

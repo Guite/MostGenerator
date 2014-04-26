@@ -31,23 +31,17 @@ class Installer {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         val installerPrefix = if (!targets('1.3.5')) name.formatForCodeCapital + 'Module' else ''
-        generateClassPair(fsa, getAppSourceLibPath + installerPrefix + 'Installer.php', installerBaseFile, installerFile)
+        generateClassPair(fsa, getAppSourceLibPath + installerPrefix + 'Installer.php',
+            fh.phpFileContent(it, installerBaseClass), fh.phpFileContent(it, installerImpl)
+        )
 
         if (interactiveInstallation == true) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Controller/InteractiveInstaller' + (if (targets('1.3.5')) '' else 'Controller') + '.php', interactiveBaseFile, interactiveFile)
+            generateClassPair(fsa, getAppSourceLibPath + 'Controller/InteractiveInstaller' + (if (targets('1.3.5')) '' else 'Controller') + '.php',
+                fh.phpFileContent(it, interactiveBaseClass), fh.phpFileContent(it, interactiveImpl)
+            )
             new InstallerView().generate(it, fsa)
         }
     }
-
-    def private installerBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «installerBaseClass»
-    '''
-
-    def private installerFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «installerImpl»
-    '''
 
     def private installerBaseClass(Application it) '''
         «IF !targets('1.3.5')»
@@ -79,16 +73,6 @@ class Installer {
         {
             «installerBaseImpl»
         }
-    '''
-
-    def private interactiveBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «interactiveBaseClass»
-    '''
-
-    def private interactiveFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «interactiveImpl»
     '''
 
     def private interactiveBaseClass(Application it) '''
@@ -412,7 +396,7 @@ class Installer {
             «IF hasUploads»
 
                 // remove all thumbnails
-                $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
+                $manager = $this->getServiceManager()->get«IF targets('1.3.5')»Service«ENDIF»('systemplugin.imagine.manager');
                 $manager->setModule($this->name);
                 $manager->cleanupModuleThumbs();
 

@@ -28,18 +28,10 @@ class ModelUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for model layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Model' + (if (targets('1.3.5')) '' else 'Util') + '.php', modelFunctionsBaseFile, modelFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Model' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+            fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
+        )
     }
-
-    def private modelFunctionsBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «modelFunctionsBaseImpl»
-    '''
-
-    def private modelFunctionsFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «modelFunctionsImpl»
-    '''
 
     def private modelFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

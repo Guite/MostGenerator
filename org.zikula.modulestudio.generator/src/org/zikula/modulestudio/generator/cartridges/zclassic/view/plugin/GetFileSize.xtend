@@ -16,14 +16,9 @@ class GetFileSize {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'GetFileSize')
         if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, getFileSizeFile)
+            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, getFileSizeImpl))
         }
     }
-
-    def private getFileSizeFile(Application it) '''
-        «new FileHelper().phpFileHeader(it)»
-        «getFileSizeImpl»
-    '''
 
     def private getFileSizeImpl(Application it) '''
         /**

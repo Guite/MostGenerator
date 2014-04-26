@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionh
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -13,12 +12,12 @@ class UploadProcessing {
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension Utils = new Utils
 
-    def generate(Controller it) {
-        if (container.application.hasUploads)
-            handleUploads(container.application)
+    def generate(Application it) {
+        if (hasUploads)
+            handleUploads
     }
 
-    def private handleUploads(Controller it, Application app) '''
+    def private handleUploads(Application it) '''
         /**
          * Helper method to process upload fields.
          *
@@ -34,7 +33,7 @@ class UploadProcessing {
             }
 
             // initialise the upload handler
-            $uploadManager = new «IF app.targets('1.3.5')»«app.appName»_«ENDIF»UploadHandler();
+            $uploadManager = new «IF targets('1.3.5')»«appName»_«ENDIF»UploadHandler();
             $existingObjectData = $existingObject->toArray();
 
             $objectId = ($this->mode != 'create') ? $this->idValues[0] : 0;

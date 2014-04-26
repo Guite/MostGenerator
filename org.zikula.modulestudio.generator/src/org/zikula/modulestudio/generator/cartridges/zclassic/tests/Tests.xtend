@@ -24,7 +24,7 @@ class Tests {
             if (shouldBeMarked(testsPath + fileName)) {
                 fileName = 'bootstrap.generated.php'
             }
-            fsa.generateFile(testsPath + fileName, bootstrapFile)
+            fsa.generateFile(testsPath + fileName, fh.phpFileContent(it, bootstrapImpl))
         }
 
         fileName = 'AllTests.php'
@@ -32,19 +32,9 @@ class Tests {
             if (shouldBeMarked(testsPath + fileName)) {
                 fileName = 'AllTests.generated.php'
             }
-            fsa.generateFile(testsPath + fileName, testSuiteFile)
+            fsa.generateFile(testsPath + fileName, fh.phpFileContent(it, testSuiteImpl))
         }
     }
-
-    def private bootstrapFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «bootstrapImpl»
-    '''
-
-    def private testSuiteFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «testSuiteImpl»
-    '''
 
     def private bootstrapImpl(Application it) '''
         error_reporting(E_ALL | E_STRICT);

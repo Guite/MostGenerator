@@ -19,18 +19,10 @@ class Selection {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating selection api')
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Selection' + (if (targets('1.3.5')) '' else 'Api') + '.php', selectionBaseFile, selectionFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Selection' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+            fh.phpFileContent(it, selectionBaseClass), fh.phpFileContent(it, selectionImpl)
+        )
     }
-
-    def private selectionBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «selectionBaseClass»
-    '''
-
-    def private selectionFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «selectionImpl»
-    '''
 
     def private selectionBaseClass(Application it) '''
         «IF !targets('1.3.5')»

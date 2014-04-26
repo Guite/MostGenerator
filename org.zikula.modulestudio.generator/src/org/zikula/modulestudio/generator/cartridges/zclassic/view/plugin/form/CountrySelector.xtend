@@ -16,26 +16,13 @@ class CountrySelector {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/CountrySelector.php', formCountrySelectorBaseFile, formCountrySelectorFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/CountrySelector.php',
+            fh.phpFileContent(it, formCountrySelectorBaseImpl), fh.phpFileContent(it, formCountrySelectorImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'CountrySelector'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'CountrySelector'), formCountrySelectorPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'CountrySelector'), fh.phpFileContent(it, formCountrySelectorPluginImpl))
         }
     }
-
-    def private formCountrySelectorBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formCountrySelectorBaseImpl»
-    '''
-
-    def private formCountrySelectorFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formCountrySelectorImpl»
-    '''
-
-    def private formCountrySelectorPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formCountrySelectorPluginImpl»
-    '''
 
     def private formCountrySelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

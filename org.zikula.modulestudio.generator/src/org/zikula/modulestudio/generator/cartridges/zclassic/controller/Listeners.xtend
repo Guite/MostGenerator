@@ -116,12 +116,11 @@ class Listeners {
             if (app.shouldBeMarked(filePath)) {
                 filePath = listenerPath + name + listenerSuffix.replace('.php', '.generated.php')
             }
-            fsa.generateFile(filePath, content)
+            fsa.generateFile(filePath, fh.phpFileContent(app, content))
         }
     }
 
     def private listenersCoreFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -147,7 +146,6 @@ class Listeners {
     '''
 
     def private listenersFrontControllerFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -173,7 +171,6 @@ class Listeners {
     '''
 
     def private listenersInstallerFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -201,7 +198,6 @@ class Listeners {
     '''
 
     def private listenersModuleDispatchFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -228,7 +224,6 @@ class Listeners {
     '''
 
     def private listenersMailerFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -254,7 +249,6 @@ class Listeners {
     '''
 
     def private listenersPageFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -281,7 +275,6 @@ class Listeners {
 
     // obsolete, used for 1.3.5 only
     def private listenersErrorsFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -307,7 +300,6 @@ class Listeners {
     '''
 
     def private listenersThemeFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -333,7 +325,6 @@ class Listeners {
     '''
 
     def private listenersViewFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -359,7 +350,6 @@ class Listeners {
     '''
 
     def private listenersUserLoginFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -385,7 +375,6 @@ class Listeners {
     '''
 
     def private listenersUserLogoutFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -411,7 +400,6 @@ class Listeners {
     '''
 
     def private listenersUserFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -441,7 +429,6 @@ class Listeners {
     '''
 
     def private listenersUserRegistrationFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -467,7 +454,6 @@ class Listeners {
     '''
 
     def private listenersUsersFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -493,7 +479,6 @@ class Listeners {
     '''
 
     def private listenersGroupFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
@@ -519,7 +504,6 @@ class Listeners {
     '''
 
     def private listenersThirdPartyFile(Application it) '''
-        «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 

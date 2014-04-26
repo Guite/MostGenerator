@@ -56,6 +56,12 @@ class ControllerExtensions {
     def getAllAdminControllers(Application it) {
         getAllControllers.filter(AdminController)
     }
+    /**
+     * Checks whether the application has an admin controller or not.
+     */
+    def hasAdminController(Application it) {
+        !getAllAdminControllers.empty
+    }
 
     /**
      * Returns a list of all user controllers in the given container.
@@ -74,7 +80,7 @@ class ControllerExtensions {
     /**
      * Checks whether a controller owns actions of a given type.
      */
-    def hasActions(Controller it, String type) {
+    def dispatch hasActions(Controller it, String type) {
         switch type {
             case 'index'    : !actions.filter(MainAction).empty 
             case 'view'     : !actions.filter(ViewAction).empty 
@@ -84,6 +90,67 @@ class ControllerExtensions {
             case 'custom'   : !actions.filter(CustomAction).empty 
             default : false
         }
+    }
+
+    /**
+     * Checks whether an entity owns actions of a given type.
+     */
+    def dispatch hasActions(Entity it, String type) {
+        val actions = container.application.getAdminAndUserControllers.map[actions].flatten.toList
+        switch type {
+            case 'index'    : !actions.filter(MainAction).empty 
+            case 'view'     : !actions.filter(ViewAction).empty 
+            case 'display'  : !actions.filter(DisplayAction).empty 
+            case 'edit'     : !actions.filter(EditAction).empty
+            case 'delete'   : !actions.filter(DeleteAction).empty
+            case 'custom'   : !actions.filter(CustomAction).empty 
+            default : false
+        }
+    }
+
+    /**
+     * Returns a unique list of actions contained in either admin or user controller.
+     */
+    def getActionsOfAdminAndUserControllers(Application it) {
+        var actions = newArrayList
+        var actionNames = newArrayList
+        for (controller : getAdminAndUserControllers) {
+            for (action : controller.actions) {
+                if (!actionNames.contains(action.name.formatForCode)) {
+                    actionNames.add(action.name.formatForCode)
+                    actions.add(action)
+                }
+            }
+        }
+        actions
+    }
+
+    /**
+     * Checks whether the application has at least one view action or not.
+     */
+    def hasViewActions(Application it) {
+        !getViewActions.empty
+    }
+
+    /**
+     * Returns a list of all view actions in the given application.
+     */
+    def getViewActions(Application it) {
+        getAllControllers.map[actions].flatten.filter(ViewAction)
+    }
+
+    /**
+     * Checks whether the application has at least one display action or not.
+     */
+    def hasDisplayActions(Application it) {
+        !getDisplayActions.empty
+    }
+
+    /**
+     * Returns a list of all display actions in the given application.
+     */
+    def getDisplayActions(Application it) {
+        getAllControllers.map[actions].flatten.filter(DisplayAction)
     }
 
     /**
@@ -98,6 +165,20 @@ class ControllerExtensions {
      */
     def getEditActions(Application it) {
         getAllControllers.map[actions].flatten.filter(EditAction)
+    }
+
+    /**
+     * Checks whether the application has at least one delete action or not.
+     */
+    def hasDeleteActions(Application it) {
+        !getDeleteActions.empty
+    }
+
+    /**
+     * Returns a list of all delete actions in the given application.
+     */
+    def getDeleteActions(Application it) {
+        getAllControllers.map[actions].flatten.filter(DeleteAction)
     }
 
     /**
@@ -116,23 +197,6 @@ class ControllerExtensions {
     def getAdminAndUserControllers(Application it) {
         var allControllers = getAllControllers
         allControllers.filter(AdminController) + allControllers.filter(UserController)
-    }
-
-    /**
-     * Returns the controller instance to be used for linking to a display
-     * page of a given entity.
-     * The main purpose of this function is to consider joins from or to entities
-     * of other models/modules properly.
-     */
-    def getLinkController(Application it, Controller currentController, Entity entity) {
-        val Application entityApp = entity.container.application
-        var Controller linkController = null
-        if (it == entityApp && currentController.hasActions('display')) {
-            linkController = currentController
-        } else if (entityApp.hasUserController && entityApp.getMainUserController.hasActions('display')) {
-            linkController = entityApp.getMainUserController
-        }
-        linkController
     }
 
     /**

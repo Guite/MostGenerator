@@ -16,26 +16,13 @@ class GeoInput {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/GeoInput.php', formGeoInputBaseFile, formGeoInputFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/GeoInput.php',
+            fh.phpFileContent(it, formGeoInputBaseImpl), fh.phpFileContent(it, formGeoInputImpl)
+        )
         if (!shouldBeSkipped(viewPluginFilePath('function', 'GeoInput'))) {
-            fsa.generateFile(viewPluginFilePath('function', 'GeoInput'), formGeoInputPluginFile)
+            fsa.generateFile(viewPluginFilePath('function', 'GeoInput'), fh.phpFileContent(it, formGeoInputPluginImpl))
         }
     }
-
-    def private formGeoInputBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formGeoInputBaseImpl»
-    '''
-
-    def private formGeoInputFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formGeoInputImpl»
-    '''
-
-    def private formGeoInputPluginFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «formGeoInputPluginImpl»
-    '''
 
     def private formGeoInputBaseImpl(Application it) '''
         «IF !targets('1.3.5')»

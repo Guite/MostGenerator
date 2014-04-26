@@ -27,18 +27,10 @@ class Config {
         if (!needsConfig) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/Config' + (if (targets('1.3.5')) '' else 'Handler') + '.php', configHandlerBaseFile, configHandlerFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/Config' + (if (targets('1.3.5')) '' else 'Handler') + '.php',
+            fh.phpFileContent(it, configHandlerBaseImpl), fh.phpFileContent(it, configHandlerImpl)
+        )
     }
-
-    def private configHandlerBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «configHandlerBaseImpl»
-    '''
-
-    def private configHandlerFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «configHandlerImpl»
-    '''
 
     def private configHandlerBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
@@ -185,7 +177,12 @@ class Config {
                 }
 
                 // redirect back to the config page
-                $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
+                «IF targets('1.3.5')»
+                    $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
+                «ELSE»
+                    $serviceManager = $this->view->getServiceManager();
+                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_«configController.formatForDB»_config');
+                «ENDIF»
 
                 return $this->view->redirect($url);
             }

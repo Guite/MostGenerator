@@ -24,18 +24,10 @@ class ControllerUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for controller layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Controller' + (if (targets('1.3.5')) '' else 'Util') + '.php', controllerFunctionsBaseFile, controllerFunctionsFile)
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Controller' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+            fh.phpFileContent(it, controllerFunctionsBaseImpl), fh.phpFileContent(it, controllerFunctionsImpl)
+        )
     }
-
-    def private controllerFunctionsBaseFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «controllerFunctionsBaseImpl»
-    '''
-
-    def private controllerFunctionsFile(Application it) '''
-        «fh.phpFileHeader(it)»
-        «controllerFunctionsImpl»
-    '''
 
     def private controllerFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
