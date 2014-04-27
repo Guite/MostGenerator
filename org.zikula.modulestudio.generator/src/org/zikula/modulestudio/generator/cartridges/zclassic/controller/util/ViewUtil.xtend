@@ -221,7 +221,7 @@ class ViewUtil {
                     }
                 }
             «ELSE»
-                $format = $request->query->filter('_format', 'html', false, FILTER_SANITIZE_STRING);
+                $format = $request->getRequestFormat();
                 if ($format != 'html' && in_array($format, $extensions)) {
                     $templateExtension = $format;
                 }

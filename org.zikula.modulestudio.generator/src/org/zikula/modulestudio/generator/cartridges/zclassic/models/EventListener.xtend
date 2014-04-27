@@ -485,13 +485,17 @@ class EventListener {
         «IF app.targets('1.3.5')»
             $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
         «ELSE»
-            $usesCsvOutput = (FormUtil::getPassedValue('_format', 'html', 'GETPOST', FILTER_SANITIZE_STRING) == 'csv') ? true : false;
+            $serviceManager = ServiceUtil::getManager();
+            $requestStack = $serviceManager->get('request_stack');
+            $usesCsvOutput = $requestStack->getCurrentRequest()->getRequestFormat() == 'csv' ? true : false;
         «ENDIF»
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
             $uploadManager = new «IF app.targets('1.3.5')»«app.appName»_«ENDIF»UploadHandler();
-            $serviceManager = ServiceUtil::getManager();
+            «IF app.targets('1.3.5')»
+                $serviceManager = ServiceUtil::getManager();
+            «ENDIF»
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
         «ENDIF»
 

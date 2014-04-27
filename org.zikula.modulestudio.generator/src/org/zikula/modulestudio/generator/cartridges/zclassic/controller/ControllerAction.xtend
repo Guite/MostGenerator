@@ -678,7 +678,7 @@ class ControllerAction {
             «IF app.targets('1.3.5')»
                 $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
             «ELSE»
-                $csv = ($request->query->filter('_format', 'html', false, FILTER_SANITIZE_STRING) == 'csv') ? 1 : 0;
+                $csv = $request->getRequestFormat() == 'csv' ? 1 : 0;
             «ENDIF»
             if ($csv == 1) {
                 $showAllEntries = 1;
