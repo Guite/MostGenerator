@@ -54,7 +54,7 @@ class ServiceDefinitions {
                 «parametersUploadHandler»
 
             «ENDIF»
-            «parametersListener»
+            «parametersEventSubscriber»
             «parametersHelper»
 
         services:
@@ -62,7 +62,7 @@ class ServiceDefinitions {
                 «servicesUploadHandler»
 
             «ENDIF»
-            «servicesListener»
+            «servicesEventSubscriber»
             «servicesHelper»
     '''
 
@@ -82,19 +82,19 @@ class ServiceDefinitions {
         «modPrefix».upload_handler.class: «appNamespace»\UploadHandler
     '''
 
-    def private parametersListener(Application it) '''
-        «val listenerBase = appNamespace + '\\Listener\\'»
+    def private parametersEventSubscriber(Application it) '''
+        «val nsBase = appNamespace + '\\Listener\\'»
         # Listener classes
-        «FOR listenerName : getListenerNames»
-            «modPrefix».«listenerName.toLowerCase»_listener.class: «listenerBase»«listenerName»Listener
+        «FOR className : getSubscriberNames»
+            «modPrefix».«className.toLowerCase»_listener.class: «nsBase»«className»Listener
         «ENDFOR»
     '''
 
     def private parametersHelper(Application it) '''
-        «val helperBase = appNamespace + '\\Util\\'»
+        «val nsBase = appNamespace + '\\Util\\'»
         # Util classes
-        «FOR helperName : getHelperNames»
-            «modPrefix».«helperName.toLowerCase»_helper.class: «helperBase»«helperName»Util
+        «FOR className : getHelperNames»
+            «modPrefix».«className.toLowerCase»_helper.class: «nsBase»«className»Util
         «ENDFOR»
     '''
 
@@ -103,10 +103,10 @@ class ServiceDefinitions {
             class: "%«modPrefix».upload_handler.class%"
     '''
 
-    def private servicesListener(Application it) '''
-        «FOR listenerName : getListenerNames»
-            «modPrefix».«listenerName.toLowerCase»_listener:
-                class: "%«modPrefix».«listenerName.toLowerCase»_listener.class%"
+    def private servicesEventSubscriber(Application it) '''
+        «FOR className : getSubscriberNames»
+            «modPrefix».«className.toLowerCase»_listener:
+                class: "%«modPrefix».«className.toLowerCase»_listener.class%"
                 tags:
                     - { name: kernel.event_subscriber }
 
@@ -114,17 +114,17 @@ class ServiceDefinitions {
     '''
 
     def private servicesHelper(Application it) '''
-        «FOR helperName : getHelperNames»
-            «modPrefix».«helperName.toLowerCase»_helper:
-                class: "%«modPrefix».«helperName.toLowerCase»_helper.class%"
+        «FOR className : getHelperNames»
+            «modPrefix».«className.toLowerCase»_helper:
+                class: "%«modPrefix».«className.toLowerCase»_helper.class%"
                 arguments: ["@service_container", "@«appName»"]
 
         «ENDFOR»
     '''
 
-    def private getListenerNames(Application it) {
+    def private getSubscriberNames(Application it) {
         var listeners = newArrayList(
-            'Core', 'FrontController', 'Installer', 'ModuleDispatch', 'Mailer', 'Page', 'Theme', 'View',
+            'Core', 'Kernel', 'Installer', 'ModuleDispatch', 'Mailer', 'Page', 'Theme', 'View',
             'UserLogin', 'UserLogout', 'User', 'UserRegistration', 'Users', 'Group')
 
         val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')

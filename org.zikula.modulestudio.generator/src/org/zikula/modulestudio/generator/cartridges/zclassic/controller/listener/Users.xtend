@@ -7,23 +7,10 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Users {
     @Inject extension Utils = new Utils
 
-    def generate(Application it, Boolean isBase) '''
-        /**
-         * Listener for the `module.users.config.updated` event.
-         *
-         * Occurs after the Users module configuration has been
-         * updated via the administration interface.
-         *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
-         */
-        public static function configUpdated(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
-        {
-            «IF !isBase»
-                parent::configUpdated($event);
-            «ENDIF»
-        }
-        «IF !targets('1.3.5')»
+    CommonExample commonExample
 
+    def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
             /**
              * Makes our handlers known to the event system.
              */
@@ -37,6 +24,23 @@ class Users {
                     return parent::getSubscribedEvents();
                 «ENDIF»
             }
+
         «ENDIF»
+        /**
+         * Listener for the `module.users.config.updated` event.
+         *
+         * Occurs after the Users module configuration has been
+         * updated via the administration interface.
+         *
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         */
+        public «IF targets('1.3.5')»static «ENDIF»function configUpdated(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        {
+            «IF !isBase»
+                parent::configUpdated($event);
+
+                «commonExample.generalEventProperties(it)»
+            «ENDIF»
+        }
     '''
 }

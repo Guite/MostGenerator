@@ -7,25 +7,10 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Mailer {
     @Inject extension Utils = new Utils
 
-    def generate(Application it, Boolean isBase) '''
-        /**
-         * Listener for the `module.mailer.api.sendmessage` event.
-         *
-         * Invoked from `Mailer_Api_User#sendmessage`.
-         * Subject is `Mailer_Api_User` with `$args`.
-         * This is a notifyUntil event so the event must `$event->stop«IF !targets('1.3.5')»Propagation«ENDIF»()` and set any
-         * return data into `$event->data`, or `$event->setData()`.
-         *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
-         */
-        public static function sendMessage(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
-        {
-            «IF !isBase»
-                parent::sendMessage($event);
-            «ENDIF»
-        }
-        «IF !targets('1.3.5')»
+    CommonExample commonExample
 
+    def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
             /**
              * Makes our handlers known to the event system.
              */
@@ -39,6 +24,25 @@ class Mailer {
                     return parent::getSubscribedEvents();
                 «ENDIF»
             }
+
         «ENDIF»
+        /**
+         * Listener for the `module.mailer.api.sendmessage` event.
+         *
+         * Invoked from `Mailer_Api_User#sendmessage`.
+         * Subject is `Mailer_Api_User` with `$args`.
+         * This is a notifyUntil event so the event must `$event->stop«IF !targets('1.3.5')»Propagation«ENDIF»()` and set any
+         * return data into `$event->data`, or `$event->setData()`.
+         *
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         */
+        public «IF targets('1.3.5')»static «ENDIF»function sendMessage(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        {
+            «IF !isBase»
+                parent::sendMessage($event);
+
+                «commonExample.generalEventProperties(it)»
+            «ENDIF»
+        }
     '''
 }

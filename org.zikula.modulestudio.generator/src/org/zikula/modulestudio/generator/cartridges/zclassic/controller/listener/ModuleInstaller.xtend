@@ -7,7 +7,30 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ModuleInstaller {
     @Inject extension Utils = new Utils
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(
+                        CoreEvents::MODULE_INSTALL             => array('moduleInstalled', 5),
+                        CoreEvents::MODULE_UPGRADE             => array('moduleUpgraded', 5),
+                        CoreEvents::MODULE_ENABLE              => array('moduleEnabled', 5),
+                        CoreEvents::MODULE_DISABLE             => array('moduleDisabled', 5),
+                        CoreEvents::MODULE_REMOVE              => array('moduleRemoved', 5),
+                        'installer.subscriberarea.uninstalled' => array('subscriberAreaUninstalled', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
+
+        «ENDIF»
         /**
          * Listener for the `«IF targets('1.3.5')»installer.module.installed«ELSE»module.install«ENDIF»` event.
          *
@@ -16,10 +39,12 @@ class ModuleInstaller {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
          */
-        public static function moduleInstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function moduleInstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::moduleInstalled($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -31,10 +56,12 @@ class ModuleInstaller {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
          */
-        public static function moduleUpgraded(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function moduleUpgraded(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::moduleUpgraded($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
         «IF !targets('1.3.5')»
@@ -45,10 +72,12 @@ class ModuleInstaller {
              * Called after a module has been successfully enabled.
              * Receives `$modinfo` as args.
              */
-            public static function moduleEnabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+            public function moduleEnabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
             {
                 «IF !isBase»
                     parent::moduleEnabled($event);
+
+                    «commonExample.generalEventProperties(it)»
                 «ENDIF»
             }
 
@@ -58,10 +87,12 @@ class ModuleInstaller {
              * Called after a module has been successfully disabled.
              * Receives `$modinfo` as args.
              */
-            public static function moduleDisabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+            public function moduleDisabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
             {
                 «IF !isBase»
                     parent::moduleDisabled($event);
+
+                    «commonExample.generalEventProperties(it)»
                 «ENDIF»
             }
         «ENDIF»
@@ -74,10 +105,12 @@ class ModuleInstaller {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -89,32 +122,13 @@ class ModuleInstaller {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function subscriberAreaUninstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function subscriberAreaUninstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::subscriberAreaUninstalled($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        CoreEvents::MODULE_INSTALL              => array('moduleInstalled', 5),
-                        CoreEvents::MODULE_UPGRADE              => array('moduleUpgraded', 5),
-                        CoreEvents::MODULE_ENABLE               => array('moduleEnabled', 5),
-                        CoreEvents::MODULE_DISABLE              => array('moduleDisabled', 5),
-                        CoreEvents::MODULE_REMOVE               => array('moduleRemoved', 5),
-                        'installer.subscriberarea.uninstalled'  => array('subscriberAreaUninstalled', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 }

@@ -7,7 +7,30 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class UserRegistration {
     @Inject extension Utils = new Utils
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(
+                        'module.users.ui.registration.started'   => array('started', 5),
+                        'module.users.ui.registration.succeeded' => array('succeeded', 5),
+                        'module.users.ui.registration.failed'    => array('failed', 5),
+                        'user.registration.create'               => array('create', 5),
+                        'user.registration.update'               => array('update', 5),
+                        'user.registration.delete'               => array('delete', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
+
+        «ENDIF»
         /**
          * Listener for the `module.users.ui.registration.started` event.
          *
@@ -15,10 +38,12 @@ class UserRegistration {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function started(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function started(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::started($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -90,10 +115,12 @@ class UserRegistration {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function succeeded(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function succeeded(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::succeeded($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -122,10 +149,12 @@ class UserRegistration {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function failed(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function failed(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::failed($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -140,10 +169,12 @@ class UserRegistration {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -156,10 +187,12 @@ class UserRegistration {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::update($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -173,32 +206,13 @@ class UserRegistration {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::delete($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        'module.users.ui.registration.started'      => array('started', 5),
-                        'module.users.ui.registration.succeeded'    => array('succeeded', 5),
-                        'module.users.ui.registration.failed'       => array('failed', 5),
-                        'user.registration.create'                  => array('create', 5),
-                        'user.registration.update'                  => array('update', 5),
-                        'user.registration.delete'                  => array('delete', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 }

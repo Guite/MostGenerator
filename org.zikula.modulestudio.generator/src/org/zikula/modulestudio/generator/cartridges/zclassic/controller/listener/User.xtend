@@ -16,7 +16,28 @@ class User {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(
+                        'user.gettheme'       => array('getTheme', 5),
+                        'user.account.create' => array('create', 5),
+                        'user.account.update' => array('update', 5),
+                        'user.account.delete' => array('delete', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
+
+        «ENDIF»
         /**
          * Listener for the `user.gettheme` event.
          *
@@ -27,10 +48,12 @@ class User {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getTheme(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function getTheme(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getTheme($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -45,10 +68,12 @@ class User {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -62,10 +87,12 @@ class User {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::update($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -80,41 +107,24 @@ class User {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::delete($event);
+
+                «commonExample.generalEventProperties(it)»
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
-                ModUtil::initOOModule('«appName»');
+                    ModUtil::initOOModule('«appName»');
 
-                $userRecord = $event->getSubject();
-                $uid = $userRecord['uid'];
-                $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
-                «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+                    $userRecord = $event->getSubject();
+                    $uid = $userRecord['uid'];
+                    $serviceManager = ServiceUtil::getManager();
+                    $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                    «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        'user.gettheme'         => array('getTheme', 5),
-                        'user.account.create'   => array('create', 5),
-                        'user.account.update'   => array('update', 5),
-                        'user.account.delete'   => array('delete', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 
     def private userDelete(Entity it) '''

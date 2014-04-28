@@ -7,7 +7,26 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class View {
     @Inject extension Utils = new Utils
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(
+                        'view.init'      => array('init', 5),
+                        'view.postfetch' => array('postFetch', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
+
+        «ENDIF»
         /**
          * Listener for the `view.init` event.
          *
@@ -16,10 +35,12 @@ class View {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function init(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function init(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::init($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -33,28 +54,13 @@ class View {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postFetch(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function postFetch(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postFetch($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        'view.init'         => array('init', 5),
-                        'view.postfetch'    => array('postFetch', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 }

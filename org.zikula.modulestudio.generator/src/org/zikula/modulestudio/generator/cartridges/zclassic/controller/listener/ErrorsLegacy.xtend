@@ -1,11 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import org.zikula.modulestudio.generator.extensions.Utils
 
 class ErrorsLegacy {
-    @Inject extension Utils = new Utils
+
+    CommonExample commonExample
 
     // obsolete, used for 1.3.5 only
     def generate(Application it, Boolean isBase) '''
@@ -14,14 +13,16 @@ class ErrorsLegacy {
          *
          * Invoked during `System::init()`.
          * Used to activate `set_error_handler()`.
-         * Event must `stop«IF !targets('1.3.5')»Propagation«ENDIF»()`.
+         * Event must `stop()`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param Zikula_Event $event The event instance.
          */
-        public static function setupErrorReporting(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public static function setupErrorReporting(Zikula_Event $event)
         {
             «IF !isBase»
                 parent::setupErrorReporting($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -31,12 +32,14 @@ class ErrorsLegacy {
          * Invoked on any system error.
          * args gets `array('errorno' => $errno, 'errstr' => $errstr, 'errfile' => $errfile, 'errline' => $errline, 'errcontext' => $errcontext)`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param Zikula_Event $event The event instance.
          */
-        public static function systemError(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public static function systemError(Zikula_Event $event)
         {
             «IF !isBase»
                 parent::systemError($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
     '''

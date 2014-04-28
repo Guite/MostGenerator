@@ -7,7 +7,30 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Group {
     @Inject extension Utils = new Utils
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(
+                        'group.create'     => array('create', 5),
+                        'group.update'     => array('update', 5),
+                        'group.delete'     => array('delete', 5),
+                        'group.adduser'    => array('addUser', 5),
+                        'group.removeuser' => array('removeUser', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
+
+        «ENDIF»
+
         /**
          * Listener for the `group.create` event.
          *
@@ -16,10 +39,12 @@ class Group {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -31,10 +56,12 @@ class Group {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::update($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -47,10 +74,12 @@ class Group {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::delete($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -64,10 +93,12 @@ class Group {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function addUser(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function addUser(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::addUser($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -80,31 +111,13 @@ class Group {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function removeUser(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function removeUser(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::removeUser($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        'group.create'      => array('create', 5),
-                        'group.update'      => array('update', 5),
-                        'group.delete'      => array('delete', 5),
-                        'group.adduser'     => array('addUser', 5),
-                        'group.removeuser'  => array('removeUser', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 }

@@ -17,25 +17,11 @@ class ThirdParty {
     @Inject extension Utils = new Utils
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
-        «IF generatePendingContentSupport»
-            «pendingContentListener(isBase)»
-        «ENDIF»
         «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
-        «IF generateListContentType || needsDetailContentType»
-
-            «contentGetTypes(isBase)»
-        «ENDIF»
         «IF !targets('1.3.5')»
-            «IF generateScribitePlugins»
-
-                «getEditorHelpers(isBase)»
-
-                «getTinyMcePlugins(isBase)»
-
-                «getCKEditorPlugins(isBase)»
-            «ENDIF»
-
             /**
              * Makes our handlers known to the event system.
              */
@@ -53,6 +39,24 @@ class ThirdParty {
                     return parent::getSubscribedEvents();
                 «ENDIF»
             }
+
+        «ENDIF»
+        «IF generatePendingContentSupport»
+            «pendingContentListener(isBase)»
+        «ENDIF»
+        «IF generateListContentType || needsDetailContentType»
+
+            «contentGetTypes(isBase)»
+        «ENDIF»
+        «IF !targets('1.3.5')»
+            «IF generateScribitePlugins»
+
+                «getEditorHelpers(isBase)»
+
+                «getTinyMcePlugins(isBase)»
+
+                «getCKEditorPlugins(isBase)»
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -80,10 +84,12 @@ class ThirdParty {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function pendingContentListener(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function pendingContentListener(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::pendingContentListener($event);
+
+                «commonExample.generalEventProperties(it)»
             «ELSE»
                 «pendingContentListenerImpl»
             «ENDIF»
@@ -139,10 +145,12 @@ class ThirdParty {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function contentGetTypes(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function contentGetTypes(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::contentGetTypes($event);
+
+                «commonExample.generalEventProperties(it)»
             «ELSE»
                 «contentGetTypesImpl»
             «ENDIF»
@@ -174,10 +182,12 @@ class ThirdParty {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getEditorHelpers(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function getEditorHelpers(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getEditorHelpers($event);
+
+                «commonExample.generalEventProperties(it)»
             «ELSE»
                 «getEditorHelpersImpl»
             «ENDIF»
@@ -203,10 +213,12 @@ class ThirdParty {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getTinyMcePlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function getTinyMcePlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getTinyMcePlugins($event);
+
+                «commonExample.generalEventProperties(it)»
             «ELSE»
                 «getTinyMcePluginsImpl»
             «ENDIF»
@@ -232,10 +244,12 @@ class ThirdParty {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getCKEditorPlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function getCKEditorPlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getCKEditorPlugins($event);
+
+                «commonExample.generalEventProperties(it)»
             «ELSE»
                 «getCKEditorPluginsImpl»
             «ENDIF»

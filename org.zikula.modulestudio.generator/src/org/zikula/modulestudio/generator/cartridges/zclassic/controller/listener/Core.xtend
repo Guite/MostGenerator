@@ -7,7 +7,30 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Core {
     @Inject extension Utils = new Utils
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
+
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(
+                        'api.method_not_found'        => array('apiMethodNotFound', 5),
+                        'core.preinit'                => array('preInit', 5),
+                        'core.init'                   => array('init', 5),
+                        'core.postinit'               => array('postInit', 5),
+                        'controller.method_not_found' => array('controllerMethodNotFound', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
+
+        «ENDIF»
         /**
          * Listener for the `api.method_not_found` event.
          *
@@ -21,10 +44,12 @@ class Core {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function apiMethodNotFound(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function apiMethodNotFound(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::apiMethodNotFound($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -35,10 +60,12 @@ class Core {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function preInit(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function preInit(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::preInit($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -50,10 +77,12 @@ class Core {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function init(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function init(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::init($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -64,10 +93,12 @@ class Core {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postInit(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function postInit(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postInit($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -84,34 +115,13 @@ class Core {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function controllerMethodNotFound(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function controllerMethodNotFound(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::controllerMethodNotFound($event);
 
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
-            // You can have multiple of these methods.
-            // See system/Extensions/«IF targets('1.3.5')»lib/Extensions/«ENDIF»HookUI.php for an example.
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        'api.method_not_found'          => array('apiMethodNotFound', 5),
-                        'core.preinit'                  => array('preInit', 5),
-                        'core.init'                     => array('init', 5),
-                        'core.postinit'                 => array('postInit', 5),
-                        'controller.method_not_found'   => array('controllerMethodNotFound', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 }

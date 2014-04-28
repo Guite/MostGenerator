@@ -7,7 +7,29 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ModuleDispatch {
     @Inject extension Utils = new Utils
 
+    CommonExample commonExample
+
     def generate(Application it, Boolean isBase) '''
+        «IF !targets('1.3.5')»
+            /**
+             * Makes our handlers known to the event system.
+             */
+            public static function getSubscribedEvents()
+            {
+                «IF isBase»
+                    return array(
+                        'module_dispatch.postloadgeneric'  => array('postLoadGeneric', 5),
+                        'module_dispatch.preexecute'       => array('preExecute', 5),
+                        'module_dispatch.postexecute'      => array('postExecute', 5),
+                        'module_dispatch.custom_classname' => array('customClassname', 5),
+                        'module_dispatch.service_links'    => array('serviceLinks', 5)
+                    );
+                «ELSE»
+                    return parent::getSubscribedEvents();
+                «ENDIF»
+            }
+
+        «ENDIF»
         /**
          * Listener for the `module_dispatch.postloadgeneric` event.
          *
@@ -16,10 +38,12 @@ class ModuleDispatch {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postLoadGeneric(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function postLoadGeneric(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postLoadGeneric($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -37,10 +61,12 @@ class ModuleDispatch {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function preExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function preExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::preExecute($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -60,10 +86,12 @@ class ModuleDispatch {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function postExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postExecute($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -78,10 +106,12 @@ class ModuleDispatch {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function customClassname(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function customClassname(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::customClassName($event);
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
 
@@ -94,34 +124,16 @@ class ModuleDispatch {
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function serviceLinks(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.5')»static «ENDIF»function serviceLinks(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::customClassName($event);
 
                 // Format data like so:
                 // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»'), 'text' => __('Link Text'));
+
+                «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        'module_dispatch.postloadgeneric'   => array('postLoadGeneric', 5),
-                        'module_dispatch.preexecute'        => array('preExecute', 5),
-                        'module_dispatch.postexecute'       => array('postExecute', 5),
-                        'module_dispatch.custom_classname'  => array('customClassname', 5),
-                        'module_dispatch.service_links'     => array('serviceLinks', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 }
