@@ -91,14 +91,6 @@ class FormHandler {
             namespace «appNamespace»\Form\Handler\Common\Base;
 
             use «appNamespace»\Form\Plugin\AbstractObjectSelector;
-            «IF hasUploads»
-                use «appNamespace»\UploadHandler;
-            «ENDIF»
-            use «appNamespace»\Util\ControllerUtil;
-            «IF hasTranslatable»
-                use «appNamespace»\Util\TranslatableUtil;
-            «ENDIF»
-            use «appNamespace»\Util\WorkflowUtil;
 
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -408,7 +400,12 @@ class FormHandler {
             $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
 
             // retrieve identifier of the object we wish to view
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
+            «ELSE»
+                $controllerHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».controller_helper');
+            «ENDIF»
+
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
@@ -455,7 +452,11 @@ class FormHandler {
 
             «initializeExtensions»
 
-            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $workflowHelper = new «appName»_Util_Workflow($this->view->getServiceManager());
+            «ELSE»
+                $workflowHelper = $this->view->getServiceManager()->get('«appName.formatForDB».workflow_helper');
+            «ENDIF»
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
                 «IF targets('1.3.5')»
@@ -609,7 +610,11 @@ class FormHandler {
                 $entity = $this->entityRef;
 
                 // retrieve translated fields
-                $translatableHelper = new «IF targets('1.3.5')»«appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                «IF targets('1.3.5')»
+                    $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
+                «ELSE»
+                    $translatableHelper = $this->serviceManager->get('«app.appName.formatForDB».translatable_helper');
+                «ENDIF»
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
@@ -869,7 +874,12 @@ class FormHandler {
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
-                $translatableHelper = new «IF targets('1.3.5')»«appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                // persist translated fields
+                «IF targets('1.3.5')»
+                    $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
+                «ELSE»
+                    $translatableHelper = $this->serviceManager->get('«app.appName.formatForDB».translatable_helper');
+                «ENDIF»
                 $translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);
 
                 foreach ($translations as $translation) {
@@ -1008,7 +1018,11 @@ class FormHandler {
                     «IF !targets('1.3.5') && hasSluggable»
 
                         if ($this->hasSlugUpdatableField === true && isset($entityData['slug'])) {
-                            $controllerHelper = new ControllerUtil($this->view->getServiceManager());
+                            «IF app.targets('1.3.5')»
+                                $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
+                            «ELSE»
+                                $controllerHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».controller_helper');
+                            «ENDIF»
                             $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                         }
                     «ENDIF»
@@ -1208,12 +1222,6 @@ class FormHandler {
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
             use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
-            use «app.appNamespace»\Util\ControllerUtil;
-            «IF app.hasListFields»
-                use «app.appNamespace»\Util\ListEntriesUtil;
-            «ENDIF»
-            use «app.appNamespace»\Util\ModelUtil;
-            use «app.appNamespace»\Util\WorkflowUtil;
 
         «ENDIF»
         «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
@@ -1355,7 +1363,11 @@ class FormHandler {
             parent::initialize($view);
 
             if ($this->mode == 'create') {
-                $modelHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Model«ELSE»ModelUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                «IF app.targets('1.3.5')»
+                    $modelHelper = new «app.appName»_Util_Model($this->view->getServiceManager());
+                «ELSE»
+                    $modelHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».model_helper');
+                «ENDIF»
                 if (!$modelHelper->canBeCreated($this->objectType)) {
                     «IF app.targets('1.3.5')»
                         LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
@@ -1387,7 +1399,12 @@ class FormHandler {
             «IF app.hasListFields»
 
                 if (count($this->listFields) > 0) {
-                    $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                    «IF app.targets('1.3.5')»
+                        $helper = new «app.appName»_Util_ListEntries($this->view->getServiceManager());
+                    «ELSE»
+                        $helper = $this->view->getServiceManager()->get('«app.appName.formatForDB».listentries_helper');
+                    «ENDIF»
+
                     foreach ($this->listFields as $listField => $isMultiple) {
                         $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
                         if ($isMultiple) {
@@ -1519,7 +1536,11 @@ class FormHandler {
 
                 «ENDIF»
                 // execute the workflow action
-                $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                «IF app.targets('1.3.5')»
+                    $workflowHelper = new «app.appName»_Util_Workflow($this->view->getServiceManager());
+                «ELSE»
+                    $workflowHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».workflow_helper');
+                «ENDIF»
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {

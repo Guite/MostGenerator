@@ -171,9 +171,8 @@ class ControllerLayer {
 
             «IF app.needsConfig && isConfigController»
                 use «app.appNamespace»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
-            «ENDIF»
-            «controllerBaseImportsUtil»
 
+            «ENDIF»
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
@@ -214,8 +213,6 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Controller\Base;
 
-            «entityControllerBaseImportsUtil»
-
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
@@ -245,35 +242,6 @@ class ControllerLayer {
             use Zikula\Core\ModUrl;
             «entityControllerBaseImportsResponse»
 
-        «ENDIF»
-    '''
-
-    def private controllerBaseImportsUtil(Controller it) '''
-        «val isAjaxController = (it instanceof AjaxController)»
-        use «app.appNamespace»\Util\ControllerUtil;
-        «IF isAjaxController && app.hasImageFields»
-            use «app.appNamespace»\Util\ImageUtil;
-        «ENDIF»
-        «IF isAjaxController && app.hasListFields»
-            use «app.appNamespace»\Util\ListEntriesUtil;
-        «ENDIF»
-        «IF hasActions('view')»
-            use «app.appNamespace»\Util\ModelUtil;
-        «ENDIF»
-        use «app.appNamespace»\Util\ViewUtil;
-        «IF (isAjaxController && app.hasTrees) || (hasActions('view') && it instanceof AdminController) || hasActions('delete')»
-            use «app.appNamespace»\Util\WorkflowUtil;
-        «ENDIF»
-    '''
-
-    def private entityControllerBaseImportsUtil(Entity it) '''
-        use «app.appNamespace»\Util\ControllerUtil;
-        «IF hasActions('view')»
-            use «app.appNamespace»\Util\ModelUtil;
-        «ENDIF»
-        use «app.appNamespace»\Util\ViewUtil;
-        «IF (hasActions('view') && it instanceof AdminController) || hasActions('delete')»
-            use «app.appNamespace»\Util\WorkflowUtil;
         «ENDIF»
     '''
 
@@ -334,7 +302,11 @@ class ControllerLayer {
             «ENDIF»
             $action = strtolower($action);
 
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+            «ELSE»
+                $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
+            «ENDIF»
 
             // process each item
             foreach ($items as $itemid) {
@@ -569,7 +541,6 @@ class ControllerLayer {
             «IF isUserController»
                 use «app.appNamespace»\RouterFacade;
             «ENDIF»
-            use «app.appNamespace»\Util\ControllerUtil;
             use ModUtil;
             use SecurityUtil;
             «IF isUserController»
@@ -595,7 +566,11 @@ class ControllerLayer {
 
                 «menuLinksBetweenControllers»
 
-                $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                «IF app.targets('1.3.5')»
+                    $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+                «ELSE»
+                    $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+                «ENDIF»
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getlinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 

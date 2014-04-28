@@ -189,13 +189,6 @@ class Repository {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository\Base;
 
-            «IF app.hasUploads»
-                use «app.appNamespace»\Util\ImageUtil;
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                use «app.appNamespace»\Util\ListEntriesUtil;
-            «ENDIF»
-            use «app.appNamespace»\Util\WorkflowUtil;
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
@@ -348,7 +341,11 @@ class Repository {
                 if (in_array($args['action'], array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
-                        $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+                        «IF app.targets('1.3.5')»
+                            $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
+                        «ELSE»
+                            $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+                        «ENDIF»
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
@@ -368,7 +365,12 @@ class Repository {
 
                 «IF app.hasUploads»
                     // initialise Imagine preset instances
-                    $imageHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+                    $serviceManager = ServiceUtil::getManager();
+                    «IF app.targets('1.3.5')»
+                        $imageHelper = new «app.appName»_Util_Image($serviceManager);
+                    «ELSE»
+                        $imageHelper = $serviceManager->get('«app.appName.formatForDB».image_helper');
+                    «ENDIF»
                     «IF hasUploadFieldsEntity»
 
                         $objectType = '«name.formatForCode»';
@@ -1609,7 +1611,11 @@ class Repository {
 
             $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
+            «ELSE»
+                $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
+            «ENDIF»
 
             foreach ($affectedEntities as $entity) {
                 $entity->initWorkflow();

@@ -83,8 +83,6 @@ class Uploads {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Base;
 
-            use «appNamespace»\Util\ControllerUtil;
-
             use DataUtil;
             use FileUtil;
             use ModUtil;
@@ -195,7 +193,11 @@ class Uploads {
             $fileName = implode('.', $fileNameParts);
 
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($serviceManager);
+            «ELSE»
+                $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
 
             // retrieve the final file name
             try {
@@ -583,7 +585,11 @@ class Uploads {
             }
 
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($serviceManager);
+            «ELSE»
+                $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
 
             // determine file system information
             try {

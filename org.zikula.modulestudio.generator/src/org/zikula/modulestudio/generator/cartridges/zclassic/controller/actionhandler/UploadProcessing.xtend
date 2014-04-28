@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionh
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -9,6 +10,8 @@ import org.zikula.modulestudio.generator.extensions.Utils
  * Upload processing functions for edit form handlers.
  */
 class UploadProcessing {
+
+    @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension Utils = new Utils
 
@@ -33,7 +36,11 @@ class UploadProcessing {
             }
 
             // initialise the upload handler
-            $uploadManager = new «IF targets('1.3.5')»«appName»_«ENDIF»UploadHandler();
+            «IF targets('1.3.5')»
+                $uploadManager = new «appName»_UploadHandler();
+            «ELSE»
+                $uploadManager = $this->view->getServiceManager()->get('«appName.formatForDB».upload_handler');
+            «ENDIF»
             $existingObjectData = $existingObject->toArray();
 
             $objectId = ($this->mode != 'create') ? $this->idValues[0] : 0;

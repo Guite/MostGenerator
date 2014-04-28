@@ -216,7 +216,8 @@ class EventListener {
         {
             // delete workflow for this entity
             «IF !container.application.targets('1.3.5')»
-                $workflowHelper = new WorkflowUtil(ServiceUtil::getManager());
+                $serviceManager = ServiceUtil::getManager();
+                $workflowHelper = $serviceManager->get('«container.application.appName.formatForDB».workflow_helper');
                 $workflowHelper->normaliseWorkflowData($this);
             «ENDIF»
             $workflow = $this['__WORKFLOW__'];
@@ -275,8 +276,14 @@ class EventListener {
                 «ELSE»
                     $objectId = $this['«it.primaryKeyFields.head.name.formatForCode»'];
                 «ENDIF»
-                // initialise the upload handler
-                $uploadManager = new «IF container.application.targets('1.3.5')»«container.application.appName»_«ENDIF»UploadHandler();
+                «IF container.application.targets('1.3.5')»
+                    // initialise the upload handler
+                    $uploadManager = new «container.application.appName»_UploadHandler();
+                «ELSE»
+                    // retrieve the upload handler
+                    $serviceManager = ServiceUtil::getManager();
+                    $uploadManager = $serviceManager->get('«container.application.appName.formatForDB».upload_handler');
+                «ENDIF»
 
                 $uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»);
                 foreach ($uploadFields as $uploadField) {
@@ -492,11 +499,17 @@ class EventListener {
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
-            $uploadManager = new «IF app.targets('1.3.5')»«app.appName»_«ENDIF»UploadHandler();
+            «IF app.targets('1.3.5')»
+                $uploadManager = new «app.appName»_UploadHandler();
+            «ELSE»
+                $uploadManager = $serviceManager->get('«app.appName.formatForDB».upload_handler');
+            «ENDIF»
             «IF app.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
+                $controllerHelper = new «app.appName»_Util_Controller($serviceManager);
+            «ELSE»
+                $controllerHelper = $serviceManager->get('«app.appName.formatForDB».controller_helper');
             «ENDIF»
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
         «ENDIF»
 
         «FOR field : fields»«field.sanitizeForOutput»«ENDFOR»

@@ -4,12 +4,15 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewUtil {
+
+    @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -30,8 +33,6 @@ class ViewUtil {
     def private viewFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util\Base;
-
-            use «appNamespace»\Util\ControllerUtil as ConcreteControllerUtil;
 
             use DataUtil;
             use FormUtil;
@@ -285,7 +286,11 @@ class ViewUtil {
             // then the surrounding
             $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ConcreteControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
             // create name of the pdf output file
             $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
                        . '-'

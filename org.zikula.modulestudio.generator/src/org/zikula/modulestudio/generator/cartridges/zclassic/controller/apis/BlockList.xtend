@@ -32,8 +32,6 @@ class BlockList {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Block\Base;
 
-            use «appNamespace»\Util\ControllerUtil;
-
             use BlockUtil;
             use DataUtil;
             use ModUtil;
@@ -181,8 +179,11 @@ class BlockList {
 
             ModUtil::initOOModule('«appName»');
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
             $utilArgs = array('name' => 'list');
             if (!isset($vars['objectType']) || !in_array($vars['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
                 $vars['objectType'] = $controllerHelper->getDefaultObjectType('block', $utilArgs);
@@ -425,8 +426,11 @@ class BlockList {
             $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
             $vars['filter'] = $this->request->request->get('filter', '');
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
             if (!in_array($vars['objectType'], $controllerHelper->getObjectTypes('block'))) {
                 $vars['objectType'] = $controllerHelper->getDefaultObjectType('block');
             }

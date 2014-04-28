@@ -512,7 +512,6 @@ class Listeners {
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 «IF needsApproval»
-                    use «appNamespace»\Util\WorkflowUtil;
                     use ServiceUtil;
                     use Zikula\Collection\Container;
                 «ENDIF»

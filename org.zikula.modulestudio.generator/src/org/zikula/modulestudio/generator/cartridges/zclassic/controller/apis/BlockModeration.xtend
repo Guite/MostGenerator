@@ -5,10 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockModerationView
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockModeration {
+
+    @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -25,8 +28,6 @@ class BlockModeration {
     def private moderationBlockBaseClass(Application it) '''
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Block\Base;
-
-            use «appNamespace»\Util\WorkflowUtil;
 
             use BlockUtil;
             use ModUtil;
@@ -120,7 +121,11 @@ class BlockModeration {
             $this->view->setCaching(Zikula_View::CACHE_DISABLED);
             $template = $this->getDisplayTemplate($vars);
 
-            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $workflowHelper = new appName»_Util_Workflow($this->serviceManager);
+            «ELSE»
+                $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
+            «ENDIF»
             $amounts = $workflowHelper->collectAmountOfModerationItems();
 
             // assign block vars and fetched data

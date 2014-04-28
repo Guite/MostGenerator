@@ -279,7 +279,11 @@ class ControllerAction {
             $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
             «permissionCheck('', '')»
         «ELSE»
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+            «ENDIF»
 
             // parameter specifying which type of objects we are treating
             $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
@@ -330,7 +334,11 @@ class ControllerAction {
         «IF it instanceof MainAction»
             «permissionCheck('', '')»
         «ELSE»
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+            «ENDIF»
 
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
@@ -553,7 +561,11 @@ class ControllerAction {
         «ELSE»
             $repository->setRequest($this->request);
         «ENDIF»
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        «IF app.targets('1.3.5')»
+            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
+        «ELSE»
+            $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
+        «ENDIF»
         «IF tree != EntityTreeType.NONE»
 
             $tpl = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('tpl', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
@@ -710,7 +722,11 @@ class ControllerAction {
                    ->assign('currentUrlObject', $currentUrlObject)
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
-        $modelHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Model«ELSE»ModelUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        «IF app.targets('1.3.5')»
+            $modelHelper = new «app.appName»_Util_Model($this->serviceManager);
+        «ELSE»
+            $modelHelper = $this->serviceManager->get('«app.appName.formatForDB».model_helper');
+        «ENDIF»
         $this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
 
         // fetch and return the appropriate template
@@ -720,7 +736,12 @@ class ControllerAction {
     def private prepareViewItemsAjax(Controller it) '''
         $items = array();
         «IF app.hasListFields»
-            $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $listHelper = new «app.appName»_Util_ListEntries($this->serviceManager);
+            «ELSE»
+                $listHelper = $this->serviceManager->get('«app.appName.formatForDB».listentries_helper');
+            «ENDIF»
+
             $listObjectTypes = array(«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
             $hasListFields = (in_array($objectType, $listObjectTypes));
 
@@ -893,7 +914,11 @@ class ControllerAction {
     '''
 
     def private processDisplayOutput(Entity it) '''
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        «IF app.targets('1.3.5')»
+            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
+        «ELSE»
+            $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
+        «ENDIF»
         $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'display', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
 
         // set cache id
@@ -1020,7 +1045,11 @@ class ControllerAction {
         «ENDIF»
 
         // determine the output template
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        «IF app.targets('1.3.5')»
+            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
+        «ELSE»
+            $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
+        «ENDIF»
         $template = $viewHelper->getViewTemplate($this->view, $objectType, 'edit', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
 
         // execute form using supplied template and page event handler
@@ -1074,7 +1103,11 @@ class ControllerAction {
 
         $entity->initWorkflow();
 
-        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        «IF app.targets('1.3.5')»
+            $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+        «ELSE»
+            $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
+        «ENDIF»
         $deleteActionId = 'delete';
         $deleteAllowed = false;
         $actions = $workflowHelper->getActionsForObject($entity);
@@ -1171,7 +1204,11 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        «IF app.targets('1.3.5')»
+            $viewHelper = new «app.appName»_Util_View($this->serviceManager);
+        «ELSE»
+            $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
+        «ENDIF»
 
         return $viewHelper->processTemplate($this->view, $objectType, 'delete', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
     '''

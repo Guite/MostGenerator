@@ -200,7 +200,11 @@ class ExampleData {
     def private persistExampleObjects(Models it) '''
         // execute the workflow action for each entity
         $action = 'submit';
-        $workflowHelper = new «IF application.targets('1.3.5')»«application.appName»_Util_Workflow«ELSE»\«application.appName»\Util\WorkflowUtil«ENDIF»($this->serviceManager«IF !application.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+        «IF application.targets('1.3.5')»
+            $workflowHelper = new «application.appName»_Util_Workflow($this->serviceManager);
+        «ELSE»
+            $workflowHelper = $this->serviceManager->get('«application.appName.formatForDB».workflow_helper');
+        «ENDIF»
         try {
             «FOR entity : entities»«entity.persistEntities(application)»«ENDFOR»
         } catch(\Exception $e) {

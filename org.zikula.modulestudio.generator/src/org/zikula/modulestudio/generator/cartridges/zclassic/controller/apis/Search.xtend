@@ -46,8 +46,6 @@ class Search {
     def private searchHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use «appNamespace»\Util\ControllerUtil;
-
         use ModUtil;
         use SecurityUtil;
         use ServiceUtil;
@@ -303,7 +301,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : array();
 
-            $controllerHelper = new ControllerUtil($serviceManager, ModUtil::getModule($this->name));
+            $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
             $utilArgs = array('helper' => 'search', 'action' => 'getResults');
             $allowedTypes = $controllerHelper->getObjectTypes('helper', $utilArgs);
 

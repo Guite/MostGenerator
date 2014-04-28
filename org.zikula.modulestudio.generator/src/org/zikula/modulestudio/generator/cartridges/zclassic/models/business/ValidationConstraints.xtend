@@ -224,7 +224,11 @@ class ValidationConstraints {
         static public function get«name.formatForCodeCapital»AllowedValues()
         {
             $serviceManager = ServiceUtil::getManager();
-            $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $helper = new «app.appName»_Util_ListEntries($serviceManager);
+            «ELSE»
+                $helper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+            «ENDIF»
             $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
             $allowedValues = array();

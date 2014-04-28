@@ -122,15 +122,6 @@ class Entities {
         «imports»
         «IF !app.targets('1.3.5')»
 
-            «IF hasUploadFieldsEntity»
-                use «app.appNamespace»\UploadHandler;
-                use «app.appNamespace»\Util\ControllerUtil;
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                use «app.appNamespace»\Util\ListEntriesUtil;
-            «ENDIF»
-            use «app.appNamespace»\Util\WorkflowUtil;
-
             use DataUtil;
             use FormUtil;
             use ModUtil;
@@ -448,7 +439,14 @@ class Entities {
         public function resetWorkflow()
         {
             $this->setWorkflowState('initial');
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+
+            $serviceManager = ServiceUtil::getManager();
+            «IF app.targets('1.3.5')»
+                $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
+            «ELSE»
+                $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
+            «ENDIF»
+
             $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
             $this['__WORKFLOW__'] = array(
                 'module' => '«app.appName»',
@@ -802,7 +800,14 @@ class Entities {
         «val app = container.application»
         // apply workflow with most important information
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
-        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+
+        $serviceManager = ServiceUtil::getManager();
+        «IF app.targets('1.3.5')»
+            $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
+        «ELSE»
+            $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
+        «ENDIF»
+
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
         $this['__WORKFLOW__'] = array(
             'module' => '«app.appName»',
@@ -906,7 +911,11 @@ class Entities {
         «IF !getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)].empty»
 
             $serviceManager = ServiceUtil::getManager();
-            $listHelper = new «IF container.application.targets('1.3.5')»«container.application.appName»_Util_ListEntries«ELSE»\«container.application.appNamespace»\Util\ListEntriesUtil«ENDIF»($serviceManager«IF !container.application.targets('1.3.5')», ModUtil::getModule('«container.application.appName»')«ENDIF»);
+            «IF container.application.targets('1.3.5')»
+                $listHelper = new «container.application.appName»_Util_ListEntries(ServiceUtil::getManager());
+            «ELSE»
+                $listHelper = $serviceManager->get('«container.application.appName.formatForDB».listentries_helper');
+            «ENDIF»
             «FOR listField : getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)]»
 
                 $items = array();
@@ -1006,7 +1015,11 @@ class Entities {
             «ELSE»
                 «IF hasListFieldsEntity»
                     $serviceManager = ServiceUtil::getManager();
-                    $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»\«app.appNamespace»\Util\ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
+                    «IF app.targets('1.3.5')»
+                        $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
+                    «ELSE»
+                        $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+                    «ENDIF»
 
                 «ENDIF»
                 $formattedTitle = «parseDisplayPattern»;

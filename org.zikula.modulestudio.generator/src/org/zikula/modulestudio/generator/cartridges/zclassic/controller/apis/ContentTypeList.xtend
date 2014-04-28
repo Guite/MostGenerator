@@ -32,8 +32,6 @@ class ContentTypeList {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\ContentType\Base;
 
-            use «appNamespace»\Util\ControllerUtil;
-
             «IF hasCategorisableEntities»
                 use CategoryUtil;
             «ENDIF»
@@ -182,7 +180,11 @@ class ContentTypeList {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($serviceManager);
+            «ELSE»
+                $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
 
             $utilArgs = array('name' => 'list');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {

@@ -839,7 +839,11 @@ class ValidatorLegacy {
         «ENDIF»
         «IF multiple && (min > 0 || max > 0)»
             $serviceManager = ServiceUtil::getManager();
-            $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $helper = new «app.appName»_Util_ListEntries($serviceManager);
+            «ELSE»
+                $helper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+            «ENDIF»
             $listValues = $helper->extractMultiList($this->entity['«name.formatForCode»']);
             $amountOfValues = count($listValues);
             «IF min == max»

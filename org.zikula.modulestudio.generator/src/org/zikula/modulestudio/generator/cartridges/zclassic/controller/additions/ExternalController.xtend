@@ -33,8 +33,6 @@ class ExternalController {
     «IF !targets('1.3.5')»
         namespace «appNamespace»\Controller\Base;
 
-        use «appNamespace»\Util\ControllerUtil;
-
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -101,7 +99,11 @@ class ExternalController {
             «IF targets('1.3.5')»
                 $getData = $this->request->query;
             «ENDIF»
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
 
             $objectType = «IF targets('1.3.5')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
             $utilArgs = array('controller' => 'external', 'action' => 'display');
@@ -227,7 +229,11 @@ class ExternalController {
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
 
             «IF targets('1.3.5')»
                 $objectType = $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);

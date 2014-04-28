@@ -37,8 +37,6 @@ class ModelUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util\Base;
 
-            use «appNamespace»\Util\ControllerUtil as «appName»ControllerUtil;
-
             use ModUtil;
             use Zikula_AbstractBase;
 
@@ -73,7 +71,11 @@ class ModelUtil {
          */
         public function canBeCreated($objectType)
         {
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«appName»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'canBeCreated')))) {
                 throw new \Exception('Error! Invalid object type received.');
             }
@@ -132,7 +134,11 @@ class ModelUtil {
          */
         protected function hasExistingInstances($objectType)
         {
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«appName»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'hasExistingInstances')))) {
                 throw new \Exception('Error! Invalid object type received.');
             }

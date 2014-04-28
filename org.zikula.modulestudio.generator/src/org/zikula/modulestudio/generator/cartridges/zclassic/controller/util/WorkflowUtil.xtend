@@ -215,7 +215,11 @@ class WorkflowUtil {
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
-            $listHelper = new «IF targets('1.3.5')»«appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $listHelper = new «appName»_Util_ListEntries($this->serviceManager);
+            «ELSE»
+                $listHelper = $this->serviceManager->get('«appName.formatForDB».listentries_helper');
+            «ENDIF»
             $states = $listHelper->getEntries($objectType, 'workflowState');
             $allowedStates = array();
             foreach ($states as $state) {

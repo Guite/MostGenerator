@@ -28,8 +28,6 @@ class Selection {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api\Base;
 
-            use «appNamespace»\Util\ControllerUtil;
-
             use ModUtil;
             use Zikula_AbstractApi;
 
@@ -79,7 +77,11 @@ class Selection {
          */
         protected function hasCompositeKeys($objectType)
         {
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
 
             return $controllerHelper->hasCompositeKeys($objectType);
         }
@@ -195,7 +197,11 @@ class Selection {
         protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF targets('1.3.5')»
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            «ENDIF»
             $utilArgs = array('api' => 'selection', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);

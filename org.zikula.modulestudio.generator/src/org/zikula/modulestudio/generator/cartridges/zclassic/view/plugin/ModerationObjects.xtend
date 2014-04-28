@@ -40,7 +40,12 @@ class ModerationObjects {
             }
 
             $serviceManager = $view->getServiceManager();
-            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»«appNamespace»\Util\WorkflowUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);
+            «IF targets('1.3.5')»
+                $workflowHelper = new «appName»_Util_Workflow($serviceManager);
+            «ELSE»
+                $workflowHelper = $serviceManager->get('«appName.formatForDB».workflow_helper');
+            «ENDIF»
+
             $result = $workflowHelper->collectAmountOfModerationItems();
 
             $view->assign($params['assign'], $result);

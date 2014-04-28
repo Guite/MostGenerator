@@ -6,6 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -20,18 +21,22 @@ class ServiceDefinitions {
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
     @Inject extension ViewExtensions = new ViewExtensions
 
+    String modPrefix = ''
+
     /**
-     * Entry point for workflow definitions.
-     * This generates xml files describing the workflows used in the application.
+     * Entry point for service definitions.
+     * This generates yaml files describing DI configuration.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (targets('1.3.5')) {
             return
         }
+        modPrefix = appName.formatForDB
         var definitionFileName = getResourcesPath + 'config/services.yml'
         if (!shouldBeSkipped(definitionFileName)) {
             if (shouldBeMarked(definitionFileName)) {
@@ -43,10 +48,78 @@ class ServiceDefinitions {
 
     def private ymlContent(Application it) '''
         parameters:
-            «parameters»
+            «parametersRouting»
+
+            «IF hasUploads»
+                «parametersUploadHandler»
+
+            «ENDIF»
+            «parametersListener»
+            «parametersHelper»
 
         services:
-            «services»
+            «IF hasUploads»
+                «servicesUploadHandler»
+
+            «ENDIF»
+            «servicesListener»
+            «servicesHelper»
+    '''
+
+    def private parametersRouting(Application it) '''
+        # Route parts
+        «modPrefix».routing.external: external
+        «FOR entity : getAllEntities»
+            «modPrefix».routing.«entity.name.formatForCode».singular: «entity.name.formatForCode»
+            «modPrefix».routing.«entity.name.formatForCode».plural: «entity.nameMultiple.formatForCode»
+        «ENDFOR»
+        «modPrefix».routing.formats.view: html«IF getListOfViewFormats.size > 0»|«FOR format : getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
+        «modPrefix».routing.formats.display: html«IF getListOfDisplayFormats.size > 0»|«FOR format : getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
+    '''
+
+    def private parametersUploadHandler(Application it) '''
+        # Upload handler class
+        «modPrefix».upload_handler.class: «appNamespace»\UploadHandler
+    '''
+
+    def private parametersListener(Application it) '''
+        «val listenerBase = appNamespace + '\\Listener\\'»
+        # Listener classes
+        «FOR listenerName : getListenerNames»
+            «modPrefix».«listenerName.toLowerCase»_listener.class: «listenerBase»«listenerName»Listener
+        «ENDFOR»
+    '''
+
+    def private parametersHelper(Application it) '''
+        «val helperBase = appNamespace + '\\Util\\'»
+        # Util classes
+        «FOR helperName : getHelperNames»
+            «modPrefix».«helperName.toLowerCase»_helper.class: «helperBase»«helperName»Util
+        «ENDFOR»
+    '''
+
+    def private servicesUploadHandler(Application it) '''
+        «modPrefix».upload_handler:
+            class: "%«modPrefix».upload_handler.class%"
+    '''
+
+    def private servicesListener(Application it) '''
+        «FOR listenerName : getListenerNames»
+            «modPrefix».«listenerName.toLowerCase»_listener:
+                class: "%«modPrefix».«listenerName.toLowerCase»_listener.class%"
+                tags:
+                    - { name: kernel.event_subscriber }
+
+        «ENDFOR»
+    '''
+
+    def private servicesHelper(Application it) '''
+        «FOR helperName : getHelperNames»
+            «modPrefix».«helperName.toLowerCase»_helper:
+                class: "%«modPrefix».«helperName.toLowerCase»_helper.class%"
+                arguments: ["@service_container", "@«appName»"]
+
+        «ENDFOR»
     '''
 
     def private getListenerNames(Application it) {
@@ -62,33 +135,18 @@ class ServiceDefinitions {
         listeners
     }
 
-    def private parameters(Application it) '''
-        «val modPrefix = appName.formatForDB»
-        # Route parts
-        «modPrefix».routing.external: external
-        «FOR entity : getAllEntities»
-            «modPrefix».routing.«entity.name.formatForCode».singular: «entity.name.formatForCode»
-            «modPrefix».routing.«entity.name.formatForCode».plural: «entity.nameMultiple.formatForCode»
-        «ENDFOR»
-        «modPrefix».routing.formats.view: html«IF getListOfViewFormats.size > 0»|«FOR format : getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
-        «modPrefix».routing.formats.display: html«IF getListOfDisplayFormats.size > 0»|«FOR format : getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
+    def private getHelperNames(Application it) {
+        var helpers = newArrayList('Model', 'Controller', 'View', 'Workflow')
+        if (hasUploads) {
+            helpers.add('Image')
+        }
+        if (hasListFields) {
+            helpers.add('ListEntries')
+        }
+        if (hasTranslatable) {
+            helpers.add('Translatable')
+        }
 
-        «val listenerBase = vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\'»
-        # Listener classes
-        «FOR listenerName : getListenerNames»
-            «modPrefix».«listenerName.toLowerCase»_listener.class: «listenerBase»«listenerName»Listener
-        «ENDFOR»
-    '''
-
-    def private services(Application it) '''
-        «val modPrefix = appName.formatForDB»
-
-        «FOR listenerName : getListenerNames»
-            «modPrefix».«listenerName.toLowerCase»_listener:
-                class: "%«modPrefix».«listenerName.toLowerCase»_listener.class%"
-                tags:
-                    - { name: kernel.event_subscriber }
-
-        «ENDFOR»
-    '''
+        helpers
+    }
 }

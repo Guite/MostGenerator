@@ -17,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
  * Entry point for the Util class creation.
  */
 class UtilMethods {
+
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
@@ -25,11 +26,15 @@ class UtilMethods {
         new ControllerUtil().generate(it, fsa)
         new ViewUtil().generate(it, fsa)
         new WorkflowUtil().generate(it, fsa)
-        if (hasUploads)
+
+        if (hasUploads) {
             new Image().generate(it, fsa)
-        if (hasListFields)
+        }
+        if (hasListFields) {
             new ListEntries().generate(it, fsa)
-        if (hasTranslatable)
+        }
+        if (hasTranslatable) {
             new Translatable().generate(it, fsa)
+        }
     }
 }

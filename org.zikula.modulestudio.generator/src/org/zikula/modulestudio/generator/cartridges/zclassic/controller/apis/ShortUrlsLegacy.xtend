@@ -64,7 +64,11 @@ class ShortUrlsLegacy {
             $router = $routerFacade->getRouter();
 
             // initialise object type
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.targets('1.3.5')»
+                $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            «ELSE»
+                $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+            «ENDIF»
             $utilArgs = array('controller' => 'user', 'action' => 'encodeurl');
             $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
             $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : $controllerHelper->getDefaultObjectType('api', $utilArgs));
