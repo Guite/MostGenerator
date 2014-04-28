@@ -46,7 +46,7 @@ class Listeners {
     String listenerSuffix
 
     /**
-     * Entry point for persistent event listeners.
+     * Entry point for event subscribers.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
