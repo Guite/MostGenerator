@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class Errors {
+class ErrorsLegacy {
     @Inject extension Utils = new Utils
 
     // obsolete, used for 1.3.5 only

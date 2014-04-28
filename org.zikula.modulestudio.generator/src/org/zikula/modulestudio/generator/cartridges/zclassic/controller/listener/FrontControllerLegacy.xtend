@@ -4,9 +4,10 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class FrontController {
+class FrontControllerLegacy {
     @Inject extension Utils = new Utils
 
+    // obsolete, used for 1.3.5 only
     def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `frontcontroller.predispatch` event.
@@ -21,21 +22,5 @@ class FrontController {
                 parent::preDispatch($event);
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
-            public static function getSubscribedEvents()
-            {
-                «IF isBase»
-                    return array(
-                        'frontcontroller.predispatch' => array('preDispatch', 5)
-                    );
-                «ELSE»
-                    return parent::getSubscribedEvents();
-                «ENDIF»
-            }
-        «ENDIF»
     '''
 }

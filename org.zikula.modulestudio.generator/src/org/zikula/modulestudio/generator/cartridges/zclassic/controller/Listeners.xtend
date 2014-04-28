@@ -4,8 +4,8 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Core
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Errors
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.FrontController
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ErrorsLegacy
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.FrontControllerLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Group
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Mailer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatch
@@ -41,6 +41,7 @@ class Listeners {
     IFileSystemAccess fsa
     Application app
     Boolean isBase
+    Boolean needsThirdPartyListener
 
     String listenerPath
     String listenerSuffix
@@ -53,32 +54,13 @@ class Listeners {
         this.app = it
         listenerSuffix = (if (targets('1.3.5')) '' else 'Listener') + '.php'
 
+        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
+        needsThirdPartyListener = (generatePendingContentSupport || generateListContentType || needsDetailContentType || (!targets('1.3.5') && generateScribitePlugins))
+
         println('Generating event listener base classes')
         listenerPath = getAppSourceLibPath + 'Listener/Base/'
         isBase = true
-
-        listenerFile('Core', listenersCoreFile)
-        listenerFile('FrontController', listenersFrontControllerFile)
-        listenerFile('Installer', listenersInstallerFile)
-        listenerFile('ModuleDispatch', listenersModuleDispatchFile)
-        listenerFile('Mailer', listenersMailerFile)
-        listenerFile('Page', listenersPageFile)
-        if (targets('1.3.5')) {
-            listenerFile('Errors', listenersErrorsFile)
-        }
-        listenerFile('Theme', listenersThemeFile)
-        listenerFile('View', listenersViewFile)
-        listenerFile('UserLogin', listenersUserLoginFile)
-        listenerFile('UserLogout', listenersUserLogoutFile)
-        listenerFile('User', listenersUserFile)
-        listenerFile('UserRegistration', listenersUserRegistrationFile)
-        listenerFile('Users', listenersUsersFile)
-        listenerFile('Group', listenersGroupFile)
-        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
-        val needsThirdPartyListener = (generatePendingContentSupport || generateListContentType || needsDetailContentType || (!targets('1.3.5') && generateScribitePlugins))
-        if (needsThirdPartyListener) {
-            listenerFile('ThirdParty', listenersThirdPartyFile)
-        }
+        generateListenerClasses
 
         if (generateOnlyBaseClasses) {
             return
@@ -87,9 +69,14 @@ class Listeners {
         println('Generating event listener implementation classes')
         listenerPath = getAppSourceLibPath + 'Listener/'
         isBase = false
+        generateListenerClasses
+    }
 
+    def private generateListenerClasses(Application it) {
         listenerFile('Core', listenersCoreFile)
-        listenerFile('FrontController', listenersFrontControllerFile)
+        if (targets('1.3.5')) {
+            listenerFile('FrontController', listenersFrontControllerFile)
+        }
         listenerFile('Installer', listenersInstallerFile)
         listenerFile('ModuleDispatch', listenersModuleDispatchFile)
         listenerFile('Mailer', listenersMailerFile)
@@ -105,6 +92,7 @@ class Listeners {
         listenerFile('UserRegistration', listenersUserRegistrationFile)
         listenerFile('Users', listenersUsersFile)
         listenerFile('Group', listenersGroupFile)
+
         if (needsThirdPartyListener) {
             listenerFile('ThirdParty', listenersThirdPartyFile)
         }
@@ -145,28 +133,14 @@ class Listeners {
         }
     '''
 
+    // obsolete, used for 1.3.5 only
     def private listenersFrontControllerFile(Application it) '''
-        «IF !targets('1.3.5')»
-            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-            «IF !isBase»
-                use «appNamespace»\Listener\Base\FrontControllerListener as BaseFrontControllerListener;
-            «ELSE»
-                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            «ENDIF»
-            use Zikula\Core\Event\GenericEvent;
-
-        «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for frontend controller interaction events.
          */
-        «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_FrontController extends «ENDIF»«appName»_Listener_Base_FrontController
-        «ELSE»
-        class FrontControllerListener«IF !isBase» extends BaseFrontControllerListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        «ENDIF»
         {
-            «new FrontController().generate(it, isBase)»
+            «new FrontControllerLegacy().generate(it, isBase)»
         }
     '''
 
@@ -275,27 +249,12 @@ class Listeners {
 
     // obsolete, used for 1.3.5 only
     def private listenersErrorsFile(Application it) '''
-        «IF !targets('1.3.5')»
-            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
-
-            «IF !isBase»
-                use «appNamespace»\Listener\Base\ErrorsListener as BaseErrorsListener;
-            «ELSE»
-                use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-            «ENDIF»
-            use Zikula\Core\Event\GenericEvent;
-
-        «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for error-related events.
          */
-        «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
-        «ELSE»
-        class ErrorsListener«IF !isBase» extends BaseErrorsListener«ELSE» implements EventSubscriberInterface«ENDIF»
-        «ENDIF»
         {
-            «new Errors().generate(it, isBase)»
+            «new ErrorsLegacy().generate(it, isBase)»
         }
     '''
 
