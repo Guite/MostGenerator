@@ -70,7 +70,7 @@ class FormHandler {
     def private generateCommon(Application it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + name + '" form handler base class')
         val formHandlerFolder = getAppSourceLibPath + 'Form/Handler/Common/'
-        generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (targets('1.3.5')) '' else 'Handler') + '.php',
+        generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + (if (targets('1.3.5')) '' else 'Handler') + '.php',
             fh.phpFileContent(it, formHandlerCommonBaseImpl(actionName)), fh.phpFileContent(app, formHandlerCommonImpl(actionName))
         )
     }
@@ -81,7 +81,7 @@ class FormHandler {
     def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
         println('Generating form handler classes for "' + name + '_' + actionName + '"')
         val formHandlerFolder = app.getAppSourceLibPath + 'Form/Handler/' + name.formatForCodeCapital + '/'
-        app.generateClassPair(fsa, formHandlerFolder + '/' + actionName.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Handler') + '.php',
+        app.generateClassPair(fsa, formHandlerFolder + actionName.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Handler') + '.php',
             fh.phpFileContent(app, formHandlerBaseImpl(actionName)), fh.phpFileContent(app, formHandlerImpl(actionName))
         )
     }
