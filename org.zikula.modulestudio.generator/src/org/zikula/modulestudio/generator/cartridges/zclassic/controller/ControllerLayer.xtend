@@ -538,9 +538,6 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Api\Base;
 
-            «IF isUserController»
-                use «app.appNamespace»\RouterFacade;
-            «ENDIF»
             use ModUtil;
             use SecurityUtil;
             «IF isUserController»
