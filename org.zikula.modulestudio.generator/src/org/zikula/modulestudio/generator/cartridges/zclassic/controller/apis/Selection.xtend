@@ -53,9 +53,9 @@ class Selection {
         {
             $objectType = $this->determineObjectType($args, 'getIdFields');
             «IF targets('1.3.5')»
-            $entityClass = '«appName»_Entity_' . ucfirst($objectType);
+                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             «ELSE»
-            $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
             «ENDIF»
 
             $meta = $this->entityManager->getClassMetadata($entityClass);

@@ -826,7 +826,7 @@ class Repository {
         {
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
             $qb = $this->addIdListFilter($idList, $qb);
-            
+
             $query = $this->getQueryFromBuilder($qb);
         
             $results = $query->getResult();
@@ -976,7 +976,47 @@ class Repository {
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
-            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+
+            $page = $currentPage;
+
+            // check if we have any filters set
+            $parameters = $this->getViewQuickNavParameters('', array());
+            $hasFilters = false;
+            foreach ($parameters as $k => $v) {
+                if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
+                    $hasFilters = true;
+                    break;
+                }
+            }
+
+            «val sessionVar = app.appName + nameMultiple.formatForCodeCapital + 'CurrentPage'»
+            if (!$hasFilters) {
+                «IF !app.targets('1.3.5')»
+                    $serviceManager = ServiceUtil::getManager();
+                    $session = $serviceManager->get('session');
+                «ENDIF»
+                if ($page > 1) {
+                    «IF app.targets('1.3.5')»
+                        SessionUtil::setVar('«sessionVar»', $page);
+                    «ELSE»
+                        $session->set('«sessionVar»', $page);
+                    «ENDIF»
+                } else {
+                    «IF app.targets('1.3.5')»
+                        $page = SessionUtil::getVar('«sessionVar»', 1);
+                    «ELSE»
+                        $page = $session->get('«sessionVar»', 1);
+                    «ENDIF»
+                    System::queryStringSetVar('pos', $page);
+                    «IF !app.targets('1.3.5')»
+                        if ($this->getRequest() !== null) {
+                            $this->getRequest->query->set('pos', $page);
+                        }
+                    «ENDIF»
+                }
+            }
+
+            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $page, $resultsPerPage);
 
             «IF app.targets('1.3.5')»
                 $result = $this->retrieveCollectionResult($query, $orderBy, true);
