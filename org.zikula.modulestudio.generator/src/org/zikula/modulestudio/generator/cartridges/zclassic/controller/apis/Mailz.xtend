@@ -68,6 +68,7 @@ class Mailz {
                 'title'         => $this->__('3 random «itemDesc»'),
                 'description'   => $this->__('A list of three random «itemDesc».')
             );
+
             return $plugins;
         }
 
@@ -142,10 +143,10 @@ class Mailz {
 
             if ($args['contenttype'] == 't') { /* text */
                 return $view->fetch('«IF targets('1.3.5')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_text.tpl');
-            } else {
-                //return $view->fetch('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.html');
-                return $view->fetch('«IF targets('1.3.5')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
             }
+
+            //return $view->fetch('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.html');
+            return $view->fetch('«IF targets('1.3.5')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
         }
     '''
 
