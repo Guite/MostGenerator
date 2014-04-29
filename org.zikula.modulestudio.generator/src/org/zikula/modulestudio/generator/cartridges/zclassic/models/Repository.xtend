@@ -528,6 +528,12 @@ class Repository {
             «ENDIF»
 
             $query->execute();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} truncated the {entity} entity table.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»'));
+            «ENDIF»
         }
     '''
 
@@ -568,6 +574,12 @@ class Repository {
             «ENDIF»
 
             $query->execute();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+            «ENDIF»
         }
 
         /**
@@ -605,6 +617,12 @@ class Repository {
             «ENDIF»
 
             $query->execute();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+            «ENDIF»
         }
 
         /**
@@ -635,6 +653,12 @@ class Repository {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+            «ENDIF»
         }
 
         /**
@@ -665,6 +689,12 @@ class Repository {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+            «ENDIF»
         }
         «ENDIF»
         «IF hasUserFieldsEntity»
@@ -704,6 +734,12 @@ class Repository {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId));
+            «ENDIF»
         }
         «ENDIF»
     '''

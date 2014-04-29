@@ -60,6 +60,11 @@ class Category {
             }
 
             $objectType = $this->determineObjectType($args, 'getMainCat');
+            «IF !targets('1.3.5')»
+
+                $logger = $this->serviceManager->get('logger');
+                $logger->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+            «ENDIF»
 
             return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
         }

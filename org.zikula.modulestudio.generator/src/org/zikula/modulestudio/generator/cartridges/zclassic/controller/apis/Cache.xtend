@@ -77,42 +77,37 @@ class Cache {
                 return;
             }
 
-            «IF hasUserController && getMainUserController.hasActions('display')»
-                // create full identifier (considering composite keys)
-                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-                $instanceId = '';
-                foreach ($idFields as $idField) {
-                    if (!empty($instanceId)) {
-                        $instanceId .= '_';
-                    }
-                    $instanceId .= $item[$idField];
-                }
+            $instanceId = $item->createCompositeIdentifier();
 
+            «IF !targets('1.3.5')»
+
+                $logger = $this->serviceManager->get('logger');
+                $logger->info('{app}: User {user} caused clearing the cache for entity {entity} with id {id}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId));
             «ENDIF»
 
             // Clear View_cache
             $cacheIds = array();
             «IF hasUserController»
-            «IF getMainUserController.hasActions('index')»
-                $cacheIds[] = '«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
-            «ENDIF»
-            «IF getMainUserController.hasActions('view')»
-                $cacheIds[] = 'view';
-            «ENDIF»
-            «IF getMainUserController.hasActions('display')»
-                $cacheIds[] = $instanceId;
-            «ENDIF»
-            «/* edit is not needed as Forms are not cached IF getMainUserController.hasActions('edit')»
-                $cacheIds[] = 'edit';
-            «ENDIF*/»
-            «/*delete is not needed as we disable caching there IF getMainUserController.hasActions('delete')»
-                $cacheIds[] = 'delete';
-            «ENDIF*/»
-            «IF getMainUserController.hasActions('custom')»
-                «FOR customAction : getMainUserController.actions.filter(CustomAction)»
-                    $cacheIds[] = '«customAction.name.formatForCode.toFirstLower»';
-                «ENDFOR»
-            «ENDIF»
+                «IF getMainUserController.hasActions('index')»
+                    $cacheIds[] = '«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
+                «ENDIF»
+                «IF getMainUserController.hasActions('view')»
+                    $cacheIds[] = 'view';
+                «ENDIF»
+                «IF getMainUserController.hasActions('display')»
+                    $cacheIds[] = $instanceId;
+                «ENDIF»
+                «/* edit is not needed as Forms are not cached IF getMainUserController.hasActions('edit')»
+                    $cacheIds[] = 'edit';
+                «ENDIF*/»
+                «/*delete is not needed as we disable caching there IF getMainUserController.hasActions('delete')»
+                    $cacheIds[] = 'delete';
+                «ENDIF*/»
+                «IF getMainUserController.hasActions('custom')»
+                    «FOR customAction : getMainUserController.actions.filter(CustomAction)»
+                        $cacheIds[] = '«customAction.name.formatForCode.toFirstLower»';
+                    «ENDFOR»
+                «ENDIF»
             «ENDIF»
 
             $view = Zikula_View::getInstance('«appName»');

@@ -418,7 +418,10 @@ class WorkflowUtil {
             «IF entitiesNotNone.empty»
                 // nothing required here as no entities use enhanced workflows including approval actions
             «ELSE»
+                «IF !targets('1.3.5')»
+                    $logger = $serviceManager->get('logger');
 
+                «ENDIF»
                 // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
                 $state = 'waiting';
                 «FOR entity : entitiesStandard»
@@ -455,6 +458,12 @@ class WorkflowUtil {
                     'state' => $state,
                     'message' => $this->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
                 );
+                «IF !container.application.targets('1.3.5')»
+
+                    if ($amounts > 0) {
+                        $logger->info('{app}: There are {amount} {entities} waiting for approval.', array('app' => '«container.application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»'));
+                    }
+                «ENDIF»
             }
         }
     '''

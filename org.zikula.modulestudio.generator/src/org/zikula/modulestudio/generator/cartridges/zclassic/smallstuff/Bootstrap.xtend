@@ -152,10 +152,17 @@ class Bootstrap {
                 }
 
                 PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
-                $entityManager = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $serviceManager = ServiceUtil::getManager();
+                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                «IF !targets('1.3.5')»
+                    $logger = $serviceManager->get('logger');
+                «ENDIF»
                 «FOR entity : entitiesWithArchive»
 
-                    // update for «entity.nameMultiple.formatForDisplay» becoming archived
+                    // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
+                    «IF !targets('1.3.5')»
+                        $logger->notice('{app}: Automatic archiving for the {entity} entity started.', array('app' => '«appName»', 'entity' => '«entity.name.formatForCode»'));
+                    «ENDIF»
                     «IF targets('1.3.5')»
                         $entityClass = '«appName»_Entity_«entity.name.formatForCodeCapital»';
                     «ELSE»
@@ -163,6 +170,9 @@ class Bootstrap {
                     «ENDIF»
                     $repository = $entityManager->getRepository($entityClass);
                     $repository->archiveObjects();
+                    «IF !targets('1.3.5')»
+                        $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', array('app' => '«appName»', 'entity' => '«entity.name.formatForCode»'));
+                    «ENDIF»
                 «ENDFOR»
                 PageUtil::setVar('«appName»AutomaticArchiving', false);
             }

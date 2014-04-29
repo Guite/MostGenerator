@@ -56,6 +56,7 @@ class ServiceDefinitions {
             «ENDIF»
             «parametersEventSubscriber»
             «parametersHelper»
+            «parametersLogger»
 
         services:
             «IF hasUploads»
@@ -64,6 +65,7 @@ class ServiceDefinitions {
             «ENDIF»
             «servicesEventSubscriber»
             «servicesHelper»
+            «servicesLogger»
     '''
 
     def private parametersRouting(Application it) '''
@@ -98,6 +100,12 @@ class ServiceDefinitions {
         «ENDFOR»
     '''
 
+    def private parametersLogger(Application it) '''
+
+        # Log processor
+        «modPrefix».log.processor.class: Monolog\Processor\PsrLogMessageProcessor
+    '''
+
     def private servicesUploadHandler(Application it) '''
         «modPrefix».upload_handler:
             class: "%«modPrefix».upload_handler.class%"
@@ -120,6 +128,13 @@ class ServiceDefinitions {
                 arguments: ["@service_container", "@«appName»"]
 
         «ENDFOR»
+    '''
+
+    def private servicesLogger(Application it) '''
+        «modPrefix».log.processor:
+            class: "%«modPrefix».log.processor.class%"
+            tags:
+                - { name: monolog.processor }
     '''
 
     def private getSubscriberNames(Application it) {

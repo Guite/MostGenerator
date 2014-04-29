@@ -173,7 +173,6 @@ class EventListener {
          */
         protected function performPrePersistCallback()
         {
-            // echo 'inserting a record ...';
             $this->validate();
 
             return true;
@@ -193,7 +192,13 @@ class EventListener {
          */
         protected function performPostPersistCallback()
         {
-            // echo 'inserted a record ...';
+            «IF !container.application.targets('1.3.5')»
+                $serviceManager = ServiceUtil::getManager();
+                $objectId = $this->createCompositeIdentifier();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} created the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+
+            «ENDIF»
             return true;
         }
 «/*}*/»«/*    def private eventListenerBaseImpl(PreRemove it) {*/»
@@ -265,23 +270,20 @@ class EventListener {
          */
         protected function performPostRemoveCallback()
         {
-            // echo 'deleted a record ...';
+            «IF !container.application.targets('1.3.5')»
+                $serviceManager = ServiceUtil::getManager();
+
+            «ENDIF»
+            «IF it.hasUploadFieldsEntity || !container.application.targets('1.3.5')»
+                $objectId = $this->createCompositeIdentifier();
+
+            «ENDIF»
             «IF it.hasUploadFieldsEntity»
-                «IF it.hasCompositeKeys»
-                    $objectIds = array();
-                    «FOR pkField : it.getPrimaryKeyFields»
-                        $objectIds[] = $this['«pkField.name.formatForCode»'];
-                    «ENDFOR»
-                    $objectId = implode('-', $objectIds);
-                «ELSE»
-                    $objectId = $this['«it.primaryKeyFields.head.name.formatForCode»'];
-                «ENDIF»
                 «IF container.application.targets('1.3.5')»
                     // initialise the upload handler
                     $uploadManager = new «container.application.appName»_UploadHandler();
                 «ELSE»
                     // retrieve the upload handler
-                    $serviceManager = ServiceUtil::getManager();
                     $uploadManager = $serviceManager->get('«container.application.appName.formatForDB».upload_handler');
                 «ENDIF»
 
@@ -294,6 +296,11 @@ class EventListener {
                     // remove upload file (and image thumbnails)
                     $uploadManager->deleteUploadFile('«it.name.formatForCode»', $this, $uploadField, $objectId);
                 }
+            «ENDIF»
+            «IF !container.application.targets('1.3.5')»
+
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} removed the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
             «ENDIF»
 
             return true;
@@ -315,7 +322,6 @@ class EventListener {
          */
         protected function performPreUpdateCallback()
         {
-            // echo 'updating a record ...';
             $this->validate();
 
             return true;
@@ -334,7 +340,13 @@ class EventListener {
          */
         protected function performPostUpdateCallback()
         {
-            // echo 'updated a record ...';
+            «IF !container.application.targets('1.3.5')»
+                $serviceManager = ServiceUtil::getManager();
+                $objectId = $this->createCompositeIdentifier();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} updated the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+
+            «ENDIF»
             return true;
         }
 «/*}*/»
@@ -348,7 +360,6 @@ class EventListener {
          */
         protected function performPreSaveCallback()
         {
-            // echo 'saving a record ...';
             $this->validate();
 
             return true;
@@ -364,7 +375,13 @@ class EventListener {
          */
         protected function performPostSaveCallback()
         {
-            // echo 'saved a record ...';
+            «IF !container.application.targets('1.3.5')»
+                $serviceManager = ServiceUtil::getManager();
+                $objectId = $this->createCompositeIdentifier();
+                $logger = $serviceManager->get('logger');
+                $logger->debug('{app}: User {user} saved the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+
+            «ENDIF»
             return true;
         }
 «/*}*/»

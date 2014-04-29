@@ -33,6 +33,11 @@ class ControllerUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util\Base;
 
+            «IF hasUploads»
+                use Symfony\Component\Filesystem\Filesystem;
+                use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+
+            «ENDIF»
             use DataUtil;
             «IF hasUploads»
                 use FileUtil;
@@ -307,45 +312,64 @@ class ControllerUtil {
         {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName, true);
 
-            «IF !targets('1.3.5')»
-                $session = $this->serviceManager->get('session');
-            «ENDIF»
-
-            // Check if directory exist and try to create it if needed
-            if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
-                «IF targets('1.3.5')»
+            «IF targets('1.3.5')»
+                // Check if directory exist and try to create it if needed
+                if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
                     LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
-                «ELSE»
-                    $session->getFlashBag()->add('error', $this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
-                «ENDIF»
-                return false;
-            }
-
-            // Check if directory is writable and change permissions if needed
-            if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
-                «IF targets('1.3.5')»
-                    LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
-                «ELSE»
-                    $session->getFlashBag()->add('warning', $this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
-                «ENDIF»
-                return false;
-            }
-
-            // Write a htaccess file into the upload directory
-            $htaccessFilePath = $uploadPath . '/.htaccess';
-            $htaccessFileTemplate = 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«getAppDocPath»«ENDIF»htaccessTemplate';
-            if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
-                $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
-                $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
-                if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
-                    «IF targets('1.3.5')»
-                        LogUtil::registerStatus($this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
-                    «ELSE»
-                        $session->getFlashBag()->add('warning', $this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
-                    «ENDIF»
                     return false;
                 }
-            }
+
+                // Check if directory is writable and change permissions if needed
+                if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
+                    LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                    return false;
+                }
+
+                // Write a htaccess file into the upload directory
+                $htaccessFilePath = $uploadPath . '/.htaccess';
+                $htaccessFileTemplate = 'modules/«appName»/docs/htaccessTemplate';
+                if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
+                    $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
+                    $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
+                    if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
+                        LogUtil::registerStatus($this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+                        return false;
+                    }
+                }
+            «ELSE»
+                $session = $this->serviceManager->get('session');
+                $logger = $this->serviceManager->get('logger');
+
+                $fs = new Filesystem();
+
+                try {
+                    // Check if directory exist and try to create it if needed
+                    if (!$fs->exists($uploadPath) && !$fs->mkdir($uploadPath, 0777)) {
+                        $session->getFlashBag()->add('error', $this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+                        $logger->error('{app}: The upload directory {directory} does not exist and could not be created.', array('app' => '«appName»', 'directory' => $uploadPath));
+                        return false;
+                    }
+
+                    // Check if directory is writable and change permissions if needed
+                    if (!is_writable($uploadPath) && !$fs->chmod($uploadPath, 0777)) {
+                        $session->getFlashBag()->add('warning', $this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                        $logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', array('app' => '«appName»', 'directory' => $uploadPath));
+                        return false;
+                    }
+
+                    // Write a htaccess file into the upload directory
+                    $htaccessFilePath = $uploadPath . '/.htaccess';
+                    $htaccessFileTemplate = 'modules/«getAppDocPath»htaccessTemplate';
+                    if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
+                        $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
+                        $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents(DataUtil::formatForOS($htaccessFileTemplate, false)));
+                        $fs->dumpFile($htaccessFilePath, $htaccessContent);
+                    }
+                } catch (IOExceptionInterface $e) {
+                    $session->getFlashBag()->add('error', $this->__f('An error occured during creation of the .htaccess file in directory "%s".', array($e->getPath())));
+                    $logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', array('app' => '«appName»', 'directory' => $uploadPath));
+                }
+            «ENDIF»
 
             return true;
         }
@@ -405,6 +429,11 @@ class ControllerUtil {
 
                     $result['latitude'] = str_replace(',', '.', $location->lat);
                     $result['longitude'] = str_replace(',', '.', $location->lng);
+                } else {
+                    «IF !targets('1.3.5')»
+                        $logger = $this->serviceManager->get('logger');
+                        $logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'address' => $address));
+                    «ENDIF»
                 }
             }
 

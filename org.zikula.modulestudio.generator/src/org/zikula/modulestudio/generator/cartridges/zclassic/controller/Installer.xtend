@@ -143,6 +143,8 @@ class Installer {
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
+                        $logger = $this->serviceManager->get('logger');
+                        $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                         return false;
                     «ENDIF»
                 }
@@ -154,6 +156,8 @@ class Installer {
                     return LogUtil::registerError($returnMessage);
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $returnMessage);
+                    $logger = $this->serviceManager->get('logger');
+                    $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                     return false;
                 «ENDIF»
             }
@@ -220,6 +224,8 @@ class Installer {
                             $this->entityManager->flush();
                         } catch (\Exception $e) {
                             $this->request->getSession()->getFlashBag()->add('error', $this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
+                            $logger = $this->serviceManager->get('logger');
+                            $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()));
                         }
                         $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
                     «ENDFOR»
@@ -261,6 +267,8 @@ class Installer {
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $e->getMessage());
+                    $logger = $this->serviceManager->get('logger');
+                    $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                     return false;
                 «ENDIF»
             }
@@ -298,6 +306,8 @@ class Installer {
                                 return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                             «ELSE»
                                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
+                                $logger = $this->serviceManager->get('logger');
+                                $logger->error('{app}: User {user} could not update the database tables during the upgrade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                                 return false;
                             «ENDIF»
                         }
@@ -305,6 +315,8 @@ class Installer {
                             return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                         «ELSE»
                             $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
+                            $logger = $this->serviceManager->get('logger');
+                            $logger->error('{app}: User {user} could not update the database tables during the ugprade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                             return false;
                         «ENDIF»
                     }
@@ -350,6 +362,8 @@ class Installer {
                     return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                    $logger = $this->serviceManager->get('logger');
+                    $logger->error('{app}: User {user} could not remove stored object workflows during uninstallation.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
                     return false;
                 «ENDIF»
             }
@@ -362,6 +376,8 @@ class Installer {
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
+                        $logger = $this->serviceManager->get('logger');
+                        $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                         return false;
                     «ENDIF»
                 }
@@ -369,6 +385,8 @@ class Installer {
                     return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
+                    $logger = $this->serviceManager->get('logger');
+                    $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                     return false;
                 «ENDIF»
             }

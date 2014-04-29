@@ -199,11 +199,11 @@ class Scribite {
           1. Open modules/Scribite/lib/Scribite/Api/User.php in your favourite text editor.
           2. Search for
                 if (ModUtil::available('SimpleMedia')) {
-                    PageUtil::AddVar('javascript', 'modules/SimpleMedia/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/findItem.js');
+                    PageUtil::addVar('javascript', 'modules/SimpleMedia/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/findItem.js');
                 }
           3. Below this add
                 if (ModUtil::available('«appName»')) {
-                    PageUtil::AddVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
+                    PageUtil::addVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
                 }
           4. Copy or move all files from modules/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
 

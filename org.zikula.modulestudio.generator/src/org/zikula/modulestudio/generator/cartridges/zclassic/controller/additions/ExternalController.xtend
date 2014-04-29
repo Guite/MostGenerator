@@ -98,8 +98,6 @@ class ExternalController {
         {
             «IF targets('1.3.5')»
                 $getData = $this->request->query;
-            «ENDIF»
-            «IF targets('1.3.5')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -122,19 +120,15 @@ class ExternalController {
 
             «IF targets('1.3.5')»
                 $source = isset($args['source']) ? $args['source'] : $getData->filter('source', '', FILTER_SANITIZE_STRING);
-            «ENDIF»
-            if (!in_array($source, array('contentType', 'scribite'))) {
-                $source = 'contentType';
-            }
+                if (!in_array($source, array('contentType', 'scribite'))) {
+                    $source = 'contentType';
+                }
 
-            «IF targets('1.3.5')»
                 $displayMode = isset($args['displayMode']) ? $args['displayMode'] : $getData->filter('displayMode', 'embed', FILTER_SANITIZE_STRING);
-            «ENDIF»
-            if (!in_array($displayMode, array('link', 'embed'))) {
-                $displayMode = 'embed';
-            }
+                if (!in_array($displayMode, array('link', 'embed'))) {
+                    $displayMode = 'embed';
+                }
 
-            «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
             «ELSE»
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
@@ -161,19 +155,7 @@ class ExternalController {
 
             $entity->initWorkflow();
 
-            /*if ($controllerHelper->hasCompositeKeys($objectType)) {
-                «/** TODO consider composite keys properly */»
-                $instanceId = '';
-                foreach ($idFields as $idField) {
-                    if (!empty($instanceId)) {
-                        $instanceId .= '_';
-                    }
-                    $instanceId .= $idValues[$idField];
-                }
-                $instance = $instanceId . '::';
-            } else {*/
-                $instance = $id . '::';
-            /*}*/
+            $instance = $entity->createCompositeIdentifier() . '::';
 
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id

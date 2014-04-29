@@ -208,6 +208,8 @@ class Uploads {
                 «ELSE»
                     $session = $serviceManager->get('session');
                     $session->getFlashBag()->add('error', $e->getMessage());
+                    $logger = $serviceManager->get('logger');
+                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName));
                     return false;
                 «ENDIF»
             }
@@ -219,6 +221,8 @@ class Uploads {
                 «ELSE»
                     $session = $serviceManager->get('session');
                     $session->getFlashBag()->add('error', __('Error! Could not move your file to the destination folder.', $dom));
+                    $logger = $serviceManager->get('logger');
+                    $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName));
                     return false;
                 «ENDIF»
             }
@@ -261,6 +265,8 @@ class Uploads {
                 «ELSE»
                     $session = $serviceManager->get('session');
                     $session->getFlashBag()->add('error', __('Error! No file found.', $dom));
+                    $logger = $serviceManager->get('logger');
+                    $logger->error('{app}: User {user} tried to upload a file which could not be found.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
                     return false;
                 «ENDIF»
             }
@@ -279,6 +285,8 @@ class Uploads {
                 «ELSE»
                     $session = $serviceManager->get('session');
                     $session->getFlashBag()->add('error', __('Error! This file type is not allowed. Please choose another file format.', $dom));
+                    $logger = $serviceManager->get('logger');
+                    $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'extension' => $extension));
                     return false;
                 «ENDIF»
             }
@@ -296,6 +304,8 @@ class Uploads {
                         «ELSE»
                             $session = $serviceManager->get('session');
                             $session->getFlashBag()->add('error', __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                            $logger = $serviceManager->get('logger');
+                            $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeKB));
                             return false;
                         «ENDIF»
                     }
@@ -306,6 +316,8 @@ class Uploads {
                     «ELSE»
                         $session = $serviceManager->get('session');
                         $session->getFlashBag()->add('error', __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                        $logger = $serviceManager->get('logger');
+                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeMB));
                         return false;
                     «ENDIF»
                 }
@@ -321,6 +333,8 @@ class Uploads {
                     «ELSE»
                         $session = $serviceManager->get('session');
                         $session->getFlashBag()->add('error', __('Error! This file type seems not to be a valid image.', $dom));
+                        $logger = $serviceManager->get('logger');
+                        $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
                         return false;
                     «ENDIF»
                 }
@@ -526,37 +540,39 @@ class Uploads {
         private function handleError($file)
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
-            $errmsg = '';
+            $errorMessage = '';
             switch ($file['error']) {
                 case UPLOAD_ERR_OK: //no error; possible file attack!
-                    $errmsg = __('Unknown error', $dom);
+                    $errorMessage = __('Unknown error', $dom);
                     break;
                 case UPLOAD_ERR_INI_SIZE: //uploaded file exceeds the upload_max_filesize directive in php.ini
-                    $errmsg = __('File too big', $dom);
+                    $errorMessage = __('File too big', $dom);
                     break;
                 case UPLOAD_ERR_FORM_SIZE: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-                    $errmsg = __('File too big', $dom);
+                    $errorMessage = __('File too big', $dom);
                     break;
                 case UPLOAD_ERR_PARTIAL: //uploaded file was only partially uploaded
-                    $errmsg = __('File uploaded partially', $dom);
+                    $errorMessage = __('File uploaded partially', $dom);
                     break;
                 case UPLOAD_ERR_NO_FILE: //no file was uploaded
-                    $errmsg = __('No file uploaded', $dom);
+                    $errorMessage = __('No file uploaded', $dom);
                     break;
                 case UPLOAD_ERR_NO_TMP_DIR: //missing a temporary folder
-                    $errmsg = __('No tmp folder', $dom);
+                    $errorMessage = __('No tmp folder', $dom);
                     break;
                 default: //a default (error, just in case!  :)
-                    $errmsg = __('Unknown error', $dom);
+                    $errorMessage = __('Unknown error', $dom);
                     break;
             }
 
             «IF targets('1.3.5')»
-                return LogUtil::registerError(__('Error with upload: ', $dom) . $errmsg);
+                return LogUtil::registerError(__('Error with upload: ', $dom) . $errorMessage);
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 $session = $serviceManager->get('session');
-                $session->getFlashBag()->add('error', __('Error with upload: ', $dom) . $errmsg);
+                $session->getFlashBag()->add('error', __('Error with upload: ', $dom) . $errorMessage);
+                $logger = $serviceManager->get('logger');
+                $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $errorMessage));
                 return false;
             «ENDIF»
         }
@@ -596,7 +612,9 @@ class Uploads {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             } catch (\Exception $e) {
                 LogUtil::registerError($e->getMessage());
-                return $objectData;
+                $logger = $serviceManager->get('logger');
+                $logger = $serviceManager->get('logger');
+                $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName));
             }
             $fileName = $objectData[$fieldName];
 

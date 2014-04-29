@@ -130,22 +130,27 @@ class User {
     def private userDelete(Entity it) '''
         «IF standardFields || hasUserFieldsEntity»
 
-        $repo = $entityManager->getRepository('«entityClassName('', false)»');
-        «IF standardFields»
-            // delete all «nameMultiple.formatForDisplay» created by this user
-            $repo->deleteCreator($uid);
-            // note you could also do: $repo->updateCreator($uid, 2);
+            $repo = $entityManager->getRepository('«entityClassName('', false)»');
+            «IF standardFields»
+                // delete all «nameMultiple.formatForDisplay» created by this user
+                $repo->deleteCreator($uid);
+                // note you could also do: $repo->updateCreator($uid, 2);
 
-            // set last editor to admin (2) for all «nameMultiple.formatForDisplay» updated by this user
-            $repo->updateLastEditor($uid, 2);
-            // note you could also do: $repo->deleteLastEditor($uid);
-        «ENDIF»
-        «IF hasUserFieldsEntity»
-            «FOR userField: getUserFieldsEntity»
-                // set «userField.name.formatForDisplay» to guest (1) for all affected «nameMultiple.formatForDisplay»
-                $repo->updateUserField('«userField.name.formatForCode»', $uid, 1);
-            «ENDFOR»
-        «ENDIF»
+                // set last editor to admin (2) for all «nameMultiple.formatForDisplay» updated by this user
+                $repo->updateLastEditor($uid, 2);
+                // note you could also do: $repo->deleteLastEditor($uid);
+            «ENDIF»
+            «IF hasUserFieldsEntity»
+                «FOR userField: getUserFieldsEntity»
+                    // set «userField.name.formatForDisplay» to guest (1) for all affected «nameMultiple.formatForDisplay»
+                    $repo->updateUserField('«userField.name.formatForCode»', $uid, 1);
+                «ENDFOR»
+            «ENDIF»
+            «IF !container.application.targets('1.3.5')»
+
+                $logger = $serviceManager->get('logger');
+                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»'));
+            «ENDIF»
         «ENDIF»
     '''
 }

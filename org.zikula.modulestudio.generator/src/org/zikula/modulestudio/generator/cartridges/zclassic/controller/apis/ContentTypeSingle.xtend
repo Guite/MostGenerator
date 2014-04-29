@@ -189,9 +189,9 @@ class ContentTypeSingle {
         {
             // ensure our custom plugins are loaded
             «IF targets('1.3.5')»
-            array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
+                array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
             «ELSE»
-            array_push($this->view->plugins_dir, 'modules/«getViewPath»/plugins');
+                array_push($this->view->plugins_dir, 'modules/«getViewPath»/plugins');
             «ENDIF»
 
             // required as parameter for the item selector plugin

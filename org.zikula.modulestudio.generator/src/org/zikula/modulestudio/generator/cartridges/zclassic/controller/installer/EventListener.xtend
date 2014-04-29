@@ -13,7 +13,7 @@ class EventListener {
 
     /**
      * Entry point for event listeners registered by the installer.
-     * Used for 1.3.5 target only, in 1.3.7 it is replaced by service definition used by the DependencyInjection component.
+     * Used for 1.3.5 target only, in 1.4.0 it is replaced by service definition used by the DependencyInjection component.
      */
     def generate(Application it) '''
         /**

@@ -46,12 +46,18 @@ class LinkTable {
             {
                 $qb = $this->getEntityManager()->createQueryBuilder();
                 «IF app.targets('1.3.5')»
-                $qb->delete('«app.appName»_Entity_«refClass.formatForCodeCapital»', 'tbl');
+                    $qb->delete('«app.appName»_Entity_«refClass.formatForCodeCapital»', 'tbl');
                 «ELSE»
-                $qb->delete('\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«refClass.formatForCodeCapital»', 'tbl');
+                    $qb->delete('\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«refClass.formatForCodeCapital»', 'tbl');
                 «ENDIF»
                 $query = $qb->getQuery();
                 $query->execute();
+                «IF !app.targets('1.3.5')»
+
+                    $serviceManager = ServiceUtil::getManager();
+                    $logger = $serviceManager->get('logger');
+                    $logger->debug('{app}: User {user} truncated the {entity} entity table.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«refClass.formatForDisplay»'));
+                «ENDIF»
             }
         }
     '''

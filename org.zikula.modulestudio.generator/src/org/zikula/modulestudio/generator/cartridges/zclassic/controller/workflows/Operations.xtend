@@ -121,8 +121,18 @@ class Operations {
             $entityManager->flush();
             //});
             $result = true;
+            «IF !app.targets('1.3.5')»
+
+                $logger = $serviceManager->get('logger');
+                $logger->notice('{app}: User {user} updated an entity.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+            «ENDIF»
         } catch (\Exception $e) {
             «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+            «IF !app.targets('1.3.5')»
+
+                $logger = $serviceManager->get('logger');
+                $logger->error('{app}: User {user} tried to update an entity, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+            «ENDIF»
         }
     '''
 
@@ -136,8 +146,18 @@ class Operations {
             $entityManager->remove($entity);
             $entityManager->flush();
             $result = true;
+            «IF !app.targets('1.3.5')»
+
+                $logger = $serviceManager->get('logger');
+                $logger->notice('{app}: User {user} deleted an entity.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+            «ENDIF»
         } catch (\Exception $e) {
             «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+            «IF !app.targets('1.3.5')»
+
+                $logger = $serviceManager->get('logger');
+                $logger->error('{app}: User {user} tried to delete an entity, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+            «ENDIF»
         }
     '''
 }

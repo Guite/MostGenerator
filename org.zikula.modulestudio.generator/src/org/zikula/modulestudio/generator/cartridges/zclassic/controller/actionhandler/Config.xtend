@@ -142,6 +142,10 @@ class Config {
              */
             public function handleCommand(Zikula_Form_View $view, &$args)
             {
+                «IF !targets('1.3.5')»
+                    $serviceManager = ServiceUtil::getManager();
+
+                «ENDIF»
                 if ($args['commandName'] == 'save') {
                     // check if all fields are valid
                     if (!$this->view->isValid()) {
@@ -171,6 +175,9 @@ class Config {
                         LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Module configuration updated.'));
+
+                        $logger = $serviceManager->get('logger');
+                        $logger->notice('{app}: User {user} updated the configuration.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
                     «ENDIF»
                 } else if ($args['commandName'] == 'cancel') {
                     // nothing to do there
@@ -180,7 +187,6 @@ class Config {
                 «IF targets('1.3.5')»
                     $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
                 «ELSE»
-                    $serviceManager = $this->view->getServiceManager();
                     $url = $serviceManager->get('router')->generate('«appName.formatForDB»_«configController.formatForDB»_config');
                 «ENDIF»
 

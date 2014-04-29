@@ -463,6 +463,8 @@ class FormHandler {
                     return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                    $logger = $this->view->getServiceManager()->get('logger');
+                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()));
                     return false;
                 «ENDIF»
             }
@@ -588,9 +590,9 @@ class FormHandler {
                 $entity = clone $entityT;
             } else {
                 «IF targets('1.3.5')»
-                $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
+                    $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $entity = new $entityClass();
             }
@@ -953,6 +955,12 @@ class FormHandler {
                 «ELSE»
                     $flashType = ($success === true) ? 'status' : 'error';
                     $this->request->getSession()->getFlashBag()->add($flashType, $message);
+                    $logger = $this->view->getServiceManager()->get('logger');
+                    if ($success === true) {
+                        $logger->notice('{app}: User {user} updated the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()));
+                    } else {
+                        $logger->error('{app}: User {user} tried to update the {entity} with id {id}, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()));
+                    }
                 «ENDIF»
             }
         }
@@ -1372,7 +1380,8 @@ class FormHandler {
                     «IF app.targets('1.3.5')»
                         LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
                     «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
+                        $logger = $this->view->getServiceManager()->get('logger');
+                        $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType));
                     «ENDIF»
 
                     return $this->view->redirect($this->getRedirectUrl(null));
@@ -1548,6 +1557,8 @@ class FormHandler {
                         LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                        $logger = $this->view->getServiceManager()->get('logger');
+                        $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
                     «ENDIF»
             «ENDIF»
             } catch(\Exception $e) {
@@ -1555,6 +1566,8 @@ class FormHandler {
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    $logger = $this->view->getServiceManager()->get('logger');
+                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()));
                 «ENDIF»
             }
 

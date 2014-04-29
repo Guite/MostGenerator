@@ -500,6 +500,11 @@ class Ajax {
             // return response
             $result = array('id' => $id,
                             'state' => $entity[$field]);
+            «IF !app.targets('1.3.5')»
+
+                $logger = $this->serviceManager->get('logger');
+                $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id));
+            «ENDIF»
 
             return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
         }
@@ -638,24 +643,48 @@ class Ajax {
     '''
 
     def private treeOperationSwitch(AjaxController it, Application app) '''
+        «IF !app.targets('1.3.5')»
+            $logger = $this->serviceManager->get('logger');
+
+        «ENDIF»
         switch ($op) {
             case 'addRootNode':
                             «treeOperationAddRootNode(app)»
+                            «IF !app.targets('1.3.5')»
+
+                                $logger->notice('{app}: User {user} added a new root node in the {entity} tree.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType));
+                            «ENDIF»
 
                             break;
             case 'addChildNode':
                             «treeOperationAddChildNode(app)»
+                            «IF !app.targets('1.3.5')»
+
+                                $logger->notice('{app}: User {user} added a new child node in the {entity} tree.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType));
+                            «ENDIF»
                             break;
             case 'deleteNode':
                             «treeOperationDeleteNode(app)»
+                            «IF !app.targets('1.3.5')»
+
+                                $logger->notice('{app}: User {user} deleted a node from the {entity} tree.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType));
+                            «ENDIF»
 
                             break;
             case 'moveNode':
                             «treeOperationMoveNode(app)»
+                            «IF !app.targets('1.3.5')»
+
+                                $logger->notice('{app}: User {user} moved a node in the {entity} tree.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType));
+                            «ENDIF»
 
                             break;
             case 'moveNodeTo':
                             «treeOperationMoveNodeTo(app)»
+                            «IF !app.targets('1.3.5')»
+
+                                $logger->notice('{app}: User {user} moved a node in the {entity} tree.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType));
+                            «ENDIF»
 
                             break;
         }

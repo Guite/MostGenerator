@@ -350,6 +350,8 @@ class ControllerLayer {
                         LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                        $logger = $this->serviceManager->get('logger');
+                        $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()));
                     «ENDIF»
                 }
 
@@ -362,12 +364,16 @@ class ControllerLayer {
                         LogUtil::registerStatus($this->__('Done! Item deleted.'));
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
+                        $logger = $this->serviceManager->get('logger');
+                        $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
                     «ENDIF»
                 } else {
                     «IF app.targets('1.3.5')»
                         LogUtil::registerStatus($this->__('Done! Item updated.'));
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item updated.'));
+                        $logger = $this->serviceManager->get('logger');
+                        $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
                     «ENDIF»
                 }
 

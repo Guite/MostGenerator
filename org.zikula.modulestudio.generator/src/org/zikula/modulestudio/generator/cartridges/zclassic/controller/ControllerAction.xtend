@@ -324,6 +324,9 @@ class ControllerAction {
 
             return $this->redirect($redirectUrl);
         «ELSE»
+            $logger = $this->serviceManager->get('logger');
+            $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', array('app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»'));
+
             $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $objectType . '_«name.formatForCode»', $redirectArgs);
 
             return new RedirectResponse(System::normalizeUrl($redirectUrl));
@@ -1016,6 +1019,9 @@ class ControllerAction {
             «ELSE»
                 $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+
+                $logger = $this->serviceManager->get('logger');
+                $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId));
             «ENDIF»
         }
 
@@ -1116,6 +1122,8 @@ class ControllerAction {
                 return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
             «ELSE»
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                $logger = $this->serviceManager->get('logger');
+                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
                 return false;
             «ENDIF»
         }
@@ -1131,6 +1139,8 @@ class ControllerAction {
                 return LogUtil::registerError($this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
             «ELSE»
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
+                $logger = $this->serviceManager->get('logger');
+                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
                 return false;
             «ENDIF»
         }
@@ -1153,7 +1163,13 @@ class ControllerAction {
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $deleteActionId);
                 if ($success) {
-                    $this->registerStatus($this->__('Done! Item deleted.'));
+                    «IF app.targets('1.3.5')»
+                        $this->registerStatus($this->__('Done! Item deleted.'));
+                    «ELSE»
+                        $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
+                        $logger = $this->serviceManager->get('logger');
+                        $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
+                    «ENDIF»
                 }
 
                 // Let any hooks know that we have created, updated or deleted the «name.formatForDisplay»
