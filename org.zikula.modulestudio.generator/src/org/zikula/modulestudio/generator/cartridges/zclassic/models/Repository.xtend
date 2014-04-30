@@ -1010,7 +1010,7 @@ class Repository {
                     System::queryStringSetVar('pos', $page);
                     «IF !app.targets('1.3.5')»
                         if ($this->getRequest() !== null) {
-                            $this->getRequest->query->set('pos', $page);
+                            $this->getRequest()->query->set('pos', $page);
                         }
                     «ENDIF»
                 }
