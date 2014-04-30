@@ -168,7 +168,7 @@ class ControllerAction {
          «' '»* @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
          «' '»*        name = "«app.appName.formatForDB»_«name.formatForCode»_«action.name.formatForCode»",
          «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "«IF action instanceof DisplayAction»%«app.appName.formatForDB».routing.formats.display%«ELSE»html«ENDIF»"},
-         «' '»*        defaults = {"_format" = "html"}
+         «' '»*        defaults = {"_format" = "html"},
          «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}
          «' '»* )
     '''
