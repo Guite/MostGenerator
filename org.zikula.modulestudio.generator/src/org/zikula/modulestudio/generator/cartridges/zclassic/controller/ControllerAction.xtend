@@ -245,7 +245,7 @@ class ControllerAction {
         output
     }
 
-    def private dispatch methodArgs(Entity it, DisplayAction action) '''«methodArgsForSingleEntity»»''' 
+    def private dispatch methodArgs(Entity it, DisplayAction action) '''«methodArgsForSingleEntity»''' 
 
     def private dispatch actionRoute(DisplayAction it, Entity entity) '''
         «actionRouteForSingleEntity(entity, it)»
@@ -257,7 +257,7 @@ class ControllerAction {
         «actionRouteForSingleEntity(entity, it)»
     '''
 
-    def private dispatch methodArgs(Entity it, DeleteAction action) '''«methodArgsForSingleEntity»»''' 
+    def private dispatch methodArgs(Entity it, DeleteAction action) '''«methodArgsForSingleEntity»''' 
 
     def private dispatch actionRoute(DeleteAction it, Entity entity) '''
         «actionRouteForSingleEntity(entity, it)»
