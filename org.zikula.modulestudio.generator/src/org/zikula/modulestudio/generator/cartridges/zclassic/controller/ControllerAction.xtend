@@ -155,7 +155,7 @@ class ControllerAction {
 
     def private dispatch actionRoute(ViewAction it, Entity entity) '''
          «' '»*
-         «' '»* @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».plural%/{sort}/{sortdir}/{pos}/{num}.{_format}",
+         «' '»* @Route("/%«app.appName.formatForDB».routing.«entity.name.formatForCode».plural%/{sort}/{sortdir}/{pos}/{num}.{_format}",
          «' '»*        name = "«app.appName.formatForDB»_«entity.name.formatForCode»_view",
          «' '»*        requirements = {"sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+", "_format" = "%«app.appName.formatForDB».routing.formats.view%"},
          «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0, "_format" = "html"},
