@@ -49,7 +49,7 @@ class ControllerAction {
         {
             $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
             System::queryStringSetVar('type', $legacyControllerType);
-            $this->request->query->set('type', $legacyControllerType);
+            $«IF app.targets('1.3.5')»this->«ENDIF»request->query->set('type', $legacyControllerType);
 
             «IF softDeleteable && !app.targets('1.3.5')»
                 if ($legacyControllerType == 'admin') {
@@ -245,7 +245,7 @@ class ControllerAction {
         output
     }
 
-    def private dispatch methodArgs(Entity it, DisplayAction action) '''«methodArgsForSingleEntity»''' 
+    def private dispatch methodArgs(Entity it, DisplayAction action) '''Request $request, «methodArgsForSingleEntity»''' 
 
     def private dispatch actionRoute(DisplayAction it, Entity entity) '''
         «actionRouteForSingleEntity(entity, it)»
@@ -257,7 +257,7 @@ class ControllerAction {
         «actionRouteForSingleEntity(entity, it)»
     '''
 
-    def private dispatch methodArgs(Entity it, DeleteAction action) '''«methodArgsForSingleEntity»''' 
+    def private dispatch methodArgs(Entity it, DeleteAction action) '''Request $request, «methodArgsForSingleEntity»''' 
 
     def private dispatch actionRoute(DeleteAction it, Entity entity) '''
         «actionRouteForSingleEntity(entity, it)»
@@ -345,6 +345,7 @@ class ControllerAction {
 
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
+            $utilArgs = array('controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»');
             $permLevel = $legacyControllerType == 'admin' ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
             «action.permissionCheck("' . ucwords($objectType) . '", '')»
         «ENDIF»
@@ -900,19 +901,9 @@ class ControllerAction {
 
     def private prepareDisplayPermissionCheck(Entity it) '''
         // build ModUrl instance for display hooks; also create identifier for permission check
-        $currentUrlArgs = array();
-        $instanceId = '';
-        foreach ($idFields as $idField) {
-            $currentUrlArgs[$idField] = $entity[$idField];
-            if (!empty($instanceId)) {
-                $instanceId .= '_';
-            }
-            $instanceId .= $entity[$idField];
-        }
-        $currentUrlArgs['id'] = $instanceId;
-        if (isset($entity['slug'])) {
-            $currentUrlArgs['slug'] = $entity['slug'];
-        }
+        $currentUrlArgs = $entity->createUrlArgs();
+        $instanceId = $entity->createCompositeIdentifier();
+        $currentUrlArgs['id'] = $instanceId; // TODO remove this
         $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
     '''
 

@@ -454,7 +454,7 @@ class ControllerLayer {
 
                 return true;
             «ELSE»
-                return new PlainResponse($view->display('«typeName.toFirstUpper»/inlineRedirectHandler.tpl'));
+                return new PlainResponse($this->view->display('«typeName.toFirstUpper»/inlineRedirectHandler.tpl'));
             «ENDIF»
         }
     '''
