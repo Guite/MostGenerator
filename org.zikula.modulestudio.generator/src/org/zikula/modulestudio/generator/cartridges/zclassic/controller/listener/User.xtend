@@ -16,7 +16,7 @@ class User {
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
-    CommonExample commonExample
+    CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.5')»

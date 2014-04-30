@@ -17,7 +17,7 @@ class ThirdParty {
     @Inject extension Utils = new Utils
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
-    CommonExample commonExample
+    CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
         «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»

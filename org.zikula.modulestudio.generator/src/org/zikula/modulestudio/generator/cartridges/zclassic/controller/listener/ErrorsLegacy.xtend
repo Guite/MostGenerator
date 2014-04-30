@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class ErrorsLegacy {
 
-    CommonExample commonExample
+    CommonExample commonExample = new CommonExample()
 
     // obsolete, used for 1.3.5 only
     def generate(Application it, Boolean isBase) '''
