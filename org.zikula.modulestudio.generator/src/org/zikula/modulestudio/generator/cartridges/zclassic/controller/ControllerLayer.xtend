@@ -416,7 +416,7 @@ class ControllerLayer {
          * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
          *        name = "«app.appName.formatForDB»_«name.formatForCode»_handleInlineRedirect",
          *        requirements = {"id" = "\d+"},
-         *        defaults = {"commandName" = "", id" = 0},
+         *        defaults = {"commandName" = "", "id" = 0},
          *        methods = {"GET"}
          * )
          «ENDIF»
