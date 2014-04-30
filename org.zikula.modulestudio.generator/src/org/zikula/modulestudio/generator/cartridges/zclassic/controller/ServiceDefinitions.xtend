@@ -125,7 +125,7 @@ class ServiceDefinitions {
         «FOR className : getHelperNames»
             «modPrefix».«className.toLowerCase»_helper:
                 class: "%«modPrefix».«className.toLowerCase»_helper.class%"
-                arguments: ["@service_container", "@«appName»"]
+                arguments: ["@service_container", "@=service('kernel').getBundle('«appName»')"]
 
         «ENDFOR»
     '''
