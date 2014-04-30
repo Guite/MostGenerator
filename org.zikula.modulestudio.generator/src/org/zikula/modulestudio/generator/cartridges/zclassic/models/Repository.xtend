@@ -223,6 +223,7 @@ class Repository {
             use FormUtil;
             use ModUtil;
             use ServiceUtil;
+            use System;
             use UserUtil;
             «IF hasArchive && getEndDateField !== null»
                 use ZLanguage;
