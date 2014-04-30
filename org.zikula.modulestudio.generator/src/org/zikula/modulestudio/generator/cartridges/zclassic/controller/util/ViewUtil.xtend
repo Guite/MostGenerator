@@ -249,13 +249,13 @@ class ViewUtil {
                 if ($hasAdminAccess) {
                     $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»);
                 } else {
-                    $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»«IF format == 'rss' || format == 'atom' || format == 'pdf'»'«format»'«ENDIF»«ENDFOR»);
+                    $extensions = array(«FOR format : getListOfViewFormats.filter[it == 'rss' || it == 'atom' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»);
                 }
             } elseif ($func == 'display') {
                 if ($hasAdminAccess) {
                     $extensions = array(«FOR format : getListOfDisplayFormats SEPARATOR ', '»'«format»'«ENDFOR»);
                 } else {
-                    $extensions = array(«FOR format : getListOfDisplayFormats SEPARATOR ', '»«IF format == 'ics' || format == 'pdf'»'«format»'«ENDIF»«ENDFOR»);
+                    $extensions = array(«FOR format : getListOfDisplayFormats.filter[it == 'ics' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»);
                 }
             }
 
