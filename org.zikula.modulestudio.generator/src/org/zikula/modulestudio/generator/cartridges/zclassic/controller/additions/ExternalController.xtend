@@ -187,7 +187,7 @@ class ExternalController {
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
          *        name = "«appName.formatForDB»_external_finder",
-         *        requirements = {"editor" = "xinha|tinymce«/* |ckeditor */»", "sortdir" = "asc|desc", "pos" => "\d+", "num" => "\d+"},
+         *        requirements = {"editor" = "xinha|tinymce«/* |ckeditor */»", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
          *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
          *        methods = {"GET"}
          * )
