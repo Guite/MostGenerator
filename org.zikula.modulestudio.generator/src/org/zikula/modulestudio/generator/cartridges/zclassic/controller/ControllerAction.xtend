@@ -298,31 +298,38 @@ class ControllerAction {
     '''
 
     def private redirectLegacyAction(Action it) '''
-        // forward GET parameters
-        $redirectArgs = $this->request->query->«IF app.targets('1.3.5')»getCollection«ELSE»all«ENDIF»();
+        «IF !app.targets('1.3.5')»
+            // forward GET parameters
+            $redirectArgs = $this->request->query->«IF app.targets('1.3.5')»getCollection«ELSE»all«ENDIF»();
 
-        // remove unrequired fields
-        if (isset($redirectArgs['module'])) {
-            unset($redirectArgs['module']);
-        }
-        if (isset($redirectArgs['type'])) {
-            unset($redirectArgs['type']);
-        }
-        if (isset($redirectArgs['func'])) {
-            unset($redirectArgs['func']);
-        }
-        if (isset($redirectArgs['ot'])) {
-            unset($redirectArgs['ot']);
-        }
+            // remove unrequired fields
+            if (isset($redirectArgs['module'])) {
+                unset($redirectArgs['module']);
+            }
+            if (isset($redirectArgs['type'])) {
+                unset($redirectArgs['type']);
+            }
+            if (isset($redirectArgs['func'])) {
+                unset($redirectArgs['func']);
+            }
+            if (isset($redirectArgs['ot'])) {
+                unset($redirectArgs['ot']);
+            }
 
-        // add information about legacy controller type (admin/user)
-        $redirectArgs['lct'] = '«controller.formattedName»';
+            // add information about legacy controller type (admin/user)
+            $redirectArgs['lct'] = '«controller.formattedName»';
 
+        «ENDIF»
         // redirect to entity controller
         «IF app.targets('1.3.5')»
+            «/*
             $redirectUrl = ModUtil::url($this->name, $objectType, '«name.formatForCode»', $redirectArgs);
 
-            return $this->redirect($redirectUrl);
+            return $this->redirect($redirectUrl); */»
+            System::queryStringSetVar('lct', '«controller.formattedName»');
+            $this->request->query->set('lct', '«controller.formattedName»');
+
+            return ModUtil::func($this->name, $objectType, '«name.formatForCode»', array('lct' => '«controller.formattedName»'));
         «ELSE»
             $logger = $this->serviceManager->get('logger');
             $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', array('app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»'));
