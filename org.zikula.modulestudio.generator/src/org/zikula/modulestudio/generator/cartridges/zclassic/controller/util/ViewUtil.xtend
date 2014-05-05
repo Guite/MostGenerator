@@ -164,7 +164,7 @@ class ViewUtil {
                 // standalone output
                 if ($templateExtension == 'pdf') {
                     $template = str_replace('.pdf', '', $template);
-                    return $this->processPdf($view, $template);
+                    return $this->processPdf($view«IF !targets('1.3.5')», $request«ENDIF», $template);
                 } else {
                     «IF targets('1.3.5')»
                         $view->display($template);
@@ -268,17 +268,24 @@ class ViewUtil {
          * Processes a template file using dompdf (LGPL).
          *
          * @param Zikula_View $view     Reference to view object.
+         «IF !targets('1.3.5')»
+         * @param Request     $request  Current request.
+         «ENDIF»
          * @param string      $template Name of template to use.
          *
          * @return mixed Output.
          */
-        protected function processPdf(Zikula_View $view, $template)
+        protected function processPdf(Zikula_View $view«IF !targets('1.3.5')», Request $request«ENDIF», $template)
         {
             // first the content, to set page vars
             $output = $view->fetch($template);
 
             // make local images absolute
-            $output = str_replace('img src="/', 'img src="' . System::serverGetVar('DOCUMENT_ROOT') . '/', $output);
+            «IF targets('1.3.5')»
+                $output = str_replace('img src="/', 'img src="' . System::serverGetVar('DOCUMENT_ROOT') . '/', $output);
+            «ELSE»
+                $output = str_replace('img src="/', 'img src="' . $request->server->get('DOCUMENT_ROOT') . '/', $output);
+            «ENDIF»
 
             // see http://codeigniter.com/forums/viewthread/69388/P15/#561214
             //$output = utf8_decode($output);
