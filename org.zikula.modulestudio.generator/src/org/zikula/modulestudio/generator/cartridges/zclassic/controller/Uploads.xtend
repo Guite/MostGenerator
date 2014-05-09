@@ -611,10 +611,12 @@ class Uploads {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             } catch (\Exception $e) {
-                LogUtil::registerError($e->getMessage());
-                $logger = $serviceManager->get('logger');
-                $logger = $serviceManager->get('logger');
-                $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName));
+                «IF targets('1.3.5')»
+                    LogUtil::registerError($e->getMessage());
+                «ELSE»
+                    $logger = $serviceManager->get('logger');
+                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName));
+                «ENDIF»
             }
             $fileName = $objectData[$fieldName];
 
