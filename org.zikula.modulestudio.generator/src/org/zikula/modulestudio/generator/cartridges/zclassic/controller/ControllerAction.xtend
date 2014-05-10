@@ -45,7 +45,7 @@ class ControllerAction {
         «action.actionDoc(it)»
         public function «action.methodName»«IF app.targets('1.3.5')»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
         {
-            $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+            $legacyControllerType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
             System::queryStringSetVar('type', $legacyControllerType);
             $«IF app.targets('1.3.5')»this->«ENDIF»request->query->set('type', $legacyControllerType);
 
@@ -73,6 +73,9 @@ class ControllerAction {
             «ENDIF»
         «ENDIF»
          *
+         «IF !app.targets('1.3.5')»
+         * @param Request  $request      Current request instance
+         «ENDIF»
         «IF entity !== null»
             «actionDocMethodParams(entity, it)»
         «ELSE»
@@ -141,10 +144,10 @@ class ControllerAction {
                + ' * @param int     $pos          Current pager position.\n'
                + ' * @param int     $num          Amount of entries to display.\n'
             DisplayAction:
-                (if (entity !== null && controller.container.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
+                (if (entity !== null && !controller.container.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
             DeleteAction:
-                (if (entity !== null && controller.container.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
+                (if (entity !== null && !controller.container.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
                + ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n'
             default: ''
