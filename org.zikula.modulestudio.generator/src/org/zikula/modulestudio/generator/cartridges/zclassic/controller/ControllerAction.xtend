@@ -87,11 +87,11 @@ class ControllerAction {
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
-         * @throws NotFoundHttpException     Thrown if item to be displayed isn't found
+         * @throws NotFoundHttpException Thrown by param converter if item to be displayed isn't found
          «ELSEIF it instanceof EditAction»
-         * @throws NotFoundHttpException     Thrown if item to be edited isn't found
+         * @throws NotFoundHttpException Thrown by form handler if item to be edited isn't found
          «ELSEIF it instanceof DeleteAction»
-         * @throws NotFoundHttpException     Thrown if item to be deleted isn't found
+         * @throws NotFoundHttpException Thrown by param converter if item to be deleted isn't found
          «ENDIF»
          «ENDIF»
          */
