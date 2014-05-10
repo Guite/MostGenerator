@@ -71,6 +71,21 @@ class ControllerAction {
             «IF it instanceof DisplayAction || it instanceof DeleteAction»
                 «paramConverter(entity)»
             «ENDIF»
+            «IF it instanceof MainAction»
+                @Cache(expires="«/*tomorrow*/»+7 days«/* valid are all dates understood by strtotime() */»", public=true)
+            «ELSEIF it instanceof ViewAction»
+                @Cache(expires="+2 hours", public=false)
+            «ELSEIF !(it instanceof CustomAction)»
+                «IF entity.standardFields»
+                    @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map['post.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate()")
+                «ELSE»
+                    «IF it instanceof EditAction»
+                        @Cache(expires="+30 minutes", public=false)
+                    «ELSE»
+                        @Cache(expires="+12 hours", public=false)
+                    «ENDIF»
+                «ENDIF»
+            «ENDIF»
         «ENDIF»
          *
          «IF !app.targets('1.3.5')»

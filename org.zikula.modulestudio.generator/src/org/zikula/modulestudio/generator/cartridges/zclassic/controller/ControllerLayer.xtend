@@ -222,10 +222,11 @@ class ControllerLayer {
             «IF hasActions('main') || hasActions('view') || hasActions('delete')»
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
-            use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+            use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
             «IF hasActions('display') || hasActions('delete')»
                 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
             «ENDIF»
+            use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
             use FormUtil;
             «IF hasActions('edit')»
                 use JCSSUtil;
