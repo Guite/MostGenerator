@@ -117,15 +117,17 @@ class Translatable {
             }
 
             // prepare form data to edit multiple translations at once
-            $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.5')»
+                $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «ENDIF»
 
             // get translations
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType) . 'Translation';
+                $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'TranslationEntity';
+                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
-            $repository = $entityManager->getRepository($entityClass);
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLocales = ZLanguage::getInstalledLanguages();

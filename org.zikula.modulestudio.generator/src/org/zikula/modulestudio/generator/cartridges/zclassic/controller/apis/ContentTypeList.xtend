@@ -274,12 +274,14 @@ class ContentTypeList {
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
-            «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
-            $repository = $entityManager->getRepository($entityClass);
+            «IF targets('1.3.5')»
+                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $repository = $entityManager->getRepository($entityClass);
+            «ELSE»
+                $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
+            «ENDIF»
 
             // ensure that the view does not look for templates in the Content module (#218)
             $this->view->toplevelmodule = '«appName»';

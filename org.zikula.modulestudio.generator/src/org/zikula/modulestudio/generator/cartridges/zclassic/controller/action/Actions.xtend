@@ -225,13 +225,10 @@ class Actions {
     def private actionImplBodyAjaxView(ViewAction it) '''
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
-        «ELSE»
-            $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
-        «ENDIF»
-        $repository = $this->entityManager->getRepository($entityClass);
-        «IF app.targets('1.3.5')»
+            $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->request);
         «ENDIF»
 
@@ -329,13 +326,10 @@ class Actions {
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
-        «ELSE»
-            $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
-        «ENDIF»
-        $repository = $this->entityManager->getRepository($entityClass);
-        «IF app.targets('1.3.5')»
+            $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->request);
         «ENDIF»
         «IF app.targets('1.3.5')»
@@ -561,13 +555,10 @@ class Actions {
     def private actionImplBodyAjaxDisplay(DisplayAction it) '''
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
-        «ELSE»
-            $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
-        «ENDIF»
-        $repository = $this->entityManager->getRepository($entityClass);
-        «IF app.targets('1.3.5')»
+            $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->request);
         «ENDIF»
 
@@ -613,11 +604,7 @@ class Actions {
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
-            «IF app.targets('1.3.5')»
-                $repository->setControllerArguments(array());
-            «ELSE»
-                $repository->setRequest($this->request);
-            «ENDIF»
+            $repository->setControllerArguments(array());
 
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
@@ -931,10 +918,10 @@ class Actions {
 
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
-            $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
         «ENDIF»
-        $repository = $this->entityManager->getRepository($entityClass);
 
         // set caching id
         $this->view->setCaching(Zikula_View::CACHE_DISABLED);

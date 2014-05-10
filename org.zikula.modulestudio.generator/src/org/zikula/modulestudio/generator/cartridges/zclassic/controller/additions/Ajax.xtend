@@ -153,13 +153,10 @@ class Ajax {
 
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
-            «ELSE»
-                $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
-            «ENDIF»
-            $repository = $this->entityManager->getRepository($entityClass);
-            «IF app.targets('1.3.5')»
+                $repository = $this->entityManager->getRepository($entityClass);
                 $repository->setControllerArguments(array());
             «ELSE»
+                $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
                 $repository->setRequest($request);
             «ENDIF»
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
@@ -258,10 +255,10 @@ class Ajax {
 
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
+                $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
-                $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
+                $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
-            $repository = $this->entityManager->getRepository($entityClass);
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
             $fragment = '';
@@ -360,13 +357,17 @@ class Ajax {
             «ENDIF»
 
             «prepareDuplicateCheckParameters(app)»
-
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
+                /* can probably be removed
+                 * $object = new $entityClass();
+                 */ 
             «ELSE»
-                $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
+                /* can probably be removed
+                 * $createMethod = 'create' . ucfirst($objectType);
+                 * $object = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+                 */
             «ENDIF»
-            $object = new $entityClass(); 
 
             $result = false;
             switch ($objectType) {
@@ -374,7 +375,11 @@ class Ajax {
                 «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
-                        $repository = $this->entityManager->getRepository($entityClass);
+                        «IF app.targets('1.3.5')»
+                            $repository = $this->entityManager->getRepository($entityClass);
+                        «ELSE»
+                            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                        «ENDIF»
                         switch ($fieldName) {
                         «FOR uniqueField : uniqueFields»
                             case '«uniqueField.name.formatForCode»':
@@ -560,10 +565,11 @@ class Ajax {
 
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
+                $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
-                $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
+                $createMethod = 'create' . ucfirst($objectType);
+                $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
-            $repository = $this->entityManager->getRepository($entityClass);
 
             $rootId = 1;
             if (!in_array($op, array('addRootNode'))) {
@@ -692,7 +698,11 @@ class Ajax {
 
     def private treeOperationAddRootNode(AjaxController it, Application app) '''
         //$this->entityManager->transactional(function($entityManager) {
-            $entity = new $entityClass();
+            «IF app.targets('1.3.5')»
+                $entity = new $entityClass();
+            «ELSE»
+                $entity = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+            «ENDIF»
             $entityData = array();
             if (!empty($titleFieldName)) {
                 $entityData[$titleFieldName] = $this->__('New root node');
@@ -728,7 +738,11 @@ class Ajax {
         }
 
         //$this->entityManager->transactional(function($entityManager) {
-            $childEntity = new $entityClass();
+            «IF app.targets('1.3.5')»
+                $childEntity = new $entityClass();
+            «ELSE»
+                $childEntity = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+            «ENDIF»
             $entityData = array();
             $entityData[$titleFieldName] = $this->__('New child node');
             if (!empty($descriptionFieldName)) {

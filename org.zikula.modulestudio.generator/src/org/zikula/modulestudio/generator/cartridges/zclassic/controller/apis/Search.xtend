@@ -169,7 +169,9 @@ class Search {
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
-            $entityManager = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.5')»
+                $entityManager = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «ENDIF»
             $currentPage = 1;
             $resultsPerPage = 50;
 
@@ -325,8 +327,7 @@ class Search {
                     «ENDFOR»
                 }
 
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
-                $repository = $this->entityManager->getRepository($entityClass);
+                $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
 
                 // build the search query without any joins
                 $qb = $repository->genericBaseQuery('', '', false);

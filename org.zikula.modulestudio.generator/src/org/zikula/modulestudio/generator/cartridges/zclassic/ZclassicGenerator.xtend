@@ -26,6 +26,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Mai
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Search
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.Factory
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
@@ -105,6 +106,10 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Model: Repository classes')
         println('Generating repository classes')
         new Repository().generate(it, fsa)
+
+        pm?.subTask('Model: Factory classes')
+        println('Generating factory classes')
+        new Factory().generate(it, fsa)
     }
 
     def private generateController(Application it) {

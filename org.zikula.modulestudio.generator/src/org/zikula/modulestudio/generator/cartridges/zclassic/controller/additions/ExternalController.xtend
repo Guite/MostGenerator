@@ -130,13 +130,10 @@ class ExternalController {
                 }
 
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
-            «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
-            «ENDIF»
-            $repository = $this->entityManager->getRepository($entityClass);
-            «IF targets('1.3.5')»
+                $repository = $this->entityManager->getRepository($entityClass);
                 $repository->setControllerArguments(array());
             «ELSE»
+                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
                 $repository->setRequest($this->request);
             «ENDIF»
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
@@ -235,13 +232,10 @@ class ExternalController {
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
-            «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
-            «ENDIF»
-            $repository = $this->entityManager->getRepository($entityClass);
-            «IF targets('1.3.5')»
+                $repository = $this->entityManager->getRepository($entityClass);
                 $repository->setControllerArguments(array());
             «ELSE»
+                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
                 $repository->setRequest($this->request);
             «ENDIF»
 

@@ -482,12 +482,11 @@ class WorkflowUtil {
         {
             «IF targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+                $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
+                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
-            $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
-
-            $repository = $entityManager->getRepository($entityClass);
 
             $where = 'tbl.workflowState = \'' . $state . '\'';
             $parameters = array('workflowState' => $state);

@@ -343,10 +343,10 @@ class FormHandler {
             {
                 «IF targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
+                    $repository = $this->entityManager->getRepository($entityClass);
                 «ELSE»
-                    $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
+                    $repository = $this->view->getServiceManager()->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
                 «ENDIF»
-                $repository = $this->entityManager->getRepository($entityClass);
                 $utilArgs = array('controller' => FormUtil::getPassedValue('type', 'user', 'GETPOST'),
                                   'action' => '«actionName.formatForCode.toFirstLower»',
                                   'mode' => $this->mode);
@@ -591,10 +591,12 @@ class FormHandler {
             } else {
                 «IF targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
+                    $entity = new $entityClass();
                 «ELSE»
                     $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $createMethod = 'create' . ucfirst($this->objectType);
+                    $entity = $this->serviceManager->get('«app.name.formatForDB».' . $this->objectType . '_factory')->$createMethod();
                 «ENDIF»
-                $entity = new $entityClass();
             }
 
             return $entity;

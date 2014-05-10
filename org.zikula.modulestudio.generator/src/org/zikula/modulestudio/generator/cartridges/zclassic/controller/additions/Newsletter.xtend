@@ -214,12 +214,14 @@ class Newsletter {
             $objectType = $args['objectType'];
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
-            «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
-            $repository = $entityManager->getRepository($entityClass);
+            «IF targets('1.3.5')»
+                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $repository = $entityManager->getRepository($entityClass);
+            «ELSE»
+                $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            «ENDIF»
 
             // create query
             $where = isset($args['filter']) ? $args['filter'] : '';

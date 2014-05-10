@@ -96,6 +96,27 @@ class Entities {
         }
     }
 
+    def private imports(Entity it) '''
+        use Doctrine\ORM\Mapping as ORM;
+        «IF hasCollections || attributable || categorisable»
+            use Doctrine\Common\Collections\ArrayCollection;
+        «ENDIF»
+        use Gedmo\Mapping\Annotation as Gedmo;
+        «IF hasNotifyPolicy»
+            use Doctrine\Common\NotifyPropertyChanged;
+            use Doctrine\Common\PropertyChangedListener;
+        «ENDIF»
+        «IF standardFields»
+            use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
+        «ENDIF»
+        «IF !container.application.targets('1.3.5')»
+            use Symfony\Component\Validator\Constraints as Assert;
+            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
+                use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+            «ENDIF»
+        «ENDIF»
+    '''
+
     def private modelEntityBaseImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Base;
@@ -121,6 +142,10 @@ class Entities {
          * Entity class that defines the entity structure and behaviours.
          *
          * This is the base entity class for «name.formatForDisplay» entities.
+         * The following annotation marks it as a mapped superclass so subclasses
+         * inherit orm properties.
+         *
+         * @ORM\MappedSuperclass
          *
          * @abstract
          */
@@ -131,42 +156,84 @@ class Entities {
             NotifyPropertyChanged«ENDIF»
         «ENDIF»
         {
-            «entityInfo(app)»
-
+            «val validatorClassLegacy = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
+            «memberVars(validatorClassLegacy)»
+    
+            «new EntityConstructor().constructor(it, false)»
+    
+            «accessors(validatorClassLegacy)»
+    
             «thEvLi.generateBase(it)»
-
+    
             «new EntityMethods().generate(it, app, thProp)»
         }
     '''
 
-    def private imports(Entity it) '''
-        use Doctrine\ORM\Mapping as ORM;
-        «IF hasCollections || attributable || categorisable»
-            use Doctrine\Common\Collections\ArrayCollection;
+    def private memberVars(Entity it, String validatorClassLegacy) '''
+        /**
+         * @var string The tablename this object maps to.
+         */
+        protected $_objectType = '«name.formatForCode»';
+        «IF container.application.targets('1.3.5')»
+
+            /**
+             * @var «validatorClassLegacy» The validator for this entity.
+             */
+            protected $_validator = null;
         «ENDIF»
-        use Gedmo\Mapping\Annotation as Gedmo;
+
+        /**
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="bool")
+         «ENDIF»
+         * @var boolean Option to bypass validation if needed.
+         */
+        protected $_bypassValidation = false;
         «IF hasNotifyPolicy»
-            use Doctrine\Common\NotifyPropertyChanged;
-            use Doctrine\Common\PropertyChangedListener;
+
+            /**
+             «IF !container.application.targets('1.3.5')»
+             * @Assert\Type(type="array")
+             «ENDIF»
+             * @var array List of change notification listeners.
+             */
+            protected $_propertyChangedListeners = array();
         «ENDIF»
-        «IF standardFields»
-            use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
-        «ENDIF»
-        «IF !container.application.targets('1.3.5')»
-            use Symfony\Component\Validator\Constraints as Assert;
-            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
-                use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-            «ENDIF»
-        «ENDIF»
+
+        /**
+         «IF !container.application.targets('1.3.5')»
+         * @Assert\Type(type="array")
+         «ENDIF»
+         * @var array List of available item actions.
+         */
+        protected $_actions = array();
+
+        /**
+         * @var array The current workflow data of this object.
+         */
+        protected $__WORKFLOW__ = array();
+
+        «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
+        «extMan.additionalProperties»
+
+        «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
     '''
 
-    def private index(EntityIndex it, String indexType) '''
-         *         @ORM\«indexType.toFirstUpper»(name="«name.formatForDB»", columns={«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»})
-    '''
-    def private indexField(EntityIndexItem it) '''"«name.formatForCode»"'''
+    def private accessors(Entity it, String validatorClassLegacy) '''
+        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
+        «IF container.application.targets('1.3.5')»
+            «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
+        «ENDIF»
+        «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
+        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
 
-    def private discriminatorInfo(InheritanceRelationship it) '''
-        , "«source.name.formatForCode»" = "«source.entityClassName('', false)»"
+        «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
+        «extMan.additionalAccessors»
+
+        «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
     '''
 
     def private modelEntityImpl(Entity it, Application app) '''
@@ -251,79 +318,12 @@ class Entities {
         «ENDIF»
     '''
 
-    def private entityInfo(Entity it, Application app) '''
-        «val validatorClassLegacy = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
-        «memberVars(validatorClassLegacy)»
-
-        «new EntityConstructor().constructor(it, false)»
-
-        «accessors(validatorClassLegacy)»
+    def private index(EntityIndex it, String indexType) '''
+         *         @ORM\«indexType.toFirstUpper»(name="«name.formatForDB»", columns={«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»})
     '''
+    def private indexField(EntityIndexItem it) '''"«name.formatForCode»"'''
 
-    def private memberVars(Entity it, String validatorClassLegacy) '''
-        /**
-         * @var string The tablename this object maps to.
-         */
-        protected $_objectType = '«name.formatForCode»';
-        «IF container.application.targets('1.3.5')»
-
-            /**
-             * @var «validatorClassLegacy» The validator for this entity.
-             */
-            protected $_validator = null;
-        «ENDIF»
-
-        /**
-         «IF !container.application.targets('1.3.5')»
-         * @Assert\Type(type="bool")
-         «ENDIF»
-         * @var boolean Option to bypass validation if needed.
-         */
-        protected $_bypassValidation = false;
-        «IF hasNotifyPolicy»
-
-            /**
-             «IF !container.application.targets('1.3.5')»
-             * @Assert\Type(type="array")
-             «ENDIF»
-             * @var array List of change notification listeners.
-             */
-            protected $_propertyChangedListeners = array();
-        «ENDIF»
-
-        /**
-         «IF !container.application.targets('1.3.5')»
-         * @Assert\Type(type="array")
-         «ENDIF»
-         * @var array List of available item actions.
-         */
-        protected $_actions = array();
-
-        /**
-         * @var array The current workflow data of this object.
-         */
-        protected $__WORKFLOW__ = array();
-
-        «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
-        «extMan.additionalProperties»
-
-        «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
-    '''
-
-    def private accessors(Entity it, String validatorClassLegacy) '''
-        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
-        «IF container.application.targets('1.3.5')»
-            «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
-        «ENDIF»
-        «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
-        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
-
-        «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
-        «extMan.additionalAccessors»
-
-        «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
+    def private discriminatorInfo(InheritanceRelationship it) '''
+        , "«source.name.formatForCode»" = "«source.entityClassName('', false)»"
     '''
 }

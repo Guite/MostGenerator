@@ -54,8 +54,12 @@ class ServiceDefinitions {
                 «parametersUploadHandler»
 
             «ENDIF»
+            «parametersEntityFactories»
+
             «parametersEventSubscriber»
+
             «parametersHelper»
+
             «parametersLogger»
 
         services:
@@ -63,8 +67,12 @@ class ServiceDefinitions {
                 «servicesUploadHandler»
 
             «ENDIF»
+            «servicesEntityFactories»
+
             «servicesEventSubscriber»
+
             «servicesHelper»
+
             «servicesLogger»
     '''
 
@@ -83,6 +91,13 @@ class ServiceDefinitions {
     def private parametersUploadHandler(Application it) '''
         # Upload handler class
         «modPrefix».upload_handler.class: «appNamespace»\UploadHandler
+    '''
+
+    def private parametersEntityFactories(Application it) '''
+        # Entity factory classes
+        «FOR entity : getAllEntities»
+            «modPrefix».entity.factory.«entity.name.formatForCode».class: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«name.formatForCodeCapital»Factory
+        «ENDFOR»
     '''
 
     def private parametersEventSubscriber(Application it) '''
@@ -110,6 +125,17 @@ class ServiceDefinitions {
     def private servicesUploadHandler(Application it) '''
         «modPrefix».upload_handler:
             class: "%«modPrefix».upload_handler.class%"
+    '''
+
+    def private servicesEntityFactories(Application it) '''
+        «FOR entity : getAllEntities»
+            «modPrefix».«entity.name.formatForCode»_factory:
+                class: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«name.formatForCodeCapital»Factory
+                arguments:
+                    objectManager: "@doctrine.orm.entity_manager"
+                    className: "%«modPrefix».entity.factory.«entity.name.formatForCode».class%"
+
+        «ENDFOR»
     '''
 
     def private servicesEventSubscriber(Application it) '''

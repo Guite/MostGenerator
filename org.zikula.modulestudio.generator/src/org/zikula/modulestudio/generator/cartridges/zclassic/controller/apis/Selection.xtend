@@ -225,11 +225,12 @@ class Selection {
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
+                $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($objectType) . 'Entity';
+                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
-            return $this->entityManager->getRepository($entityClass);
+            return $repository;
         }
         «IF hasTrees»
 

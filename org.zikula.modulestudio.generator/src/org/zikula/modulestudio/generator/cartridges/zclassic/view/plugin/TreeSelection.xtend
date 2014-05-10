@@ -65,12 +65,14 @@ class TreeSelection {
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($params['objectType']);
-            «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($params['objectType']) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
-            $repository = $entityManager->getRepository($entityClass);
+            «IF targets('1.3.5')»
+                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $repository = $entityManager->getRepository($entityClass);
+            «ELSE»
+                $repository = $serviceManager->get('«appName.formatForDB».' . $params['objectType'] . '_factory')->getRepository();
+            «ENDIF»
             $titleFieldName = $repository->getTitleFieldName();
 
             $node = $params['node'];
