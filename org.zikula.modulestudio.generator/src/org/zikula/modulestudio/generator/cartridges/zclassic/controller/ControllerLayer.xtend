@@ -213,6 +213,7 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Controller\Base;
 
+            use «entityClassName('', false)»;
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
@@ -222,6 +223,9 @@ class ControllerLayer {
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+            «IF hasActions('display') || hasActions('delete')»
+                use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+            «ENDIF»
             use FormUtil;
             «IF hasActions('edit')»
                 use JCSSUtil;
