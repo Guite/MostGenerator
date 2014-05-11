@@ -67,7 +67,7 @@ class ExternalView {
         {if $displayMode eq 'link'}
             <p«IF app.hasUserController» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
             «IF app.hasUserController»
-                <a href="{modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' «modUrlDisplay(name.formatForCode, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
+                <a href="{modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»'«IF app.targets('1.3.5')» ot='«name.formatForCode»'«ENDIF» «modUrlDisplay(name.formatForCode, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
             «ENDIF»
             {$«name.formatForCode»->getTitleFromDisplayPattern()|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}
             «IF app.hasUserController»
