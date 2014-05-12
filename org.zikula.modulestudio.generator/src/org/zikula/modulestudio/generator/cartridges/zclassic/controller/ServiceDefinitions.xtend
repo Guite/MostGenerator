@@ -13,7 +13,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 /**
- * Service definitions in xml format.
+ * Service definitions in yaml format.
  */
 class ServiceDefinitions {
 
