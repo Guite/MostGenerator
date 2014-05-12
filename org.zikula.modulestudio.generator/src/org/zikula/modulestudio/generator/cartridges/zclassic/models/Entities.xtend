@@ -121,6 +121,8 @@ class Entities {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Base;
 
+            use «app.appNamespace»\«app.name.formatForCodeCapital»Events;
+            use «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event;
         «ENDIF»
         «imports»
         «IF !app.targets('1.3.5')»

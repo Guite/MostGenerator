@@ -78,6 +78,15 @@ class EventListener {
             «postLoadImpl»
 
             $this->prepareItemActions();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_LOAD, $event);
+            «ENDIF»
 
             return true;
         }
@@ -174,6 +183,18 @@ class EventListener {
         protected function performPrePersistCallback()
         {
             $this->validate();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_PERSIST, $event);
+                if ($event->isPropagationStopped()) {
+                    return false;
+                }
+            «ENDIF»
 
             return true;
         }
@@ -198,6 +219,12 @@ class EventListener {
                 $logger = $serviceManager->get('logger');
                 $logger->debug('{app}: User {user} created the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
 
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_PERSIST, $event);
+
             «ENDIF»
             return true;
         }
@@ -219,6 +246,18 @@ class EventListener {
          */
         protected function performPreRemoveCallback()
         {
+            «IF !container.application.targets('1.3.5')»
+                $serviceManager = ServiceUtil::getManager();
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_REMOVE, $event);
+                if ($event->isPropagationStopped()) {
+                    return false;
+                }
+
+            «ENDIF»
             // delete workflow for this entity
             «IF !container.application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
@@ -301,6 +340,12 @@ class EventListener {
 
                 $logger = $serviceManager->get('logger');
                 $logger->debug('{app}: User {user} removed the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_REMOVE, $event);
             «ENDIF»
 
             return true;
@@ -323,6 +368,18 @@ class EventListener {
         protected function performPreUpdateCallback()
         {
             $this->validate();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_UPDATE, $event);
+                if ($event->isPropagationStopped()) {
+                    return false;
+                }
+            «ENDIF»
 
             return true;
         }
@@ -346,6 +403,12 @@ class EventListener {
                 $logger = $serviceManager->get('logger');
                 $logger->debug('{app}: User {user} updated the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
 
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_UPDATE, $event);
+
             «ENDIF»
             return true;
         }
@@ -361,6 +424,18 @@ class EventListener {
         protected function performPreSaveCallback()
         {
             $this->validate();
+            «IF !container.application.targets('1.3.5')»
+
+                $serviceManager = ServiceUtil::getManager();
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_SAVE, $event);
+                if ($event->isPropagationStopped()) {
+                    return false;
+                }
+            «ENDIF»
 
             return true;
         }
@@ -380,6 +455,12 @@ class EventListener {
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
                 $logger->debug('{app}: User {user} saved the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+
+                $dispatcher = $serviceManager->get('event_dispatcher');
+
+                // create the new Filter«name.formatForCodeCapital»Event and dispatch it
+                $event = new Filter«name.formatForCodeCapital»Event($this);
+                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_SAVE, $event);
 
             «ENDIF»
             return true;

@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerLayer
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Events
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
@@ -128,6 +129,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Service definitions')
         println('Generating service definitions')
         new ServiceDefinitions().generate(it, fsa)
+        pm?.subTask('Controller: Event definitions')
+        println('Generating event definitions')
+        new Events().generate(it, fsa)
         pm?.subTask('Controller: Bootstrapping')
         println('Generating bootstrapping')
         new Bootstrap().generate(it, fsa)
