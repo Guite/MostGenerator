@@ -146,9 +146,6 @@ class View {
             <form action="{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
-                «IF container.application.targets('1.3.5')»
-                    <input type="hidden" name="ot" value="«name.formatForCode»" />
-                «ENDIF»
             {/if}
         «ENDIF»
             «viewItemList(appName)»
