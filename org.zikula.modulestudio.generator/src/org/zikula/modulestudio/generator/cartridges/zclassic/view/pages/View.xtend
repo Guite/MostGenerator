@@ -142,7 +142,7 @@ class View {
 
     def private viewForm(Entity it, String appName) '''
         «IF listType == 3»
-            {if $lqt eq 'admin'}
+            {if $lct eq 'admin'}
             <form action="{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
@@ -151,7 +151,7 @@ class View {
             «viewItemList(appName)»
             «pagerCall(appName)»
         «IF listType == 3»
-            {if $lqt eq 'admin'}
+            {if $lct eq 'admin'}
                     «massActionFields(appName)»
                 </div>
             </form>
@@ -177,9 +177,9 @@ class View {
             «IF !container.application.targets('1.3.5')»
                 <div class="table-responsive">
             «ENDIF»
-            <table class="«IF container.application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover{if $lqt eq 'admin'}«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $lqt eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
+            <table class="«IF container.application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover{if $lct eq 'admin'}«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $lct eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
                 <colgroup>
-                    {if $lqt eq 'admin'}
+                    {if $lct eq 'admin'}
                         <col id="cSelect" />
                     {/if}
                     «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
@@ -192,7 +192,7 @@ class View {
                     «IF categorisable»
                         {assign var='catIdListMainString' value=','|implode:$catIdList.Main}
                     «ENDIF»
-                    {if $lqt eq 'admin'}
+                    {if $lct eq 'admin'}
                         <th id="hSelect" scope="col" align="center" valign="middle">
                             <input type="checkbox" id="toggle«nameMultiple.formatForCodeCapital»" />
                         </th>
@@ -215,7 +215,7 @@ class View {
                 <dt>
             «ELSEIF listType == 3»
                 <tr«IF container.application.targets('1.3.5')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
-                    {if $lqt eq 'admin'}
+                    {if $lct eq 'admin'}
                         <td headers="hselect" align="center" valign="top">
                             <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
                         </td>
@@ -238,8 +238,8 @@ class View {
             «ELSEIF listType == 2»
                 <dt>
             «ELSEIF listType == 3»
-                <tr class="z-{if $lqt eq 'admin'}admin{else}data{/if}tableempty">
-                  <td class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-left" colspan="{if $lqt eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
+                <tr class="z-{if $lct eq 'admin'}admin{else}data{/if}tableempty">
+                  <td class="«IF container.application.targets('1.3.5')»z«ELSE»text«ENDIF»-left" colspan="{if $lct eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
             «ENDIF»
             {gt text='No «nameMultiple.formatForDisplay» found.'}
             «IF listType < 2»
