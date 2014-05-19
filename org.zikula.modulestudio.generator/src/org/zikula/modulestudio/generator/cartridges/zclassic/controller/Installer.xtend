@@ -294,7 +294,7 @@ class Installer {
         /*
             // Upgrade dependent on old version number
             switch ($oldVersion) {
-                case 1.0.0:
+                case '1.0.0':
                     // do something
                     // ...
                     // update the database schema
