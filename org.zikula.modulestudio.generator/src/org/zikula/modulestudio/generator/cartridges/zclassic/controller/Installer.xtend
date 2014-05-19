@@ -324,11 +324,11 @@ class Installer {
             «IF !targets('1.3.5')»
 
                 // Note there are several helpers available for making migration of your extension easier.
-                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.3.7.
+                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.0.
 
                 // here is a possible usage example
-                // of course 1.2.3 should match the number you used for the last stable 1.3.5/1.3.6 module version.
-                /* if ($oldVersion = 1.2.3) {
+                // of course 1.2.3 should match the number you used for the last stable 1.3.x module version.
+                /* if ($oldVersion = '1.2.3') {
                     «new MigrationHelper().generateUsageExample(it)»
                 } * /
             «ENDIF»
