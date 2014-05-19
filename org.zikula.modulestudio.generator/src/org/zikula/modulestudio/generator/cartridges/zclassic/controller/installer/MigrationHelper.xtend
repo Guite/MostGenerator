@@ -157,7 +157,7 @@ class MigrationHelper {
          */
         protected function dropEventHandlersFromDatabase()
         {
-            EventUtil::unregisterPersistentModuleHandlers('«appName»');
+            EventUtil::unregisterPersistentModuleHandlers('«name.formatForCodeCapital»');
         }
     '''
 
