@@ -98,7 +98,7 @@ class ServiceDefinitions {
     def private parametersEntityFactories(Application it) '''
         # Entity factory classes
         «FOR entity : getAllEntities»
-            «modPrefix».entity.factory.«entity.name.formatForCode».class: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«name.formatForCodeCapital»Factory
+            «modPrefix».entity.factory.«entity.name.formatForCode».class: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«entity.name.formatForCodeCapital»Factory
         «ENDFOR»
     '''
 
