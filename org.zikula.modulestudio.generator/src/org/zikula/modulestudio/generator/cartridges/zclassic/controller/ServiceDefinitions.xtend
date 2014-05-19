@@ -142,10 +142,10 @@ class ServiceDefinitions {
     def private servicesEntityFactories(Application it) '''
         «FOR entity : getAllEntities»
             «modPrefix».«entity.name.formatForCode»_factory:
-                class: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«name.formatForCodeCapital»Factory
+                class: "%«modPrefix».entity.factory.«entity.name.formatForCode».class%"
                 arguments:
                     objectManager: "@doctrine.orm.entity_manager"
-                    className: "%«modPrefix».entity.factory.«entity.name.formatForCode».class%"
+                    className: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\«entity.name.formatForCodeCapital»Entity
 
         «ENDFOR»
     '''
