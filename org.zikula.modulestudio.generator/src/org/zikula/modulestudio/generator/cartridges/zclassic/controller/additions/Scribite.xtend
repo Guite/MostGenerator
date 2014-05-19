@@ -25,10 +25,10 @@ class Scribite {
         this.fsa = fsa
 
         docPath = getAppDocPath + 'scribite/'
-        var fileName = 'integration.txt'
+        var fileName = 'integration.md'
         if (!shouldBeSkipped(docPath + fileName)) {
             if (shouldBeMarked(docPath + fileName)) {
-                fileName = 'integration.generated.txt'
+                fileName = 'integration.generated.md'
             }
             fsa.generateFile(docPath + fileName, integration)
         }
@@ -205,7 +205,7 @@ class Scribite {
                 if (ModUtil::available('«appName»')) {
                     PageUtil::addVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
                 }
-          4. Copy or move all files from modules/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
+          4. Copy or move all files from modules/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
 
         Just follow these few steps to complete the integration for Scribite >= 5.0:
          1. Check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy from
