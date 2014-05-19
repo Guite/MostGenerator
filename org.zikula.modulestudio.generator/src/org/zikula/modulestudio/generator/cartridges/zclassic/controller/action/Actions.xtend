@@ -432,7 +432,7 @@ class Actions {
             }
 
             // retrieve item list with pagination
-            $selectionArgs['currentPage'] = $currentPage;   
+            $selectionArgs['currentPage'] = $currentPage;
             $selectionArgs['resultsPerPage'] = $resultsPerPage;
             list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
