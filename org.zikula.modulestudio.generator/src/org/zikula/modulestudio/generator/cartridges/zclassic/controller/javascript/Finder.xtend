@@ -184,7 +184,11 @@ class Finder {
                 window.opener.tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
                 // other tinymce commands: mceImage, mceInsertLink, mceReplaceContent, see http://www.tinymce.com/wiki.php/Command_identifiers
             } else if (editor === 'ckeditor') {
-                /** to be done*/
+                if (window.opener.current«appName»Editor !== null) {
+                    html = getPasteSnippet('html', itemId);
+
+                    window.opener.current«appName»Editor.insertHtml(html);
+                }
             } else {
                 alert('Insert into Editor: ' + editor);
             }
