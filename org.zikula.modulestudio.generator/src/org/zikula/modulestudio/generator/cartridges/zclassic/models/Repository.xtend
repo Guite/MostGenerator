@@ -336,6 +336,9 @@ class Repository {
             $templateParameters = array();
 
             if ($context == 'controllerAction') {
+                «IF app.hasUploads || (hasListFieldsEntity && !app.targets('1.3.5'))»
+                    $serviceManager = ServiceUtil::getManager();
+                «ENDIF»
                 if (!isset($args['action'])) {
                     $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
                 }
@@ -366,7 +369,6 @@ class Repository {
 
                 «IF app.hasUploads»
                     // initialise Imagine preset instances
-                    $serviceManager = ServiceUtil::getManager();
                     «IF app.targets('1.3.5')»
                         $imageHelper = new «app.appName»_Util_Image($serviceManager);
                     «ELSE»

@@ -177,7 +177,7 @@ class View {
             «IF !container.application.targets('1.3.5')»
                 <div class="table-responsive">
             «ENDIF»
-            <table class="«IF container.application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover{if $lct eq 'admin'}«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $lct eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
+            <table class="«IF container.application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $lct eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
                 <colgroup>
                     {if $lct eq 'admin'}
                         <col id="cSelect" />
