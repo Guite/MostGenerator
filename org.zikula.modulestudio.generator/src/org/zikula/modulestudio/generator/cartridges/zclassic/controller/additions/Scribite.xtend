@@ -225,7 +225,7 @@ class Scribite {
                     }
                 });
                 editor.ui.addButton('«appName.formatForDB»', {
-                    label: 'Insert «appName» object',
+                    label: editor.lang.«appName».title,
                     command: 'insert«appName»',
                  // icon: this.path + 'images/ed_«appName.formatForDB».png'
                     icon: '/images/icons/extrasmall/favorites.png'
@@ -235,21 +235,21 @@ class Scribite {
     '''
 
     def private ckLangDe(Application it) '''
-        CKEDITOR.plugins.setLang('«name.formatForDB»', 'de', {
+        CKEDITOR.plugins.setLang('«appName»', 'de', {
             title : '«appName»-Objekt einfügen',
             alt: '«appName»-Objekt einfügen'
         });
     '''
 
     def private ckLangEn(Application it) '''
-        CKEDITOR.plugins.setLang('«name.formatForDB»', 'en', {
+        CKEDITOR.plugins.setLang('«appName»', 'en', {
             title: 'Insert «appName» object',
             alt: 'Insert «appName» object'
         });
     '''
 
     def private ckLangNl(Application it) '''
-        CKEDITOR.plugins.setLang('«name.formatForDB»', 'nl', {
+        CKEDITOR.plugins.setLang('«appName»', 'nl', {
             title : '«appName» Object invoegen',
             alt: '«appName» Object invoegen'
         });
