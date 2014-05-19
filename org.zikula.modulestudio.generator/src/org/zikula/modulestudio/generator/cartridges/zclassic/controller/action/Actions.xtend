@@ -242,13 +242,13 @@ class Actions {
 
         // parameter for used sort order
         «IF app.targets('1.3.5')»
-            $sdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
+            $sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
         «ELSE»
-            $sdir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
+            $sortdir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
         «ENDIF»
-        $sdir = strtolower($sdir);
-        if ($sdir != 'asc' && $sdir != 'desc') {
-            $sdir = 'asc';
+        $sortdir = strtolower($sortdir);
+        if ($sortdir != 'asc' && $sortdir != 'desc') {
+            $sortdir = 'asc';
         }
 
         // convenience vars to make code clearer
@@ -264,7 +264,7 @@ class Actions {
         $selectionArgs = array(
             'ot' => $objectType,
             'where' => $where,
-            'orderBy' => $sort . ' ' . $sdir
+            'orderBy' => $sort . ' ' . $sortdir
         );
 
         «prepareViewUrlArgs(false)»
@@ -352,21 +352,20 @@ class Actions {
         // parameter for used sorting field
         «IF app.targets('1.3.5')»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
-        «ELSE»
-            $sort = $request->query->filter('sort', '', false, FILTER_SANITIZE_STRING);
         «ENDIF»
         «new ControllerHelper().defaultSorting(it)»
 
-        // parameter for used sort order
         «IF app.targets('1.3.5')»
-            $sdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
+            // parameter for used sort order
+            $sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
+            $sortdir = strtolower($sortdir);
+            if ($sortdir != 'asc' && $sortdir != 'desc') {
+                $sortdir = 'asc';
+            }
         «ELSE»
-            $sdir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
+            // parameter for used sort order
+            $sortdir = strtolower($sortdir);
         «ENDIF»
-        $sdir = strtolower($sdir);
-        if ($sdir != 'asc' && $sdir != 'desc') {
-            $sdir = 'asc';
-        }
 
         // convenience vars to make code clearer
         $currentUrlArgs = array();
@@ -376,7 +375,7 @@ class Actions {
         $selectionArgs = array(
             'ot' => $objectType,
             'where' => $where,
-            'orderBy' => $sort . ' ' . $sdir
+            'orderBy' => $sort . ' ' . $sortdir
         );
 
         «prepareViewUrlArgs(true)»
@@ -393,7 +392,7 @@ class Actions {
         }
 
         $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
-        $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
+        $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sortdir;
         $resultsPerPage = 0;
         if ($showAllEntries == 1) {
             // set cache id
@@ -411,14 +410,14 @@ class Actions {
             «IF app.targets('1.3.5')»
                 $currentPage = (int) $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
             «ELSE»
-                $currentPage = (int) $request->query->filter('pos', 1, false, FILTER_VALIDATE_INT);
+                $currentPage = $pos;
             «ENDIF»
 
             // the number of items displayed on a page for pagination
             «IF app.targets('1.3.5')»
                 $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
             «ELSE»
-                $resultsPerPage = (int) $request->query->filter('num', 0, false, FILTER_VALIDATE_INT);
+                $resultsPerPage = $num;
             «ENDIF»
             if ($resultsPerPage == 0) {
                 $resultsPerPage = $this->getVar('pageSize', 10);
@@ -433,7 +432,7 @@ class Actions {
             }
 
             // retrieve item list with pagination
-            $selectionArgs['currentPage'] = $currentPage;
+            $selectionArgs['currentPage'] = $currentPage;   
             $selectionArgs['resultsPerPage'] = $resultsPerPage;
             list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
@@ -488,7 +487,7 @@ class Actions {
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $entities)
                    ->assign('sort', $sort)
-                   ->assign('sdir', $sdir)
+                   ->assign('sdir', $sortdir)
                    ->assign('pageSize', $resultsPerPage)
                    ->assign('currentUrlObject', $currentUrlObject)
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));

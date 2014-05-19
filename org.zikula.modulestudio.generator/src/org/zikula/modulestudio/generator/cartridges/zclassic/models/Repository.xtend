@@ -999,12 +999,14 @@ class Repository {
                     $session = $serviceManager->get('session');
                 «ENDIF»
                 if ($page > 1) {
+                    // store current page in session
                     «IF app.targets('1.3.5')»
                         SessionUtil::setVar('«sessionVar»', $page);
                     «ELSE»
                         $session->set('«sessionVar»', $page);
                     «ENDIF»
                 } else {
+                    // restore current page from session
                     «IF app.targets('1.3.5')»
                         $page = SessionUtil::getVar('«sessionVar»', 1);
                     «ELSE»
