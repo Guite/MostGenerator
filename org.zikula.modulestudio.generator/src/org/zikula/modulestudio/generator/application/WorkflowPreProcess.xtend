@@ -37,16 +37,16 @@ class WorkflowPreProcess {
     def private Boolean emptyDir(File dir) {
         var hasErrors = false
         val files = dir.listFiles
-        if (files !== null) {
-            for (file : files) {
-                if (file.isDirectory) {
-                    emptyDir(file)
-                }
-                if (!file.delete) {
-                    hasErrors = true
-                }
+
+        for (file : files) {
+            if (file.isDirectory) {
+                emptyDir(file)
+            }
+            if (!file.delete) {
+                hasErrors = true
             }
         }
+
         hasErrors
     }
 }
