@@ -66,7 +66,6 @@
       <import plugin="org.eclipse.birt.report.engine.script.javascript" version="4.3.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.report.item.crosstab.core" version="4.3.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.9.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe2.launch" version="2.5.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.gmf.runtime.diagram.ui.render" version="1.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.8.101" match="greaterOrEqual"/>
@@ -82,10 +81,11 @@
       <import plugin="org.eclipse.emf.query.ocl" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ocl.ecore" version="3.3.0" match="greaterOrEqual"/>
       <import plugin="com.ibm.icu"/>
-      <import plugin="org.eclipse.xtend.core" version="2.5.4" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend2.lib" version="2.5.4" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext" version="2.5.4" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.builder" version="2.5.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe2.launch" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.core" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend2.lib" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.builder" version="2.6.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
