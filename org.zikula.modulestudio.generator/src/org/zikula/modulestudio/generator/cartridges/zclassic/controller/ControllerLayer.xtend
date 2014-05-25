@@ -272,7 +272,7 @@ class ControllerLayer {
          * Multiple items may have their state changed or be deleted.
          «IF !app.targets('1.3.5')»
          *
-         * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».plural%/handleSelectedEntries/{action}/{items}",
+         * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».plural%/handleSelectedEntries",
          *        name = "«app.appName.formatForDB»_«name.formatForCode»_handleSelectedEntries",
          *        methods = {"POST"}
          * )
@@ -287,7 +287,7 @@ class ControllerLayer {
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ENDIF»
          */
-        public function handleSelectedEntries«IF app.targets('1.3.5')»()«ELSE»Action($action, $items)«ENDIF»
+        public function handleSelectedEntries«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
         {
             $this->checkCsrfToken();
 
@@ -299,12 +299,10 @@ class ControllerLayer {
 
             $objectType = '«name.formatForCode»';
 
-            «IF app.targets('1.3.5')»
-                // Get parameters
-                $action = $this->request->request->get('action', null);
-                $items = $this->request->request->get('items', null);
+            // Get parameters
+            $action = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('action', null);
+            $items = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('items', null);
 
-            «ENDIF»
             $action = strtolower($action);
 
             «IF app.targets('1.3.5')»
