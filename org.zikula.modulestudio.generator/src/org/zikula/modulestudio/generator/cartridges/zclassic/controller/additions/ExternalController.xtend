@@ -47,10 +47,6 @@ class ExternalController {
     «ENDIF»
     /**
      * Controller for external calls base class.
-     «IF !targets('1.3.5')»
-     *
-     * @Route("/%«appName.formatForDB».routing.external%")
-     «ENDIF»
      */
     class «IF targets('1.3.5')»«appName»_Controller_Base_External«ELSE»ExternalController«ENDIF» extends Zikula_AbstractController
     {
@@ -75,9 +71,23 @@ class ExternalController {
     '''
 
     def private externalBaseImpl(Application it) '''
+        «displayBase»
+
+        «finderBase»
+    '''
+
+    def private displayBase(Application it) '''
+        «displayDocBlock(true)»
+        «displaySignature»
+        {
+            «displayBaseImpl»
+        }
+    '''
+
+    def private displayDocBlock(Application it, Boolean isBase) '''
         /**
          * Displays one item of a certain object type using a separate template for external usages.
-         «IF !targets('1.3.5')»
+         «IF !targets('1.3.5') && !isBase»
          *
          * @Route("/display/{ot}/{id}/{source}/{displayMode}",
          *        name = "«appName.formatForDB»_external_display",
@@ -94,93 +104,107 @@ class ExternalController {
          *
          * @return string Desired data output.
          */
+    '''
+
+    def private displaySignature(Application it) '''
         public function display«IF targets('1.3.5')»(array $args = array())«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
-        {
-            «IF targets('1.3.5')»
-                $getData = $this->request->query;
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
-            «ENDIF»
+    '''
 
-            $objectType = «IF targets('1.3.5')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
-            $utilArgs = array('controller' => 'external', 'action' => 'display');
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
-            }
-            «IF targets('1.3.5')»
+    def private displayBaseImpl(Application it) '''
+        «IF targets('1.3.5')»
+            $getData = $this->request->query;
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+        «ELSE»
+            $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+        «ENDIF»
 
-                $id = isset($args['id']) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
-            «ENDIF»
+        $objectType = «IF targets('1.3.5')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
+        $utilArgs = array('controller' => 'external', 'action' => 'display');
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
+        }
+        «IF targets('1.3.5')»
 
-            $component = $this->name . ':' . ucwords($objectType) . ':';
-            if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
-                return '';
-            }
+            $id = isset($args['id']) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
+        «ENDIF»
 
-            «IF targets('1.3.5')»
-                $source = isset($args['source']) ? $args['source'] : $getData->filter('source', '', FILTER_SANITIZE_STRING);
-                if (!in_array($source, array('contentType', 'scribite'))) {
-                    $source = 'contentType';
-                }
-
-                $displayMode = isset($args['displayMode']) ? $args['displayMode'] : $getData->filter('displayMode', 'embed', FILTER_SANITIZE_STRING);
-                if (!in_array($displayMode, array('link', 'embed'))) {
-                    $displayMode = 'embed';
-                }
-
-                $entityClass = '«appName»_Entity_' . ucwords($objectType);
-                $repository = $this->entityManager->getRepository($entityClass);
-                $repository->setControllerArguments(array());
-            «ELSE»
-                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
-                $repository->setRequest($this->request);
-            «ENDIF»
-            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
-            $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
-
-            $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-            if (!$hasIdentifier) {
-                return $this->__('Error! Invalid identifier received.');
-            }
-
-            // assign object data fetched from the database
-            $entity = $repository->selectById($idValues);
-            if ((!is_array($entity) && !is_object($entity)) || !isset($entity[$idFields[0]])) {
-                return $this->__('No such item.');
-            }
-
-            $entity->initWorkflow();
-
-            $instance = $entity->createCompositeIdentifier() . '::';
-
-            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
-            // set cache id
-            $accessLevel = ACCESS_READ;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
-                $accessLevel = ACCESS_COMMENT;
-            }
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
-                $accessLevel = ACCESS_EDIT;
-            }
-            $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
-
-            $this->view->assign('objectType', $objectType)
-                      ->assign('source', $source)
-                      ->assign($objectType, $entity)
-                      ->assign('displayMode', $displayMode);
-
-            «IF targets('1.3.5')»
-                return $this->view->fetch('external/' . $objectType . '/display.tpl');
-            «ELSE»
-                return $this->response($this->view->fetch('External/' . ucwords($objectType) . '/display.tpl'));
-            «ENDIF»
+        $component = $this->name . ':' . ucwords($objectType) . ':';
+        if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
+            return '';
         }
 
+        «IF targets('1.3.5')»
+            $source = isset($args['source']) ? $args['source'] : $getData->filter('source', '', FILTER_SANITIZE_STRING);
+            if (!in_array($source, array('contentType', 'scribite'))) {
+                $source = 'contentType';
+            }
+
+            $displayMode = isset($args['displayMode']) ? $args['displayMode'] : $getData->filter('displayMode', 'embed', FILTER_SANITIZE_STRING);
+            if (!in_array($displayMode, array('link', 'embed'))) {
+                $displayMode = 'embed';
+            }
+
+            $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
+            $repository->setControllerArguments(array());
+        «ELSE»
+            $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($this->request);
+        «ENDIF»
+        $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+        $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
+
+        $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
+        if (!$hasIdentifier) {
+            return $this->__('Error! Invalid identifier received.');
+        }
+
+        // assign object data fetched from the database
+        $entity = $repository->selectById($idValues);
+        if ((!is_array($entity) && !is_object($entity)) || !isset($entity[$idFields[0]])) {
+            return $this->__('No such item.');
+        }
+
+        $entity->initWorkflow();
+
+        $instance = $entity->createCompositeIdentifier() . '::';
+
+        $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+        // set cache id
+        $accessLevel = ACCESS_READ;
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            $accessLevel = ACCESS_COMMENT;
+        }
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            $accessLevel = ACCESS_EDIT;
+        }
+        $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
+
+        $this->view->assign('objectType', $objectType)
+                  ->assign('source', $source)
+                  ->assign($objectType, $entity)
+                  ->assign('displayMode', $displayMode);
+
+        «IF targets('1.3.5')»
+            return $this->view->fetch('external/' . $objectType . '/display.tpl');
+        «ELSE»
+            return $this->response($this->view->fetch('External/' . ucwords($objectType) . '/display.tpl'));
+        «ENDIF»
+    '''
+
+    def private finderBase(Application it) '''
+        «finderDocBlock(true)»
+        «finderSignature»
+        {
+            «finderBaseImpl»
+        }
+    '''
+
+    def private finderDocBlock(Application it, Boolean isBase) '''
         /**
          * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
-         «IF !targets('1.3.5')»
+         «IF !targets('1.3.5') && !isBase»
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
          *        name = "«appName.formatForDB»_external_finder",
@@ -203,113 +227,117 @@ class ExternalController {
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
+    '''
+
+    def private finderSignature(Application it) '''
         public function finder«IF targets('1.3.5')»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
-        {
-            PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
+    '''
 
-            $getData = $this->request->query;
-            «IF targets('1.3.5')»
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
-            «ENDIF»
+    def private finderBaseImpl(Application it) '''
+        PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
-            «IF targets('1.3.5')»
-                $objectType = $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            «ENDIF»
-            $utilArgs = array('controller' => 'external', 'action' => 'finder');
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
-            }
+        $getData = $this->request->query;
+        «IF targets('1.3.5')»
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+        «ELSE»
+            $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+        «ENDIF»
 
-            «IF targets('1.3.5')»
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
-            «ELSE»
-                if (!SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT)) {
-                    throw new AccessDeniedException();
-                }
-            «ENDIF»
-
-            «IF targets('1.3.5')»
-                $entityClass = '«appName»_Entity_' . ucwords($objectType);
-                $repository = $this->entityManager->getRepository($entityClass);
-                $repository->setControllerArguments(array());
-            «ELSE»
-                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
-                $repository->setRequest($this->request);
-            «ENDIF»
-
-            «IF targets('1.3.5')»
-                $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
-            «ENDIF»
-            if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
-                return $this->__('Error: Invalid editor context given for external controller action.');
-            }
-            «IF hasCategorisableEntities»
-
-                // fetch selected categories to reselect them in the output
-                // the actual filtering is done inside the repository class
-                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
-            «ENDIF»
-            «IF targets('1.3.5')»
-                $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);
-            «ENDIF»
-            if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
-                $sort = $repository->getDefaultSortingField();
-            }
-
-            «IF targets('1.3.5')»
-                $sortdir = $getData->filter('sortdir', '', FILTER_SANITIZE_STRING);
-            «ENDIF»
-            $sdir = strtolower($sortdir);
-            if ($sdir != 'asc' && $sdir != 'desc') {
-                $sdir = 'asc';
-            }
-
-            $sortParam = $sort . ' ' . $sdir;
-
-            // the current offset which is used to calculate the pagination
-            $currentPage = (int) «IF targets('1.3.5')»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
-
-            // the number of items displayed on a page for pagination
-            $resultsPerPage = (int) «IF targets('1.3.5')»$getData->filter('num', 0, FILTER_VALIDATE_INT)«ELSE»$num«ENDIF»;
-            if ($resultsPerPage == 0) {
-                $resultsPerPage = $this->getVar('pageSize', 20);
-            }
-            $where = '';
-            list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
-
-            foreach ($entities as $k => $entity) {
-                $entity->initWorkflow();
-            }
-
-            $view = Zikula_View::getInstance('«appName»', false);
-
-            $view->assign('editorName', $editor)
-                 ->assign('objectType', $objectType)
-                 ->assign('items', $entities)
-                 ->assign('sort', $sort)
-                 ->assign('sortdir', $sdir)
-                 ->assign('currentPage', $currentPage)
-                 ->assign('pager', array('numitems'     => $objectCount,
-                                         'itemsperpage' => $resultsPerPage));
-            «IF hasCategorisableEntities»
-
-                // assign category properties
-                $properties = null;
-                if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
-                }
-                $view->assign('properties', $properties)
-                     ->assign('catIds', $categoryIds);
-            «ENDIF»
-
-            «IF targets('1.3.5')»
-                return $view->display('external/' . $objectType . '/find.tpl');
-            «ELSE»
-                return new PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
-            «ENDIF»
+        «IF targets('1.3.5')»
+            $objectType = $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+        «ENDIF»
+        $utilArgs = array('controller' => 'external', 'action' => 'finder');
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
         }
+
+        «IF targets('1.3.5')»
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
+        «ELSE»
+            if (!SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT)) {
+                throw new AccessDeniedException();
+            }
+        «ENDIF»
+
+        «IF targets('1.3.5')»
+            $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
+            $repository->setControllerArguments(array());
+        «ELSE»
+            $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($this->request);
+        «ENDIF»
+
+        «IF targets('1.3.5')»
+            $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
+        «ENDIF»
+        if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
+            return $this->__('Error: Invalid editor context given for external controller action.');
+        }
+        «IF hasCategorisableEntities»
+
+            // fetch selected categories to reselect them in the output
+            // the actual filtering is done inside the repository class
+            $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
+        «ENDIF»
+        «IF targets('1.3.5')»
+            $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);
+        «ENDIF»
+        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
+            $sort = $repository->getDefaultSortingField();
+        }
+
+        «IF targets('1.3.5')»
+            $sortdir = $getData->filter('sortdir', '', FILTER_SANITIZE_STRING);
+        «ENDIF»
+        $sdir = strtolower($sortdir);
+        if ($sdir != 'asc' && $sdir != 'desc') {
+            $sdir = 'asc';
+        }
+
+        $sortParam = $sort . ' ' . $sdir;
+
+        // the current offset which is used to calculate the pagination
+        $currentPage = (int) «IF targets('1.3.5')»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
+
+        // the number of items displayed on a page for pagination
+        $resultsPerPage = (int) «IF targets('1.3.5')»$getData->filter('num', 0, FILTER_VALIDATE_INT)«ELSE»$num«ENDIF»;
+        if ($resultsPerPage == 0) {
+            $resultsPerPage = $this->getVar('pageSize', 20);
+        }
+        $where = '';
+        list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+
+        foreach ($entities as $k => $entity) {
+            $entity->initWorkflow();
+        }
+
+        $view = Zikula_View::getInstance('«appName»', false);
+
+        $view->assign('editorName', $editor)
+             ->assign('objectType', $objectType)
+             ->assign('items', $entities)
+             ->assign('sort', $sort)
+             ->assign('sortdir', $sdir)
+             ->assign('currentPage', $currentPage)
+             ->assign('pager', array('numitems'     => $objectCount,
+                                     'itemsperpage' => $resultsPerPage));
+        «IF hasCategorisableEntities»
+
+            // assign category properties
+            $properties = null;
+            if (in_array($objectType, $this->categorisableObjectTypes)) {
+                $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+            }
+            $view->assign('properties', $properties)
+                 ->assign('catIds', $categoryIds);
+        «ENDIF»
+
+        «IF targets('1.3.5')»
+            return $view->display('external/' . $objectType . '/find.tpl');
+        «ELSE»
+            return new PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+        «ENDIF»
     '''
 
     def private externalImpl(Application it) '''
@@ -321,6 +349,10 @@ class ExternalController {
         «ENDIF»
         /**
          * Controller for external calls implementation class.
+         «IF !targets('1.3.5')»
+         *
+         * @Route("/%«appName.formatForDB».routing.external%")
+         «ENDIF»
          */
         «IF targets('1.3.5')»
         class «appName»_Controller_External extends «appName»_Controller_Base_External
@@ -328,7 +360,29 @@ class ExternalController {
         class ExternalController extends BaseExternalController
         «ENDIF»
         {
+            «IF !targets('1.3.5')»
+                «displayImpl»
+
+                «finderImpl»
+
+            «ENDIF»
             // feel free to extend the external controller here
+        }
+    '''
+
+    def private displayImpl(Application it) '''
+        «displayDocBlock(false)»
+        «displaySignature»
+        {
+            return parent::displayAction($ot, $id, $source, $displayMode);
+        }
+    '''
+
+    def private finderImpl(Application it) '''
+        «finderDocBlock(false)»
+        «finderSignature»
+        {
+            return parent::finderAction($objectType, $editor, $sort, $sortdir, $pos, $num);
         }
     '''
 }

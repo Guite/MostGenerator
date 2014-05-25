@@ -32,57 +32,66 @@ class ControllerAction {
         actionsImpl = new Actions(app)
     }
 
-    def generate(Action it) '''
-        «actionDoc(null)»
-        public function «methodName»«IF app.targets('1.3.5')»()«ELSE»Action(«methodArgs»)«ENDIF»
-        {
-            «actionsImpl.actionImpl(it)»
-        }
-        «/* this line is on purpose */»
+    def generate(Action it, Boolean isBase) '''
+        «IF isBase»
+            «actionDoc(null, isBase)»
+            public function «methodName»«IF app.targets('1.3.5')»()«ELSE»Action(«methodArgs»)«ENDIF»
+            {
+                «actionsImpl.actionImpl(it)»
+            }
+            «/* this line is on purpose */»
+        «ENDIF»
     '''
 
-    def generate(Entity it, Action action) '''
-        «action.actionDoc(it)»
+    def generate(Entity it, Action action, Boolean isBase) '''
+        «action.actionDoc(it, isBase)»
         public function «action.methodName»«IF app.targets('1.3.5')»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
         {
-            $legacyControllerType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
-            System::queryStringSetVar('type', $legacyControllerType);
-            $«IF app.targets('1.3.5')»this->«ENDIF»request->query->set('type', $legacyControllerType);
+            «IF isBase»
+                $legacyControllerType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+                System::queryStringSetVar('type', $legacyControllerType);
+                $«IF app.targets('1.3.5')»this->«ENDIF»request->query->set('type', $legacyControllerType);
 
-            «IF softDeleteable && !app.targets('1.3.5')»
-                if ($legacyControllerType == 'admin') {
-                    //$this->entityManager->getFilters()->disable('softdeleteable');
-                } else {
-                    $this->entityManager->getFilters()->enable('softdeleteable');
-                }
+                «IF softDeleteable && !app.targets('1.3.5')»
+                    if ($legacyControllerType == 'admin') {
+                        //$this->entityManager->getFilters()->disable('softdeleteable');
+                    } else {
+                        $this->entityManager->getFilters()->enable('softdeleteable');
+                    }
 
+                «ENDIF»
+                «actionsImpl.actionImpl(it, action)»
+            «ELSE»
+                return parent::«action.methodName»Action(«methodArgsCall(it, action)»);
             «ENDIF»
-            «actionsImpl.actionImpl(it, action)»
         }
         «/* this line is on purpose */»
     '''
 
-    def private actionDoc(Action it, Entity entity) '''
+    def private actionDoc(Action it, Entity entity, Boolean isBase) '''
         /**
          * «actionDocMethodDescription»
         «actionDocMethodDocumentation»
         «IF !app.targets('1.3.5') && entity !== null»
-            «actionRoute(entity)»
-            «IF it instanceof DisplayAction || it instanceof DeleteAction»
-                «paramConverter(entity)»
-            «ENDIF»
-            «IF it instanceof MainAction»
-                «' '»* @Cache(expires="+7 days", public=true)
-            «ELSEIF it instanceof ViewAction»
-                «' '»* @Cache(expires="+2 hours", public=false)
-            «ELSEIF !(it instanceof CustomAction)»
-                «IF entity.standardFields»
-                    «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map[entity.name.formatForCode + '.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
-                «ELSE»
-                    «IF it instanceof EditAction»
-                        «' '»* @Cache(expires="+30 minutes", public=false)
+            «IF !isBase»
+                «actionRoute(entity)»
+            «ELSE»
+                «IF it instanceof DisplayAction || it instanceof DeleteAction»
+                    «paramConverter(entity)»
+                «ENDIF»
+                «IF it instanceof MainAction»
+                    «' '»* @Cache(expires="+7 days", public=true)
+                «ELSEIF it instanceof ViewAction»
+                    «' '»* @Cache(expires="+2 hours", public=false)
+                «ELSEIF !(it instanceof CustomAction)»
+                    «IF entity.standardFields»
+                        «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map[entity.name.formatForCode + '.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
                     «ELSE»
-                        «' '»* @Cache(expires="+12 hours", public=false)
+                        «IF it instanceof EditAction»
+                            «' '»* @Cache(expires="+30 minutes", public=false)
+                        «ELSE»
+                            «' '»* @Cache(expires="+12 hours", public=false)
+                        «ENDIF»
                     «ENDIF»
                 «ENDIF»
             «ENDIF»
@@ -176,6 +185,7 @@ class ControllerAction {
     def private methodArgs(Action action) '''Request $request''' 
 
     def private dispatch methodArgs(Entity it, Action action) '''Request $request''' 
+    def private dispatch methodArgsCall(Entity it, Action action) '''$request''' 
 
     def private dispatch actionRoute(Action it, Entity entity) '''
     '''
@@ -249,20 +259,24 @@ class ControllerAction {
     }
 
     def private dispatch methodArgs(Entity it, ViewAction action) '''Request $request, $sort, $sortdir, $pos, $num''' 
+    def private dispatch methodArgsCall(Entity it, ViewAction action) '''$request, $sort, $sortdir, $pos, $num''' 
 
     def private dispatch methodArgs(Entity it, DisplayAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
+    def private dispatch methodArgsCall(Entity it, DisplayAction action) '''$request, $«name.formatForCode»''' 
 
     def private dispatch actionRoute(DisplayAction it, Entity entity) '''
         «actionRouteForSingleEntity(entity, it)»
     '''
 
     def private dispatch methodArgs(Entity it, EditAction action) '''Request $request«/* TODO migrate to Symfony forms #416 */»''' 
+    def private dispatch methodArgsCall(Entity it, EditAction action) '''$request«/* TODO migrate to Symfony forms #416 */»''' 
 
     def private dispatch actionRoute(EditAction it, Entity entity) '''
         «actionRouteForSingleEntity(entity, it)»
     '''
 
     def private dispatch methodArgs(Entity it, DeleteAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
+    def private dispatch methodArgsCall(Entity it, DeleteAction action) '''$request, $«name.formatForCode»''' 
 
     def private dispatch actionRoute(DeleteAction it, Entity entity) '''
         «actionRouteForSingleEntity(entity, it)»

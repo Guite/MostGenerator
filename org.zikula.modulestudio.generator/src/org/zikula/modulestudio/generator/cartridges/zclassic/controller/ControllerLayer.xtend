@@ -126,14 +126,14 @@ class ControllerLayer {
             «ENDIF»
 
             «val actionHelper = new ControllerAction(app)»
-            «FOR action : actions»«actionHelper.generate(action)»«ENDFOR»
+            «FOR action : actions»«actionHelper.generate(action, true)»«ENDFOR»
             «IF hasActions('edit')»
 
-                «handleInlineRedirect»
+                «handleInlineRedirect(true)»
             «ENDIF»
             «IF app.needsConfig && isConfigController»
 
-                «configAction»
+                «configAction(true)»
             «ENDIF»
             «IF isAjaxController»
                 «new Ajax().additionalAjaxFunctions(it, app)»
@@ -151,14 +151,14 @@ class ControllerLayer {
             «new ControllerHelper().controllerPostInitialize(it, false, '')»
 
             «val actionHelper = new ControllerAction(app)»
-            «FOR action : app.getActionsOfAdminAndUserControllers»«actionHelper.generate(it, action)»«ENDFOR»
+            «FOR action : app.getActionsOfAdminAndUserControllers»«actionHelper.generate(it, action, true)»«ENDFOR»
             «IF hasActions('view') && app.hasAdminController»
 
-                «handleSelectedObjects»
+                «handleSelectedObjects(true)»
             «ENDIF»
             «IF hasActions('edit')»
 
-                «handleInlineRedirect»
+                «handleInlineRedirect(true)»
             «ENDIF»
         }
     '''
@@ -267,13 +267,25 @@ class ControllerLayer {
         use Zikula\Core\Response\PlainResponse;
     '''
 
-    def private handleSelectedObjects(Entity it) '''
+    def private handleSelectedObjects(Entity it, Boolean isBase) '''
+        «handleSelectedObjectsDocBlock(isBase)»
+        public function handleSelectedEntries«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        {
+            «IF isBase»
+                «handleSelectedObjectsBaseImpl»
+            «ELSE»
+                return parent::handleSelectedEntriesAction($request);
+            «ENDIF»
+        }
+    '''
+
+    def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase) '''
         /**
          * Process status changes for multiple items.
          *
          * This function processes the items selected in the admin view page.
          * Multiple items may have their state changed or be deleted.
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.5') && !isBase»
          *
          * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».plural%/handleSelectedEntries",
          *        name = "«app.appName.formatForDB»_«name.formatForCode»_handleSelectedEntries",
@@ -290,134 +302,146 @@ class ControllerLayer {
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ENDIF»
          */
-        public function handleSelectedEntries«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
-        {
-            $this->checkCsrfToken();
+    '''
 
-            «IF app.targets('1.3.5')»
-                $redirectUrl = ModUtil::url($this->name, 'admin', 'main', array('ot' => '«name.formatForCode»'));
-            «ELSE»
-                $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_index', array('lct' => 'admin'));
-            «ENDIF»
+    def private handleSelectedObjectsBaseImpl(Entity it) '''
+        $this->checkCsrfToken();
 
-            $objectType = '«name.formatForCode»';
+        «IF app.targets('1.3.5')»
+            $redirectUrl = ModUtil::url($this->name, 'admin', 'main', array('ot' => '«name.formatForCode»'));
+        «ELSE»
+            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_index', array('lct' => 'admin'));
+        «ENDIF»
 
-            // Get parameters
-            $action = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('action', null);
-            $items = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('items', null);
+        $objectType = '«name.formatForCode»';
 
-            $action = strtolower($action);
+        // Get parameters
+        $action = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('action', null);
+        $items = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('items', null);
 
-            «IF app.targets('1.3.5')»
-                $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
-            «ELSE»
-                $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
-            «ENDIF»
+        $action = strtolower($action);
 
-            // process each item
-            foreach ($items as $itemid) {
-                // check if item exists, and get record instance
-                $selectionArgs = array('ot' => $objectType,
-                                       'id' => $itemid,
-                                       'useJoins' => false);
-                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
+        «IF app.targets('1.3.5')»
+            $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+        «ELSE»
+            $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
+        «ENDIF»
 
-                $entity->initWorkflow();
+        // process each item
+        foreach ($items as $itemid) {
+            // check if item exists, and get record instance
+            $selectionArgs = array('ot' => $objectType,
+                                   'id' => $itemid,
+                                   'useJoins' => false);
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
 
-                // check if $action can be applied to this entity (may depend on it's current workflow state)
-                $allowedActions = $workflowHelper->getActionsForObject($entity);
-                $actionIds = array_keys($allowedActions);
-                if (!in_array($action, $actionIds)) {
-                    // action not allowed, skip this object
-                    continue;
-                }
+            $entity->initWorkflow();
 
-                $hookAreaPrefix = $entity->getHookAreaPrefix();
-
-                // Let any hooks perform additional validation actions
-                $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-                «IF app.targets('1.3.5')»
-                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                    $validators = $this->notifyHooks($hook)->getValidators();
-                «ELSE»
-                    $hook = new ValidationHook(new ValidationProviders());
-                    $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-                «ENDIF»
-                if ($validators->hasErrors()) {
-                    continue;
-                }
-
-                $success = false;
-                try {
-                    // execute the workflow action
-                    $success = $workflowHelper->executeAction($entity, $action);
-                } catch(\Exception $e) {
-                    «IF app.targets('1.3.5')»
-                        LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
-                    «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
-                        $logger = $this->serviceManager->get('logger');
-                        $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()));
-                    «ENDIF»
-                }
-
-                if (!$success) {
-                    continue;
-                }
-
-                if ($action == 'delete') {
-                    «IF app.targets('1.3.5')»
-                        LogUtil::registerStatus($this->__('Done! Item deleted.'));
-                    «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
-                        $logger = $this->serviceManager->get('logger');
-                        $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
-                    «ENDIF»
-                } else {
-                    «IF app.targets('1.3.5')»
-                        LogUtil::registerStatus($this->__('Done! Item updated.'));
-                    «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item updated.'));
-                        $logger = $this->serviceManager->get('logger');
-                        $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
-                    «ENDIF»
-                }
-
-                // Let any hooks know that we have updated or deleted an item
-                $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
-                $url = null;
-                if ($action != 'delete') {
-                    $urlArgs = $entity->createUrlArgs();
-                    $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                }
-                «IF app.targets('1.3.5')»
-                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                    $this->notifyHooks($hook);
-                «ELSE»
-                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-                «ENDIF»
-
-                // An item was updated or deleted, so we clear all cached pages for this item.
-                $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+            // check if $action can be applied to this entity (may depend on it's current workflow state)
+            $allowedActions = $workflowHelper->getActionsForObject($entity);
+            $actionIds = array_keys($allowedActions);
+            if (!in_array($action, $actionIds)) {
+                // action not allowed, skip this object
+                continue;
             }
 
-            // clear view cache to reflect our changes
-            $this->view->clear_cache();
+            $hookAreaPrefix = $entity->getHookAreaPrefix();
 
+            // Let any hooks perform additional validation actions
+            $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
             «IF app.targets('1.3.5')»
-                return $this->redirect($redirectUrl);
+                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                $validators = $this->notifyHooks($hook)->getValidators();
             «ELSE»
-                return new RedirectResponse(System::normalizeUrl($redirectUrl));
+                $hook = new ValidationHook(new ValidationProviders());
+                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+            «ENDIF»
+            if ($validators->hasErrors()) {
+                continue;
+            }
+
+            $success = false;
+            try {
+                // execute the workflow action
+                $success = $workflowHelper->executeAction($entity, $action);
+            } catch(\Exception $e) {
+                «IF app.targets('1.3.5')»
+                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    $logger = $this->serviceManager->get('logger');
+                    $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()));
+                «ENDIF»
+            }
+
+            if (!$success) {
+                continue;
+            }
+
+            if ($action == 'delete') {
+                «IF app.targets('1.3.5')»
+                    LogUtil::registerStatus($this->__('Done! Item deleted.'));
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
+                    $logger = $this->serviceManager->get('logger');
+                    $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
+                «ENDIF»
+            } else {
+                «IF app.targets('1.3.5')»
+                    LogUtil::registerStatus($this->__('Done! Item updated.'));
+                «ELSE»
+                    $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item updated.'));
+                    $logger = $this->serviceManager->get('logger');
+                    $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
+                «ENDIF»
+            }
+
+            // Let any hooks know that we have updated or deleted an item
+            $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+            $url = null;
+            if ($action != 'delete') {
+                $urlArgs = $entity->createUrlArgs();
+                $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+            }
+            «IF app.targets('1.3.5')»
+                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                $this->notifyHooks($hook);
+            «ELSE»
+                $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
+                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+            «ENDIF»
+
+            // An item was updated or deleted, so we clear all cached pages for this item.
+            $cacheArgs = array('ot' => $objectType, 'item' => $entity);
+            ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+        }
+
+        // clear view cache to reflect our changes
+        $this->view->clear_cache();
+
+        «IF app.targets('1.3.5')»
+            return $this->redirect($redirectUrl);
+        «ELSE»
+            return new RedirectResponse(System::normalizeUrl($redirectUrl));
+        «ENDIF»
+    '''
+
+    def private handleInlineRedirect(NamedObject it, Boolean isBase) '''
+        «handleInlineRedirectDocBlock(isBase)»
+        public function handleInlineRedirect«IF app.targets('1.3.5')»()«ELSE»Action($idPrefix, $commandName, $id = 0)«ENDIF»
+        {
+            «IF isBase»
+                «handleInlineRedirectBaseImpl»
+            «ELSE»
+                return parent::handleInlineRedirectAction($idPrefix, $commandName, $id);
             «ENDIF»
         }
     '''
 
-    def private handleInlineRedirect(NamedObject it) '''
+    def private handleInlineRedirectDocBlock(NamedObject it, Boolean isBase) '''
         /**
          * This method cares for a redirect within an inline frame.
-         «IF it instanceof Entity && !app.targets('1.3.5')»
+         «IF it instanceof Entity && !app.targets('1.3.5') && !isBase»
          *
          * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
          *        name = "«app.appName.formatForDB»_«name.formatForCode»_handleInlineRedirect",
@@ -433,42 +457,54 @@ class ControllerLayer {
          *
          * @return boolean Whether the inline redirect has been performed or not.
          */
-        public function handleInlineRedirect«IF app.targets('1.3.5')»()«ELSE»Action($idPrefix, $commandName, $id = 0)«ENDIF»
+    '''
+
+    def private handleInlineRedirectBaseImpl(NamedObject it) '''
+        «IF app.targets('1.3.5') || it instanceof Controller»
+            $id = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
+            $idPrefix = $this->request->query->filter('idPrefix', '', FILTER_SANITIZE_STRING);
+            $commandName = $this->request->query->filter('commandName', '', FILTER_SANITIZE_STRING);
+        «ENDIF»
+        if (empty($idPrefix)) {
+            return false;
+        }
+
+        $this->view->assign('itemId', $id)
+                   ->assign('idPrefix', $idPrefix)
+                   ->assign('commandName', $commandName)
+                   ->assign('jcssConfig', JCSSUtil::getJSConfig());
+
+        «var typeName = ''»
+        «IF it instanceof Controller»
+            «{typeName = it.formattedName; ''}»
+        «ELSEIF it instanceof Entity»
+            «{typeName = it.name.formatForCode; ''}»
+        «ENDIF»
+        «IF app.targets('1.3.5')»
+            $this->view->display('«typeName»/inlineRedirectHandler.tpl');
+
+            return true;
+        «ELSE»
+            return new PlainResponse($this->view->display('«typeName.toFirstUpper»/inlineRedirectHandler.tpl'));
+        «ENDIF»
+    '''
+
+    def private configAction(Controller it, Boolean isBase) '''
+        «configDocBlock(isBase)»
+        public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
-            «IF app.targets('1.3.5') || it instanceof Controller»
-                $id = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
-                $idPrefix = $this->request->query->filter('idPrefix', '', FILTER_SANITIZE_STRING);
-                $commandName = $this->request->query->filter('commandName', '', FILTER_SANITIZE_STRING);
-            «ENDIF»
-            if (empty($idPrefix)) {
-                return false;
-            }
-
-            $this->view->assign('itemId', $id)
-                       ->assign('idPrefix', $idPrefix)
-                       ->assign('commandName', $commandName)
-                       ->assign('jcssConfig', JCSSUtil::getJSConfig());
-
-            «var typeName = ''»
-            «IF it instanceof Controller»
-                «{typeName = it.formattedName; ''}»
-            «ELSEIF it instanceof Entity»
-                «{typeName = it.name.formatForCode; ''}»
-            «ENDIF»
-            «IF app.targets('1.3.5')»
-                $this->view->display('«typeName»/inlineRedirectHandler.tpl');
-
-                return true;
+            «IF isBase»
+                «configBaseImpl»
             «ELSE»
-                return new PlainResponse($this->view->display('«typeName.toFirstUpper»/inlineRedirectHandler.tpl'));
+                return parent::configAction();
             «ENDIF»
         }
     '''
 
-    def private configAction(Controller it) '''
+    def private configDocBlock(Controller it, Boolean isBase) '''
         /**
          * This method takes care of the application configuration.
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.5') && !isBase»
          *
          * @Route("/config",
          *        name = "«app.appName.formatForDB»_«formattedName»_config",
@@ -482,26 +518,25 @@ class ControllerLayer {
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
-        public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
-        {
-            «IF app.targets('1.3.5')»
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
-            «ELSE»
-                if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    throw new AccessDeniedException();
-                }
-            «ENDIF»
-
-            // Create new Form reference
-            $view = FormUtil::newForm($this->name, $this);
-
-            $templateName = '«IF app.targets('1.3.5')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
-
-            // Execute form using supplied template and page event handler
-            return «IF !app.targets('1.3.5')»new Response(«ENDIF»$view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»())«IF !app.targets('1.3.5')»)«ENDIF»;
-        }
     '''
 
+    def private configBaseImpl(Controller it) '''
+        «IF app.targets('1.3.5')»
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
+        «ELSE»
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                throw new AccessDeniedException();
+            }
+        «ENDIF»
+
+        // Create new Form reference
+        $view = FormUtil::newForm($this->name, $this);
+
+        $templateName = '«IF app.targets('1.3.5')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
+
+        // Execute form using supplied template and page event handler
+        return «IF !app.targets('1.3.5')»new Response(«ENDIF»$view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»())«IF !app.targets('1.3.5')»)«ENDIF»;
+    '''
 
     def private controllerImpl(Controller it) '''
         «IF !app.targets('1.3.5')»
@@ -519,6 +554,19 @@ class ControllerLayer {
         class «name.formatForCodeCapital»Controller extends Base«name.formatForCodeCapital»Controller
         «ENDIF»
         {
+            «IF !app.targets('1.3.5')»
+                «/* not required as no routes are used here
+                «val actionHelper = new ControllerAction(app)»
+                «FOR action : actions»«actionHelper.generate(action, false)»«ENDFOR»*/»
+                «IF hasActions('edit')»
+                    «handleInlineRedirect(false)»
+
+                «ENDIF»
+                «IF app.needsConfig && isConfigController»
+                    «configAction(false)»
+
+                «ENDIF»
+            «ENDIF»
             // feel free to add your own controller methods here
         }
     '''
@@ -539,6 +587,19 @@ class ControllerLayer {
         class «name.formatForCodeCapital»Controller extends Base«name.formatForCodeCapital»Controller
         «ENDIF»
         {
+            «IF !app.targets('1.3.5')»
+                «val actionHelper = new ControllerAction(app)»
+                «FOR action : app.getActionsOfAdminAndUserControllers»«actionHelper.generate(it, action, false)»«ENDFOR»
+                «IF hasActions('view') && app.hasAdminController»
+
+                    «handleSelectedObjects(false)»
+                «ENDIF»
+                «IF hasActions('edit')»
+
+                    «handleInlineRedirect(false)»
+                «ENDIF»
+
+            «ENDIF»
             // feel free to add your own controller methods here
         }
     '''
