@@ -60,8 +60,6 @@ class ServiceDefinitions {
 
             «parametersHelper»
 
-            «parametersCaching»
-
             «parametersLogger»
 
         services:
@@ -116,16 +114,6 @@ class ServiceDefinitions {
         «FOR className : getHelperNames»
             «modPrefix».«className.toLowerCase»_helper.class: «nsBase»«className»Util
         «ENDFOR»
-    '''
-
-    def private parametersCaching(Application it) '''
-
-        # Cache expiration intervals
-        # valid are all dates understood by strtotime(), like for example: tomorrow
-        «modPrefix».cache.expiration.index: +7 days
-        «modPrefix».cache.expiration.view: +2 hours
-        «modPrefix».cache.expiration.edit: +30 minutes
-        «modPrefix».cache.expiration.other: +12 hours
     '''
 
     def private parametersLogger(Application it) '''

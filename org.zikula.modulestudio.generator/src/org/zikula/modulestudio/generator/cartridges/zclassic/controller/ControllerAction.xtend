@@ -72,17 +72,17 @@ class ControllerAction {
                 «paramConverter(entity)»
             «ENDIF»
             «IF it instanceof MainAction»
-                «' '»* @Cache(expires="%«app.appName.formatForDB».cache.expiration.main%", public=true)
+                «' '»* @Cache(expires="+7 days", public=true)
             «ELSEIF it instanceof ViewAction»
-                «' '»* @Cache(expires="%«app.appName.formatForDB».cache.expiration.view%", public=false)
+                «' '»* @Cache(expires="+2 hours", public=false)
             «ELSEIF !(it instanceof CustomAction)»
                 «IF entity.standardFields»
                     «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map['post.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate()")
                 «ELSE»
                     «IF it instanceof EditAction»
-                        «' '»* @Cache(expires="%«app.appName.formatForDB».cache.expiration.edit%", public=false)
+                        «' '»* @Cache(expires="+30 minutes", public=false)
                     «ELSE»
-                        «' '»* @Cache(expires="%«app.appName.formatForDB».cache.expiration.other%", public=false)
+                        «' '»* @Cache(expires="+12 hours", public=false)
                     «ENDIF»
                 «ENDIF»
             «ENDIF»
