@@ -105,13 +105,13 @@ class Forms {
     '''
 
     def private pageIcon(Entity it, String iconName) '''
-        {if $lcq eq 'admin'}
+        {if $lct eq 'admin'}
             {assign var='adminPageIcon' value='«iconName»'}
         {/if}
     '''
 
     def private templateHeader(Entity it) '''
-        {if $lcq eq 'admin'}
+        {if $lct eq 'admin'}
             «IF container.application.targets('1.3.5')»
                 <div class="z-admin-content-pagetitle">
                     {icon type=$adminPageIcon size='small' alt=$templateTitle}
