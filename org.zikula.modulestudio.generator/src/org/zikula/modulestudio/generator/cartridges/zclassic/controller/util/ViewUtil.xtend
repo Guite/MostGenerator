@@ -85,11 +85,6 @@ class ViewUtil {
          */
         public function getViewTemplate(Zikula_View $view, $type, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
         {
-            if (FormUtil::getPassedValue('lct', 'user', 'GETPOST') == 'admin') {
-                // load Smarty plugins of Admin module
-                $view->addPluginDir('system/«IF targets('1.3.5')»Admin/templates«ELSE»Zikula/Module/AdminModule/Resources/views«ENDIF»/plugins');
-            }
-
             // create the base template name
             $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type«ELSE»ucwords($type)«ENDIF» . '/' . $func);
 
@@ -158,6 +153,22 @@ class ViewUtil {
             «ENDIF»
             if (!$raw && $templateExtension != 'tpl') {
                 $raw = true;
+            }
+
+            // ensure the Admin module's plugins are loaded if we have lct=admin but another type value
+            «IF targets('1.3.5')»
+                $lct = (isset($args['lct']) && !empty($args['lct'])) ? $args['lct'] : FormUtil::getPassedValue('lct', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
+            «ELSE»
+                $lct = user;
+                if ($request->isMethod('POST')) {
+                    $lct = $request->request->filter('lct', 'user', false, FILTER_SANITIZE_STRING);
+                } elseif ($request->isMethod('GET')) {
+                    $lct = $request->query->filter('lct', 'user', false, FILTER_SANITIZE_STRING);
+                }
+            «ENDIF»
+            if ($lct == 'admin') {
+                // load Smarty plugins of Admin module
+                $view->addPluginDir('system/«IF targets('1.3.5')»Admin/templates«ELSE»Zikula/Module/AdminModule/Resources/views«ENDIF»/plugins');
             }
 
             if ($raw == true) {
