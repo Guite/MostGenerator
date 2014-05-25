@@ -30,6 +30,7 @@ class Cache {
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
+            use UserUtil;
             use Zikula_AbstractApi;
             use Zikula_View;
             use Zikula_View_Theme;
