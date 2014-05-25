@@ -173,10 +173,10 @@ class ControllerLayer {
                 use «app.appNamespace»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
 
             «ENDIF»
+            use Symfony\Component\HttpFoundation\Request;
             «IF (app.needsConfig && isConfigController) || hasActions('edit')»
                 use Symfony\Component\HttpFoundation\Response;
             «ENDIF»
-            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
