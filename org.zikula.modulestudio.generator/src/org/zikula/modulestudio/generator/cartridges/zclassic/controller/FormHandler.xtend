@@ -595,7 +595,7 @@ class FormHandler {
                 «ELSE»
                     $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                     $createMethod = 'create' . ucfirst($this->objectType);
-                    $entity = $this->serviceManager->get('«app.name.formatForDB».' . $this->objectType . '_factory')->$createMethod();
+                    $entity = $this->view->getContainer()->get('«appName.formatForDB».' . $this->objectType . '_factory')->$createMethod();
                 «ENDIF»
             }
 
