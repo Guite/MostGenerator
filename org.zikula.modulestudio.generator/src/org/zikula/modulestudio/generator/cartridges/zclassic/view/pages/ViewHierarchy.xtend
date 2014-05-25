@@ -39,7 +39,8 @@ class ViewHierarchy {
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/header.tpl"}
+            {assign var='lctUc' value=$lct|ucfirst}
+            {include file="`$lctUc`/header.tpl"}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
             {gt text='«name.formatForDisplayCapital» hierarchy' assign='templateTitle'}
@@ -84,7 +85,7 @@ class ViewHierarchy {
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/footer.tpl"}
+            {include file="`$lctUc`/footer.tpl"}
         «ENDIF»
     '''
 

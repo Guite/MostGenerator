@@ -43,13 +43,14 @@ class Index {
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/header.tpl"}
+            {assign var='lctUc' value=$lct|ucfirst}
+            {include file="`$lctUc`/header.tpl"}
         «ENDIF»
         <p>{gt text='Welcome to the «name.formatForDisplay» section of the «app.name.formatForDisplayCapital» application.'}</p>
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/footer.tpl"}
+            {include file="`$lctUc`/footer.tpl"}
         «ENDIF»
     '''
 }

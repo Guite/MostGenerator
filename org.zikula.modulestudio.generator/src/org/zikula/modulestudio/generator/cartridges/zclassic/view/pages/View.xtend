@@ -68,7 +68,8 @@ class View {
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/header.tpl"}
+            {assign var='lctUc' value=$lct|ucfirst}
+            {include file="`$lctUc`/header.tpl"}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
             {gt text='«name.formatForDisplayCapital» list' assign='templateTitle'}
@@ -90,7 +91,7 @@ class View {
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/footer.tpl"}
+            {include file="`$lctUc`/footer.tpl"}
         «ENDIF»
         «ajaxToggle»
     '''

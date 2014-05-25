@@ -83,7 +83,8 @@ class Forms {
         «IF app.targets('1.3.5')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/header.tpl"}
+            {assign var='lctUc' value=$lct|ucfirst}
+            {include file="`$lctUc`/header.tpl"}
         «ENDIF»
         {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js'}
         {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_validation.js'}
@@ -157,7 +158,7 @@ class Forms {
         «IF app.targets('1.3.5')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/footer.tpl"}
+            {include file="`$lctUc`/footer.tpl"}
         «ENDIF»
 
         «formTemplateJS(app, actionName)»

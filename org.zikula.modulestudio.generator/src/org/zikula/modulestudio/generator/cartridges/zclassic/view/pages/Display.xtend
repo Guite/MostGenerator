@@ -55,7 +55,8 @@ class Display {
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/header.tpl"}
+            {assign var='lctUc' value=$lct|ucfirst}
+            {include file="`$lctUc`/header.tpl"}
         «ENDIF»
         «val refedElems = getOutgoingJoinRelations.filter[e|e.target.container.application == it.container.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.container.application == it.container.application]»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» with-rightbox«ENDIF»">
@@ -104,7 +105,7 @@ class Display {
         «IF container.application.targets('1.3.5')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`ucfirst($lct)`/footer.tpl"}
+            {include file="`$lctUc`/footer.tpl"}
         «ENDIF»
         «IF hasBooleansWithAjaxToggleEntity || useGroupingPanels('display')»
 
