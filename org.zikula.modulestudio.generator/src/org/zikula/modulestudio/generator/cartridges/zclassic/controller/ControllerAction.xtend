@@ -77,7 +77,7 @@ class ControllerAction {
                 «' '»* @Cache(expires="+2 hours", public=false)
             «ELSEIF !(it instanceof CustomAction)»
                 «IF entity.standardFields»
-                    «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map['post.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate()")
+                    «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map[entity.name.formatForCode + '.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
                 «ELSE»
                     «IF it instanceof EditAction»
                         «' '»* @Cache(expires="+30 minutes", public=false)
