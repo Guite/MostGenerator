@@ -105,7 +105,7 @@ class View {
                     «IF container.application.targets('1.3.5')»
                         <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
                     «ELSE»
-                        <a href="{modurl modname='«appName»' type='«objName»' func='edit' lct=$lct id=0}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
+                        <a href="{modurl modname='«appName»' type='«objName»' func='edit' lct=$lct}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
                     «ENDIF»
                 {/checkpermissionblock}
             {/if}

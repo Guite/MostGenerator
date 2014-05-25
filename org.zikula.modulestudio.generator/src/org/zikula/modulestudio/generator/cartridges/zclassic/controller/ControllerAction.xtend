@@ -203,7 +203,7 @@ class ControllerAction {
          «' '»* @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
          «' '»*        name = "«app.appName.formatForDB»_«name.formatForCode»_«action.name.formatForCode»",
          «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "«IF action instanceof DisplayAction»%«app.appName.formatForDB».routing.formats.display%«ELSE»html«ENDIF»"},
-         «' '»*        defaults = {"_format" = "html"},
+         «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)»«ENDIF»"_format" = "html"},
          «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}
          «' '»* )
     '''
@@ -231,6 +231,19 @@ class ControllerAction {
             }
         }
         output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "\d+"'''].join(', ')
+
+        output
+    }
+
+    def private actionRouteDefaultsForSingleEntity(Entity it, Action action) {
+        var output = ''
+        if (hasSluggableFields && !(action instanceof EditAction)) {
+            output = '''"slug" = ""'''
+            if (slugUnique) {
+                return output
+            }
+        }
+        output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "0"'''].join(', ')
 
         output
     }
