@@ -159,7 +159,7 @@ class ViewUtil {
             «IF targets('1.3.5')»
                 $lct = (isset($args['lct']) && !empty($args['lct'])) ? $args['lct'] : FormUtil::getPassedValue('lct', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
             «ELSE»
-                $lct = user;
+                $lct = 'user';
                 if ($request->isMethod('POST')) {
                     $lct = $request->request->filter('lct', 'user', false, FILTER_SANITIZE_STRING);
                 } elseif ($request->isMethod('GET')) {
