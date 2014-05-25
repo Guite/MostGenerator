@@ -265,7 +265,7 @@ class ControllerAction {
 
     // currently called for DisplayAction and DeleteAction
     def private paramConverter(Entity it) '''
-         «' '»* @ParamConverter("«name.formatForCode»", class="«app.appName»:«name.formatForCodeCapital»", options={«paramConverterOptions»})
+         «' '»* @ParamConverter("«name.formatForCode»", class="«app.appName»:«name.formatForCodeCapital»Entity", options={«paramConverterOptions»})
     '''
 
     def private paramConverterOptions(Entity it) {
