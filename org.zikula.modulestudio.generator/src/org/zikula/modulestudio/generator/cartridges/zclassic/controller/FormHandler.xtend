@@ -347,7 +347,7 @@ class FormHandler {
                 «ELSE»
                     $repository = $this->view->getServiceManager()->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
                 «ENDIF»
-                $utilArgs = array('controller' => FormUtil::getPassedValue('type', 'user', 'GETPOST'),
+                $utilArgs = array('controller' => \FormUtil::getPassedValue('type', 'user', 'GETPOST'),
                                   'action' => '«actionName.formatForCode.toFirstLower»',
                                   'mode' => $this->mode);
                 $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
