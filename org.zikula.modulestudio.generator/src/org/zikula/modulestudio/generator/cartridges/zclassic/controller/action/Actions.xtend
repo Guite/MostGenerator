@@ -624,6 +624,8 @@ class Actions {
             $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
             unset($idValues);
         «ELSE»
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+
             $entity = $«name.formatForCode»;
         «ENDIF»
 
