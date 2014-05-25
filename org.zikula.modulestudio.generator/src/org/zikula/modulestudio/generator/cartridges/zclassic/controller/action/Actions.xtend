@@ -789,7 +789,7 @@ class Actions {
         $template = $viewHelper->getViewTemplate($this->view, $objectType, 'edit', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
 
         // execute form using supplied template and page event handler
-        return $view->execute($template, new $handlerClass());
+        return «IF !app.targets('1.3.5')»new Response(«ENDIF»$view->execute($template, new $handlerClass())«IF !app.targets('1.3.5')»)«ENDIF»;
     '''
 
     def private dispatch actionImplBody(DeleteAction it) '''
