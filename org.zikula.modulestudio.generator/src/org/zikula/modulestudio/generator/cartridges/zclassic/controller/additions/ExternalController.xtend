@@ -346,6 +346,8 @@ class ExternalController {
 
             use «appNamespace»\Controller\Base\ExternalController as BaseExternalController;
 
+            use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
         «ENDIF»
         /**
          * Controller for external calls implementation class.

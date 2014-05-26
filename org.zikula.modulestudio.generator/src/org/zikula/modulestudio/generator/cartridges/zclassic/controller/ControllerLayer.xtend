@@ -577,6 +577,14 @@ class ControllerLayer {
 
             use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
 
+            use RuntimeException;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+            «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
+                use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+            «ENDIF»
+            use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+            use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+
         «ENDIF»
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.
