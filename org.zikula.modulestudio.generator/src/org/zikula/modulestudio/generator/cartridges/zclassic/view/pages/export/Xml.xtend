@@ -55,7 +55,7 @@ class Xml {
         «IF container.application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
         <«nameMultiple.formatForCode»>
         {foreach item='item' from=$items}
-            {include file='«name.formatForCode»/include.xml'}
+            {include file='«name.formatForCode»/include.xml.tpl'}
         {foreachelse}
             <no«name.formatForCodeCapital» />
         {/foreach}
@@ -66,7 +66,7 @@ class Xml {
         {* purpose of this template: «nameMultiple.formatForDisplay» display xml view *}
         «IF container.application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
         {getbaseurl assign='baseurl'}
-        {include file='«name.formatForCode»/include.xml' item=$«name.formatForCode»}
+        {include file='«name.formatForCode»/include.xml.tpl' item=$«name.formatForCode»}
     '''
 
     def private xmlInclude(Entity it, String appName) '''
