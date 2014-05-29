@@ -208,7 +208,7 @@ class ExternalController {
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
          *        name = "«appName.formatForDB»_external_finder",
-         *        requirements = {"editor" = "xinha|tinymce«/* |ckeditor */»", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
+         *        requirements = {"editor" = "xinha|tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
          *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
          *        methods = {"GET"}
          * )
@@ -271,7 +271,7 @@ class ExternalController {
         «IF targets('1.3.5')»
             $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
         «ENDIF»
-        if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
+        if (empty($editor) || !in_array($editor, array('xinha', 'tinymce', 'ckeditor'))) {
             return $this->__('Error: Invalid editor context given for external controller action.');
         }
         «IF hasCategorisableEntities»
