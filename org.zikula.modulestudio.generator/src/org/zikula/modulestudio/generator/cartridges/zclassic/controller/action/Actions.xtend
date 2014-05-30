@@ -162,11 +162,11 @@ class Actions {
             «IF controller.hasActions('view')»
 
                 «IF app.targets('1.3.5')»
-                    $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'view');
+                    $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'view', array('lct' => '«controller.formattedName»'));
 
                     return $this->redirect($redirectUrl);
                 «ELSE»
-                    $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $objectType . '_view');
+                    $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $objectType . '_view', array('lct' => '«controller.formattedName»'));
 
                     return new RedirectResponse(System::normalizeUrl($redirectUrl));
                 «ENDIF»
