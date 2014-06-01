@@ -146,6 +146,10 @@ class Redirect {
          */
         protected function getRedirectUrl($args)
         {
+            «IF !app.targets('1.3.5')»
+                $serviceManager = $this->view->getContainer();
+
+            «ENDIF»
             if ($this->inlineUsage == true) {
                 $urlArgs = array('idPrefix'    => $this->idPrefix,
                                  'commandName' => $args['commandName']);
