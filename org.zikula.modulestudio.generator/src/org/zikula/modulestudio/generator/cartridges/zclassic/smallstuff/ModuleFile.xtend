@@ -27,7 +27,11 @@ class ModuleFile {
     def private moduleBaseImpl(Application it) '''
         namespace «appNamespace»\Base;
 
-        use Zikula\Core\Abstract«IF isSystemModule»Core«ENDIF»Module;
+        «IF isSystemModule»
+            use Zikula\Bundle\CoreBundle\Bundle\AbstractCoreModule
+        «ELSE»
+            use Zikula\Core\AbstractModule;
+        «ENDIF»
 
         /**
          * Module base class.
