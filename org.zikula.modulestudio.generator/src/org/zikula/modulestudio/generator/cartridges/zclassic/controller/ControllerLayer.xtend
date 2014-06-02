@@ -198,6 +198,7 @@ class ControllerLayer {
             «IF (hasActions('view') && isAdminController) || hasActions('main') || hasActions('delete')»
                 use System;
             «ENDIF»
+            use UserUtil;
             use Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»;
             use Zikula_View;
             use ZLanguage;
@@ -239,6 +240,7 @@ class ControllerLayer {
             «IF (hasActions('view') && app.hasAdminController) || hasActions('main') || hasActions('delete')»
                 use System;
             «ENDIF»
+            use UserUtil;
             use Zikula_AbstractController;
             use Zikula_View;
             use ZLanguage;

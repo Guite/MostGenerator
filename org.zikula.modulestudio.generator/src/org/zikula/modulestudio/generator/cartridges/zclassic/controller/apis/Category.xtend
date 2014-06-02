@@ -30,6 +30,7 @@ class Category {
 
             use CategoryRegistryUtil;
             use ModUtil;
+            use UserUtil;
             use Zikula_AbstractApi;
 
         «ENDIF»

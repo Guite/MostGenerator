@@ -41,6 +41,7 @@ class Config {
             use ModUtil;
             use SecurityUtil;
             use System;
+            use UserUtil;
             use Zikula_Form_AbstractHandler;
             use Zikula_Form_View;
 

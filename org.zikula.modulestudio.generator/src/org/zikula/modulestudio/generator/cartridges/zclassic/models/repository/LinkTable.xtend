@@ -29,6 +29,8 @@ class LinkTable {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository\Base;
 
+            use UserUtil;
+
         «ENDIF»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.

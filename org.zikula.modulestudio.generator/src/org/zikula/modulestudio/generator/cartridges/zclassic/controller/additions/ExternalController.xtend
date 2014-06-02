@@ -40,6 +40,7 @@ class ExternalController {
         use PageUtil;
         use SecurityUtil;
         use ThemeUtil;
+        use UserUtil;
         use Zikula_AbstractController;
         use Zikula_View;
         use Zikula\Core\Response\PlainResponse;

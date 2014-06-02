@@ -60,6 +60,7 @@ class Installer {
             use HookUtil;
             use ModUtil;
             use System;
+            use UserUtil;
             use Zikula_AbstractInstaller;
             use Zikula_Workflow_Util;
 

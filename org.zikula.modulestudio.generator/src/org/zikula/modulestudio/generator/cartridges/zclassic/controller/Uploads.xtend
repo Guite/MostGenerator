@@ -87,6 +87,7 @@ class Uploads {
             use FileUtil;
             use ModUtil;
             use ServiceUtil;
+            use UserUtil;
             use ZLanguage;
 
         «ENDIF»

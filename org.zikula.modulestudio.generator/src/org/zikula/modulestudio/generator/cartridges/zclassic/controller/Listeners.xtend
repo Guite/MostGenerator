@@ -410,6 +410,7 @@ class Listeners {
                     use ModUtil;
                     use ServiceUtil;
                 «ENDIF»
+                use UserUtil;
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
