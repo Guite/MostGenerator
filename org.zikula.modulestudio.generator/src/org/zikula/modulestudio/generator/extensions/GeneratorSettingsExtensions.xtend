@@ -15,6 +15,21 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether the model describes a system module or not.
+     */
+    def isSystemModule(Application it) {
+        if (hasSettings) getSettings.isSystemModule else false
+    }
+
+    /**
+     * Returns the root folder depending on whether a system or
+     * a normal module is to be generated.
+     */
+    def rootFolder(Application it) {
+        if (isSystemModule) 'system' else 'modules'
+    }
+
+    /**
      * Determines whether account panel integration should be generated or not.
      */
     def generateAccountApi(Application it) {

@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -13,6 +14,7 @@ class ViewHierarchy {
 
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -126,7 +128,7 @@ class ViewHierarchy {
             </div>
         </div>
 
-        {pageaddvar name='javascript' value='modules/«IF container.application.targets('1.3.5')»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»_tree.js'}
+        {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF container.application.targets('1.3.5')»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»_tree.js'}
         <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {

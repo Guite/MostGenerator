@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,7 +13,9 @@ import org.zikula.modulestudio.generator.extensions.Utils
  * This class creates additional artifacts which can be helpful for Scribite integration.
  */
 class Scribite {
+
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -203,13 +206,13 @@ class Scribite {
                 }
           3. Below this add
                 if (ModUtil::available('«appName»')) {
-                    PageUtil::addVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
+                    PageUtil::addVar('javascript', '«rootFolder»/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
                 }
-          4. Copy or move all files from modules/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
+          4. Copy or move all files from «rootFolder»/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
 
         Just follow these few steps to complete the integration for Scribite >= 5.0:
          1. Check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy from
-            modules/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF» into modules/Scribite/plugins.
+            «rootFolder»/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF» into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''

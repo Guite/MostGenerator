@@ -19,6 +19,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -30,6 +31,7 @@ class Forms {
 
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
@@ -86,8 +88,8 @@ class Forms {
             {assign var='lctUc' value=$lct|ucfirst}
             {include file="`$lctUc`/header.tpl"}
         «ENDIF»
-        {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js'}
-        {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_validation.js'}
+        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js'}
+        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_validation.js'}
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
@@ -487,7 +489,7 @@ class Forms {
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
-                <script type="text/javascript" src="{$baseurl}modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js"></script>
+                <script type="text/javascript" src="{$baseurl}«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">

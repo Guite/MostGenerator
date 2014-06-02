@@ -6,12 +6,15 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeSingleView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ContentTypeSingle {
+
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
@@ -189,9 +192,9 @@ class ContentTypeSingle {
         {
             // ensure our custom plugins are loaded
             «IF targets('1.3.5')»
-                array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
+                array_push($this->view->plugins_dir, '«rootFolder»/«appName»/templates/plugins');
             «ELSE»
-                array_push($this->view->plugins_dir, 'modules/«getViewPath»/plugins');
+                array_push($this->view->plugins_dir, '«rootFolder»/«getViewPath»/plugins');
             «ENDIF»
 
             // required as parameter for the item selector plugin

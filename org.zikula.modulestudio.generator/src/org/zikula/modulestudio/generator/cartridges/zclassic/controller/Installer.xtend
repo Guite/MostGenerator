@@ -12,13 +12,16 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installe
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.InstallerView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Installer {
+
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -190,8 +193,8 @@ class Installer {
 
                 // add default entry for category registry (property named Main)
                 «IF targets('1.3.5')»
-                    include_once 'modules/«appName»/lib/«appName»/Api/Base/Category.php';
-                    include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
+                    include_once '«rootFolder»/«appName»/lib/«appName»/Api/Base/Category.php';
+                    include_once '«rootFolder»/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»
                     $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi($this->serviceManager);

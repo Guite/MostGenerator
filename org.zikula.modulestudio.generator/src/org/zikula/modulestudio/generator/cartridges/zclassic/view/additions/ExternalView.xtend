@@ -7,14 +7,17 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExternalView {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
@@ -151,8 +154,8 @@ class ExternalView {
         <head>
             <title>{gt text='Search and select «name.formatForDisplay»'}</title>
             <link type="text/css" rel="stylesheet" href="{$baseurl}style/core.css" />
-            <link type="text/css" rel="stylesheet" href="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»style.css" />
-            <link type="text/css" rel="stylesheet" href="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»finder.css" />
+            <link type="text/css" rel="stylesheet" href="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.5')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»style.css" />
+            <link type="text/css" rel="stylesheet" href="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.5')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»finder.css" />
             {assign var='ourEntry' value=$modvars.ZConfig.entrypoint}
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
@@ -162,7 +165,7 @@ class ExternalView {
                 <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.ImageViewer.js"></script>
-            <script type="text/javascript" src="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_finder.js"></script>
+            <script type="text/javascript" src="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.5')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_finder.js"></script>
         «IF app.targets('1.3.5')»
         {if $editorName eq 'tinymce'}
             <script type="text/javascript" src="{$baseurl}modules/Scribite/includes/tinymce/tiny_mce_popup.js"></script>

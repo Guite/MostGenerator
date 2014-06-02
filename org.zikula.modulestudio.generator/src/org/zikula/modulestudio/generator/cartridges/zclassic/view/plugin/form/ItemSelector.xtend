@@ -5,13 +5,16 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ItemSelector {
+
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
@@ -118,7 +121,7 @@ class ItemSelector {
                     PageUtil::addVar('javascript', 'prototype');
                     PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
                     «IF targets('1.3.5')»
-                    PageUtil::addVar('javascript', 'modules/«appName»/javascript/«appName»_finder.js');
+                    PageUtil::addVar('javascript', '«rootFolder»/«appName»/javascript/«appName»_finder.js');
                     «ELSE»
                     PageUtil::addVar('javascript', '«getAppJsPath»«appName»_finder.js');
                     «ENDIF»

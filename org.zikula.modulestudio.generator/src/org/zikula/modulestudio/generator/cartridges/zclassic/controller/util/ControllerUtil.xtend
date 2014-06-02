@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -12,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerUtil {
     @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension NamingExtensions = new NamingExtensions
@@ -330,7 +332,7 @@ class ControllerUtil {
 
                 // Write a htaccess file into the upload directory
                 $htaccessFilePath = $uploadPath . '/.htaccess';
-                $htaccessFileTemplate = 'modules/«appName»/docs/htaccessTemplate';
+                $htaccessFileTemplate = '«rootFolder»/«appName»/docs/htaccessTemplate';
                 if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
                     $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                     $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
@@ -362,7 +364,7 @@ class ControllerUtil {
 
                     // Write a htaccess file into the upload directory
                     $htaccessFilePath = $uploadPath . '/.htaccess';
-                    $htaccessFileTemplate = 'modules/«getAppDocPath»htaccessTemplate';
+                    $htaccessFileTemplate = '«rootFolder»/«getAppDocPath»htaccessTemplate';
                     if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
                         $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                         $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents(DataUtil::formatForOS($htaccessFileTemplate, false)));
@@ -399,7 +401,7 @@ class ControllerUtil {
             $json = '';
 
             // we can either use Snoopy if available
-            //require_once('modules/«IF targets('1.3.5')»«appName»/lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
+            //require_once('«rootFolder»/«IF targets('1.3.5')»«appName»/lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$json = $snoopy->results;

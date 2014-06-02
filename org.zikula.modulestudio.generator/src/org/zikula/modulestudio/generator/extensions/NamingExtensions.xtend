@@ -172,7 +172,7 @@ class NamingExtensions {
      */
     def getAppSourcePath(Application it) {
         if (targets('1.3.5'))
-            'src/modules/' + appName + '/'
+            'src/' + rootFolder + '/' + appName + '/'
         else
             ''
     }

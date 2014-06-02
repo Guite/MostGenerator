@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ThirdParty {
+
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -201,7 +202,7 @@ class ThirdParty {
         $helpers->add(
             array('module' => '«appName»',
                   'type'   => 'javascript',
-                  'path'   => 'modules/«IF targets('1.3.5')»«appName»/javascript/«ELSE»«appName»/«getAppJsPath»«ENDIF»«appName»_finder.js')
+                  'path'   => '«rootFolder»/«IF targets('1.3.5')»«appName»/javascript/«ELSE»«appName»/«getAppJsPath»«ENDIF»«appName»_finder.js')
         );
     '''
 
@@ -231,7 +232,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«appName»/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»/editor_plugin.js'
+                  'path' => '«rootFolder»/«IF targets('1.3.5')»«appName»/docs/«ELSE»«appName»/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»/editor_plugin.js'
             )
         );
     '''
@@ -262,7 +263,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«appName»/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                  'path' => '«rootFolder»/«IF targets('1.3.5')»«appName»/docs/«ELSE»«appName»/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
                   'file' => 'plugin.js',
                   'img'  => 'ed_«appName.formatForDB».gif'
             )
