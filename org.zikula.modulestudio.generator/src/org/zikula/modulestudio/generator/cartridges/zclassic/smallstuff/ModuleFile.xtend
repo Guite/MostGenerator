@@ -28,7 +28,7 @@ class ModuleFile {
         namespace «appNamespace»\Base;
 
         «IF isSystemModule»
-            use Zikula\Bundle\CoreBundle\Bundle\AbstractCoreModule
+            use Zikula\Bundle\CoreBundle\Bundle\AbstractCoreModule;
         «ELSE»
             use Zikula\Core\AbstractModule;
         «ENDIF»
