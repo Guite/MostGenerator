@@ -193,9 +193,9 @@ class ControllerUtil {
                 if (!$id && $idField != 'id' && count($idFields) == 1) {
                     $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
                     «IF !targets('1.3.5')»
-                    if ($request->attributes->has("_route_params[$idField]")) {
-                        $id = (int) filter_var($request->attributes->get("_route_params[$idField]", $defaultValue, true), FILTER_VALIDATE_INT);
-                    } else«ENDIF»if ($request->query->has($idField)) {
+                    if ($request->attributes->has("_route_params[id]")) {
+                        $id = (int) filter_var($request->attributes->get("_route_params[id]", $defaultValue, true), FILTER_VALIDATE_INT);
+                    } else«ENDIF»if ($request->query->has('id')) {
                         $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                     } else {
                         $id = $defaultValue;
