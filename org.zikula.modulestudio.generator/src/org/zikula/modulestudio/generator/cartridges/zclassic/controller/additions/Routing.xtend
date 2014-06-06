@@ -36,8 +36,6 @@ class Routing {
         «appName.toLowerCase»:
             # define routing support for these controllers
             resource: "@«appName»/Controller"
-            # set a unique prefix to avoid route conflicts with other applications
-            prefix:   /«vendor.toLowerCase»«name.toLowerCase»
             # enable support for defining routes by annotations
             type:     annotation
     '''

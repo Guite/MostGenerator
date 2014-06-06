@@ -174,9 +174,6 @@ class ControllerLayer {
 
             «ENDIF»
             use Symfony\Component\HttpFoundation\Request;
-            «IF (app.needsConfig && isConfigController) || hasActions('edit')»
-                use Symfony\Component\HttpFoundation\Response;
-            «ENDIF»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -537,7 +534,7 @@ class ControllerLayer {
         $templateName = '«IF app.targets('1.3.5')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
 
         // Execute form using supplied template and page event handler
-        return «IF !app.targets('1.3.5')»new Response(«ENDIF»$view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»())«IF !app.targets('1.3.5')»)«ENDIF»;
+        return «IF !app.targets('1.3.5')»$this->response(«ENDIF»$view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»())«IF !app.targets('1.3.5')»)«ENDIF»;
     '''
 
     def private controllerImpl(Controller it) '''
