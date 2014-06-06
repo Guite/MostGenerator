@@ -98,8 +98,14 @@ class ColourInput {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
-                    PageUtil::addVar('javascript', 'javascript/picky_color/picky_color.js');
+                    «IF targets('1.3.5')»
+                        PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
+                        PageUtil::addVar('javascript', 'javascript/picky_color/picky_color.js');
+                    «ELSE»
+                        PageUtil::addVar('stylesheet', 'web/jquery-minicolors/jquery.minicolors.css');
+                        PageUtil::addVar('javascript', 'jquery');
+                        PageUtil::addVar('javascript', 'web/jquery-minicolors/jquery.minicolors.min.js');
+                    «ENDIF»
                 }
                 $firstTime = false;
 
@@ -113,12 +119,16 @@ class ColourInput {
 
                 $result .= "<script type=\"text/javascript\">
                     /* <![CDATA[ */
-                        var namePicky = new PickyColor({
-                            field: '" . $this->getId() . "',
-                            color: '" . DataUtil::formatForDisplay($this->text) . "',
-                            colorWell: '" . $this->getId() . "',
-                            closeText: '" . __('Close', $dom) . "'
-                        })
+                        «IF targets('1.3.5')»
+                            var namePicky = new PickyColor({
+                                field: '" . $this->getId() . "',
+                                color: '" . DataUtil::formatForDisplay($this->text) . "',
+                                colorWell: '" . $this->getId() . "',
+                                closeText: '" . __('Close', $dom) . "'
+                            });
+                        «ELSE»
+                            jQuery('#" . $this->getId() . "').minicolors({theme: 'bootstrap'});
+                        «ENDIF»
                     /* ]]> */
                     </script>";
 
