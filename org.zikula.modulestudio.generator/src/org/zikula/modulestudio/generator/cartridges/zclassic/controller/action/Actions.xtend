@@ -821,13 +821,12 @@ class Actions {
 
         $entity->initWorkflow();
 
+        // determine available workflow actions
         «IF app.targets('1.3.5')»
             $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
         «ELSE»
             $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
         «ENDIF»
-        $deleteActionId = 'delete';
-        $deleteAllowed = false;
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {
             «IF app.targets('1.3.5')»
@@ -836,9 +835,13 @@ class Actions {
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
                 $logger = $this->serviceManager->get('logger');
                 $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
-                return false;
+                throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
             «ENDIF»
         }
+
+        // check whether deletion is allowed
+        $deleteActionId = 'delete';
+        $deleteAllowed = false;
         foreach ($actions as $actionId => $action) {
             if ($actionId != $deleteActionId) {
                 continue;
@@ -853,12 +856,11 @@ class Actions {
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
                 $logger = $this->serviceManager->get('logger');
                 $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
-                return false;
             «ENDIF»
         }
 
         $confirmation = (bool) $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('confirmation', false, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
-        if ($confirmation) {
+        if ($confirmation && $deleteAllowed) {
             $this->checkCsrfToken();
 
             $hookAreaPrefix = $entity->getHookAreaPrefix();

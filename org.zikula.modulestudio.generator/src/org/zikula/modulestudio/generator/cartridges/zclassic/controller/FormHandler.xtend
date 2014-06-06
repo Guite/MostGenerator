@@ -465,7 +465,7 @@ class FormHandler {
                     $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
                     $logger = $this->view->getServiceManager()->get('logger');
                     $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()));
-                    return false;
+                    throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
                 «ENDIF»
             }
             // assign list of allowed actions to the view for further processing
