@@ -169,15 +169,37 @@ class ControllerUtil {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
                 if ($this->hasCompositeKeys($objectType)) {
                     // composite key may be alphanumeric
-                    $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.5')», false«ENDIF»);
+                    «IF !targets('1.3.5')»
+                    if ($request->attributes->has("_route_params[$idField]")) {
+                        $id = $request->attributes->get("_route_params[$idField]", $defaultValue, true);
+                    } else«ENDIF»if ($request->query->has($idField)) {
+                        $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.5')», false«ENDIF»);
+                    } else {
+                        $id = $defaultValue;
+                    }
                 } else {
                     // single identifier
-                    $id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    «IF !targets('1.3.5')»
+                    if ($request->attributes->has("_route_params[$idField]")) {
+                        $id = (int) filter_var($request->attributes->get("_route_params[$idField]", $defaultValue, true), FILTER_VALIDATE_INT);
+                    } else«ENDIF»if ($request->query->has($idField)) {
+                        $id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    } else {
+                        $id = $defaultValue;
+                    }
                 }
+
                 // fallback if id has not been found yet
                 if (!$id && $idField != 'id' && count($idFields) == 1) {
                     $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
-                    $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    «IF !targets('1.3.5')»
+                    if ($request->attributes->has("_route_params[$idField]")) {
+                        $id = (int) filter_var($request->attributes->get("_route_params[$idField]", $defaultValue, true), FILTER_VALIDATE_INT);
+                    } else«ENDIF»if ($request->query->has($idField)) {
+                        $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    } else {
+                        $id = $defaultValue;
+                    }
                 }
                 $idValues[$idField] = $id;
             }
