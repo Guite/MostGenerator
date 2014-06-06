@@ -99,9 +99,13 @@ class Redirect {
                 $serviceManager = $this->view->getServiceManager();
 
             «ENDIF»
+            «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType::NONE»
+                $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+
+            «ENDIF»
             «IF hasActions('view')»
                 // redirect to the list of «nameMultiple.formatForCode»
-                $viewArgs = array(«IF app.targets('1.3.5')»'ot' => $this->objectType«ENDIF»);
+                $viewArgs = array(«IF app.targets('1.3.5')»'ot' => $this->objectType, «ENDIF»'lct' => $legacyControllerType);
                 «IF tree != EntityTreeType::NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
@@ -112,10 +116,11 @@ class Redirect {
                 «ENDIF»
             «ELSEIF hasActions('index')»
                 // redirect to the «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page
+                $indexArgs = array('lct' => $legacyControllerType);
                 «IF app.targets('1.3.5')»
-                    $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'main');
+                    $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'main', $indexArgs);
                 «ELSE»
-                    $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_index');
+                    $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_index', $indexArgs);
                 «ENDIF»
             «ELSE»
                 $url = System::getHomepageUrl();
@@ -125,9 +130,13 @@ class Redirect {
                 if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
                     // redirect to the detail page of treated «name.formatForCode»
                     «IF app.targets('1.3.5')»
-                        $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), «modUrlDisplay('this->idValues', false)»);
+                        $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
+                        $displayArgs = array(«modUrlPrimaryKeyParams('this->idValues', false)»«appendSlug('this->idValues', false)»);
+                        $url = ModUtil::url($this->name, $currentType, 'display', $displayArgs);
                     «ELSE»
-                        $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_display', $this->idValues);
+                        $displayArgs = $this->idValues;
+                        $displayArgs['lct'] = $legacyControllerType;
+                        $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_display', $displayArgs);
                     «ENDIF»
                 }
             «ENDIF»

@@ -97,7 +97,7 @@ class UrlExtensions {
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String the slug parameter assignment.
      */
-    def private appendSlug(Entity it, String objName, Boolean template) {
+    def appendSlug(Entity it, String objName, Boolean template) {
         if (hasSluggableFields) {
             if (template) ' slug=$' + objName + '.slug'
             else ", 'slug' => $" + objName + "['slug']"
