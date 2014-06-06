@@ -164,7 +164,7 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\«outgoingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«fetchTypeTag»«outgoingMappingAdditions»)
+         * @ORM\«outgoingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»)
         «joinDetails(true)»
         «IF !container.application.targets('1.3.5')»
             «IF !nullable»
