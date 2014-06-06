@@ -165,13 +165,16 @@ class ControllerUtil {
         public function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
         {
             $idValues = array();
+            «IF !targets('1.3.5')»
+                $routeParams = $request->get('_route_params', array());
+            «ENDIF»
             foreach ($idFields as $idField) {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
                 if ($this->hasCompositeKeys($objectType)) {
                     // composite key may be alphanumeric
                     «IF !targets('1.3.5')»
-                    if ($request->attributes->has("_route_params[$idField]")) {
-                        $id = $request->attributes->get("_route_params[$idField]", $defaultValue, true);
+                    if (array_key_exists($idField, $routeParams)) {
+                        $id = !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
                     } else«ENDIF»if ($request->query->has($idField)) {
                         $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.5')», false«ENDIF»);
                     } else {
@@ -180,8 +183,8 @@ class ControllerUtil {
                 } else {
                     // single identifier
                     «IF !targets('1.3.5')»
-                    if ($request->attributes->has("_route_params[$idField]")) {
-                        $id = (int) filter_var($request->attributes->get("_route_params[$idField]", $defaultValue, true), FILTER_VALIDATE_INT);
+                    if (array_key_exists($idField, $routeParams)) {
+                        $id = (int) !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
                     } else«ENDIF»if ($request->query->has($idField)) {
                         $id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                     } else {
@@ -193,8 +196,8 @@ class ControllerUtil {
                 if (!$id && $idField != 'id' && count($idFields) == 1) {
                     $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
                     «IF !targets('1.3.5')»
-                    if ($request->attributes->has("_route_params[id]")) {
-                        $id = (int) filter_var($request->attributes->get("_route_params[id]", $defaultValue, true), FILTER_VALIDATE_INT);
+                    if (array_key_exists('id', $routeParams)) {
+                        $id = (int) !empty($routeParams['id']) ? $routeParams['id'] : $defaultValue;
                     } else«ENDIF»if ($request->query->has('id')) {
                         $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
                     } else {
