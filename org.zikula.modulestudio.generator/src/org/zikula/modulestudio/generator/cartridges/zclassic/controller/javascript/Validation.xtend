@@ -21,11 +21,20 @@ class Validation {
      * Entry point for the JavaScript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '_validation.js'
+        var fileName = ''
+        if (targets('1.3.5')) {
+            fileName = appName + '_validation.js'
+        } else {
+            fileName = appName + '.Validation.js'
+        }
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for validation')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '_validation.generated.js'
+                if (targets('1.3.5')) {
+                    fileName = appName + '_validation.generated.js'
+                } else {
+                    fileName = appName + '.Validation.generated.js'
+                }
             }
             fsa.generateFile(getAppJsPath + fileName, generate)
         }
@@ -34,7 +43,7 @@ class Validation {
     def private generate(Application it) '''
         'use strict';
 
-        function «prefix»Today(format)
+        function «prefix()»Today(format)
         {
             var timestamp, todayDate, month, day, hours, minutes, seconds;
 
@@ -73,7 +82,7 @@ class Validation {
         }
 
         // returns YYYY-MM-DD even if date is in DD.MM.YYYY
-        function «prefix»ReadDate(val, includeTime)
+        function «prefix()»ReadDate(val, includeTime)
         {
             // look if we have YYYY-MM-DD
             if (val.substr(4, 1) === '-' && val.substr(7, 1) === '-') {
@@ -94,7 +103,7 @@ class Validation {
             /**
              * Performs a duplicate check for unique fields
              */
-            function «prefix»UniqueCheck(ucOt, val, elem, ucEx)
+            function «prefix()»UniqueCheck(ucOt, val, elem, ucEx)
             {
                 var params, request;
 
@@ -142,7 +151,7 @@ class Validation {
         /**
          * Add special validation rules.
          */
-        function «prefix»AddCommonValidationRules(objectType, id)
+        function «prefix()»AddCommonValidationRules(objectType, id)
         {
             Validation.addAllThese([
                 ['validate-nospace', Zikula.__('No spaces', 'module_«appName.formatForDB»_js'), function(val, elem) {
@@ -176,16 +185,16 @@ class Validation {
                         ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
-                            cmpVal = «prefix»ReadDate(valStr, true);
-                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('datetime'));
+                            cmpVal = «prefix()»ReadDate(valStr, true);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix()»Today('datetime'));
                         }],
                     «ENDIF»
                     «IF datetimeFields.exists[future]»
                         ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
-                            cmpVal = «prefix»ReadDate(valStr, true);
-                            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix»Today('datetime'));
+                            cmpVal = «prefix()»ReadDate(valStr, true);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('datetime'));
                         }],
                     «ENDIF»
                 «ENDIF»
@@ -195,16 +204,16 @@ class Validation {
                         ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
-                            cmpVal = «prefix»ReadDate(valStr, false);
-                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('date'));
+                            cmpVal = «prefix()»ReadDate(valStr, false);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix()»Today('date'));
                         }],
                     «ENDIF»
                     «IF dateFields.exists[future]»
                         ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
-                            cmpVal = «prefix»ReadDate(valStr, false);
-                            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix»Today('date'));
+                            cmpVal = «prefix()»ReadDate(valStr, false);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('date'));
                         }],
                     «ENDIF»
                 «ENDIF»
@@ -214,7 +223,7 @@ class Validation {
                         ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal;
                             cmpVal = new String(val);
-                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('time'));
+                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix()»Today('time'));
                         }],
                     «ENDIF»
                     «IF timeFields.exists[future]»
@@ -235,8 +244,8 @@ class Validation {
                         ['«validateClass»', Zikula.__('The start must be before the end.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal, cmpVal2, result;
 
-                            cmpVal = «prefix»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
-                            cmpVal2 = «prefix»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
+                            cmpVal = «prefix()»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
+                            cmpVal2 = «prefix()»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
                             result = (cmpVal <= cmpVal2);
                             if (result) {
                                 $('advice-«validateClass»-«startFieldName»').hide();
@@ -259,7 +268,7 @@ class Validation {
                 «ENDFOR»
                 «IF getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                 ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                    return «prefix»UniqueCheck('«name.formatForCode»', val, elem, id);
+                    return «prefix()»UniqueCheck('«name.formatForCode»', val, elem, id);
                 }]
                 «ENDIF»
             ]);

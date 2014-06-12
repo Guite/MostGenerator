@@ -23,11 +23,20 @@ class EditFunctions {
      * Entry point for the JavaScript file with edit functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '_editFunctions.js'
+        var fileName = ''
+        if (targets('1.3.5')) {
+            fileName = appName + '_editFunctions.js'
+        } else {
+            fileName = appName + '.EditFunctions.js'
+        }
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for edit functions')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '_editFunctions.generated.js'
+                if (targets('1.3.5')) {
+                    fileName = appName + '_editFunctions.generated.js'
+                } else {
+                    fileName = appName + '.EditFunctions.generated.js'
+                }
             }
             fsa.generateFile(getAppJsPath + fileName, generate)
         }
@@ -63,7 +72,7 @@ class EditFunctions {
             /**
              * Initialises a user field with auto completion.
              */
-            function «prefix»InitUserField(fieldName, getterName)
+            function «prefix()»InitUserField(fieldName, getterName)
             {
                 if ($(fieldName + 'LiveSearch') === null) {
                     return;
@@ -91,7 +100,7 @@ class EditFunctions {
         /**
          * Resets the value of an upload / file input field.
          */
-        function «prefix»ResetUploadField(fieldName)
+        function «prefix()»ResetUploadField(fieldName)
         {
             if ($(fieldName) != null) {
                 $(fieldName).setAttribute('type', 'input');
@@ -104,12 +113,12 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain upload input.
          */
-        function «prefix»InitUploadField(fieldName)
+        function «prefix()»InitUploadField(fieldName)
         {
             if ($('reset' + fieldName.capitalize() + 'Val') != null) {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
-                    «prefix»ResetUploadField(fieldName);
+                    «prefix()»ResetUploadField(fieldName);
                 }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
             }
         }
@@ -119,7 +128,7 @@ class EditFunctions {
         /**
          * Resets the value of a date or datetime input field.
          */
-        function «prefix»ResetDateField(fieldName)
+        function «prefix()»ResetDateField(fieldName)
         {
             if ($(fieldName) != null) {
                 $(fieldName).value = '';
@@ -134,12 +143,12 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain date input.
          */
-        function «prefix»InitDateField(fieldName)
+        function «prefix()»InitDateField(fieldName)
         {
             if ($('reset' + fieldName.capitalize() + 'Val') != null) {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
-                    «prefix»ResetDateField(fieldName);
+                    «prefix()»ResetDateField(fieldName);
                 }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
             }
         }
@@ -152,17 +161,17 @@ class EditFunctions {
          * Uses a callback function for retrieving the address to be converted, so that it can be easily customised in each edit template.
          * There is also a method on PHP level available in the \«IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Util\ControllerUtil«ENDIF» class.
          */
-        function «prefix»InitGeoCoding(addressCallback)
+        function «prefix()»InitGeoCoding(addressCallback)
         {
             $('linkGetCoordinates').observe('click', function (evt) {
-                «prefix»DoGeoCoding(addressCallback);
+                «prefix()»DoGeoCoding(addressCallback);
             });
         }
 
         /**
          * Performs the actual geo coding using Mapstraction.
          */
-        function «prefix»DoGeoCoding(addressCallback)
+        function «prefix()»DoGeoCoding(addressCallback)
         {
             var address = {
                 address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
@@ -173,14 +182,14 @@ class EditFunctions {
                 address = addressCallback();
             }
 
-            var geocoder = new mxn.Geocoder('googlev3', «prefix»GeoCodeReturn, «prefix»GeoCodeErrorCallback);
+            var geocoder = new mxn.Geocoder('googlev3', «prefix()»GeoCodeReturn, «prefix()»GeoCodeErrorCallback);
             geocoder.geocode(address);
 
-            function «prefix»GeoCodeErrorCallback (status) {
+            function «prefix()»GeoCodeErrorCallback (status) {
                 Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
             }
 
-            function «prefix»GeoCodeReturn (location) {
+            function «prefix()»GeoCodeReturn (location) {
                 Form.Element.setValue('latitude', location.point.lat.toFixed(4));
                 Form.Element.setValue('longitude', location.point.lng.toFixed(4));
                 newCoordinatesEventHandler();
@@ -250,7 +259,7 @@ class EditFunctions {
 
             «selectRelatedItem»
 
-            «initRelatedItemsForm(prefix)»
+            «initRelatedItemsForm(prefix())»
 
             «closeWindowFromInside»
         «ENDIF»
@@ -260,7 +269,7 @@ class EditFunctions {
         /**
          * Toggles the fields of an auto completion field.
          */
-        function «prefix»ToggleRelatedItemForm(idPrefix)
+        function «prefix()»ToggleRelatedItemForm(idPrefix)
         {
             // if we don't have a toggle link do nothing
             if ($(idPrefix + 'AddLink') === null) {
@@ -279,10 +288,10 @@ class EditFunctions {
         /**
          * Resets an auto completion field.
          */
-        function «prefix»ResetRelatedItemForm(idPrefix)
+        function «prefix()»ResetRelatedItemForm(idPrefix)
         {
             // hide the sub form
-            «prefix»ToggleRelatedItemForm(idPrefix);
+            «prefix()»ToggleRelatedItemForm(idPrefix);
 
             // reset value of the auto completion field
             $(idPrefix + 'Selector').value = '';
@@ -295,7 +304,7 @@ class EditFunctions {
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
-        function «prefix»CreateWindowInstance(containerElem, useIframe)
+        function «prefix()»CreateWindowInstance(containerElem, useIframe)
         {
             var newWindow;
 
@@ -325,7 +334,7 @@ class EditFunctions {
         /**
          * Observe a link for opening an inline window
          */
-        function «prefix»InitInlineWindow(objectType, containerID)
+        function «prefix()»InitInlineWindow(objectType, containerID)
         {
             var found, newItem;
 
@@ -344,7 +353,7 @@ class EditFunctions {
                         relationHandler.windowInstance.destroy();
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstance = «prefix»CreateWindowInstance($(containerID), true);
+                    relationHandler.windowInstance = «prefix()»CreateWindowInstance($(containerID), true);
                 }
             });
 
@@ -356,7 +365,7 @@ class EditFunctions {
                 newItem.alias = '«/*TODO*/»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
-                newItem.windowInstance = «prefix»CreateWindowInstance($(containerID), true);
+                newItem.windowInstance = «prefix()»CreateWindowInstance($(containerID), true);
 
                 // add it to the list of handlers
                 relationHandler.push(newItem);
@@ -368,7 +377,7 @@ class EditFunctions {
         /**
          * Removes a related item from the list of selected ones.
          */
-        function «prefix»RemoveRelatedItem(idPrefix, removeId)
+        function «prefix()»RemoveRelatedItem(idPrefix, removeId)
         {
             var itemIds, itemIdsArr;
 
@@ -388,7 +397,7 @@ class EditFunctions {
         /**
          * Adds a related item to selection which has been chosen by auto completion.
          */
-        function «prefix»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem)
+        function «prefix()»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem)
         {
             var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
 
@@ -408,7 +417,7 @@ class EditFunctions {
                 editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
                 li.appendChild(editLink);
             }
-            removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefix»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
+            removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefix()»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
             li.appendChild(removeLink);
             if (itemPreview !== '') {
                 fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
@@ -422,7 +431,7 @@ class EditFunctions {
                 editLink.update(' ' + editImage);
 
                 $(elemPrefix + 'Edit').observe('click', function (e) {
-                    «prefix»InitInlineWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
+                    «prefix()»InitInlineWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
                     e.stop();
                 });
             }
@@ -434,7 +443,7 @@ class EditFunctions {
                     itemIdsArr = itemIds.split(',');
                     itemIdsArr.each(function (existingId) {
                         if (existingId) {
-                            «prefix»RemoveRelatedItem(idPrefix, existingId);
+                            «prefix()»RemoveRelatedItem(idPrefix, existingId);
                         }
                     });
                     itemIds = '';
@@ -445,7 +454,7 @@ class EditFunctions {
             itemIds += newItemId;
             $(idPrefix + 'ItemList').value = itemIds;
 
-            «prefix»ResetRelatedItemForm(idPrefix);
+            «prefix()»ResetRelatedItemForm(idPrefix);
         }
     '''
 
@@ -540,7 +549,7 @@ class EditFunctions {
         /**
          * Closes an iframe from the document displayed in it
          */
-        function «prefix»CloseWindowFromInside(idPrefix, itemId)
+        function «prefix()»CloseWindowFromInside(idPrefix, itemId)
         {
             // if there is no parent window do nothing
             if (window.parent === '') {

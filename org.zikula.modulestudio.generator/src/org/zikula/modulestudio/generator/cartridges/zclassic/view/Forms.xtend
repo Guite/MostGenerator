@@ -88,8 +88,8 @@ class Forms {
             {assign var='lctUc' value=$lct|ucfirst}
             {include file="`$lctUc`/header.tpl"}
         «ENDIF»
-        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js'}
-        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_validation.js'}
+        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js'}
+        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.5')»_v«ELSE».V«ENDIF»alidation.js'}
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
@@ -478,7 +478,7 @@ class Forms {
         }
     }
 
-    def private inlineRedirectHandlerImpl(Application app) '''
+    def private inlineRedirectHandlerImpl(Application it) '''
         {* purpose of this template: close an iframe from within this iframe *}
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml">
@@ -489,14 +489,14 @@ class Forms {
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
-                <script type="text/javascript" src="{$baseurl}«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_editFunctions.js"></script>
+                <script type="text/javascript" src="{$baseurl}«rootFolder»/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     // close window from parent document
                     document.observe('dom:loaded', function() {
-                        «app.prefix»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
+                        «prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
                     });
                 /* ]]> */
                 </script>

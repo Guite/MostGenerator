@@ -206,7 +206,7 @@ class Scribite {
                 }
           3. Below this add
                 if (ModUtil::available('«appName»')) {
-                    PageUtil::addVar('javascript', '«rootFolder»/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
+                    PageUtil::addVar('javascript', '«rootFolder»/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»«IF targets('1.3.5')»_f«ELSE».F«ENDIF»inder.js');
                 }
           4. Copy or move all files from «rootFolder»/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
 
@@ -223,7 +223,7 @@ class Scribite {
                 editor.addCommand('insert«appName»', {
                     exec: function (editor) {
                         var url = Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor';
-                        // call method in «appName»_Finder.js and also give current editor
+                        // call method in «appName»«IF targets('1.3.5')»_f«ELSE».F«ENDIF»inder.js and provide current editor
                         «appName»FinderCKEditor(editor, url);
                     }
                 });

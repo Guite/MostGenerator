@@ -121,9 +121,9 @@ class ItemSelector {
                     PageUtil::addVar('javascript', 'prototype');
                     PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
                     «IF targets('1.3.5')»
-                    PageUtil::addVar('javascript', '«rootFolder»/«appName»/javascript/«appName»_finder.js');
+                        PageUtil::addVar('javascript', '«rootFolder»/«appName»/javascript/«appName»_finder.js');
                     «ELSE»
-                    PageUtil::addVar('javascript', '«getAppJsPath»«appName»_finder.js');
+                        PageUtil::addVar('javascript', '«getAppJsPath»«appName».Finder.js');
                     «ENDIF»
                     PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
                 }

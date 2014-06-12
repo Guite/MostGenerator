@@ -411,7 +411,7 @@ class ControllerUtil {
          * To use this please customise it to your needs in the concrete subclass.
          * Also you have to call this method in a PrePersist-Handler of the
          * corresponding entity class.
-         * There is also a method on JS level available in «getAppJsPath»«appName»_editFunctions.js.
+         * There is also a method on JS level available in «getAppJsPath»«appName»«IF targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js.
          *
          * @param string $address The address input string.
          *

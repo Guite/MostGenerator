@@ -16,11 +16,20 @@ class Finder {
      * Entry point for the JavaScript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '_finder.js'
+        var fileName = ''
+        if (targets('1.3.5')) {
+            fileName = appName + '_finder.js'
+        } else {
+            fileName = appName + '.Finder.js'
+        }
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for finder component')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '_finder.generated.js'
+                if (targets('1.3.5')) {
+                    fileName = appName + '_finder.generated.js'
+                } else {
+                    fileName = appName + '.Finder.generated.js'
+                }
             }
             fsa.generateFile(getAppJsPath + fileName, generate)
         }

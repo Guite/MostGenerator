@@ -16,11 +16,20 @@ class TreeFunctions {
      * Entry point for tree-related JavaScript functions.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        var fileName = appName + '_tree.js'
+        var fileName = ''
+        if (targets('1.3.5')) {
+            fileName = appName + '_tree.js'
+        } else {
+            fileName = appName + '.Tree.js'
+        }
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for tree functions')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                fileName = appName + '_tree.generated.js'
+                if (targets('1.3.5')) {
+                    fileName = appName + '_tree.generated.js'
+                } else {
+                    fileName = appName + '.Tree.generated.js'
+                }
             }
             fsa.generateFile(getAppJsPath + fileName, generate)
         }
@@ -57,7 +66,7 @@ class TreeFunctions {
         /**
          * Initialise event handlers for all nodes of a given tree root.
          */
-        function «prefix»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
+        function «prefix()»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
         {
             $$('#itemTree' + rootId + ' a').each(function (elem) {
                 var liRef, isRoot, contextMenu;
@@ -112,7 +121,7 @@ class TreeFunctions {
                          + Zikula.__('Add child node', 'module_«appName.formatForDB»_js'),
                     callback: function () {
                         currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                        «prefix»PerformTreeOperation(objectType, rootId, 'addChildNode');
+                        «prefix()»PerformTreeOperation(objectType, rootId, 'addChildNode');
                     }
                 });
                 contextMenu.addItem({
@@ -127,7 +136,7 @@ class TreeFunctions {
                         }
                         if (window.confirm(confirmQuestion) !== false) {
                             currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                            «prefix»PerformTreeOperation(objectType, rootId, 'deleteNode');
+                            «prefix()»PerformTreeOperation(objectType, rootId, 'deleteNode');
                         }
                     }
                 });
@@ -139,7 +148,7 @@ class TreeFunctions {
                     },
                     callback: function () {
                         currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                        «prefix»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
+                        «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
                     }
                 });
                 contextMenu.addItem({
@@ -150,7 +159,7 @@ class TreeFunctions {
                     },
                     callback: function () {
                         currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                        «prefix»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
+                        «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
                     }
                 });
             });
@@ -162,7 +171,7 @@ class TreeFunctions {
          * Helper function to start several different ajax actions
          * performing tree related amendments and operations.
          */
-        function «prefix»PerformTreeOperation(objectType, rootId, op)
+        function «prefix()»PerformTreeOperation(objectType, rootId, op)
         {
             var opParam, pars, request;
 
@@ -217,7 +226,7 @@ class TreeFunctions {
          *
          * @return true on success, otherwise the change will be reverted
          */
-        function «prefix»TreeSave(node, params, data)
+        function «prefix()»TreeSave(node, params, data)
         {
             var nodeParts, rootId, nodeId, destId, pars, request;
 

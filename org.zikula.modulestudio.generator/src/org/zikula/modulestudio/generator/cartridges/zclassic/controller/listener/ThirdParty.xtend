@@ -202,7 +202,7 @@ class ThirdParty {
         $helpers->add(
             array('module' => '«appName»',
                   'type'   => 'javascript',
-                  'path'   => '«rootFolder»/«IF targets('1.3.5')»«appName»/javascript/«ELSE»«appName»/«getAppJsPath»«ENDIF»«appName»_finder.js')
+                  'path'   => '«rootFolder»/«IF targets('1.3.5')»«appName»/javascript/«ELSE»«appName»/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.5')»_f«ELSE».F«ENDIF»inder.js')
         );
     '''
 

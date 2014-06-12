@@ -130,7 +130,7 @@ class MigrationHelper {
             $conn = $this->getConnection();
             $dbName = $this->getDbName();
 
-            $oldPrefix = '«prefix»_';
+            $oldPrefix = '«prefix()»_';
             $oldPrefixLength = strlen($oldPrefix);
             $newPrefix = '«vendor.formatForDB»_«prefix()»_';
 

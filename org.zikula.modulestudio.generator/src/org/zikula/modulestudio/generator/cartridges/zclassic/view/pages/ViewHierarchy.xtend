@@ -128,7 +128,7 @@ class ViewHierarchy {
             </div>
         </div>
 
-        {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF container.application.targets('1.3.5')»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»_tree.js'}
+        {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF container.application.targets('1.3.5')»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF container.application.targets('1.3.5')»_t«ELSE».T«ENDIF»ree.js'}
         <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
