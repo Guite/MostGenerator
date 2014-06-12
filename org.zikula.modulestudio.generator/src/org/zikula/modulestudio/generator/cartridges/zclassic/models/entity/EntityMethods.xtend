@@ -242,9 +242,15 @@ class EntityMethods {
             $this['__WORKFLOW__'] = array(
                 'module' => '«app.appName»',
                 'state' => $this['workflowState'],
-                'obj_table' => $this['_objectType'],
-                'obj_idcolumn' => '«primaryKeyFields.head.name.formatForCode»',
-                'obj_id' => 0,
+                «IF app.targets('1.3.5')»
+                    'obj_table' => $this['_objectType'],
+                    'obj_idcolumn' => '«primaryKeyFields.head.name.formatForCode»',
+                    'obj_id' => 0,
+                «ELSE»
+                    'objTable' => $this['_objectType'],
+                    'objIdcolumn' => '«primaryKeyFields.head.name.formatForCode»',
+                    'objId' => 0,
+                «ENDIF»
                 'schemaname' => $schemaName);
         }
     '''
@@ -386,9 +392,15 @@ class EntityMethods {
         $this['__WORKFLOW__'] = array(
             'module' => '«app.appName»',
             'state' => $this['workflowState'],
-            'obj_table' => $this['_objectType'],
-            'obj_idcolumn' => $idColumn,
-            'obj_id' => $this[$idColumn],
+            «IF app.targets('1.3.5')»
+                'obj_table' => $this['_objectType'],
+                'obj_idcolumn' => $idColumn,
+                'obj_id' => $this[$idColumn],
+            «ELSE»
+                'objTable' => $this['_objectType'],
+                'objIdcolumn' => $idColumn,
+                'objId' => $this[$idColumn],
+            «ENDIF»
             'schemaname' => $schemaName);
 
         // load the real workflow only when required (e. g. when func is edit or delete)

@@ -211,7 +211,7 @@ class WorkflowUtil {
                 $this->normaliseWorkflowData($entity);
             «ENDIF»
 
-            $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
+            $idcolumn = $entity['__WORKFLOW__']['«IF targets('1.3.5')»obj_idcolumn«ELSE»objIdcolumn«ENDIF»'];
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
@@ -339,7 +339,7 @@ class WorkflowUtil {
             $schemaName = $this->getWorkflowName($objectType);
 
             $entity->initWorkflow(true);
-            $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
+            $idcolumn = $entity['__WORKFLOW__']['«IF targets('1.3.5')»obj_idcolumn«ELSE»objIdcolumn«ENDIF»'];
             «IF !targets('1.3.5')»
 
                 $this->normaliseWorkflowData($entity);
@@ -390,9 +390,15 @@ class WorkflowUtil {
                 'module'        => '«appName»',
                 'id'            => $workflow->getId(),
                 'state'         => $workflow->getState(),
-                'obj_table'     => $workflow->getObjTable(),
-                'obj_idcolumn'  => $workflow->getObjIdcolumn(),
-                'obj_id'        => $workflow->getObjId(),
+                «IF targets('1.3.5')»
+                    'obj_table'     => $workflow->getObjTable(),
+                    'obj_idcolumn'  => $workflow->getObjIdcolumn(),
+                    'obj_id'        => $workflow->getObjId(),
+                «ELSE»
+                    'objTable'      => $workflow->getObjTable(),
+                    'objIdcolumn'   => $workflow->getObjIdcolumn(),
+                    'objId'         => $workflow->getObjId(),
+                «ENDIF»
                 'schemaname'    => $workflow->getSchemaname()
             );
 
