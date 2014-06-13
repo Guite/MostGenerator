@@ -49,7 +49,9 @@ class Plugins {
         }
         if (hasEditActions) {
             editPlugins(fsa)
-            new ValidationError().generate(it, fsa)
+            if (targets('1.3.5')) {
+                new ValidationError().generate(it, fsa)
+            }
         }
         otherPlugins(fsa)
     }

@@ -77,16 +77,32 @@ class Display {
             «IF useGroupingPanels('display')»
 
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            <div id="«appName.toFirstLower»Panel" class="z-panels">
-                <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer z-panel-active">{gt text='Fields'}</h3>
-                <div class="z-panel-content z-panel-active" style="overflow: visible">
+                «IF container.application.targets('1.3.5')»
+                    <div id="«appName.toFirstLower»Panel" class="z-panels">
+                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer z-panel-active">{gt text='Fields'}</h3>
+                        <div class="z-panel-content z-panel-active" style="overflow: visible">
+                «ELSE»
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{gt text='Fields'}</a></h3>
+                            </div>
+                            <div id="collapseFields" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                «ENDIF»
             {/if}
             «ENDIF»
 
             «fieldDetails(appName)»
             «IF useGroupingPanels('display')»
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                </div>«/* fields panel */»
+                «IF container.application.targets('1.3.5')»
+                    </div>«/* fields panel */»
+                «ELSE»
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
             {/if}
             «ENDIF»
             «displayExtensions(objName)»
@@ -107,30 +123,42 @@ class Display {
         «ELSE»
             {include file="`$lctUc`/footer.tpl"}
         «ENDIF»
-        «IF hasBooleansWithAjaxToggleEntity || useGroupingPanels('display')»
+        «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && container.application.targets('1.3.5'))»
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             <script type="text/javascript">
             /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                    «IF hasBooleansWithAjaxToggleEntity»
-                    {{assign var='itemid' value=$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}}
-                «FOR field : getBooleansWithAjaxToggleEntity»
-                    «container.application.prefix»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
-                «ENDFOR»
-                    «ENDIF»
-                    «IF useGroupingPanels('display')»
-                    var panel = new Zikula.UI.Panels('«appName.toFirstLower»Panel', {
-                        headerSelector: 'h3',
-                        headerClassName: 'z-panel-header z-panel-indicator',
-                        contentClassName: 'z-panel-content',
-                        active: $('z-panel-header-fields')
+                «IF container.application.targets('1.3.5')»
+                    document.observe('dom:loaded', function() {
+                        «initAjaxToggle»
+                        «IF useGroupingPanels('display')»
+                            var panel = new Zikula.UI.Panels('«appName.toFirstLower»Panel', {
+                                headerSelector: 'h3',
+                                headerClassName: 'z-panel-header z-panel-indicator',
+                                contentClassName: 'z-panel-content',
+                                active: $('z-panel-header-fields')
+                            });
+                        «ENDIF»
                     });
-                    «ENDIF»
-                });
+                «ELSE»
+                    ( function($) {
+                        $(document).ready(function() {
+                            «initAjaxToggle»
+                        });
+                    })(jQuery);
+                «ENDIF»
             /* ]]> */
             </script>
         {/if}
+        «ENDIF»
+    '''
+
+    def private initAjaxToggle(Entity it) '''
+        «IF hasBooleansWithAjaxToggleEntity»
+            {{assign var='itemid' value=$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}}
+            «FOR field : getBooleansWithAjaxToggleEntity»
+                «container.application.prefix()»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
+            «ENDFOR»
         «ENDIF»
     '''
 
@@ -208,9 +236,17 @@ class Display {
             «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                    «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
-                });
+                «IF container.application.targets('1.3.5')»
+                    document.observe('dom:loaded', function() {
+                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                    });
+                «ELSE»
+                    ( function($) {
+                        $(document).ready(function() {
+                            «container.application.prefix()»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                        });
+                    })(jQuery);
+                «ENDIF»
             /* ]]> */
             </script>
           «ENDIF»
@@ -237,9 +273,17 @@ class Display {
         </p>
         <script type="text/javascript">
         /* <![CDATA[ */
-            document.observe('dom:loaded', function() {
-                «container.application.prefix»InitItemActions('«name.formatForCode»', 'display', 'itemActions');
-            });
+            «IF container.application.targets('1.3.5')»
+                document.observe('dom:loaded', function() {
+                    «container.application.prefix()»InitItemActions('«name.formatForCode»', 'display', 'itemActions');
+                });
+            «ELSE»
+                ( function($) {
+                    $(document).ready(function() {
+                        «container.application.prefix()»InitItemActions('«name.formatForCode»', 'display', 'itemActions');
+                    });
+                })(jQuery);
+            «ENDIF»
         /* ]]> */
         </script>
     '''
@@ -247,8 +291,17 @@ class Display {
     def private displayExtensions(Entity it, String objName) '''
         «IF geographical»
             «IF useGroupingPanels('display')»
-                <h3 class="«container.application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
-                <div class="«container.application.appName.toLowerCase»-map z-panel-content" style="display: none">
+                «IF container.application.targets('1.3.5')»
+                    <h3 class="«container.application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+                    <div class="«container.application.appName.toLowerCase»-map z-panel-content" style="display: none">
+                «ELSE»
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMap">{gt text='Map'}</a></h3>
+                        </div>
+                        <div id="collapseMap" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                «ENDIF»
             «ELSE»
                 <h3 class="«container.application.appName.toLowerCase»-map">{gt text='Map'}</h3>
             «ENDIF»
@@ -258,29 +311,31 @@ class Display {
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     var mapstraction;
-                    Event.observe(window, 'load', function() {
-                        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
-                        mapstraction.addControls({
-                            pan: true,
-                            zoom: 'small',
-                            map_type: true
+                    «IF container.application.targets('1.3.5')»
+                        Event.observe(window, 'load', function() {
+                            «initGeographical(objName)»
                         });
-
-                        var latlon = new mxn.LatLonPoint({{$«objName».latitude|«container.application.name.formatForDB»FormatGeoData}}, {{$«objName».longitude|«container.application.name.formatForDB»FormatGeoData}});
-
-                        mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
-                        mapstraction.setCenterAndZoom(latlon, 18);
-                        mapstraction.mousePosition('position');
-
-                        // add a marker
-                        var marker = new mxn.Marker(latlon);
-                        mapstraction.addMarker(marker, true);
-                    });
+                    «ELSE»
+                        ( function($) {
+                            $(document).ready(function() {
+                                «initGeographical(objName)»
+                            });
+                        })(jQuery);
+                    «ENDIF»
                 /* ]]> */
                 </script>
             {/pageaddvarblock}
             <div id="mapContainer" class="«container.application.appName.toLowerCase»-mapcontainer">
             </div>
+            «IF useGroupingPanels('display')»
+                «IF container.application.targets('1.3.5')»
+                    </div>
+                «ELSE»
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
+            «ENDIF»
         «ENDIF»
         «IF attributable»
             {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
@@ -290,14 +345,29 @@ class Display {
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             «IF useGroupingPanels('display')»
-                <h3 class="relatives z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Relatives'}</h3>
-                <div class="relatives z-panel-content" style="display: none">
+                «IF container.application.targets('1.3.5')»
+                    <h3 class="relatives z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Relatives'}</h3>
+                    <div class="relatives z-panel-content" style="display: none">
+                «ELSE»
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseRelatives">{gt text='Relatives'}</a></h3>
+                        </div>
+                        <div id="collapseRelatives" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                «ENDIF»
             «ELSE»
                 <h3 class="relatives">{gt text='Relatives'}</h3>
             «ENDIF»
                     {include file='«IF container.application.targets('1.3.5')»«name.formatForCode»«ELSE»«name.formatForCodeCapital»«ENDIF»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
             «IF useGroupingPanels('display')»
-                </div>
+                «IF container.application.targets('1.3.5')»
+                    </div>
+                «ELSE»
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
             «ENDIF»
         «ENDIF»
         «IF metaData»
@@ -308,13 +378,54 @@ class Display {
         «ENDIF»
     '''
 
+    def private initGeographical(Entity it, String objName) '''
+        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
+        mapstraction.addControls({
+            pan: true,
+            zoom: 'small',
+            map_type: true
+        });
+
+        var latlon = new mxn.LatLonPoint({{$«objName».latitude|«container.application.name.formatForDB»FormatGeoData}}, {{$«objName».longitude|«container.application.name.formatForDB»FormatGeoData}});
+
+        mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
+        mapstraction.setCenterAndZoom(latlon, 18);
+        mapstraction.mousePosition('position');
+
+        // add a marker
+        var marker = new mxn.Marker(latlon);
+        mapstraction.addMarker(marker, true);
+        «IF !container.application.targets('1.3.5')»
+
+            $('#collapseMap').on('hidden.bs.collapse', function () {
+                // redraw the map after it's panel has been opened (see also #340)
+                mapstraction.resizeTo($('#mapContainer').width(), $('#mapContainer').height());
+            })
+        «ENDIF»
+    '''
+
     def private callDisplayHooks(Entity it, String appName) '''
         {* include display hooks *}
         {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' id=«displayHookId» urlobject=$currentUrlObject assign='hooks'}
-        {foreach key='providerArea' item='hook' from=$hooks}
+        {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
             «IF useGroupingPanels('display')»
-                <h3 class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
-                <div class="z-panel-content" style="display: none">{$hook}</div>
+                «IF container.application.targets('1.3.5')»
+                    <h3 class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
+                    <div class="z-panel-content" style="display: none">
+                        {$hook}
+                    </div>
+                «ELSE»
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{$smarty.foreach.hookLoop.iteration}">{$providerArea}</a></h3>
+                        </div>
+                        <div id="collapseHook{$smarty.foreach.hookLoop.iteration}" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                {$hook}
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
             «ELSE»
                 {$hook}
             «ENDIF»

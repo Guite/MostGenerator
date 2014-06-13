@@ -111,42 +111,66 @@ class Relations {
             {assign var='allowEditing' value=false}
         {/if}
         {if isset($panel) && $panel eq true}
-            <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
-            <fieldset class="«ownEntityName.formatForDB» z-panel-content" style="display: none">
+            «IF app.targets('1.3.5')»
+                <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
+                <fieldset class="«ownEntityName.formatForDB» z-panel-content" style="display: none">
+            «ELSE»
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse«ownEntityName.formatForCodeCapital»">{gt text='«ownEntityName.formatForDisplayCapital»'}</a></h3>
+                    </div>
+                    <div id="collapse«ownEntityName.formatForCodeCapital»" class="panel-collapse collapse in">
+                        <div class="panel-body">
+            «ENDIF»
         {else}
             <fieldset class="«ownEntityName.formatForDB»">
         {/if}
             <legend>{gt text='«ownEntityName.formatForDisplayCapital»'}</legend>
-            <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            «includedEditTemplateBody(app, ownEntity, linkingEntity, incoming, hasEdit, many)»
+        {if isset($panel) && $panel eq true}
+            «IF app.targets('1.3.5')»
+                </fieldset>
+            «ELSE»
+                        </div>
+                    </div>
+                </div>
+            «ENDIF»
+        {else}
+            </fieldset>
+        {/if}
+    '''
+
+    def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
+        «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
+        <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
         «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
         «val appnameLower = container.application.appName.formatForDB»
-            {if $displayMode eq 'dropdown'}
-                {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
-                «IF !app.targets('1.3.5')»
-                    <div class="col-lg-9">
-                «ENDIF»
-                    {«appnameLower»RelationSelectorList «pluginAttributes»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
-                «IF !app.targets('1.3.5')»
-                    </div>
-                «ENDIF»
-            {elseif $displayMode eq 'autocomplete'}
-                «IF !isManyToMany && !incoming»
-                    «component_ParentEditing(ownEntity, many)»
-                «ELSE»
-                    {assign var='createLink' value=''}
-                    {if $allowEditing eq true}
-                        «IF app.targets('1.3.5')»
-                            {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
-                        «ELSE»
-                            {modurl modname='«app.appName»' type='«ownEntity.name.formatForCode»' func='edit' lct=$lct assign='createLink'}
-                        «ENDIF»
-                    {/if}
-                    {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
-                    «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
-                «ENDIF»
-            {/if}
-            </div>
-        </fieldset>
+        {if $displayMode eq 'dropdown'}
+            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            «IF !app.targets('1.3.5')»
+                <div class="col-lg-9">
+            «ENDIF»
+                {«appnameLower»RelationSelectorList «pluginAttributes»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+            «IF !app.targets('1.3.5')»
+                </div>
+            «ENDIF»
+        {elseif $displayMode eq 'autocomplete'}
+            «IF !isManyToMany && !incoming»
+                «component_ParentEditing(ownEntity, many)»
+            «ELSE»
+                {assign var='createLink' value=''}
+                {if $allowEditing eq true}
+                    «IF app.targets('1.3.5')»
+                        {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
+                    «ELSE»
+                        {modurl modname='«app.appName»' type='«ownEntity.name.formatForCode»' func='edit' lct=$lct assign='createLink'}
+                    «ENDIF»
+                {/if}
+                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
+            «ENDIF»
+        {/if}
+        </div>
     '''
 
     def private formPluginAttributes(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
@@ -211,7 +235,7 @@ class Relations {
                     <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type='«targetEntity.name.formatForCode»' «targetEntity.modUrlEdit('item', true)» lct=$lct}">{$editImage}</a>
                 «ENDIF»
             «ENDIF»
-             <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>
+             <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>
             «IF targetEntity.hasImageFieldsEntity»
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
@@ -277,7 +301,7 @@ class Relations {
             relationHandler.push(newItem);
         '''
         else '''
-            «app.prefix»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «(stageCode > 1).displayBool»);
+            «app.prefix()»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «(stageCode > 1).displayBool»);
         '''
     }
 

@@ -40,34 +40,77 @@ class Attributes {
         {* purpose of this template: reusable display of entity attributes *}
         {if isset($obj.attributes)}
             {if isset($panel) && $panel eq true}
-                <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
-                <div class="attributes z-panel-content" style="display: none">
+                «IF targets('1.3.5')»
+                    <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
+                    <div class="attributes z-panel-content" style="display: none">
+                «ELSE»
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseAttributes">{gt text='Attributes'}</a></h3>
+                        </div>
+                        <div id="collapseAttributes" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                «ENDIF»
             {else}
                 <h3 class="attributes">{gt text='Attributes'}</h3>
             {/if}
-            <dl class="propertylist">
-            {foreach key='fieldName' item='fieldInfo' from=$obj.attributes}
-                <dt>{$fieldName|safetext}</dt>
-                <dd>{$fieldInfo.value|default:''|safetext}</dd>
-            {/foreach}
-            </dl>
+            «viewBody»
             {if isset($panel) && $panel eq true}
-                </div>
+                «IF targets('1.3.5')»
+                    </div>
+                «ELSE»
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
             {/if}
         {/if}
     '''
 
+    def private viewBody(Application it) '''
+        <dl class="propertylist">
+        {foreach key='fieldName' item='fieldInfo' from=$obj.attributes}
+            <dt>{$fieldName|safetext}</dt>
+            <dd>{$fieldInfo.value|default:''|safetext}</dd>
+        {/foreach}
+        </dl>
+    '''
+
     def private attributesEditImpl(Application it) '''
         {* purpose of this template: reusable editing of entity attributes *}
-            {if isset($panel) && $panel eq true}
+        {if isset($panel) && $panel eq true}
+            «IF targets('1.3.5')»
                 <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
                 <fieldset class="attributes z-panel-content" style="display: none">
-            {else}
-                <fieldset class="attributes">
-            {/if}
+            «ELSE»
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseAttributes">{gt text='Attributes'}</a></h3>
+                    </div>
+                    <div id="collapseAttributes" class="panel-collapse collapse in">
+                        <div class="panel-body">
+            «ENDIF»
+        {else}
+            <fieldset class="attributes">
+        {/if}
             <legend>{gt text='Attributes'}</legend>
-            {formvolatile}
-            {foreach key='fieldName' item='fieldValue' from=$attributes}
+            «editBody»
+        {if isset($panel) && $panel eq true}
+            «IF targets('1.3.5')»
+                </fieldset>
+            «ELSE»
+                        </div>
+                    </div>
+                </div>
+            «ENDIF»
+        {else}
+            </fieldset>
+        {/if}
+    '''
+
+    def private editBody(Application it) '''
+        {formvolatile}
+        {foreach key='fieldName' item='fieldValue' from=$attributes}
             <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
                 {formlabel for="attributes`$fieldName`"' text=$fieldName«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
                 «IF !targets('1.3.5')»
@@ -78,8 +121,7 @@ class Attributes {
                     </div>
                 «ENDIF»
             </div>
-            {/foreach}
-            {/formvolatile}
-        </fieldset>
+        {/foreach}
+        {/formvolatile}
     '''
 }

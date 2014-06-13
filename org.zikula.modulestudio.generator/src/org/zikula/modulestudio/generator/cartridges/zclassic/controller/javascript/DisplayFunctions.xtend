@@ -53,6 +53,10 @@ class DisplayFunctions {
 
             «toggleFlag»
         «ENDIF»
+        «IF !targets('1.3.5')»
+
+            «simpleAlert»
+        «ENDIF»
     '''
 
     def private initItemActions(Application it) '''
@@ -63,7 +67,11 @@ class DisplayFunctions {
                 // open in new tab / window when right-clicked
                 if (event.isRightClick()) {
                     item.callback(this.clicked, true);
-                    event.stop(); // close the menu
+                    «IF targets('1.3.5')»
+                        event.stop(); // close the menu
+                    «ELSE»
+                        event.stopPropagation(); // close the menu
+                    «ENDIF»
                     return;
                 }
                 // open in current window when left-clicked
@@ -84,13 +92,17 @@ class DisplayFunctions {
             contextMenu = new «prefix()»ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
-            $$('#' + containerId + ' a').each(function (elem) {
+            «IF targets('1.3.5')»$«ENDIF»$('#' + containerId + ' a').each(function (elem) {
                 «IF !targets('1.3.5')»
                     // save css class before hiding (#428)
-                    var elemClass = elem.readAttribute('class');
+                    var elemClass = elem.attr('class');
                 «ENDIF»
                 // hide it
-                elem.addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                «IF targets('1.3.5')»
+                    elem.addClassName('z-hide');
+                «ELSE»
+                    elem.addClass('hidden');
+                «ENDIF»
                 // determine the link text
                 var linkText = '';
                 if (func === 'display') {
@@ -101,7 +113,7 @@ class DisplayFunctions {
                             linkText = imgElem.readAttribute('alt');
                         });
                     «ELSE»
-                        linkText = elem.readAttribute('data-linktext');
+                        linkText = elem.attr('data-linktext');
                     «ENDIF»
                 }
 
@@ -134,8 +146,8 @@ class DisplayFunctions {
                         icon = '<img src="' + icon + '" width="16" height="16" alt="' + linkText + '" /> ';
                     }
                 «ELSE»
-                    if (elem.hasClassName('fa')) {
-                        icon = '<span class="' + elemClass + '"></span>';
+                    if (elem.hasClass('fa')) {
+                        icon = $('<span>', { class: elemClass });
                     }
                 «ENDIF»
 
@@ -144,7 +156,11 @@ class DisplayFunctions {
                     callback: function (selectedMenuItem, isRightClick) {
                         var url;
 
-                        url = elem.readAttribute('href');
+                        «IF targets('1.3.5')»
+                            url = elem.readAttribute('href');
+                        «ELSE»
+                            url = elem.attr('href');
+                        «ENDIF»
                         if (isRightClick) {
                             window.open(url);
                         } else {
@@ -153,7 +169,11 @@ class DisplayFunctions {
                     }
                 });
             });
-            $(triggerId).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+            «IF targets('1.3.5')»
+                $(triggerId).removeClassName('z-hide');
+            «ELSE»
+                $('#' + triggerId).removeClass('hidden');
+            «ENDIF»
         }
     '''
 
@@ -168,7 +188,7 @@ class DisplayFunctions {
          */
         function «prefix()»SubmitQuickNavForm(objectType)
         {
-            $('«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
+            $('«IF !targets('1.3.5')»#«ENDIF»«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
@@ -176,22 +196,43 @@ class DisplayFunctions {
          */
         function «prefix()»InitQuickNavigation(objectType)
         {
-            if ($('«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
-                return;
-            }
+            «IF targets('1.3.5')»
+                if ($('«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
+                    return;
+                }
+            «ELSE»
+                if ($('#«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').size() < 1) {
+                    return;
+                }
+            «ENDIF»
 
-            if ($('catid') != undefined) {
-                $('catid').observe('change', «initQuickNavigationSubmitCall(prefix())»);
-            }
-            if ($('sortby') != undefined) {
-                $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix())»);
-            }
-            if ($('sortdir') != undefined) {
-                $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix())»);
-            }
-            if ($('num') != undefined) {
-                $('num').observe('change', «initQuickNavigationSubmitCall(prefix())»);
-            }
+            «IF targets('1.3.5')»
+                if ($('catid') != undefined) {
+                    $('catid').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                }
+                if ($('sortby') != undefined) {
+                    $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                }
+                if ($('sortdir') != undefined) {
+                    $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                }
+                if ($('num') != undefined) {
+                    $('num').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                }
+            «ELSE»
+                if ($('#catid').size() > 0) {
+                    $('#catid').change(«initQuickNavigationSubmitCall(prefix())»);
+                }
+                if ($('#sortby').size() > 0) {
+                    $('#sortby').change(«initQuickNavigationSubmitCall(prefix())»);
+                }
+                if ($('#sortdir').size() > 0) {
+                    $('#sortdir').change(«initQuickNavigationSubmitCall(prefix())»);
+                }
+                if ($('#num').size() > 0) {
+                    $('#num').change(«initQuickNavigationSubmitCall(prefix())»);
+                }
+            «ENDIF»
 
             switch (objectType) {
             «FOR entity : getAllEntities»
@@ -246,30 +287,52 @@ class DisplayFunctions {
     '''
 
     def private dispatch jsInit(DerivedField it) '''
-        if ($('«name.formatForCode»') != undefined) {
-            $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
-        }
+        «IF entity.container.application.targets('1.3.5')»
+            if ($('«name.formatForCode»') != undefined) {
+                $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.container.application.prefix())»);
+            }
+        «ELSE»
+            if ($('#«name.formatForCode»').size() > 0) {
+                $('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.container.application.prefix())»);
+            }
+        «ENDIF»
     '''
 
     def private dispatch jsInit(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        if ($('«sourceAliasName»') != undefined) {
-            $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(container.application.prefix)»);
-        }
+        «IF container.application.targets('1.3.5')»
+            if ($('«sourceAliasName»') != undefined) {
+                $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(container.application.prefix())»);
+            }
+        «ELSE»
+            if ($('#«sourceAliasName»').size() > 0) {
+                $('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(container.application.prefix())»);
+            }
+        «ENDIF»
     '''
 
     def private initRelationWindow(Application it) '''
-        /**
-         * Helper function to create new Zikula.UI.Window instances.
-         * For edit forms we use "iframe: true" to ensure file uploads work without problems.
-         * For all other windows we use "iframe: false" because we want the escape key working.
-         */
+        «IF targets('1.3.5')»
+            /**
+             * Helper function to create new Zikula.UI.Window instances.
+             * For edit forms we use "iframe: true" to ensure file uploads work without problems.
+             * For all other windows we use "iframe: false" because we want the escape key working.
+             */
+         «ELSE»
+            /**
+             * Helper function to create new Bootstrap modal window instances.
+             */
+         «ENDIF»
         function «prefix()»InitInlineWindow(containerElem, title)
         {
             var newWindow;
 
             // show the container (hidden for users without JavaScript)
-            containerElem.removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+            «IF targets('1.3.5')»
+                containerElem.removeClassName('z-hide');
+            «ELSE»
+                containerElem.removeClass('hidden');
+            «ENDIF»
 
             // define the new window instance
             newWindow = new Zikula.UI.Window(
@@ -297,13 +360,22 @@ class DisplayFunctions {
          */
         function «prefix()»InitToggle(objectType, fieldName, itemId)
         {
-            var idSuffix = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + itemId;
-            if ($('toggle' + idSuffix) == undefined) {
-                return;
-            }
-            $('toggle' + idSuffix).observe('click', function() {
-                «prefix()»ToggleFlag(objectType, fieldName, itemId);
-            }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+            var idSuffix = «prefix()»CapitaliseFirstLetter(fieldName) + itemId;
+            «IF targets('1.3.5')»
+                if ($('toggle' + idSuffix) == undefined) {
+                    return;
+                }
+                $('toggle' + idSuffix).observe('click', function() {
+                    «prefix()»ToggleFlag(objectType, fieldName, itemId);
+                }).removeClassName('z-hide');
+            «ELSE»
+                if ($('#toggle' + idSuffix).size() < 1) {
+                    return;
+                }
+                $('#toggle' + idSuffix).click( function() {
+                    «prefix()»ToggleFlag(objectType, fieldName, itemId);
+                }).removeClass('hidden');
+            «ENDIF»
         }
 
     '''
@@ -314,37 +386,94 @@ class DisplayFunctions {
          */
         function «prefix()»ToggleFlag(objectType, fieldName, itemId)
         {
-            fieldName = fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
-            var pars = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
+            fieldName = «prefix()»CapitaliseFirstLetter(fieldName);
+            var params = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
-            new Zikula.Ajax.Request(
-                Zikula.Config.baseURL + '«IF targets('1.3.5')»ajax«ELSE»index«ENDIF».php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=toggleFlag',
-                {
-                    method: 'post',
-                    parameters: pars,
-                    onComplete: function(req) {
-                        if (!req.isSuccess()) {
-                            Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
-                            return;
-                        }
-                        var data = req.getData();
-                        /*if (data.message) {
-                            Zikula.UI.Alert(data.message, Zikula.__('Success', 'module_«appName.formatForDB»_js'));
-                        }*/
+            «IF targets('1.3.5')»
+                new Zikula.Ajax.Request(
+                    Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=toggleFlag',
+                    {
+                        method: 'post',
+                        parameters: params,
+                        onComplete: function(req) {
+                            var idSuffix = fieldName + '_' + itemId;
+                            if (!req.isSuccess()) {
+                                Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
+                                return;
+                            }
+                            var data = req.getData();
+                            /*if (data.message) {
+                                Zikula.UI.Alert(data.message, Zikula.__('Success', 'module_«appName.formatForDB»_js'));
+                            }*/
 
-                        var idSuffix = fieldName + '_' + itemId;
-                        idSuffix = idSuffix.toLowerCase();
-                        var state = data.state;
-                        if (state === true) {
-                            $('no' + idSuffix).addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                            $('yes' + idSuffix).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                        } else {
-                            $('yes' + idSuffix).addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                            $('no' + idSuffix).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                            idSuffix = idSuffix.toLowerCase();
+                            var state = data.state;
+                            if (state === true) {
+                                $('no' + idSuffix).addClassName('z-hide');
+                                $('yes' + idSuffix).removeClassName('z-hide');
+                            } else {
+                                $('yes' + idSuffix).addClassName('z-hide');
+                                $('no' + idSuffix).removeClassName('z-hide');
+                            }
                         }
                     }
-                }
-            );
+                );
+            «ELSE»
+                $.ajax({
+                    type: 'POST',
+                    url: Zikula.Config.baseURL + 'index.php?module=«appName»&type=ajax&func=toggleFlag',
+                    data: params
+                }).done(function(res) {
+                    // get data returned by the ajax response
+                    var idSuffix, data;
+
+                    idSuffix = fieldName + '_' + itemId;
+                    data = res.data;
+
+                    /*if (data.message) {
+                        «prefix()»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Success', 'module_«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                    }*/
+
+                    idSuffix = idSuffix.toLowerCase();
+                    var state = data.state;
+                    if (state === true) {
+                        $('#no' + idSuffix).addClass('hidden');
+                        $('#yes' + idSuffix).removeClass('hidden');
+                    } else {
+                        $('#yes' + idSuffix).addClass('hidden');
+                        $('#no' + idSuffix).removeClass('hidden');
+                    }
+                })«/*.fail(function(jqXHR, textStatus) {
+                    // nothing to do yet
+                    var idSuffix = fieldName + '_' + itemId;
+                    «prefix()»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                })*/»;
+            «ENDIF»
+        }
+
+    '''
+
+    def private simpleAlert(Application it) '''
+        /**
+         * Simulates a simple alert using bootstrap.
+         */
+        function «prefix()»SimpleAlert(beforeElem, title, content, alertId, cssClass)
+        {
+            var alertBox;
+
+            alertBox = '
+                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  <h4>' + title + '</h4>
+                  <p>' + content + '</p>
+                </div>';
+
+            // insert alert before the given element
+            beforeElem.before(alertBox);
+
+            $('#' + alertId).delay(200).addClass('in').fadeOut(4000, function () {
+                $(this).remove();
+            });
         }
     '''
 }

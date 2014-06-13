@@ -115,7 +115,7 @@ class NewsletterView {
                 </div>
             «ENDIF»
         </div>
-        <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»">
+        <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»"«IF !targets('1.3.5')» data-switch="«appName.toFirstLower»Args_{$objectType}_template" data-switch-value="custom"«ENDIF»>
             <label for="«appName.toFirstLower»Args_{$objectType}_customtemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
@@ -153,27 +153,36 @@ class NewsletterView {
     '''
 /*
     def private editTemplateJs(Application it) '''
-        {pageaddvar name='javascript' value='prototype'}
-        <script type="text/javascript">
-        /* <![CDATA[ * /
-            function «prefix()»ToggleCustomTemplate(objectType) {
-                if ($F('«appName.toFirstLower»Args_' + objectType + '_template') == 'custom') {
-                    $('customTemplateArea_' + objectType).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                } else {
-                    $('customTemplateArea_' + objectType).addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+        «IF targets('1.3.5')»
+            {pageaddvar name='javascript' value='prototype'}
+        «ELSE»
+            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap.min.css'}
+            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap-theme.min.css'}
+            {pageaddvar name='javascript' value='jquery'}
+            {pageaddvar name='javascript' value='web/bootstrap/js/bootstrap.min.js'}
+        «ENDIF»
+        «IF targets('1.3.5')»
+            <script type="text/javascript">
+            /* <![CDATA[ * /
+                function «prefix()»ToggleCustomTemplate(objectType) {
+                    if ($F('«appName.toFirstLower»Args_' + objectType + '_template') == 'custom') {
+                        $('customTemplateArea_' + objectType).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                    } else {
+                        $('customTemplateArea_' + objectType).addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                    }
                 }
-            }
-
-            document.observe('dom:loaded', function() {
-                {{foreach key='objectType' item='objectTypeData' from=$objectTypes}}
-                    «prefix()»ToggleCustomTemplate('{{$objectType}}');
-                    $('«appName.toFirstLower»Args_{{$objectType}}_template').observe('change', function(e) {
+    
+                document.observe('dom:loaded', function() {
+                    {{foreach key='objectType' item='objectTypeData' from=$objectTypes}}
                         «prefix()»ToggleCustomTemplate('{{$objectType}}');
-                    });
-                {{/foreach}}
-            });
-        /* ]]> * /
-        </script>
+                        $('«appName.toFirstLower»Args_{{$objectType}}_template').observe('change', function(e) {
+                            «prefix()»ToggleCustomTemplate('{{$objectType}}');
+                        });
+                    {{/foreach}}
+                });
+            /* ]]> * /
+            </script>
+        «ENDIF»
     '''
 */
 }

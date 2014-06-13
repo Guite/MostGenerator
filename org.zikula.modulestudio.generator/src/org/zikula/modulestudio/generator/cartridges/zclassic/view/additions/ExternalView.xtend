@@ -160,16 +160,23 @@ class ExternalView {
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
                 Zikula.Config = {'entrypoint': '{{$ourEntry|default:'index.php'}}', 'baseURL': '{{$baseurl}}'}; /* ]]> */</script>
-                <script type="text/javascript" src="{$baseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
-                <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
-                <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
-                <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
-                <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.ImageViewer.js"></script>
+                «IF app.targets('1.3.5')»
+                    <script type="text/javascript" src="{$baseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.ImageViewer.js"></script>
+                «ELSE»
+                    <link rel="stylesheet" href="web/bootstrap/css/bootstrap.min.css" type="text/css" />
+                    <link rel="stylesheet" href="web/bootstrap/css/bootstrap-theme.css" type="text/css" />
+                    <script type="text/javascript" src="web/jquery/jquery.min.js"></script>
+                    <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
+                «ENDIF»
             <script type="text/javascript" src="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.5')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.5')»_f«ELSE».F«ENDIF»inder.js"></script>
         «IF app.targets('1.3.5')»
-        {if $editorName eq 'tinymce'}
-            <script type="text/javascript" src="{$baseurl}modules/Scribite/includes/tinymce/tiny_mce_popup.js"></script>
-        {/if}
+            {if $editorName eq 'tinymce'}
+                <script type="text/javascript" src="{$baseurl}modules/Scribite/includes/tinymce/tiny_mce_popup.js"></script>
+            {/if}
         «ENDIF»
         </head>
         <body>
@@ -377,9 +384,17 @@ class ExternalView {
     def private findTemplateJs(Entity it, Application app) '''
         <script type="text/javascript">
         /* <![CDATA[ */
-            document.observe('dom:loaded', function() {
-                «app.name.formatForDB».finder.onLoad();
-            });
+            «IF app.targets('1.3.5')»
+                document.observe('dom:loaded', function() {
+                    «app.name.formatForDB».finder.onLoad();
+                });
+            «ELSE»
+                ( function($) {
+                    $(document).ready(function() {
+                        «app.name.formatForDB».finder.onLoad();
+                    });
+                })(jQuery);
+            «ENDIF»
         /* ]]> */
         </script>
     '''
@@ -478,9 +493,17 @@ class ExternalView {
 
         <script type="text/javascript">
         /* <![CDATA[ */
-            document.observe('dom:loaded', function() {
-                «app.name.formatForDB».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
-            });
+            «IF app.targets('1.3.5')»
+                document.observe('dom:loaded', function() {
+                    «app.name.formatForDB».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
+                });
+            «ELSE»
+                ( function($) {
+                    $(document).ready(function() {
+                        «app.name.formatForDB».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
+                    });
+                })(jQuery);
+            «ENDIF»
         /* ]]> */
         </script>
     '''

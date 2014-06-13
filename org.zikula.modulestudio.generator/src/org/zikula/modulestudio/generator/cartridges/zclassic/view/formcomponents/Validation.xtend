@@ -26,11 +26,13 @@ class Validation {
     @Inject extension Utils = new Utils
 
     def dispatch mandatoryValidationMessage(DerivedField it, String idSuffix) '''
-        «IF mandatory»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='required'}
-        «ENDIF»
-        «IF unique»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-unique'}
+        «IF entity.container.application.targets('1.3.5')»
+            «IF mandatory»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='required'}
+            «ENDIF»
+            «IF unique»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-unique'}
+            «ENDIF»
         «ENDIF»
     '''
     def dispatch mandatoryValidationMessage(ListField it, String idSuffix) {
@@ -39,37 +41,53 @@ class Validation {
     def dispatch additionalValidationMessages(DerivedField it, String idSuffix) {
     }
     def dispatch additionalValidationMessages(AbstractIntegerField it, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-digits'}
+        «IF entity.container.application.targets('1.3.5')»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-digits'}
+        «ENDIF»
     '''
     def dispatch additionalValidationMessages(UserField it, String idSuffix) '''
     '''
     def dispatch additionalValidationMessages(DecimalField it, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
+        «IF entity.container.application.targets('1.3.5')»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
+        «ENDIF»
     '''
     def dispatch additionalValidationMessages(FloatField it, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
+        «IF entity.container.application.targets('1.3.5')»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
+        «ENDIF»
     '''
     def dispatch additionalValidationMessages(AbstractStringField it, String idSuffix) '''
-        «IF nospace»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
+        «IF entity.container.application.targets('1.3.5')»
+            «IF nospace»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
+            «ENDIF»
         «ENDIF»
     '''
     def dispatch additionalValidationMessages(StringField it, String idSuffix) '''
-        «IF nospace && !country && !language && !locale»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
-        «ENDIF»
-        «IF htmlcolour»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-htmlcolour'}
+        «IF entity.container.application.targets('1.3.5')»
+            «IF nospace && !country && !language && !locale»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
+            «ENDIF»
+            «IF htmlcolour»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-htmlcolour'}
+            «ENDIF»
         «ENDIF»
     '''
     def dispatch additionalValidationMessages(EmailField it, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-email'}
+        «IF entity.container.application.targets('1.3.5')»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-email'}
+        «ENDIF»
     '''
     def dispatch additionalValidationMessages(UrlField it, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-url'}
+        «IF entity.container.application.targets('1.3.5')»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-url'}
+        «ENDIF»
     '''
     def dispatch additionalValidationMessages(UploadField it, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-upload'}
+        «IF entity.container.application.targets('1.3.5')»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-upload'}
+        «ENDIF»
     '''
     def dispatch additionalValidationMessages(ListField it, String idSuffix) {
     }
@@ -85,20 +103,26 @@ class Validation {
         «additionalValidationMessagesDateRange(idSuffix)»
     '''
     def private additionalValidationMessagesDefault(AbstractDateField it, String idSuffix) '''
-        «IF past»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-past'}
-        «ELSEIF future»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-future'}
+        «IF entity.container.application.targets('1.3.5')»
+            «IF past»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-past'}
+            «ELSEIF future»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-future'}
+            «ENDIF»
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DatetimeField it, String idSuffix) '''
-        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
+        «IF entity.container.application.targets('1.3.5')»
+            «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
+            «ENDIF»
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DateField it, String idSuffix) '''
-        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
-            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
+        «IF entity.container.application.targets('1.3.5')»
+            «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
+                {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
+            «ENDIF»
         «ENDIF»
     '''
 

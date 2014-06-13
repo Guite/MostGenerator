@@ -75,9 +75,17 @@ class Relations {
                     {if !$nolink}
                     <script type="text/javascript">
                     /* <![CDATA[ */
-                        document.observe('dom:loaded', function() {
-                            «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item->getTitleFromDisplayPattern()|replace:"'":""}}');
-                        });
+                        «IF app.targets('1.3.5')»
+                            document.observe('dom:loaded', function() {
+                                «app.prefix()»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item->getTitleFromDisplayPattern()|replace:"'":""}}');
+                            });
+                        «ELSE»
+                            ( function($) {
+                                $(document).ready(function() {
+                                    «app.prefix()»InitInlineWindow($('#«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item->getTitleFromDisplayPattern()|replace:"'":""}}');
+                                });
+                            })(jQuery);
+                        «ENDIF»
                     /* ]]> */
                     </script>
                     {/if}

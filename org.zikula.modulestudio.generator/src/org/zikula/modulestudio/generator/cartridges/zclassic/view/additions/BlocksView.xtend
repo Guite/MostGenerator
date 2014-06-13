@@ -152,7 +152,7 @@ class BlocksView {
             «ENDIF»
         </div>
 
-        <div id="customTemplateArea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»">
+        <div id="customTemplateArea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»"«IF !targets('1.3.5')» data-switch="«appName.toFirstLower»Template" data-switch-value="custom"«ENDIF»>
             <label for="«appName.toFirstLower»CustomTemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
             «IF !targets('1.3.5')»
                 <div class="col-lg-9">
@@ -192,24 +192,33 @@ class BlocksView {
     '''
 
     def private editTemplateJs(Application it) '''
-        {pageaddvar name='javascript' value='prototype'}
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            function «prefix()»ToggleCustomTemplate() {
-                if ($F('«appName.toFirstLower»Template') == 'custom') {
-                    $('customTemplateArea').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                } else {
-                    $('customTemplateArea').addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+        «IF targets('1.3.5')»
+            {pageaddvar name='javascript' value='prototype'}
+        «ELSE»
+            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap.min.css'}
+            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap-theme.min.css'}
+            {pageaddvar name='javascript' value='jquery'}
+            {pageaddvar name='javascript' value='web/bootstrap/js/bootstrap.min.js'}
+        «ENDIF»
+        «IF targets('1.3.5')»
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                function «prefix()»ToggleCustomTemplate() {
+                    if ($F('«appName.toFirstLower»Template') == 'custom') {
+                        $('customTemplateArea').removeClassName('z-hide');
+                    } else {
+                        $('customTemplateArea').addClassName('z-hide');
+                    }
                 }
-            }
 
-            document.observe('dom:loaded', function() {
-                «prefix()»ToggleCustomTemplate();
-                $('«appName.toFirstLower»Template').observe('change', function(e) {
+                document.observe('dom:loaded', function() {
                     «prefix()»ToggleCustomTemplate();
+                    $('«appName.toFirstLower»Template').observe('change', function(e) {
+                        «prefix()»ToggleCustomTemplate();
+                    });
                 });
-            });
-        /* ]]> */
-        </script>
+            /* ]]> */
+            </script>
+        «ENDIF»
     '''
 }

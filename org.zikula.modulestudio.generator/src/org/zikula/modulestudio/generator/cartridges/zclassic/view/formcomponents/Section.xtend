@@ -35,15 +35,30 @@ class Section {
     def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa) '''
         «IF geographical»
             «IF useGroupingPanels('edit')»
-            <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
-            <fieldset class="«app.appName.toLowerCase»-map z-panel-content" style="display: none">
+                «IF app.targets('1.3.5')»
+                    <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+                    <fieldset class="«app.appName.toLowerCase»-map z-panel-content" style="display: none">
+                «ELSE»
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMap">{gt text='Map'}</a></h3>
+                        </div>
+                        <div id="collapseMap" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                «ENDIF»
             «ELSE»
-            <fieldset class="«app.appName.toLowerCase»-map">
+                <fieldset class="«app.appName.toLowerCase»-map">
             «ENDIF»
                 <legend>{gt text='Map'}</legend>
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
-            </fieldset>
+            «IF app.targets('1.3.5')»
+                </fieldset>
+            «ELSE»
+                        </div>
+                    </div>
+                </div>
+            «ENDIF»
 
         «ENDIF»
         «IF attributable»
@@ -72,15 +87,30 @@ class Section {
             {notifydisplayhooks eventname='«app.name.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=null assign='hooks'}
         {/if}
         {if is_array($hooks) && count($hooks)}
-            {foreach key='providerArea' item='hook' from=$hooks}
+            {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
                 «IF useGroupingPanels('edit')»
-                    <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
-                    <fieldset class="hook z-panel-content" style="display: none">{$hook}</div>
+                    «IF app.targets('1.3.5')»
+                        <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
+                        <fieldset class="hook z-panel-content" style="display: none">{$hook}</div>
+                    «ELSE»
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{$smarty.foreach.hookLoop.iteration}">{$providerArea}</a></h3>
+                            </div>
+                            <div id="collapseHook{$smarty.foreach.hookLoop.iteration}" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                    «ENDIF»
                 «ELSE»
                     <fieldset>
                 «ENDIF»
                     {$hook}
-                </fieldset>
+                «IF app.targets('1.3.5')»
+                    </fieldset>
+                «ELSE»
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
             {/foreach}
         {/if}
     '''

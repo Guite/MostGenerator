@@ -127,7 +127,11 @@ class ColourInput {
                                 closeText: '" . __('Close', $dom) . "'
                             });
                         «ELSE»
-                            jQuery('#" . $this->getId() . "').minicolors({theme: 'bootstrap'});
+                            ( function($) {
+                                $(document).ready(function() {
+                                    $('#" . $this->getId() . "').minicolors({theme: 'bootstrap'});
+                                });
+                            })(jQuery);
                         «ENDIF»
                     /* ]]> */
                     </script>";

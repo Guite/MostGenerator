@@ -161,13 +161,30 @@ class Views {
 
     def private headerImpl(Application it, Controller controller) '''
         {* purpose of this template: header for «controller.formattedName» area *}
-        {pageaddvar name='javascript' value='prototype'}
-        {pageaddvar name='javascript' value='validation'}
-        {pageaddvar name='javascript' value='zikula'}
-        {pageaddvar name='javascript' value='livepipe'}
-        {pageaddvar name='javascript' value='zikula.ui'}
-        {pageaddvar name='javascript' value='zikula.imageviewer'}
+        «IF targets('1.3.5')»
+            {pageaddvar name='javascript' value='prototype'}
+            {pageaddvar name='javascript' value='validation'}
+            {pageaddvar name='javascript' value='zikula'}
+            {pageaddvar name='javascript' value='livepipe'}
+            {pageaddvar name='javascript' value='zikula.ui'}
+            «IF hasUploads»
+                {pageaddvar name='javascript' value='zikula.imageviewer'}
+            «ENDIF»
+        «ELSE»
+            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap.min.css'}
+            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap-theme.min.css'}
+            {pageaddvar name='javascript' value='jquery'}
+            {pageaddvar name='javascript' value='web/bootstrap/js/bootstrap.min.js'}
+            {pageaddvar name='javascript' value='zikula'}{* still required for Gettext *}
+            «IF hasUploads»
+                {pageaddvar name='javascript' value='web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js'}
+                {pageaddvar name='stylesheet' value='web/bootstrap-media-lightbox/bootstrap-media-lightbox.css'}
+            «ENDIF»
+        «ENDIF»
         {pageaddvar name='javascript' value='«rootFolder»/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName».js'}
+
+        {* initialise additional gettext domain for translations within javascript *}
+        {pageaddvar name='jsgettext' value='module_«appName.formatForDB»_js:«appName»'}
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «IF controller instanceof AdminController»

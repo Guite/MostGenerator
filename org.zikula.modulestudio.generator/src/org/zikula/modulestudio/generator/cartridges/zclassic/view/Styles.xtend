@@ -52,7 +52,7 @@ class Styles {
         }
 
         /* display pages */
-        .«cssPrefix»-display.with-rightbox div.z-panel-content {
+        .«cssPrefix»-display.with-rightbox div.«IF targets('1.3.5')»z-panel-content«ELSE»panel«ENDIF» {
             float: left;
             width: 79%;
         }
@@ -111,17 +111,19 @@ class Styles {
 
     def private validationStyles(Application it) '''
         /* validation */
-        div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» input.required, div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» textarea.required {
+        div.«fieldGroupClass» input.required, div.«fieldGroupClass» textarea.required {
             border: 1px solid #00a8e6;
         }
-        div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» input.validation-failed, div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» textarea.validation-failed {
-            border: 1px solid #f30;
-            color: #f30;
-        }
-        div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» input.validation-passed, div.«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF» textarea.validation-passed {
-            border: 1px solid #0c0;
-            color: #000;
-        }
+        «IF targets('1.3.5')»
+            div.«fieldGroupClass» input.validation-failed, div.«fieldGroupClass» textarea.validation-failed {
+                border: 1px solid #f30;
+                color: #f30;
+            }
+            div.«fieldGroupClass» input.validation-passed, div.«fieldGroupClass» textarea.validation-passed {
+                border: 1px solid #0c0;
+                color: #000;
+            }
+        «ENDIF»
 
         .validation-advice {
             margin: 5px 0;
@@ -131,6 +133,8 @@ class Styles {
             font-weight: 700;
         }
     '''
+
+    def private fieldGroupClass(Application it) '''«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»'''
 
     def private autoCompletion(Application it) '''
         «val hasUserFields = hasUserFields»
@@ -158,7 +162,7 @@ class Styles {
 
             «ENDIF»
             /* hide legends if z-panels are used as both contain the same labels */
-            div.«name.formatForDB»-edit .z-panel-content legend {
+            div.«name.formatForDB»-edit .«IF targets('1.3.5')»z-panel-content«ELSE»panel«ENDIF» legend {
                 display: none;
             }
 

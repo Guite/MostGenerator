@@ -32,7 +32,7 @@ class ViewHierarchy {
 
     def private hierarchyView(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        «val appPrefix = container.application.prefix»
+        «val appPrefix = container.application.prefix()»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree view *}
         {assign var='lct' value='user'}
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
@@ -61,12 +61,23 @@ class ViewHierarchy {
 
                     <script type="text/javascript">
                     /* <![CDATA[ */
-                    document.observe('dom:loaded', function() {
-                        $('treeAddRoot').observe('click', function(event) {
-                            «appPrefix»PerformTreeOperation('«objName»', 1, 'addRootNode');
-                            Event.stop(event);
-                        }).removeClassName('«IF container.application.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                    });
+                    «IF container.application.targets('1.3.5')»
+                        document.observe('dom:loaded', function() {
+                            $('treeAddRoot').observe('click', function(event) {
+                                «appPrefix»PerformTreeOperation('«objName»', 1, 'addRootNode');
+                                Event.stop(event);
+                            }).removeClassName('z-hide');
+                        });
+                    «ELSE»
+                        ( function($) {
+                            $(document).ready(function() {
+                                $('#treeAddRoot').click( function(event) {
+                                    «appPrefix»PerformTreeOperation('«objName»', 1, 'addRootNode');
+                                    event.stopPropagation();
+                                }).removeClass('hidden');
+                            });
+                        })(jQuery);
+                    «ENDIF»
                     /* ]]> */
                     </script>
                     <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
@@ -110,15 +121,12 @@ class ViewHierarchy {
     '''
 
     def private hierarchyItemsView(Entity it, String appName) '''
-        «val appPrefix = container.application.prefix»
+        «val appPrefix = container.application.prefix()»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree items *}
         {assign var='hasNodes' value=false}
         {if isset($items) && (is_object($items) && $items->count() gt 0) || (is_array($items) && count($items) gt 0)}
             {assign var='hasNodes' value=true}
         {/if}
-
-        {* initialise additional gettext domain for translations within javascript *}
-        {pageaddvar name='jsgettext' value='module_«appName.formatForDB»_js:«appName»'}
 
         <div id="«name.formatForCode.toFirstLower»Tree{$rootId}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»tree-container">
             <div id="«name.formatForCode.toFirstLower»TreeItems{$rootId}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»tree-items">
@@ -128,17 +136,26 @@ class ViewHierarchy {
             </div>
         </div>
 
-        {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF container.application.targets('1.3.5')»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF container.application.targets('1.3.5')»_t«ELSE».T«ENDIF»ree.js'}
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            document.observe('dom:loaded', function() {
-            {{if $hasNodes}}
-                «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
-                Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
-            {{/if}}
-            });
-        /* ]]> */
-        </script>
-        <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
+        {if $hasNodes}
+            {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF container.application.targets('1.3.5')»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF container.application.targets('1.3.5')»_t«ELSE».T«ENDIF»ree.js'}
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                «IF container.application.targets('1.3.5')»
+                    document.observe('dom:loaded', function() {
+                        «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
+                        Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
+                    });
+                «ELSE»
+                    ( function($) {
+                        $(document).ready(function() {
+                            «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
+                            Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
+                        });
+                    })(jQuery);
+                «ENDIF»
+            /* ]]> */
+            </script>
+            <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
+        {/if}
     '''
 }

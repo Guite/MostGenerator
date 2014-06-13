@@ -16,6 +16,9 @@ class ValidationError {
     @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.5')) {
+            return
+        }
         val pluginFilePath = viewPluginFilePath('function', 'ValidationError')
         if (!shouldBeSkipped(pluginFilePath)) {
             fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, validationErrorImpl))

@@ -326,31 +326,50 @@ class View {
 
             <script type="text/javascript">
             /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                «IF hasBooleansWithAjaxToggleEntity»
-                    «val objName = name.formatForCode»
-                    {{foreach item='«objName»' from=$items}}
-                        {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
-                        «FOR field : getBooleansWithAjaxToggleEntity»
-                            «container.application.prefix»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
-                        «ENDFOR»
-                    {{/foreach}}
+                «IF container.application.targets('1.3.5')»
+                    document.observe('dom:loaded', function() {
+                        «initAjaxSingleToggle»
+                        «IF listType == 3»
+                            «initMassToggle»
+                        «ENDIF»
+                    });
+                «ELSE»
+                    ( function($) {
+                        $(document).ready(function() {
+                            «initAjaxSingleToggle»
+                            «IF listType == 3»
+                                «initMassToggle»
+                            «ENDIF»
+                        });
+                    })(jQuery);
                 «ENDIF»
-                «IF listType == 3»
-                    {{if $lct eq 'admin'}}
-                        {{* init the "toggle all" functionality *}}
-                        if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
-                            $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
-                                Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
-                                e.stop()
-                            });
-                        }
-                    {{/if}}
-                «ENDIF»
-                });
             /* ]]> */
             </script>
         «ENDIF»
+    '''
+
+    def private initAjaxSingleToggle(Entity it) '''
+        «IF hasBooleansWithAjaxToggleEntity»
+            «val objName = name.formatForCode»
+            {{foreach item='«objName»' from=$items}}
+                {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
+                «FOR field : getBooleansWithAjaxToggleEntity»
+                    «container.application.prefix()»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
+                «ENDFOR»
+            {{/foreach}}
+        «ENDIF»
+    '''
+
+    def private initMassToggle(Entity it) '''
+        {{if $lct eq 'admin'}}
+            {{* init the "toggle all" functionality *}}
+            if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
+                $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
+                    Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
+                    e.stop()
+                });
+            }
+        {{/if}}
     '''
 
     def private templateHeader(Entity it) '''
@@ -477,9 +496,17 @@ class View {
                 «ENDIF»
                 <script type="text/javascript">
                 /* <![CDATA[ */
-                    document.observe('dom:loaded', function() {
-                        «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
-                    });
+                    «IF container.application.targets('1.3.5')»
+                        document.observe('dom:loaded', function() {
+                            «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                        });
+                    «ELSE»
+                        ( function($) {
+                            $(document).ready(function() {
+                                «container.application.prefix()»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                            });
+                        })(jQuery);
+                    «ENDIF»
                 /* ]]> */
                 </script>
             «ENDIF»
@@ -528,9 +555,17 @@ class View {
                 {icon id="«itemActionContainerIdForSmarty»Trigger" type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hidden«ENDIF»'}
                 <script type="text/javascript">
                 /* <![CDATA[ */
-                    document.observe('dom:loaded', function() {
-                        «container.application.prefix»InitItemActions('«name.formatForCode»', 'view', '«itemActionContainerIdForJs»');
-                    });
+                    «IF container.application.targets('1.3.5')»
+                        document.observe('dom:loaded', function() {
+                            «container.application.prefix()»InitItemActions('«name.formatForCode»', 'view', '«itemActionContainerIdForJs»');
+                        });
+                    «ELSE»
+                        ( function($) {
+                            $(document).ready(function() {
+                                «container.application.prefix()»InitItemActions('«name.formatForCode»', 'view', '«itemActionContainerIdForJs»');
+                            });
+                        })(jQuery);
+                    «ENDIF»
                 /* ]]> */
                 </script>
             {/if}

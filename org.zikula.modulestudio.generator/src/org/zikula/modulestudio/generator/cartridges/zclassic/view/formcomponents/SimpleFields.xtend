@@ -65,7 +65,7 @@ class SimpleFields {
         «ENDIF»
     '''
 
-    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.container.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !entity.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.container.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !entity.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»«IF !entity.container.application.targets('1.3.5')» data-toggle='tooltip'«ENDIF»'''
 
     def private formLabelText(DerivedField it) {
         name.formatForDisplayCapital
@@ -228,7 +228,7 @@ class SimpleFields {
         «val realName = objName + '.' + name.formatForCode»
         <span class="«IF entity.container.application.targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»">
             {gt text='Current file'}:
-            <a href="{$«realName»FullPathUrl}" title="{$formattedEntityTitle|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
+            <a href="{$«realName»FullPathUrl}" title="{$formattedEntityTitle|replace:"\"":""}"{if $«realName»Meta.isImage} «IF entity.container.application.targets('1.3.5')»rel="imageviewer[«entity.name.formatForDB»]"«ELSE»class="lightbox"«ENDIF»{/if}>
             {if $«realName»Meta.isImage}
                 {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$formattedEntityTitle«IF !entity.container.application.targets('1.3.5')» img_class='img-thumbnail'«ENDIF»}
             {else}

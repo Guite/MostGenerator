@@ -118,11 +118,14 @@ class ItemSelector {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    PageUtil::addVar('javascript', 'prototype');
-                    PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
                     «IF targets('1.3.5')»
+                        PageUtil::addVar('javascript', 'prototype');
+                        PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
                         PageUtil::addVar('javascript', '«rootFolder»/«appName»/javascript/«appName»_finder.js');
                     «ELSE»
+                        PageUtil::addVar('javascript', 'jquery');
+                        PageUtil::addVar('javascript', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
+                        PageUtil::addVar('stylesheet', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
                         PageUtil::addVar('javascript', '«getAppJsPath»«appName».Finder.js');
                     «ENDIF»
                     PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));

@@ -102,10 +102,17 @@ class EditFunctions {
          */
         function «prefix()»ResetUploadField(fieldName)
         {
-            if ($(fieldName) != null) {
-                $(fieldName).setAttribute('type', 'input');
-                $(fieldName).setAttribute('type', 'file');
-            }
+            «IF targets('1.3.5')»
+                if ($(fieldName) != null) {
+                    $(fieldName).setAttribute('type', 'input');
+                    $(fieldName).setAttribute('type', 'file');
+                }
+            «ELSE»
+                if ($('#' + fieldName).size() > 0) {
+                    $('#' + fieldName).attr('type', 'input');
+                    $('#' + fieldName).attr('type', 'file');
+                }
+            «ENDIF»
         }
     '''
 
@@ -115,12 +122,24 @@ class EditFunctions {
          */
         function «prefix()»InitUploadField(fieldName)
         {
-            if ($('reset' + fieldName.capitalize() + 'Val') != null) {
-                $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
-                    evt.preventDefault();
-                    «prefix()»ResetUploadField(fieldName);
-                }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-            }
+            «IF targets('1.3.5')»
+                if ($('reset' + fieldName.capitalize() + 'Val') != null) {
+                    $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
+                        evt.preventDefault();
+                        «prefix()»ResetUploadField(fieldName);
+                    }).removeClassName('z-hide');
+                }
+            «ELSE»
+                var fieldNameCapitalised;
+
+                fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+                if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
+                    $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
+                        event.stopPropagation();
+                        «prefix()»ResetUploadField(fieldName);
+                    }).removeClass('hidden');
+                }
+            «ENDIF»
         }
     '''
 
@@ -130,12 +149,21 @@ class EditFunctions {
          */
         function «prefix()»ResetDateField(fieldName)
         {
-            if ($(fieldName) != null) {
-                $(fieldName).value = '';
-            }
-            if ($(fieldName + 'cal') != null) {
-                $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
-            }
+            «IF targets('1.3.5')»
+                if ($(fieldName) != null) {
+                    $(fieldName).value = '';
+                }
+                if ($(fieldName + 'cal') != null) {
+                    $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
+                }
+            «ELSE»
+                if ($('#' + fieldName).size() > 0) {
+                    $('#' + fieldName).val('');
+                }
+                if ($('#' + fieldName + 'cal').size() > 0) {
+                    $('#' + fieldName + 'cal').html(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
+                }
+            «ENDIF»
         }
     '''
 
@@ -145,12 +173,24 @@ class EditFunctions {
          */
         function «prefix()»InitDateField(fieldName)
         {
-            if ($('reset' + fieldName.capitalize() + 'Val') != null) {
-                $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
-                    evt.preventDefault();
-                    «prefix()»ResetDateField(fieldName);
-                }).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-            }
+            «IF targets('1.3.5')»
+                if ($('reset' + fieldName.capitalize() + 'Val') != null) {
+                    $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
+                        evt.preventDefault();
+                        «prefix()»ResetDateField(fieldName);
+                    }).removeClassName('z-hide');
+                }
+            «ELSE»
+                var fieldNameCapitalised;
+
+                fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+                if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
+                    $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
+                        event.stopPropagation();
+                        «prefix()»ResetDateField(fieldName);
+                    }).removeClass('hidden');
+                }
+            «ENDIF»
         }
     '''
 
@@ -163,9 +203,15 @@ class EditFunctions {
          */
         function «prefix()»InitGeoCoding(addressCallback)
         {
-            $('linkGetCoordinates').observe('click', function (evt) {
-                «prefix()»DoGeoCoding(addressCallback);
-            });
+            «IF targets('1.3.5')»
+                $('linkGetCoordinates').observe('click', function (evt) {
+                    «prefix()»DoGeoCoding(addressCallback);
+                });
+            «ELSE»
+                $('#linkGetCoordinates').click( function (evt) {
+                    «prefix()»DoGeoCoding(addressCallback);
+                });
+            «ENDIF»
         }
 
         /**
@@ -173,9 +219,15 @@ class EditFunctions {
          */
         function «prefix()»DoGeoCoding(addressCallback)
         {
-            var address = {
-                address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
-            };
+            «IF targets('1.3.5')»
+                var address = {
+                    address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
+                };
+            «ELSE»
+                var address = {
+                    address : $('#street').val() + ' ' + $('#houseNumber').val() + ' ' + $('#zipcode').val() + ' ' + $('#city').val() + ' ' + $('#country').val()
+                };
+            «ENDIF»
 
             // Check whether the given callback is executable
             if (typeof addressCallback !== 'function') {
@@ -186,12 +238,21 @@ class EditFunctions {
             geocoder.geocode(address);
 
             function «prefix()»GeoCodeErrorCallback (status) {
-                Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
+                «IF targets('1.3.5')»
+                    Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
+                «ELSE»
+                    «prefix()»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', 'module_«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
+                «ENDIF»
             }
 
             function «prefix()»GeoCodeReturn (location) {
-                Form.Element.setValue('latitude', location.point.lat.toFixed(4));
-                Form.Element.setValue('longitude', location.point.lng.toFixed(4));
+                «IF targets('1.3.5')»
+                    Form.Element.setValue('latitude', location.point.lat.toFixed(4));
+                    Form.Element.setValue('longitude', location.point.lng.toFixed(4));
+                «ELSE»
+                    $('#latitude').val(location.point.lat.toFixed(7));
+                    $('#longitude').val(location.point.lng.toFixed(7));
+                «ENDIF»
                 newCoordinatesEventHandler();
             }
         }
@@ -253,7 +314,7 @@ class EditFunctions {
 
             «createWindowInstance»
 
-            «initInlineWindow»
+            «initInlineRelationWindow»
 
             «removeRelatedItem»
 
@@ -271,16 +332,29 @@ class EditFunctions {
          */
         function «prefix()»ToggleRelatedItemForm(idPrefix)
         {
-            // if we don't have a toggle link do nothing
-            if ($(idPrefix + 'AddLink') === null) {
-                return;
-            }
+            «IF targets('1.3.5')»
+                // if we don't have a toggle link do nothing
+                if ($(idPrefix + 'AddLink') === null) {
+                    return;
+                }
 
-            // show/hide the toggle link
-            $(idPrefix + 'AddLink').toggleClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                // show/hide the toggle link
+                $(idPrefix + 'AddLink').toggleClassName('z-hide');
 
-            // hide/show the fields
-            $(idPrefix + 'AddFields').toggleClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                // hide/show the fields
+                $(idPrefix + 'AddFields').toggleClassName('z-hide');
+            «ELSE»
+                // if we don't have a toggle link do nothing
+                if ($('#' + idPrefix + 'AddLink').size() < 1) {
+                    return;
+                }
+
+                // show/hide the toggle link
+                $('#' + idPrefix + 'AddLink').toggleClass('hidden');
+
+                // hide/show the fields
+                $('#' + idPrefix + 'AddFields').toggleClass('hidden');
+            «ENDIF»
         }
     '''
 
@@ -294,7 +368,11 @@ class EditFunctions {
             «prefix()»ToggleRelatedItemForm(idPrefix);
 
             // reset value of the auto completion field
-            $(idPrefix + 'Selector').value = '';
+            «IF targets('1.3.5')»
+                $(idPrefix + 'Selector').value = '';
+            «ELSE»
+                $('#' + idPrefix + 'Selector').val('');
+            «ENDIF»
         }
     '''
 
@@ -330,11 +408,11 @@ class EditFunctions {
         }
     '''
 
-    def private initInlineWindow(Application it) '''
+    def private initInlineRelationWindow(Application it) '''
         /**
          * Observe a link for opening an inline window
          */
-        function «prefix()»InitInlineWindow(objectType, containerID)
+        function «prefix()»initInlineRelationWindow(objectType, containerID)
         {
             var found, newItem;
 
@@ -350,10 +428,10 @@ class EditFunctions {
                     // look whether there is already a window instance
                     if (relationHandler.windowInstance !== null) {
                         // unset it
-                        relationHandler.windowInstance.destroy();
+                        relationHandler.windowInstance.«IF targets('1.3.5')»destroy«ELSE»remove«ENDIF»();
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstance = «prefix()»CreateWindowInstance($(containerID), true);
+                    relationHandler.windowInstance = «prefix()»CreateWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
                 }
             });
 
@@ -365,7 +443,7 @@ class EditFunctions {
                 newItem.alias = '«/*TODO*/»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
-                newItem.windowInstance = «prefix()»CreateWindowInstance($(containerID), true);
+                newItem.windowInstance = «prefix()»CreateWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
 
                 // add it to the list of handlers
                 relationHandler.push(newItem);
@@ -381,15 +459,30 @@ class EditFunctions {
         {
             var itemIds, itemIdsArr;
 
-            itemIds = $F(idPrefix + 'ItemList');
+            «IF targets('1.3.5')»
+                itemIds = $F(idPrefix + 'ItemList');
+            «ELSE»
+                itemIds = $('#' + idPrefix + 'ItemList').val();
+            «ENDIF»
             itemIdsArr = itemIds.split(',');
 
-            itemIdsArr = itemIdsArr.without(removeId);
+            «IF targets('1.3.5')»
+                itemIdsArr = itemIdsArr.without(removeId);
+            «ELSE»
+                itemIdsArr = $.grep(itemIdsArr, function(value) {
+                    return value != removeId;
+                });
+            «ENDIF»
 
             itemIds = itemIdsArr.join(',');
 
-            $(idPrefix + 'ItemList').value = itemIds;
-            $(idPrefix + 'Reference_' + removeId).remove();
+            «IF targets('1.3.5')»
+                $(idPrefix + 'ItemList').value = itemIds;
+                $(idPrefix + 'Reference_' + removeId).remove();
+            «ELSE»
+                $('#' + idPrefix + 'ItemList').val(itemIds);
+                $('#' + idPrefix + 'Reference_' + removeId).remove();
+            «ENDIF»
         }
     '''
 
@@ -401,58 +494,122 @@ class EditFunctions {
         {
             var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
 
-            newItemId = selectedListItem.id;
-            newTitle = $F(idPrefix + 'Selector');
-            includeEditing = !!(($F(idPrefix + 'Mode') == '1'));
+            «IF targets('1.3.5')»
+                newItemId = selectedListItem.id;
+                newTitle = $F(idPrefix + 'Selector');
+                includeEditing = !!(($F(idPrefix + 'Mode') == '1'));
+            «ELSE»
+                newItemId = selectedListItem.attr('id');
+                newTitle = $('#' + idPrefix + 'Selector').val();
+                includeEditing = !!(($('#' + idPrefix + 'Mode').val() == '1'));
+            «ENDIF»
             elemPrefix = idPrefix + 'Reference_' + newItemId;
             itemPreview = '';
 
-            if ($('itemPreview' + selectedListItem.id) !== null) {
-                itemPreview = $('itemPreview' + selectedListItem.id).innerHTML;
-            }
-
-            var li = Builder.node('li', {id: elemPrefix}, newTitle);
-            if (includeEditing === true) {
-                var editHref = $(idPrefix + 'SelectorDoNew').href + '&id=' + newItemId;
-                editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
-                li.appendChild(editLink);
-            }
-            removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefix()»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
-            li.appendChild(removeLink);
-            if (itemPreview !== '') {
-                fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
-                fldPreview.update(itemPreview);
-                li.appendChild(fldPreview);
-                itemPreview = '';
-            }
-            $(idPrefix + 'ReferenceList').appendChild(li);
-
-            if (includeEditing === true) {
-                editLink.update(' ' + editImage);
-
-                $(elemPrefix + 'Edit').observe('click', function (e) {
-                    «prefix()»InitInlineWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
-                    e.stop();
-                });
-            }
-            removeLink.update(' ' + removeImage);
-
-            itemIds = $F(idPrefix + 'ItemList');
-            if (itemIds !== '') {
-                if ($F(idPrefix + 'Scope') === '0') {
-                    itemIdsArr = itemIds.split(',');
-                    itemIdsArr.each(function (existingId) {
-                        if (existingId) {
-                            «prefix()»RemoveRelatedItem(idPrefix, existingId);
-                        }
-                    });
-                    itemIds = '';
-                } else {
-                    itemIds += ',';
+            «IF targets('1.3.5')»
+                if ($('itemPreview' + selectedListItem.id) !== null) {
+                    itemPreview = $('itemPreview' + selectedListItem.id).innerHTML;
                 }
+            «ELSE»
+                if ($('#itemPreview' + selectedListItem.attr('id')).size() > 0) {
+                    itemPreview = $('#itemPreview' + selectedListItem.attr('id')).innerHTML;
+                }
+            «ENDIF»
+
+            «IF targets('1.3.5')»
+                var li = Builder.node('li', {id: elemPrefix}, newTitle);
+                if (includeEditing === true) {
+                    var editHref = $(idPrefix + 'SelectorDoNew').href + '&id=' + newItemId;
+                    editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
+                    li.appendChild(editLink);
+                }
+                removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefix()»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
+                li.appendChild(removeLink);
+                if (itemPreview !== '') {
+                    fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
+                    fldPreview.update(itemPreview);
+                    li.appendChild(fldPreview);
+                    itemPreview = '';
+                }
+                $(idPrefix + 'ReferenceList').appendChild(li);
+            «ELSE»
+                var li = $('<li>', {id: elemPrefix, text: newTitle});
+                if (includeEditing === true) {
+                    var editHref = $('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
+                    editLink = $('<a>', {id: elemPrefix + 'Edit', href: editHref, text: 'edit'});
+                    li.append(editLink);
+                }
+                removeLink = $('<a>', {id: elemPrefix + 'Remove', href: 'javascript:«prefix()»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove'});
+                li.append(removeLink);
+                if (itemPreview !== '') {
+                    fldPreview = $('<div>', {id: elemPrefix + 'preview', name: idPrefix + 'preview'});
+                    fldPreview.html(itemPreview);
+                    li.append(fldPreview);
+                    itemPreview = '';
+                }
+                $('#' + idPrefix + 'ReferenceList').append(li);
+            «ENDIF»
+
+            if (includeEditing === true) {
+                «IF targets('1.3.5')»
+                    editLink.update(' ' + editImage);
+                «ELSE»
+                    editLink.html(' ' + editImage);
+                «ENDIF»
+
+                «IF targets('1.3.5')»
+                    $(elemPrefix + 'Edit').observe('click', function (e) {
+                        «prefix()»initInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
+                        e.stop();
+                    });
+                «ELSE»
+                    $('#' + elemPrefix + 'Edit').click( function (e) {
+                        «prefix()»initInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
+                        e.stopPropagation();
+                    });
+                «ENDIF»
             }
-            itemIds += newItemId;
-            $(idPrefix + 'ItemList').value = itemIds;
+            «IF targets('1.3.5')»
+                removeLink.update(' ' + removeImage);
+            «ELSE»
+                removeLink.html(' ' + removeImage);
+            «ENDIF»
+
+            «IF targets('1.3.5')»
+                itemIds = $F(idPrefix + 'ItemList');
+                if (itemIds !== '') {
+                    if ($F(idPrefix + 'Scope') === '0') {
+                        itemIdsArr = itemIds.split(',');
+                        itemIdsArr.each(function (existingId) {
+                            if (existingId) {
+                                «prefix()»RemoveRelatedItem(idPrefix, existingId);
+                            }
+                        });
+                        itemIds = '';
+                    } else {
+                        itemIds += ',';
+                    }
+                }
+                itemIds += newItemId;
+                $(idPrefix + 'ItemList').value = itemIds;
+            «ELSE»
+                itemIds = $('#' + idPrefix + 'ItemList').val();
+                if (itemIds !== '') {
+                    if ($('#' + idPrefix + 'Scope').val() === '0') {
+                        itemIdsArr = itemIds.split(',');
+                        itemIdsArr.each(function (existingId) {
+                            if (existingId) {
+                                «prefix()»RemoveRelatedItem(idPrefix, existingId);
+                            }
+                        });
+                        itemIds = '';
+                    } else {
+                        itemIds += ',';
+                    }
+                }
+                itemIds += newItemId;
+                $('#' + idPrefix + 'ItemList').val(itemIds);
+            «ENDIF»
 
             «prefix()»ResetRelatedItemForm(idPrefix);
         }
@@ -466,18 +623,33 @@ class EditFunctions {
         {
             var acOptions, itemIds, itemIdsArr;
 
-            // add handling for the toggle link if existing
-            if ($(idPrefix + 'AddLink') !== null) {
-                $(idPrefix + 'AddLink').observe('click', function (e) {
-                    «prefixSmall»ToggleRelatedItemForm(idPrefix);
-                });
-            }
-            // add handling for the cancel button
-            if ($(idPrefix + 'SelectorDoCancel') !== null) {
-                $(idPrefix + 'SelectorDoCancel').observe('click', function (e) {
-                    «prefixSmall»ResetRelatedItemForm(idPrefix);
-                });
-            }
+            «IF targets('1.3.5')»
+                // add handling for the toggle link if existing
+                if ($(idPrefix + 'AddLink') !== null) {
+                    $(idPrefix + 'AddLink').observe('click', function (e) {
+                        «prefixSmall»ToggleRelatedItemForm(idPrefix);
+                    });
+                }
+                // add handling for the cancel button
+                if ($(idPrefix + 'SelectorDoCancel') !== null) {
+                    $(idPrefix + 'SelectorDoCancel').observe('click', function (e) {
+                        «prefixSmall»ResetRelatedItemForm(idPrefix);
+                    });
+                }
+            «ELSE»
+                // add handling for the toggle link if existing
+                if ($('#' + idPrefix + 'AddLink').size() > 0) {
+                    $('#' + idPrefix + 'AddLink').click( function (e) {
+                        «prefixSmall»ToggleRelatedItemForm(idPrefix);
+                    });
+                }
+                // add handling for the cancel button
+                if ($('#' + idPrefix + 'SelectorDoCancel').size() > 0) {
+                    $('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
+                        «prefixSmall»ResetRelatedItemForm(idPrefix);
+                    });
+                }
+            «ENDIF»
             // clear values and ensure starting state
             «prefixSmall»ResetRelatedItemForm(idPrefix);
 
@@ -490,13 +662,23 @@ class EditFunctions {
 
                     // modify the query string before the request
                     queryString = defaultQueryString + '&ot=' + objectType;
-                    if ($(idPrefix + 'ItemList') !== null) {
-                        queryString += '&exclude=' + $F(idPrefix + 'ItemList');
-                    }
+                    «IF targets('1.3.5')»
+                        if ($(idPrefix + 'ItemList') !== null) {
+                            queryString += '&exclude=' + $F(idPrefix + 'ItemList');
+                        }
 
-                    if ($(idPrefix + 'NoResultsHint') != null) {
-                        $(idPrefix + 'NoResultsHint').addClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                    }
+                        if ($(idPrefix + 'NoResultsHint') != null) {
+                            $(idPrefix + 'NoResultsHint').addClassName('z-hide');
+                        }
+                    «ELSE»
+                        if ($('#' + idPrefix + 'ItemList').size() > 0) {
+                            queryString += '&exclude=' + $('#' + idPrefix + 'ItemList').val();
+                        }
+
+                        if ($('#' + idPrefix + 'NoResultsHint').size() > 0) {
+                            $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
+                        }
+                    «ENDIF»
 
                     return queryString;
                 },
@@ -517,29 +699,55 @@ class EditFunctions {
                 }
             });
 
-            if (!includeEditing || $(idPrefix + 'SelectorDoNew') === null) {
-                return;
-            }
+            «IF targets('1.3.5')»
+                if (!includeEditing || $(idPrefix + 'SelectorDoNew') === null) {
+                    return;
+                }
+            «ELSE»
+                if (!includeEditing || $('#' + idPrefix + 'SelectorDoNew').size() < 1) {
+                    return;
+                }
+            «ENDIF»
 
             // from here inline editing will be handled
-            $(idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
-            $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
-                «prefixSmall»InitInlineWindow(objectType, idPrefix + 'SelectorDoNew');
-                e.stop();
-            });
+            «IF targets('1.3.5')»
+                $(idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
+                $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
+                    «prefixSmall»initInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
+                    e.stop();
+                });
+            «ELSE»
+                $('#' + idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
+                $('#' + idPrefix + 'SelectorDoNew').click( function(e) {
+                    «prefixSmall»initInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
+                    e.stopPropagation();
+                });
+            «ENDIF»
 
-            itemIds = $F(idPrefix + 'ItemList');
+            «IF targets('1.3.5')»
+                itemIds = $F(idPrefix + 'ItemList');
+            «ELSE»
+                itemIds = $('#' + idPrefix + 'ItemList').val();
+            «ENDIF»
             itemIdsArr = itemIds.split(',');
             itemIdsArr.each(function (existingId) {
                 var elemPrefix;
 
                 if (existingId) {
                     elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
-                    $(elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
-                    $(elemPrefix).observe('click', function (e) {
-                        «prefixSmall»InitInlineWindow(objectType, elemPrefix);
-                        e.stop();
-                    });
+                    «IF targets('1.3.5')»
+                        $(elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
+                        $(elemPrefix).observe('click', function (e) {
+                            «prefixSmall»initInlineRelationWindow(objectType, elemPrefix);
+                            e.stop();
+                        });
+                    «ELSE»
+                        $('#' + elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
+                        $('#' + elemPrefix).click( function (e) {
+                            «prefixSmall»initInlineRelationWindow(objectType, elemPrefix);
+                            e.stopPropagation();
+                        });
+                    «ENDIF»
                 }
             });
         }
@@ -566,10 +774,14 @@ class EditFunctions {
                         if (relationHandler.acInstance !== null) {
                             // activate it
                             relationHandler.acInstance.activate();
-                            // show a message 
-                            Zikula.UI.Alert(Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), {
-                                autoClose: 3 // time in seconds
-                            });
+                            // show a message
+                            «IF targets('1.3.5')» 
+                                Zikula.UI.Alert(Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), {
+                                    autoClose: 3 // time in seconds
+                                });
+                            «ELSE»
+                                «prefix()»SimpleAlert($('.«appName.toLowerCase»-form'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
+                            «ENDIF»
                         }
                     }
                     // look whether there is a windows instance

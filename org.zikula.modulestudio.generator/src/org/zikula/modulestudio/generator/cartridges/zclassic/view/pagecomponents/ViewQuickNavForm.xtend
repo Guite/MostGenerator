@@ -56,13 +56,25 @@ class ViewQuickNavForm {
 
         <script type="text/javascript">
         /* <![CDATA[ */
-            document.observe('dom:loaded', function() {
-                «app.prefix»InitQuickNavigation('«name.formatForCode»');
-                {{if isset($searchFilter) && $searchFilter eq false}}
-                    {{* we can hide the submit button if we have no quick search field *}}
-                    $('quicknavSubmit').addClassName('«IF app.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                {{/if}}
-            });
+            «IF app.targets('1.3.5')»
+                document.observe('dom:loaded', function() {
+                    «app.prefix()»InitQuickNavigation('«name.formatForCode»');
+                    {{if isset($searchFilter) && $searchFilter eq false}}
+                        {{* we can hide the submit button if we have no quick search field *}}
+                        $('quicknavSubmit').addClassName('z-hide');
+                    {{/if}}
+                });
+            «ELSE»
+                ( function($) {
+                    $(document).ready(function() {
+                        «app.prefix()»InitQuickNavigation('«name.formatForCode»');
+                        {{if isset($searchFilter) && $searchFilter eq false}}
+                            {{* we can hide the submit button if we have no quick search field *}}
+                            $('#quicknavSubmit').addClass('hidden');
+                        {{/if}}
+                    });
+                })(jQuery);
+            «ENDIF»
         /* ]]> */
         </script>
         {/checkpermissionblock}

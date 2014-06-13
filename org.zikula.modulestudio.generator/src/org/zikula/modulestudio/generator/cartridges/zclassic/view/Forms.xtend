@@ -143,13 +143,29 @@ class Forms {
             «ENDIF»
 
             «IF useGroupingPanels('edit')»
-                <div id="«app.appName.toFirstLower»Panel" class="z-panels">
-                    <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
-                    <div class="z-panel-content z-panel-active" style="overflow: visible">
-                        «fieldDetails(app)»
+                «IF app.targets('1.3.5')»
+                    <div id="«app.appName.toFirstLower»Panel" class="z-panels">
+                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
+                        <div class="z-panel-content z-panel-active" style="overflow: visible">
+                            «fieldDetails(app)»
+                        </div>
+                        «new Section().generate(it, app, fsa)»
                     </div>
-                    «new Section().generate(it, app, fsa)»
-                </div>
+                «ELSE»
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{gt text='Fields'}</a></h3>
+                            </div>
+                            <div id="collapseFields" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    «fieldDetails(app)»
+                                </div>
+                            </div>
+                        </div>
+                        «new Section().generate(it, app, fsa)»
+                    </div>
+                «ENDIF»
             «ELSE»
                 «fieldDetails(app)»
                 «new Section().generate(it, app, fsa)»
@@ -234,7 +250,9 @@ class Forms {
                             <div class="col-lg-9">
                         «ENDIF»
                             {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.5')» form-control«ENDIF»'}
-                            {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
+                            «IF app.targets('1.3.5')»
+                                {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
+                            «ENDIF»
                         «IF !app.targets('1.3.5')»
                             </div>
                         «ENDIF»
@@ -253,7 +271,7 @@ class Forms {
                 «ENDIF»
                     {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !container.application.targets('1.3.5')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
                     <span class="«IF container.application.targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>
-                «IF slugUnique»
+                «IF slugUnique && container.application.targets('1.3.5')»
                     «/*{«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
                     {«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
                 «ENDIF»
@@ -283,83 +301,21 @@ class Forms {
                     var mapstraction;
                     var marker;
 
-                    function newCoordinatesEventHandler() {
-                        var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
-                        marker.hide();
-                        mapstraction.removeMarker(marker);
-                        marker = new mxn.Marker(location);
-                        mapstraction.addMarker(marker,true);
-                        mapstraction.setCenterAndZoom(location, 18);
-                    }
+                    «IF app.targets('1.3.5')»
+                        «newCoordinatesEventHandler»
 
-                    Event.observe(window, 'load', function() {
-                        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
-                        mapstraction.addControls({
-                            pan: true,
-                            zoom: 'small',
-                            map_type: true
+                        Event.observe(window, 'load', function() {
+                            «initGeographical(app)»
                         });
+                    «ELSE»
+                        ( function($) {
+                            $(document).ready(function() {
+                                «newCoordinatesEventHandler»
 
-                        var latlon = new mxn.LatLonPoint({{$«name.formatForDB».latitude|«app.appName.formatForDB»FormatGeoData}}, {{$«name.formatForDB».longitude|«app.appName.formatForDB»FormatGeoData}});
-
-                        mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
-                        mapstraction.setCenterAndZoom(latlon, 16);
-                        mapstraction.mousePosition('position');
-
-                        // add a marker
-                        marker = new mxn.Marker(latlon);
-                        mapstraction.addMarker(marker, true);
-
-                        $('latitude').observe('change', function() {
-                            newCoordinatesEventHandler();
-                        });
-
-                        $('longitude').observe('change', function() {
-                            newCoordinatesEventHandler();
-                        });
-
-                        mapstraction.click.addHandler(function(event_name, event_source, event_args){
-                            var coords = event_args.location;
-                            Form.Element.setValue('latitude', coords.lat.toFixed(7));
-                            Form.Element.setValue('longitude', coords.lng.toFixed(7));
-                            newCoordinatesEventHandler();
-                        });
-
-                        {{if $mode eq 'create'}}
-                            // derive default coordinates from users position with html5 geolocation feature
-                            if (navigator.geolocation) {
-                                navigator.geolocation.getCurrentPosition(setDefaultCoordinates, handlePositionError);
-                            }
-                        {{/if}}
-
-                        function setDefaultCoordinates(position) {
-                            $('latitude').value = position.coords.latitude.toFixed(7);
-                            $('longitude').value = position.coords.longitude.toFixed(7);
-                            newCoordinatesEventHandler();
-                        }
-
-                        function handlePositionError(evt) {
-                            Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
-                        }
-
-                        {{*
-                            Initialise geocoding functionality.
-                            In contrast to the map picker this one determines coordinates for a given address.
-                            To use this please customise the following method for assembling the address.
-                            Furthermore you will need a link or a button with id="linkGetCoordinates" which will
-                            be used by the script for adding a corresponding click event handler.
-
-                            var determineAddressForGeoCoding = function () {
-                                var address = {
-                                    address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
-                                };
-
-                                return address;
-                            }
-
-                            «app.prefix»InitGeoCoding(determineAddressForGeoCoding);
-                        *}}
-                    });
+                                «initGeographical(app)»
+                            });
+                        })(jQuery);
+                    «ENDIF»
                 /* ]]> */
                 </script>
             {/pageaddvarblock}
@@ -367,66 +323,230 @@ class Forms {
 
         <script type="text/javascript">
         /* <![CDATA[ */
-            «relationHelper.initJs(it, app, false)»
-
-            var formButtons, formValidator;
-
-            function handleFormButton (event) {
-                var result = formValidator.validate();
-                if (!result) {
-                    // validation error, abort form submit
-                    Event.stop(event);
-                } else {
-                    // hide form buttons to prevent double submits by accident
-                    formButtons.each(function (btn) {
-                        btn.addClassName('«IF app.targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+            «IF app.targets('1.3.5')»
+                «relationHelper.initJs(it, app, false)»
+    
+                var formButtons, formValidator;
+    
+                function handleFormButton (event) {
+                    var result = formValidator.validate();
+                    if (!result) {
+                        // validation error, abort form submit
+                        Event.stop(event);
+                    } else {
+                        // hide form buttons to prevent double submits by accident
+                        formButtons.each(function (btn) {
+                            btn.addClassName('z-hide');
+                        });
+                    }
+    
+                    return result;
+                }
+    
+                document.observe('dom:loaded', function() {
+                    «val userFields = getUserFieldsEntity»
+                    «IF !userFields.empty»
+                        // initialise auto completion for user fields
+                        «FOR userField : userFields»
+                            «val realName = userField.name.formatForCode»
+                            «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
+                        «ENDFOR»
+                    «ENDIF»
+                    «relationHelper.initJs(it, app, true)»
+    
+                    «container.application.prefix()»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                    {{* observe validation on button events instead of form submit to exclude the cancel command *}}
+                    formValidator = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
+                    {{if $mode ne 'create'}}
+                        var result = formValidator.validate();
+                    {{/if}}
+    
+                    formButtons = $('{{$__formid}}').select('div.z-formbuttons input');
+    
+                    formButtons.each(function (elem) {
+                        if (elem.id != 'btnCancel') {
+                            elem.observe('click', handleFormButton);
+                        }
                     });
+                    «IF useGroupingPanels('edit')»
+
+                        var panel = new Zikula.UI.Panels('«app.appName.toFirstLower»Panel', {
+                            headerSelector: 'h3',
+                            headerClassName: 'z-panel-header z-panel-indicator',
+                            contentClassName: 'z-panel-content',
+                            active: $('z-panel-header-fields')
+                        });
+                    «ENDIF»
+    
+                    Zikula.UI.Tooltips($$('.«app.appName.toLowerCase»-form-tooltips'));
+                    «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
+                });
+            «ELSE»
+                «relationHelper.initJs(it, app, false)»
+    
+                var formButtons;
+    
+                function handleFormButton (event) {
+                    «container.application.prefix()»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                    var result = document.getElementById('{{$__formid}}').checkValidity();
+                    if (!result) {
+                        // validation error, abort form submit
+                        event.stopPropagation();
+                    } else {
+                        // hide form buttons to prevent double submits by accident
+                        formButtons.each(function (btn) {
+                            btn.addClass('hidden');
+                        });
+                    }
+    
+                    return result;
                 }
 
-                return result;
-            }
-
-            document.observe('dom:loaded', function() {
-                «val userFields = getUserFieldsEntity»
-                «IF !userFields.empty»
-                    // initialise auto completion for user fields
-                    «FOR userField : userFields»
-                        «val realName = userField.name.formatForCode»
-                        «app.prefix»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
-                    «ENDFOR»
-                «ENDIF»
-                «relationHelper.initJs(it, app, true)»
-
-                «container.application.prefix»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
-                {{* observe validation on button events instead of form submit to exclude the cancel command *}}
-                formValidator = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
-                {{if $mode ne 'create'}}
-                    var result = formValidator.validate();
-                {{/if}}
-
-                formButtons = $('{{$__formid}}').select('div.«IF app.targets('1.3.5')»z-formbuttons«ELSE»form-buttons«ENDIF» input');
-
-                formButtons.each(function (elem) {
-                    if (elem.id != 'btnCancel') {
-                        elem.observe('click', handleFormButton);
-                    }
-                });
-                «IF useGroupingPanels('edit')»
-
-                    var panel = new Zikula.UI.Panels('«app.appName.toFirstLower»Panel', {
-                        headerSelector: 'h3',
-                        headerClassName: 'z-panel-header z-panel-indicator',
-                        contentClassName: 'z-panel-content',
-                        active: $('z-panel-header-fields')
+                ( function($) {
+                    $(document).ready(function() {
+                        «val userFields = getUserFieldsEntity»
+                        «IF !userFields.empty»
+                            // initialise auto completion for user fields
+                            «FOR userField : userFields»
+                                «val realName = userField.name.formatForCode»
+                                «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
+                            «ENDFOR»
+                        «ENDIF»
+                        «relationHelper.initJs(it, app, true)»
+        
+                        {{* observe validation on button events instead of form submit to exclude the cancel command *}}
+                        {{if $mode ne 'create'}}
+                            if (!document.getElementById('{{$__formid}}').checkValidity()) {
+                                document.getElementById('{{$__formid}}').submit();
+                            }
+                        {{/if}}
+        
+                        formButtons = $('#{{$__formid}}').find('div.form-buttons input');
+        
+                        formButtons.each(function (elem) {
+                            if (elem.attr('id') != 'btnCancel') {
+                                elem.click(handleFormButton);
+                            }
+                        });
+    
+                        $('.«app.appName.toLowerCase»-form-tooltips').tooltip();
+                        «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
                     });
-                «ENDIF»
-
-                Zikula.UI.Tooltips($$('.«app.appName.toLowerCase»-form-tooltips'));
-                «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
-            });
+                })(jQuery);
+            «ENDIF»
 
         /* ]]> */
         </script>
+    '''
+
+    def private newCoordinatesEventHandler(Entity it) '''
+        function newCoordinatesEventHandler() {
+            «IF container.application.targets('1.3.5')»
+                var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
+            «ELSE»
+                var location = new mxn.LatLonPoint($('#latitude').val(), $('#longitude').val());
+            «ENDIF»
+            marker.hide();
+            mapstraction.removeMarker(marker);
+            marker = new mxn.Marker(location);
+            mapstraction.addMarker(marker, true);
+            mapstraction.setCenterAndZoom(location, 18);
+        }
+    '''
+
+    def private initGeographical(Entity it, Application app) '''
+        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
+        mapstraction.addControls({
+            pan: true,
+            zoom: 'small',
+            map_type: true
+        });
+
+        var latlon = new mxn.LatLonPoint({{$«name.formatForDB».latitude|«app.appName.formatForDB»FormatGeoData}}, {{$«name.formatForDB».longitude|«app.appName.formatForDB»FormatGeoData}});
+
+        mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
+        mapstraction.setCenterAndZoom(latlon, 16);
+        mapstraction.mousePosition('position');
+
+        // add a marker
+        marker = new mxn.Marker(latlon);
+        mapstraction.addMarker(marker, true);
+
+        // init event handler
+        «IF container.application.targets('1.3.5')»
+            $('latitude').observe('change', newCoordinatesEventHandler);
+            $('longitude').observe('change', newCoordinatesEventHandler);
+        «ELSE»
+            $('#latitude').change(newCoordinatesEventHandler);
+            $('#longitude').change(newCoordinatesEventHandler);
+        «ENDIF»
+        «IF !container.application.targets('1.3.5')»
+
+            $('#collapseMap').on('hidden.bs.collapse', function () {
+                // redraw the map after it's panel has been opened (see also #340)
+                mapstraction.resizeTo($('#mapContainer').width(), $('#mapContainer').height());
+            })
+        «ENDIF»
+
+        mapstraction.click.addHandler(function(event_name, event_source, event_args) {
+            var coords = event_args.location;
+            «IF container.application.targets('1.3.5')»
+                Form.Element.setValue('latitude', coords.lat.toFixed(7));
+                Form.Element.setValue('longitude', coords.lng.toFixed(7));
+            «ELSE»
+                $('#latitude').val(coords.lat.toFixed(7));
+                $('#longitude').val(coords.lng.toFixed(7));
+            «ENDIF»
+            newCoordinatesEventHandler();
+        });
+
+        {{if $mode eq 'create'}}
+            // derive default coordinates from users position with html5 geolocation feature
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(setDefaultCoordinates, handlePositionError);
+            }
+        {{/if}}
+
+        function setDefaultCoordinates(position) {
+            «IF app.targets('1.3.5')»
+                $('latitude').value = position.coords.latitude.toFixed(7);
+                $('longitude').value = position.coords.longitude.toFixed(7);
+            «ELSE»
+                $('#latitude').val(position.coords.latitude.toFixed(7));
+                $('#longitude').val(position.coords.longitude.toFixed(7));
+            «ENDIF»
+            newCoordinatesEventHandler();
+        }
+
+        function handlePositionError(evt) {
+            «IF app.targets('1.3.5')»
+                Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
+            «ELSE»
+                «app.prefix()»SimpleAlert($('#mapContainer'), Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'), evt.message, 'geoLocationAlert', 'danger');
+            «ENDIF»
+        }
+
+        {{*
+            Initialise geocoding functionality.
+            In contrast to the map picker this one determines coordinates for a given address.
+            To use this please customise the following method for assembling the address.
+            Furthermore you will need a link or a button with id="linkGetCoordinates" which will
+            be used by the script for adding a corresponding click event handler.
+
+            var determineAddressForGeoCoding = function () {
+                var address = {
+                    «IF app.targets('1.3.5')»
+                        address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
+                    «ELSE»
+                        address : $('#street').val() + ' ' + $('#houseNumber').val() + ' ' + $('#zipcode').val() + ' ' + $('#city').val() + ' ' + $('#country').val()
+                    «ENDIF»
+                };
+
+                return address;
+            }
+
+            «app.prefix()»InitGeoCoding(determineAddressForGeoCoding);
+        *}}
     '''
 
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
@@ -447,12 +567,12 @@ class Forms {
     }
 
     def private additionalInitScriptUpload(UploadField it) '''
-        «entity.container.application.prefix»InitUploadField('«name.formatForCode»');
+        «entity.container.application.prefix()»InitUploadField('«name.formatForCode»');
     '''
 
     def private additionalInitScriptCalendar(AbstractDateField it) '''
         «IF !mandatory && nullable»
-            «entity.container.application.prefix»InitDateField('«name.formatForCode»');
+            «entity.container.application.prefix()»InitDateField('«name.formatForCode»');
         «ENDIF»
     '''
 
@@ -485,19 +605,35 @@ class Forms {
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 {$jcssConfig}
-                <script type="text/javascript" src="{$baseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
-                <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
-                <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
-                <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
+                «IF targets('1.3.5')»
+                    <script type="text/javascript" src="{$baseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
+                «ELSE»
+                    <link rel="stylesheet" href="web/bootstrap/css/bootstrap.min.css" type="text/css" />
+                    <link rel="stylesheet" href="web/bootstrap/css/bootstrap-theme.css" type="text/css" />
+                    <script type="text/javascript" src="web/jquery/jquery.min.js"></script>
+                    <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
+                    <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
+                «ENDIF»
                 <script type="text/javascript" src="{$baseurl}«rootFolder»/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     // close window from parent document
-                    document.observe('dom:loaded', function() {
-                        «prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
-                    });
+                    «IF targets('1.3.5')»
+                        document.observe('dom:loaded', function() {
+                            «prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
+                        });
+                    «ELSE»
+                        ( function($) {
+                            $(document).ready(function() {
+                                «prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
+                            });
+                        })(jQuery);
+                    «ENDIF»
                 /* ]]> */
                 </script>
             </body>

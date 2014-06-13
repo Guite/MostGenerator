@@ -57,12 +57,27 @@ class Config {
                 {* add validation summary and a <div> element for styling the form *}
                 {«appName.formatForDB»FormFrame}
                     {formsetinitialfocus inputId='«getSortedVariableContainers.head.vars.head.name.formatForCode»'}
-                    «IF hasMultipleConfigSections»
-                        {formtabbedpanelset}
+                    «IF hasMultipleConfigSections && !targets('1.3.5')»
+                        <ul class="nav nav-pills">
+                        «FOR varContainer : getSortedVariableContainers»
+                            {gt text='«varContainer.name.formatForDisplayCapital»' assign='tabTitle'}
+                            <li«IF varContainer == getSortedVariableContainers.head» class="active"«ENDIF» data-toggle="pill"><a href="#" title="{$tabTitle|replace:'"':''}">{$tabTitle}</a></li>
+                        «ENDFOR»
+                        </ul>
+
                     «ENDIF»
-                    «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, hasMultipleConfigSections, varContainer == getSortedVariableContainers.head)»«ENDFOR»
                     «IF hasMultipleConfigSections»
-                        {/formtabbedpanelset}
+                        «IF targets('1.3.5')»
+                            {formtabbedpanelset}
+                                «configSections»
+                            {/formtabbedpanelset}
+                        «ELSE»
+                            <div class="tab-content"»
+                                «configSections»
+                            </div>
+                        «ENDIF»
+                    «ELSE»
+                        «configSections»
                     «ENDIF»
 
                     <div class="«IF targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
@@ -82,33 +97,55 @@ class Config {
         «IF !getAllVariables.filter[documentation !== null && documentation != ''].empty»
             <script type="text/javascript">
             /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                    Zikula.UI.Tooltips($$('.«appName.toLowerCase»-form-tooltips'));
-                });
+                «IF targets('1.3.5')»
+                    document.observe('dom:loaded', function() {
+                        Zikula.UI.Tooltips($$('.«appName.toLowerCase»-form-tooltips'));
+                    });
+                «ELSE»
+                    ( function($) {
+                        $(document).ready(function() {
+                            $('.«appName.toLowerCase»-form-tooltips').tooltip();
+                        });
+                    })(jQuery);
+                «ENDIF»
             /* ]]> */
             </script>
         «ENDIF»
     '''
 
-    def private configSection(Variables it, Application app, Boolean hasMultipleConfigSections, Boolean isPrimaryVarContainer) '''
-        {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
-        «IF hasMultipleConfigSections»
-            {formtabbedpanel title=$tabTitle}
+    def private configSections(Application it) '''
+        «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, varContainer == getSortedVariableContainers.head)»«ENDFOR»
+    '''
+
+    def private configSection(Variables it, Application app, Boolean isPrimaryVarContainer) '''
+        «IF app.hasMultipleConfigSections»
+            «IF app.targets('1.3.5')»
+                {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
+                {formtabbedpanel title=$tabTitle}
+                    «configSectionBody(app, isPrimaryVarContainer)»
+                {/formtabbedpanel}
+            «ELSE»
+                <div class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»">
+                    «configSectionBody(app, isPrimaryVarContainer)»
+                </div>
+            «ENDIF»
+        «ELSE»
+            «configSectionBody(app, isPrimaryVarContainer)»
         «ENDIF»
+    '''
+
+    def private configSectionBody(Variables it, Application app, Boolean isPrimaryVarContainer) '''
         <fieldset>
             <legend>{$tabTitle}</legend>
 
             «IF documentation !== null && documentation != ''»
                 <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replace("'", "")»'|nl2br}</p>
-            «ELSEIF !hasMultipleConfigSections || isPrimaryVarContainer»
+            «ELSEIF !app.hasMultipleConfigSections || isPrimaryVarContainer»
                 <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='Here you can manage all basic settings for this application.'}</p>
             «ENDIF»
 
             «FOR modvar : vars»«modvar.formRow»«ENDFOR»
         </fieldset>
-        «IF hasMultipleConfigSections»
-            {/formtabbedpanel}
-        «ENDIF»
     '''
 
     def private formRow(Variable it) '''

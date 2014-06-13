@@ -151,7 +151,7 @@ class SimpleFields {
             «IF !mandatory»
                 {if $«realName» ne ''}
             «ENDIF»
-              <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
+              <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} «IF entity.container.application.targets('1.3.5')»rel="imageviewer[«entity.name.formatForDB»]"«ELSE»class="lightbox"«ENDIF»{/if}>
               {if $«realName»Meta.isImage}
                   {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName»->getTitleFromDisplayPattern()«IF !entity.container.application.targets('1.3.5')» img_class='img-thumbnail'«ENDIF»}
               {else}

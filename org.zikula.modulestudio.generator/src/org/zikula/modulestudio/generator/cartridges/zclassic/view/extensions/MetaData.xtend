@@ -45,41 +45,60 @@ class MetaData {
         {* purpose of this template: reusable display of meta data fields *}
         {if isset($obj.metadata)}
             {if isset($panel) && $panel eq true}
-                <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
-                <div class="metadata z-panel-content" style="display: none">
+                «IF targets('1.3.5')»
+                    <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
+                    <div class="metadata z-panel-content" style="display: none">
+                «ELSE»
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata">{gt text='Metadata'}</a></h3>
+                        </div>
+                        <div id="collapseMetadata" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                «ENDIF»
             {else}
                 <h3 class="metadata">{gt text='Metadata'}</h3>
             {/if}
-            <dl class="propertylist">
-            «displayRow('title')»
-            «displayRow('author')»
-            «displayRow('subject')»
-            «displayRow('keywords')»
-            «displayRow('description')»
-            «displayRow('publisher')»
-            «displayRow('contributor')»
-            {if $obj.metadata.startdate ne ''}
-                <dt>{gt text='Start date'}</dt>
-                <dd>{$obj.metadata.startdate|dateformat}</dd>
-            {/if}
-            {if $obj.metadata.enddate ne ''}
-                <dt>{gt text='End date'}</dt>
-                <dd>{$obj.metadata.enddate|dateformat}</dd>
-            {/if}
-            «displayRow('type')»
-            «displayRow('format')»
-            «displayRow('uri')»
-            «displayRow('source')»
-            «displayRow('language')»
-            «displayRow('relation')»
-            «displayRow('coverage')»
-            «displayRow('comment')»
-            «displayRow('extra')»
-            </dl>
+            «viewBody»
             {if isset($panel) && $panel eq true}
-                </div>
+                «IF targets('1.3.5')»
+                    </div>
+                «ELSE»
+                            </div>
+                        </div>
+                    </div>
+                «ENDIF»
             {/if}
         {/if}
+    '''
+
+    def private viewBody(Application it) '''
+        <dl class="propertylist">
+        «displayRow('title')»
+        «displayRow('author')»
+        «displayRow('subject')»
+        «displayRow('keywords')»
+        «displayRow('description')»
+        «displayRow('publisher')»
+        «displayRow('contributor')»
+        {if $obj.metadata.startdate ne ''}
+            <dt>{gt text='Start date'}</dt>
+            <dd>{$obj.metadata.startdate|dateformat}</dd>
+        {/if}
+        {if $obj.metadata.enddate ne ''}
+            <dt>{gt text='End date'}</dt>
+            <dd>{$obj.metadata.enddate|dateformat}</dd>
+        {/if}
+        «displayRow('type')»
+        «displayRow('format')»
+        «displayRow('uri')»
+        «displayRow('source')»
+        «displayRow('language')»
+        «displayRow('relation')»
+        «displayRow('coverage')»
+        «displayRow('comment')»
+        «displayRow('extra')»
+        </dl>
     '''
 
     def private displayRow(String fieldName) '''
@@ -96,32 +115,55 @@ class MetaData {
     def private metaDataEditImpl(Application it) '''
         {* purpose of this template: reusable editing of meta data fields *}
         {if isset($panel) && $panel eq true}
-            <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
-            <fieldset class="metadata z-panel-content" style="display: none">
+            «IF targets('1.3.5')»
+                <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
+                <fieldset class="metadata z-panel-content" style="display: none">
+            «ELSE»
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata">{gt text='Metadata'}</a></h3>
+                    </div>
+                    <div id="collapseMetadata" class="panel-collapse collapse in">
+                        <div class="panel-body">
+            «ENDIF»
         {else}
             <fieldset class="metadata">
         {/if}
             <legend>{gt text='Metadata'}</legend>
+            «editBody»
+        {if isset($panel) && $panel eq true}
+            «IF targets('1.3.5')»
+                </fieldset>
+            «ELSE»
+                        </div>
+                    </div>
+                </div>
+            «ENDIF»
+        {else}
+            </fieldset>
+        {/if}
+    '''
 
-            «formRow('title', 80)»
-            «formRow('author', 80)»
-            «formRow('subject', 255)»
-            «formRow('keywords', 128)»
-            «formRow('description', 255)»
-            «formRow('publisher', 128)»
-            «formRow('contributor', 80)»
-            «formRow('startdate', 0)»
-            «formRow('enddate', 0)»
-            «formRow('type', 128)»
-            «formRow('format', 128)»
-            «formRow('uri', 255)»
-            «formRow('source', 128)»
-            «formRow('language', 0)»
-            «formRow('relation', 255)»
-            «formRow('coverage', 64)»
-            «formRow('comment', 255)»
-            «formRow('extra', 255)»
-        </fieldset>
+    def private editBody(Application it) '''
+
+        «formRow('title', 80)»
+        «formRow('author', 80)»
+        «formRow('subject', 255)»
+        «formRow('keywords', 128)»
+        «formRow('description', 255)»
+        «formRow('publisher', 128)»
+        «formRow('contributor', 80)»
+        «formRow('startdate', 0)»
+        «formRow('enddate', 0)»
+        «formRow('type', 128)»
+        «formRow('format', 128)»
+        «formRow('uri', 255)»
+        «formRow('source', 128)»
+        «formRow('language', 0)»
+        «formRow('relation', 255)»
+        «formRow('coverage', 64)»
+        «formRow('comment', 255)»
+        «formRow('extra', 255)»
     '''
 
     def private formRow(String fieldName, Integer length) '''
