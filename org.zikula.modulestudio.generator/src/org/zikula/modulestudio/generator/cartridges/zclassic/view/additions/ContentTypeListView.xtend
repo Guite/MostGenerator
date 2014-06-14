@@ -282,6 +282,10 @@ class ContentTypeListView {
     '''
 
     def private detailLink(Entity it, String appName) '''
-        <a href="{modurl modname='«appName»' type='«IF container.application.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' «modUrlDisplayWithFreeOt('$objectType', true)»}">{gt text='Read more'}</a>
+        «IF container.application.targets('1.3.5')»
+            <a href="{modurl modname='«appName»' type='user' ot='«name.formatForCode»' func='display' «routeParamsLegacy('$objectType', true, true)»}">{gt text='Read more'}</a>
+        «ELSE»
+            <a href="{route name='«appName.formatForDB»_«name.formatForCode»_display' «routeParams('$objectType', true)»}">{gt text='Read more'}</a>
+        «ENDIF»
     '''
 }

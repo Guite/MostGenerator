@@ -163,7 +163,7 @@ class Relations {
                     «IF app.targets('1.3.5')»
                         {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
                     «ELSE»
-                        {modurl modname='«app.appName»' type='«ownEntity.name.formatForCode»' func='edit' lct=$lct assign='createLink'}
+                        {route name='«app.appName.formatForDB»_«ownEntity.name.formatForCode»_edit' lct=$lct assign='createLink'}
                     «ENDIF»
                 {/if}
                 {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
@@ -230,9 +230,9 @@ class Relations {
             {$item->getTitleFromDisplayPattern()}
             «IF includeEditing»
                 «IF app.targets('1.3.5')»
-                    <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type=$lct «targetEntity.modUrlEdit('item', true)» ot='«targetEntity.name.formatForCode»' forcelongurl=true}">{$editImage}</a>
+                    <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type=$lct func='edit' ot='«targetEntity.name.formatForCode»' «targetEntity.routeParamsLegacy('item', true, false)» forcelongurl=true}">{$editImage}</a>
                 «ELSE»
-                    <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type='«targetEntity.name.formatForCode»' «targetEntity.modUrlEdit('item', true)» lct=$lct}">{$editImage}</a>
+                    <a id="{$idPrefixItem}Edit" href="{route name='«app.appName.formatForDB»_«targetEntity.name.formatForCode»_edit' «targetEntity.routeParams('item', true)» lct=$lct}">{$editImage}</a>
                 «ENDIF»
             «ENDIF»
              <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>

@@ -131,10 +131,10 @@ class Redirect {
                     // redirect to the detail page of treated «name.formatForCode»
                     «IF app.targets('1.3.5')»
                         $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
-                        $displayArgs = array(«modUrlPrimaryKeyParams('this->idValues', false)»«appendSlug('this->idValues', false)»);
+                        $displayArgs = array('ot' => $this->objectType, «routeParamsLegacy('this->idValues', false, true)»);
                         $url = ModUtil::url($this->name, $currentType, 'display', $displayArgs);
                     «ELSE»
-                        $displayArgs = $this->idValues;
+                        $displayArgs = array(«routeParams('this->idValues', false)»);
                         $displayArgs['lct'] = $legacyControllerType;
                         $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_display', $displayArgs);
                     «ENDIF»

@@ -52,7 +52,7 @@ class Display {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF container.application.targets('1.3.5')»
+        «IF isLegacyApp»
             {include file="`$lct`/header.tpl"}
         «ELSE»
             {assign var='lctUc' value=$lct|ucfirst}
@@ -77,9 +77,9 @@ class Display {
             «IF useGroupingPanels('display')»
 
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                «IF container.application.targets('1.3.5')»
+                «IF isLegacyApp»
                     <div id="«appName.toFirstLower»Panel" class="z-panels">
-                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer z-panel-active">{gt text='Fields'}</h3>
+                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer z-panel-active">{gt text='Fields'}</h3>
                         <div class="z-panel-content z-panel-active" style="overflow: visible">
                 «ELSE»
                     <div class="panel-group" id="accordion">
@@ -96,7 +96,7 @@ class Display {
             «fieldDetails(appName)»
             «IF useGroupingPanels('display')»
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                «IF container.application.targets('1.3.5')»
+                «IF isLegacyApp»
                     </div>«/* fields panel */»
                 «ELSE»
                             </div>
@@ -118,17 +118,17 @@ class Display {
                 «ENDIF»
             {/if}
         </div>
-        «IF container.application.targets('1.3.5')»
+        «IF isLegacyApp»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {include file="`$lctUc`/footer.tpl"}
         «ENDIF»
-        «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && container.application.targets('1.3.5'))»
+        «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && isLegacyApp)»
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             <script type="text/javascript">
             /* <![CDATA[ */
-                «IF container.application.targets('1.3.5')»
+                «IF isLegacyApp»
                     document.observe('dom:loaded', function() {
                         «initAjaxToggle»
                         «IF useGroupingPanels('display')»
@@ -182,7 +182,7 @@ class Display {
 
     def private templateHeader(Entity it, String appName) '''
         {if $lct eq 'admin'}
-            «IF container.application.targets('1.3.5')»
+            «IF isLegacyApp»
                 <div class="z-admin-content-pagetitle">
                     {icon type='display' size='small' __alt='Details'}
                     <h3>«templateHeading(appName)»</h3>
@@ -198,7 +198,7 @@ class Display {
         {/if}
     '''
 
-    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»{icon id='itemActionsTrigger' type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hidden«ENDIF»'}'''
+    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»{icon id='itemActionsTrigger' type='options' size='extrasmall' __alt='Actions' class='«IF isLegacyApp»z-pointer z-hide«ELSE»cursor-pointer hidden«ENDIF»'}'''
 
     def private displayEntry(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
@@ -220,23 +220,23 @@ class Display {
         {if isset($«relObjName») && $«relObjName» ne null}
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
           «IF linkEntity.hasActions('display')»
-              «IF container.application.targets('1.3.5')»
-                  <a href="{modurl modname='«linkEntity.container.application.appName»' type=$lct «linkEntity.modUrlDisplay(relObjName, true)» ot='«linkEntity.name.formatForCode»'}">{strip}
+              «IF linkEntity.isLegacyApp»
+                  <a href="{modurl modname='«linkEntity.container.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
               «ELSE»
-                  <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkEntity.name.formatForCode»' «linkEntity.modUrlDisplay(relObjName, true)» lct=$lct}">{strip}
+                  <a href="{route name='«linkEntity.container.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
               «ENDIF»
           «ENDIF»
             {$«relObjName»->getTitleFromDisplayPattern()|default:""}
           «IF linkEntity.hasActions('display')»
             {/strip}</a>
-            «IF container.application.targets('1.3.5')»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type=$lct «linkEntity.modUrlDisplay(relObjName, true)» ot='«linkEntity.name.formatForCode»' theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+            «IF linkEntity.isLegacyApp»
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»' theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             «ELSE»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkEntity.name.formatForCode»' «linkEntity.modUrlDisplay(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«linkEntity.container.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
             «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
-                «IF container.application.targets('1.3.5')»
+                «IF linkEntity.isLegacyApp»
                     document.observe('dom:loaded', function() {
                         «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                     });
@@ -268,12 +268,12 @@ class Display {
     def private itemActionsImpl(Entity it, String appName) '''
         <p id="itemActions">
         {foreach item='option' from=$«name.formatForCode»._actions}
-            <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="«IF container.application.targets('1.3.5')»z-icon-es«ELSE»fa fa«ENDIF»-{$option.icon}">{$option.linkText|safetext}</a>
+            <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="«IF isLegacyApp»z-icon-es«ELSE»fa fa«ENDIF»-{$option.icon}">{$option.linkText|safetext}</a>
         {/foreach}
         </p>
         <script type="text/javascript">
         /* <![CDATA[ */
-            «IF container.application.targets('1.3.5')»
+            «IF isLegacyApp»
                 document.observe('dom:loaded', function() {
                     «container.application.prefix()»InitItemActions('«name.formatForCode»', 'display', 'itemActions');
                 });
@@ -291,8 +291,8 @@ class Display {
     def private displayExtensions(Entity it, String objName) '''
         «IF geographical»
             «IF useGroupingPanels('display')»
-                «IF container.application.targets('1.3.5')»
-                    <h3 class="«container.application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+                «IF isLegacyApp»
+                    <h3 class="«container.application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
                     <div class="«container.application.appName.toLowerCase»-map z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -311,7 +311,7 @@ class Display {
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     var mapstraction;
-                    «IF container.application.targets('1.3.5')»
+                    «IF isLegacyApp»
                         Event.observe(window, 'load', function() {
                             «initGeographical(objName)»
                         });
@@ -328,7 +328,7 @@ class Display {
             <div id="mapContainer" class="«container.application.appName.toLowerCase»-mapcontainer">
             </div>
             «IF useGroupingPanels('display')»
-                «IF container.application.targets('1.3.5')»
+                «IF isLegacyApp»
                     </div>
                 «ELSE»
                             </div>
@@ -338,15 +338,15 @@ class Display {
             «ENDIF»
         «ENDIF»
         «IF attributable»
-            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF isLegacyApp»helper«ELSE»Helper«ENDIF»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF categorisable»
-            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF isLegacyApp»helper«ELSE»Helper«ENDIF»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             «IF useGroupingPanels('display')»
-                «IF container.application.targets('1.3.5')»
-                    <h3 class="relatives z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Relatives'}</h3>
+                «IF isLegacyApp»
+                    <h3 class="relatives z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{gt text='Relatives'}</h3>
                     <div class="relatives z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -359,9 +359,9 @@ class Display {
             «ELSE»
                 <h3 class="relatives">{gt text='Relatives'}</h3>
             «ENDIF»
-                    {include file='«IF container.application.targets('1.3.5')»«name.formatForCode»«ELSE»«name.formatForCodeCapital»«ENDIF»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
+                    {include file='«IF isLegacyApp»«name.formatForCode»«ELSE»«name.formatForCodeCapital»«ENDIF»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
             «IF useGroupingPanels('display')»
-                «IF container.application.targets('1.3.5')»
+                «IF isLegacyApp»
                     </div>
                 «ELSE»
                             </div>
@@ -371,10 +371,10 @@ class Display {
             «ENDIF»
         «ENDIF»
         «IF metaData»
-            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF isLegacyApp»helper«ELSE»Helper«ENDIF»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF standardFields»
-            {include file='«IF container.application.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF isLegacyApp»helper«ELSE»Helper«ENDIF»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
     '''
 
@@ -395,7 +395,7 @@ class Display {
         // add a marker
         var marker = new mxn.Marker(latlon);
         mapstraction.addMarker(marker, true);
-        «IF !container.application.targets('1.3.5')»
+        «IF !isLegacyApp»
 
             $('#collapseMap').on('hidden.bs.collapse', function () {
                 // redraw the map after it's panel has been opened (see also #340)
@@ -409,8 +409,8 @@ class Display {
         {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' id=«displayHookId» urlobject=$currentUrlObject assign='hooks'}
         {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
             «IF useGroupingPanels('display')»
-                «IF container.application.targets('1.3.5')»
-                    <h3 class="z-panel-header z-panel-indicator «IF container.application.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
+                «IF isLegacyApp»
+                    <h3 class="z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
                     <div class="z-panel-content" style="display: none">
                         {$hook}
                     </div>
@@ -444,11 +444,8 @@ class Display {
                 {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='allParents' assign='allParents'}
                 {if $allParents ne null && count($allParents) gt 0}
                     <h4>{gt text='All parents'}</h4>
-                    <ul>
+                    «nodeLoop(appName, 'allParents')»
                     {foreach item='node' from=$allParents}
-                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
-                    {/foreach}
-                    </ul>
                 {/if}
             {/if}
             {if !isset($directParent) || $directParent eq true}
@@ -456,7 +453,11 @@ class Display {
                 {if $directParent ne null}
                     <h4>{gt text='Direct parent'}</h4>
                     <ul>
-                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('directParent', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
+                        «IF isLegacyApp»
+                            <li><a href="{modurl modname='«appName»' type=$lct func='display' ot='«objName»' «routeParamsLegacy('directParent', true, true)»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
+                        «ELSE»
+                            <li><a href="{route name='«appName.formatForDB»_«objName»_display' «routeParams('directParent', true)» lct=$lct}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
+                        «ENDIF»
                     </ul>
                 {/if}
             {/if}
@@ -465,22 +466,14 @@ class Display {
             {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='allChildren' assign='allChildren'}
             {if $allChildren ne null && count($allChildren) gt 0}
                 <h4>{gt text='All children'}</h4>
-                <ul>
-                {foreach item='node' from=$allChildren}
-                    <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
-                {/foreach}
-                </ul>
+                «nodeLoop(appName, 'allChildren')»
             {/if}
         {/if}
         {if !isset($directChildren) || $directChildren eq true}
             {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='directChildren' assign='directChildren'}
             {if $directChildren ne null && count($directChildren) gt 0}
                 <h4>{gt text='Direct children'}</h4>
-                <ul>
-                {foreach item='node' from=$directChildren}
-                    <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
-                {/foreach}
-                </ul>
+                «nodeLoop(appName, 'directChildren')»
             {/if}
         {/if}
         {if $«objName».lvl gt 0}
@@ -488,35 +481,40 @@ class Display {
                 {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='predecessors' assign='predecessors'}
                 {if $predecessors ne null && count($predecessors) gt 0}
                     <h4>{gt text='Predecessors'}</h4>
-                    <ul>
-                    {foreach item='node' from=$predecessors}
-                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
-                    {/foreach}
-                    </ul>
+                    «nodeLoop(appName, 'predecessors')»
                 {/if}
             {/if}
             {if !isset($successors) || $successors eq true}
                 {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='successors' assign='successors'}
                 {if $successors ne null && count($successors) gt 0}
                     <h4>{gt text='Successors'}</h4>
-                    <ul>
-                    {foreach item='node' from=$successors}
-                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
-                    {/foreach}
-                    </ul>
+                    «nodeLoop(appName, 'successors')»
                 {/if}
             {/if}
             {if !isset($preandsuccessors) || $preandsuccessors eq true}
                 {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='preandsuccessors' assign='preandsuccessors'}
                 {if $preandsuccessors ne null && count($preandsuccessors) gt 0}
                     <h4>{gt text='Siblings'}</h4>
-                    <ul>
-                    {foreach item='node' from=$preandsuccessors}
-                        <li><a href="{modurl modname='«appName»' type=«IF container.application.targets('1.3.5')»$lct«ELSE»'«objName»'«ENDIF» «modUrlDisplay('node', true)»«IF container.application.targets('1.3.5')» ot='«objName»'«ELSE» lct=$lct«ENDIF»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
-                    {/foreach}
-                    </ul>
+                    «nodeLoop(appName, 'preandsuccessors')»
                 {/if}
             {/if}
         {/if}
     '''
+
+    def private nodeLoop(Entity it, String appName, String collectionName) '''
+        «val objName = name.formatForCode»
+        <ul>
+        {foreach item='node' from=$«collectionName»}
+            «IF isLegacyApp»
+                <li><a href="{modurl modname='«appName»' type=$lct func='display' ot='«objName»' «routeParamsLegacy('node', true, true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+            «ELSE»
+                <li><a href="{route name='«appName.formatForDB»_«objName»_display' «routeParams('node', true)» lct=$lct}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+            «ENDIF»
+        {/foreach}
+        </ul>
+    '''
+
+    def private isLegacyApp(Entity it) {
+        container.application.targets('1.3.5')
+    }
 }

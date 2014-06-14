@@ -70,7 +70,11 @@ class ExternalView {
         {if $displayMode eq 'link'}
             <p«IF app.hasUserController» class="«app.appName.toLowerCase»-external-link"«ENDIF»>
             «IF app.hasUserController»
-                <a href="{modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»'«IF app.targets('1.3.5')» ot='«name.formatForCode»'«ENDIF» «modUrlDisplay(name.formatForCode, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
+                «IF app.targets('1.3.5')»
+                    <a href="{modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
+                «ELSE»
+                    <a href="{route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams(name.formatForCode, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
+                «ENDIF»
             «ENDIF»
             {$«name.formatForCode»->getTitleFromDisplayPattern()|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}
             «IF app.hasUserController»
@@ -231,7 +235,7 @@ class ExternalView {
             «ELSE»
                 <ul class="nav nav-pills nav-justified">
                 «FOR entity : app.getAllEntities.filter[e|e.name != name] SEPARATOR ' | '»
-                    <li{if $objectType eq '«entity.name.formatForCode»'} class="active"{/if}><a href="{modurl modname='«app.appName»' type='external' func='finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a></li>
+                    <li{if $objectType eq '«entity.name.formatForCode»'} class="active"{/if}><a href="{route name='«app.appName.formatForDB»_external_finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a></li>
                 «ENDFOR»
                 </ul>
             «ENDIF»
@@ -302,7 +306,7 @@ class ExternalView {
                     {foreach item='«name.formatForCode»' from=$items}
                         <li>
                             <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})">{$«name.formatForCode»->getTitleFromDisplayPattern()}</a>
-                            <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='«IF app.targets('1.3.5')»user«ELSE»«name.formatForCode»«ENDIF»' «modUrlDisplay(name.formatForCode, true)» fqurl=true}«ENDIF»" />
+                            <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»«IF app.targets('1.3.5')»{modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}«ELSE»{route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams(name.formatForCode, true)» absolute=true}«ENDIF»«ENDIF»" />
                             <input type="hidden" id="title{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}" />
                             <input type="hidden" id="desc{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{capture assign='description'}«displayDescription('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
                         </li>

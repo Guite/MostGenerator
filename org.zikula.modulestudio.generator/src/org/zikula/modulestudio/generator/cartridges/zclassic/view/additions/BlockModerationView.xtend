@@ -3,10 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockModerationView {
+
+    @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension Utils = new Utils
 
@@ -26,7 +29,11 @@ class BlockModerationView {
         {if count($moderationObjects) gt 0}
             <ul>
             {foreach item='modItem' from=$moderationObjects}
-                <li><a href="{modurl modname='«appName»' type=«IF targets('1.3.5')»'admin'«ELSE»$modItem.objectType«ENDIF» func='view'«IF targets('1.3.5')» ot=$modItem.objectType«ELSE» lct='admin'«ENDIF» workflowState=$modItem.state}" class="«IF targets('1.3.5')»z-«ENDIF»bold">{$modItem.message}</a></li>
+                «IF targets('1.3.5')»
+                    <li><a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a></li>
+                «ELSE»
+                    <li><a href="{route name="«appName.formatForDB»_`$modItem.objectType`_view" lct='admin' workflowState=$modItem.state}" class="bold">{$modItem.message}</a></li>
+                «ENDIF»
             {/foreach}
             </ul>
         {/if}

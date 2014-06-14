@@ -38,7 +38,7 @@ class ViewHierarchy {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF container.application.targets('1.3.5')»
+        «IF isLegacyApp»
             {include file="`$lct`/header.tpl"}
         «ELSE»
             {assign var='lctUc' value=$lct|ucfirst}
@@ -50,18 +50,18 @@ class ViewHierarchy {
             «templateHeader»
 
             «IF documentation !== null && documentation != ''»
-                <p class="«IF container.application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">«documentation»</p>
+                <p class="«IF isLegacyApp»z-informationmsg«ELSE»alert alert-info«ENDIF»">«documentation»</p>
             «ENDIF»
 
             <p>
             «IF hasActions('edit')»
                 {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
                     {gt text='Add root node' assign='addRootTitle'}
-                    <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-add z-hide«ELSE»fa fa-plus hidden«ENDIF»">{$addRootTitle}</a>
+                    <a id="treeAddRoot" href="javascript:void(0)" title="{$addRootTitle}" class="«IF isLegacyApp»z-icon-es-add z-hide«ELSE»fa fa-plus hidden«ENDIF»">{$addRootTitle}</a>
 
                     <script type="text/javascript">
                     /* <![CDATA[ */
-                    «IF container.application.targets('1.3.5')»
+                    «IF isLegacyApp»
                         document.observe('dom:loaded', function() {
                             $('treeAddRoot').observe('click', function(event) {
                                 «appPrefix»PerformTreeOperation('«objName»', 1, 'addRootNode');
@@ -84,18 +84,22 @@ class ViewHierarchy {
                 {/checkpermissionblock}
             «ENDIF»
                 {gt text='Switch to table view' assign='switchTitle'}
-                <a href="{modurl modname='«appName»' «IF container.application.targets('1.3.5')»type=$lct func='view' ot='«objName»'«ELSE»type='«objName»' func='view' lct=$lct«ENDIF»}" title="{$switchTitle}" class="«IF container.application.targets('1.3.5')»z-icon-es-view«ELSE»fa fa-table«ENDIF»">{$switchTitle}</a>
+                «IF isLegacyApp»
+                    <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">{$switchTitle}</a>
+                «ELSE»
+                    <a href="{route name='«appName.formatForDB»_«objName»_view' lct=$lct}" title="{$switchTitle}" class="fa fa-table">{$switchTitle}</a>
+                «ENDIF»
             </p>
 
             {foreach key='rootId' item='treeNodes' from=$trees}
-                {include file='«IF container.application.targets('1.3.5')»«objName»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' lct=$lct rootId=$rootId items=$treeNodes}
+                {include file='«IF isLegacyApp»«objName»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' lct=$lct rootId=$rootId items=$treeNodes}
             {foreachelse}
-                {include file='«IF container.application.targets('1.3.5')»«objName»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' lct=$lct rootId=1 items=null}
+                {include file='«IF isLegacyApp»«objName»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' lct=$lct rootId=1 items=null}
             {/foreach}
 
             <br style="clear: left" />
         </div>
-        «IF container.application.targets('1.3.5')»
+        «IF isLegacyApp»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {include file="`$lctUc`/footer.tpl"}
@@ -104,7 +108,7 @@ class ViewHierarchy {
 
     def private templateHeader(Entity it) '''
         {if $lct eq 'admin'}
-            «IF container.application.targets('1.3.5')»
+            «IF isLegacyApp»
                 <div class="z-admin-content-pagetitle">
                     {icon type='view' size='small' alt=$templateTitle}
                     <h3>{$templateTitle}</h3>
@@ -128,8 +132,8 @@ class ViewHierarchy {
             {assign var='hasNodes' value=true}
         {/if}
 
-        <div id="«name.formatForCode.toFirstLower»Tree{$rootId}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»tree-container">
-            <div id="«name.formatForCode.toFirstLower»TreeItems{$rootId}" class="«IF container.application.targets('1.3.5')»z-«ENDIF»tree-items">
+        <div id="«name.formatForCode.toFirstLower»Tree{$rootId}" class="«IF isLegacyApp»z-«ENDIF»tree-container">
+            <div id="«name.formatForCode.toFirstLower»TreeItems{$rootId}" class="«IF isLegacyApp»z-«ENDIF»tree-items">
             {if $hasNodes}
                 {«appName.formatForDB»TreeJS objectType='«name.formatForCode»' tree=$items controller=$lct root=$rootId sortable=true}
             {/if}
@@ -137,10 +141,10 @@ class ViewHierarchy {
         </div>
 
         {if $hasNodes}
-            {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF container.application.targets('1.3.5')»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF container.application.targets('1.3.5')»_t«ELSE».T«ENDIF»ree.js'}
+            {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF isLegacyApp»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF isLegacyApp»_t«ELSE».T«ENDIF»ree.js'}
             <script type="text/javascript">
             /* <![CDATA[ */
-                «IF container.application.targets('1.3.5')»
+                «IF isLegacyApp»
                     document.observe('dom:loaded', function() {
                         «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
                         Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
@@ -158,4 +162,8 @@ class ViewHierarchy {
             <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
         {/if}
     '''
+
+    def private isLegacyApp(Entity it) {
+        container.application.targets('1.3.5')
+    }
 }

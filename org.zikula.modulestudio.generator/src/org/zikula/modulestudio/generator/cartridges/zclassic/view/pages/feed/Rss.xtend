@@ -66,11 +66,11 @@ class Rss {
             <item>
                 <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName»->getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}]]></title>
                 «IF container.application.targets('1.3.5')»
-                    <link>{modurl modname='«appName»' type=$lct «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</link>
-                    <guid>{modurl modname='«appName»' type=$lct «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</guid>
+                    <link>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</link>
+                    <guid>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</guid>
                 «ELSE»
-                    <link>{modurl modname='«appName»' type='«name.formatForCode»' «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»index«ENDIF»'«ENDIF» lct=$lct fqurl='1'}</link>
-                    <guid>{modurl modname='«appName»' type='«name.formatForCode»' «IF hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF hasActions('view')»view«ELSE»index«ENDIF»'«ENDIF» lct=$lct fqurl='1'}</guid>
+                    <link>{route name='«appName.formatForDB»_«name.formatForCode»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</link>
+                    <guid>{route name='«appName.formatForDB»_«name.formatForCode»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</guid>
                 «ENDIF»
                 «IF !standardFields»
                     «IF metaData»

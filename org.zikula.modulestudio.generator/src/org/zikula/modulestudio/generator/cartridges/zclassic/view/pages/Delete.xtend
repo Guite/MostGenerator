@@ -45,7 +45,7 @@ class Delete {
 
             <p class="«IF app.targets('1.3.5')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
 
-            <form class="«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»" action="{modurl modname='«appName»' type=«IF app.targets('1.3.5')»$lct«ELSE»'«name.formatForCode»'«ENDIF» «modUrlDelete(name, true)»«IF app.targets('1.3.5')» ot='«name.formatForCode»'«ELSE» lct=$lct«ENDIF»}" method="post"«IF !app.targets('1.3.5')» role="form"«ENDIF»>
+            <form class="«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»" action="«IF app.targets('1.3.5')»{modurl modname='«appName»' type=$lct func='delete' ot='«name.formatForCode»' «routeParamsLegacy(name, true, false)»}«ELSE»{route name='«appName.formatForDB»_«name.formatForCode»_delete' «routeParams(name, true)» lct=$lct}«ENDIF»" method="post"«IF !app.targets('1.3.5')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
                     <input type="hidden" id="confirmation" name="confirmation" value="1" />
@@ -57,7 +57,11 @@ class Delete {
                         «ENDIF»
                             {gt text='Delete' assign='deleteTitle'}
                             {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF app.targets('1.3.5')»z-btred«ELSE»btn btn-danger«ENDIF»'}
-                            <a href="{modurl modname='«appName»' type=«IF app.targets('1.3.5')»$lct«ELSE»'«name.formatForCode»'«ENDIF» func='view'«IF app.targets('1.3.5')» ot='«name.formatForCode»'«ELSE» lct=$lct«ENDIF»}"«IF !app.targets('1.3.5')» class="btn btn-default" role="button"«ENDIF»>«IF app.targets('1.3.5')»{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'}«ELSE»<span class="fa fa-times"></span>«ENDIF» {gt text='Cancel'}</a>
+                            «IF app.targets('1.3.5')»
+                                <a href="{modurl modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
+                            «ELSE»
+                                <a href="{route name='«appName.formatForDB»_«name.formatForCode»_view' lct=$lct}" class="btn btn-default" role="button"><span class="fa fa-times"></span> {gt text='Cancel'}</a>
+                            «ENDIF»
                         «IF !app.targets('1.3.5')»
                             </div>
                         «ENDIF»

@@ -9,7 +9,6 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -21,7 +20,6 @@ class ItemActions {
     @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension NamingExtensions = new NamingExtensions
     @Inject extension UrlExtensions = new UrlExtensions
@@ -58,9 +56,9 @@ class ItemActions {
                 «IF controller.tempIsAdminController && container.application.hasUserController && container.application.getMainUserController.hasActions('display')»
                     $this->_actions[] = array(
                         «IF app.targets('1.3.5')»
-                            'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                            'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)),
                         «ELSE»
-                            'url' => array('type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => array('lct' => 'user'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                            'url' => array('type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => array('lct' => 'user', «routeParams('this', false)»)),
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.5')»preview«ELSE»search-plus«ENDIF»',
                         'linkTitle' => __('Open preview page', $dom),
@@ -70,9 +68,9 @@ class ItemActions {
                 «IF controller.hasActions('display')»
                     $this->_actions[] = array(
                         «IF app.targets('1.3.5')»
-                            'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                            'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)),
                         «ELSE»
-                            'url' => array('type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => array('lct' => '«controller.formattedName»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                            'url' => array('type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => array('lct' => '«controller.formattedName»', «routeParams('this', false)»)),
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.5')»display«ELSE»eye«ENDIF»',
                         'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern())«/*__('Open detail page', $dom)*/»,
@@ -106,9 +104,9 @@ class ItemActions {
                     if (SecurityUtil::checkPermission($component, $instance, ACCESS_DELETE)) {
                         $this->_actions[] = array(
                             «IF app.targets('1.3.5')»
-                                'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                                'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)),
                             «ELSE»
-                                'url' => array('type' => '«name.formatForCode»', 'func' => 'delete', 'arguments' => array('lct' => '«controller.formattedName»'«IF !(hasSluggableFields && slugUnique)»«modUrlPrimaryKeyParams('this', false)»«ENDIF»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
+                                'url' => array('type' => '«name.formatForCode»', 'func' => 'delete', 'arguments' => array('lct' => '«controller.formattedName»', «routeParams('this', false)»)),
                             «ENDIF»
                             'icon' => '«IF app.targets('1.3.5')»delete«ELSE»trash-o«ENDIF»',
                             'linkTitle' => __('Delete', $dom),
@@ -222,9 +220,9 @@ class ItemActions {
         «IF !readOnly»«/*create is allowed, but editing not*/»
             $this->_actions[] = array(
                 «IF container.application.targets('1.3.5')»
-                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
+                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)),
                 «ELSE»
-                    'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»'«modUrlPrimaryKeyParams('this', false)»)),
+                    'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»', «routeParams('this', false)»)),
                 «ENDIF»
                 'icon' => '«IF container.application.targets('1.3.5')»edit«ELSE»pencil-square-o«ENDIF»',
                 'linkTitle' => __('Edit', $dom),
@@ -234,9 +232,9 @@ class ItemActions {
         «IF tree == EntityTreeType::NONE»
                 $this->_actions[] = array(
                     «IF container.application.targets('1.3.5')»
-                        'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
+                        'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false, 'astemplate')»)),
                     «ELSE»
-                        'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
+                        'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»', «routeParams('this', false, 'astemplate')»)),
                     «ENDIF»
                     'icon' => '«IF container.application.targets('1.3.5')»saveas«ELSE»files-o«ENDIF»',
                     'linkTitle' => __('Reuse for new item', $dom),

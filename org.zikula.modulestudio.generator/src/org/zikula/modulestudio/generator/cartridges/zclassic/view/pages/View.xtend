@@ -105,7 +105,7 @@ class View {
                     «IF container.application.targets('1.3.5')»
                         <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
                     «ELSE»
-                        <a href="{modurl modname='«appName»' type='«objName»' func='edit' lct=$lct}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
+                        <a href="{route name='«appName.formatForDB»_«objName»_edit' lct=$lct}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
                     «ENDIF»
                 {/checkpermissionblock}
             {/if}
@@ -120,7 +120,7 @@ class View {
             «IF container.application.targets('1.3.5')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»'}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
-                <a href="{modurl modname='«appName»' type='«objName»' func='view' lct=$lct}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
+                <a href="{route name='«appName.formatForDB»_«objName»_view' lct=$lct}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
             «ENDIF»
             {assign var='all' value=1}
         {else}
@@ -128,7 +128,7 @@ class View {
             «IF container.application.targets('1.3.5')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»' all=1}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
-                <a href="{modurl modname='«appName»' type='«objName»' func='view' lct=$lct all=1}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
+                <a href="{route name='«appName.formatForDB»_«objName»_view' lct=$lct all=1}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
             «ENDIF»
         {/if}
         «IF tree != EntityTreeType::NONE»
@@ -136,7 +136,7 @@ class View {
             «IF container.application.targets('1.3.5')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»' tpl='tree'}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
-                <a href="{modurl modname='«appName»' type='«objName»' func='view' lct=$lct tpl='tree'}" title="{$linkTitle}" class="fa fa-code-fork">{$linkTitle}</a>
+                <a href="{route name='«appName.formatForDB»_«objName»_view' lct=$lct tpl='tree'}" title="{$linkTitle}" class="fa fa-code-fork">{$linkTitle}</a>
             «ENDIF»
         «ENDIF»
     '''
@@ -144,7 +144,7 @@ class View {
     def private viewForm(Entity it, String appName) '''
         «IF listType == 3»
             {if $lct eq 'admin'}
-            <form action="{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
+            <form action="«IF container.application.targets('1.3.5')»{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}«ELSE»{route name='«appName.formatForDB»_«name.formatForCode»_handleSelectedEntries' lct=$lct}«ENDIF»" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF container.application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !container.application.targets('1.3.5')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
             {/if}
@@ -457,9 +457,9 @@ class View {
         «IF leading == true»
             «IF entity.hasActions('display')»
                 «IF entity.container.application.targets('1.3.5')»
-                    <a href="{modurl modname='«entity.container.application.appName»' type=$lct «entity.modUrlDisplay(entity.name.formatForCode, true)» ot='«entity.name.formatForCode»'}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
+                    <a href="{modurl modname='«entity.container.application.appName»' type=$lct func='display' ot='«entity.name.formatForCode»' «entity.routeParamsLegacy(entity.name.formatForCode, true, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ELSE»
-                    <a href="{modurl modname='«entity.container.application.appName»' type='«entity.name.formatForCode»' «entity.modUrlDisplay(entity.name.formatForCode, true)» lct=$lct}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
+                    <a href="{route name='«entity.container.application.appName.formatForDB»_«entity.name.formatForCode»_display' «entity.routeParams(entity.name.formatForCode, true)» lct=$lct}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ENDIF»
             «ELSE»
                 «displayLeadingEntry»
@@ -481,18 +481,18 @@ class View {
         {if isset($«relObjName») && $«relObjName» ne null}
             «IF linkEntity.hasActions('display')»
                 «IF container.application.targets('1.3.5')»
-                    <a href="{modurl modname='«linkEntity.container.application.appName»' type=$lct «linkEntity.modUrlDisplay(relObjName, true)» ot='«linkEntity.name.formatForCode»'}">{strip}
+                    <a href="{modurl modname='«linkEntity.container.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
                 «ELSE»
-                    <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkEntity.name.formatForCode»' «linkEntity.modUrlDisplay(relObjName, true)» lct=$lct}">{strip}
+                    <a href="{route name='«linkEntity.container.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
                 «ENDIF»
             «ENDIF»
               {$«relObjName»->getTitleFromDisplayPattern()|default:""}
             «IF linkEntity.hasActions('display')»
                 {/strip}</a>
                 «IF container.application.targets('1.3.5')»
-                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type=$lct «linkEntity.modUrlDisplay(relObjName, true)» ot='«linkEntity.name.formatForCode»' theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 «ELSE»
-                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«linkEntity.name.formatForCode»' «linkEntity.modUrlDisplay(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«container.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
                 «ENDIF»
                 <script type="text/javascript">
                 /* <![CDATA[ */
