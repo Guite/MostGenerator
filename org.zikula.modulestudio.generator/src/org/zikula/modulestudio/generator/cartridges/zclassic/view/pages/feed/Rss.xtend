@@ -102,8 +102,8 @@ class Rss {
     '''
 
     def private description(Entity it, String objName) '''
-        «val textFields = fields.filter(TextField).filter[!leading]»
-        «val stringFields = fields.filter(StringField).filter[!leading]»
+        «val textFields = fields.filter(TextField)»
+        «val stringFields = fields.filter(StringField)»
         <description>
             <![CDATA[
             «IF !textFields.empty»

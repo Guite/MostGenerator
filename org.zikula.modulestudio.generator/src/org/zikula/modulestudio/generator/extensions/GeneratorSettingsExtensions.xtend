@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.CoreVersion
 
 /**
  * This class contains several helper functions for accessing and using generator settings.
@@ -11,7 +12,7 @@ class GeneratorSettingsExtensions {
      * Retrieves the target core version.
      */
     def getCoreVersion(Application it) {
-        if (hasSettings) getSettings.targetCoreVersion else /*CoreVersion::ZKPRE14*/ targetCoreVersion
+        if (hasSettings) getSettings.targetCoreVersion else CoreVersion.ZKPRE14
     }
 
     /**

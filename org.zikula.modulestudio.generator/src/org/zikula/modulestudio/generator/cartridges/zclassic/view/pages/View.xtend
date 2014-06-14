@@ -454,7 +454,7 @@ class View {
     }
 
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
-        «IF leading == true»
+        «IF newArrayList('name', 'title').contains(name)»
             «IF entity.hasActions('display')»
                 «IF entity.container.application.targets('1.3.5')»
                     <a href="{modurl modname='«entity.container.application.appName»' type=$lct func='display' ot='«entity.name.formatForCode»' «entity.routeParamsLegacy(entity.name.formatForCode, true, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>

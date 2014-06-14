@@ -31,8 +31,8 @@ import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import java.util.List
 
-import static de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy.*
 import static de.guite.modulestudio.metamodel.modulestudio.EntityLockType.*
+import static de.guite.modulestudio.metamodel.modulestudio.IpAddressScope.*
 
 /**
  * This class contains model related extension methods.
@@ -41,7 +41,6 @@ import static de.guite.modulestudio.metamodel.modulestudio.EntityLockType.*
 class ModelExtensions {
     @Inject extension CollectionUtils = new CollectionUtils
     @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     @Inject extension Utils = new Utils
     @Inject extension WorkflowExtensions = new WorkflowExtensions
 
@@ -241,16 +240,6 @@ class ModelExtensions {
      */
     def getUniqueDerivedFields(Entity it) {
         getDerivedFields.filter[unique]
-    }
-
-    /**
-     * Returns the field having leading = true of this entity.
-     */
-    def DerivedField getLeadingField(Entity it) {
-        if (!getDerivedFields.empty)
-            getDerivedFields.findFirst[leading]
-        else if (isInheriting)
-            parentType.getLeadingField
     }
 
     /**

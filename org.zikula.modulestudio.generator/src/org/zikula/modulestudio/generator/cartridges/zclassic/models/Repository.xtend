@@ -98,11 +98,11 @@ class Repository {
         class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
-            «val stringFields = fields.filter(StringField).filter[!leading && !password]»
+            «val stringFields = fields.filter(StringField).filter[!password]»
             /**
              * @var string The default sorting field/expression.
              */
-            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else if (getLeadingField !== null) getLeadingField else getDerivedFields.head).name.formatForCode»';
+            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else getDerivedFields.head).name.formatForCode»';
 
             «IF app.targets('1.3.5')»
                 /**
@@ -272,7 +272,7 @@ class Repository {
          */
         public function getDescriptionFieldName()
         {
-            «val textFields = fields.filter(TextField).filter[!leading]»
+            «val textFields = fields.filter(TextField)»
             «IF !textFields.empty»
                 $fieldName = '«textFields.head.name.formatForCode»';
             «ELSEIF !stringFields.empty»
@@ -1424,21 +1424,14 @@ class Repository {
     '''
 
     def private addSelectionPartsForDisplayPattern(Entity it) '''
-        «IF displayPattern === null || displayPattern == ''»
-            «val leadingField = getLeadingField»
-            «IF leadingField !== null»
-                $selection .= ', tbl.«leadingField.name.formatForCode»';
+        «val patternParts = displayPattern.split('#')»
+        «FOR patternPart : patternParts»
+            «/* check if patternPart equals a field name */»
+            «var matchedFields = fields.filter[name == patternPart]»
+            «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»
+                $selection .= ', tbl.«patternPart.formatForCode»';
             «ENDIF»
-        «ELSE»
-            «val patternParts = displayPattern.split('#')»
-            «FOR patternPart : patternParts»
-                «/* check if patternPart equals a field name */»
-                «var matchedFields = fields.filter[name == patternPart]»
-                «IF (!matchedFields.empty || (geographical && (patternPart == 'latitude' || patternPart == 'longitude')))»
-                    $selection .= ', tbl.«patternPart.formatForCode»';
-                «ENDIF»
-            «ENDFOR»
-        «ENDIF»
+        «ENDFOR»
     '''
 
     def private genericBaseQueryWhere(Entity it) '''

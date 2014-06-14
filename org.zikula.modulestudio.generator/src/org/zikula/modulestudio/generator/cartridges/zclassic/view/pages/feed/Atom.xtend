@@ -109,8 +109,8 @@ class Atom {
     '''
 
     def private description(Entity it, String objName) '''
-        «val textFields = fields.filter(TextField).filter[!leading]»
-        «val stringFields = fields.filter(StringField).filter[!leading]»
+        «val textFields = fields.filter(TextField)»
+        «val stringFields = fields.filter(StringField)»
         <summary type="html">
             <![CDATA[
             «IF !textFields.empty»

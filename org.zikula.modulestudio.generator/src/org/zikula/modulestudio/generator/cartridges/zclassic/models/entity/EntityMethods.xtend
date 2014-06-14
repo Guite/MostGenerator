@@ -119,26 +119,16 @@ class EntityMethods {
          */
         public function getTitleFromDisplayPattern()
         {
-            «IF displayPattern === null || displayPattern == ''»
-                «val leadingField = getLeadingField»
-                «IF leadingField !== null»
-                    $formattedTitle = $this->get«leadingField.name.formatForCodeCapital»();
+            «IF hasListFieldsEntity»
+                $serviceManager = ServiceUtil::getManager();
+                «IF app.targets('1.3.5')»
+                    $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
                 «ELSE»
-                    $dom = ZLanguage::getModuleDomain('«app.appName»');
-                    $formattedTitle = __('«name.formatForDisplayCapital»', $dom);
+                    $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
                 «ENDIF»
-            «ELSE»
-                «IF hasListFieldsEntity»
-                    $serviceManager = ServiceUtil::getManager();
-                    «IF app.targets('1.3.5')»
-                        $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
-                    «ELSE»
-                        $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
-                    «ENDIF»
 
-                «ENDIF»
-                $formattedTitle = «parseDisplayPattern»;
             «ENDIF»
+            $formattedTitle = «parseDisplayPattern»;
 
             return $formattedTitle;
         }
