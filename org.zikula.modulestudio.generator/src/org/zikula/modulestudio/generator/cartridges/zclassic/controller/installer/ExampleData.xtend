@@ -183,10 +183,17 @@ class ExampleData {
                 $metaData->setDescription($this->__('Example description'));
                 $metaData->setPublisher($this->__('Example publisher'));
                 $metaData->setContributor($this->__('Example contributor'));
-                $metaData->setPublisher($this->__('Example publisher'));
-                $metaData->setPublisher($this->__('Example publisher'));
-                $metaData->setPublisher($this->__('Example publisher'));
-                $metaData->setPublisher($this->__('Example publisher'));
+                $metaData->setStartdate('');
+                $metaData->setEnddate('');
+                $metaData->setType($this->__('Example type'));
+                $metaData->setFormat($this->__('Example format'));
+                $metaData->setUri('http://example.org/');
+                $metaData->setSource($this->__('Example source'));
+                $metaData->setLanguage('en');
+                $metaData->setRelation($this->__('Example relation'));
+                $metaData->setCoverage($this->__('Example coverafge'));
+                $metaData->setComment($this->__('Example comment'));
+                $metaData->setExtra($this->__('Example extra information'));
 
                 $«entityName»«number»->setMetadata($metaData);
             «ENDIF»
