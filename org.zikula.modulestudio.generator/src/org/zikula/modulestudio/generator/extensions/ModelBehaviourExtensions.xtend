@@ -3,12 +3,15 @@ package org.zikula.modulestudio.generator.extensions
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
+import de.guite.modulestudio.metamodel.modulestudio.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntitySlugStyle
 import de.guite.modulestudio.metamodel.modulestudio.EntityTimestampableType
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
+
+import static de.guite.modulestudio.metamodel.modulestudio.EntitySlugStyle.*
 
 /**
  * This class contains model behaviour related extension methods.
@@ -248,6 +251,30 @@ class ModelBehaviourExtensions {
             case UPPERCASE  : 'upper'
             case CAMEL      : 'camel'
             default: 'default'
+        }
+    }
+
+    /**
+     * Prints an output string corresponding to the given account deletion handler type.
+     */
+    def adhAsConstant(AccountDeletionHandler handler) {
+        switch handler {
+            case ADMIN  : 'admin'
+            case GUEST  : 'guest'
+            case DELETE : 'delete'
+            default: '' 
+        }
+    }
+
+    /**
+     * Returns the uid fitting to a certain account deletion handler type.
+     */
+    def adhUid(AccountDeletionHandler handler) {
+        switch handler {
+            case ADMIN  : 2
+            case GUEST  : 1
+            case DELETE : 0
+            default: 0 
         }
     }
 }

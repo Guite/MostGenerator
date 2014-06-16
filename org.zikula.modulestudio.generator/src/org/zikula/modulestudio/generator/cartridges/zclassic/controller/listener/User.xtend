@@ -1,8 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -132,18 +134,25 @@ class User {
 
             $repo = $entityManager->getRepository('«entityClassName('', false)»');
             «IF standardFields»
-                // delete all «nameMultiple.formatForDisplay» created by this user
-                $repo->deleteCreator($uid);
-                // note you could also do: $repo->updateCreator($uid, 2);
+                «IF onAccountDeletionCreator != AccountDeletionHandler.DELETE»
+                    // set creator to «onAccountDeletionCreator.adhAsConstant» («onAccountDeletionCreator.adhUid») for all «nameMultiple.formatForDisplay» created by this user
+                    $repo->updateCreator($uid, «onAccountDeletionCreator.adhUid»);
+                «ELSE»
+                    // delete all «nameMultiple.formatForDisplay» created by this user
+                    $repo->deleteByCreator($uid);
+                «ENDIF»
 
-                // set last editor to admin (2) for all «nameMultiple.formatForDisplay» updated by this user
-                $repo->updateLastEditor($uid, 2);
-                // note you could also do: $repo->deleteLastEditor($uid);
+                «IF onAccountDeletionLastEditor != AccountDeletionHandler.DELETE»
+                    // set last editor to «onAccountDeletionLastEditor.adhAsConstant» («onAccountDeletionLastEditor.adhUid») for all «nameMultiple.formatForDisplay» updated by this user
+                    $repo->updateLastEditor($uid, «onAccountDeletionLastEditor.adhUid»);
+                «ELSE»
+                    // delete all «nameMultiple.formatForDisplay» recently updated by this user
+                    $repo->deleteByLastEditor($uid);
+                «ENDIF»
             «ENDIF»
             «IF hasUserFieldsEntity»
                 «FOR userField: getUserFieldsEntity»
-                    // set «userField.name.formatForDisplay» to guest (1) for all affected «nameMultiple.formatForDisplay»
-                    $repo->updateUserField('«userField.name.formatForCode»', $uid, 1);
+                    «userField.onAccountDeletionHandler»
                 «ENDFOR»
             «ENDIF»
             «IF !container.application.targets('1.3.5')»
@@ -151,6 +160,16 @@ class User {
                 $logger = $serviceManager->get('logger');
                 $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»'));
             «ENDIF»
+        «ENDIF»
+    '''
+
+    def private onAccountDeletionHandler(UserField it) '''
+        «IF onAccountDeletion != AccountDeletionHandler.DELETE»
+            // set last editor to «onAccountDeletion.adhAsConstant» («onAccountDeletion.adhUid») for all «entity.nameMultiple.formatForDisplay» affected by this user
+            $repo->updateUserField('«name.formatForCode»', $uid, «onAccountDeletion.adhUid»);
+        «ELSE»
+            // delete all «entity.nameMultiple.formatForDisplay» affected by this user
+            $repo->deleteByUserField('«name.formatForCode»', $uid);
         «ENDIF»
     '''
 }
