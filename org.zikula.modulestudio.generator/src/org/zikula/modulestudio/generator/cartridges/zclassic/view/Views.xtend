@@ -180,6 +180,10 @@ class Views {
                 {pageaddvar name='javascript' value='web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js'}
                 {pageaddvar name='stylesheet' value='web/bootstrap-media-lightbox/bootstrap-media-lightbox.css'}
             «ENDIF»
+            «IF controller.hasActions('view') || controller.hasActions('display') || controller.hasActions('edit')»
+                {pageaddvar name='stylesheet' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.css'}
+                {pageaddvar name='javascript' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.js'}
+            «ENDIF»
         «ENDIF»
         {pageaddvar name='javascript' value='«rootFolder»/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName».js'}
 

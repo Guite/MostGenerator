@@ -325,7 +325,7 @@ class DisplayFunctions {
          «ENDIF»
         function «prefix()»InitInlineWindow(containerElem, title)
         {
-            var newWindow;
+            var newWindow«IF !targets('1.3.5')»Id«ENDIF»;
 
             // show the container (hidden for users without JavaScript)
             «IF targets('1.3.5')»
@@ -335,21 +335,43 @@ class DisplayFunctions {
             «ENDIF»
 
             // define the new window instance
-            newWindow = new Zikula.UI.Window(
-                containerElem,
-                {
-                    minmax: true,
-                    resizable: true,
-                    title: title,
-                    width: 600,
-                    initMaxHeight: 400,
-                    modal: false,
-                    iframe: false
-                }
-            );
+            «IF targets('1.3.5')»
+                newWindow = new Zikula.UI.Window(
+                    containerElem,
+                    {
+                        minmax: true,
+                        resizable: true,
+                        title: title,
+                        width: 600,
+                        initMaxHeight: 400,
+                        modal: false,
+                        iframe: false
+                    }
+                );
+            «ELSE»
+                newWindowId = containerElem.attr('id') + 'Dialog';
+                $('<div id="' + newWindowId + "></div>')
+                    .append($('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
+                    .dialog({
+                        autoOpen: false,
+                        show: {
+                            effect: 'blind',
+                            duration: 1000
+                        },
+                        hide: {
+                            effect: 'explode',
+                            duration: 1000
+                        },
+                        title: title,
+                        width: 600,
+                        height: 400,
+                        modal: false
+                    })
+                    .dialog('open');
+            «ENDIF»
 
-            // return the instance
-            return newWindow;
+            // return the «IF targets('1.3.5')»instance«ELSE»dialog selector id«ENDIF»;
+            return newWindow«IF !targets('1.3.5')»Id«ENDIF»;
         }
 
     '''

@@ -312,7 +312,7 @@ class EditFunctions {
 
             «resetRelatedItemForm»
 
-            «createWindowInstance»
+            «createRelationWindowInstance»
 
             «initInlineRelationWindow»
 
@@ -376,35 +376,57 @@ class EditFunctions {
         }
     '''
 
-    def private createWindowInstance(Application it) '''
+    def private createRelationWindowInstance(Application it) '''
         /**
-         * Helper function to create new Zikula.UI.Window instances.
+         * Helper function to create new «IF targets('1.3.5')»Zikula.UI.Window«ELSE»modal form dialog«ENDIF» instances.
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
-        function «prefix()»CreateWindowInstance(containerElem, useIframe)
+        function «prefix()»CreateRelationWindowInstance(containerElem, useIframe)
         {
-            var newWindow;
+            var newWindow«IF !targets('1.3.5')»Id«ENDIF»;
 
             // define the new window instance
-            newWindow = new Zikula.UI.Window(
-                containerElem,
-                {
-                    minmax: true,
-                    resizable: true,
-                    //title: containerElem.title,
-                    width: 600,
-                    initMaxHeight: 500,
-                    modal: false,
-                    iframe: useIframe
-                }
-            );
+            «IF targets('1.3.5')»
+                newWindow = new Zikula.UI.Window(
+                    containerElem,
+                    {
+                        minmax: true,
+                        resizable: true,
+                        //title: containerElem.title,
+                        width: 600,
+                        initMaxHeight: 500,
+                        modal: false,
+                        iframe: useIframe
+                    }
+                );
 
-            // open it
-            newWindow.openHandler();
+                // open it
+                newWindow.openHandler();
+            «ELSE»
+                newWindowId = containerElem.attr('id') + 'Dialog';
+                $('<div id="' + newWindowId + "></div>')
+                    .append($('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
+                    .dialog({
+                        autoOpen: false,
+                        show: {
+                            effect: 'blind',
+                            duration: 1000
+                        },
+                        hide: {
+                            effect: 'explode',
+                            duration: 1000
+                        },
+                        //title: containerElem.title,
+                        width: 600,
+                        height: 500,
+                        modal: false
+                    })
+                    .dialog('open');
+            «ENDIF»
 
             // return the instance
-            return newWindow;
+            return newWindow«IF !targets('1.3.5')»Id«ENDIF»;
         }
     '''
 
@@ -428,10 +450,14 @@ class EditFunctions {
                     // look whether there is already a window instance
                     if (relationHandler.windowInstance !== null) {
                         // unset it
-                        relationHandler.windowInstance.«IF targets('1.3.5')»destroy«ELSE»remove«ENDIF»();
+                        «IF targets('1.3.5')»
+                            relationHandler.windowInstance.destroy();
+                        «ELSE»
+                            $(containerID + 'Dialog').dialog('destroy');
+                        «ENDIF»
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstance = «prefix()»CreateWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
+                    relationHandler.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «prefix()»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
                 }
             });
 
@@ -443,7 +469,7 @@ class EditFunctions {
                 newItem.alias = '«/*TODO*/»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
-                newItem.windowInstance = «prefix()»CreateWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
+                newItem.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «prefix()»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
 
                 // add it to the list of handlers
                 relationHandler.push(newItem);
