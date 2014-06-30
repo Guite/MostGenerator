@@ -211,7 +211,8 @@ class ExternalController {
          *        name = "«appName.formatForDB»_external_finder",
          *        requirements = {"editor" = "xinha|tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
          *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
-         *        methods = {"GET"}
+         *        methods = {"GET"},
+         *        options={"expose"=true}
          * )
          «ENDIF»
          *

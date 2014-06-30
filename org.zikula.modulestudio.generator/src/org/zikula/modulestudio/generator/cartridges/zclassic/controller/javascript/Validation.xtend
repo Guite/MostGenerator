@@ -157,7 +157,7 @@ class Validation {
                 «ELSE»
                     $.ajax({
                         type: 'POST',
-                        url: Zikula.Config.baseURL + 'index.php?module=«appName»&type=ajax&func=checkForDuplicate',
+                        url: Routing.generate('«appName.formatForDB»_ajax_checkForDuplicate'),
                         data: params
                     }).done(function(res) {
                         if (res.data.isDuplicate !== '1') {

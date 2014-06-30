@@ -78,6 +78,7 @@ class ServiceDefinitions {
 
     def private parametersRouting(Application it) '''
         # Route parts
+        «modPrefix».routing.ajax: ajax
         «modPrefix».routing.external: external
         «modPrefix».routing.view.suffix: view
         «FOR entity : getAllEntities»

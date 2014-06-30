@@ -106,6 +106,7 @@ class TreeFunctions {
                                 currentNodeId = liRef.attr('id').replace('tree' + rootId + 'node_', '');
                             «ENDIF»
                             url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=display&id=' + currentNodeId;
+                            «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
 
                             if (isRightClick) {
                                 window.open(url);
@@ -128,6 +129,7 @@ class TreeFunctions {
                                 currentNodeId = liRef.attr('id').replace('tree' + rootId + 'node_', '');
                             «ENDIF»
                             url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=edit&id=' + currentNodeId;
+                            «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
 
                             if (isRightClick) {
                                 window.open(url);
@@ -270,7 +272,7 @@ class TreeFunctions {
             «ELSE»
                 $.ajax({
                     type: 'POST',
-                    url: Zikula.Config.baseURL + 'index.php?module=«appName»&type=ajax&func=handleTreeOperation',
+                    url: Routing.generate('«appName.formatForDB»_ajax_handleTreeOperation'),
                     data: params
                 }).done(function(res) {
                     // get data returned by the ajax response
@@ -358,7 +360,7 @@ class TreeFunctions {
             «ELSE»
                 $.ajax({
                     type: 'POST',
-                    url: Zikula.Config.baseURL + 'index.php?module=«appName»&type=ajax&func=handleTreeOperation',
+                    url: Routing.generate('«appName.formatForDB»_ajax_handleTreeOperation'),
                     data: params
                 }).done(function(res) {
                     return true;

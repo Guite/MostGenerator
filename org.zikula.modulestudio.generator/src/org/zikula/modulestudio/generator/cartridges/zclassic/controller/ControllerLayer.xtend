@@ -136,7 +136,7 @@ class ControllerLayer {
                 «configAction(true)»
             «ENDIF»
             «IF isAjaxController»
-                «new Ajax().additionalAjaxFunctions(it, app)»
+                «new Ajax().additionalAjaxFunctionsBase(it, app)»
             «ENDIF»
         }
     '''
@@ -546,6 +546,10 @@ class ControllerLayer {
         «ENDIF»
         /**
          * «name» controller class providing navigation and interaction functionality.
+        «IF !app.targets('1.3.5') && it instanceof AjaxController»
+         «' '»*
+         «' '»* @Route("/%«app.appName.formatForDB».routing.ajax%")
+        «ENDIF»
          */
         «IF app.targets('1.3.5')»
         class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
@@ -554,16 +558,18 @@ class ControllerLayer {
         «ENDIF»
         {
             «IF !app.targets('1.3.5')»
-                «/* not required as no routes are used here
                 «val actionHelper = new ControllerAction(app)»
-                «FOR action : actions»«actionHelper.generate(action, false)»«ENDFOR»*/»
+                «FOR action : actions»«actionHelper.generate(action, false)»«ENDFOR»
                 «IF hasActions('edit')»
-                    «handleInlineRedirect(false)»
 
+                    «handleInlineRedirect(false)»
                 «ENDIF»
                 «IF app.needsConfig && isConfigController»
-                    «configAction(false)»
 
+                    «configAction(false)»
+                «ENDIF»
+                «IF it instanceof AjaxController»
+                    «new Ajax().additionalAjaxFunctions(it, app)»
                 «ENDIF»
             «ENDIF»
             // feel free to add your own controller methods here
@@ -637,7 +643,7 @@ class ControllerLayer {
              *
              * @return array Array of «name.formatForDB» links.
              */
-            public function getlinks()
+            public function getLinks()
             {
                 $links = array();
 
@@ -648,7 +654,7 @@ class ControllerLayer {
                 «ELSE»
                     $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
                 «ENDIF»
-                $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getlinks');
+                $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 
                 «IF hasActions('view')»

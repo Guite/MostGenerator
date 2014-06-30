@@ -78,7 +78,11 @@ class Finder {
             current«appName»Editor = editor;
 
             editor.popup(
-                Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor',
+                «IF targets('1.3.5')»
+                    Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor',
+                «ELSE»
+                    Routing.generate('«appName.formatForDB»_external_finder', { editor: 'ckeditor' }),
+                «ENDIF»
                 /*width*/ '80%', /*height*/ '70%',
                 'location=no,menubar=no,toolbar=no,dependent=yes,minimizable=no,modal=yes,alwaysRaised=yes,resizable=yes,scrollbars=yes'
             );
@@ -341,7 +345,7 @@ class Finder {
             «ELSE»
                 $.ajax({
                     type: 'POST',
-                    url: Zikula.Config.baseURL + 'index.php?module=«appName»&type=ajax&func=getItemListFinder',
+                    url: Routing.generate('«appName.formatForDB»_ajax_getItemListFinder'),
                     data: params
                 }).done(function(res) {
                     // get data returned by the ajax response

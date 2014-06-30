@@ -222,7 +222,11 @@ class Scribite {
             init: function (editor) {
                 editor.addCommand('insert«appName»', {
                     exec: function (editor) {
-                        var url = Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor';
+                        «IF targets('1.3.5')»
+                            var url = Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor';
+                        «ELSE»
+                            var url = Routing.generate('«appName.formatForDB»_external_finder', { editor: 'ckeditor' });
+                        «ENDIF»
                         // call method in «appName»«IF targets('1.3.5')»_f«ELSE».F«ENDIF»inder.js and provide current editor
                         «appName»FinderCKEditor(editor, url);
                     }
@@ -286,7 +290,11 @@ class Scribite {
                     // Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mce«appName»');
                     ed.addCommand('mce«appName»', function () {
                         ed.windowManager.open({
-                            file : Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=tinymce',
+                            «IF targets('1.3.5')»
+                                file : Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=tinymce',
+                            «ELSE»
+                                file : Routing.generate('«appName.formatForDB»_external_finder', { editor: 'tinymce' }),
+                            «ENDIF»
                             width : (screen.width * 0.75),
                             height : (screen.height * 0.66),
                             inline : 1,
@@ -391,7 +399,11 @@ class Scribite {
                 image    : '/images/icons/extrasmall/favorites.png',
                 textMode : false,
                 action   : function (editor) {
-                    var url = Zikula.Config.baseURL + 'index.php'/*Zikula.Config.entrypoint*/ + '?module=«appName»&type=external&func=finder&editor=xinha';
+                    «IF targets('1.3.5')»
+                        var url = Zikula.Config.baseURL + 'index.php'/*Zikula.Config.entrypoint*/ + '?module=«appName»&type=external&func=finder&editor=xinha';
+                    «ELSE»
+                        var url = Routing.generate('«appName.formatForDB»_external_finder', { editor: 'xinha' });
+                    «ENDIF»
                     «appName»FinderXinha(editor, url);
                 }
             });

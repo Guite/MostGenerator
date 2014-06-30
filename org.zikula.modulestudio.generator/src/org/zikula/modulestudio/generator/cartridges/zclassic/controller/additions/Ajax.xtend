@@ -24,177 +24,219 @@ class Ajax {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
     @Inject extension Utils = new Utils
 
-    def dispatch additionalAjaxFunctions(Controller it, Application app) {
+    def dispatch additionalAjaxFunctionsBase(Controller it, Application app) {
     }
 
-    def dispatch additionalAjaxFunctions(AjaxController it, Application app) '''
-        «userSelectors(app)»
+    def dispatch additionalAjaxFunctionsBase(AjaxController it, Application app) '''
+        «userSelectorsBase(app)»
         «IF app.generateExternalControllerAndFinder»
 
-            «getItemListFinder(app)»
+            «getItemListFinderBase(app)»
         «ENDIF»
         «val joinRelations = app.getJoinRelations»
         «IF !joinRelations.empty»
 
-            «getItemListAutoCompletion(app)»
+            «getItemListAutoCompletionBase(app)»
         «ENDIF»
         «IF app.getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
         || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
 
-            «checkForDuplicate(app)»
+            «checkForDuplicateBase(app)»
         «ENDIF»
         «IF app.hasBooleansWithAjaxToggle»
 
-            «toggleFlag(app)»
+            «toggleFlagBase(app)»
         «ENDIF»
         «IF app.hasTrees»
         
-            «handleTreeOperations(app)»
+            «handleTreeOperationBase(app)»
         «ENDIF»
     '''
 
-    def private userSelectors(AjaxController it, Application app) '''
+    def private userSelectorsBase(AjaxController it, Application app) '''
         «val userFields = app.getAllUserFields»
         «IF !userFields.empty»
             «FOR userField : userFields»
 
-                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users«IF !app.targets('1.3.5')»Action«ENDIF»()
+                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users()«IF !app.targets('1.3.5')»Action(Request $request)«ENDIF»
                 {
-                    return $this->getCommonUsersList();
+                    return $this->getCommonUsersList«IF container.application.targets('1.3.5')»()«ELSE»Action($request)«ENDIF»;
                 }
             «ENDFOR»
 
-            /**
-             * Retrieve a general purpose list of users.
-             *
-             * @param string $fragment The search fragment.
-             *
-             * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
-             */ 
-            public function getCommonUsersList«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
-            {
-                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                    return true;
-                }
-
-                $fragment = '';
-                if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('fragment')) {
-                    $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('fragment', '');
-                } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('fragment')) {
-                    $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->get('fragment', '');
-                }
-
-                «IF app.targets('1.3.5')»
-                    ModUtil::dbInfoLoad('Users');
-                    $tables = DBUtil::getTables();
-
-                    $usersColumn = $tables['users_column'];
-
-                    $where = 'WHERE ' . $usersColumn['uname'] . ' REGEXP \'(' . DataUtil::formatForStore($fragment) . ')\'';
-                    $results = DBUtil::selectObjectArray('users', $where);
-                «ELSE»
-                    ModUtil::initOOModule('ZikulaUsersModule');
-
-                    $dql = 'SELECT u FROM Zikula\Module\UsersModule\Entity\UserEntity u WHERE u.uname LIKE :fragment';
-                    $query = $this->entityManager->createQuery($dql);
-                    $query->setParameter('fragment', '%' . $fragment . '%');
-                    $results = $query->getArrayResult();
-                «ENDIF»
-
-                $out = '<ul>';
-                if (is_array($results) && count($results) > 0) {
-                    foreach($results as $result) {
-                        $userNameDisplay = DataUtil::formatForDisplay($result['uname']);
-                        $out .= '<li>' . $userNameDisplay . '<input type="hidden" id="' . $userNameDisplay . '" value="' . $result['uid'] . '" /></li>';
-                    }
-                }
-                $out .= '</ul>';
-
-                «IF app.targets('1.3.5')»
-                    return new Zikula_Response_Ajax_Plain($out);
-                «ELSE»
-                    return new PlainResponse($out);
-                «ENDIF»
-            }
+            «getCommonUsersListBase(app)»
         «ENDIF»
     '''
 
-    def private getItemListFinder(AjaxController it, Application app) '''
+    def private getCommonUsersListBase(AjaxController it, Application app) '''
+        «getCommonUsersListDocBlock(true)»
+        «getCommonUsersListSignature»
+        {
+            «getCommonUsersListBaseImpl(app)»
+        }
+    '''
+
+    def private getCommonUsersListDocBlock(AjaxController it, Boolean isBase) '''
+        /**
+         * Retrieve a general purpose list of users.
+        «IF !container.application.targets('1.3.5') && !isBase»
+        «' '»*
+        «' '»* @Route("/getCommonUsersList", options={"expose"=true})
+        «/*' '»* @Method("POST")*/»
+        «ENDIF»
+         *
+         * @param string $fragment The search fragment.
+         *
+         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
+         */ 
+    '''
+
+    def private getCommonUsersListSignature(AjaxController it) '''
+        public function getCommonUsersList«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+    '''
+
+    def private getCommonUsersListBaseImpl(AjaxController it, Application app) '''
+        if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            return true;
+        }
+
+        $fragment = '';
+        if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('fragment')) {
+            $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('fragment', '');
+        } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('fragment')) {
+            $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->get('fragment', '');
+        }
+
+        «IF app.targets('1.3.5')»
+            ModUtil::dbInfoLoad('Users');
+            $tables = DBUtil::getTables();
+
+            $usersColumn = $tables['users_column'];
+
+            $where = 'WHERE ' . $usersColumn['uname'] . ' REGEXP \'(' . DataUtil::formatForStore($fragment) . ')\'';
+            $results = DBUtil::selectObjectArray('users', $where);
+        «ELSE»
+            ModUtil::initOOModule('ZikulaUsersModule');
+
+            $dql = 'SELECT u FROM Zikula\Module\UsersModule\Entity\UserEntity u WHERE u.uname LIKE :fragment';
+            $query = $this->entityManager->createQuery($dql);
+            $query->setParameter('fragment', '%' . $fragment . '%');
+            $results = $query->getArrayResult();
+        «ENDIF»
+
+        $out = '<ul>';
+        if (is_array($results) && count($results) > 0) {
+            foreach($results as $result) {
+                $userNameDisplay = DataUtil::formatForDisplay($result['uname']);
+                $out .= '<li>' . $userNameDisplay . '<input type="hidden" id="' . $userNameDisplay . '" value="' . $result['uid'] . '" /></li>';
+            }
+        }
+        $out .= '</ul>';
+
+        «IF app.targets('1.3.5')»
+            return new Zikula_Response_Ajax_Plain($out);
+        «ELSE»
+            return new PlainResponse($out);
+        «ENDIF»
+    '''
+
+    def private getItemListFinderBase(AjaxController it, Application app) '''
+        «getItemListFinderDocBlock(true)»
+        «getItemListFinderSignature»
+        {
+            «getItemListFinderBaseImpl(app)»
+        }
+
+        «getItemListFinderPrepareSlimItem(app)»
+    '''
+
+    def private getItemListFinderDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Retrieve item list for finder selections in Forms, Content type plugin and Scribite.
+        «IF !container.application.targets('1.3.5') && !isBase»
+        «' '»*
+        «' '»* @Route("/getItemListFinder", options={"expose"=true})
+        «/*' '»* @Method("POST")*/»
+        «ENDIF»
          *
          * @param string $ot      Name of currently used object type.
          * @param string $sort    Sorting field.
          * @param string $sortdir Sorting direction.
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          */
-        public function getItemListFinder«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
-        {
-            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                return true;
-            }
+    '''
 
-            $objectType = '«app.getLeadingEntity.name.formatForCode»';
-            if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('ot')) {
-                $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            } elseif ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->query->has('ot')) {
-                $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            }
-            «IF app.targets('1.3.5')»
-                $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
-            «ENDIF»
-            $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListFinder');
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
-            }
+    def private getItemListFinderSignature(AjaxController it) '''
+        public function getItemListFinder«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+    '''
 
-            «IF app.targets('1.3.5')»
-                $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
-                $repository = $this->entityManager->getRepository($entityClass);
-                $repository->setControllerArguments(array());
-            «ELSE»
-                $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
-                $repository->setRequest($request);
-            «ENDIF»
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-
-            $descriptionField = $repository->getDescriptionFieldName();
-
-            $sort = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
-                $sort = $repository->getDefaultSortingField();
-            }
-
-            $sdir = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('sortdir', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $sdir = strtolower($sdir);
-            if ($sdir != 'asc' && $sdir != 'desc') {
-                $sdir = 'asc';
-            }
-
-            $where = ''; // filters are processed inside the repository class
-            $sortParam = $sort . ' ' . $sdir;
-
-            $entities = $repository->selectWhere($where, $sortParam);
-
-            $slimItems = array();
-            $component = $this->name . ':' . ucwords($objectType) . ':';
-            foreach ($entities as $item) {
-                $itemId = '';
-                foreach ($idFields as $idField) {
-                    $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
-                }
-                if (!SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
-                    continue;
-                }
-                $slimItems[] = $this->prepareSlimItem($objectType, $item, $itemId, $descriptionField);
-            }
-
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($slimItems);
+    def private getItemListFinderBaseImpl(AjaxController it, Application app) '''
+        if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            return true;
         }
 
+        $objectType = '«app.getLeadingEntity.name.formatForCode»';
+        if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('ot')) {
+            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        } elseif ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->query->has('ot')) {
+            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        }
+        «IF app.targets('1.3.5')»
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+        «ELSE»
+            $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+        «ENDIF»
+        $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListFinder');
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
+        }
+
+        «IF app.targets('1.3.5')»
+            $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
+            $repository->setControllerArguments(array());
+        «ELSE»
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($request);
+        «ENDIF»
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+
+        $descriptionField = $repository->getDescriptionFieldName();
+
+        $sort = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('sort', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
+            $sort = $repository->getDefaultSortingField();
+        }
+
+        $sdir = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('sortdir', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        $sdir = strtolower($sdir);
+        if ($sdir != 'asc' && $sdir != 'desc') {
+            $sdir = 'asc';
+        }
+
+        $where = ''; // filters are processed inside the repository class
+        $sortParam = $sort . ' ' . $sdir;
+
+        $entities = $repository->selectWhere($where, $sortParam);
+
+        $slimItems = array();
+        $component = $this->name . ':' . ucwords($objectType) . ':';
+        foreach ($entities as $item) {
+            $itemId = '';
+            foreach ($idFields as $idField) {
+                $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
+            }
+            if (!SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
+                continue;
+            }
+            $slimItems[] = $this->prepareSlimItem($objectType, $item, $itemId, $descriptionField);
+        }
+
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($slimItems);
+    '''
+
+    def private getItemListFinderPrepareSlimItem(AjaxController it, Application app) '''
         /**
          * Builds and returns a slim data array from a given entity.
          *
@@ -221,188 +263,222 @@ class Ajax {
         }
     '''
 
-    def private getItemListAutoCompletion(AjaxController it, Application app) '''
+    def private getItemListAutoCompletionBase(AjaxController it, Application app) '''
+        «getItemListAutoCompletionDocBlock(true)»
+        «getItemListAutoCompletionSignature»
+        {
+            «getItemListAutoCompletionBaseImpl(app)»
+        }
+    '''
+
+    def private getItemListAutoCompletionDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Searches for entities for auto completion usage.
+        «IF !container.application.targets('1.3.5') && !isBase»
+        «' '»*
+        «' '»* @Route("/getItemListAutoCompletion", options={"expose"=true})
+        «/*' '»* @Method("POST")*/»
+        «ENDIF»
          *
          * @param string $ot       Treated object type.
          * @param string $fragment The fragment of the entered item name.
          * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
+         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
          */
-        public function getItemListAutoCompletion«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
-        {
-            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                return true;
-            }
+    '''
 
-            $objectType = '«app.getLeadingEntity.name.formatForCode»';
-            if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('ot')) {
-                $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            } elseif ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->query->has('ot')) {
-                $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            }
-            «IF app.targets('1.3.5')»
-                $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+    def private getItemListAutoCompletionSignature(AjaxController it) '''
+        public function getItemListAutoCompletion«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+    '''
+
+    def private getItemListAutoCompletionBaseImpl(AjaxController it, Application app) '''
+        if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            return true;
+        }
+
+        $objectType = '«app.getLeadingEntity.name.formatForCode»';
+        if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('ot')) {
+            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        } elseif ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->query->has('ot')) {
+            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        }
+        «IF app.targets('1.3.5')»
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+        «ELSE»
+            $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+        «ENDIF»
+        $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
+        if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
+            $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
+        }
+
+        «IF app.targets('1.3.5')»
+            $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
+        «ELSE»
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+        «ENDIF»
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+
+        $fragment = '';
+        $exclude = '';
+        if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('fragment')) {
+            $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('fragment', '');
+            $exclude = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('exclude', '');
+        } elseif ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->query->has('fragment')) {
+            $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->get('fragment', '');
+            $exclude = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->get('exclude', '');
+        }
+        $exclude = ((!empty($exclude)) ? array($exclude) : array());
+
+        // parameter for used sorting field
+        $sort = $this->request->query->get('sort', '');
+        «new ControllerHelper().defaultSorting(it)»
+        $sortParam = $sort . ' asc';
+
+        $currentPage = 1;
+        $resultsPerPage = 20;
+
+        // get objects from database
+        list($entities, $objectCount) = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage);
+
+        $out = '<ul>';
+        if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
+            $descriptionFieldName = $repository->getDescriptionFieldName();
+            $previewFieldName = $repository->getPreviewFieldName();
+            «IF app.hasImageFields»
+                if (!empty($previewFieldName)) {
+                    «IF app.targets('1.3.5')»
+                        $imageHelper = new «app.appName»_Util_Image($this->serviceManager);
+                    «ELSE»
+                        $imageHelper = $this->serviceManager->get('«app.appName.formatForDB».image_helper');
+                    «ENDIF»
+                    $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+                }
             «ENDIF»
-            $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
-            }
-
-            «IF app.targets('1.3.5')»
-                $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
-                $repository = $this->entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-
-            $fragment = '';
-            $exclude = '';
-            if ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->request->has('fragment')) {
-                $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('fragment', '');
-                $exclude = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('exclude', '');
-            } elseif ($«IF app.targets('1.3.5')»this->«ENDIF»request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $«IF app.targets('1.3.5')»this->«ENDIF»request->query->has('fragment')) {
-                $fragment = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->get('fragment', '');
-                $exclude = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->get('exclude', '');
-            }
-            $exclude = ((!empty($exclude)) ? array($exclude) : array());
-
-            // parameter for used sorting field
-            $sort = $this->request->query->get('sort', '');
-            «new ControllerHelper().defaultSorting(it)»
-            $sortParam = $sort . ' asc';
-
-            $currentPage = 1;
-            $resultsPerPage = 20;
-
-            // get objects from database
-            list($entities, $objectCount) = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage);
-
-            $out = '<ul>';
-            if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
-                $descriptionFieldName = $repository->getDescriptionFieldName();
-                $previewFieldName = $repository->getPreviewFieldName();
+            foreach ($entities as $item) {
+                // class="informal" --> show in dropdown, but do nots copy in the input field after selection
+                $itemTitle = $item->getTitleFromDisplayPattern();
+                $itemTitleStripped = str_replace('"', '', $itemTitle);
+                $itemDescription = (isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.');
+                $itemId = '';
+                foreach ($idFields as $idField) {
+                    $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
+                }
+                $out .= '<li id="' . $itemId . '" title="' . $itemTitleStripped . '">';
+                $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
+                if (!empty($itemDescription)) {
+                    $out .= '<div class="itemdesc informal">' . substr($itemDescription, 0, 50) . '&hellip;</div>';
+                }
                 «IF app.hasImageFields»
-                    if (!empty($previewFieldName)) {
-                        «IF app.targets('1.3.5')»
-                            $imageHelper = new «app.appName»_Util_Image($this->serviceManager);
-                        «ELSE»
-                            $imageHelper = $this->serviceManager->get('«app.appName.formatForDB».image_helper');
-                        «ENDIF»
-                        $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+                    // check for preview image
+                    if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
+                        $fullObjectId = $objectType . '-' . $itemId;
+                        $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
+                        $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
+                        $out .= '<div id="itemPreview' . $itemId . '" class="itempreview informal">' . $preview . '</div>';
                     }
                 «ENDIF»
-                foreach ($entities as $item) {
-                    // class="informal" --> show in dropdown, but do nots copy in the input field after selection
-                    $itemTitle = $item->getTitleFromDisplayPattern();
-                    $itemTitleStripped = str_replace('"', '', $itemTitle);
-                    $itemDescription = (isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.');
-                    $itemId = '';
-                    foreach ($idFields as $idField) {
-                        $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
-                    }
-                    $out .= '<li id="' . $itemId . '" title="' . $itemTitleStripped . '">';
-                    $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
-                    if (!empty($itemDescription)) {
-                        $out .= '<div class="itemdesc informal">' . substr($itemDescription, 0, 50) . '&hellip;</div>';
-                    }
-                    «IF app.hasImageFields»
-                        // check for preview image
-                        if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
-                            $fullObjectId = $objectType . '-' . $itemId;
-                            $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
-                            $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
-                            $out .= '<div id="itemPreview' . $itemId . '" class="itempreview informal">' . $preview . '</div>';
-                        }
-                    «ENDIF»
-                    $out .= '</li>';
-                }
+                $out .= '</li>';
             }
-            $out .= '</ul>';
+        }
+        $out .= '</ul>';
 
-            // return response
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»($out);
+        // return response
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»($out);
+    '''
+
+    def private checkForDuplicateBase(AjaxController it, Application app) '''
+        «checkForDuplicateDocBlock(true)»
+        «checkForDuplicateSignature»
+        {
+            «checkForDuplicateBaseImpl(app)»
         }
     '''
 
-    def private checkForDuplicate(AjaxController it, Application app) '''
+    def private checkForDuplicateDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Checks whether a field value is a duplicate or not.
+        «IF !container.application.targets('1.3.5') && !isBase»
+        «' '»*
+        «' '»* @Route("/checkForDuplicate", options={"expose"=true})
+        «' '»* @Method("POST")
+        «ENDIF»
          *
          * @param string $ot Treated object type.
          * @param string $fn Name of field to be checked.
          * @param string $v  The value to be checked for uniqueness.
          * @param string $ex Optional identifier to be excluded from search.
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
-         «IF !app.targets('1.3.5')»
+         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         «IF !container.application.targets('1.3.5')»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
-        public function checkForDuplicate«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
-        {
-            $this->checkAjaxToken();
-            «IF app.targets('1.3.5')»
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
-            «ELSE»
-                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                    throw new AccessDeniedException();
-                }
-            «ENDIF»
+    '''
 
-            «prepareDuplicateCheckParameters(app)»
-            «IF app.targets('1.3.5')»
-                $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
-                /* can probably be removed
-                 * $object = new $entityClass();
-                 */ 
-            «ELSE»
-                /* can probably be removed
-                 * $createMethod = 'create' . ucfirst($objectType);
-                 * $object = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
-                 */
-            «ENDIF»
+    def private checkForDuplicateSignature(AjaxController it) '''
+        public function checkForDuplicate«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+    '''
 
-            $result = false;
-            switch ($objectType) {
-            «FOR entity : app.getAllEntities»
-                «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
-                «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
-                    case '«entity.name.formatForCode»':
-                        «IF app.targets('1.3.5')»
-                            $repository = $this->entityManager->getRepository($entityClass);
-                        «ELSE»
-                            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
-                        «ENDIF»
-                        switch ($fieldName) {
-                        «FOR uniqueField : uniqueFields»
-                            case '«uniqueField.name.formatForCode»':
-                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
-                                    break;
-                        «ENDFOR»
-                        «IF entity.hasSluggableFields && entity.slugUnique»
-                            case 'slug':
-                                    $entity = $repository->selectBySlug($value, false, $exclude);
-                                    $result = ($entity != null && isset($entity['slug']));
-                                    break;
-                        «ENDIF»
-                        }
-                        break;
-                «ENDIF»
-            «ENDFOR»
+    def private checkForDuplicateBaseImpl(AjaxController it, Application app) '''
+        $this->checkAjaxToken();
+        «IF app.targets('1.3.5')»
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+        «ELSE»
+            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                throw new AccessDeniedException();
             }
+        «ENDIF»
 
-            // return response
-            $result = array('isDuplicate' => $result);
+        «prepareDuplicateCheckParameters(app)»
+        «IF app.targets('1.3.5')»
+            $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
+            /* can probably be removed
+             * $object = new $entityClass();
+             */ 
+        «ELSE»
+            /* can probably be removed
+             * $createMethod = 'create' . ucfirst($objectType);
+             * $object = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+             */
+        «ENDIF»
 
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        $result = false;
+        switch ($objectType) {
+        «FOR entity : app.getAllEntities»
+            «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
+            «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
+                case '«entity.name.formatForCode»':
+                    «IF app.targets('1.3.5')»
+                        $repository = $this->entityManager->getRepository($entityClass);
+                    «ELSE»
+                        $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                    «ENDIF»
+                    switch ($fieldName) {
+                    «FOR uniqueField : uniqueFields»
+                        case '«uniqueField.name.formatForCode»':
+                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
+                                break;
+                    «ENDFOR»
+                    «IF entity.hasSluggableFields && entity.slugUnique»
+                        case 'slug':
+                                $entity = $repository->selectBySlug($value, false, $exclude);
+                                $result = ($entity != null && isset($entity['slug']));
+                                break;
+                    «ENDIF»
+                    }
+                    break;
+            «ENDIF»
+        «ENDFOR»
         }
+
+        // return response
+        $result = array('isDuplicate' => $result);
+
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
     '''
 
     def private prepareDuplicateCheckParameters(AjaxController it, Application app) '''
@@ -450,74 +526,104 @@ class Ajax {
         «ENDIF» 
     '''
 
-    def private toggleFlag(AjaxController it, Application app) '''
+    def private toggleFlagBase(AjaxController it, Application app) '''
+        «toggleFlagDocBlock(true)»
+        «toggleFlagSignature»
+        {
+            «toggleFlagBaseImpl(app)»
+        }
+    '''
+
+    def private toggleFlagDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Changes a given flag (boolean field) by switching between true and false.
+        «IF !container.application.targets('1.3.5') && !isBase»
+        «' '»*
+        «' '»* @Route("/toggleFlag", options={"expose"=true})
+        «' '»* @Method("POST")
+        «ENDIF»
          *
          * @param string $ot    Treated object type.
          * @param string $field The field to be toggled.
          * @param int    $id    Identifier of treated entity.
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
-         «IF !app.targets('1.3.5')»
+         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         «IF !container.application.targets('1.3.5')»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
          */
-        public function toggleFlag«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+    '''
+
+    def private toggleFlagSignature(AjaxController it) '''
+        public function toggleFlag«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+    '''
+
+    def private toggleFlagBaseImpl(AjaxController it, Application app) '''
+        «IF app.targets('1.3.5')»
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+        «ELSE»
+            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                throw new AccessDeniedException();
+            }
+        «ENDIF»
+
+        $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
+
+        $objectType = $postData->filter('ot', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        $field = $postData->filter('field', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+        $id = (int) $postData->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+
+        «val entities = app.getEntitiesWithAjaxToggle»
+        if ($id == 0
+            || («FOR entity : entities SEPARATOR ' && '»$objectType != '«entity.name.formatForCode»'«ENDFOR»)
+        «FOR entity : entities»
+            || ($objectType == '«entity.name.formatForCode»' && !in_array($field, array(«FOR field : entity.getBooleansWithAjaxToggleEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»)))
+        «ENDFOR»
+        ) {
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
+        }
+
+        // select data from data source
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
+        if ($entity == null) {
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
+        }
+
+        // toggle the flag
+        $entity[$field] = !$entity[$field];
+
+        // save entity back to database
+        $this->entityManager->flush();
+
+        // return response
+        $result = array('id' => $id,
+                        'state' => $entity[$field]);
+        «IF !app.targets('1.3.5')»
+
+            $logger = $this->serviceManager->get('logger');
+            $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id));
+        «ENDIF»
+
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+    '''
+
+    def private handleTreeOperationBase(AjaxController it, Application app) '''
+        «handleTreeOperationDocBlock(true)»
+        «handleTreeOperationSignature»
         {
-            «IF app.targets('1.3.5')»
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
-            «ELSE»
-                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                    throw new AccessDeniedException();
-                }
-            «ENDIF»
-
-            $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
-
-            $objectType = $postData->filter('ot', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $field = $postData->filter('field', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $id = (int) $postData->filter('id', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-
-            «val entities = app.getEntitiesWithAjaxToggle»
-            if ($id == 0
-                || («FOR entity : entities SEPARATOR ' && '»$objectType != '«entity.name.formatForCode»'«ENDFOR»)
-            «FOR entity : entities»
-                || ($objectType == '«entity.name.formatForCode»' && !in_array($field, array(«FOR field : entity.getBooleansWithAjaxToggleEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»)))
-            «ENDFOR»
-            ) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
-            }
-
-            // select data from data source
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
-            if ($entity == null) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
-            }
-
-            // toggle the flag
-            $entity[$field] = !$entity[$field];
-
-            // save entity back to database
-            $this->entityManager->flush();
-
-            // return response
-            $result = array('id' => $id,
-                            'state' => $entity[$field]);
-            «IF !app.targets('1.3.5')»
-
-                $logger = $this->serviceManager->get('logger');
-                $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id));
-            «ENDIF»
-
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+            «handleTreeOperationBaseImpl(app)»
         }
     '''
 
-    def private handleTreeOperations(AjaxController it, Application app) '''
+    def private handleTreeOperationDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Performs different operations on tree hierarchies.
+        «IF !container.application.targets('1.3.5') && !isBase»
+        «' '»*
+        «' '»* @Route("/handleTreeOperation", options={"expose"=true})
+        «' '»* @Method("POST")
+        «ENDIF»
          *
          * @param string $ot        Treated object type.
          * @param string $op        The operation which should be performed (addRootNode, addChildNode, deleteNode, moveNode, moveNodeTo).
@@ -526,88 +632,92 @@ class Ajax {
          * @param string $direction The target direction for a move action (only for moveNode [up, down] and moveNodeTo [after, before, bottom]).
          * @param int    $destid    Identifier of destination node for (only for moveNodeTo).
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          *
-         «IF !app.targets('1.3.5')»
+         «IF !container.application.targets('1.3.5')»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
-         * @throws «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
-         «IF !app.targets('1.3.5')»
+         * @throws «IF container.application.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
+         «IF !container.application.targets('1.3.5')»
          * @throws RuntimeException Thrown if tree verification or executing the workflow action fails
          «ENDIF»
          */
-        public function handleTreeOperation«IF app.targets('1.3.5')»()«ELSE»Action()«ENDIF»
-        {
-            «IF app.targets('1.3.5')»
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
-            «ELSE»
-                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
-                    throw new AccessDeniedException();
-                }
-            «ENDIF»
+    '''
 
-            $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
+    def private handleTreeOperationSignature(AjaxController it) '''
+        public function handleTreeOperation«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+    '''
 
-            «val treeEntities = app.getTreeEntities»
-            // parameter specifying which type of objects we are treating
-            $objectType = DataUtil::convertFromUTF8($postData->filter('ot', '«treeEntities.head.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING));
-            // ensure that we use only object types with tree extension enabled
-            if (!in_array($objectType, array(«FOR treeEntity : treeEntities SEPARATOR ", "»'«treeEntity.name.formatForCode»'«ENDFOR»))) {
-                $objectType = '«treeEntities.head.name.formatForCode»';
+    def private handleTreeOperationBaseImpl(AjaxController it, Application app) '''
+        «IF app.targets('1.3.5')»
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+        «ELSE»
+            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                throw new AccessDeniedException();
             }
+        «ENDIF»
 
-            «prepareTreeOperationParameters(app)»
+        $postData = $«IF app.targets('1.3.5')»this->«ENDIF»request->request;
 
-            $returnValue = array(
-                'data'    => array(),
-                'message' => ''
-            );
-
-            «IF app.targets('1.3.5')»
-                $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
-                $repository = $this->entityManager->getRepository($entityClass);
-            «ELSE»
-                $createMethod = 'create' . ucfirst($objectType);
-                $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
-
-            $rootId = 1;
-            if (!in_array($op, array('addRootNode'))) {
-                $rootId = (int) $postData->filter('root', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
-                if (!$rootId) {
-                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid root node.'));
-                }
-            }
-
-            // Select tree
-            $tree = null;
-            if (!in_array($op, array('addRootNode'))) {
-                $tree = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
-            }
-
-            // verification and recovery of tree
-            $verificationResult = $repository->verify();
-            if (is_array($verificationResult)) {
-                foreach ($verificationResult as $errorMsg) {
-                    «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($errorMsg);
-                }
-            }
-            $repository->recover();
-            $this->entityManager->clear(); // clear cached nodes
-
-            «treeOperationDetermineEntityFields(app)»
-
-            «treeOperationSwitch(app)»
-
-            $returnValue['message'] = $this->__('The operation was successful.');
-
-            // Renew tree
-            /** postponed, for now we do a page reload
-            $returnValue['data'] = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
-            */
-
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($returnValue);
+        «val treeEntities = app.getTreeEntities»
+        // parameter specifying which type of objects we are treating
+        $objectType = DataUtil::convertFromUTF8($postData->filter('ot', '«treeEntities.head.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING));
+        // ensure that we use only object types with tree extension enabled
+        if (!in_array($objectType, array(«FOR treeEntity : treeEntities SEPARATOR ", "»'«treeEntity.name.formatForCode»'«ENDFOR»))) {
+            $objectType = '«treeEntities.head.name.formatForCode»';
         }
+
+        «prepareTreeOperationParameters(app)»
+
+        $returnValue = array(
+            'data'    => array(),
+            'message' => ''
+        );
+
+        «IF app.targets('1.3.5')»
+            $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
+        «ELSE»
+            $createMethod = 'create' . ucfirst($objectType);
+            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+        «ENDIF»
+
+        $rootId = 1;
+        if (!in_array($op, array('addRootNode'))) {
+            $rootId = (int) $postData->filter('root', 0, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+            if (!$rootId) {
+                throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid root node.'));
+            }
+        }
+
+        // Select tree
+        $tree = null;
+        if (!in_array($op, array('addRootNode'))) {
+            $tree = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+        }
+
+        // verification and recovery of tree
+        $verificationResult = $repository->verify();
+        if (is_array($verificationResult)) {
+            foreach ($verificationResult as $errorMsg) {
+                «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($errorMsg);
+            }
+        }
+        $repository->recover();
+        $this->entityManager->clear(); // clear cached nodes
+
+        «treeOperationDetermineEntityFields(app)»
+
+        «treeOperationSwitch(app)»
+
+        $returnValue['message'] = $this->__('The operation was successful.');
+
+        // Renew tree
+        /** postponed, for now we do a page reload
+        $returnValue['data'] = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+        */
+
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($returnValue);
     '''
 
     def private prepareTreeOperationParameters(AjaxController it, Application app) '''
@@ -847,5 +957,105 @@ class Ajax {
             }
             $this->entityManager->flush();
         //});
+    '''
+
+
+
+
+    def dispatch additionalAjaxFunctions(Controller it, Application app) {
+    }
+
+    def dispatch additionalAjaxFunctions(AjaxController it, Application app) '''
+        «userSelectorsImpl(app)»
+        «IF app.generateExternalControllerAndFinder»
+
+            «getItemListFinderImpl(app)»
+        «ENDIF»
+        «val joinRelations = app.getJoinRelations»
+        «IF !joinRelations.empty»
+
+            «getItemListAutoCompletionImpl(app)»
+        «ENDIF»
+        «IF app.getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
+
+            «checkForDuplicateImpl(app)»
+        «ENDIF»
+        «IF app.hasBooleansWithAjaxToggle»
+
+            «toggleFlagImpl(app)»
+        «ENDIF»
+        «IF app.hasTrees»
+        
+            «handleTreeOperationImpl(app)»
+        «ENDIF»
+    '''
+
+    def private userSelectorsImpl(AjaxController it, Application app) '''
+        «val userFields = app.getAllUserFields»
+        «IF !userFields.empty»
+            «FOR userField : userFields»
+
+                /**
+                 *
+                 * @Route("/get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users", options={"expose"=true})
+                 * @Method("POST")
+                 */
+                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction(Request $request)
+                {
+                    return parent::get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction($request);
+                }
+            «ENDFOR»
+
+            «getCommonUsersListImpl(app)»
+        «ENDIF»
+    '''
+
+    def private getCommonUsersListImpl(AjaxController it, Application app) '''
+        «getCommonUsersListDocBlock(false)»
+        «getCommonUsersListSignature»
+        {
+            return parent::return $this->getCommonUsersListAction($request);
+        }
+    '''
+
+    def private getItemListFinderImpl(AjaxController it, Application app) '''
+        «getItemListFinderDocBlock(false)»
+        «getItemListFinderSignature»
+        {
+            return parent::getItemListFinderAction($request);
+        }
+    '''
+
+    def private getItemListAutoCompletionImpl(AjaxController it, Application app) '''
+        «getItemListAutoCompletionDocBlock(false)»
+        «getItemListAutoCompletionSignature»
+        {
+            return parent::getItemListAutoCompletionAction($request);
+        }
+    '''
+
+    def private checkForDuplicateImpl(AjaxController it, Application app) '''
+        «checkForDuplicateDocBlock(false)»
+        «checkForDuplicateSignature»
+        {
+            return parent::checkForDuplicateAction($request);
+        }
+    '''
+
+    def private toggleFlagImpl(AjaxController it, Application app) '''
+        «toggleFlagDocBlock(false)»
+        «toggleFlagSignature»
+        {
+            return parent::toggleFlagAction($request);
+        }
+    '''
+
+    def private handleTreeOperationImpl(AjaxController it, Application app) '''
+        «handleTreeOperationDocBlock(false)»
+        «handleTreeOperationSignature»
+        {
+            return parent::handleTreeOperationAction($request);
+        }
     '''
 }

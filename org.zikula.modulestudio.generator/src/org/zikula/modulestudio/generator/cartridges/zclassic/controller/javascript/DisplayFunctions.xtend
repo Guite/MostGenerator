@@ -443,7 +443,7 @@ class DisplayFunctions {
             «ELSE»
                 $.ajax({
                     type: 'POST',
-                    url: Zikula.Config.baseURL + 'index.php?module=«appName»&type=ajax&func=toggleFlag',
+                    url: Routing.generate('«appName.formatForDB»_ajax_toggleFlag'),
                     data: params
                 }).done(function(res) {
                     // get data returned by the ajax response
