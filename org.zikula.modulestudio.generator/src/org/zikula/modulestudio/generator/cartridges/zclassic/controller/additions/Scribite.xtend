@@ -36,11 +36,7 @@ class Scribite {
             fsa.generateFile(docPath + fileName, integration)
         }
 
-        if (targets('1.3.5')) {
-            docPath = docPath + 'includes/'
-        } else {
-            docPath = docPath + 'plugins/'
-        }
+        docPath = docPath + 'plugins/'
 
         pluginAloha
         pluginCk
@@ -60,13 +56,7 @@ class Scribite {
     }
 
     def private pluginCk(Application it) {
-        var pluginPath = ''
-
-        if (targets('1.3.5')) {
-            pluginPath = docPath + 'ckeditor/plugins/' + name.formatForDB + '/'
-        } else {
-            pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
-        }
+        val pluginPath = docPath + 'ckeditor/plugins/' + name.formatForDB + '/'
 
         var fileName = 'plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
@@ -111,13 +101,7 @@ class Scribite {
     }
 
     def private pluginTinyMce(Application it) {
-        var pluginPath = ''
-
-        if (targets('1.3.5')) {
-            pluginPath = docPath + 'tinymce/plugins/' + name.formatForDB + '/'
-        } else {
-            pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
-        }
+        var pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
 
         var fileName = 'editor_plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
@@ -165,13 +149,7 @@ class Scribite {
     }
 
     def private pluginXinha(Application it) {
-        var pluginPath = ''
-
-        if (targets('1.3.5')) {
-            pluginPath = docPath + 'xinha/plugins/' + appName + '/'
-        } else {
-            pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
-        }
+        var pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
 
         var fileName = appName + '.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
@@ -193,26 +171,13 @@ class Scribite {
         --------------------
 
         It is easy to include «appName» in your Scribite editors.
-        While «appName» contains already the a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay» and other items,
-        the actual Scribite enhancements must be done manually for Scribite <= 4.3.
-        From Scribite 5.0 onwards the integration is automatic. The necessary javascript is loaded via event system and the
-        plugins are already in the Scribite package.
+        «appName» contains already the a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size() > 1» and other items«ENDIF».
+        Please note that Scribite 5.0 is required for this.
 
-        Just follow these few steps to complete the integration for Scribite <= 4.3:
-          1. Open modules/Scribite/lib/Scribite/Api/User.php in your favourite text editor.
-          2. Search for
-                if (ModUtil::available('SimpleMedia')) {
-                    PageUtil::addVar('javascript', 'modules/SimpleMedia/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/findItem.js');
-                }
-          3. Below this add
-                if (ModUtil::available('«appName»')) {
-                    PageUtil::addVar('javascript', '«rootFolder»/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»«IF targets('1.3.5')»_f«ELSE».F«ENDIF»inder.js');
-                }
-          4. Copy or move all files from «rootFolder»/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/ into modules/Scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF»/.
-
-        Just follow these few steps to complete the integration for Scribite >= 5.0:
-         1. Check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy from
-            «rootFolder»/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/«IF targets('1.3.5')»includes«ELSE»plugins«ENDIF» into modules/Scribite/plugins.
+        To activate the popup for the editor of your choice (currently supported: CKEditor, TinyMCE, Xinha)
+        check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins.
+        If not then copy from
+            «rootFolder»/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''
