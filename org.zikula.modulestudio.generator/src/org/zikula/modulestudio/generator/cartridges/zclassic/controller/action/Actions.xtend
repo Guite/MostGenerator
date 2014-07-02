@@ -611,6 +611,20 @@ class Actions {
             $idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $objectType, $idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
+            // check for unique permalinks (without id)
+            $hasSlug = false;
+            $slug = '';
+            if ($hasIdentifier === false) {
+                $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+                $meta = $this->entityManager->getClassMetadata($entityClass);
+                $hasSlug = $meta->hasField('slug') && $meta->isUniqueField('slug');
+                if ($hasSlug) {
+                    $slug = $this->request->query->filter('slug', '', FILTER_SANITIZE_STRING);
+                    $hasSlug = (!empty($slug));
+                }
+            }
+            $hasIdentifier |= $hasSlug;
+
             $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
             $selectionArgs = array('ot' => $objectType, 'id' => $idValues);
