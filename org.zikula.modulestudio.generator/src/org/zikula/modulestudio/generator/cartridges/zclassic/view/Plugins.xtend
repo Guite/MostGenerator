@@ -14,7 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectS
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectTypeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateSelector
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeJS
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.AbstractObjectSelector
@@ -75,7 +75,7 @@ class Plugins {
             new FormatGeoData().generate(it, fsa)
         }
         if (hasTrees) {
-            new TreeJS().generate(it, fsa)
+            new TreeData().generate(it, fsa)
             new TreeSelection().generate(it, fsa)
         }
         if (generateModerationPanel && needsApproval) {

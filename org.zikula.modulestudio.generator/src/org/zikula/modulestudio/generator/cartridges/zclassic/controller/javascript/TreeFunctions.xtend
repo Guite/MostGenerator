@@ -297,16 +297,22 @@ class TreeFunctions {
          * Callback function for config.onSave. This function is called after each tree change.
          *
          * @param node - the node which is currently being moved
-         * @param params - array with insertion params, which are [relativenode, dir];
-         *     - "dir" is a string with value "after', "before" or "bottom" and defines
-         *       whether the affected node is inserted after, before or as last child of "relativenode"
-         * @param tree data - serialized to JSON tree data
+        «IF targets('1.3.5')»
+            «' '»* @param params - array with insertion params, which are [relativenode, dir];
+            «' '»*     - "dir" is a string with value "after", "before" or "bottom" and defines
+            «' '»*       whether the affected node is inserted after, before or as last child of "relativenode"
+            «' '»* @param tree data - serialized to JSON tree data
+        «ELSE»
+            «' '»* @param parentNode - the new parent node
+            «' '»* @param position - can be "after", "before" or "bottom" and defines
+            «' '»*       whether the affected node is inserted after, before or as last child of "relativenode"
+        «ENDIF»
          *
          * @return true on success, otherwise the change will be reverted
          */
-        function «prefix()»TreeSave(node, params, data)
+        function «prefix()»TreeSave(node, «IF targets('1.3.5')»params, data«ELSE»parentNode, position«ENDIF»)
         {
-            var nodeParts, rootId, nodeId, destId, params«IF targets('1.3.5')», request«ENDIF»;
+            var nodeParts, rootId, nodeId, destId, requestParams«IF targets('1.3.5')», request«ENDIF»;
 
             // do not allow inserts on root level
             «IF targets('1.3.5')»
@@ -328,12 +334,12 @@ class TreeFunctions {
                 nodeParts = node.attr('id').split('node_');
                 rootId = nodeParts[0].replace('tree', '');
                 nodeId = nodeParts[1];
-                destId = params[1].attr('id').replace('tree' + rootId + 'node_', '');
+                destId = parentNode.attr('id').replace('tree' + rootId + 'node_', '');
             «ENDIF»
 
-            params = {
+            requestParams = {
                 'op': 'moveNodeTo',
-                'direction': params[0],
+                'direction': «IF targets('1.3.5')»params[0]«ELSE»position«ENDIF»,
                 'root': rootId,
                 'id': nodeId,
                 'destid': destId
@@ -344,12 +350,13 @@ class TreeFunctions {
                     Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=handleTreeOperation',
                     {
                         method: 'post',
-                        parameters: params,
+                        parameters: requestParams,
                         onComplete: function (req) {
                             if (!req.isSuccess()) {
+                                var treeName = 'itemTree' + rootId;
                                 Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
 
-                                return Zikula.TreeSortable.categoriesTree.revertInsertion();
+                                return Zikula.TreeSortable[treeName].revertInsertion();
                             }
                             return true;
                         }
@@ -361,13 +368,15 @@ class TreeFunctions {
                 $.ajax({
                     type: 'POST',
                     url: Routing.generate('«appName.formatForDB»_ajax_handleTreeOperation'),
-                    data: params
+                    data: requestParams
                 }).done(function(res) {
                     return true;
                 }).fail(function(jqXHR, textStatus) {
+                    var treeName = 'itemTree' + rootId;
                     «prefix()»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
 
-                    return Zikula.TreeSortable.categoriesTree.revertInsertion();
+                    window.location.reload();
+                    return false;
                 });
 
                 return true;

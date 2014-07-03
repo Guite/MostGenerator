@@ -131,29 +131,87 @@ class ViewHierarchy {
         {if isset($items) && (is_object($items) && $items->count() gt 0) || (is_array($items) && count($items) gt 0)}
             {assign var='hasNodes' value=true}
         {/if}
+        {assign var='idPrefix' value="«name.formatForCode.toFirstLower»Tree`$rootId`"}
 
-        <div id="«name.formatForCode.toFirstLower»Tree{$rootId}" class="«IF isLegacyApp»z-«ENDIF»tree-container">
-            <div id="«name.formatForCode.toFirstLower»TreeItems{$rootId}" class="«IF isLegacyApp»z-«ENDIF»tree-items">
-            {if $hasNodes}
-                {«appName.formatForDB»TreeJS objectType='«name.formatForCode»' tree=$items controller=$lct root=$rootId sortable=true}
-            {/if}
-            </div>
+        «IF !isLegacyApp»
+            <p>
+                <label for="{$idPrefix}SearchTerm">{gt text='Quick search'}:</label>
+                <input type="search" id="{$idPrefix}SearchTerm" value="" />
+            </p>
+        «ENDIF»
+        <div id="{$idPrefix}" class="«IF isLegacyApp»z-«ENDIF»tree-container">
+            «IF isLegacyApp»
+                <div id="«name.formatForCode.toFirstLower»TreeItems{$rootId}" class="«IF isLegacyApp»z-«ENDIF»tree-items">
+                {if $hasNodes}
+                    {«appName.formatForDB»TreeData objectType='«name.formatForCode»' tree=$items controller=$lct root=$rootId sortable=true}
+                {/if}
+                </div>
+            «ELSE»
+                {if $hasNodes}
+                    <ul>
+                        {«appName.formatForDB»TreeData objectType='«name.formatForCode»' tree=$items controller=$lct root=$rootId}
+                    </ul>
+                {/if}
+            «ENDIF»
         </div>
 
         {if $hasNodes}
             {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF isLegacyApp»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF isLegacyApp»_t«ELSE».T«ENDIF»ree.js'}
+            «IF !isLegacyApp»
+                {pageaddvar name='javascript' value='web/jstree/dist/jstree.min.js'}
+                {pageaddvar name='stylesheet' value='web/jstree/dist/themes/default/style.min.css'}
+            «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
                 «IF isLegacyApp»
                     document.observe('dom:loaded', function() {
                         «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
-                        Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
+                        Zikula.TreeSortable.trees.itemTree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
                     });
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
                             «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
-                            Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
+
+                            var tree = $('#{{$idPrefix}}').jstree({
+                                'core': {
+                                    'multiple': false,
+                                    'check_callback': true
+                                },
+                                'dnd': {
+                                    'copy': false,
+                                    'is_draggable': function(node) {
+                                        // disable drag and drop for root category
+                                        var inst = node.inst;
+                                        var level = inst.get_path().length;
+
+                                        return (level > 1) ? true : false;
+                                    }
+                                },
+                                'state': {
+                                    'key': '{{$idPrefix}}'
+                                },
+                                'plugins': [ 'dnd', 'search', 'state', 'wholerow' ]
+                            });
+
+                            tree.on('move_node.jstree', function (e, data) {
+                                var node = data.node;
+                                var parentId = data.parent;
+                                var parentNode = $tree.jstree('get_node', parentId, false);
+
+                                «appPrefix»TreeSave(node, parentNode, 'bottom');
+                            });
+
+                            var searchStartDelay = false;
+                            $('#{{$idPrefix}}SearchTerm').keyup(function () {
+                                if (searchStartDelay) {
+                                    clearTimeout(to);
+                                }
+                                searchStartDelay = setTimeout(function () {
+                                    var v = $('#{{$idPrefix}}SearchTerm').val();
+                                    $('#{{$idPrefix}}').jstree(true).search(v);
+                                }, 250);
+                            });
                         });
                     })(jQuery);
                 «ENDIF»
