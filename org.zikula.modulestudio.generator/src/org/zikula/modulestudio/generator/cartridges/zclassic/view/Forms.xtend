@@ -323,27 +323,93 @@ class Forms {
 
         <script type="text/javascript">
         /* <![CDATA[ */
-            «IF app.targets('1.3.5')»
-                «relationHelper.initJs(it, app, false)»
-    
-                var formButtons, formValidator;
-    
-                function handleFormButton (event) {
-                    var result = formValidator.validate();
-                    if (!result) {
-                        // validation error, abort form submit
-                        Event.stop(event);
-                    } else {
-                        // hide form buttons to prevent double submits by accident
-                        formButtons.each(function (btn) {
-                            btn.addClassName('z-hide');
-                        });
-                    }
-    
-                    return result;
+            «jsInitImpl(app)»
+        /* ]]> */
+        </script>
+    '''
+
+    def private jsInitImpl(Entity it, Application app) '''
+        «IF app.targets('1.3.5')»
+            «relationHelper.initJs(it, app, false)»
+
+            var formButtons, formValidator;
+
+            function handleFormButton (event) {
+                var result = formValidator.validate();
+                if (!result) {
+                    // validation error, abort form submit
+                    Event.stop(event);
+                } else {
+                    // hide form buttons to prevent double submits by accident
+                    formButtons.each(function (btn) {
+                        btn.addClassName('z-hide');
+                    });
                 }
-    
-                document.observe('dom:loaded', function() {
+
+                return result;
+            }
+
+            document.observe('dom:loaded', function() {
+                «val userFields = getUserFieldsEntity»
+                «IF !userFields.empty»
+                    // initialise auto completion for user fields
+                    «FOR userField : userFields»
+                        «val realName = userField.name.formatForCode»
+                        «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
+                    «ENDFOR»
+                «ENDIF»
+                «relationHelper.initJs(it, app, true)»
+
+                «container.application.prefix()»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                {{* observe validation on button events instead of form submit to exclude the cancel command *}}
+                formValidator = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
+                {{if $mode ne 'create'}}
+                    var result = formValidator.validate();
+                {{/if}}
+
+                formButtons = $('{{$__formid}}').select('div.z-formbuttons input');
+
+                formButtons.each(function (elem) {
+                    if (elem.id != 'btnCancel') {
+                        elem.observe('click', handleFormButton);
+                    }
+                });
+                «IF useGroupingPanels('edit')»
+
+                    var panel = new Zikula.UI.Panels('«app.appName.toFirstLower»Panel', {
+                        headerSelector: 'h3',
+                        headerClassName: 'z-panel-header z-panel-indicator',
+                        contentClassName: 'z-panel-content',
+                        active: $('z-panel-header-fields')
+                    });
+                «ENDIF»
+
+                Zikula.UI.Tooltips($$('.«app.appName.toLowerCase»-form-tooltips'));
+                «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
+            });
+        «ELSE»
+            «relationHelper.initJs(it, app, false)»
+
+            var formButtons;
+
+            function handleFormButton (event) {
+                «container.application.prefix()»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                var result = document.getElementById('{{$__formid}}').checkValidity();
+                if (!result) {
+                    // validation error, abort form submit
+                    event.stopPropagation();
+                } else {
+                    // hide form buttons to prevent double submits by accident
+                    formButtons.each(function (btn) {
+                        btn.addClass('hidden');
+                    });
+                }
+
+                return result;
+            }
+
+            ( function($) {
+                $(document).ready(function() {
                     «val userFields = getUserFieldsEntity»
                     «IF !userFields.empty»
                         // initialise auto completion for user fields
@@ -354,89 +420,26 @@ class Forms {
                     «ENDIF»
                     «relationHelper.initJs(it, app, true)»
     
-                    «container.application.prefix()»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                     {{* observe validation on button events instead of form submit to exclude the cancel command *}}
-                    formValidator = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
                     {{if $mode ne 'create'}}
-                        var result = formValidator.validate();
+                        if (!document.getElementById('{{$__formid}}').checkValidity()) {
+                            document.getElementById('{{$__formid}}').submit();
+                        }
                     {{/if}}
     
-                    formButtons = $('{{$__formid}}').select('div.z-formbuttons input');
+                    formButtons = $('#{{$__formid}}').find('div.form-buttons input');
     
                     formButtons.each(function (elem) {
-                        if (elem.id != 'btnCancel') {
-                            elem.observe('click', handleFormButton);
+                        if (elem.attr('id') != 'btnCancel') {
+                            elem.click(handleFormButton);
                         }
                     });
-                    «IF useGroupingPanels('edit')»
 
-                        var panel = new Zikula.UI.Panels('«app.appName.toFirstLower»Panel', {
-                            headerSelector: 'h3',
-                            headerClassName: 'z-panel-header z-panel-indicator',
-                            contentClassName: 'z-panel-content',
-                            active: $('z-panel-header-fields')
-                        });
-                    «ENDIF»
-    
-                    Zikula.UI.Tooltips($$('.«app.appName.toLowerCase»-form-tooltips'));
+                    $('.«app.appName.toLowerCase»-form-tooltips').tooltip();
                     «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
                 });
-            «ELSE»
-                «relationHelper.initJs(it, app, false)»
-    
-                var formButtons;
-    
-                function handleFormButton (event) {
-                    «container.application.prefix()»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
-                    var result = document.getElementById('{{$__formid}}').checkValidity();
-                    if (!result) {
-                        // validation error, abort form submit
-                        event.stopPropagation();
-                    } else {
-                        // hide form buttons to prevent double submits by accident
-                        formButtons.each(function (btn) {
-                            btn.addClass('hidden');
-                        });
-                    }
-    
-                    return result;
-                }
-
-                ( function($) {
-                    $(document).ready(function() {
-                        «val userFields = getUserFieldsEntity»
-                        «IF !userFields.empty»
-                            // initialise auto completion for user fields
-                            «FOR userField : userFields»
-                                «val realName = userField.name.formatForCode»
-                                «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
-                            «ENDFOR»
-                        «ENDIF»
-                        «relationHelper.initJs(it, app, true)»
-        
-                        {{* observe validation on button events instead of form submit to exclude the cancel command *}}
-                        {{if $mode ne 'create'}}
-                            if (!document.getElementById('{{$__formid}}').checkValidity()) {
-                                document.getElementById('{{$__formid}}').submit();
-                            }
-                        {{/if}}
-        
-                        formButtons = $('#{{$__formid}}').find('div.form-buttons input');
-        
-                        formButtons.each(function (elem) {
-                            if (elem.attr('id') != 'btnCancel') {
-                                elem.click(handleFormButton);
-                            }
-                        });
-    
-                        $('.«app.appName.toLowerCase»-form-tooltips').tooltip();
-                        «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
-                    });
-                })(jQuery);
-            «ENDIF»
-
-        /* ]]> */
-        </script>
+            })(jQuery);
+        «ENDIF»
     '''
 
     def private newCoordinatesEventHandler(Entity it) '''
