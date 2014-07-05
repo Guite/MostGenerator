@@ -789,7 +789,7 @@ class Repository {
                     $serviceManager = ServiceUtil::getManager();
                     $session = $serviceManager->get('session');
                 «ENDIF»
-                if ($page > 1) {
+                if ($page > 1 || isset($_GET['pos'])) {
                     // store current page in session
                     «IF app.targets('1.3.5')»
                         SessionUtil::setVar('«sessionVar»', $page);
