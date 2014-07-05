@@ -162,7 +162,9 @@ class Redirect {
             if ($this->inlineUsage == true) {
                 $urlArgs = array('idPrefix'    => $this->idPrefix,
                                  'commandName' => $args['commandName']);
-                $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
+                foreach ($this->idFields as $idField) {
+                    $urlArgs[$idField] = $this->idValues[$idField];
+                }
 
                 // inline usage, return to special function for closing the Zikula.UI.Window instance
                 «IF app.targets('1.3.5')»
@@ -206,9 +208,13 @@ class Redirect {
                     «IF someController.hasActions('display')»
                         case '«controllerName»Display':
                             if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
-                                $urlArgs = $this->addIdentifiersToUrlArgs();
                                 «IF app.targets('1.3.5')»
                                     $urlArgs['ot'] = $this->objectType;
+                                «ENDIF»
+                                foreach ($this->idFields as $idField) {
+                                    $urlArgs[$idField] = $this->idValues[$idField];
+                                }
+                                «IF app.targets('1.3.5')»
                                     return ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
                                 «ELSE»
                                     $urlArgs['lct'] = '«controllerName»';
