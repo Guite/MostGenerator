@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions.transformation
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
@@ -16,12 +15,12 @@ class PersistenceTransformer {
     /**
      * Extension methods for formatting names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions
+    extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Extension methods related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions
+    extension ModelExtensions = new ModelExtensions
 
     /**
      * Transformation entry point consuming the application instance.

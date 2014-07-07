@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -11,10 +10,10 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class MetaData extends AbstractExtension implements EntityExtensionInterface {
 
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.

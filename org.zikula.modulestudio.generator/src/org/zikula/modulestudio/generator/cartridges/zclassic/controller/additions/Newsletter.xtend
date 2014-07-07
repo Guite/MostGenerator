@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -13,12 +12,12 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Newsletter {
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     FileHelper fh = new FileHelper
 

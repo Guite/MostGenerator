@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
@@ -14,11 +13,11 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowUtil {
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
-    @Inject extension WorkflowExtensions = new WorkflowExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     FileHelper fh = new FileHelper
 

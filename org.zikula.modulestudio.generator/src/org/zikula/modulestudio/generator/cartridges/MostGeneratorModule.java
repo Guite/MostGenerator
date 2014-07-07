@@ -13,7 +13,7 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
 
     /**
      * Returns the full qualified language name.
-     * 
+     *
      * @return The language name.
      */
     @Override
@@ -23,7 +23,7 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
 
     /**
      * Returns the file extensions for the textual notation.
-     * 
+     *
      * @return The file extensions.
      */
     @Override
@@ -34,7 +34,7 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
     /**
      * Binds the
      * {@link org.zikula.modulestudio.generator.cartridges.MostGenerator}.
-     * 
+     *
      * @return The {@link org.eclipse.xtext.generator.IGenerator} instance.
      */
     public Class<? extends IGenerator> bindIGenerator() {
@@ -43,7 +43,7 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
 
     /**
      * Binds the {@link org.eclipse.emf.ecore.resource.ResourceSet}.
-     * 
+     *
      * @return The {@link org.eclipse.emf.ecore.resource.ResourceSet} instance.
      */
     public Class<? extends ResourceSet> bindResourceSet() {

@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.util.ControllerUtil
@@ -18,8 +17,8 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
  */
 class UtilMethods {
 
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
         new ModelUtil().generate(it, fsa)

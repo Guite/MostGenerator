@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -17,14 +16,14 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
  */
 class ServiceDefinitions {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
-    @Inject extension ViewExtensions = new ViewExtensions
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
+    extension ViewExtensions = new ViewExtensions
 
     String modPrefix = ''
 

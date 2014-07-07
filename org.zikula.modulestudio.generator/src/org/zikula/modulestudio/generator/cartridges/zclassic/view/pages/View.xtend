@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
@@ -30,14 +29,14 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class View {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension UrlExtensions = new UrlExtensions
-    @Inject extension Utils = new Utils
-    @Inject extension WorkflowExtensions = new WorkflowExtensions
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     SimpleFields fieldHelper = new SimpleFields
 

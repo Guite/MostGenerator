@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.workflows
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
@@ -16,9 +15,9 @@ import static de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType.*
  * Workflow definitions in xml format.
  */
 class Definition {
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension WorkflowExtensions = new WorkflowExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension WorkflowExtensions = new WorkflowExtensions
 
     Application app
     EntityWorkflowType wfType

@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -8,7 +7,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class SoftDeleteable extends AbstractExtension implements EntityExtensionInterface {
 
-    @Inject extension Utils = new Utils
+    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.

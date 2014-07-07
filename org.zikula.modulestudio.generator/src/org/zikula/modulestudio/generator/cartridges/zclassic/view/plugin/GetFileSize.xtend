@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -9,9 +8,9 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class GetFileSize {
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginFilePath = viewPluginFilePath('modifier', 'GetFileSize')

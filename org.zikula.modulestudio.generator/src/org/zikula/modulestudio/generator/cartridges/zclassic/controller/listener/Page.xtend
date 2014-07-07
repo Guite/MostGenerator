@@ -1,13 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Page {
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 

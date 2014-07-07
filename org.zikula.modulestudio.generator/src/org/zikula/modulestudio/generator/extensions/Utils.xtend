@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import java.util.Date
 
@@ -14,12 +13,12 @@ class Utils {
     /**
      * Extensions used for formatting element names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions
+    extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Helper methods for generator settings.
      */
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
      * Returns the version number of ModuleStudio.

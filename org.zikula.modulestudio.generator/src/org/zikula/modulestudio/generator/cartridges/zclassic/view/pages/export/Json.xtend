@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -10,10 +9,10 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Json {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating json view templates for entity "' + name.formatForDisplay + '"')

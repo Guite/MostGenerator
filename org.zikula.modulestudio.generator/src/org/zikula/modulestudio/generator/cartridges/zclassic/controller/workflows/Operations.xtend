@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.workflows
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -14,10 +13,10 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
  * Workflow operations.
  */
 class Operations {
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension WorkflowExtensions = new WorkflowExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension WorkflowExtensions = new WorkflowExtensions
+    extension Utils = new Utils
 
     Application app
     //EntityWorkflowType wfType

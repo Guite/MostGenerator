@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
@@ -22,7 +21,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 
 class ExtensionManager {
 
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
     Entity entity
     List<EntityExtensionInterface> extensions

@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
@@ -16,13 +15,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Relations {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension UrlExtensions = new UrlExtensions
-    @Inject extension Utils = new Utils
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
 
     def displayItemList(Entity it, Application app, Boolean many, IFileSystemAccess fsa) {
         val templatePath = templateFile('include_displayItemList' + (if (many) 'Many' else 'One'))

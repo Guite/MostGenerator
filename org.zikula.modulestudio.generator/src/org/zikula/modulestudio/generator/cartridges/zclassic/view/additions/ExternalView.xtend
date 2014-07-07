@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -15,13 +14,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExternalView {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension UrlExtensions = new UrlExtensions
-    @Inject extension Utils = new Utils
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
 
     private SimpleFields fieldHelper = new SimpleFields
 

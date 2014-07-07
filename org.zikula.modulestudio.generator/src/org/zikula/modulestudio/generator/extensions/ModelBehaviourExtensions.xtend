@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.AccountDeletionHandler
@@ -21,7 +20,7 @@ class ModelBehaviourExtensions {
     /**
      * Extensions related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions
+    extension ModelExtensions = new ModelExtensions
 
     /**
      * Checks whether the application contains at least one entity with the loggable extension enabled.

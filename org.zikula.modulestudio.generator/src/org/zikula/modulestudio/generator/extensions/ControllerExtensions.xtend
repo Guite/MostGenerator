@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
@@ -23,8 +22,8 @@ import static de.guite.modulestudio.metamodel.modulestudio.RelationEditType.*
  */
 class ControllerExtensions {
 
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension Utils = new Utils
 
     /**
      * Makes a controller name lowercase. 

@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.ArrayField
@@ -36,12 +35,12 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExampleData {
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     /**
      * Entry point for example data used by the installer.

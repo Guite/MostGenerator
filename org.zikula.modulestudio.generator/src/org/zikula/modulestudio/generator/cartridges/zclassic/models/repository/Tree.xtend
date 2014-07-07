@@ -1,13 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.repository
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class Tree {
-    @Inject extension FormattingExtensions = new FormattingExtensions
+    extension FormattingExtensions = new FormattingExtensions
 
     def generate(Entity it, Application app) '''
         «IF tree != EntityTreeType::NONE»

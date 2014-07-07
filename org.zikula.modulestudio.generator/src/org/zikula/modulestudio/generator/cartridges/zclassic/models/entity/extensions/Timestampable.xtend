@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -9,7 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class Timestampable extends AbstractExtension implements EntityExtensionInterface {
 
-    @Inject extension FormattingExtensions = new FormattingExtensions
+    extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Generates additional annotations on class level.

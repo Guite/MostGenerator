@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Action
 import de.guite.modulestudio.metamodel.modulestudio.AjaxController
@@ -29,15 +28,15 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Forms {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
-    @Inject extension ViewExtensions = new ViewExtensions
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
+    extension ViewExtensions = new ViewExtensions
 
     SimpleFields fieldHelper = new SimpleFields
     Relations relationHelper = new Relations

@@ -1,13 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class MigrationHelper {
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension Utils = new Utils
 
     def generateUsageExample(Application it) '''
         // rename module for all modvars

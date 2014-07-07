@@ -1,11 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import com.google.inject.Inject
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleInstaller {
-    @Inject extension Utils = new Utils
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 

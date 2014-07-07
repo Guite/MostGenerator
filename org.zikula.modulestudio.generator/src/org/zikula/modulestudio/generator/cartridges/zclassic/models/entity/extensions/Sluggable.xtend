@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -11,9 +10,9 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Sluggable extends AbstractExtension implements EntityExtensionInterface {
 
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension Utils = new Utils
 
     /**
      * Generates additional annotations on class level.

@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.Application
@@ -39,10 +38,10 @@ import static de.guite.modulestudio.metamodel.modulestudio.IpAddressScope.*
  * TODO document class and methods.
  */
 class ModelExtensions {
-    @Inject extension CollectionUtils = new CollectionUtils
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension Utils = new Utils
-    @Inject extension WorkflowExtensions = new WorkflowExtensions
+    extension CollectionUtils = new CollectionUtils
+    extension FormattingExtensions = new FormattingExtensions
+    extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     /**
      * Returns a list of all entities in this application.

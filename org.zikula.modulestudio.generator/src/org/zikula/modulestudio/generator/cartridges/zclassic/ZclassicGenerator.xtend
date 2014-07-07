@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
@@ -54,11 +53,11 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ZclassicGenerator implements IGenerator {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    @Inject extension WorkflowExtensions = new WorkflowExtensions
+    extension ControllerExtensions = new ControllerExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
     IProgressMonitor pm

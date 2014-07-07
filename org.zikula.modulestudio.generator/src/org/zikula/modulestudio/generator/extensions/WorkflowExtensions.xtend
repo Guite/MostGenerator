@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
@@ -13,7 +12,7 @@ class WorkflowExtensions {
     /**
      * Extensions related to the model layer.
      */
-	@Inject extension ModelWorkflowExtensions = new ModelWorkflowExtensions
+	extension ModelWorkflowExtensions = new ModelWorkflowExtensions
 
     /**
      * Determines whether any entity in the given application uses a certain workflow type.

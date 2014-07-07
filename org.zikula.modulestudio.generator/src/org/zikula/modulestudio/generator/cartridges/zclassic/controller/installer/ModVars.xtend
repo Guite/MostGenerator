@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Variable
 import de.guite.modulestudio.metamodel.modulestudio.BoolVar
 import de.guite.modulestudio.metamodel.modulestudio.IntVar
@@ -13,8 +12,8 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
  * Utility methods for the installer.
  */
 class ModVars {
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
 
     def valFromSession(Variable it) {
         switch it {

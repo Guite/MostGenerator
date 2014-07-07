@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.StringField
@@ -14,11 +13,11 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Atom {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension UrlExtensions = new UrlExtensions
-    @Inject extension Utils = new Utils
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
 
     Application app
 

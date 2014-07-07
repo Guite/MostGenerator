@@ -1,11 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Core {
-    @Inject extension Utils = new Utils
+    extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
 

@@ -1,15 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventListener {
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension Utils = new Utils
+    extension ControllerExtensions = new ControllerExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension Utils = new Utils
 
     /**
      * Entry point for event listeners registered by the installer.

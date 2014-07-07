@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
@@ -23,15 +22,15 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Display {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension ModelExtensions = new ModelExtensions
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension UrlExtensions = new UrlExtensions
-    @Inject extension Utils = new Utils
-    @Inject extension ViewExtensions = new ViewExtensions
-    @Inject extension WorkflowExtensions = new WorkflowExtensions
+    extension ControllerExtensions = new ControllerExtensions
+    extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension UrlExtensions = new UrlExtensions
+    extension Utils = new Utils
+    extension ViewExtensions = new ViewExtensions
+    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating display templates for entity "' + name.formatForDisplay + '"')

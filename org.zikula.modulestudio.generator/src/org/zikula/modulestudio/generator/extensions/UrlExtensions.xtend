@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 
@@ -12,17 +11,17 @@ class UrlExtensions {
     /**
      * Extensions used for formatting element names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions
+    extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Extensions related to behavioural aspects of the model layer.
      */
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
     /**
      * Extensions related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions
+    extension ModelExtensions = new ModelExtensions
 
     /**
      * Collects parameters for a route relating a given entity,

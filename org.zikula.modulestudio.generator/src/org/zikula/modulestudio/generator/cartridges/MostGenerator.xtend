@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
@@ -11,7 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.transformation.PersistenceTransformer
 
 class MostGenerator implements IGenerator {
-    @Inject extension ModelExtensions = new ModelExtensions
+    extension ModelExtensions = new ModelExtensions
 
     String cartridge = ''
 

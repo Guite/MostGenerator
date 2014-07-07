@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -9,9 +8,9 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleFile {
 
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     FileHelper fh = new FileHelper
 

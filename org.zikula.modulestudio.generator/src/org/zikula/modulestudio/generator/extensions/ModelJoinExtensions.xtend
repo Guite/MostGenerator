@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.CascadeType
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
@@ -24,12 +23,12 @@ class ModelJoinExtensions {
     /**
      * Extensions used for formatting element names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions
+    extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Extensions related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions
+    extension ModelExtensions = new ModelExtensions
 
     /**
      * Returns the table name for a certain join side, including the application specific prefix.

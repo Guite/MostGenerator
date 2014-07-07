@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
@@ -10,8 +9,8 @@ import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
  */
 class ViewExtensions {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ControllerExtensions = new ControllerExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
      * Determines whether grouping panels with JavaScript for

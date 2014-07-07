@@ -1,12 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class FilterSyntaxDialog {
-    @Inject extension NamingExtensions = new NamingExtensions
+    extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = 'include_filterSyntaxDialog.tpl'

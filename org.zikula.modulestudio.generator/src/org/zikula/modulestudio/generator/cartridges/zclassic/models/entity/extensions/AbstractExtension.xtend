@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -13,11 +12,11 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 abstract class AbstractExtension implements EntityExtensionInterface {
 
-    @Inject extension FormattingExtensions = new FormattingExtensions
-    @Inject extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
-    @Inject extension NamingExtensions = new NamingExtensions
-    @Inject extension Utils = new Utils
+    extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     Application app
     String classType = ''
