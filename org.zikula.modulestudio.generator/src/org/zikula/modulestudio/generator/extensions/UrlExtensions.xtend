@@ -114,7 +114,7 @@ class UrlExtensions {
         if (template)
             routeParamsForTemplate(getPrimaryKeyFields, objName, customVarName)
         else
-            routeParamsForCode(getPrimaryKeyFields, objName, customVarName).toString.substring(2)
+            routeParamsForCode(getPrimaryKeyFields, objName, customVarName).substring(2)
     }
 
     /**
