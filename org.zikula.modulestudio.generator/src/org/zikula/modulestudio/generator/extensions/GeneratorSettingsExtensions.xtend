@@ -182,11 +182,7 @@ class GeneratorSettingsExtensions {
      */
     def getListOfFilesToBeSkipped(Application it) {
         if (hasSettings && getSettings.skipFiles !== null) {
-            var list = getSettings.skipFiles.replace("\t", '').replace("\n", '').split(',').toList
-            for (i : 0 ..< list.size) {
-                list.set(i, list.get(i).trim)
-            }
-            list
+            getListOfAffectedFiles(getSettings.skipFiles)
         } else {
             newArrayList('')
         }
@@ -197,12 +193,21 @@ class GeneratorSettingsExtensions {
      */
     def getListOfFilesToBeMarked(Application it) {
         if (hasSettings && getSettings.markFiles !== null) {
-            val list = getSettings.markFiles.replace("\t", '').replace("\n", '').split(',').toList
-            list.forEach[trim]
-            list
+            getListOfAffectedFiles(getSettings.markFiles)
         } else {
             newArrayList('')
         }
+    }
+
+    /**
+     * Prepares a list of file pathes for further processing.
+     */
+    def private getListOfAffectedFiles(String setting) {
+        var list = setting.replace("\t", '').replace("\n", '').split(',').toList
+        for (i : 0 ..< list.size) {
+            list.set(i, list.get(i).trim)
+        }
+        list
     }
 
     /**
