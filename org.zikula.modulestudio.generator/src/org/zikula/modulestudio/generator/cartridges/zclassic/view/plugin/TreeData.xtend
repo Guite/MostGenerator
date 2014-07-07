@@ -142,8 +142,9 @@ class TreeData {
             function processTreeItemWithChildren($node, $rootId, $descriptionFieldName, $controllerHasEditAction)
             {
                 $output = '';
+                $idPrefix = 'tree' . $rootId . 'node_' . $item->createCompositeIdentifier();
                 $title = (($descriptionFieldName != '') ? strip_tags($item[$descriptionFieldName]) : '');
-                $liTag = '<li id="tree' . $rootId . 'node_' . $item->createCompositeIdentifier() . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $item->getLvl() . '">';
+                $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $item->getLvl() . '">';
 
                 $liContent = $item->getTitleFromDisplayPattern();
                 if ($controllerHasEditAction) {
@@ -152,6 +153,15 @@ class TreeData {
                     $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $params['objectType'] . '_edit', $urlArgs);
 
                     $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
+
+                    // add dropdown for available node-related actions
+                    $liContent .= '
+                        <div class="dropdown">
+                            <a id="' . $idPrefix . 'DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="dropdown-toggle"><span class="caret"></span></a>
+                            <ul id="' . $idPrefix . 'DropDownMenu" class="dropdown-menu" role="menu" aria-labelledby="' . $idPrefix . 'DropDownToggle">
+                            </ul>
+                        </div>
+                    ';
                 }
 
                 $treeItem = $liTag . $liContent;

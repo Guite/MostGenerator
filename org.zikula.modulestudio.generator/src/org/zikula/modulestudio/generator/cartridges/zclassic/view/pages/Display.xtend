@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -109,7 +110,7 @@ class Display {
 
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
                 «callDisplayHooks(appName)»
-                «itemActions(appName)»
+                «new ItemActionsView().generate(it, 'display')»
                 «IF useGroupingPanels('display')»
                     </div>«/* panels */»
                 «ENDIF»
@@ -198,7 +199,7 @@ class Display {
         {/if}
     '''
 
-    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»{icon id='itemActionsTrigger' type='options' size='extrasmall' __alt='Actions' class='«IF isLegacyApp»z-pointer z-hide«ELSE»cursor-pointer hidden«ENDIF»'}'''
+    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»«new ItemActionsView().trigger(it, 'display')»'''
 
     def private displayEntry(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
@@ -257,35 +258,6 @@ class Display {
             {gt text='Not set.'}
         {/if}
         </dd>
-    '''
-
-    def private itemActions(Entity it, String appName) '''
-        {if count($«name.formatForCode»._actions) gt 0}
-            «itemActionsImpl(appName)»
-        {/if}
-    '''
-
-    def private itemActionsImpl(Entity it, String appName) '''
-        <p id="itemActions">
-        {foreach item='option' from=$«name.formatForCode»._actions}
-            <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="«IF isLegacyApp»z-icon-es«ELSE»fa fa«ENDIF»-{$option.icon}">{$option.linkText|safetext}</a>
-        {/foreach}
-        </p>
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            «IF isLegacyApp»
-                document.observe('dom:loaded', function() {
-                    «container.application.prefix()»InitItemActions('«name.formatForCode»', 'display', 'itemActions');
-                });
-            «ELSE»
-                ( function($) {
-                    $(document).ready(function() {
-                        «container.application.prefix()»InitItemActions('«name.formatForCode»', 'display', 'itemActions');
-                    });
-                })(jQuery);
-            «ENDIF»
-        /* ]]> */
-        </script>
     '''
 
     def private displayExtensions(Entity it, String objName) '''

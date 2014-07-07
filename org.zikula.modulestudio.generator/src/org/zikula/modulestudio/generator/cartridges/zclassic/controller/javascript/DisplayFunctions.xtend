@@ -37,8 +37,10 @@ class DisplayFunctions {
 
     def private generate(Application it) '''
         'use strict';
+        «IF targets('1.3.5')»
 
-        «initItemActions»
+            «initItemActions»
+        «ENDIF»
         «IF !getAllControllers.map[hasActions('view')].empty»
 
             «initQuickNavigation»
@@ -147,7 +149,7 @@ class DisplayFunctions {
                     }
                 «ELSE»
                     if (elem.hasClass('fa')) {
-                        icon = $('<span>', { class: elemClass });
+                        icon = $('<i>', { class: elemClass });
                     }
                 «ENDIF»
 

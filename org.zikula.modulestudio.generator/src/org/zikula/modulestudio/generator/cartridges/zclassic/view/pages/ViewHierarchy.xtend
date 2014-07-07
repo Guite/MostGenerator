@@ -148,7 +148,7 @@ class ViewHierarchy {
                 </div>
             «ELSE»
                 {if $hasNodes}
-                    <ul>
+                    <ul id="itemTree{$rootId}">
                         {«appName.formatForDB»TreeData objectType='«name.formatForCode»' tree=$items controller=$lct root=$rootId}
                     </ul>
                 {/if}
@@ -212,6 +212,8 @@ class ViewHierarchy {
                                     $('#{{$idPrefix}}').jstree(true).search(v);
                                 }, 250);
                             });
+
+                            $('.dropdown-toggle').dropdown();
                         });
                     })(jQuery);
                 «ENDIF»

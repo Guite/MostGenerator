@@ -16,6 +16,7 @@ import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -538,51 +539,14 @@ class View {
     }
 
     def private itemActions(Entity it, String appName) '''
-        «val objName = name.formatForCode»
         «IF listType != 3»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«itemActionContainerId»" headers="hItemActions" class="«IF container.application.targets('1.3.5')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
+            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF container.application.targets('1.3.5')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
         «ENDIF»
-            {if count($«objName»._actions) gt 0}
-                {foreach item='option' from=$«objName»._actions}
-                    «IF container.application.targets('1.3.5')»
-                        <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
-                    «ELSE»
-                        <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'zoom-in'} target="_blank"{/if} class="fa fa-{$option.icon}" data-linktext="{$option.linkText|safetext}"></a>
-                    «ENDIF»
-                {/foreach}
-                {icon id="«itemActionContainerIdForSmarty»Trigger" type='options' size='extrasmall' __alt='Actions' class='«IF container.application.targets('1.3.5')»z-pointer z-hide«ELSE»cursor-pointer hidden«ENDIF»'}
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    «IF container.application.targets('1.3.5')»
-                        document.observe('dom:loaded', function() {
-                            «container.application.prefix()»InitItemActions('«name.formatForCode»', 'view', '«itemActionContainerIdForJs»');
-                        });
-                    «ELSE»
-                        ( function($) {
-                            $(document).ready(function() {
-                                «container.application.prefix()»InitItemActions('«name.formatForCode»', 'view', '«itemActionContainerIdForJs»');
-                            });
-                        })(jQuery);
-                    «ENDIF»
-                /* ]]> */
-                </script>
-            {/if}
+            «new ItemActionsView().generate(it, 'view')»
         </«listType.asItemTag»>
     '''
-
-    def private itemActionContainerId(Entity it) '''
-        «val objName = name.formatForCode»
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$«objName».«pkField.name.formatForCode»}«ENDFOR»'''
-
-    def private itemActionContainerIdForJs(Entity it) '''
-        «val objName = name.formatForCode»
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«objName».«pkField.name.formatForCode»}}«ENDFOR»'''
-
-    def private itemActionContainerIdForSmarty(Entity it) '''
-        «val objName = name.formatForCode»
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«objName».«pkField.name.formatForCode»`«ENDFOR»'''
 
     def private asListTag (Integer listType) {
         switch listType {
