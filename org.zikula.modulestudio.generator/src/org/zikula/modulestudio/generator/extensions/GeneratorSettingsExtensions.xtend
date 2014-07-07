@@ -182,8 +182,10 @@ class GeneratorSettingsExtensions {
      */
     def getListOfFilesToBeSkipped(Application it) {
         if (hasSettings && getSettings.skipFiles !== null) {
-            val list = getSettings.skipFiles.replace("\t", '').replace("\n", '').split(',').toList
-            list.forEach[trim]
+            var list = getSettings.skipFiles.replace("\t", '').replace("\n", '').split(',').toList
+            for (i : 0 ..< list.size) {
+                list.set(i, list.get(i).trim)
+            }
             list
         } else {
             newArrayList('')
