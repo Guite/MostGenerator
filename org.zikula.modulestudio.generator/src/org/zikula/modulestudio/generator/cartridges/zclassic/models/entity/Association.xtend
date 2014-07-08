@@ -62,7 +62,7 @@ class Association {
          *
         «incomingMappingDetails»
          * @ORM\«incomingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
-        «IF it instanceof OneToManyRelationship && getSourceFields.length == 1» * «joinColumn(getSourceFields.head, source.getFirstPrimaryKey.name.formatForDB, false)»«ELSE»«joinDetails(false)»«ENDIF»«/* @JoinTable is not required for most @ManyToOne relationships */»
+        «joinDetails(false)»
         «IF !container.application.targets('1.3.5')»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(false).toFirstLower»
