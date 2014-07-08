@@ -16,6 +16,7 @@ import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
+import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.ObjectField
@@ -155,6 +156,7 @@ class ExampleData {
             «ENDIF»
             «FOR relation : outgoing.filter(OneToOneRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
             «FOR relation : outgoing.filter(ManyToOneRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
+            «FOR relation : outgoing.filter(ManyToManyRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.container.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
@@ -276,8 +278,11 @@ class ExampleData {
         }
     }
 
-    def private exampleRowAssignmentOutgoing(JoinRelationship it, String entityName, Integer number) '''
+    def private dispatch exampleRowAssignmentOutgoing(JoinRelationship it, String entityName, Integer number) '''
             $«entityName»«number»->set«getRelationAliasName(true).formatForCodeCapital»($«target.name.formatForCode»«number»);
+    '''
+    def private dispatch exampleRowAssignmentOutgoing(ManyToManyRelationship it, String entityName, Integer number) '''
+            $«entityName»«number»->add«getRelationAliasName(true).formatForCodeCapital»($«target.name.formatForCode»«number»);
     '''
     def private exampleRowAssignmentIncoming(JoinRelationship it, String entityName, Integer number) '''
             $«entityName»«number»->set«getRelationAliasName(false).formatForCodeCapital»($«source.name.formatForCode»«number»);
