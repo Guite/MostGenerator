@@ -112,7 +112,7 @@ class Relations {
     }
 
     def displayRelatedItems(JoinRelationship it, String appName, Entity relatedEntity) '''
-        «val incoming = (if (target == relatedEntity) true else false)»
+        «val incoming = (if (target == relatedEntity && source != relatedEntity) true else false)»«/* use outgoing mode for self relations #547 */»
         «val useTarget = !incoming»
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
         «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»

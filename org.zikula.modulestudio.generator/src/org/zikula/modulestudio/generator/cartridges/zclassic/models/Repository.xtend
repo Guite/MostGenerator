@@ -831,11 +831,10 @@ class Repository {
          */
         public function addCommonViewFilters(QueryBuilder $qb)
         {
-            /* commented out to allow default filters also for other calls, like content types and mailz
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
-            if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'finder'))) {
+            if ($currentFunc == 'edit') {«/* fix for #547 */»
                 return $qb;
-            }*/
+            }
 
             «IF !app.targets('1.3.5')»
                 if ($this->getRequest() === null) {
