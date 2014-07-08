@@ -22,7 +22,7 @@ class ItemActionsView {
     def private markup(Entity it, String context) '''
         «IF container.application.targets('1.3.5')»
             «IF context == 'display'»
-                <p id="itemActions">
+                <p id="«itemActionContainerViewId»">
                     «linkList(context)»
                 </p>
             «ELSEIF context == 'view'»
