@@ -272,8 +272,8 @@ class Association {
         if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
            && !unique && nullable && onDelete == '') ''' * @ORM\JoinTable(name="«foreignTableName»")'''
         else ''' * @ORM\JoinTable(name="«foreignTableName»",
-        «joinTableDetails(useTarget)»
-         * )'''
+«joinTableDetails(useTarget)»
+ * )'''
     }
 
     def private joinTableDetails(JoinRelationship it, Boolean useTarget) '''
@@ -294,11 +294,14 @@ class Association {
     def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, Entity joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»},'''
 
     def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget) '''
-        @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF onDelete != ''», onDelete="«onDelete»"«ENDIF»)
-    '''
+        @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF onDelete != ''», onDelete="«onDelete»"«ENDIF»)'''
 
     def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
-        (if (useTarget) target else source).name.formatForDB + '_' + columnName //$NON-NLS-1$
+        switch it {
+            ManyToManyRelationship case columnName == 'id': (if (useTarget) target else source).name.formatForDB + '_id' //$NON-NLS-1$ //$NON-NLS-2$
+            default: columnName
+        }
+        //(if (useTarget) target else source).name.formatForDB + '_' + columnName //$NON-NLS-1$
     }
 
     def private additionalOptions(JoinRelationship it, Boolean useReverse) '''«cascadeOptions(useReverse)»«fetchTypeTag»'''
