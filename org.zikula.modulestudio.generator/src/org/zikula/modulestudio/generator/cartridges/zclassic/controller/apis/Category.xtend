@@ -67,7 +67,7 @@ class Category {
                 $logger->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
             «ENDIF»
 
-            return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
+            return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucfirst($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
         }
 
         /**
@@ -209,7 +209,7 @@ class Category {
         {
             $objectType = $this->determineObjectType($args, 'getAllProperties');
 
-            $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds($this->name, ucwords($objectType));
+            $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds($this->name, ucfirst($objectType));
 
             return $propertyIdsPerName;
         }
@@ -230,7 +230,7 @@ class Category {
                 $args['arraykey'] = '';
             }
 
-            $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, ucwords($objectType), $args['arraykey']);
+            $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, ucfirst($objectType), $args['arraykey']);
 
             return $registryInfo;
         }
@@ -247,7 +247,7 @@ class Category {
         {
             $objectType = $this->determineObjectType($args, 'getMainCatForProperty');
 
-            $catId = CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['property']);
+            $catId = CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucfirst($objectType), $args['property']);
 
             return $catId;
         }

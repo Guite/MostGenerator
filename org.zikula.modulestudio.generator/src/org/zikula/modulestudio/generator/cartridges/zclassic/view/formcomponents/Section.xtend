@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponent
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -25,6 +26,8 @@ class Section {
         «extensionsAndRelations(app, fsa)»
 
         «displayHooks(app)»
+
+        «additionalRemark»
 
         «returnControl»
 
@@ -114,18 +117,40 @@ class Section {
         {/if}
     '''
 
+    def private additionalRemark(Entity it) '''
+        «IF workflow != EntityWorkflowType.NONE»
+            <fieldset>
+                <legend>{gt text='Communication'}</legend>
+                <div class="«IF isLegacyApp»z-formrow«ELSE»form-group«ENDIF»">
+                    {usergetvar name='uid' assign='uid'}
+                    {formlabel for='additionalNotificationRemarks' __text='Additional remarks'«IF !isLegacyApp» cssClass='col-lg-3 control-label'«ENDIF»}
+                    {gt text='Enter any additions about your changes' assign='fieldTitle'}
+                    {if $mode eq 'create'}
+                        {gt text='Enter any additions about your content' assign='fieldTitle'}
+                    {/if}
+                    {formtextinput group='«name.formatForDB»' id='additionalNotificationRemarks' mandatory=false title=$fieldTitle textMode='multiline' rows='6«/*8*/»'«IF isLegacyApp» cols='50'«ENDIF»}
+                    {if $isModerator || $isSuperModerator}
+                        <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.'}</span>
+                    {elseif $isCreator}
+                        <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.'}</span>
+                    {/if}
+                </div>
+            </fieldset>
+        «ENDIF»
+    '''
+
     def private returnControl(Entity it) '''
         {* include return control *}
         {if $mode eq 'create'}
             <fieldset>
                 <legend>{gt text='Return control'}</legend>
-                <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                    {formlabel for='repeatCreation' __text='Create another item after save'«IF !container.application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
-                «IF !container.application.targets('1.3.5')»
+                <div class="«IF isLegacyApp»z-formrow«ELSE»form-group«ENDIF»">
+                    {formlabel for='repeatCreation' __text='Create another item after save'«IF !isLegacyApp» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !isLegacyApp»
                     <div class="col-lg-9">
                 «ENDIF»
                         {formcheckbox group='«name.formatForDB»' id='repeatCreation' readOnly=false}
-                «IF !container.application.targets('1.3.5')»
+                «IF !isLegacyApp»
                     </div>
                 «ENDIF»
                 </div>
@@ -135,12 +160,20 @@ class Section {
 
     def private submitActions(Entity it) '''
         {* include possible submit actions *}
-        <div class="«IF container.application.targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
-        «IF !container.application.targets('1.3.5')»
+        <div class="«IF isLegacyApp»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
+        «IF !isLegacyApp»
             <div class="col-lg-offset-3 col-lg-9">
+                «submitActionsImpl»
+            </div>
+        «ELSE»
+            «submitActionsImpl»
         «ENDIF»
+        </div>
+    '''
+
+    def private submitActionsImpl(Entity it) '''
         {foreach item='action' from=$actions}
-            {assign var='actionIdCapital' value=$action.id|@ucwords}
+            {assign var='actionIdCapital' value=$action.id|@ucfirst}
             {gt text=$action.title assign='actionTitle'}
             {*gt text=$action.description assign='actionDescription'*}{* TODO: formbutton could support title attributes *}
             {if $action.id eq 'delete'}
@@ -150,10 +183,10 @@ class Section {
                 {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
             {/if}
         {/foreach}
-            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF container.application.targets('1.3.5')»z-bt-cancel«ELSE»btn btn-default«ENDIF»'}
-        «IF !container.application.targets('1.3.5')»
-            </div>
-        «ENDIF»
-        </div>
+        {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»'}
     '''
+
+    def private isLegacyApp(Entity it) {
+        container.application.targets('1.3.5')
+    }
 }

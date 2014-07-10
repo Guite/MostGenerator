@@ -85,7 +85,7 @@ class ViewUtil {
         public function getViewTemplate(Zikula_View $view, $type, $func, «IF targets('1.3.5')»$args = array()«ELSE»Request $request«ENDIF»)
         {
             // create the base template name
-            $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type«ELSE»ucwords($type)«ENDIF» . '/' . $func);
+            $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type«ELSE»ucfirst($type)«ENDIF» . '/' . $func);
 
             // check for template extension
             $templateExtension = $this->determineExtension($view, $type, $func, «IF targets('1.3.5')»$args«ELSE»$request«ENDIF»);
@@ -254,7 +254,7 @@ class ViewUtil {
         public function availableExtensions($type, $func)
         {
             $extensions = array();
-            $hasAdminAccess = SecurityUtil::checkPermission('«appName»:' . ucwords($type) . ':', '::', ACCESS_ADMIN);
+            $hasAdminAccess = SecurityUtil::checkPermission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
             if ($func == 'view') {
                 if ($hasAdminAccess) {
                     $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»);

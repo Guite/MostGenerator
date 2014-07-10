@@ -63,7 +63,7 @@ class TreeSelection {
             }
 
             «IF targets('1.3.5')»
-                $entityClass = '«appName»_Entity_' . ucwords($params['objectType']);
+                $entityClass = '«appName»_Entity_' . ucfirst($params['objectType']);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             «IF targets('1.3.5')»

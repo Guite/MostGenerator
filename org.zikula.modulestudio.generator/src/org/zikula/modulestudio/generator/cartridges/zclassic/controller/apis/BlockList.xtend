@@ -191,7 +191,7 @@ class BlockList {
             $objectType = $vars['objectType'];
 
             «IF targets('1.3.5')»
-                $entityClass = '«appName»_Entity_' . ucwords($objectType);
+                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
@@ -200,7 +200,7 @@ class BlockList {
 
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
-            $component = '«appName»:' . ucwords($objectType) . ':';
+            $component = '«appName»:' . ucfirst($objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
             if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
@@ -447,9 +447,9 @@ class BlockList {
 
             // clear the block cache
             $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . ucwords($vars['objectType']) . '_display.tpl');
+            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($vars['objectType']) . '_display.tpl');
             $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . ucwords($vars['objectType']) . '_display_description.tpl');
+            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($vars['objectType']) . '_display_description.tpl');
 
             return $blockinfo;
         }

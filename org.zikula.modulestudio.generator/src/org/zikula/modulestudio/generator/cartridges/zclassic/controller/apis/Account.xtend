@@ -81,7 +81,7 @@ class Account {
             «IF !getAllUserControllers.empty && getMainUserController.hasActions('view')»
                 «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
                     $objectType = '«entity.name.formatForCode»';
-                    if (SecurityUtil::checkPermission($this->name . ':' . ucwords($objectType) . ':', '::', ACCESS_READ)) {
+                    if (SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                         $items[] = array(
                             «IF targets('1.3.5')»
                                 'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),

@@ -23,6 +23,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Cat
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeSingle
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Mailz
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Notification
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Search
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
@@ -221,6 +222,11 @@ class ZclassicGenerator implements IGenerator {
             pm?.subTask('Integration: Search api')
             println('Generating search api')
             new Search().generate(it, fsa)
+        }
+        if (needsApproval) {
+            pm?.subTask('Integration: Notification api')
+            println('Generating notification api')
+            new Notification().generate(it, fsa)
         }
     }
 

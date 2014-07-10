@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.Emails
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Attributes
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.Categories
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.extensions.MetaData
@@ -87,6 +88,9 @@ class Views {
         }
         if (needsConfig) {
             new Config().generate(it, fsa)
+        }
+        if (needsApproval) {
+            new Emails().generate(it, fsa)
         }
         pdfHeaderFile
     }

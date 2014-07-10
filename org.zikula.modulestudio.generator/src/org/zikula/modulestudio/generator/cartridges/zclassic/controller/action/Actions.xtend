@@ -57,7 +57,7 @@ class Actions {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
             $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
-            «permissionCheck("' . ucwords($objectType) . '", '')»
+            «permissionCheck("' . ucfirst($objectType) . '", '')»
         «ENDIF»
         «actionImplBody»
     '''
@@ -119,7 +119,7 @@ class Actions {
             $objectType = '«name.formatForCode»';
             $utilArgs = array('controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»');
             $permLevel = $legacyControllerType == 'admin' ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
-            «action.permissionCheck("' . ucwords($objectType) . '", '')»
+            «action.permissionCheck("' . ucfirst($objectType) . '", '')»
         «ENDIF»
         «actionImplBody(it, action)»
     '''
@@ -223,7 +223,7 @@ class Actions {
 
     def private actionImplBodyAjaxView(ViewAction it) '''
         «IF app.targets('1.3.5')»
-            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
@@ -270,7 +270,7 @@ class Actions {
 
         // prepare access level for cache id
         $accessLevel = ACCESS_READ;
-        $component = '«app.appName»:' . ucwords($objectType) . ':';
+        $component = '«app.appName»:' . ucfirst($objectType) . ':';
         $instance = '::';
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
@@ -324,7 +324,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
         «IF app.targets('1.3.5')»
-            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
@@ -381,7 +381,7 @@ class Actions {
 
         // prepare access level for cache id
         $accessLevel = ACCESS_READ;
-        $component = '«app.appName»:' . ucwords($objectType) . ':';
+        $component = '«app.appName»:' . ucfirst($objectType) . ':';
         $instance = '::';
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
@@ -552,7 +552,7 @@ class Actions {
 
     def private actionImplBodyAjaxDisplay(DisplayAction it) '''
         «IF app.targets('1.3.5')»
-            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
@@ -588,7 +588,7 @@ class Actions {
 
         $instanceId = $entity->createCompositeIdentifier();
 
-        «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
+        «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
         $result = array(
             'result' => true,
@@ -600,7 +600,7 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
         «IF app.targets('1.3.5')»
-            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
 
@@ -614,7 +614,7 @@ class Actions {
             $hasSlug = false;
             $slug = '';
             if ($hasIdentifier === false) {
-                $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+                $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
                 $meta = $this->entityManager->getClassMetadata($entityClass);
                 $hasSlug = $meta->hasField('slug') && $meta->isUniqueField('slug');
                 if ($hasSlug) {
@@ -646,7 +646,7 @@ class Actions {
 
         «prepareDisplayPermissionCheck»
 
-        «action.permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
+        «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
         «processDisplayOutput»
     '''
@@ -668,7 +668,7 @@ class Actions {
         $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'display', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
 
         // set cache id
-        $component = $this->name . ':' . ucwords($objectType) . ':';
+        $component = $this->name . ':' . ucfirst($objectType) . ':';
         $instance = $instanceId . '::';
         $accessLevel = ACCESS_READ;
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
@@ -722,7 +722,7 @@ class Actions {
 
         $instanceId = $entity->createCompositeIdentifier();
 
-        «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
+        «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
         $result = array(
             'result' => false,
@@ -933,7 +933,7 @@ class Actions {
         }
 
         «IF app.targets('1.3.5')»
-            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+            $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
             $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();

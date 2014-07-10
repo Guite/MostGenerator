@@ -13,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Config {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
@@ -168,7 +169,11 @@ class Config {
     '''
 
     def private dispatch inputField(IntVar it) '''
-        {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+        «IF isUserGroupSelector»
+            {formdropdownlist id='«name.formatForCode»' group='config' __title='Choose the «name.formatForDisplay»'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+        «ELSE»
+            {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+        «ENDIF»
     '''
 
     def private dispatch inputField(BoolVar it) '''

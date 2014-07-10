@@ -65,14 +65,14 @@ class Tag {
             $urlArgs = $urlObject->getArgs();
             $objectType = isset($urlArgs['ot']) ? $urlArgs['ot'] : '«getLeadingEntity.name.formatForCode»';
 
-            $component = $module . ':' . ucwords($objectType) . ':';
+            $component = $module . ':' . ucfirst($objectType) . ':';
             $perm = SecurityUtil::checkPermission($component, $objectId . '::', ACCESS_READ);
             if (!$perm) {
                 return;
             }
 
             «IF targets('1.3.5')»
-                $entityClass = $module . '_Entity_' . ucwords($objectType);
+                $entityClass = $module . '_Entity_' . ucfirst($objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             «IF targets('1.3.5')»

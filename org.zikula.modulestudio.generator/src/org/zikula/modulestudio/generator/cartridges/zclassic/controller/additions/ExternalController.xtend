@@ -128,7 +128,7 @@ class ExternalController {
             $id = isset($args['id']) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
         «ENDIF»
 
-        $component = $this->name . ':' . ucwords($objectType) . ':';
+        $component = $this->name . ':' . ucfirst($objectType) . ':';
         if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
             return '';
         }
@@ -144,7 +144,7 @@ class ExternalController {
                 $displayMode = 'embed';
             }
 
-            $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
@@ -188,7 +188,7 @@ class ExternalController {
         «IF targets('1.3.5')»
             return $this->view->fetch('external/' . $objectType . '/display.tpl');
         «ELSE»
-            return $this->response($this->view->fetch('External/' . ucwords($objectType) . '/display.tpl'));
+            return $this->response($this->view->fetch('External/' . ucfirst($objectType) . '/display.tpl'));
         «ENDIF»
     '''
 
@@ -253,15 +253,15 @@ class ExternalController {
         }
 
         «IF targets('1.3.5')»
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
         «ELSE»
-            if (!SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT)) {
+            if (!SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
 
         «IF targets('1.3.5')»
-            $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
@@ -337,7 +337,7 @@ class ExternalController {
         «IF targets('1.3.5')»
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
-            return new PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+            return new PlainResponse($view->display('External/' . ucfirst($objectType) . '/find.tpl'));
         «ENDIF»
     '''
 

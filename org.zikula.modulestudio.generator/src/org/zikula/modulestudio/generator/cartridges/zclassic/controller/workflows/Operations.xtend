@@ -33,9 +33,9 @@ class Operations {
         this.fsa = fsa
         outputPath = getAppSourcePath + 'workflows/operations/'
 
-        generate(EntityWorkflowType::NONE)
-        generate(EntityWorkflowType::STANDARD)
-        generate(EntityWorkflowType::ENTERPRISE)
+        generate(EntityWorkflowType.NONE)
+        generate(EntityWorkflowType.STANDARD)
+        generate(EntityWorkflowType.ENTERPRISE)
     }
 
     def private generate(EntityWorkflowType wfType) {
@@ -47,6 +47,9 @@ class Operations {
 
         operation('update')
         operation('delete')
+        if (app.needsApproval) {
+            operation('notify')
+        }
     }
 
     def private operation(String opName) {
@@ -92,6 +95,7 @@ class Operations {
     def private operationImpl(String opName) '''
         «IF opName == 'update'»«updateImpl»
         «ELSEIF opName == 'delete'»«deleteImpl»
+        «ELSEIF opName == 'notify'»«notifyImpl»
         «ENDIF»
     '''
 
@@ -158,5 +162,15 @@ class Operations {
                 $logger->error('{app}: User {user} tried to delete an entity, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
             «ENDIF»
         }
+    '''
+
+    def private notifyImpl() '''
+        $notifyArgs = array(
+            'recipientType' => $params['recipientType'],
+            'action' => $params['action'],
+            'entity' => $entity
+        );
+
+        ModUtil::apiFunc('«app.appName»', 'notification', 'process', $notifyArgs);
     '''
 }

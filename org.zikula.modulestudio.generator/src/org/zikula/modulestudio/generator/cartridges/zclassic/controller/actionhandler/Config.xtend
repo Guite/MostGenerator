@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.IntVar
 import de.guite.modulestudio.metamodel.modulestudio.ListVar
 import de.guite.modulestudio.metamodel.modulestudio.ListVarItem
 import de.guite.modulestudio.metamodel.modulestudio.Variable
@@ -83,9 +84,19 @@ class Config {
                         throw new AccessDeniedException();
                     «ENDIF»
                 }
+                «IF !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty»
+
+                    // prepare list of user groups for moderation group selectors
+                    $userGroups = ModUtil::apiFunc('«IF targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'admin', 'getall');
+                    $userGroupItems = array();
+                    foreach ($userGroups as $userGroup) {
+                        $userGroupItems = array('value' => $userGroup['gid'], 'text' => $userGroup['name']);
+                    }
+                «ENDIF»
 
                 // retrieve module vars
                 $modVars = $this->getVars();
+
                 «FOR modvar : getAllVariables»«modvar.init»«ENDFOR»
 
                 // assign all module vars
@@ -197,6 +208,12 @@ class Config {
 
     def private dispatch init(Variable it) {
     }
+
+    def private dispatch init(IntVar it) '''
+        «IF isUserGroupSelector»
+            $modVars['«name.formatForCode»Items'] = $userGroupItems;
+        «ENDIF»
+    '''
 
     def private dispatch init(ListVar it) '''
         // initialise list entries for the '«name.formatForDisplay»' setting

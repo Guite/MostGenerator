@@ -131,7 +131,7 @@ class ItemSelector {
                 }
                 $firstTime = false;
 
-                if (!SecurityUtil::checkPermission('«appName»:' . ucwords($this->objectType) . ':', '::', ACCESS_COMMENT)) {
+                if (!SecurityUtil::checkPermission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
                     return false;
                 }
                 «IF hasCategorisableEntities»
@@ -148,7 +148,7 @@ class ItemSelector {
                 $this->selectedItemId = $this->text;
 
                 «IF targets('1.3.5')»
-                    $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
+                    $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
                 «IF targets('1.3.5')»
@@ -182,7 +182,7 @@ class ItemSelector {
                          ->assign('catIds', $catIds);
                 «ENDIF»
 
-                return $view->fetch(«IF targets('1.3.5')»'external/' . $this->objectType«ELSE»'External/' . ucwords($this->objectType)«ENDIF» . '/select.tpl');
+                return $view->fetch(«IF targets('1.3.5')»'external/' . $this->objectType«ELSE»'External/' . ucfirst($this->objectType)«ENDIF» . '/select.tpl');
             }
 
             /**

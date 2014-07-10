@@ -38,9 +38,9 @@ class PermissionCheck {
         this.fsa = fsa
         outputPath = getAppSourcePath + 'workflows/'
 
-        generate(EntityWorkflowType::NONE)
-        generate(EntityWorkflowType::STANDARD)
-        generate(EntityWorkflowType::ENTERPRISE)
+        generate(EntityWorkflowType.NONE)
+        generate(EntityWorkflowType.STANDARD)
+        generate(EntityWorkflowType.ENTERPRISE)
     }
 
     def private generate(EntityWorkflowType wfType) {
@@ -91,7 +91,7 @@ class PermissionCheck {
 
             // calculate the permission component
             $objectType = $obj['_objectType'];
-            $component = '«app.appName»:' . ucwords($objectType) . ':';
+            $component = '«app.appName»:' . ucfirst($objectType) . ':';
 
             // calculate the permission instance
             $idFields = ModUtil::apiFunc('«app.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
@@ -112,7 +112,7 @@ class PermissionCheck {
                 // check whether the current user is the owner
                 if (!$result && isset($obj['createdUserId']) && $obj['createdUserId'] == $currentUser) {
                     // allow author update operations for all states which occur before 'approved' in the object's life cycle.
-                    $result = in_array($actionId, array('initial'«IF app.hasWorkflowState(wfType, 'deferred')», 'deferred'«ENDIF»«IF wfType != EntityWorkflowType::NONE», 'waiting'«ENDIF», 'accepted'));
+                    $result = in_array($actionId, array('initial'«IF app.hasWorkflowState(wfType, 'deferred')», 'deferred'«ENDIF»«IF wfType != EntityWorkflowType.NONE», 'waiting'«ENDIF», 'accepted'));
                 }
             «ENDIF»
 

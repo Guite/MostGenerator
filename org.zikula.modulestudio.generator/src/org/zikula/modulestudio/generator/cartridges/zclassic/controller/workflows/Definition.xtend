@@ -35,9 +35,9 @@ class Definition {
         this.fsa = fsa
         outputPath = getAppSourcePath + 'workflows/'
 
-        generate(EntityWorkflowType::NONE)
-        generate(EntityWorkflowType::STANDARD)
-        generate(EntityWorkflowType::ENTERPRISE)
+        generate(EntityWorkflowType.NONE)
+        generate(EntityWorkflowType.STANDARD)
+        generate(EntityWorkflowType.ENTERPRISE)
     }
 
     def private generate(EntityWorkflowType wfType) {
@@ -165,16 +165,15 @@ class Definition {
 
     def private deferAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'deferred')»
-            «val permission = if (wfType == EntityWorkflowType::NONE) 'edit' else 'comment'»
+            «val permission = if (wfType == EntityWorkflowType.NONE) 'edit' else 'comment'»
             «actionImpl('defer', 'Defer', permission, it.value, 'deferred')»
         «ENDIF»
     '''
 
     def private submitAction(ListFieldItem it) '''
-        «IF wfType == EntityWorkflowType::NONE»
+        «IF wfType == EntityWorkflowType.NONE»
             «actionImpl('submit', 'Submit', 'edit', it.value, 'approved')»
         «ELSE»
-            «/*operations = update + '<operation group="moderators" action="create">notify</operation>'*/»
             «actionImpl('submit', 'Submit', 'comment', it.value, 'waiting')»
         «ENDIF»
     '''
@@ -185,40 +184,34 @@ class Definition {
 
     def private rejectAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'deferred')»
-            «/*operations = update + '<operation group="authors" action="promote">notify</operation>'*/»
             «actionImpl('reject', 'Reject', 'edit', it.value, 'deferred')»
         «ENDIF»
     '''
 
     def private acceptAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'accepted')»
-            «/*operations = update + '<operation group="editors" action="promote">notify</operation>'*/»
             «actionImpl('accept', 'Accept', 'edit', it.value, 'accepted')»
         «ENDIF»
     '''
 
     def private approveAction(ListFieldItem it) '''
-        «/*operations = update + '<operation group="authors/editors" action="promote">notify</operation>'*/»
         «actionImpl('approve', 'Approve', 'add', it.value, 'approved')»
     '''
 
     def private submitAndAcceptAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'accepted')»
-            «/*operations = update + '<operation group="editors" action="create">notify</operation>'*/»
             «actionImpl('accept', 'Submit and Accept', 'edit', it.value, 'accepted')»
         «ENDIF»
     '''
 
     def private submitAndApproveAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'waiting')»
-            «/*operations = update + '<operation group="editors" action="create">notify</operation>'*/»
             «actionImpl('approve', 'Submit and Approve', 'add', it.value, 'approved')»
         «ENDIF»
     '''
 
     def private demoteAction(ListFieldItem it) '''
         «IF app.hasWorkflowState(wfType, 'accepted')»
-            «/*operations = update + '<operation group="editors" action="demote">notify</operation>'*/»
             «actionImpl('demote', 'Demote', 'add', it.value, 'accepted')»
         «ENDIF»
     '''
@@ -276,7 +269,40 @@ class Definition {
             «ELSE»
                 <operation>update</operation>
             «ENDIF»
+            «IF wfType != EntityWorkflowType.NONE»
+                «notifyCall(id, state)»
+            «ENDIF»
         </action>
 
+    '''
+
+    def private notifyCall(String id, String state) '''
+        «IF id == 'submit' && state == 'waiting'»
+            <operation recipientType="moderator" action="«id»">notify</operation>
+        «ELSEIF id == 'reject' && state == 'deferred'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+        «ELSEIF id == 'accept' && state == 'accepted'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+            <operation recipientType="superModerator" action="«id»">notify</operation>
+        «ELSEIF id == 'approve' && state == 'approved'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+            «IF wfType == EntityWorkflowType.ENTERPRISE»
+                <operation recipientType="moderator" action="«id»">notify</operation>
+            «ENDIF»
+        «ELSEIF id == 'demote' && state == 'accepted'»
+            <operation recipientType="moderator" action="«id»">notify</operation>
+        «ELSEIF id == 'unpublish' && state == 'suspended'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+        «ELSEIF id == 'publish' && state == 'approved'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+        «ELSEIF id == 'archive' && state == 'archived'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+        «ELSEIF id == 'trash' && state == 'trashed'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+        «ELSEIF id == 'recover'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+        «ELSEIF id == 'delete'»
+            <operation recipientType="creator" action="«id»">notify</operation>
+        «ENDIF»
     '''
 }

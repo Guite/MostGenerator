@@ -143,7 +143,7 @@ class ModelUtil {
             }
 
             «IF targets('1.3.5')»
-                $entityClass = '«appName»_Entity_' . ucwords($objectType);
+                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();

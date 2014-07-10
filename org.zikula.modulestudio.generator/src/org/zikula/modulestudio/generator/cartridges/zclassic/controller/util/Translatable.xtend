@@ -122,7 +122,7 @@ class Translatable {
 
             // get translations
             «IF targets('1.3.5')»
-                $entityClass = '«appName»_Entity_' . ucwords($objectType) . 'Translation';
+                $entityClass = '«appName»_Entity_' . ucfirst($objectType) . 'Translation';
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();

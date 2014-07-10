@@ -1268,7 +1268,7 @@ class Repository {
                     // we need to create one category plugin instance for each one
                     $categoryProperties = ModUtil::apiFunc('«app.appName»', 'category', 'getAllProperties', array('ot' => '«name.formatForCode»'));
                     foreach ($categoryProperties as $propertyName => $registryId) {
-                        $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucwords($propertyName));
+                        $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
                     }
                 «ENDIF»
 

@@ -452,7 +452,7 @@ class WorkflowUtil {
     def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''
         $objectType = '«name.formatForCode»';
         «val permissionLevel = if (requiredAction == 'approval') 'ADD' else if (requiredAction == 'acceptance') 'EDIT' else 'MODERATE'»
-        if (SecurityUtil::checkPermission($modname . ':' . ucwords($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
+        if (SecurityUtil::checkPermission($modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if ($amount > 0) {
                 $amounts[] = array(
@@ -486,7 +486,7 @@ class WorkflowUtil {
         public function getAmountOfModerationItems($objectType, $state)
         {
             «IF targets('1.3.5')»
-                $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+                $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
                 $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»

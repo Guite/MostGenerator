@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
+import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -25,7 +26,7 @@ class PersistenceTransformer {
     /**
      * Transformation entry point consuming the application instance.
      *
-     * @param it The given {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     * @param it The given {@link Application} instance.
      */
     def modify(Application it) {
         // TEMPORARY
@@ -35,19 +36,24 @@ class PersistenceTransformer {
 
         println('Starting model transformation')
         // handle all entities
-        for (entity : getAllEntities)
+        for (entity : getAllEntities) {
             entity.handleEntity
+        }
+
+        addWorkflowSettings
     }
 
     /**
      * Transformation processing for a single entity.
      *
-     * @param it The currently treated {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
+     * @param it The currently treated {@link Entity} instance.
      */
     def private void handleEntity(Entity it) {
         //println('Transforming entity ' + name)
         //println('Field size before: ' + fields.size + ' fields')
-        if (getPrimaryKeyFields.empty) addPrimaryKey
+        if (getPrimaryKeyFields.empty) {
+            addPrimaryKey
+        }
         //println('Added primary key, field size now: ' + fields.size + ' fields')
         addWorkflowState
     }
@@ -55,7 +61,7 @@ class PersistenceTransformer {
     /**
      * Adds a primary key to a given entity.
      * 
-     * @param entity The given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
+     * @param entity The given {@link Entity} instance.
      */
     def private addPrimaryKey(Entity entity) {
         entity.fields.add(0, createIdColumn('', true))
@@ -82,7 +88,7 @@ class PersistenceTransformer {
     /**
      * Adds a list field for the workflow state to a given entity.
      * 
-     * @param entity The given {@link de.guite.modulestudio.metamodel.modulestudio.Entity} instance.
+     * @param entity The given {@link Entity} instance.
      */
     def private addWorkflowState(Entity entity) {
         val factory = ModulestudioFactory.eINSTANCE
@@ -170,5 +176,51 @@ class PersistenceTransformer {
         ]
 
         entity.indexes += wfIndex
+    }
+
+    def private addWorkflowSettings(Application it) {
+        val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
+        if (entitiesWithWorkflow.empty) {
+            return
+        }
+
+        val varContainer = createVarContainerForWorkflowSettings(defaultDataSource)
+        val factory = ModulestudioFactory.eINSTANCE
+
+        for (entity : entitiesWithWorkflow) {
+            varContainer.vars += factory.createIntVar => [
+                name = 'moderationGroupFor' + entity.nameMultiple.formatForCodeCapital
+                value = '2' // use admin group (gid=2) as fallback
+                documentation = 'Used to determine moderator user accounts for sending email notifications.'
+            ]
+            if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
+                varContainer.vars += factory.createIntVar => [
+                    name = 'superModerationGroupFor' + entity.nameMultiple.formatForCodeCapital
+                    value = '2' // use admin group (gid=2) as fallback
+                    documentation = 'Used to determine moderator user accounts for sending email notifications.'
+                ]
+            }
+        }
+
+        defaultDataSource.variables += varContainer
+    }
+
+    def private createVarContainerForWorkflowSettings(Models container) {
+        var lastVarContainerSortNumber = 0
+        if (!container.variables.empty) {
+            lastVarContainerSortNumber = container.variables.sortBy[sortOrder].reverseView.head.sortOrder
+        }
+
+        val newSortNumber = lastVarContainerSortNumber + 1
+
+        val factory = ModulestudioFactory.eINSTANCE
+
+        val varContainer = factory.createVariables => [
+            name = 'Moderation'
+            documentation = 'Here you can assign moderation groups for enhanced workflow actions.'
+            sortOrder = newSortNumber
+        ]
+
+        varContainer
     }
 }

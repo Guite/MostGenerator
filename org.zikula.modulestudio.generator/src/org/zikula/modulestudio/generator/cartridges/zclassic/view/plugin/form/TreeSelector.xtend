@@ -107,9 +107,9 @@ class TreeSelector {
                 parent::create($view, $params);
 
                 «IF targets('1.3.5')»
-                    $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
+                    $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 «ELSE»
-                    $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($this->objectType) . 'Entity';
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
                 $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');

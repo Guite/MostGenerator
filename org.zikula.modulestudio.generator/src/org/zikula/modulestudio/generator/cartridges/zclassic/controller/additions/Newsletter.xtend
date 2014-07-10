@@ -185,7 +185,7 @@ class Newsletter {
             $output = array();
 
             foreach ($objectTypes as $objectType) {
-                if (!SecurityUtil::checkPermission($this->modname . ':' . ucwords($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
+                if (!SecurityUtil::checkPermission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
                     // the newsletter has no permission for these items
                     continue;
                 }
@@ -212,7 +212,7 @@ class Newsletter {
         {
             $objectType = $args['objectType'];
             «IF targets('1.3.5')»
-                $entityClass = '«appName»_Entity_' . ucwords($objectType);
+                $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             «IF targets('1.3.5')»

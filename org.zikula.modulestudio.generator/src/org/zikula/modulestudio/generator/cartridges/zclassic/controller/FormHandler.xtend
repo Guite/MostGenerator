@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import de.guite.modulestudio.metamodel.modulestudio.Action
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Config
@@ -341,7 +342,7 @@ class FormHandler {
             public function postInitialize()
             {
                 «IF targets('1.3.5')»
-                    $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
+                    $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                     $repository = $this->entityManager->getRepository($entityClass);
                 «ELSE»
                     $repository = $this->view->getServiceManager()->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
@@ -394,7 +395,7 @@ class FormHandler {
             «IF targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             «ELSE»
-                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucwords($this->objectType) . 'Entity';
+                $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($this->objectType) . 'Entity';
             «ENDIF»
             $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
 
@@ -592,7 +593,7 @@ class FormHandler {
                     $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                     $entity = new $entityClass();
                 «ELSE»
-                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'Entity';
                     $createMethod = 'create' . ucfirst($this->objectType);
                     $entity = $this->view->getContainer()->get('«appName.formatForDB».' . $this->objectType . '_factory')->$createMethod();
                 «ENDIF»
@@ -871,9 +872,9 @@ class FormHandler {
             protected function processTranslationsForUpdate($entity, $formData)
             {
                 «IF targets('1.3.5')»
-                    $entityTransClass = $this->name . '_Entity_' . ucwords($this->objectType) . 'Translation';
+                    $entityTransClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'Translation';
                 «ELSE»
-                    $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'TranslationEntity';
+                    $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'TranslationEntity';
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
@@ -1054,6 +1055,14 @@ class FormHandler {
                     $this->repeatCreateAction = $entityData['repeatCreation'];
                 }
                 unset($entityData['repeatCreation']);
+            }
+            if (isset($entityData['additionalNotificationRemarks'])) {
+                «IF app.targets('1.3.5')»
+                    SessionUtil::setVar($this->name . 'AdditionalNotificationRemarks', $entityData['additionalNotificationRemarks']);
+                «ELSE»
+                    $this->request->getSession()->set($this->name . 'AdditionalNotificationRemarks', $entityData['additionalNotificationRemarks']);
+                «ENDIF»
+                unset($entityData['additionalNotificationRemarks']);
             }
             «IF hasAttributableEntities»
 
@@ -1438,6 +1447,28 @@ class FormHandler {
                 // assign formatted title
                 $this->view->assign('formattedEntityTitle', $entity->getTitleFromDisplayPattern());
             }
+            «IF workflow != EntityWorkflowType.NONE»
+
+                $uid = UserUtil::getVar('uid');
+                $isCreator = $entity['createdUserId'] == $uid;
+                «IF workflow == EntityWorkflowType.ENTERPRISE»
+                    $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('moderationGroupFor' . $this->objectTypeCapital, 2));
+                    $isModerator = ModUtil::apiFunc('«IF container.application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                    $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('superModerationGroupFor' . $this->objectTypeCapital, 2));
+                    $isSuperModerator = ModUtil::apiFunc('«IF container.application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+
+                    $this->view->assign('isCreator', $isCreator)
+                               ->assign('isModerator', $isModerator)
+                               ->assign('isSuperModerator', $isSuperModerator);
+                «ELSEIF workflow == EntityWorkflowType.STANDARD»
+                    $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('moderationGroupFor' . $this->objectTypeCapital, 2));
+                    $isModerator = ModUtil::apiFunc('«IF container.application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+
+                    $this->view->assign('isCreator', $isCreator)
+                               ->assign('isModerator', $isModerator)
+                               ->assign('isSuperModerator', false);
+                «ENDIF»
+            «ENDIF»
 
             // everything okay, no initialization errors occured
             return true;

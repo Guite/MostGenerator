@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DeleteAction
 import de.guite.modulestudio.metamodel.modulestudio.DisplayAction
 import de.guite.modulestudio.metamodel.modulestudio.EditAction
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.IntVar
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.MainAction
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
@@ -223,6 +224,19 @@ class ControllerExtensions {
      */
     def isConfigController(Controller it) {
         container.application.configController == formattedName
+    }
+
+    /**
+     * Determines whether the given int var instance represents a user group selector
+     * for moderation purposes.
+     */
+    def isUserGroupSelector(IntVar it) {
+        if (name.contains('moderationGroupFor')
+            || name.contains('superModerationGroupFor')) {
+                return true
+        }
+
+        false
     }
 
     /**

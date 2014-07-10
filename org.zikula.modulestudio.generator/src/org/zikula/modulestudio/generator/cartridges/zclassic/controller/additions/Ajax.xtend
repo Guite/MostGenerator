@@ -220,7 +220,7 @@ class Ajax {
         $entities = $repository->selectWhere($where, $sortParam);
 
         $slimItems = array();
-        $component = $this->name . ':' . ucwords($objectType) . ':';
+        $component = $this->name . ':' . ucfirst($objectType) . ':';
         foreach ($entities as $item) {
             $itemId = '';
             foreach ($idFields as $idField) {
@@ -250,7 +250,7 @@ class Ajax {
         {
             $view = Zikula_View::getInstance('«app.appName»', false);
             $view->assign($objectType, $item);
-            $previewInfo = base64_encode($view->fetch(«IF app.targets('1.3.5')»'external/' . $objectType«ELSE»'External/' . ucwords($objectType)«ENDIF» . '/info.tpl'));
+            $previewInfo = base64_encode($view->fetch(«IF app.targets('1.3.5')»'external/' . $objectType«ELSE»'External/' . ucfirst($objectType)«ENDIF» . '/info.tpl'));
 
             $title = $item->getTitleFromDisplayPattern();
             $description = ($descriptionField != '') ? $item[$descriptionField] : '';

@@ -275,7 +275,7 @@ class ContentTypeList {
             ModUtil::initOOModule('«appName»');
 
             «IF targets('1.3.5')»
-                $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
+                $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             «IF targets('1.3.5')»
@@ -290,7 +290,7 @@ class ContentTypeList {
 
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
-            $component = '«appName»:' . ucwords($this->objectType) . ':';
+            $component = '«appName»:' . ucfirst($this->objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
             if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
