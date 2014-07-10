@@ -261,6 +261,9 @@ class SimpleFields {
     def private dispatch formField(UserField it, String groupSuffix, String idSuffix) '''
         {«entity.container.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' cssClass='«IF mandatory»required«ENDIF»«IF !isLegacyApp»«IF mandatory» «ENDIF»form-control«ENDIF»'}
         {if $mode ne 'create' && $«entity.name.formatForDB».«name.formatForDB» && !$inlineUsage}
+            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF» avatar">
+                {useravatar uid=$«entity.name.formatForDB».«name.formatForDB» rating='g'}
+            </span>
             {checkpermissionblock component='Users::' instance='::' level='ACCESS_ADMIN'}
             <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»"><a href="{modurl modname='«IF isLegacyApp»Users«ELSE»ZikulaUsersModule«ENDIF»' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to users administration'}">{gt text='Manage user'}</a></span>
             {/checkpermissionblock}

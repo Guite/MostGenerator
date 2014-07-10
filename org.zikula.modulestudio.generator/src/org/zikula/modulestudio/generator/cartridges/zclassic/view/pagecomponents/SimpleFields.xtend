@@ -72,6 +72,7 @@ class SimpleFields {
                   {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «ENDIF»
                 {$«realName»|profilelinkbyuid}
+                    <span class="avatar">{useravatar uid=$«realName» rating='g'}</span>
             «IF page == 'display'»
                   {else}
                     {usergetvar name='uname' uid=$«realName»}
