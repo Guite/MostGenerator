@@ -89,6 +89,9 @@ class Forms {
         «ENDIF»
         {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js'}
         {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.5')»_v«ELSE».V«ENDIF»alidation.js'}
+        «IF !app.targets('1.3.5') && (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
+            {pageaddvar name='javascript' value='web/bootstrap3-typeahead/bootstrap3-typeahead.min.js'}
+        «ENDIF»
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}

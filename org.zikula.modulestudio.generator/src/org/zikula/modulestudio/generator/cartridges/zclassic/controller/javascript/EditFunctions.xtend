@@ -73,27 +73,111 @@ class EditFunctions {
              */
             function «prefix()»InitUserField(fieldName, getterName)
             {
-                if ($(fieldName + 'LiveSearch') === null) {
-                    return;
-                }
-                $(fieldName + 'LiveSearch').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
-                new Ajax.Autocompleter(
-                    fieldName + 'Selector',
-                    fieldName + 'SelectorChoices',
-                    «IF targets('1.3.5')»
-                        Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=' + getterName,
-                    «ELSE»
-                        Routing.generate('«appName.formatForDB»_ajax_' + getterName),
-                    «ENDIF»
-                    {
-                        paramName: 'fragment',
-                        minChars: 3,
-                        indicator: fieldName + 'Indicator',
-                        afterUpdateElement: function(data) {
-                            $(fieldName).value = $($(data).value).value;
-                        }
+                «IF !targets('1.3.5')»
+                    var users, userMap;
+
+                «ENDIF»
+                «IF targets('1.3.5')»
+                    if ($(fieldName + 'LiveSearch') === null) {
+                        return;
                     }
-                );
+                    $(fieldName + 'LiveSearch').removeClassName('z-hide');
+                «ELSE»
+                    if ($('#' + fieldName + 'LiveSearch').length < 1) {
+                        return;
+                    }
+                    $('#' + fieldName + 'LiveSearch').removeClass('hidden');
+                «ENDIF»
+
+                «IF targets('1.3.5')»
+                    new Ajax.Autocompleter(
+                        fieldName + 'Selector',
+                        fieldName + 'SelectorChoices',
+                        Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=' + getterName,
+                        {
+                            paramName: 'fragment',
+                            minChars: 3,
+                            indicator: fieldName + 'Indicator',
+                            afterUpdateElement: function (inputField, selectedListItem) {
+                                var itemId = selectedListItem.id;
+                                var userId = itemId.replace('user', '');
+                                $(fieldName).value = userId;
+                            }
+                        }
+                    );
+                «ELSE»
+                    users = [];
+                    userMap = [];
+
+                    $('#' + fieldName + 'Selector').typeahead({
+                        items: 25,
+                        minLength: 2,
+                        showHintOnFocus: true,
+                        scrollHeight: 400,
+
+                        // The data source to query against. Receives the query value in the input field and the process callback.
+                        source: function (query, process) {
+                            users[fieldName] = [];
+                            userMap[fieldName] = {};
+
+                            // Retrieve data from server using "query" parameter as it contains the search string entered by the user
+                            $('#' + fieldName + 'Indicator').removeClass('hidden')
+                            $.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName, { fragment: query }), function( data ) {
+
+                                if (data.length > 0) {
+                                    $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
+
+                                    // map dropdown options to corresponding objects
+                                    $.each(data, function (key, user) {
+                                        userMap[fieldName][user.uname] = user;
+                                        users[fieldName].push(user.uname);
+                                    });
+                                } else {
+                                    $('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
+                                }
+
+                                $('#' + fieldName + 'Indicator').addClass('hidden')
+                            });
+
+                            // call process() function with dropdown array
+                            return process(users[fieldName]);
+                        },
+
+                        // custom formatting of result items
+                        highlighter: function(item) {
+                            var html, user;
+
+                            user = userMap[fieldName][item];
+
+                            html = '<div class="typeahead">';
+                            html += '<div class="media"><a class="pull-left" href="#"><img src="' + user.avatar + '" /></a>'
+                            html += '<div class="media-body">';
+                            html += '<p class="media-heading">' + user.uname + '</p>';
+                            html += '</div>';
+                            html += '</div>';
+
+                            return html;
+                        },
+
+                        // Called after the user selects an item. Here we can do something with the selection.
+                        updater: function (item) {
+                            var userId;
+
+                            userId = userMap[fieldName][item].uid;
+
+                            $('#' + fieldName).val(userId);
+
+                            return item;
+                        }
+                    });
+
+                    // Ensure that clearing out the selector is reflected into the hidden field properly
+                    $('#' + fieldName + 'Selector').blur(function() {
+                        if ($(this).val().length == 0 || $('#' + fieldName).val() != userMap[fieldName][$(this).val()]) {
+                            $('#' + fieldName).val('');
+                        }
+                    });
+                «ENDIF»
             }
 
         «ENDIF»
@@ -262,7 +346,7 @@ class EditFunctions {
     '''
 
     def private relationFunctionsPreparation(Application it) '''
-        «IF !getJoinRelations.empty»
+        «IF !getJoinRelations.empty && targets('1.3.5')»
 
             /**
              * Override method of Scriptaculous auto completer method.
@@ -528,7 +612,7 @@ class EditFunctions {
                 newTitle = $F(idPrefix + 'Selector');
                 includeEditing = !!(($F(idPrefix + 'Mode') == '1'));
             «ELSE»
-                newItemId = selectedListItem.attr('id');
+                newItemId = selectedListItem.id;
                 newTitle = $('#' + idPrefix + 'Selector').val();
                 includeEditing = !!(($('#' + idPrefix + 'Mode').val() == '1'));
             «ENDIF»
@@ -540,8 +624,8 @@ class EditFunctions {
                     itemPreview = $('itemPreview' + selectedListItem.id).innerHTML;
                 }
             «ELSE»
-                if ($('#itemPreview' + selectedListItem.attr('id')).size() > 0) {
-                    itemPreview = $('#itemPreview' + selectedListItem.attr('id')).innerHTML;
+                if (selectedListItem.image != '') {
+                    itemPreview = selectedListItem.image;
                 }
             «ENDIF»
 
@@ -650,7 +734,7 @@ class EditFunctions {
          */
         function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
-            var acOptions, itemIds, itemIdsArr;
+            var acOptions, itemIds, itemIdsArr«IF !targets('1.3.5')», listItems, listItemMap, acUrl«ENDIF»;
 
             «IF targets('1.3.5')»
                 // add handling for the toggle link if existing
@@ -682,16 +766,16 @@ class EditFunctions {
             // clear values and ensure starting state
             «prefixSmall»ResetRelatedItemForm(idPrefix);
 
-            acOptions = {
-                paramName: 'fragment',
-                minChars: 2,
-                indicator: idPrefix + 'Indicator',
-                callback: function (inputField, defaultQueryString) {
-                    var queryString;
+            «IF targets('1.3.5')»
+                acOptions = {
+                    paramName: 'fragment',
+                    minChars: 2,
+                    indicator: idPrefix + 'Indicator',
+                    callback: function (inputField, defaultQueryString) {
+                        var queryString;
 
-                    // modify the query string before the request
-                    queryString = defaultQueryString + '&ot=' + objectType;
-                    «IF targets('1.3.5')»
+                        // modify the query string before the request
+                        queryString = defaultQueryString + '&ot=' + objectType;
                         if ($(idPrefix + 'ItemList') !== null) {
                             queryString += '&exclude=' + $F(idPrefix + 'ItemList');
                         }
@@ -699,39 +783,115 @@ class EditFunctions {
                         if ($(idPrefix + 'NoResultsHint') != null) {
                             $(idPrefix + 'NoResultsHint').addClassName('z-hide');
                         }
-                    «ELSE»
-                        if ($('#' + idPrefix + 'ItemList').size() > 0) {
-                            queryString += '&exclude=' + $('#' + idPrefix + 'ItemList').val();
-                        }
 
-                        if ($('#' + idPrefix + 'NoResultsHint').size() > 0) {
-                            $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
-                        }
-                    «ENDIF»
-
-                    return queryString;
-                },
-                afterUpdateElement: function (inputField, selectedListItem) {
-                    // Called after the input element has been updated (i.e. when the user has selected an entry).
-                    // This function is called after the built-in function that adds the list item text to the input field.
-                    «prefixSmall»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem);
-                }
-            };
-            relationHandler.each(function (relationHandler) {
-                if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && relationHandler.acInstance === null) {
-                    relationHandler.acInstance = new Ajax.Autocompleter(
-                        idPrefix + 'Selector',
-                        idPrefix + 'SelectorChoices',
-                        «IF targets('1.3.5')»
+                        return queryString;
+                    },
+                    afterUpdateElement: function (inputField, selectedListItem) {
+                        // Called after the input element has been updated (i.e. when the user has selected an entry).
+                        // This function is called after the built-in function that adds the list item text to the input field.
+                        «prefixSmall»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem);
+                    }
+                };
+                relationHandler.each(function (relationHandler) {
+                    if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && relationHandler.acInstance === null) {
+                        relationHandler.acInstance = new Ajax.Autocompleter(
+                            idPrefix + 'Selector',
+                            idPrefix + 'SelectorChoices',
                             Zikula.Config.baseURL + 'ajax.php?module=' + relationHandler.moduleName + '&func=getItemListAutoCompletion',
-                        «ELSE»
-                            //Routing.generate('«appName.formatForDB»_ajax_getItemListAutoCompletion'),
-                            Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getItemListAutoCompletion'),
-                        «ENDIF»
-                        acOptions
-                    );
-                }
-            });
+                            acOptions
+                        );
+                    }
+                });
+            «ELSE»
+                listItems = [];
+                listItemMap = [];
+
+                acOptions = {
+                    items: 25,
+                    minLength: 2,
+                    showHintOnFocus: true,
+                    scrollHeight: 400,
+
+                    // The data source to query against. Receives the query value in the input field and the process callback.
+                    source: function (query, process) {
+                        listItems[idPrefix] = [];
+                        listItemMap[idPrefix] = {};
+
+                        // Retrieve data from server using "query" parameter as it contains the search string entered by the user
+                        $('#' + idPrefix + 'Indicator').removeClass('hidden')
+                        $.getJSON( acUrl, { fragment: query }), function( data ) {
+
+                            if (data.length > 0) {
+                                $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
+
+                                // map dropdown options to corresponding objects
+                                $.each(data, function (key, listItem) {
+                                    listItemMap[idPrefix][listItem.title] = listItem;
+                                    listItems[idPrefix].push(listItem.title);
+                                });
+                            } else {
+                                $('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
+                            }
+
+                            $('#' + idPrefix + 'Indicator').addClass('hidden')
+                        });
+
+                        // call process() function with dropdown array
+                        return process(listItems[idPrefix]);
+                    },
+
+                    // custom formatting of result items
+                    highlighter: function(item) {
+                        var html, listItem;
+
+                        listItem = listItemMap[idPrefix][item];
+
+                        html = '<div class="typeahead">';
+                        html += '<div class="media"><a class="pull-left" href="#"><img src="' + listItem.image + '" /></a>'
+                        html += '<div class="media-body">';
+                        html += '<p class="media-heading">' + listItem.title + '</p>';
+                        html += listItem.description;
+                        html += '</div>';
+                        html += '</div>';
+
+                        return html;
+                    },
+
+                    // Called after the user selects an item. Here we can do something with the selection.
+                    updater: function (item) {
+                        var inputField, listItem;
+
+                        inputField = $('#' + idPrefix);
+                        listItem = listItemMap[idPrefix][item];
+
+                        «prefixSmall»SelectRelatedItem(objectType, idPrefix, inputField, listItem);
+                        inputField.val(listItemId);
+
+                        return item;
+                    }
+                };
+
+                relationHandler.each(function (key, relationHandler) {
+                    if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && relationHandler.acInstance === null) {
+                        relationHandler.acInstance = 'yes';
+
+                        acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getItemListAutoCompletion');
+                        acUrl += '&ot=' + objectType;
+                        if ($('#' + idPrefix + 'ItemList').size() > 0) {
+                            acUrl += '&exclude=' + $('#' + idPrefix + 'ItemList').val();
+                        }
+
+                        $('#' + idPrefix + 'Selector').typeahead(acOptions);
+
+                        // Ensure that clearing out the selector is reflected into the hidden field properly
+                        $('#' + idPrefix + 'Selector').blur(function() {
+                            if ($(this).val().length == 0 || $('#' + idPrefix).val() != listItemMap[idPrefix][$(this).val()]) {
+                                $('#' + idPrefix).val('');
+                            }
+                        });
+                    }
+                });
+            «ENDIF»
 
             «IF targets('1.3.5')»
                 if (!includeEditing || $(idPrefix + 'SelectorDoNew') === null) {
@@ -807,9 +967,13 @@ class EditFunctions {
                         // look whether there is an auto completion instance
                         if (relationHandler.acInstance !== null) {
                             // activate it
-                            relationHandler.acInstance.activate();
+                            «IF targets('1.3.5')»
+                                relationHandler.acInstance.activate();
+                            «ELSE»
+                                $('#' + idPrefix + 'Selector').lookup();
+                            «ENDIF»
                             // show a message
-                            «IF targets('1.3.5')» 
+                            «IF targets('1.3.5')»
                                 Zikula.UI.Alert(Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), {
                                     autoClose: 3 // time in seconds
                                 });

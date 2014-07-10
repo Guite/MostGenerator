@@ -123,19 +123,48 @@ class Ajax {
             $results = $query->getArrayResult();
         «ENDIF»
 
-        $out = '<ul>';
-        if (is_array($results) && count($results) > 0) {
-            foreach($results as $result) {
-                $userNameDisplay = DataUtil::formatForDisplay($result['uname']);
-                $out .= '<li>' . $userNameDisplay . '<input type="hidden" id="' . $userNameDisplay . '" value="' . $result['uid'] . '" /></li>';
-            }
-        }
-        $out .= '</ul>';
+        // load avatar plugin
+        «IF app.targets('1.3.5')»
+            include_once 'lib/viewplugins/function.useravatar.php';
+        «ELSE»
+            include_once 'lib/legacy/viewplugins/function.useravatar.php';
+        «ENDIF»
+        $view = Zikula_View::getInstance('«app.appName»', false);
 
         «IF app.targets('1.3.5')»
-            return new Zikula_Response_Ajax_Plain($out);
+            $out = '<ul>';
+            if (is_array($results) && count($results) > 0) {
+                foreach ($results as $result) {
+                    $itemId = 'user' . $result['uid'];
+                    $itemTitle = DataUtil::formatForDisplay($result['uname']);
+                    $itemTitleStripped = str_replace('"', '', $itemTitle);
+                    $out .= '<li id="' . $itemId . '" title="' . $itemTitleStripped . '">';
+                    $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
+                    $out .= '<input type="hidden" id="' . $itemTitleStripped . '" value="' . $result['uid'] . '" />';
+                    $out .= '<div id="itemPreview' . $itemId . '" class="itempreview informal">' . smarty_function_useravatar(array('uid' => $result['uid'], 'rating' => 'g'), $view) . '</div>';
+                    $out .= '</li>';
+                }
+            }
+            $out .= '</ul>';
+
+            «IF app.targets('1.3.5')»
+                return new Zikula_Response_Ajax_Plain($out);
+            «ELSE»
+                return new PlainResponse($out);
+            «ENDIF»
         «ELSE»
-            return new PlainResponse($out);
+            $resultItems = array();
+            if (is_array($results) && count($results) > 0) {
+                foreach ($results as $result) {
+                    $resultItems[] = array(
+                        'uid' => $result['uid'],
+                        'uname' => DataUtil::formatForDisplay($result['uname']),
+                        'avatar' => smarty_function_useravatar(array('uid' => $result['uid'], 'rating' => 'g'), $view)
+                    );
+                }
+            }
+
+            return new JsonResponse($resultItems);
         «ENDIF»
     '''
 
@@ -342,50 +371,91 @@ class Ajax {
         // get objects from database
         list($entities, $objectCount) = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage);
 
-        $out = '<ul>';
-        if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
-            $descriptionFieldName = $repository->getDescriptionFieldName();
-            $previewFieldName = $repository->getPreviewFieldName();
-            «IF app.hasImageFields»
-                if (!empty($previewFieldName)) {
-                    «IF app.targets('1.3.5')»
-                        $imageHelper = new «app.appName»_Util_Image($this->serviceManager);
-                    «ELSE»
-                        $imageHelper = $this->serviceManager->get('«app.appName.formatForDB».image_helper');
-                    «ENDIF»
-                    $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
-                }
-            «ENDIF»
-            foreach ($entities as $item) {
-                // class="informal" --> show in dropdown, but do nots copy in the input field after selection
-                $itemTitle = $item->getTitleFromDisplayPattern();
-                $itemTitleStripped = str_replace('"', '', $itemTitle);
-                $itemDescription = (isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.');
-                $itemId = '';
-                foreach ($idFields as $idField) {
-                    $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
-                }
-                $out .= '<li id="' . $itemId . '" title="' . $itemTitleStripped . '">';
-                $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
-                if (!empty($itemDescription)) {
-                    $out .= '<div class="itemdesc informal">' . substr($itemDescription, 0, 50) . '&hellip;</div>';
-                }
-                «IF app.hasImageFields»
-                    // check for preview image
-                    if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
-                        $fullObjectId = $objectType . '-' . $itemId;
-                        $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
-                        $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
-                        $out .= '<div id="itemPreview' . $itemId . '" class="itempreview informal">' . $preview . '</div>';
-                    }
-                «ENDIF»
-                $out .= '</li>';
-            }
-        }
-        $out .= '</ul>';
+        «IF app.targets('1.3.5')»
+            $out = '<ul>';
+            if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
+                «prepareForAutoCompletionProcessing(app)»
+                foreach ($entities as $item) {
+                    // class="informal" --> show in dropdown, but do nots copy in the input field after selection
+                    $itemTitle = $item->getTitleFromDisplayPattern();
+                    $itemTitleStripped = str_replace('"', '', $itemTitle);
+                    $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.');
+                    $itemId = $item->createCompositeIdentifier();
 
-        // return response
-        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»($out);
+                    $out .= '<li id="' . $itemId . '" title="' . $itemTitleStripped . '">';
+                    $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
+                    if (!empty($itemDescription)) {
+                        $out .= '<div class="itemdesc informal">' . substr($itemDescription, 0, 50) . '&hellip;</div>';
+                    }
+                    «IF app.hasImageFields»
+
+                        // check for preview image
+                        if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
+                            $fullObjectId = $objectType . '-' . $itemId;
+                            $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
+                            $preview = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';
+                            $out .= '<div id="itemPreview' . $itemId . '" class="itempreview informal">' . $preview . '</div>';
+                        }
+                    «ENDIF»
+
+                    $out .= '</li>';
+                }
+            }
+            $out .= '</ul>';
+
+            // return response
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»($out);
+        «ELSE»
+            $resultItems = array();
+
+            if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
+                «prepareForAutoCompletionProcessing(app)»
+                foreach ($entities as $item) {
+                    $itemTitle = $item->getTitleFromDisplayPattern();
+                    $itemTitleStripped = str_replace('"', '', $itemTitle);
+                    $itemDescription = isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName]) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.')
+                    if (!empty($itemDescription)) {
+                        $itemDescription = substr($itemDescription, 0, 50) . '&hellip;';
+                    }
+
+                    $resultItem = array(
+                        'id' => $item->createCompositeIdentifier(),
+                        'title' => $item->getTitleFromDisplayPattern(),
+                        'description' => $itemDescription,
+                        'image' => ''
+                    );
+                    «IF app.hasImageFields»
+
+                        // check for preview image
+                        if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
+                            $fullObjectId = $objectType . '-' . $itemId;
+                            $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
+                            $preview = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';
+                            $resultItem['image'] = $preview;
+                        }
+                    «ENDIF»
+
+                    $resultItems[] = $resultItem;
+                }
+            }
+
+            return new JsonResponse($resultItems);
+        «ENDIF»
+    '''
+
+    def private prepareForAutoCompletionProcessing(AjaxController it, Application app) '''
+        $descriptionFieldName = $repository->getDescriptionFieldName();
+        $previewFieldName = $repository->getPreviewFieldName();
+        «IF app.hasImageFields»
+            if (!empty($previewFieldName)) {
+                «IF app.targets('1.3.5')»
+                    $imageHelper = new «app.appName»_Util_Image($this->serviceManager);
+                «ELSE»
+                    $imageHelper = $this->serviceManager->get('«app.appName.formatForDB».image_helper');
+                «ENDIF»
+                $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+            }
+        «ENDIF»
     '''
 
     def private checkForDuplicateBase(AjaxController it, Application app) '''

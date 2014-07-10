@@ -165,50 +165,43 @@ class Styles {
                 display: none;
             }
 
-            «IF hasUserFields»
-                div.«cssPrefix»-livesearch-user {
+            «IF targets('1.3.5')»
+                «IF hasUserFields»
+                    div.«cssPrefix»-livesearch-user {
+                        margin: 0;
+                    }
+
+                «ENDIF»
+
+                div.«cssPrefix»-autocomplete«IF hasUserFields»,
+                div.«cssPrefix»-autocomplete-user«ENDIF»«IF hasImageFields»,
+                div.«cssPrefix»-autocomplete-withimage«ENDIF» {
+                    position: relative !important;
+                    top: 2px !important;
+                    width: 191px !important;
+                    background-color: #fff;
+                    border: 1px solid #888;
                     margin: 0;
+                    padding: 0;
                 }
 
-            «ENDIF»
-            «/*required for IE*/»
-            div.«cssPrefix»-autocomplete-wrap {
-                position: absolute;
-                height: 40px;
-                margin: 0;
-                padding: 0;
-                left: 260px;
-                top: 10px;
-            }
-
-            div.«cssPrefix»-autocomplete«IF hasUserFields»,
-            div.«cssPrefix»-autocomplete-user«ENDIF»«IF hasImageFields»,
-            div.«cssPrefix»-autocomplete-withimage«ENDIF» {
-                position: relative !important;
-                top: 2px !important;
-                width: 191px !important;
-                background-color: #fff;
-                border: 1px solid #888;
-                margin: 0;
-                padding: 0;
-            }
-
-            div.«cssPrefix»-autocomplete«IF hasImageFields»,
-            div.«cssPrefix»-autocomplete-with-image«ENDIF» {
-                left: 0 !important;
-            }
-            «IF hasUserFields»
-                div.«cssPrefix»-autocomplete-user {
-                    left: 29% !important;
+                div.«cssPrefix»-autocomplete«IF hasImageFields»,
+                div.«cssPrefix»-autocomplete-with-image«ENDIF» {
+                    left: 0 !important;
                 }
+                «IF hasUserFields»
+                    div.«cssPrefix»-autocomplete-user {
+                        left: 29% !important;
+                    }
 
+                «ENDIF»
+                div.«cssPrefix»-autocomplete ul«IF hasUserFields»,
+                div.«cssPrefix»-autocomplete-user ul«ENDIF»«IF hasImageFields»,
+                div.«cssPrefix»-autocomplete-with-image ul«ENDIF» {
+                    margin: 0;
+                    padding: 0;
+                }
             «ENDIF»
-            div.«cssPrefix»-autocomplete ul«IF hasUserFields»,
-            div.«cssPrefix»-autocomplete-user ul«ENDIF»«IF hasImageFields»,
-            div.«cssPrefix»-autocomplete-with-image ul«ENDIF» {
-                margin: 0;
-                padding: 0;
-            }
 
             div.«cssPrefix»-autocomplete ul li«IF hasUserFields»,
             div.«cssPrefix»-autocomplete-user ul li«ENDIF»«IF hasImageFields»,

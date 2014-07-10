@@ -118,7 +118,7 @@ class RelationSelectorAutoComplete {
              */
             protected function getStyleClass()
             {
-                return 'z-form-relationlist autocomplete';
+                return 'z-form-relationlist «IF targets('1.3.5')»autocomplete«ELSE»typeahead«ENDIF»';
             }
 
             /**
@@ -155,24 +155,35 @@ class RelationSelectorAutoComplete {
                 }
 
                 $alias = $this->id;
+                $class = $this->getStyleClass();
 
                 $result = '
                     <div class="«appName.toLowerCase»-relation-rightside">'
                         . $addLink . '
-                        <div id="' . $idPrefix . 'AddFields">
+                        <div id="' . $idPrefix . 'AddFields «appName.toLowerCase»-autocomplete' . (($this->withImage) ? '-with-image' : '') . '">
                             <label for="' . $idPrefix . 'Selector">' . $selectLabelText . '</label>
-                            <br />
-                            <img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchIconText . '" />
-                            <input type="text" name="' . $idPrefix . 'Selector" id="' . $idPrefix . 'Selector" value="" />
-                            <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . ((!$many) ? '0' : '1') . '" />
-                            <img src="' . System::getBaseUrl() . 'images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $idPrefix . 'Indicator" style="display: none" />
-                            <span id="' . $idPrefix . 'NoResultsHint" class="«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»">' . __('No results found!', $dom) . '</span>
-                            <div id="' . $idPrefix . 'SelectorChoices" class="«appName.toLowerCase»-autocomplete' . (($this->withImage) ? '-with-image' : '') . '"></div>
-                            <input type="button" id="' . $idPrefix . 'SelectorDoCancel" name="' . $idPrefix . 'SelectorDoCancel" value="' . __('Cancel', $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button" />'
-                            . $createLink . '
-                            <noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>
-                        </div>
-                    </div>';
+                            <br />';
+
+                «IF targets('1.3.5')»
+                    $result .= '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchIconText . '" />
+                                <input type="text" name="' . $idPrefix . 'Selector" id="' . $idPrefix . 'Selector" value="" />
+                                <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . ((!$many) ? '0' : '1') . '" />
+                                <img src="' . System::getBaseUrl() . 'images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $idPrefix . 'Indicator" style="display: none" />
+                                <span id="' . $idPrefix . 'NoResultsHint" class="z-hide">' . __('No results found!', $dom) . '</span>
+                                <div id="' . $idPrefix . 'SelectorChoices" class=""></div>';
+                «ELSE»
+                    $result .= '<i class="fa fa-search" title="' . $searchIconText . '"><i>
+                                <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . ((!$many) ? '0' : '1') . '" />
+                                <input type="text" id="' . $idPrefix . 'Selector" name="' . $idPrefix . 'Selector" value="' . DataUtil::formatForDisplay($this->text) . '" autocomplete="off" class="' . $class . '" />
+                                <i class="fa fa-refresh fa-spin hidden" id="' . $idPrefix . 'Indicator"></i>
+                                <span id="' . $idPrefix . 'NoResultsHint" class="hidden">' . __('No results found!', $dom) . '</span>';
+                «ENDIF»
+                $result .= '
+                                <input type="button" id="' . $idPrefix . 'SelectorDoCancel" name="' . $idPrefix . 'SelectorDoCancel" value="' . __('Cancel', $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button" />'
+                                . $createLink . '
+                                <noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>
+                            </div>
+                        </div>' . "\n";
 
                 return $result;
             }

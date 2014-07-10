@@ -257,6 +257,7 @@ class ControllerLayer {
             use Zikula\Core\Response\Ajax\BadDataResponse;
             use Zikula\Core\Response\Ajax\FatalResponse;
             use Zikula\Core\Response\Ajax\NotFoundResponse;
+            use Symfony\Component\HttpFoundation\JsonResponse;
         «ENDIF»
         use Zikula\Core\Response\PlainResponse;
     '''
