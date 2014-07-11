@@ -164,6 +164,8 @@ class ValidationConstraints {
             «' '»* @Assert\Issn(caseSensitive=«(issn == StringIssnStyle.CASE_SENSITIVE || issn == StringIssnStyle.STRICT).displayBool», requireHyphen=«(issn == StringIssnStyle.REQUIRE_HYPHEN || issn == StringIssnStyle.STRICT).displayBool»)
         «ELSEIF ipAddress != IpAddressScope.NONE»
             «' '»* @Assert\Ip(version="«ipAddress.ipScopeAsConstant»")
+        «ELSEIF uuid»
+            «' '»* @Assert\Uuid(strict=true)
         «ENDIF»
     '''
     def dispatch fieldAnnotations(TextField it) '''
