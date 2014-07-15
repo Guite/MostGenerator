@@ -90,7 +90,7 @@ class Config {
                     $userGroups = ModUtil::apiFunc('«IF targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'getall');
                     $userGroupItems = array();
                     foreach ($userGroups as $userGroup) {
-                        $userGroupItems = array(
+                        $userGroupItems[] = array(
                             'value' => $userGroup['gid'],
                             'text' => $userGroup['name']
                         );
