@@ -87,10 +87,13 @@ class Config {
                 «IF !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty»
 
                     // prepare list of user groups for moderation group selectors
-                    $userGroups = ModUtil::apiFunc('«IF targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'admin', 'getall');
+                    $userGroups = ModUtil::apiFunc('«IF targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'getall');
                     $userGroupItems = array();
                     foreach ($userGroups as $userGroup) {
-                        $userGroupItems = array('value' => $userGroup['gid'], 'text' => $userGroup['name']);
+                        $userGroupItems = array(
+                            'value' => $userGroup['gid'],
+                            'text' => $userGroup['name']
+                        );
                     }
                 «ENDIF»
 
