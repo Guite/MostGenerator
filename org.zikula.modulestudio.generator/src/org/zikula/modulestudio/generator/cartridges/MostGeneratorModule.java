@@ -3,7 +3,13 @@ package org.zikula.modulestudio.generator.cartridges;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule;
+import org.eclipse.xtext.service.DispatchingProvider;
+
+import com.google.inject.Binder;
+
+import de.guite.modulestudio.encoding.MostDslEncodingProvider;
 
 /**
  * This class is the generator module which is injected by
@@ -29,6 +35,18 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
     @Override
     protected String getFileExtensions() {
         return "mostapp";// mostdsl"; //$NON-NLS-1$
+    }
+
+    /**
+     * Configures a custom runtime encoding provider.
+     *
+     * @param binder
+     *            The given {@link Binder} instance.
+     */
+    public void configureRuntimeEncodingProvider(Binder binder) {
+        binder.bind(IEncodingProvider.class)
+                .annotatedWith(DispatchingProvider.Runtime.class)
+                .to(MostDslEncodingProvider.class);
     }
 
     /**
