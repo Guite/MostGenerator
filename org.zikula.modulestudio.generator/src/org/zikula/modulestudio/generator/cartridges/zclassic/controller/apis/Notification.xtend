@@ -162,7 +162,7 @@ class Notification {
                 'name' => (isset($userVars['name']) && !empty($userVars['name']) ? $userVars['name'] : $userVars['uname']),
                 'email' => $userVars['email']
             );
-
+            $this->recipients[] = $recipient;
             return $recipient;
         }
 
