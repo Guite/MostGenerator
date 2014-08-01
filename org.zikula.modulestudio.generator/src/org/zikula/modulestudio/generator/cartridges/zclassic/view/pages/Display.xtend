@@ -416,7 +416,6 @@ class Display {
                 {if $allParents ne null && count($allParents) gt 0}
                     <h4>{gt text='All parents'}</h4>
                     «nodeLoop(appName, 'allParents')»
-                    {foreach item='node' from=$allParents}
                 {/if}
             {/if}
             {if !isset($directParent) || $directParent eq true}

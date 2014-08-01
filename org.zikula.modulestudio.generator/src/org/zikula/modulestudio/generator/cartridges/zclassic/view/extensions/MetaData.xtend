@@ -176,9 +176,9 @@ class MetaData {
             «ENDIF»
                 «IF 'startdate'.equals(fieldName) || 'enddate'.equals(fieldName)»
                 {if $mode ne 'create'}
-                    {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true«IF useBootstrap» cssClass='form-control'«ENDIF»}
+                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true«IF useBootstrap» cssClass='form-control'«ENDIF»}
                 {else}
-                    {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true defaultValue='now'«IF useBootstrap» cssClass='form-control'«ENDIF»}
+                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true defaultValue='now'«IF useBootstrap» cssClass='form-control'«ENDIF»}
                 {/if}
                 «ELSEIF 'language'.equals(fieldName)»
                 {formlanguageselector group='meta' id='metadata«label»' mandatory=false __title='Choose a language' dataField='«fieldName»'«IF useBootstrap» cssClass='form-control'«ENDIF»}

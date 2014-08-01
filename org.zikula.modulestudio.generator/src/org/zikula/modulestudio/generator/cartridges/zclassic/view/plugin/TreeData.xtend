@@ -17,7 +17,7 @@ class TreeData {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginFilePath = viewPluginFilePath('function', 'TreeJS')
+        val pluginFilePath = viewPluginFilePath('function', 'TreeData')
         if (!shouldBeSkipped(pluginFilePath)) {
             fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, treeDataImpl))
         }
@@ -95,8 +95,9 @@ class TreeData {
                 foreach ($params['tree'] as $item) {
                     $url = $controllerHasEditAction ? ModUtil::url('«appName»', $params['controller'], 'edit', $item->createUrlArgs()) : '';
 
+                    $parent = $item->getParent();
                     $treeData[] = array('id' => $item->createCompositeIdentifier(),
-                                        'parent_id' => $item->getParent()->createCompositeIdentifier(),
+                                        'parent_id' => $parent ? $parent->createCompositeIdentifier() : null,
                                         'name' => $item->getTitleFromDisplayPattern(),
                                         'title' => (($descriptionFieldName != '') ? strip_tags($item[$descriptionFieldName]) : ''),
                                       //'icon' => '',

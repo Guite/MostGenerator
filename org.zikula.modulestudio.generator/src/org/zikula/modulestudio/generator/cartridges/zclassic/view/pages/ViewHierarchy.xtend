@@ -154,8 +154,8 @@ class ViewHierarchy {
             «ENDIF»
         </div>
 
+        {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF isLegacyApp»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF isLegacyApp»_t«ELSE».T«ENDIF»ree.js'}
         {if $hasNodes}
-            {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF isLegacyApp»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF isLegacyApp»_t«ELSE».T«ENDIF»ree.js'}
             «IF !isLegacyApp»
                 {pageaddvar name='javascript' value='web/jstree/dist/jstree.min.js'}
                 {pageaddvar name='stylesheet' value='web/jstree/dist/themes/default/style.min.css'}
