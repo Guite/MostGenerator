@@ -125,11 +125,13 @@ class Config {
                     «configSectionBody(app, isPrimaryVarContainer)»
                 {/formtabbedpanel}
             «ELSE»
+                {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
                 <div class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»">
                     «configSectionBody(app, isPrimaryVarContainer)»
                 </div>
             «ENDIF»
         «ELSE»
+            {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
             «configSectionBody(app, isPrimaryVarContainer)»
         «ENDIF»
     '''
