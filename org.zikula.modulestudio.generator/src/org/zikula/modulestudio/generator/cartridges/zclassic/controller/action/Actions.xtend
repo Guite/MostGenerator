@@ -63,6 +63,7 @@ class Actions {
     '''
 
     def private redirectLegacyAction(Action it) '''
+
         «IF !app.targets('1.3.5')»
             // forward GET parameters
             $redirectArgs = $this->request->query->«IF app.targets('1.3.5')»getCollection«ELSE»all«ENDIF»();
@@ -170,7 +171,8 @@ class Actions {
                     return new RedirectResponse(System::normalizeUrl($redirectUrl));
                 «ENDIF»
             «ELSE»
-                // set caching id
+                «redirectLegacyAction»
+«/*                // set caching id
                 $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
                 // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
@@ -178,7 +180,7 @@ class Actions {
                     return $this->view->fetch('«controller.formattedName»/main.tpl');
                 «ELSE»
                     return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
-                «ENDIF»
+                «ENDIF»*/»
             «ENDIF»
         «ENDIF»
     '''
