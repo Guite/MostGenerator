@@ -48,15 +48,13 @@ class ThirdParty {
 
             «contentGetTypes(isBase)»
         «ENDIF»
-        «IF !targets('1.3.5')»
-            «IF generateScribitePlugins»
+        «IF generateScribitePlugins»
 
-                «getEditorHelpers(isBase)»
+            «getEditorHelpers(isBase)»
 
-                «getTinyMcePlugins(isBase)»
+            «getTinyMcePlugins(isBase)»
 
-                «getCKEditorPlugins(isBase)»
-            «ENDIF»
+            «getCKEditorPlugins(isBase)»
         «ENDIF»
     '''
 
