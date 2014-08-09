@@ -29,33 +29,7 @@ class EventListener {
     /**
      * Entry point for entity lifecycle callback methods.
      */
-    def generateBase(Entity it) {
-        // Temporary hack
-        stubMethodsForNowBaseImpl
-        /*for (listener : listeners) listener.eventListenerBaseImpl */
-    }
-    def generateImpl(Entity it) {
-        // Temporary hack
-        stubMethodsForNowImpl
-        /*for (listener : listeners) listener.eventListenerImpl */
-    }
-/*
-    def private dispatch eventListenerBaseImpl(EntityEventListener it) {
-    }
-    def private dispatch eventListenerBaseImpl(PreProcess it) {
-    }
-    def private dispatch eventListenerBaseImpl(PostProcess it) {
-    }
-
-    def private dispatch eventListenerImpl(EntityEventListener it) {
-    }
-    def private dispatch eventListenerImpl(PreProcess it) {
-    }
-    def private dispatch eventListenerImpl(PostProcess it) {
-    }
-*/
-    def private stubMethodsForNowBaseImpl(Entity it) '''
-«/*    def private eventListenerBaseImpl(PostLoad it) {*/»
+    def generateBase(Entity it) '''
         /**
          * Post-Process the data after the entity has been constructed by the entity manager.
          * The event happens after the entity has been loaded from database or after a refresh call.
@@ -164,7 +138,7 @@ class EventListener {
                 $this[$fieldName] = (isset($this[$fieldName]) && !empty($this[$fieldName])) ? DataUtil::formatForDisplay($this[$fieldName]) : '';
             }
         «ENDIF»
-«/*}*/»«/*    def private eventListenerBaseImpl(PrePersist it) {*/»
+
         /**
          * Pre-Process the data prior to an insert operation.
          * The event happens before the entity managers persist operation is executed for this entity.
@@ -197,7 +171,7 @@ class EventListener {
 
             return true;
         }
-«/*}*/»«/*    def private eventListenerBaseImpl(PostPersist it) {*/»
+
         /**
          * Post-Process the data after an insert operation.
          * The event happens after the entity has been made persistant.
@@ -227,7 +201,7 @@ class EventListener {
             «ENDIF»
             return true;
         }
-«/*}*/»«/*    def private eventListenerBaseImpl(PreRemove it) {*/»
+
         /**
          * Pre-Process the data prior a delete operation.
          * The event happens before the entity managers remove operation is executed for this entity.
@@ -293,7 +267,7 @@ class EventListener {
 
             return true;
         }
-«/*}*/»«/*    def private eventListenerBaseImpl(PostRemove it) {*/»
+
         /**
          * Post-Process the data after a delete.
          * The event happens after the entity has been deleted.
@@ -349,7 +323,7 @@ class EventListener {
 
             return true;
         }
-«/*}*/»«/*    def private eventListenerBaseImpl(PreUpdate it) {*/»
+
         /**
          * Pre-Process the data prior to an update operation.
          * The event happens before the database update operations for the entity data.
@@ -382,7 +356,7 @@ class EventListener {
 
             return true;
         }
-«/*}*/»«/*    def private eventListenerBaseImpl(PostUpdate it) {*/»
+
         /**
          * Post-Process the data after an update operation.
          * The event happens after the database update operations for the entity data.
@@ -411,7 +385,7 @@ class EventListener {
             «ENDIF»
             return true;
         }
-«/*}*/»
+
         /**
          * Pre-Process the data prior to a save operation.
          * This combines the PrePersist and PreUpdate events.
@@ -464,12 +438,10 @@ class EventListener {
             «ENDIF»
             return true;
         }
-«/*}*/»
     '''
 
 
-    def private stubMethodsForNowImpl(Entity it) '''
-«/*    def private eventListenerImpl(PostLoad it) {*/»
+    def generateImpl(Entity it) '''
         /**
          * Post-Process the data after the entity has been constructed by the entity manager.
          *
@@ -481,7 +453,7 @@ class EventListener {
         {
             $this->performPostLoadCallback();
         }
-«/*}*/»«/*    def private eventListenerImpl(PrePersist it) {*/»
+
         /**
          * Pre-Process the data prior to an insert operation.
          *
@@ -493,7 +465,7 @@ class EventListener {
         {
             $this->performPrePersistCallback();
         }
-«/*}*/»«/*    def private eventListenerImpl(PostPersist it) {*/»
+
         /**
          * Post-Process the data after an insert operation.
          *
@@ -505,7 +477,7 @@ class EventListener {
         {
             $this->performPostPersistCallback();
         }
-«/*}*/»«/*    def private eventListenerImpl(PreRemove it) {*/»
+
         /**
          * Pre-Process the data prior a delete operation.
          *
@@ -517,7 +489,7 @@ class EventListener {
         {
             $this->performPreRemoveCallback();
         }
-«/*}*/»«/*    def private eventListenerImpl(PostRemove it) {*/»
+
         /**
          * Post-Process the data after a delete.
          *
@@ -529,7 +501,7 @@ class EventListener {
         {
             $this->performPostRemoveCallback();
         }
-«/*}*/»«/*    def private eventListenerImpl(PreUpdate it) {*/»
+
         /**
          * Pre-Process the data prior to an update operation.
          *
@@ -541,7 +513,7 @@ class EventListener {
         {
             $this->performPreUpdateCallback();
         }
-«/*}*/»«/*    def private eventListenerImpl(PostUpdate it) {*/»
+
         /**
          * Post-Process the data after an update operation.
          *
@@ -553,7 +525,7 @@ class EventListener {
         {
             $this->performPostUpdateCallback();
         }
-«/*}*/»
+
         /**
          * Pre-Process the data prior to a save operation.
          *
@@ -579,11 +551,10 @@ class EventListener {
         {
             $this->performPostSaveCallback();
         }
-«/*}*/»
     '''
 
 
-    def private postLoadImpl(Entity it/* PostLoad it */) '''
+    def private postLoadImpl(Entity it) '''
         «val app = container.application»
         $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
         «IF app.targets('1.3.5')»
