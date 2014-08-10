@@ -557,7 +557,7 @@ class Forms {
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
         «/*No input fields for foreign keys, relations are processed further down*/»
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
-            <div class="«IF entity.container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+            <div class="«IF entity.container.application.targets('1.3.5')»z-formrow«IF !visible» z-hide«ENDIF»«ELSE»form-group«IF !visible» hidden«ENDIF»«ENDIF»">
                 «fieldHelper.formRow(it, groupSuffix, idSuffix)»
             </div>
         «ENDIF»
