@@ -54,13 +54,6 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all entities in the primary model container.
-     */
-    def getEntitiesFromDefaultDataSource(Application it) {
-        getDefaultDataSource.entities
-    }
-
-    /**
      * Returns a list of all entity fields in this application.
      */
     def getAllEntityFields(Application it) {
@@ -78,7 +71,7 @@ class ModelExtensions {
      * Returns the leading entity in the primary model container.
      */
     def getLeadingEntity(Application it) {
-        getEntitiesFromDefaultDataSource.findFirst[leading]
+        getAllEntities.findFirst[leading]
     }
 
     /**
@@ -164,13 +157,6 @@ class ModelExtensions {
      */
     def getEntitiesWithAjaxToggle(Application it) {
         getAllEntities.filter[hasBooleansWithAjaxToggleEntity]
-    }
-
-    /**
-     * Returns the first model container which is default data source.
-     */
-    def getDefaultDataSource(Application it) {
-        models.findFirst[defaultDataSource]
     }
 
     /**

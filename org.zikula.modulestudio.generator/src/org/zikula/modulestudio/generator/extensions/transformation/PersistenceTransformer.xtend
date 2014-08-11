@@ -184,6 +184,8 @@ class PersistenceTransformer {
             return
         }
 
+        val defaultDataSource = models.head
+
         val varContainer = createVarContainerForWorkflowSettings(defaultDataSource)
         val factory = ModulestudioFactory.eINSTANCE
 

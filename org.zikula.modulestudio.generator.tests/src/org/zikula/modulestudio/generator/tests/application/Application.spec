@@ -40,7 +40,6 @@ describe 'Tests for generator application classes' {
                 }
                 controllingLayer {
                     controllerContainer Controller {
-                        modelContext ( 'SimpleNews.Model' )
                     }
                 }
             }

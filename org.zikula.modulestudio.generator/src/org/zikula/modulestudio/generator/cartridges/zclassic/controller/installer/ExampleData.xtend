@@ -56,8 +56,14 @@ class ExampleData {
          */
         protected function createDefaultData($categoryRegistryIdsPerEntity)
         {
-            «getDefaultDataSource.exampleRowImpl»
+            «exampleRows»
         }
+    '''
+
+    def private exampleRows(Application it) '''
+        «FOR modelContainer : models»
+            «modelContainer.exampleRowImpl»
+        «ENDFOR»
     '''
 
     def private exampleRowImpl(Models it) '''
