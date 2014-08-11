@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.reporting
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controllers
 import de.guite.modulestudio.metamodel.modulestudio.Models
 import java.io.File
 import org.eclipse.core.runtime.CoreException
@@ -40,11 +39,6 @@ class DiagramExporter {
     Integer diagCounterM
 
     /**
-     * Counter for iterating controller sub diagrams.
-     */
-    Integer diagCounterC
-
-    /**
      * Reference to workflow settings.
      */
     WorkflowSettings settings
@@ -80,7 +74,6 @@ class DiagramExporter {
         inputDiagramType = 0
         preferencesHint = prefHint
         diagCounterM = 0
-        diagCounterC = 0
 
         // create sub folder for diagrams
         outputPath = outPath + '/diagrams/' //$NON-NLS-1$
@@ -128,10 +121,6 @@ class DiagramExporter {
                 inputDiagramType = 1
                 diagCounterM = diagCounterM + 1
             }
-            Controllers: {
-                inputDiagramType = 2
-                diagCounterC = diagCounterC + 1
-            }
         }
 
         var result = false
@@ -168,8 +157,6 @@ class DiagramExporter {
             outputSuffix = '_main' //$NON-NLS-1$
         } else if (diagramType == 1) {
             outputSuffix = '_model_' + diagCounterM //$NON-NLS-1$
-        } else if (diagramType == 2) {
-            outputSuffix = '_controller_' + diagCounterC //$NON-NLS-1$
         }
 
         val filePath = outputPath + outputPrefix

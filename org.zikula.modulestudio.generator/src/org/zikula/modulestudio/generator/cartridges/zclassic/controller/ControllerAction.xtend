@@ -143,13 +143,13 @@ class ControllerAction {
     }
 
     def private actionDocMethodParams(Action it) {
-        if (!controller.container.application.targets('1.3.5') && it instanceof MainAction) {
+        if (!controller.application.targets('1.3.5') && it instanceof MainAction) {
             ' * @param string  $ot           Treated object type.\n'
         } else if (!(it instanceof MainAction || it instanceof CustomAction)) {
             ' * @param string  $ot           Treated object type.\n'
             + '''«actionDocAdditionalParams(null)»'''
             + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
-            + (if (controller.container.application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (controller.application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
 
@@ -157,7 +157,7 @@ class ControllerAction {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
             + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
-            + (if (action.controller.container.application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (action.controller.application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
 
@@ -169,10 +169,10 @@ class ControllerAction {
                + ' * @param int     $pos          Current pager position.\n'
                + ' * @param int     $num          Amount of entries to display.\n'
             DisplayAction:
-                (if (entity !== null && !controller.container.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
+                (if (entity !== null && !controller.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
             DeleteAction:
-                (if (entity !== null && !controller.container.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
+                (if (entity !== null && !controller.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
                + ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n'
             default: ''

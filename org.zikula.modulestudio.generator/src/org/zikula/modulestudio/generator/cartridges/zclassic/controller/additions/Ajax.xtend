@@ -59,7 +59,7 @@ class Ajax {
 
                 public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users()«IF !app.targets('1.3.5')»Action(Request $request)«ENDIF»
                 {
-                    return $this->getCommonUsersList«IF container.application.targets('1.3.5')»()«ELSE»Action($request)«ENDIF»;
+                    return $this->getCommonUsersList«IF application.targets('1.3.5')»()«ELSE»Action($request)«ENDIF»;
                 }
             «ENDFOR»
 
@@ -78,7 +78,7 @@ class Ajax {
     def private getCommonUsersListDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Retrieve a general purpose list of users.
-        «IF !container.application.targets('1.3.5') && !isBase»
+        «IF !application.targets('1.3.5') && !isBase»
         «' '»*
         «' '»* @Route("/getCommonUsersList", options={"expose"=true})
         «/*' '»* @Method("POST")*/»
@@ -86,12 +86,12 @@ class Ajax {
          *
          * @param string $fragment The search fragment.
          *
-         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
+         * @return «IF application.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
          */ 
     '''
 
     def private getCommonUsersListSignature(AjaxController it) '''
-        public function getCommonUsersList«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        public function getCommonUsersList«IF application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
     '''
 
     def private getCommonUsersListBaseImpl(AjaxController it, Application app) '''
@@ -181,7 +181,7 @@ class Ajax {
     def private getItemListFinderDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Retrieve item list for finder selections in Forms, Content type plugin and Scribite.
-        «IF !container.application.targets('1.3.5') && !isBase»
+        «IF !application.targets('1.3.5') && !isBase»
         «' '»*
         «' '»* @Route("/getItemListFinder", options={"expose"=true})
         «/*' '»* @Method("POST")*/»
@@ -191,12 +191,12 @@ class Ajax {
          * @param string $sort    Sorting field.
          * @param string $sortdir Sorting direction.
          *
-         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         * @return «IF application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          */
     '''
 
     def private getItemListFinderSignature(AjaxController it) '''
-        public function getItemListFinder«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        public function getItemListFinder«IF application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
     '''
 
     def private getItemListFinderBaseImpl(AjaxController it, Application app) '''
@@ -302,7 +302,7 @@ class Ajax {
     def private getItemListAutoCompletionDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Searches for entities for auto completion usage.
-        «IF !container.application.targets('1.3.5') && !isBase»
+        «IF !application.targets('1.3.5') && !isBase»
         «' '»*
         «' '»* @Route("/getItemListAutoCompletion", options={"expose"=true})
         «/*' '»* @Method("POST")*/»
@@ -312,12 +312,12 @@ class Ajax {
          * @param string $fragment The fragment of the entered item name.
          * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
          *
-         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
+         * @return «IF application.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
          */
     '''
 
     def private getItemListAutoCompletionSignature(AjaxController it) '''
-        public function getItemListAutoCompletion«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        public function getItemListAutoCompletion«IF application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
     '''
 
     def private getItemListAutoCompletionBaseImpl(AjaxController it, Application app) '''
@@ -469,7 +469,7 @@ class Ajax {
     def private checkForDuplicateDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Checks whether a field value is a duplicate or not.
-        «IF !container.application.targets('1.3.5') && !isBase»
+        «IF !application.targets('1.3.5') && !isBase»
         «' '»*
         «' '»* @Route("/checkForDuplicate", options={"expose"=true})
         «' '»* @Method("POST")
@@ -480,8 +480,8 @@ class Ajax {
          * @param string $v  The value to be checked for uniqueness.
          * @param string $ex Optional identifier to be excluded from search.
          *
-         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
-         «IF !container.application.targets('1.3.5')»
+         * @return «IF application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         «IF !application.targets('1.3.5')»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
@@ -489,7 +489,7 @@ class Ajax {
     '''
 
     def private checkForDuplicateSignature(AjaxController it) '''
-        public function checkForDuplicate«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        public function checkForDuplicate«IF application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
     '''
 
     def private checkForDuplicateBaseImpl(AjaxController it, Application app) '''
@@ -529,7 +529,7 @@ class Ajax {
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
                         case '«uniqueField.name.formatForCode»':
-                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
+                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !application.getAllEntities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
                                 break;
                     «ENDFOR»
                     «IF entity.hasSluggableFields && entity.slugUnique»
@@ -588,7 +588,7 @@ class Ajax {
         }
 
         $exclude = $postData->get('ex', '');
-        «IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»
+        «IF !application.getAllEntities.filter[hasCompositeKeys].empty»
             if (strpos($exclude, '_') !== false) {
                 $exclude = explode('_', $exclude);
             }
@@ -606,7 +606,7 @@ class Ajax {
     def private toggleFlagDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Changes a given flag (boolean field) by switching between true and false.
-        «IF !container.application.targets('1.3.5') && !isBase»
+        «IF !application.targets('1.3.5') && !isBase»
         «' '»*
         «' '»* @Route("/toggleFlag", options={"expose"=true})
         «' '»* @Method("POST")
@@ -616,8 +616,8 @@ class Ajax {
          * @param string $field The field to be toggled.
          * @param int    $id    Identifier of treated entity.
          *
-         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
-         «IF !container.application.targets('1.3.5')»
+         * @return «IF application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         «IF !application.targets('1.3.5')»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
@@ -625,7 +625,7 @@ class Ajax {
     '''
 
     def private toggleFlagSignature(AjaxController it) '''
-        public function toggleFlag«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        public function toggleFlag«IF application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
     '''
 
     def private toggleFlagBaseImpl(AjaxController it, Application app) '''
@@ -688,7 +688,7 @@ class Ajax {
     def private handleTreeOperationDocBlock(AjaxController it, Boolean isBase) '''
         /**
          * Performs different operations on tree hierarchies.
-        «IF !container.application.targets('1.3.5') && !isBase»
+        «IF !application.targets('1.3.5') && !isBase»
         «' '»*
         «' '»* @Route("/handleTreeOperation", options={"expose"=true})
         «' '»* @Method("POST")
@@ -701,20 +701,20 @@ class Ajax {
          * @param string $direction The target direction for a move action (only for moveNode [up, down] and moveNodeTo [after, before, bottom]).
          * @param int    $destid    Identifier of destination node for (only for moveNodeTo).
          *
-         * @return «IF container.application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         * @return «IF application.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          *
-         «IF !container.application.targets('1.3.5')»
+         «IF !application.targets('1.3.5')»
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
-         * @throws «IF container.application.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
-         «IF !container.application.targets('1.3.5')»
+         * @throws «IF application.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
+         «IF !application.targets('1.3.5')»
          * @throws RuntimeException Thrown if tree verification or executing the workflow action fails
          «ENDIF»
          */
     '''
 
     def private handleTreeOperationSignature(AjaxController it) '''
-        public function handleTreeOperation«IF container.application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        public function handleTreeOperation«IF application.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
     '''
 
     def private handleTreeOperationBaseImpl(AjaxController it, Application app) '''

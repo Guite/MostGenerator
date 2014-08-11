@@ -40,7 +40,7 @@ class DisplayFunctions {
 
             «initItemActions»
         «ENDIF»
-        «IF !getAllControllers.map[hasActions('view')].empty»
+        «IF !controllers.map[hasActions('view')].empty»
 
             «initQuickNavigation»
         «ENDIF»

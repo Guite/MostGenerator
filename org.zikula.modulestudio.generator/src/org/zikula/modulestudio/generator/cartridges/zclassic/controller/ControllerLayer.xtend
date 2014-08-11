@@ -48,7 +48,7 @@ class ControllerLayer {
         this.app = it
 
         // controllers and apis
-        getAllControllers.forEach[generateControllerAndApi(fsa)]
+        controllers.forEach[generateControllerAndApi(fsa)]
         getAllEntities.forEach[generateController(fsa)]
 
         new UtilMethods().generate(it, fsa)
@@ -693,22 +693,22 @@ class ControllerLayer {
 
     def private menuLinksBetweenControllers(Controller it) {
         switch it {
-            AdminController case !container.getUserControllers.empty: '''
-                    «val userController = container.getUserControllers.head»
+            AdminController case !application.getAllUserControllers.empty: '''
+                    «val userController = application.getAllUserControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                         $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
-                                         «IF container.application.targets('1.3.5')»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
+                                         «IF application.targets('1.3.5')»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
                     }
                     '''
-            UserController case !container.getAdminControllers.empty: '''
-                    «val adminController = container.getAdminControllers.head»
+            UserController case !application.getAllAdminControllers.empty: '''
+                    «val adminController = application.getAllAdminControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
-                                         «IF container.application.targets('1.3.5')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
+                                         «IF application.targets('1.3.5')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
                     }
                     '''
         }
@@ -716,14 +716,14 @@ class ControllerLayer {
 
     def private menuLinksPermissionLevel(Controller it) {
         switch it {
-            AdminController case !container.getUserControllers.empty: 'ADMIN'
+            AdminController case !application.getAllUserControllers.empty: 'ADMIN'
             default: 'READ'
         }
     }
 
     def private additionalApiMethods(Controller it) {
         switch it {
-            UserController: if (container.application.targets('1.3.5')) new ShortUrlsLegacy(app).generate(it) else ''
+            UserController: if (application.targets('1.3.5')) new ShortUrlsLegacy(app).generate(it) else ''
             default: ''
         }
     }
@@ -750,8 +750,8 @@ class ControllerLayer {
 
     def private indexUrlDetails(Controller it) {
         if (hasActions('index')) '\'' + (if (app.targets('1.3.5')) 'main' else 'index') + '\''
-        else if (hasActions('view')) '\'view\', array(\'ot\' => \'' + container.application.getLeadingEntity.name.formatForCode + '\')'
-        else if (container.application.needsConfig && isConfigController) '\'config\''
+        else if (hasActions('view')) '\'view\', array(\'ot\' => \'' + application.getLeadingEntity.name.formatForCode + '\')'
+        else if (application.needsConfig && isConfigController) '\'config\''
         else '\'hooks\''
     }
 }

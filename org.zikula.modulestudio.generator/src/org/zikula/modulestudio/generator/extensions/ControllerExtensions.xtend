@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.Controllers
 import de.guite.modulestudio.metamodel.modulestudio.CustomAction
 import de.guite.modulestudio.metamodel.modulestudio.DeleteAction
 import de.guite.modulestudio.metamodel.modulestudio.DisplayAction
@@ -37,7 +36,7 @@ class ControllerExtensions {
      * Returns a list of all user controllers in the given application.
      */
     def getAllUserControllers(Application it) {
-        getAllControllers.filter(UserController)
+        controllers.filter(UserController)
     }
     /**
      * Checks whether the application has an user controller or not.
@@ -56,27 +55,13 @@ class ControllerExtensions {
      * Returns a list of all admin controllers in the given application.
      */
     def getAllAdminControllers(Application it) {
-        getAllControllers.filter(AdminController)
+        controllers.filter(AdminController)
     }
     /**
      * Checks whether the application has an admin controller or not.
      */
     def hasAdminController(Application it) {
         !getAllAdminControllers.empty
-    }
-
-    /**
-     * Returns a list of all user controllers in the given container.
-     */
-    def getUserControllers(Controllers it) {
-        controllers.filter(UserController)
-    }
-
-    /**
-     * Returns a list of all admin controllers in the given container.
-     */
-    def getAdminControllers(Controllers it) {
-        controllers.filter(AdminController)
     }
 
     /**
@@ -143,7 +128,7 @@ class ControllerExtensions {
      * Returns a list of all view actions in the given application.
      */
     def getViewActions(Application it) {
-        getAllControllers.map[actions].flatten.filter(ViewAction)
+        controllers.map[actions].flatten.filter(ViewAction)
     }
 
     /**
@@ -157,7 +142,7 @@ class ControllerExtensions {
      * Returns a list of all display actions in the given application.
      */
     def getDisplayActions(Application it) {
-        getAllControllers.map[actions].flatten.filter(DisplayAction)
+        controllers.map[actions].flatten.filter(DisplayAction)
     }
 
     /**
@@ -171,7 +156,7 @@ class ControllerExtensions {
      * Returns a list of all edit actions in the given application.
      */
     def getEditActions(Application it) {
-        getAllControllers.map[actions].flatten.filter(EditAction)
+        controllers.map[actions].flatten.filter(EditAction)
     }
 
     /**
@@ -185,25 +170,14 @@ class ControllerExtensions {
      * Returns a list of all delete actions in the given application.
      */
     def getDeleteActions(Application it) {
-        getAllControllers.map[actions].flatten.filter(DeleteAction)
-    }
-
-    /**
-     * Returns a list of all controllers in the given application.
-     */
-    def getAllControllers(Application it) {
-        var allControllers = controllers.head.controllers
-        for (controllerContainer : controllers.tail)
-            allControllers.addAll(controllerContainer.controllers)
-        allControllers
+        controllers.map[actions].flatten.filter(DeleteAction)
     }
 
     /**
      * Get a list of only admin and user controllers.
      */
     def getAdminAndUserControllers(Application it) {
-        var allControllers = getAllControllers
-        allControllers.filter(AdminController) + allControllers.filter(UserController)
+        controllers.filter(AdminController) + controllers.filter(UserController)
     }
 
     /**
@@ -216,14 +190,14 @@ class ControllerExtensions {
             if (!getAllUserControllers.empty)
                 getMainUserController.formattedName
             else
-                getAllControllers.head.formattedName
+                controllers.head.formattedName
     }
 
     /**
      * Checks for whether the given controller is responsible for the config action.
      */
     def isConfigController(Controller it) {
-        container.application.configController == formattedName
+        application.configController == formattedName
     }
 
     /**

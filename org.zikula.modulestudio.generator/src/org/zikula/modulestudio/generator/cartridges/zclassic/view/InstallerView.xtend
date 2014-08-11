@@ -76,7 +76,7 @@ class InstallerView {
             <dd>{gt text='Easy management of «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size > 1» and «IF models.map[relations].size > 1»related«ELSE»other«ENDIF» artifacts«ENDIF».'}</dd>
             <dd>{gt text='Included workflow support.'}</dd>
         «tplInitStep1Additions»
-        «IF !getAllControllers.filter[hasActions('view') || hasActions('display')].empty»
+        «IF !controllers.filter[hasActions('view') || hasActions('display')].empty»
             <dt>{gt text='Output formats'}</dt>
             <dd>{gt text='Beside the normal templates «appName» includes also templates for various other output formats.'}</dd>
         «ENDIF»

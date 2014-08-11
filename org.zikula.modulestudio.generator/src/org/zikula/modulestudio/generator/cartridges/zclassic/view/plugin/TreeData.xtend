@@ -184,7 +184,7 @@ class TreeData {
     '''
 
     def private controllerEditActionFlags(Application it) '''
-        «FOR controller : getAllControllers.filter[hasActions('edit')]»
+        «FOR controller : controllers.filter[hasActions('edit')]»
             case '«controller.formattedName»': $controllerHasEditAction = true; break;
         «ENDFOR»
         «IF !targets('1.3.5')»

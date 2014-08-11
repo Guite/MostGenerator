@@ -260,7 +260,7 @@ class Styles {
     '''
 
     def private viewFilterForm(Application it) '''
-        «IF !getAllControllers.filter[hasActions('view')].empty»
+        «IF !controllers.filter[hasActions('view')].empty»
             div.«cssPrefix»-view form.«cssPrefix»-quicknav {
                 margin: 10px 0;
                 padding: 8px 12px;

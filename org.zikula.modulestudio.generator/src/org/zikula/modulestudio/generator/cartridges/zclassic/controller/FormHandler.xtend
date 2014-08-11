@@ -54,7 +54,7 @@ class FormHandler {
         // Create new Form reference
         $view = FormUtil::newForm('«appName.formatForCode»', $this);
 
-        «IF controller.container.application.targets('1.3.5')»
+        «IF controller.application.targets('1.3.5')»
             $handlerClass = '«appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»';
         «ELSE»
             $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«controller.name.formatForCodeCapital»\\«actionName.formatForCodeCapital»Handler';

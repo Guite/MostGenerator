@@ -42,7 +42,7 @@ class Forms {
     Relations relationHelper = new Relations
 
     def generate(Application it, IFileSystemAccess fsa) {
-        for (controller : getAllControllers) {
+        for (controller : controllers) {
             if (!(controller instanceof AjaxController)) {
                 for (action : controller.actions.filter(EditAction)) action.generate(it, fsa)
             }

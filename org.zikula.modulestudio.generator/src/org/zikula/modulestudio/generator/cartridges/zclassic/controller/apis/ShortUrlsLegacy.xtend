@@ -192,15 +192,15 @@ class ShortUrlsLegacy {
             }
 
             // define the available user functions
-            $funcs = array(«FOR action : actions SEPARATOR ", "»'«IF !container.application.targets('1.3.5') && action.name.toLowerCase == 'main'»index«ELSE»«action.name.formatForCode.toFirstLower»«ENDIF»'«ENDFOR»);
+            $funcs = array(«FOR action : actions SEPARATOR ", "»'«IF !application.targets('1.3.5') && action.name.toLowerCase == 'main'»index«ELSE»«action.name.formatForCode.toFirstLower»«ENDIF»'«ENDFOR»);
 
             // return if function url scheme is not being customised
             $customFuncs = array(«IF hasActions('view')»'view'«IF hasActions('display')», «ENDIF»«ENDIF»«IF hasActions('display')»'display'«ENDIF»);
 
             // set the correct function name based on our input
             if (empty($args['vars'][2])) {
-                // no func and no vars = «IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»
-                System::queryStringSetVar('func', '«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»');
+                // no func and no vars = «IF application.targets('1.3.5')»main«ELSE»index«ENDIF»
+                System::queryStringSetVar('func', '«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»');
                 return true;
             } else if (in_array($args['vars'][2], $funcs) && !in_array($args['vars'][2], $customFuncs)) {
                 // normal url scheme, no need for special decoding
@@ -252,7 +252,7 @@ class ShortUrlsLegacy {
 
             // post processing
             if (!isset($parameters['func'])) {
-                $parameters['func'] = '«IF hasActions('view')»view«ELSEIF hasActions('display')»display«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»';
+                $parameters['func'] = '«IF hasActions('view')»view«ELSEIF hasActions('display')»display«ELSE»«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»';
             }
 
             $func = $parameters['func'];

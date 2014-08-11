@@ -33,7 +33,7 @@ class Redirect {
         protected function getRedirectCodes()
         {
             $codes = array();
-            «FOR someController : getAllControllers»
+            «FOR someController : controllers»
                 «val controllerName = someController.formattedName»
                 «IF someController.hasActions('index')»
                     // «IF targets('1.3.5')»main«ELSE»index«ENDIF» page of «controllerName» area
@@ -65,7 +65,7 @@ class Redirect {
             «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
                 «val sourceEntity = incomingRelation.source»
                 «IF sourceEntity.name != it.name»
-                    «FOR someController : app.getAllControllers»
+                    «FOR someController : app.controllers»
                         «val controllerName = someController.formattedName»
                         «IF someController.hasActions('view')»
                             // «controllerName» list of «sourceEntity.nameMultiple.formatForDisplay»
@@ -185,7 +185,7 @@ class Redirect {
 
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
-                «FOR someController : app.getAllControllers»
+                «FOR someController : app.controllers»
                 «IF !(someController instanceof AjaxController)»
                     «val controllerName = someController.formattedName»
                     «IF someController.hasActions('index')»
@@ -227,7 +227,7 @@ class Redirect {
                 «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
                     «val sourceEntity = incomingRelation.source»
                     «IF sourceEntity.name != it.name»
-                        «FOR someController : app.getAllControllers»
+                        «FOR someController : app.controllers»
                         «IF !(someController instanceof AjaxController)»
                             «val controllerName = someController.formattedName»
                             «IF someController.hasActions('view')»

@@ -52,7 +52,7 @@ class Custom {
     def private templateHeader(Controller it, String actionName) {
         switch it {
             AdminController: '''
-                «IF container.application.targets('1.3.5')»
+                «IF application.targets('1.3.5')»
                     <div class="z-admin-content-pagetitle">
                         {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
                         <h3>{$templateTitle}</h3>
