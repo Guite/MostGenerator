@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.reporting
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controllers
 import de.guite.modulestudio.metamodel.modulestudio.Models
-import de.guite.modulestudio.metamodel.modulestudio.Views
 import java.io.File
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.Path
@@ -21,7 +20,7 @@ import org.zikula.modulestudio.generator.application.WorkflowSettings
 class DiagramExporter {
 
     /**
-     * The diagram type (0 = main, 1 = model, 2 = controller, 3 = view).
+     * The diagram type (0 = main, 1 = model, 2 = controller).
      */
     Integer inputDiagramType
 
@@ -46,11 +45,6 @@ class DiagramExporter {
     Integer diagCounterC
 
     /**
-     * Counter for iterating view sub diagrams.
-     */
-    Integer diagCounterV
-
-    /**
      * Reference to workflow settings.
      */
     WorkflowSettings settings
@@ -64,7 +58,7 @@ class DiagramExporter {
      * The constructor.
      * 
      * @param wfSettings
-     *            Given {@link org.zikula.modulestudio.generator.application.WorkflowSettings} instance.
+     *            Given {@link WorkflowSettings} instance.
      */
     new(WorkflowSettings wfSettings) {
         settings = wfSettings
@@ -74,11 +68,11 @@ class DiagramExporter {
      * Process an application diagram.
      * 
      * @param appDiagram
-     *            Instance of {@link org.eclipse.gmf.runtime.notation.Diagram}.
+     *            Instance of {@link Diagram}.
      * @param outPath
      *            The desired output path.
      * @param prefHint
-     *            Instance of {@link org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint}.
+     *            Instance of {@link PreferencesHint}.
      */
     def processDiagram(Diagram appDiagram, String outPath,
             PreferencesHint prefHint) {
@@ -87,7 +81,6 @@ class DiagramExporter {
         preferencesHint = prefHint
         diagCounterM = 0
         diagCounterC = 0
-        diagCounterV = 0
 
         // create sub folder for diagrams
         outputPath = outPath + '/diagrams/' //$NON-NLS-1$
@@ -121,7 +114,7 @@ class DiagramExporter {
     }
 
     /**
-     * Exports the given {@link org.eclipse.gmf.runtime.notation.Diagram} into all possible file formats.
+     * Exports the given {@link Diagram} into all possible file formats.
      * 
      * @param inputDiagram
      *            The given input diagram.
@@ -138,10 +131,6 @@ class DiagramExporter {
             Controllers: {
                 inputDiagramType = 2
                 diagCounterC = diagCounterC + 1
-            }
-            Views: {
-                inputDiagramType = 3
-                diagCounterV = diagCounterV + 1
             }
         }
 
@@ -161,7 +150,7 @@ class DiagramExporter {
     }
 
     /**
-     * Exports the given {@link org.eclipse.gmf.runtime.notation.Diagram} into a certain {@link org.eclipse.gmf.runtime.diagram.ui.image.ImageFileFormat}.
+     * Exports the given {@link Diagram} into a certain {@link ImageFileFormat}.
      * 
      * @param format
      *            The given image file format.
@@ -181,8 +170,6 @@ class DiagramExporter {
             outputSuffix = '_model_' + diagCounterM //$NON-NLS-1$
         } else if (diagramType == 2) {
             outputSuffix = '_controller_' + diagCounterC //$NON-NLS-1$
-        } else if (diagramType == 3) {
-            outputSuffix = '_view_' + diagCounterV //$NON-NLS-1$
         }
 
         val filePath = outputPath + outputPrefix
@@ -202,10 +189,10 @@ class DiagramExporter {
     }
 
     /**
-     * Retrieve a resource set from a given {@link de.guite.modulestudio.metamodel.modulestudio.Application}.
+     * Retrieve a resource set from a given {@link Application}.
      * 
      * @param app
-     *            The given {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
+     *            The given {@link Application} instance.
      * @return The determined resource set.
      */
     def private getResourceSetFromApp(Application app) {

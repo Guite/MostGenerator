@@ -41,12 +41,6 @@ describe 'Tests for generator application classes' {
                 controllingLayer {
                     controllerContainer Controller {
                         modelContext ( 'SimpleNews.Model' )
-                        processViews = 'SimpleNews.Views'
-                    }
-                }
-                viewLayer {
-                    viewContainer Views {
-                        controller 'SimpleNews.Controller'
                     }
                 }
             }
