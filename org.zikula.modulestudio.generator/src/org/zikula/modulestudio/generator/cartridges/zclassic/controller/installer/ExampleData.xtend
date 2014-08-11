@@ -29,6 +29,7 @@ import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -37,6 +38,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExampleData {
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
@@ -68,7 +70,7 @@ class ExampleData {
 
     def private exampleRowImpl(Models it) '''
         «FOR entity : entities»«entity.truncateTable»«ENDFOR»
-        «IF numExampleRows > 0»
+        «IF application.amountOfExampleRows > 0»
             «IF !entities.filter[tree != EntityTreeType::NONE].empty»
                 $treeCounterRoot = 1;
             «ENDIF»
@@ -133,7 +135,7 @@ class ExampleData {
     '''
 
     def private initExampleObjects(Entity it, Application app) '''
-        «FOR number : 1..container.numExampleRows»
+        «FOR number : 1..app.amountOfExampleRows»
             $«name.formatForCode»«number» = new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
         «ENDFOR»
         «/* this last line is on purpose */»
@@ -145,7 +147,7 @@ class ExampleData {
             $categoryId = 41; // Business and work
             $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»CategoriesModule:CategoryEntity«ENDIF»', $categoryId);
         «ENDIF»
-        «FOR number : 1..container.numExampleRows»
+        «FOR number : 1..app.amountOfExampleRows»
             «IF isInheriting»
                 «FOR field : parentType.getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
             «ENDIF»
@@ -157,7 +159,7 @@ class ExampleData {
                 $«entityName»«number»->setParent(«IF number == 1»null«ELSE»$«entityName»1«ENDIF»);
                 $«entityName»«number»->setLvl(«IF number == 1»1«ELSE»2«ENDIF»);
                 $«entityName»«number»->setLft(«IF number == 1»1«ELSE»«((number-1)*2)»«ENDIF»);
-                $«entityName»«number»->setRgt(«IF number == 1»«container.numExampleRows*2»«ELSE»«((number-1)*2)+1»«ENDIF»);
+                $«entityName»«number»->setRgt(«IF number == 1»«app.amountOfExampleRows*2»«ELSE»«((number-1)*2)+1»«ENDIF»);
                 $«entityName»«number»->setRoot($treeCounterRoot);
             «ENDIF»
             «FOR relation : outgoing.filter(OneToOneRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
@@ -231,7 +233,7 @@ class ExampleData {
     '''
 
     def private persistEntities(Entity it, Application app) '''
-        «FOR number : 1..container.numExampleRows»
+        «FOR number : 1..app.amountOfExampleRows»
             $success = $workflowHelper->executeAction($«name.formatForCode»«number», $action);
         «ENDFOR»
     '''
