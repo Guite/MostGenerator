@@ -100,7 +100,7 @@ class ControllerUtil {
             }
 
             $allowedObjectTypes = array();
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 $allowedObjectTypes[] = '«entity.name.formatForCode»';
             «ENDFOR»
 
@@ -140,7 +140,7 @@ class ControllerUtil {
         public function hasCompositeKeys($objectType)
         {
             switch ($objectType) {
-                «FOR entity : getAllEntities»
+                «FOR entity : entities»
                     case '«entity.name.formatForCode»':
                         return «entity.hasCompositeKeys.displayBool»;
                 «ENDFOR»

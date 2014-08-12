@@ -33,10 +33,10 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
     override properties(Entity it) '''
 
         /**
-         * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»", 
+         * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»", 
          *                mappedBy="entity", cascade={"all"}, 
          *                orphanRemoval=true«/*commented out as this causes only one category to be selected (#349)   , indexBy="categoryRegistryId"*/»)
-         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»
+         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»
          */
         protected $categories = null;
     '''
@@ -61,7 +61,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
-        «IF !container.application.targets('1.3.5')»
+        «IF !application.targets('1.3.5')»
             use Zikula\Core\Doctrine\Entity\«extensionBaseClass»;
         «ENDIF»
     '''
@@ -70,7 +70,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class.
      */
     override extensionBaseClass(Entity it) {
-        if (container.application.targets('1.3.5')) {
+        if (application.targets('1.3.5')) {
             'Zikula_Doctrine2_Entity_Entity' + extensionClassType.toFirstUpper
         } else {
             'AbstractEntity' + extensionClassType.toFirstUpper
@@ -89,9 +89,9 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassBaseAnnotations(Entity it) '''
         /**
-         * @ORM\ManyToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="categories")
+         * @ORM\ManyToOne(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="categories")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields.head.name.formatForCode»")
-         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
+         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
          */
         protected $entity;
 
@@ -102,7 +102,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="«IF !container.application.targets('1.3.5')»\«ENDIF»«repositoryClass(extensionClassType)»")
+         «' '»* @ORM\Entity(repositoryClass="«IF !application.targets('1.3.5')»\«ENDIF»«repositoryClass(extensionClassType)»")
          «' '»* @ORM\Table(name="«fullEntityTableName»_category",
          «' '»*     uniqueConstraints={
          «' '»*         @ORM\UniqueConstraint(name="cat_unq", columns={"registryId", "categoryId", "entityId"})

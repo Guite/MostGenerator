@@ -49,7 +49,7 @@ class ControllerLayer {
 
         // controllers and apis
         controllers.forEach[generateControllerAndApi(fsa)]
-        getAllEntities.forEach[generateController(fsa)]
+        entities.forEach[generateController(fsa)]
 
         new UtilMethods().generate(it, fsa)
         if (targets('1.3.5')) {
@@ -658,7 +658,7 @@ class ControllerLayer {
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 
                 «IF hasActions('view')»
-                    «FOR entity : app.getAllEntities»
+                    «FOR entity : app.entities»
                         if (in_array('«entity.name.formatForCode»', $allowedObjectTypes)
                             && SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
                             «IF app.targets('1.3.5')»

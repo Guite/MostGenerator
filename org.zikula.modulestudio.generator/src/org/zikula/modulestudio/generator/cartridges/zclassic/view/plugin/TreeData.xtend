@@ -5,13 +5,11 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TreeData {
     extension ControllerExtensions = new ControllerExtensions
-    extension ModelExtensions = new ModelExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -188,7 +186,7 @@ class TreeData {
             case '«controller.formattedName»': $controllerHasEditAction = true; break;
         «ENDFOR»
         «IF !targets('1.3.5')»
-            «FOR entity : getAllEntities.filter[hasActions('edit')]»
+            «FOR entity : entities.filter[hasActions('edit')]»
                 case '«entity.name.formatForCode»': $controllerHasEditAction = true; break;
             «ENDFOR»
         «ENDIF»

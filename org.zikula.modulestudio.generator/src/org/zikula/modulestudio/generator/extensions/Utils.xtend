@@ -116,7 +116,7 @@ class Utils {
      * @return Boolean The result.
      */
     def hasMultipleConfigSections(Application it) {
-        getAllVariableContainers.size > 1
+        variables.size > 1
     }
 
     /**
@@ -127,18 +127,7 @@ class Utils {
      * @return List<Variables> The selected list.
      */
     def getSortedVariableContainers(Application it) {
-        getAllVariableContainers.sortBy[sortOrder]
-    }
-
-    /**
-     * Returns all variables containers for a given application.
-     *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Application} instance.
-     *
-     * @return List<Variables> The selected list.
-     */
-    def getAllVariableContainers(Application it) {
-        models.map[variables].flatten.toList
+        variables.sortBy[sortOrder]
     }
 
     /**
@@ -149,7 +138,7 @@ class Utils {
      * @return List<Variable> The selected list.
      */
     def getAllVariables(Application it) {
-        getAllVariableContainers.map[vars].flatten.toList
+        variables.map[vars].flatten.toList
     }
 
     /**

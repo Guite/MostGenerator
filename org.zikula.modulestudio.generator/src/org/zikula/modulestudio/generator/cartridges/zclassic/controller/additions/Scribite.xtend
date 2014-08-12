@@ -170,7 +170,7 @@ class Scribite {
         --------------------
 
         It is easy to include «appName» in your Scribite editors.
-        «appName» contains already the a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size() > 1» and other items«ENDIF».
+        «appName» contains already the a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay»«IF entities.size() > 1» and other items«ENDIF».
         Please note that Scribite 5.0 is required for this.
 
         To activate the popup for the editor of your choice (currently supported: CKEditor, TinyMCE, Xinha)

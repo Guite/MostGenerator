@@ -37,8 +37,8 @@ class Ajax {
 
             «getItemListAutoCompletionBase(app)»
         «ENDIF»
-        «IF app.getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
+        «IF app.entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        || (app.hasSluggable && !app.entities.filter[hasSluggableFields && slugUnique].empty)»
 
             «checkForDuplicateBase(app)»
         «ENDIF»
@@ -517,7 +517,7 @@ class Ajax {
 
         $result = false;
         switch ($objectType) {
-        «FOR entity : app.getAllEntities»
+        «FOR entity : app.entities»
             «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
             «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                 case '«entity.name.formatForCode»':
@@ -529,7 +529,7 @@ class Ajax {
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
                         case '«uniqueField.name.formatForCode»':
-                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !application.getAllEntities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
+                                $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !application.entities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
                                 break;
                     «ENDFOR»
                     «IF entity.hasSluggableFields && entity.slugUnique»
@@ -574,7 +574,7 @@ class Ajax {
         // check if the given field is existing and unique
         $uniqueFields = array();
         switch ($objectType) {
-            «FOR entity : app.getAllEntities»
+            «FOR entity : app.entities»
                 «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
@@ -588,7 +588,7 @@ class Ajax {
         }
 
         $exclude = $postData->get('ex', '');
-        «IF !application.getAllEntities.filter[hasCompositeKeys].empty»
+        «IF !application.entities.filter[hasCompositeKeys].empty»
             if (strpos($exclude, '_') !== false) {
                 $exclude = explode('_', $exclude);
             }
@@ -1045,8 +1045,8 @@ class Ajax {
 
             «getItemListAutoCompletionImpl(app)»
         «ENDIF»
-        «IF app.getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
+        «IF app.entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        || (app.hasSluggable && !app.entities.filter[hasSluggableFields && slugUnique].empty)»
 
             «checkForDuplicateImpl(app)»
         «ENDIF»

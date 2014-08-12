@@ -5,14 +5,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Account {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -79,7 +77,7 @@ class Account {
 
             // Create an array of links to return
             «IF !getAllUserControllers.empty && getMainUserController.hasActions('view')»
-                «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
+                «FOR entity : entities.filter[standardFields && ownerPermission]»
                     $objectType = '«entity.name.formatForCode»';
                     if (SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                         $items[] = array(

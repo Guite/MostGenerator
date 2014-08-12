@@ -7,14 +7,12 @@ import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowUtil {
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
@@ -160,7 +158,7 @@ class WorkflowUtil {
         {
             $result = '';
             switch ($objectType) {
-                «FOR entity: getAllEntities»
+                «FOR entity: entities»
                     case '«entity.name.formatForCode»':
                         $result = '«entity.workflow.textualName»';
                         break;
@@ -463,10 +461,10 @@ class WorkflowUtil {
                     'state' => $state,
                     'message' => $this->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
                 );
-                «IF !container.application.targets('1.3.5')»
+                «IF !application.targets('1.3.5')»
 
                     if ($amounts > 0) {
-                        $logger->info('{app}: There are {amount} {entities} waiting for approval.', array('app' => '«container.application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»'));
+                        $logger->info('{app}: There are {amount} {entities} waiting for approval.', array('app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»'));
                     }
                 «ENDIF»
             }

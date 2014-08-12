@@ -236,7 +236,7 @@ class DisplayFunctions {
             «ENDIF»
 
             switch (objectType) {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 «entity.initQuickNavigationEntity»
             «ENDFOR»
             default:
@@ -288,26 +288,26 @@ class DisplayFunctions {
     '''
 
     def private dispatch jsInit(DerivedField it) '''
-        «IF entity.container.application.targets('1.3.5')»
+        «IF entity.application.targets('1.3.5')»
             if ($('«name.formatForCode»') != undefined) {
-                $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.container.application.prefix())»);
+                $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.application.prefix())»);
             }
         «ELSE»
             if ($('#«name.formatForCode»').size() > 0) {
-                $('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.container.application.prefix())»);
+                $('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application.prefix())»);
             }
         «ENDIF»
     '''
 
     def private dispatch jsInit(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             if ($('«sourceAliasName»') != undefined) {
-                $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(container.application.prefix())»);
+                $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(application.prefix())»);
             }
         «ELSE»
             if ($('#«sourceAliasName»').size() > 0) {
-                $('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(container.application.prefix())»);
+                $('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(application.prefix())»);
             }
         «ENDIF»
     '''

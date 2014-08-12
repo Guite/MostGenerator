@@ -151,30 +151,30 @@ class Config {
     '''
 
     def private formRow(Variable it) '''
-        <div class="«IF container.container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+        <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
             «IF documentation !== null && documentation != ""»
                 {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
             «ENDIF»
-            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.container.application.appName.toLowerCase»-form-tooltips «ENDIF»«IF !container.container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
-            «IF !container.container.application.targets('1.3.5')»
+            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»«IF !container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
+            «IF !container.application.targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
                 «inputField»
-            «IF !container.container.application.targets('1.3.5')»
+            «IF !container.application.targets('1.3.5')»
                 </div>
             «ENDIF»
         </div>
     '''
 
     def private dispatch inputField(Variable it) '''
-        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
     '''
 
     def private dispatch inputField(IntVar it) '''
         «IF isUserGroupSelector»
-            {formdropdownlist id='«name.formatForCode»' group='config' __title='Choose the «name.formatForDisplay»'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+            {formdropdownlist id='«name.formatForCode»' group='config' __title='Choose the «name.formatForDisplay»'«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSE»
-            {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+            {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ENDIF»
     '''
 
@@ -184,9 +184,9 @@ class Config {
 
     def private dispatch inputField(ListVar it) '''
         «IF multiple»
-            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2 __title='Choose the «name.formatForDisplay»'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2 __title='Choose the «name.formatForDisplay»'«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ELSE»
-            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF» __title='Choose the «name.formatForDisplay»'«IF !container.container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF» __title='Choose the «name.formatForDisplay»'«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
         «ENDIF»
     '''
 }

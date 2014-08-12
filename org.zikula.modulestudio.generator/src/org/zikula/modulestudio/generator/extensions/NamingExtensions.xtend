@@ -43,10 +43,10 @@ class NamingExtensions {
      * Returns the base path for a certain template file.
      */
     def templateFileBase(Entity it, String actionName) {
-        if (container.application.targets('1.3.5'))
-            container.application.getViewPath + name.formatForCode + '/' + actionName
+        if (application.targets('1.3.5'))
+            application.getViewPath + name.formatForCode + '/' + actionName
         else
-            container.application.getViewPath + name.formatForCodeCapital + '/' + actionName
+            application.getViewPath + name.formatForCodeCapital + '/' + actionName
     }
 
     /**
@@ -54,7 +54,7 @@ class NamingExtensions {
      */
     def templateFile(Entity it, String actionName) {
         var filePath = templateFileBase(actionName) + templateSuffix
-        if (container.application.shouldBeMarked(filePath)) {
+        if (application.shouldBeMarked(filePath)) {
             filePath = templateFileBase(actionName) + '.generated' + templateSuffix
         }
         filePath
@@ -66,7 +66,7 @@ class NamingExtensions {
      */
     def templateFileWithExtension(Entity it, String actionName, String templateExtension) {
         var filePath = templateFileBase(actionName) + '.' + templateExtension + templateSuffix
-        if (container.application.shouldBeMarked(filePath)) {
+        if (application.shouldBeMarked(filePath)) {
             filePath = templateFileBase(actionName) + '.' + templateExtension + '.generated' + templateSuffix
         }
         filePath
@@ -112,7 +112,7 @@ class NamingExtensions {
      * Returns the class name for a certain entity class.
      */
     def entityClassName(Entity it, String suffix, Boolean isBase) {
-        val app = container.application
+        val app = application
         if (app.targets('1.3.5'))
             app.appName + '_Entity_' + (if (isBase) 'Base_' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
         else

@@ -6,7 +6,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Factory {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -29,7 +27,7 @@ class Factory {
         }
         this.fsa = fsa
         app = it
-        getAllEntities.filter[!mappedSuperClass].forEach(e|e.generate)
+        entities.filter[!mappedSuperClass].forEach(e|e.generate)
     }
 
     /**

@@ -73,7 +73,7 @@ class InstallerView {
         <p>{gt text='Many features are contained in «appName» as for example:'}</p>
         <dl id="«appName.toFirstLower»FeatureList">
             <dt>{gt text='«getLeadingEntity.name.formatForDisplayCapital» management.'}</dt>
-            <dd>{gt text='Easy management of «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size > 1» and «IF models.map[relations].size > 1»related«ELSE»other«ENDIF» artifacts«ENDIF».'}</dd>
+            <dd>{gt text='Easy management of «getLeadingEntity.nameMultiple.formatForDisplay»«IF entities.size > 1» and «IF relations.size > 1»related«ELSE»other«ENDIF» artifacts«ENDIF».'}</dd>
             <dd>{gt text='Included workflow support.'}</dd>
         «tplInitStep1Additions»
         «IF !controllers.filter[hasActions('view') || hasActions('display')].empty»

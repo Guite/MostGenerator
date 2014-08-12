@@ -70,7 +70,7 @@ class Plugins {
         if (hasListFields) {
             new GetListEntry().generate(it, fsa)
         }
-        if (getAllEntities.exists[geographical]) {
+        if (entities.exists[geographical]) {
             new FormatGeoData().generate(it, fsa)
         }
         if (hasTrees) {
@@ -80,7 +80,7 @@ class Plugins {
         if (generateModerationPanel && needsApproval) {
             new ModerationObjects().generate(it, fsa)
         }
-        if (generateIcsTemplates && !getAllEntities.filter[getStartDateField !== null && getEndDateField !== null].empty) {
+        if (generateIcsTemplates && !entities.filter[getStartDateField !== null && getEndDateField !== null].empty) {
             new FormatIcalText().generate(it, fsa)
         }
     }
@@ -92,10 +92,10 @@ class Plugins {
         if (hasCountryFields) {
             new CountrySelector().generate(it, fsa)
         }
-        if (getAllEntities.exists[geographical]) {
+        if (entities.exists[geographical]) {
             new GeoInput().generate(it, fsa)
         }
-        val hasRelations = (!models.map[relations].flatten.toList.empty)
+        val hasRelations = !relations.empty
         if (hasTrees || hasRelations) {
             new AbstractObjectSelector().generate(it, fsa)
         }

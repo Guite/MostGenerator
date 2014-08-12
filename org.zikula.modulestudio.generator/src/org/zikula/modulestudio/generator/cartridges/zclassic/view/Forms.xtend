@@ -53,7 +53,7 @@ class Forms {
      * Entry point for form templates for each action.
      */
     def private generate(Action it, Application app, IFileSystemAccess fsa) {
-        for (entity : app.getAllEntities) {
+        for (entity : app.entities) {
             entity.generate(app, 'edit', fsa)
             entity.entityInlineRedirectHandlerFile(app, fsa)
         }
@@ -116,7 +116,7 @@ class Forms {
 
     def private templateHeader(Entity it) '''
         {if $lct eq 'admin'}
-            «IF container.application.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 <div class="z-admin-content-pagetitle">
                     {icon type=$adminPageIcon size='small' alt=$templateTitle}
                     <h3>{$templateTitle}</h3>
@@ -265,19 +265,19 @@ class Forms {
     '''
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
-        «IF hasSluggableFields && slugUpdatable && !container.application.targets('1.3.5')»
-            <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !container.application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
-                «IF !container.application.targets('1.3.5')»
+        «IF hasSluggableFields && slugUpdatable && !application.targets('1.3.5')»
+            <div class="«IF application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                «IF !application.targets('1.3.5')»
                     <div class="col-lg-9">
                 «ENDIF»
-                    {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !container.application.targets('1.3.5')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
-                    <span class="«IF container.application.targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>
-                «IF slugUnique && container.application.targets('1.3.5')»
-                    «/*{«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
-                    {«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
+                    {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !application.targets('1.3.5')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
+                    <span class="«IF application.targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>
+                «IF slugUnique && application.targets('1.3.5')»
+                    «/*{«application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
+                    {«application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
                 «ENDIF»
-                «IF !container.application.targets('1.3.5')»
+                «IF !application.targets('1.3.5')»
                     </div>
                 «ENDIF»
         </div>
@@ -362,7 +362,7 @@ class Forms {
                 «ENDIF»
                 «relationHelper.initJs(it, app, true)»
 
-                «container.application.prefix()»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                «application.prefix()»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                 {{* observe validation on button events instead of form submit to exclude the cancel command *}}
                 formValidator = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
                 {{if $mode ne 'create'}}
@@ -395,7 +395,7 @@ class Forms {
             var formButtons;
 
             function handleFormButton (event) {
-                «container.application.prefix()»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                «application.prefix()»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                 var result = document.getElementById('{{$__formid}}').checkValidity();
                 if (!result) {
                     // validation error, abort form submit
@@ -446,7 +446,7 @@ class Forms {
 
     def private newCoordinatesEventHandler(Entity it) '''
         function newCoordinatesEventHandler() {
-            «IF container.application.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
             «ELSE»
                 var location = new mxn.LatLonPoint($('#latitude').val(), $('#longitude').val());
@@ -478,14 +478,14 @@ class Forms {
         mapstraction.addMarker(marker, true);
 
         // init event handler
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             $('latitude').observe('change', newCoordinatesEventHandler);
             $('longitude').observe('change', newCoordinatesEventHandler);
         «ELSE»
             $('#latitude').change(newCoordinatesEventHandler);
             $('#longitude').change(newCoordinatesEventHandler);
         «ENDIF»
-        «IF !container.application.targets('1.3.5')»
+        «IF !application.targets('1.3.5')»
 
             $('#collapseMap').on('hidden.bs.collapse', function () {
                 // redraw the map after it's panel has been opened (see also #340)
@@ -495,7 +495,7 @@ class Forms {
 
         mapstraction.click.addHandler(function(event_name, event_source, event_args) {
             var coords = event_args.location;
-            «IF container.application.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 Form.Element.setValue('latitude', coords.lat.toFixed(7));
                 Form.Element.setValue('longitude', coords.lng.toFixed(7));
             «ELSE»
@@ -557,7 +557,7 @@ class Forms {
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
         «/*No input fields for foreign keys, relations are processed further down*/»
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
-            <div class="«IF entity.container.application.targets('1.3.5')»z-formrow«IF !visible» z-hide«ENDIF»«ELSE»form-group«IF !visible» hidden«ENDIF»«ENDIF»">
+            <div class="«IF entity.application.targets('1.3.5')»z-formrow«IF !visible» z-hide«ENDIF»«ELSE»form-group«IF !visible» hidden«ENDIF»«ENDIF»">
                 «fieldHelper.formRow(it, groupSuffix, idSuffix)»
             </div>
         «ENDIF»
@@ -572,12 +572,12 @@ class Forms {
     }
 
     def private additionalInitScriptUpload(UploadField it) '''
-        «entity.container.application.prefix()»InitUploadField('«name.formatForCode»');
+        «entity.application.prefix()»InitUploadField('«name.formatForCode»');
     '''
 
     def private additionalInitScriptCalendar(AbstractDateField it) '''
         «IF !mandatory && nullable»
-            «entity.container.application.prefix()»InitDateField('«name.formatForCode»');
+            «entity.application.prefix()»InitDateField('«name.formatForCode»');
         «ENDIF»
     '''
 

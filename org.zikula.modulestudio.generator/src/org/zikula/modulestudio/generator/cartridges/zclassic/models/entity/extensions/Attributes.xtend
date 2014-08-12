@@ -33,10 +33,10 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
     override properties(Entity it) '''
 
         /**
-         * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»", 
+         * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»", 
          *                mappedBy="entity", cascade={"all"}, 
          *                orphanRemoval=true, indexBy="name")
-         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»
+         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»
          */
         protected $attributes = null;
     '''
@@ -64,7 +64,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
                     $this->attributes[$name]->setValue($value);
                 }
             } else {
-                $this->attributes[$name] = new «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»($name, $value, $this);
+                $this->attributes[$name] = new «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»($name, $value, $this);
             }
         }
 
@@ -82,7 +82,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
-        «IF !container.application.targets('1.3.5')»
+        «IF !application.targets('1.3.5')»
             use Zikula\Core\Doctrine\Entity\«extensionBaseClass»;
         «ENDIF»
     '''
@@ -91,7 +91,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class.
      */
     override extensionBaseClass(Entity it) {
-        if (container.application.targets('1.3.5')) {
+        if (application.targets('1.3.5')) {
             'Zikula_Doctrine2_Entity_Entity' + extensionClassType.toFirstUpper
         } else {
             'AbstractEntity' + extensionClassType.toFirstUpper
@@ -110,9 +110,9 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassBaseAnnotations(Entity it) '''
         /**
-         * @ORM\ManyToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="attributes")
+         * @ORM\ManyToOne(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="attributes")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields.head.name.formatForCode»")
-         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
+         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
          */
         protected $entity;
 
@@ -123,7 +123,7 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="«IF !container.application.targets('1.3.5')»\«ENDIF»«repositoryClass(extensionClassType)»")
+         «' '»* @ORM\Entity(repositoryClass="«IF !application.targets('1.3.5')»\«ENDIF»«repositoryClass(extensionClassType)»")
          «' '»* @ORM\Table(name="«fullEntityTableName»_attribute",
          «' '»*     uniqueConstraints={
          «' '»*         @ORM\UniqueConstraint(name="cat_unq", columns={"name", "entityId"})

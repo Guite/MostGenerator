@@ -10,11 +10,6 @@ import java.util.ArrayList
 class WorkflowExtensions {
 
     /**
-     * Extensions related to the model layer.
-     */
-	extension ModelWorkflowExtensions = new ModelWorkflowExtensions
-
-    /**
      * Determines whether any entity in the given application uses a certain workflow type.
      */
     def hasWorkflow(Application it, EntityWorkflowType wfType) {
@@ -25,7 +20,7 @@ class WorkflowExtensions {
      * Returns all entities using the given workflow type.
      */
     def getEntitiesForWorkflow(Application it, EntityWorkflowType wfType) {
-        getAllEntities.filter[workflow == wfType]
+        entities.filter[workflow == wfType]
     }
 
     /**
@@ -58,7 +53,7 @@ class WorkflowExtensions {
     def getRequiredStateList(Application it) {
         var states = new ArrayList<ListFieldItem>
         var stateIds = new ArrayList<String>
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             for (item : entity.getWorkflowStateField.items) {
                 if (!stateIds.contains(item.value)) {
                     states.add(item)
@@ -80,7 +75,7 @@ class WorkflowExtensions {
      * Determines whether any entity in the given application can have the given state.
      */
     def hasWorkflowState(Application it, String state) {
-        !getAllEntities.filter[hasWorkflowStateEntity(state)].empty
+        !entities.filter[hasWorkflowStateEntity(state)].empty
     }
 
     /**

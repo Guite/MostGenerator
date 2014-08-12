@@ -69,11 +69,11 @@ class UserDeletion {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+                $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
             «ENDIF»
         }
     '''
@@ -107,11 +107,11 @@ class UserDeletion {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+                $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
             «ENDIF»
         }
     '''
@@ -141,11 +141,11 @@ class UserDeletion {
             «initDeleteQueryAdditions»
 
             $query->execute();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+                $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
             «ENDIF»
         }
     '''
@@ -175,11 +175,11 @@ class UserDeletion {
             «initDeleteQueryAdditions»
 
             $query->execute();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
             «ENDIF»
         }
     '''
@@ -218,11 +218,11 @@ class UserDeletion {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId));
+                $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId));
             «ENDIF»
         }
     '''
@@ -257,11 +257,11 @@ class UserDeletion {
             «initDeleteQueryAdditions»
 
             $query->execute();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
+                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId));
             «ENDIF»
         }
     '''

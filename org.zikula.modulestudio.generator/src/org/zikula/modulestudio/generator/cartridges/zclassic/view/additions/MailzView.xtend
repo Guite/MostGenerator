@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -13,7 +12,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class MailzView {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
@@ -21,7 +19,7 @@ class MailzView {
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'mailz' else 'Mailz') + '/'
         var entityTemplate = ''
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_text.tpl'
             if (!shouldBeSkipped(entityTemplate)) {
                 if (shouldBeMarked(entityTemplate)) {
@@ -68,7 +66,7 @@ class MailzView {
 
     def private mailzEntryText(Entity it, String appName) '''
         {$«name.formatForCode»->getTitleFromDisplayPattern()}
-        «mailzEntryHtmlLinkUrlDisplay(container.application)»
+        «mailzEntryHtmlLinkUrlDisplay(application)»
     '''
 
     def private mailzEntryHtml(Entity it, Application app) '''
@@ -80,7 +78,7 @@ class MailzView {
     '''
 
     def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             {modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy('$objectType', true, true)» fqurl=true}
         «ELSE»
             {route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams('$objectType', true)» absolute=true}

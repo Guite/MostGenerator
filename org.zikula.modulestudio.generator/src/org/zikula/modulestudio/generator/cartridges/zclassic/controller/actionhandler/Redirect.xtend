@@ -62,7 +62,7 @@ class Redirect {
         protected function getRedirectCodes()
         {
             $codes = parent::getRedirectCodes();
-            «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
+            «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.application == app]»
                 «val sourceEntity = incomingRelation.source»
                 «IF sourceEntity.name != it.name»
                     «FOR someController : app.controllers»
@@ -224,7 +224,7 @@ class Redirect {
                     «ENDIF»
                 «ENDIF»
                 «ENDFOR»
-                «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
+                «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.application == app]»
                     «val sourceEntity = incomingRelation.source»
                     «IF sourceEntity.name != it.name»
                         «FOR someController : app.controllers»

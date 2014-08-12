@@ -164,7 +164,7 @@ class Installer {
                     return false;
                 «ENDIF»
             }
-            «IF !getAllVariableContainers.empty»
+            «IF !variables.empty»
 
                 // set up all our vars with initial values
                 «val modvarHelper = new ModVars()»
@@ -446,7 +446,7 @@ class Installer {
         protected function listEntityClasses()
         {
             $classNames = array();
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 $classNames[] = '«entity.entityClassName('', false)»';
                 «IF entity.loggable»
                     $classNames[] = '«entity.entityClassName('logEntry', false)»';

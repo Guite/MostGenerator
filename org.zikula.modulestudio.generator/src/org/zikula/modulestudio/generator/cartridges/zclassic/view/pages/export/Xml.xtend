@@ -33,25 +33,25 @@ class Xml {
         var templateFilePath = ''
         if (hasActions('view')) {
             templateFilePath = templateFileWithExtension('view', 'xml')
-            if (!container.application.shouldBeSkipped(templateFilePath)) {
+            if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, xmlView(appName))
             }
         }
         if (hasActions('display')) {
             templateFilePath = templateFileWithExtension('display', 'xml')
-            if (!container.application.shouldBeSkipped(templateFilePath)) {
+            if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, xmlDisplay(appName))
             }
         }
         templateFilePath = templateFileWithExtension('include', 'xml')
-        if (!container.application.shouldBeSkipped(templateFilePath)) {
+        if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, xmlInclude(appName))
         }
     }
 
     def private xmlView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» view xml view *}
-        «IF container.application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
+        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
         <«nameMultiple.formatForCode»>
         {foreach item='item' from=$items}
             {include file='«name.formatForCode»/include.xml.tpl'}
@@ -63,7 +63,7 @@ class Xml {
 
     def private xmlDisplay(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» display xml view *}
-        «IF container.application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
+        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
         {getbaseurl assign='baseurl'}
         {include file='«name.formatForCode»/include.xml.tpl' item=$«name.formatForCode»}
     '''

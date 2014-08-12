@@ -20,7 +20,6 @@ import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.IpAddressScope
 import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.ListVar
-import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.ObjectField
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
@@ -44,26 +43,9 @@ class ModelExtensions {
     extension WorkflowExtensions = new WorkflowExtensions
 
     /**
-     * Returns a list of all entities in this application.
-     */
-    def getAllEntities(Application it) {
-        var allEntities = models.head.entities
-        for (entityContainer : models.tail)
-            allEntities.addAll(entityContainer.entities)
-        allEntities
-    }
-
-    /**
      * Returns a list of all entity fields in this application.
      */
     def getAllEntityFields(Application it) {
-        getAllEntities.map[fields].flatten.toList
-    }
-
-    /**
-     * Returns a list of all entity fields in a certain model container.
-     */
-    def getModelEntityFields(Models it) {
         entities.map[fields].flatten.toList
     }
 
@@ -71,28 +53,28 @@ class ModelExtensions {
      * Returns the leading entity in the primary model container.
      */
     def getLeadingEntity(Application it) {
-        getAllEntities.findFirst[leading]
+        entities.findFirst[leading]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one image field.
      */
     def hasImageFields(Application it) {
-        getAllEntities.exists[hasImageFieldsEntity]
+        entities.exists[hasImageFieldsEntity]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one colour field.
      */
     def hasColourFields(Application it) {
-        getAllEntities.exists[hasColourFieldsEntity]
+        entities.exists[hasColourFieldsEntity]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one country field.
      */
     def hasCountryFields(Application it) {
-        getAllEntities.exists[hasCountryFieldsEntity]
+        entities.exists[hasCountryFieldsEntity]
     }
 
     /**
@@ -106,7 +88,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one upload field.
      */
     def getUploadEntities(Application it) {
-        getAllEntities.filter[hasUploadFieldsEntity]
+        entities.filter[hasUploadFieldsEntity]
     }
 
     /**
@@ -141,7 +123,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one list field.
      */
     def getListEntities(Application it) {
-        getAllEntities.filter[hasListFieldsEntity]
+        entities.filter[hasListFieldsEntity]
     }
 
 
@@ -156,7 +138,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one boolean field having ajax toggle enabled.
      */
     def getEntitiesWithAjaxToggle(Application it) {
-        getAllEntities.filter[hasBooleansWithAjaxToggleEntity]
+        entities.filter[hasBooleansWithAjaxToggleEntity]
     }
 
     /**
@@ -175,7 +157,7 @@ class ModelExtensions {
      * Returns the full table name for a given entity instance.
      */
     def fullEntityTableName(Entity it) {
-        tableNameWithPrefix(container.application, name.formatForDB)
+        tableNameWithPrefix(application, name.formatForDB)
     }
 
     /**

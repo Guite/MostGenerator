@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -15,7 +14,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Events {
 
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -36,7 +34,7 @@ class Events {
             fh.phpFileContent(it, eventDefinitionsBaseClass), fh.phpFileContent(it, eventDefinitionsImpl)
         )
 
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             generateClassPair(fsa, getAppSourceLibPath + 'Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
                 fh.phpFileContent(it, filterEventBaseClass(entity)), fh.phpFileContent(it, filterEventImpl(entity))
             )
@@ -51,7 +49,7 @@ class Events {
          */
         class «name.formatForCodeCapital»Events
         {
-            «FOR entity : getAllEntities»
+            «FOR entity : entities»
                 «entity.eventDefinitions»
             «ENDFOR»
         }
@@ -65,7 +63,7 @@ class Events {
          * are loaded from the database.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::postLoadCallback()
          * @var string
@@ -77,7 +75,7 @@ class Events {
          * is created in the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::prePersistCallback()
          * @var string
@@ -89,7 +87,7 @@ class Events {
          * has been created in the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::postPersistCallback()
          * @var string
@@ -101,7 +99,7 @@ class Events {
          * is removed from the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::preRemoveCallback()
          * @var string
@@ -113,7 +111,7 @@ class Events {
          * has been removed from the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::postRemoveCallback()
          * @var string
@@ -125,7 +123,7 @@ class Events {
          * is updated in the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::preUpdateCallback()
          * @var string
@@ -137,7 +135,7 @@ class Events {
          * has been updated in the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::postUpdateCallback()
          * @var string
@@ -149,7 +147,7 @@ class Events {
          * is created or an existing «name.formatForDisplay» is updated in the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::preSaveCallback()
          * @var string
@@ -161,7 +159,7 @@ class Events {
          * has been created or an existing «name.formatForDisplay» has been updated in the system.
          *
          * The event listener receives an
-         * «container.application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
          * @see «entityClassName('', false)»::postSaveCallback()
          * @var string

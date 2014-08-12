@@ -22,7 +22,7 @@ class Atom {
     Application app
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
-        this.app = container.application
+        app = application
         val templateFilePath = templateFileWithExtension('view', 'atom')
         if (!app.shouldBeSkipped(templateFilePath)) {
             println('Generating atom view templates for entity "' + name.formatForDisplay + '"')
@@ -36,7 +36,7 @@ class Atom {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF container.application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='application/atom+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='application/atom+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
         {gt text='Latest «nameMultiple.formatForDisplay»' assign='channelTitle'}
         {gt text='A direct feed showing the list of «nameMultiple.formatForDisplay»' assign='channelDesc'}

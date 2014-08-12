@@ -175,7 +175,7 @@ class EntityMethods {
      * Initialises the validator instance. Used for 1.3.x target only, replaced by Symfony Validator in 1.4.x.
      */
     def private initValidator(Entity it) '''
-        «val validatorClassLegacy = container.application.appName + '_Entity_Validator_' + name.formatForCodeCapital»
+        «val validatorClassLegacy = application.appName + '_Entity_Validator_' + name.formatForCodeCapital»
         /**
          * Initialises the validator and return it's instance.
          *
@@ -252,7 +252,7 @@ class EntityMethods {
          * Start validation and raise exception if invalid data is found.
          *
          * @return void.
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             «' '»*
             «' '»* @throws Zikula_Exception Thrown if a validation error occurs
         «ENDIF»
@@ -272,7 +272,7 @@ class EntityMethods {
                     }
                 «ENDFOR»
             «ENDIF»
-            «IF container.application.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 $result = $this->initValidator()->validateAll();
                 if (is_array($result)) {
                     throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
@@ -314,7 +314,7 @@ class EntityMethods {
          */
         public function createUrlArgs()
         {
-            $args = array(«IF container.application.targets('1.3.5')»'ot' => $this['_objectType']«ENDIF»);
+            $args = array(«IF application.targets('1.3.5')»'ot' => $this['_objectType']«ENDIF»);
 
             «IF hasCompositeKeys»
                 «FOR pkField : getPrimaryKeyFields»
@@ -361,27 +361,26 @@ class EntityMethods {
          */
         public function getHookAreaPrefix()
         {
-            return '«container.application.name.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
+            return '«application.name.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
         }
     '''
 
     def private loadWorkflow(Entity it) '''
-        «val app = container.application»
         // apply workflow with most important information
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
 
         $serviceManager = ServiceUtil::getManager();
-        «IF app.targets('1.3.5')»
-            $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
+        «IF application.targets('1.3.5')»
+            $workflowHelper = new «application.appName»_Util_Workflow($serviceManager);
         «ELSE»
-            $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
+            $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
         «ENDIF»
 
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
         $this['__WORKFLOW__'] = array(
-            'module' => '«app.appName»',
+            'module' => '«application.appName»',
             'state' => $this['workflowState'],
-            «IF app.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 'obj_table' => $this['_objectType'],
                 'obj_idcolumn' => $idColumn,
                 'obj_id' => $this[$idColumn],
@@ -393,11 +392,11 @@ class EntityMethods {
             'schemaname' => $schemaName);
 
         // load the real workflow only when required (e. g. when func is edit or delete)
-        if ((!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display')) && empty($isReuse)) || $forceLoading) {
-            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
+        if ((!in_array($currentFunc, array('«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display')) && empty($isReuse)) || $forceLoading) {
+            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«application.appName»');
             if (!$result) {
-                $dom = ZLanguage::getModuleDomain('«app.appName»');
-                «IF app.targets('1.3.5')»
+                $dom = ZLanguage::getModuleDomain('«application.appName»');
+                «IF application.targets('1.3.5')»
                     LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();

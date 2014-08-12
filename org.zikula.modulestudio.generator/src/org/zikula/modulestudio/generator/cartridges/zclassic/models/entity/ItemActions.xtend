@@ -52,7 +52,7 @@ class ItemActions {
     def private itemActionsTargetingDisplay(Entity it, Application app, Controller controller) '''
         «IF controller.hasActions('view')»
             if (in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
-                «IF controller.tempIsAdminController && container.application.hasUserController && container.application.getMainUserController.hasActions('display')»
+                «IF controller.tempIsAdminController && application.hasUserController && application.getMainUserController.hasActions('display')»
                     $this->_actions[] = array(
                         «IF app.targets('1.3.5')»
                             'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)),
@@ -137,7 +137,7 @@ class ItemActions {
     '''
 
     def private itemActionsForAddingRelatedItems(Entity it, Application app, Controller controller) '''
-        «val refedElems = getOutgoingJoinRelations.filter[e|e.target.container.application == it.container.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.container.application == it.container.application]»
+        «val refedElems = getOutgoingJoinRelations.filter[e|e.target.application == it.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.application == it.application]»
         «IF !refedElems.empty && controller.hasActions('edit')»
 
             // more actions for adding new related items
@@ -218,24 +218,24 @@ class ItemActions {
     def private itemActionsForEditAction(Entity it, Controller controller) '''
         «IF !readOnly»«/*create is allowed, but editing not*/»
             $this->_actions[] = array(
-                «IF container.application.targets('1.3.5')»
+                «IF application.targets('1.3.5')»
                     'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)),
                 «ELSE»
                     'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»', «routeParams('this', false)»)),
                 «ENDIF»
-                'icon' => '«IF container.application.targets('1.3.5')»edit«ELSE»pencil-square-o«ENDIF»',
+                'icon' => '«IF application.targets('1.3.5')»edit«ELSE»pencil-square-o«ENDIF»',
                 'linkTitle' => __('Edit', $dom),
                 'linkText' => __('Edit', $dom)
             );
         «ENDIF»
         «IF tree == EntityTreeType::NONE»
                 $this->_actions[] = array(
-                    «IF container.application.targets('1.3.5')»
+                    «IF application.targets('1.3.5')»
                         'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false, 'astemplate')»)),
                     «ELSE»
                         'url' => array('type' => '«name.formatForCode»', 'func' => 'edit', 'arguments' => array('lct' => '«controller.formattedName»', «routeParams('this', false, 'astemplate')»)),
                     «ENDIF»
-                    'icon' => '«IF container.application.targets('1.3.5')»saveas«ELSE»files-o«ENDIF»',
+                    'icon' => '«IF application.targets('1.3.5')»saveas«ELSE»files-o«ENDIF»',
                     'linkTitle' => __('Reuse for new item', $dom),
                     'linkText' => __('Reuse', $dom)
                 );

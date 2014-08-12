@@ -57,7 +57,7 @@ class Views {
         relationHelper = new Relations()
 
         // main action templates
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             generateViews(entity)
         }
 

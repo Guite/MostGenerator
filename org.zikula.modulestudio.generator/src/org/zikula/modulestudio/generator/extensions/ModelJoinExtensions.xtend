@@ -8,7 +8,6 @@ import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.Relationship
@@ -34,7 +33,7 @@ class ModelJoinExtensions {
      * Returns the table name for a certain join side, including the application specific prefix.
      */
     def fullJoinTableName(JoinRelationship it, Boolean useTarget, Entity joinedEntityForeign) {
-        tableNameWithPrefix((if (useTarget) target.container.application else source.container.application), getJoinTableName(useTarget, joinedEntityForeign))
+        tableNameWithPrefix((if (useTarget) target.application else source.application), getJoinTableName(useTarget, joinedEntityForeign))
     }
 
     /**
@@ -52,17 +51,6 @@ class ModelJoinExtensions {
      * Returns a list of all join relations (excluding inheritance).
      */
     def getJoinRelations(Application it) {
-        var relations = models.head.getJoinRelations
-        if (models.size > 1) {
-            for (model : models.tail) relations = relations + model.getJoinRelations
-        }
-        relations
-    }
-
-    /**
-     * Returns a list of all join relations (excluding inheritance).
-     */
-    def getJoinRelations(Models it) {
         relations.filter(JoinRelationship)
     }
 

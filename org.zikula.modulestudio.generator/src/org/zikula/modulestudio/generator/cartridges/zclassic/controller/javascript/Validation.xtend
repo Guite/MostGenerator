@@ -97,7 +97,7 @@ class Validation {
                 return newVal;
             }
         }
-        «IF getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
+        «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
 
             /**
              * Performs a duplicate check for unique fields
@@ -283,7 +283,7 @@ class Validation {
                 }
             «ENDIF»
         «ENDIF»
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
             «val startDateField = entity.getStartDateField»
             «val endDateField = entity.getEndDateField»
             «IF startDateField !== null && endDateField !== null»
@@ -392,7 +392,7 @@ class Validation {
                             }],
                         «ENDIF»
                     «ENDIF»
-                    «FOR entity : getAllEntities»
+                    «FOR entity : entities»
                         «val startDateField = entity.getStartDateField»
                         «val endDateField = entity.getEndDateField»
                         «IF startDateField !== null && endDateField !== null»
@@ -401,7 +401,7 @@ class Validation {
                             }],
                         «ENDIF»
                     «ENDFOR»
-                    «IF getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
+                    «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                         ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             return «prefix()»UniqueCheck('«name.formatForCode»', val, elem, id);
                         }]
@@ -493,7 +493,7 @@ class Validation {
                         });
                     «ENDIF»
                 «ENDIF»
-                «FOR entity : getAllEntities»
+                «FOR entity : entities»
                     «val startDateField = entity.getStartDateField»
                     «val endDateField = entity.getEndDateField»
                     «IF startDateField !== null && endDateField !== null»
@@ -506,7 +506,7 @@ class Validation {
                         });
                     «ENDIF»
                 «ENDFOR»
-                «IF getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
+                «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                     $('.validate-unique').each( function() {
                         if («prefix()»UniqueCheck('«name.formatForCode»', $(this).val(), $(this), id)) {
                             $(this).setCustomValidity(Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'));

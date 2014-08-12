@@ -20,7 +20,7 @@ class Ics {
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating ics view templates for entity "' + name.formatForDisplay + '"')
         val templateFilePath = templateFileWithExtension('display', 'ics')
-        if (!container.application.shouldBeSkipped(templateFilePath)) {
+        if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, icsDisplay(appName))
         }
     }
@@ -28,7 +28,7 @@ class Ics {
     def private icsDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display ics view *}
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             {«appName.formatForDB»TemplateHeaders contentType='text/calendar; charset=iso-8859-15'}{*charset=utf-8'*}
         «ENDIF»
         {php}

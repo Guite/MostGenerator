@@ -107,7 +107,7 @@ class Search {
 
             $view = Zikula_View::getInstance($this->name);
 
-            «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
+            «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
                 «val fieldName = 'active_' + entity.name.formatForCode»
                 $view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
             «ENDFOR»
@@ -131,7 +131,7 @@ class Search {
                 return '';
             }
 
-            «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
+            «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
                 «val fieldName = 'active_' + entity.name.formatForCode»
                 $this->view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
             «ENDFOR»
@@ -182,7 +182,7 @@ class Search {
                 $whereArray = array();
                 $languageField = null;
                 switch ($objectType) {
-                    «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
+                    «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
                         case '«entity.name.formatForCode»':
                             «FOR field : entity.getAbstractStringFieldsEntity»
                                 $whereArray[] = 'tbl.«field.name.formatForCode»';
@@ -314,7 +314,7 @@ class Search {
                 $whereArray = array();
                 $languageField = null;
                 switch ($objectType) {
-                    «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
+                    «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
                         case '«entity.name.formatForCode»':
                             «FOR field : entity.getAbstractStringFieldsEntity»
                                 $whereArray[] = 'tbl.«field.name.formatForCode»';

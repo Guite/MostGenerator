@@ -217,7 +217,7 @@ class ValidationConstraints {
     '''
 
     def dispatch validationMethods(ListField it) '''
-        «val app = entity.container.application»
+        «val app = entity.application»
         /**
          * Returns a list of possible choices for the «name.formatForCode» list field.
          * This method is used for validation.

@@ -26,7 +26,7 @@ class RelationPresets {
     '''
 
     def initPresets(Entity it) '''
-        «val owningAssociations = getOwningAssociations(it.container.application)»
+        «val owningAssociations = getOwningAssociations(it.application)»
         «IF !owningAssociations.empty»
 
             // assign identifiers of predefined incoming relationships
@@ -42,7 +42,7 @@ class RelationPresets {
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
-        «val ownedMMAssociations = getOwnedMMAssociations(it.container.application)»
+        «val ownedMMAssociations = getOwnedMMAssociations(it.application)»
         «IF !ownedMMAssociations.empty»
 
             // assign identifiers of predefined outgoing many to many relationships
@@ -67,13 +67,13 @@ class RelationPresets {
 
     def private getOwningAssociations(Entity it, Application refApp) {
         getBidirectionalIncomingJoinRelations
-            .filter[source.container.application == refApp]
+            .filter[source.application == refApp]
     }
 
     def private getOwnedMMAssociations(Entity it, Application refApp) {
         getOutgoingJoinRelations
             .filter(ManyToManyRelationship)
-            .filter[source.container.application == refApp]
+            .filter[source.application == refApp]
     }
 
     def private isEditable(JoinRelationship it, Boolean useTarget) {

@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.reporting
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Models
 import java.io.File
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.Path
@@ -19,11 +18,6 @@ import org.zikula.modulestudio.generator.application.WorkflowSettings
 class DiagramExporter {
 
     /**
-     * The diagram type (0 = main, 1 = model, 2 = controller).
-     */
-    Integer inputDiagramType
-
-    /**
      * The output path chosen for generation.
      */
     String outputPath
@@ -32,11 +26,6 @@ class DiagramExporter {
      * Prefix for output files, will be set to application name.
      */
     String outputPrefix
-
-    /**
-     * Counter for iterating model sub diagrams.
-     */
-    Integer diagCounterM
 
     /**
      * Reference to workflow settings.
@@ -71,9 +60,7 @@ class DiagramExporter {
     def processDiagram(Diagram appDiagram, String outPath,
             PreferencesHint prefHint) {
         // diagramExporterLock.objet).notifyAll)
-        inputDiagramType = 0
         preferencesHint = prefHint
-        diagCounterM = 0
 
         // create sub folder for diagrams
         outputPath = outPath + '/diagrams/' //$NON-NLS-1$
@@ -114,15 +101,6 @@ class DiagramExporter {
      * @return Whether everything worked fine or not.
      */
     def private saveCurrentDiagramInAllFormats(Diagram inputDiagram) {
-        val diagramElement = inputDiagram.element
-        inputDiagramType = 0
-        switch diagramElement {
-            Models: {
-                inputDiagramType = 1
-                diagCounterM = diagCounterM + 1
-            }
-        }
-
         var result = false
         try {
             result = saveCurrentDiagramAs(ImageFileFormat.BMP, inputDiagram)
@@ -151,13 +129,7 @@ class DiagramExporter {
      */
     def private saveCurrentDiagramAs(ImageFileFormat format,
             Diagram inputDiagram) throws CoreException {
-        val diagramType = inputDiagramType
-        var outputSuffix = '' //$NON-NLS-1$
-        if (diagramType == 0) {
-            outputSuffix = '_main' //$NON-NLS-1$
-        } else if (diagramType == 1) {
-            outputSuffix = '_model_' + diagCounterM //$NON-NLS-1$
-        }
+        val outputSuffix = '_main' //$NON-NLS-1$
 
         val filePath = outputPath + outputPrefix
                 + outputSuffix + '.' //$NON-NLS-1$

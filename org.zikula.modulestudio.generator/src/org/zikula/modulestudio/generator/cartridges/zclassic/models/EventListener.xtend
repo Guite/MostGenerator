@@ -40,7 +40,7 @@ class EventListener {
          *
          * @see «entityClassName('', false)»::postLoadCallback()
          * @return boolean true if completed successfully else false.
-         «IF !container.application.targets('1.3.5')»
+         «IF !application.targets('1.3.5')»
          *
          * @throws RuntimeException Thrown if upload file base path retrieval fails
          «ENDIF»
@@ -51,14 +51,14 @@ class EventListener {
             «postLoadImpl»
 
             $this->prepareItemActions();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_LOAD, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_LOAD, $event);
             «ENDIF»
 
             return true;
@@ -156,14 +156,14 @@ class EventListener {
         protected function performPrePersistCallback()
         {
             $this->validate();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_PERSIST, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_PERSIST, $event);
                 if ($event->isPropagationStopped()) {
                     return false;
                 }
@@ -186,17 +186,17 @@ class EventListener {
          */
         protected function performPostPersistCallback()
         {
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} created the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} created the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_PERSIST, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_PERSIST, $event);
 
             «ENDIF»
             return true;
@@ -212,38 +212,38 @@ class EventListener {
          *
          * @see «entityClassName('', false)»::preRemoveCallback()
          * @return boolean true if completed successfully else false.
-         «IF !container.application.targets('1.3.5')»
+         «IF !application.targets('1.3.5')»
          *
          * @throws RuntimeException Thrown if workflow deletion fails
          «ENDIF»
          */
         protected function performPreRemoveCallback()
         {
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_REMOVE, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_REMOVE, $event);
                 if ($event->isPropagationStopped()) {
                     return false;
                 }
 
             «ENDIF»
             // delete workflow for this entity
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
-                $workflowHelper = $serviceManager->get('«container.application.appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
                 $workflowHelper->normaliseWorkflowData($this);
             «ENDIF»
             $workflow = $this['__WORKFLOW__'];
             if ($workflow['id'] > 0) {
-                «IF container.application.targets('1.3.5')»
+                «IF application.targets('1.3.5')»
                     $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
-                    $entityManager = $serviceManager->get«IF container.application.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                    $entityManager = $serviceManager->get«IF application.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
                     $result = true;
                     try {
                         $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
@@ -254,8 +254,8 @@ class EventListener {
                     }
                 «ENDIF»
                 if ($result === false) {
-                    $dom = ZLanguage::getModuleDomain('«container.application.appName»');
-                    «IF container.application.targets('1.3.5')»
+                    $dom = ZLanguage::getModuleDomain('«application.appName»');
+                    «IF application.targets('1.3.5')»
                         return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
                     «ELSE»
                         $session = $serviceManager->get('session');
@@ -282,21 +282,21 @@ class EventListener {
          */
         protected function performPostRemoveCallback()
         {
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
 
             «ENDIF»
-            «IF it.hasUploadFieldsEntity || !container.application.targets('1.3.5')»
+            «IF it.hasUploadFieldsEntity || !application.targets('1.3.5')»
                 $objectId = $this->createCompositeIdentifier();
 
             «ENDIF»
             «IF it.hasUploadFieldsEntity»
-                «IF container.application.targets('1.3.5')»
+                «IF application.targets('1.3.5')»
                     // initialise the upload handler
-                    $uploadManager = new «container.application.appName»_UploadHandler();
+                    $uploadManager = new «application.appName»_UploadHandler();
                 «ELSE»
                     // retrieve the upload handler
-                    $uploadManager = $serviceManager->get('«container.application.appName.formatForDB».upload_handler');
+                    $uploadManager = $serviceManager->get('«application.appName.formatForDB».upload_handler');
                 «ENDIF»
 
                 $uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»);
@@ -309,16 +309,16 @@ class EventListener {
                     $uploadManager->deleteUploadFile('«it.name.formatForCode»', $this, $uploadField, $objectId);
                 }
             «ENDIF»
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} removed the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} removed the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_REMOVE, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_REMOVE, $event);
             «ENDIF»
 
             return true;
@@ -341,14 +341,14 @@ class EventListener {
         protected function performPreUpdateCallback()
         {
             $this->validate();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_UPDATE, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_UPDATE, $event);
                 if ($event->isPropagationStopped()) {
                     return false;
                 }
@@ -370,17 +370,17 @@ class EventListener {
          */
         protected function performPostUpdateCallback()
         {
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} updated the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_UPDATE, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_UPDATE, $event);
 
             «ENDIF»
             return true;
@@ -397,14 +397,14 @@ class EventListener {
         protected function performPreSaveCallback()
         {
             $this->validate();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_SAVE, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_PRE_SAVE, $event);
                 if ($event->isPropagationStopped()) {
                     return false;
                 }
@@ -423,17 +423,17 @@ class EventListener {
          */
         protected function performPostSaveCallback()
         {
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} saved the {entity} with id {id}.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} saved the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
                 // create the new Filter«name.formatForCodeCapital»Event and dispatch it
                 $event = new Filter«name.formatForCodeCapital»Event($this);
-                $dispatcher->dispatch(«container.application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_SAVE, $event);
+                $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_SAVE, $event);
 
             «ENDIF»
             return true;
@@ -555,9 +555,8 @@ class EventListener {
 
 
     def private postLoadImpl(Entity it) '''
-        «val app = container.application»
-        $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
-        «IF app.targets('1.3.5')»
+        $currentFunc = FormUtil::getPassedValue('func', '«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+        «IF application.targets('1.3.5')»
             $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
         «ELSE»
             $serviceManager = ServiceUtil::getManager();
@@ -567,16 +566,16 @@ class EventListener {
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
-            «IF app.targets('1.3.5')»
-                $uploadManager = new «app.appName»_UploadHandler();
+            «IF application.targets('1.3.5')»
+                $uploadManager = new «application.appName»_UploadHandler();
             «ELSE»
-                $uploadManager = $serviceManager->get('«app.appName.formatForDB».upload_handler');
+                $uploadManager = $serviceManager->get('«application.appName.formatForDB».upload_handler');
             «ENDIF»
-            «IF app.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 $serviceManager = ServiceUtil::getManager();
-                $controllerHelper = new «app.appName»_Util_Controller($serviceManager);
+                $controllerHelper = new «application.appName»_Util_Controller($serviceManager);
             «ELSE»
-                $controllerHelper = $serviceManager->get('«app.appName.formatForDB».controller_helper');
+                $controllerHelper = $serviceManager->get('«application.appName.formatForDB».controller_helper');
             «ENDIF»
         «ENDIF»
 
@@ -629,7 +628,7 @@ class EventListener {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
             } catch (\Exception $e) {
-                «IF entity.container.application.targets('1.3.5')»
+                «IF entity.application.targets('1.3.5')»
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();

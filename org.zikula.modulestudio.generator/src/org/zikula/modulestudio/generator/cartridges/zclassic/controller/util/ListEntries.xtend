@@ -144,7 +144,7 @@ class ListEntries {
 
             $result = false;
             switch ($objectType) {
-                «FOR entity : getAllEntities.filter[hasListFieldsEntity]»
+                «FOR entity : entities.filter[hasListFieldsEntity]»
                     case '«entity.name.formatForCode»':
                         switch ($fieldName) {
                             «FOR listField : entity.getListFieldsEntity»
@@ -179,7 +179,7 @@ class ListEntries {
 
             $entries = array();
             switch ($objectType) {
-                «FOR entity : getAllEntities.filter[hasListFieldsEntity]»
+                «FOR entity : entities.filter[hasListFieldsEntity]»
                     case '«entity.name.formatForCode»':
                         switch ($fieldName) {
                             «FOR listField : entity.getListFieldsEntity»

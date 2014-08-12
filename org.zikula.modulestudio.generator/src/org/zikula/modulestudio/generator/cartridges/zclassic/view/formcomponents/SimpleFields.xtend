@@ -64,7 +64,7 @@ class SimpleFields {
         «ENDIF»
     '''
 
-    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.container.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !isLegacyApp» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»«IF !isLegacyApp» data-toggle='tooltip'«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !isLegacyApp» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»«IF !isLegacyApp» data-toggle='tooltip'«ENDIF»'''
 
     def private formLabelText(DerivedField it) {
         name.formatForDisplayCapital
@@ -157,11 +157,11 @@ class SimpleFields {
 
     def private dispatch formField(StringField it, String groupSuffix, String idSuffix) '''
         «IF country»
-            {«entity.container.application.appName.formatForDB»CountrySelector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !isLegacyApp» cssClass='form-control'«ENDIF»}
+            {«entity.application.appName.formatForDB»CountrySelector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !isLegacyApp» cssClass='form-control'«ENDIF»}
         «ELSEIF language || locale»
             {formlanguageselector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool»«IF mandatory» addAllOption=false«ENDIF» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF !isLegacyApp» cssClass='form-control'«ENDIF»}
         «ELSEIF htmlcolour»
-            {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it, true)»}
+            {«entity.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it, true)»}
         «ELSE»
             {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it, true)»}
         «ENDIF»
@@ -207,7 +207,7 @@ class SimpleFields {
 
             <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file extensions:'} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
         «IF allowedFileSize > 0»
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.container.application.appName.formatForDB»GetFileSize:'':false:false}</span>
+            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.application.appName.formatForDB»GetFileSize:'':false:false}</span>
         «ENDIF»
         «decideWhetherToShowCurrentFile»
     '''
@@ -222,7 +222,7 @@ class SimpleFields {
     '''
 
     def private showCurrentFile(UploadField it) '''
-        «val appNameSmall = entity.container.application.appName.formatForDB»
+        «val appNameSmall = entity.application.appName.formatForDB»
         «val objName = entity.name.formatForDB»
         «val realName = objName + '.' + name.formatForCode»
         <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">
@@ -259,7 +259,7 @@ class SimpleFields {
     '''
 
     def private dispatch formField(UserField it, String groupSuffix, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' cssClass='«IF mandatory»required«ENDIF»«IF !isLegacyApp»«IF mandatory» «ENDIF»form-control«ENDIF»'}
+        {«entity.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' cssClass='«IF mandatory»required«ENDIF»«IF !isLegacyApp»«IF mandatory» «ENDIF»form-control«ENDIF»'}
         {if $mode ne 'create' && $«entity.name.formatForDB».«name.formatForDB» && !$inlineUsage}
             <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF» avatar">
                 {useravatar uid=$«entity.name.formatForDB».«name.formatForDB» rating='g'}
@@ -310,6 +310,6 @@ class SimpleFields {
     '''
 
     def private isLegacyApp(DerivedField it) {
-        entity.container.application.targets('1.3.5')
+        entity.application.targets('1.3.5')
     }
 }

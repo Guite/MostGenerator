@@ -37,7 +37,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
      * Single extension class.
      */
     def protected extensionClasses(Entity it, String classType) {
-        this.app = container.application
+        this.app = application
         this.classType = classType
 
         val entityPath = app.getAppSourceLibPath + 'Entity/'
@@ -136,7 +136,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     }
 
     def protected extensionClassEntityAccessors(Entity it) '''
-        «val app = container.application»
+        «val app = application»
         /**
          * Get reference to owning entity.
          *
@@ -192,7 +192,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
 
     def protected repositoryClass(Entity it, String classType) {
         if (app === null) {
-            app = container.application
+            app = application
         }
         (if (app.targets('1.3.5')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital
     }

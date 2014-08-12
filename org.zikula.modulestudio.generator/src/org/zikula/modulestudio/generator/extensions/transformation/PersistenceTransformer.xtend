@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
-import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -36,7 +35,7 @@ class PersistenceTransformer {
 
         println('Starting model transformation')
         // handle all entities
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             entity.handleEntity
         }
 
@@ -179,14 +178,12 @@ class PersistenceTransformer {
     }
 
     def private addWorkflowSettings(Application it) {
-        val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithWorkflow = entities.filter[workflow != EntityWorkflowType.NONE]
         if (entitiesWithWorkflow.empty) {
             return
         }
 
-        val defaultDataSource = models.head
-
-        val varContainer = createVarContainerForWorkflowSettings(defaultDataSource)
+        val varContainer = createVarContainerForWorkflowSettings
         val factory = ModulestudioFactory.eINSTANCE
 
         for (entity : entitiesWithWorkflow) {
@@ -204,13 +201,13 @@ class PersistenceTransformer {
             }
         }
 
-        defaultDataSource.variables += varContainer
+        variables += varContainer
     }
 
-    def private createVarContainerForWorkflowSettings(Models container) {
+    def private createVarContainerForWorkflowSettings(Application it) {
         var lastVarContainerSortNumber = 0
-        if (!container.variables.empty) {
-            lastVarContainerSortNumber = container.variables.sortBy[sortOrder].reverseView.head.sortOrder
+        if (!variables.empty) {
+            lastVarContainerSortNumber = variables.sortBy[sortOrder].reverseView.head.sortOrder
         }
 
         val newSortNumber = lastVarContainerSortNumber + 1

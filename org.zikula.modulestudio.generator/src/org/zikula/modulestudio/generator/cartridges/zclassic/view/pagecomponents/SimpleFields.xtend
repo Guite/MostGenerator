@@ -28,7 +28,7 @@ class SimpleFields {
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey.name.formatForCode»}
-            «IF entity.container.application.targets('1.3.5')»
+            «IF entity.application.targets('1.3.5')»
                 <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="z-hide">
                 {if $«objName».«name.formatForCode»}
                     {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.'}
@@ -86,7 +86,7 @@ class SimpleFields {
 
     def dispatch displayField(StringField it, String objName, String page) {
         if (!password) '''
-            {$«objName».«name.formatForCode»«IF country»|«entity.container.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language || locale»|getlanguagename|safetext«ENDIF»}'''
+            {$«objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language || locale»|getlanguagename|safetext«ENDIF»}'''
     }
 
     def dispatch displayField(EmailField it, String objName, String page) {
@@ -99,7 +99,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «ENDIF»
-            «IF entity.container.application.targets('1.3.5')»
+            «IF entity.application.targets('1.3.5')»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
             «ELSE»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}" class="fa fa-envelope"></a>
@@ -125,7 +125,7 @@ class SimpleFields {
             «IF page == 'display'»
                   {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «ENDIF»
-            «IF entity.container.application.targets('1.3.5')»
+            «IF entity.application.targets('1.3.5')»
                 <a href="{$«realName»}" title="{gt text='Visit this page'}">{icon type='url' size='extrasmall' __alt='Homepage'}</a>
             «ELSE»
                 <a href="{$«realName»}" title="{gt text='Visit this page'}" class="fa fa-external-link-square"></a>
@@ -142,7 +142,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(UploadField it, String objName, String page) {
-        val appNameSmall = entity.container.application.appName.formatForDB
+        val appNameSmall = entity.application.appName.formatForDB
         val realName = objName + '.' + name.formatForCode
         if (page == 'viewcsv') '''{$«realName»}'''
         else if (page == 'viewxml') '''
@@ -151,9 +151,9 @@ class SimpleFields {
             «IF !mandatory»
                 {if $«realName» ne ''}
             «ENDIF»
-              <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} «IF entity.container.application.targets('1.3.5')»rel="imageviewer[«entity.name.formatForDB»]"«ELSE»class="lightbox"«ENDIF»{/if}>
+              <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} «IF entity.application.targets('1.3.5')»rel="imageviewer[«entity.name.formatForDB»]"«ELSE»class="lightbox"«ENDIF»{/if}>
               {if $«realName»Meta.isImage}
-                  {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName»->getTitleFromDisplayPattern()«IF !entity.container.application.targets('1.3.5')» img_class='img-thumbnail'«ENDIF»}
+                  {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName»->getTitleFromDisplayPattern()«IF !entity.application.targets('1.3.5')» img_class='img-thumbnail'«ENDIF»}
               {else}
                   {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
               {/if}
@@ -165,7 +165,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(ListField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|«entity.container.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext}'''
+        {$«objName».«name.formatForCode»|«entity.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext}'''
 
     def dispatch displayField(DateField it, String objName, String page) '''
         {$«objName».«name.formatForCode»|dateformat:'datebrief'}'''

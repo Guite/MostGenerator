@@ -50,8 +50,8 @@ class Uploads {
     }
 
     def private uploadFolder(UploadField it, String folder) {
-        fsa.generateFile(getAppUploadPath(entity.container.application) + folder + '/index.html', msUrl)
-        fsa.generateFile(getAppUploadPath(entity.container.application) + folder + '/.htaccess', htAccess)
+        fsa.generateFile(getAppUploadPath(entity.application) + folder + '/index.html', msUrl)
+        fsa.generateFile(getAppUploadPath(entity.application) + folder + '/.htaccess', htAccess)
     }
 
     def private htAccess(UploadField it) '''

@@ -18,7 +18,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         «' '»* @Gedmo\Loggable(logEntryClass="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('logEntry', false)»")
+         «' '»* @Gedmo\Loggable(logEntryClass="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('logEntry', false)»")
     '''
 
     /**
@@ -52,7 +52,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
-        use Gedmo\Loggable\Entity\«IF !container.application.targets('1.3.5')»MappedSuperclass\«ENDIF»«extensionBaseClass»;
+        use Gedmo\Loggable\Entity\«IF !application.targets('1.3.5')»MappedSuperclass\«ENDIF»«extensionBaseClass»;
     '''
 
     /**

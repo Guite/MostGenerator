@@ -6,11 +6,9 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.zikula.modulestudio.generator.cartridges.zclassic.ZclassicGenerator
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.transformation.PersistenceTransformer
 
 class MostGenerator implements IGenerator {
-    extension ModelExtensions = new ModelExtensions
 
     String cartridge = ''
 
@@ -19,7 +17,7 @@ class MostGenerator implements IGenerator {
     override void doGenerate(Resource resource, IFileSystemAccess fsa) {
         val app = resource.contents.head as Application
 
-        val firstEntity = app.getAllEntities.head
+        val firstEntity = app.entities.head
         val pkFields = firstEntity.fields.filter[name == 'id']
 
         if (pkFields.empty)

@@ -19,13 +19,13 @@ class Json {
         var templateFilePath = ''
         if (hasActions('view')) {
             templateFilePath = templateFileWithExtension('view', 'json')
-            if (!container.application.shouldBeSkipped(templateFilePath)) {
+            if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, jsonView(appName))
             }
         }
         if (hasActions('display')) {
             templateFilePath = templateFileWithExtension('display', 'json')
-            if (!container.application.shouldBeSkipped(templateFilePath)) {
+            if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, jsonDisplay(appName))
             }
         }
@@ -33,7 +33,7 @@ class Json {
 
     def private jsonView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» view json view *}
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             {«appName.formatForDB»TemplateHeaders contentType='application/json'}
         «ENDIF»
         [
@@ -47,7 +47,7 @@ class Json {
     def private jsonDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display json view *}
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             {«appName.formatForDB»TemplateHeaders contentType='application/json'}
         «ENDIF»
         {$«objName»->toJson()}

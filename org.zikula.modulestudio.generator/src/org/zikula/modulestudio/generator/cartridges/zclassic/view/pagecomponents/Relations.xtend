@@ -97,7 +97,7 @@ class Relations {
                     <br />
                     «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
                     {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                        {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
+                        {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
                     {/if}
                 «ENDIF»
                 «IF many»
@@ -125,7 +125,7 @@ class Relations {
         {/if}
 
         {if isset($«relatedEntity.name.formatForCode».«relationAliasName») && $«relatedEntity.name.formatForCode».«relationAliasName» ne null}
-            {include file='«IF container.application.targets('1.3.5')»«otherEntity.name.formatForCode»«ELSE»«otherEntity.name.formatForCodeCapital»«ENDIF»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode».«relationAliasName»}
+            {include file='«IF application.targets('1.3.5')»«otherEntity.name.formatForCode»«ELSE»«otherEntity.name.formatForCodeCapital»«ENDIF»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode».«relationAliasName»}
         {/if}
 
         «IF otherEntity.hasActions('edit')»
@@ -140,7 +140,7 @@ class Relations {
             {if $mayManage || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
             <p class="managelink">
                 {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
-                «IF container.application.targets('1.3.5')»
+                «IF application.targets('1.3.5')»
                     <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo="`$lct`Display«relatedEntity.name.formatForCodeCapital»"'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
                 «ELSE»
                     <a href="{route name='«appName.formatForDB»_«otherEntity.name.formatForCode»_edit' lct=$lct «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo="`$lct`Display«relatedEntity.name.formatForCodeCapital»"'}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>

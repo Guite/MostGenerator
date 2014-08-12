@@ -55,7 +55,7 @@ class Repository {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         app = it
-        getAllEntities.filter[!mappedSuperClass].forEach(e|e.generate)
+        entities.filter[!mappedSuperClass].forEach(e|e.generate)
 
         val linkTable = new LinkTable
         for (relation : getJoinRelations.filter(ManyToManyRelationship)) linkTable.generate(relation, it, fsa)
@@ -528,11 +528,11 @@ class Repository {
             «ENDIF»
 
             $query->execute();
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} truncated the {entity} entity table.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»'));
+                $logger->debug('{app}: User {user} truncated the {entity} entity table.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»'));
             «ENDIF»
         }
     '''

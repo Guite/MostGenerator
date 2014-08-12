@@ -20,18 +20,18 @@ class ViewHierarchy {
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating tree view templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = templateFile('view_tree')
-        if (!container.application.shouldBeSkipped(templateFilePath)) {
+        if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, hierarchyView(appName))
         }
         templateFilePath = templateFile('view_tree_items')
-        if (!container.application.shouldBeSkipped(templateFilePath)) {
+        if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, hierarchyItemsView(appName))
         }
     }
 
     def private hierarchyView(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        «val appPrefix = container.application.prefix()»
+        «val appPrefix = application.prefix()»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree view *}
         {assign var='lct' value='user'}
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
@@ -124,7 +124,7 @@ class ViewHierarchy {
     '''
 
     def private hierarchyItemsView(Entity it, String appName) '''
-        «val appPrefix = container.application.prefix()»
+        «val appPrefix = application.prefix()»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree items *}
         {assign var='hasNodes' value=false}
         {if isset($items) && (is_object($items) && $items->count() gt 0) || (is_array($items) && count($items) gt 0)}
@@ -154,7 +154,7 @@ class ViewHierarchy {
             «ENDIF»
         </div>
 
-        {pageaddvar name='javascript' value='«container.application.rootFolder»/«IF isLegacyApp»«appName»/javascript/«ELSE»«container.application.getAppJsPath»«ENDIF»«appName»«IF isLegacyApp»_t«ELSE».T«ENDIF»ree.js'}
+        {pageaddvar name='javascript' value='«application.rootFolder»/«IF isLegacyApp»«appName»/javascript/«ELSE»«application.getAppJsPath»«ENDIF»«appName»«IF isLegacyApp»_t«ELSE».T«ENDIF»ree.js'}
         {if $hasNodes}
             «IF !isLegacyApp»
                 {pageaddvar name='javascript' value='web/jstree/dist/jstree.min.js'}
@@ -223,6 +223,6 @@ class ViewHierarchy {
     '''
 
     def private isLegacyApp(Entity it) {
-        container.application.targets('1.3.5')
+        application.targets('1.3.5')
     }
 }

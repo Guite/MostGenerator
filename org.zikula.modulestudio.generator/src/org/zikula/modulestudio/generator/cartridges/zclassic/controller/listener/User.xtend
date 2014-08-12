@@ -122,7 +122,7 @@ class User {
                     $uid = $userRecord['uid'];
                     $serviceManager = ServiceUtil::getManager();
                     $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
-                    «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+                    «FOR entity : entities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
             «ENDIF»
         }
@@ -154,10 +154,10 @@ class User {
                     «userField.onAccountDeletionHandler»
                 «ENDFOR»
             «ENDIF»
-            «IF !container.application.targets('1.3.5')»
+            «IF !application.targets('1.3.5')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', array('app' => '«container.application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»'));
+                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»'));
             «ENDIF»
         «ENDIF»
     '''

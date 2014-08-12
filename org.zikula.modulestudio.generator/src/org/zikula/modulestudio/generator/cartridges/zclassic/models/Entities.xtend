@@ -45,17 +45,17 @@ class Entities {
      * Entry point for Doctrine entity classes.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        getAllEntities.forEach(e|e.generate(it, fsa))
+        entities.forEach(e|e.generate(it, fsa))
 
         if (targets('1.3.5')) {
             val validator = new ValidatorLegacy()
             validator.generateCommon(it, fsa)
-            for (entity : getAllEntities) {
+            for (entity : entities) {
                 validator.generateWrapper(entity, fsa)
             }
         }
 
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             extMan = new ExtensionManager(entity)
             extMan.extensionClasses(fsa)
         }
@@ -108,7 +108,7 @@ class Entities {
         «IF standardFields»
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
         «ENDIF»
-        «IF !container.application.targets('1.3.5')»
+        «IF !application.targets('1.3.5')»
             use Symfony\Component\Validator\Constraints as Assert;
             «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -175,7 +175,7 @@ class Entities {
          * @var string The tablename this object maps to.
          */
         protected $_objectType = '«name.formatForCode»';
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
 
             /**
              * @var «validatorClassLegacy» The validator for this entity.
@@ -184,7 +184,7 @@ class Entities {
         «ENDIF»
 
         /**
-         «IF !container.application.targets('1.3.5')»
+         «IF !application.targets('1.3.5')»
          * @Assert\Type(type="bool")
          «ENDIF»
          * @var boolean Option to bypass validation if needed.
@@ -193,7 +193,7 @@ class Entities {
         «IF hasNotifyPolicy»
 
             /**
-             «IF !container.application.targets('1.3.5')»
+             «IF !application.targets('1.3.5')»
              * @Assert\Type(type="array")
              «ENDIF»
              * @var array List of change notification listeners.
@@ -202,7 +202,7 @@ class Entities {
         «ENDIF»
 
         /**
-         «IF !container.application.targets('1.3.5')»
+         «IF !application.targets('1.3.5')»
          * @Assert\Type(type="array")
          «ENDIF»
          * @var array List of available item actions.
@@ -223,7 +223,7 @@ class Entities {
 
     def private accessors(Entity it, String validatorClassLegacy) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
         «ENDIF»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»

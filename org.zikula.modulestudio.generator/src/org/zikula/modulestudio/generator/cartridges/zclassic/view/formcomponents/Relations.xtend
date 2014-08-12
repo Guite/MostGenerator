@@ -29,8 +29,8 @@ class Relations {
      * This method creates the templates to be included into the edit forms.
      */
     def generateInclusionTemplate(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, false, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, false, false, fsa)»«ENDFOR»
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.generate(app, false, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.generate(app, false, false, fsa)»«ENDFOR»
     '''
 
     /**
@@ -38,8 +38,8 @@ class Relations {
      * This method creates the Smarty include statement.
      */
     def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, true, false, fsa)»«ENDFOR»
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.generate(app, true, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.generate(app, true, false, fsa)»«ENDFOR»
     '''
 
     def private generate(JoinRelationship it, Application app, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
@@ -97,7 +97,7 @@ class Relations {
     }
 
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
-        {include file='«IF container.application.targets('1.3.5')»«ownEntity.name.formatForCode»«ELSE»«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
+        {include file='«IF application.targets('1.3.5')»«ownEntity.name.formatForCode»«ELSE»«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
     '''
 
     def private includedEditTemplate(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
@@ -141,15 +141,15 @@ class Relations {
 
     def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        <div class="«IF container.application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+        <div class="«IF application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
         «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
-        «val appnameLower = container.application.appName.formatForDB»
+        «val appnameLower = application.appName.formatForDB»
         {if $displayMode eq 'dropdown'}
             {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
             «IF !app.targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                {«appnameLower»RelationSelectorList «pluginAttributes»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                {«appnameLower»RelationSelectorList «pluginAttributes»«IF !application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
             «IF !app.targets('1.3.5')»
                 </div>
             «ENDIF»
@@ -165,7 +165,7 @@ class Relations {
                         {route name='«app.appName.formatForDB»_«ownEntity.name.formatForCode»_edit' lct=$lct assign='createLink'}
                     «ENDIF»
                 {/if}
-                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
                 «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
             «ENDIF»
         {/if}
@@ -197,7 +197,7 @@ class Relations {
     '''
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        include file='«IF container.application.targets('1.3.5')»«targetEntity.name.formatForCode»«ELSE»«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
+        include file='«IF application.targets('1.3.5')»«targetEntity.name.formatForCode»«ELSE»«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
 
     def private component_ItemList(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» *}
@@ -239,7 +239,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !container.application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
                 {/if}
             «ENDIF»
         </li>
@@ -251,8 +251,8 @@ class Relations {
     '''
 
     def initJs(Entity it, Application app, Boolean insideLoader) '''
-        «val incomingJoins = getBidirectionalIncomingJoinRelations.filter[source.container.application == app && usesAutoCompletion(true)]»
-        «val outgoingJoins = outgoingJoinRelations.filter[target.container.application == app && usesAutoCompletion(false)]»
+        «val incomingJoins = getBidirectionalIncomingJoinRelations.filter[source.application == app && usesAutoCompletion(true)]»
+        «val outgoingJoins = outgoingJoinRelations.filter[target.application == app && usesAutoCompletion(false)]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
                 «IF app.targets('1.3.5')»
@@ -294,7 +294,7 @@ class Relations {
             newItem.ot = '«linkEntity.name.formatForCode»';
             newItem.alias = '«relationAliasName»';
             newItem.prefix = '«uniqueNameForJs»SelectorDoNew';
-            newItem.moduleName = '«linkEntity.container.application.appName»';
+            newItem.moduleName = '«linkEntity.application.appName»';
             newItem.acInstance = null;
             newItem.windowInstance = null;
             relationHandler.push(newItem);

@@ -83,7 +83,7 @@ class ControllerExtensions {
      * Checks whether an entity owns actions of a given type.
      */
     def dispatch hasActions(Entity it, String type) {
-        val actions = container.application.getAdminAndUserControllers.map[actions].flatten.toList
+        val actions = application.getAdminAndUserControllers.map[actions].flatten.toList
         switch type {
             case 'index'    : !actions.filter(MainAction).empty 
             case 'view'     : !actions.filter(ViewAction).empty 
@@ -98,7 +98,7 @@ class ControllerExtensions {
     /**
      * Determines the default action used for linking to a certain entity.
      */
-    def defaultAction(Entity it) '''«IF hasActions('display')»display«ELSEIF hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»'''
+    def defaultAction(Entity it) '''«IF hasActions('display')»display«ELSEIF hasActions('view')»view«ELSE»«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»'''
 
     /**
      * Returns a unique list of actions contained in either admin or user controller.

@@ -218,7 +218,7 @@ class ZclassicGenerator implements IGenerator {
             println('Generating category api')
             new Category().generate(it, fsa)
         }
-        if (generateSearchApi && !getAllEntities.filter[hasAbstractStringFieldsEntity].empty) {
+        if (generateSearchApi && !entities.filter[hasAbstractStringFieldsEntity].empty) {
             pm?.subTask('Integration: Search api')
             println('Generating search api')
             new Search().generate(it, fsa)

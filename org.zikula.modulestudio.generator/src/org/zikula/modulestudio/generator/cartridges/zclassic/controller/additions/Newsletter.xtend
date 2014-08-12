@@ -63,7 +63,7 @@ class Newsletter {
          */
         public function getTitle()
         {
-            return $this->__('Latest «IF getAllEntities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            return $this->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
         }
 
         /**
@@ -73,7 +73,7 @@ class Newsletter {
          */
         public function getDisplayName()
         {
-            return $this->__('List of «itemDesc»«IF getAllEntities.size > 1» and other «appName» items«ENDIF»');
+            return $this->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
         }
 
         /**
@@ -83,7 +83,7 @@ class Newsletter {
          */
         public function getDescription()
         {
-            return $this->__('This plugin shows a list of «itemDesc»«IF getAllEntities.size > 1» and other items«ENDIF» of the «appName» module.');
+            return $this->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
         }
 
         /**
@@ -106,7 +106,7 @@ class Newsletter {
         {
             $objectTypes = array();
             if (ModUtil::available($this->modname) && ModUtil::loadApi($this->modname)) {
-                «FOR entity : getAllEntities»
+                «FOR entity : entities»
                     $objectTypes['«entity.name.formatForCode»'] = array('name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'));
                 «ENDFOR»
             }

@@ -181,12 +181,12 @@ class UrlRoutingLegacy {
 
             if ($func == 'view') {
                 switch ($objectType) {
-                    «FOR entity : getAllEntities»«entity.getGroupingFolderFromObjectType(true)»«ENDFOR»
+                    «FOR entity : entities»«entity.getGroupingFolderFromObjectType(true)»«ENDFOR»
                     default: return '';
                 }
             } else if ($func == 'display') {
                 switch ($objectType) {
-                    «FOR entity : getAllEntities»«entity.getGroupingFolderFromObjectType(false)»«ENDFOR»
+                    «FOR entity : entities»«entity.getGroupingFolderFromObjectType(false)»«ENDFOR»
                     default: return '';
                 }
             }
@@ -211,12 +211,12 @@ class UrlRoutingLegacy {
 
             if ($func == 'view') {
                 switch ($groupFolder) {
-                    «FOR entity : getAllEntities»«entity.getObjectTypeFromGroupingFolder(true)»«ENDFOR»
+                    «FOR entity : entities»«entity.getObjectTypeFromGroupingFolder(true)»«ENDFOR»
                     default: return '';
                 }
             } else if ($func == 'display') {
                 switch ($groupFolder) {
-                    «FOR entity : getAllEntities»«entity.getObjectTypeFromGroupingFolder(false)»«ENDFOR»
+                    «FOR entity : entities»«entity.getObjectTypeFromGroupingFolder(false)»«ENDFOR»
                     default: return '';
                 }
             }
@@ -253,7 +253,7 @@ class UrlRoutingLegacy {
             $slug = '';
 
             switch ($objectType) {
-                «FOR entity : getAllEntities»«entity.getSlugForItem»«ENDFOR»
+                «FOR entity : entities»«entity.getSlugForItem»«ENDFOR»
             }
 
             return $slug;
@@ -263,12 +263,12 @@ class UrlRoutingLegacy {
     def private getSlugForItem(Entity it) '''
         case '«name.formatForCode»':
             «IF hasSluggableFields»
-                    $item = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
+                    $item = ModUtil::apiFunc('«application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
                     «IF slugUnique»
                         $slug = $item['slug'];
                     «ELSE»
                         // make non-unique slug unique by adding the identifier
-                        $idFields = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+                        $idFields = ModUtil::apiFunc('«application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
 
                         // concatenate identifiers (for composite keys)
                         $itemId = '';

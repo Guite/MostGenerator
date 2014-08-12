@@ -187,6 +187,6 @@ class Section {
     '''
 
     def private isLegacyApp(Entity it) {
-        container.application.targets('1.3.5')
+        application.targets('1.3.5')
     }
 }

@@ -3,13 +3,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlocksView {
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -60,7 +58,7 @@ class BlocksView {
                 <div class="col-lg-9">
             «ENDIF»
                 <select id="«appName.toFirstLower»ObjectType" name="objecttype" size="1"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
-                    «FOR entity : getAllEntities»
+                    «FOR entity : entities»
                         <option value="«entity.name.formatForCode»"{if $objectType eq '«entity.name.formatForCode»'} selected="selected"{/if}>{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</option>
                     «ENDFOR»
                 </select>

@@ -18,7 +18,6 @@ import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.ObjectField
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
@@ -63,14 +62,8 @@ class ExampleData {
     '''
 
     def private exampleRows(Application it) '''
-        «FOR modelContainer : models»
-            «modelContainer.exampleRowImpl»
-        «ENDFOR»
-    '''
-
-    def private exampleRowImpl(Models it) '''
         «FOR entity : entities»«entity.truncateTable»«ENDFOR»
-        «IF application.amountOfExampleRows > 0»
+        «IF amountOfExampleRows > 0»
             «IF !entities.filter[tree != EntityTreeType::NONE].empty»
                 $treeCounterRoot = 1;
             «ENDIF»
@@ -79,7 +72,7 @@ class ExampleData {
     '''
 
     def private truncateTable(Entity it) '''
-        «val app = container.application»
+        «val app = application»
         «IF app.targets('1.3.5')»
             $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
         «ELSE»
@@ -88,15 +81,15 @@ class ExampleData {
         $this->entityManager->getRepository($entityClass)->truncateTable();
     '''
 
-    def private createExampleRows(Models it) '''
+    def private createExampleRows(Application it) '''
         «initDateValues»
-        «FOR entity : entities»«entity.initExampleObjects(application)»«ENDFOR»
-        «FOR entity : entities»«entity.createExampleRows(application)»«ENDFOR»
+        «FOR entity : entities»«entity.initExampleObjects(it)»«ENDFOR»
+        «FOR entity : entities»«entity.createExampleRows(it)»«ENDFOR»
         «persistExampleObjects»
     '''
 
-    def private initDateValues(Models it) '''
-        «val fields = getModelEntityFields.filter(AbstractDateField)»
+    def private initDateValues(Application it) '''
+        «val fields = getAllEntityFields.filter(AbstractDateField)»
         «IF !fields.filter[past].empty»
             $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
             $lastHour = mktime(date('s'), date('H')-1, date('i'), date('m'), date('d'), date('Y'));
@@ -162,10 +155,10 @@ class ExampleData {
                 $«entityName»«number»->setRgt(«IF number == 1»«app.amountOfExampleRows*2»«ELSE»«((number-1)*2)+1»«ENDIF»);
                 $«entityName»«number»->setRoot($treeCounterRoot);
             «ENDIF»
-            «FOR relation : outgoing.filter(OneToOneRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
-            «FOR relation : outgoing.filter(ManyToOneRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
-            «FOR relation : outgoing.filter(ManyToManyRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
-            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.container.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
+            «FOR relation : outgoing.filter(OneToOneRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
+            «FOR relation : outgoing.filter(ManyToOneRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
+            «FOR relation : outgoing.filter(ManyToManyRelationship).filter[target.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
                 $«entityName»«number»->getCategories()->add(new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»Category«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
@@ -213,18 +206,18 @@ class ExampleData {
         «/* this last line is on purpose */»
     '''
 
-    def private persistExampleObjects(Models it) '''
+    def private persistExampleObjects(Application it) '''
         // execute the workflow action for each entity
         $action = 'submit';
-        «IF application.targets('1.3.5')»
-            $workflowHelper = new «application.appName»_Util_Workflow($this->serviceManager);
+        «IF targets('1.3.5')»
+            $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
         «ELSE»
-            $workflowHelper = $this->serviceManager->get('«application.appName.formatForDB».workflow_helper');
+            $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
         «ENDIF»
         try {
-            «FOR entity : entities»«entity.persistEntities(application)»«ENDFOR»
+            «FOR entity : entities»«entity.persistEntities(it)»«ENDFOR»
         } catch(\Exception $e) {
-            «IF application.targets('1.3.5')»
+            «IF targets('1.3.5')»
                 LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ELSE»
                 $this->request->getSession()->getFlashBag()->add('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
@@ -323,8 +316,8 @@ class ExampleData {
             DecimalField: exampleRowValueNumber(dataEntity, number)
             StringField: if (it.country || it.language || it.locale) 'ZLanguage::getLanguageCode()' else if (it.currency) 'EUR' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
-            EmailField: '\'' + entity.container.application.email + '\''
-            UrlField: '\'' + entity.container.application.url + '\''
+            EmailField: '\'' + entity.application.email + '\''
+            UrlField: '\'' + entity.application.url + '\''
             UploadField: exampleRowValueText(dataEntity, number)
             UserField: /* admin */2
             ArrayField: exampleRowValueNumber(dataEntity, number)

@@ -80,7 +80,7 @@ class ServiceDefinitions {
         «modPrefix».routing.ajax: ajax
         «modPrefix».routing.external: external
         «modPrefix».routing.view.suffix: view
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
             «modPrefix».routing.«entity.name.formatForCode».singular: «entity.name.formatForCode»
             «modPrefix».routing.«entity.name.formatForCode».plural: «entity.nameMultiple.formatForCode»
         «ENDFOR»
@@ -95,7 +95,7 @@ class ServiceDefinitions {
 
     def private parametersEntityFactories(Application it) '''
         # Entity factory classes
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
             «modPrefix».entity.factory.«entity.name.formatForCode».class: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«entity.name.formatForCodeCapital»Factory
         «ENDFOR»
     '''
@@ -128,7 +128,7 @@ class ServiceDefinitions {
     '''
 
     def private servicesEntityFactories(Application it) '''
-        «FOR entity : getAllEntities»
+        «FOR entity : entities»
             «modPrefix».«entity.name.formatForCode»_factory:
                 class: "%«modPrefix».entity.factory.«entity.name.formatForCode».class%"
                 arguments:

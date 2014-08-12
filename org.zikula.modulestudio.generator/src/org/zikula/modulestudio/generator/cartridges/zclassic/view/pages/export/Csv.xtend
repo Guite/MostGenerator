@@ -25,7 +25,7 @@ class Csv {
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         val templateFilePath = templateFileWithExtension('view', 'csv')
-        if (!container.application.shouldBeSkipped(templateFilePath)) {
+        if (!application.shouldBeSkipped(templateFilePath)) {
             println('Generating csv view templates for entity "' + name.formatForDisplay + '"')
             fsa.generateFile(templateFilePath, csvView(appName))
         }
@@ -33,7 +33,7 @@ class Csv {
 
     def private csvView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» view csv view *}
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             {«appName.formatForDB»TemplateHeaders contentType='text/comma-separated-values; charset=iso-8859-15' asAttachment=true filename='«nameMultiple.formatForCodeCapital».csv'}
         «ENDIF»
         {strip}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{gt text='«geoFieldName.formatForDisplayCapital»'}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{gt text='Deleted at'}"«ENDIF»;"{gt text='Workflow state'}"

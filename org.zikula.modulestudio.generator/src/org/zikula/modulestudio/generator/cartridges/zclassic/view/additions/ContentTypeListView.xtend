@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.modulestudio.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -15,7 +14,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ContentTypeListView {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
@@ -23,7 +21,7 @@ class ContentTypeListView {
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'contenttype' else 'ContentType') + '/'
         var fileName = ''
-        for (entity : getAllEntities) {
+        for (entity : entities) {
             fileName = 'itemlist_' + entity.name.formatForCode + '_display_description.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
@@ -281,7 +279,7 @@ class ContentTypeListView {
     '''
 
     def private detailLink(Entity it, String appName) '''
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             <a href="{modurl modname='«appName»' type='user' ot='«name.formatForCode»' func='display' «routeParamsLegacy('$objectType', true, true)»}">{gt text='Read more'}</a>
         «ELSE»
             <a href="{route name='«appName.formatForDB»_«name.formatForCode»_display' «routeParams('$objectType', true)»}">{gt text='Read more'}</a>

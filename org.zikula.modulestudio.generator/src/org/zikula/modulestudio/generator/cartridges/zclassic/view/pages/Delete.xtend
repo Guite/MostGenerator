@@ -18,14 +18,14 @@ class Delete {
 
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         val templateFilePath = templateFile('delete')
-        if (!container.application.shouldBeSkipped(templateFilePath)) {
+        if (!application.shouldBeSkipped(templateFilePath)) {
             println('Generating delete templates for entity "' + name.formatForDisplay + '"')
             fsa.generateFile(templateFilePath, deleteView(appName))
         }
     }
 
     def private deleteView(Entity it, String appName) '''
-        «val app = container.application»
+        «val app = application»
         {* purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view *}
         {assign var='lct' value='user'}
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
@@ -80,7 +80,7 @@ class Delete {
 
     def private templateHeader(Entity it) '''
         {if $lct eq 'admin'}
-            «IF container.application.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 <div class="z-admin-content-pagetitle">
                     {icon type='delete' size='small' __alt='Delete'}
                     <h3>{$templateTitle}</h3>

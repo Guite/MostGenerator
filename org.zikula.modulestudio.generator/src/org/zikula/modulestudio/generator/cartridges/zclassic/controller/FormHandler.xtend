@@ -41,7 +41,7 @@ class FormHandler {
         app = it
         if (hasEditActions()) {
             generateCommon('edit', fsa)
-            for (entity : getAllEntities) {
+            for (entity : entities) {
                 if (entity.hasActions('edit')) {
                     entity.generate('edit', fsa)
                 }
@@ -993,7 +993,7 @@ class FormHandler {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
-            «IF hasUserFields || hasUploads || hasListFields || (hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
+            «IF hasUserFields || hasUploads || hasListFields || (hasSluggable && !entities.filter[slugUpdatable].empty)»
 
                 if ($args['commandName'] != 'cancel') {
                     «IF hasUserFields»
@@ -1202,7 +1202,7 @@ class FormHandler {
 
 
     def private formHandlerBaseImpl(Entity it, String actionName) '''
-        «val app = container.application»
+        «val app = application»
         «formHandlerBaseImports(actionName)»
 
         /**
@@ -1240,7 +1240,7 @@ class FormHandler {
     '''
 
     def private formHandlerBaseImports(Entity it, String actionName) '''
-        «val app = container.application»
+        «val app = application»
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
@@ -1349,7 +1349,7 @@ class FormHandler {
     '''
 
     def private formHandlerImpl(Entity it, String actionName) '''
-        «val app = container.application»
+        «val app = application»
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
 
@@ -1458,16 +1458,16 @@ class FormHandler {
                 $isCreator = $entity['createdUserId'] == $uid;
                 «IF workflow == EntityWorkflowType.ENTERPRISE»
                     $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('moderationGroupFor' . $this->objectTypeCapital, 2));
-                    $isModerator = ModUtil::apiFunc('«IF container.application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                    $isModerator = ModUtil::apiFunc('«IF application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
                     $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('superModerationGroupFor' . $this->objectTypeCapital, 2));
-                    $isSuperModerator = ModUtil::apiFunc('«IF container.application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                    $isSuperModerator = ModUtil::apiFunc('«IF application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
 
                     $this->view->assign('isCreator', $isCreator)
                                ->assign('isModerator', $isModerator)
                                ->assign('isSuperModerator', $isSuperModerator);
                 «ELSEIF workflow == EntityWorkflowType.STANDARD»
                     $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('moderationGroupFor' . $this->objectTypeCapital, 2));
-                    $isModerator = ModUtil::apiFunc('«IF container.application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                    $isModerator = ModUtil::apiFunc('«IF application.targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
 
                     $this->view->assign('isCreator', $isCreator)
                                ->assign('isModerator', $isModerator)

@@ -35,12 +35,12 @@ class Display {
     def generate(Entity it, String appName, IFileSystemAccess fsa) {
         println('Generating display templates for entity "' + name.formatForDisplay + '"')
         var templateFilePath = templateFile('display')
-        if (!container.application.shouldBeSkipped(templateFilePath)) {
+        if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, displayView(appName))
         }
         if (tree != EntityTreeType::NONE) {
             templateFilePath = templateFile('display_treeRelatives')
-            if (!container.application.shouldBeSkipped(templateFilePath)) {
+            if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, treeRelatives(appName))
             }
         }
@@ -58,7 +58,7 @@ class Display {
             {assign var='lctUc' value=$lct|ucfirst}
             {include file="`$lctUc`/header.tpl"}
         «ENDIF»
-        «val refedElems = getOutgoingJoinRelations.filter[e|e.target.container.application == it.container.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.container.application == it.container.application]»
+        «val refedElems = getOutgoingJoinRelations.filter[e|e.target.application == it.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source.application == it.application]»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» with-rightbox«ENDIF»">
             «val objName = name.formatForCode»
             {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
@@ -157,7 +157,7 @@ class Display {
         «IF hasBooleansWithAjaxToggleEntity»
             {{assign var='itemid' value=$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}}
             «FOR field : getBooleansWithAjaxToggleEntity»
-                «container.application.prefix()»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
+                «application.prefix()»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
             «ENDFOR»
         «ENDIF»
     '''
@@ -221,29 +221,29 @@ class Display {
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
           «IF linkEntity.hasActions('display')»
               «IF linkEntity.isLegacyApp»
-                  <a href="{modurl modname='«linkEntity.container.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
+                  <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
               «ELSE»
-                  <a href="{route name='«linkEntity.container.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
+                  <a href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
               «ENDIF»
           «ENDIF»
             {$«relObjName»->getTitleFromDisplayPattern()|default:""}
           «IF linkEntity.hasActions('display')»
             {/strip}</a>
             «IF linkEntity.isLegacyApp»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»' theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»' theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             «ELSE»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«linkEntity.container.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
             «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
                 «IF linkEntity.isLegacyApp»
                     document.observe('dom:loaded', function() {
-                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                        «application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                     });
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            «container.application.prefix()»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                            «application.prefix()»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                         });
                     })(jQuery);
                 «ENDIF»
@@ -263,8 +263,8 @@ class Display {
         «IF geographical»
             «IF useGroupingPanels('display')»
                 «IF isLegacyApp»
-                    <h3 class="«container.application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
-                    <div class="«container.application.appName.toLowerCase»-map z-panel-content" style="display: none">
+                    <h3 class="«application.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+                    <div class="«application.appName.toLowerCase»-map z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -274,7 +274,7 @@ class Display {
                             <div class="panel-body">
                 «ENDIF»
             «ELSE»
-                <h3 class="«container.application.appName.toLowerCase»-map">{gt text='Map'}</h3>
+                <h3 class="«application.appName.toLowerCase»-map">{gt text='Map'}</h3>
             «ENDIF»
             {pageaddvarblock name='header'}
                 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -296,7 +296,7 @@ class Display {
                 /* ]]> */
                 </script>
             {/pageaddvarblock}
-            <div id="mapContainer" class="«container.application.appName.toLowerCase»-mapcontainer">
+            <div id="mapContainer" class="«application.appName.toLowerCase»-mapcontainer">
             </div>
             «IF useGroupingPanels('display')»
                 «IF isLegacyApp»
@@ -357,7 +357,7 @@ class Display {
             map_type: true
         });
 
-        var latlon = new mxn.LatLonPoint({{$«objName».latitude|«container.application.name.formatForDB»FormatGeoData}}, {{$«objName».longitude|«container.application.name.formatForDB»FormatGeoData}});
+        var latlon = new mxn.LatLonPoint({{$«objName».latitude|«application.name.formatForDB»FormatGeoData}}, {{$«objName».longitude|«application.name.formatForDB»FormatGeoData}});
 
         mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
         mapstraction.setCenterAndZoom(latlon, 18);
@@ -407,7 +407,7 @@ class Display {
 
     def private treeRelatives(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        «val pluginPrefix = container.application.appName.formatForDB»
+        «val pluginPrefix = application.appName.formatForDB»
         {* purpose of this template: show different forms of relatives for a given tree node *}
         <h3>{gt text='Related «nameMultiple.formatForDisplay»'}</h3>
         {if $«objName».lvl gt 0}
@@ -485,6 +485,6 @@ class Display {
     '''
 
     def private isLegacyApp(Entity it) {
-        container.application.targets('1.3.5')
+        application.targets('1.3.5')
     }
 }

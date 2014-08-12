@@ -4,13 +4,11 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationSelectorAutoComplete {
     extension FormattingExtensions = new FormattingExtensions()
-    extension ModelExtensions = new ModelExtensions()
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
@@ -135,7 +133,7 @@ class RelationSelectorAutoComplete {
 
                 $entityNameTranslated = '';
                 switch ($this->objectType) {
-                    «FOR entity : getAllEntities»
+                    «FOR entity : entities»
                         case '«entity.name.formatForCode»':
                             $entityNameTranslated = __('«entity.name.formatForDisplay»', $dom);
                             break;

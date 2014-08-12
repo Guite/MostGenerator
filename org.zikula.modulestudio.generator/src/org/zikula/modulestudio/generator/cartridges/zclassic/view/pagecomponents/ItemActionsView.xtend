@@ -20,7 +20,7 @@ class ItemActionsView {
     '''
 
     def private markup(Entity it, String context) '''
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             «IF context == 'display'»
                 <p id="«itemActionContainerViewId»">
                     «linkList(context)»
@@ -48,7 +48,7 @@ class ItemActionsView {
     '''
 
     def private linkEntry(Entity it, String context) '''
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             «IF context == 'display'»
                 <a «linkEntryCommonAttributes» class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
             «ELSEIF context == 'view'»
@@ -64,14 +64,14 @@ class ItemActionsView {
         «ENDIF»
     '''
 
-    def private linkEntryCommonAttributes(Entity it) '''href="{$option.url.type|«container.application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
+    def private linkEntryCommonAttributes(Entity it) '''href="{$option.url.type|«application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
 
     def private javaScript(Entity it, String context) '''
         <script type="text/javascript">
         /* <![CDATA[ */
-            «IF container.application.targets('1.3.5')»
+            «IF application.targets('1.3.5')»
                 document.observe('dom:loaded', function() {
-                    «container.application.prefix()»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
+                    «application.prefix()»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
                 });
             «ELSE»
                 ( function($) {
@@ -86,7 +86,7 @@ class ItemActionsView {
     '''
 
     def trigger(Entity it, String context) '''
-        «IF container.application.targets('1.3.5')»
+        «IF application.targets('1.3.5')»
             {icon id="«itemActionContainerViewIdForSmarty»Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
         «ELSE»
             <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {gt text='Actions'}«ENDIF» <span class="caret"></span></a>
