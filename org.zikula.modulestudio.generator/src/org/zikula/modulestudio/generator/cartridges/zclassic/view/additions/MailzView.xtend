@@ -79,9 +79,9 @@ class MailzView {
 
     def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
         «IF application.targets('1.3.5')»
-            {modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy('$objectType', true, true)» fqurl=true}
+            {modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}
         «ELSE»
-            {route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams('$objectType', true)» absolute=true}
+            {route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams(name.formatForCode, true)» absolute=true}
         «ENDIF»'''
 
     def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
