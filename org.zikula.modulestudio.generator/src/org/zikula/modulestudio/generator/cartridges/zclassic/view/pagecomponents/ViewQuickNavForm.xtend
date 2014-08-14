@@ -80,7 +80,7 @@ class ViewQuickNavForm {
 
     def private formFields(Entity it) '''
         «categoriesFields»
-        «val incomingRelations = getBidirectionalIncomingJoinRelationsWithOneSource»
+        «val incomingRelations = getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]»
         «IF !incomingRelations.empty»
             «FOR relation : incomingRelations»
                 «relation.formField»
@@ -229,7 +229,7 @@ class ViewQuickNavForm {
             «IF !application.targets('1.3.5')»
                 <div class="form-group">
             «ENDIF»
-                <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
+                <label for="«sourceAliasName»">{gt text='«(source as Entity).nameMultiple.formatForDisplayCapital»'}</label>
                 {modapifunc modname='«source.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' useJoins=false assign='listEntries'}
                 <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
                     <option value="">{$lblDefault}</option>

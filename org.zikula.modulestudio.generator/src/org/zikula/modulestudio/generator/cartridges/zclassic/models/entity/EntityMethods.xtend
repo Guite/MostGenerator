@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.DateField
 import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
@@ -27,7 +28,21 @@ class EntityMethods {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, Application app, Property thProp) '''
+    def dispatch generate(DataObject it, Application app, Property thProp) '''
+        «IF !app.targets('1.3.5')»
+            «validationMethods»
+        «ENDIF»
+
+        «validate»
+
+        «relatedObjectsImpl(app)»
+
+        «toStringImpl(app)»
+
+        «cloneImpl(app, thProp)»
+    '''
+
+    def dispatch generate(Entity it, Application app, Property thProp) '''
         «propertyChangedListener»
 
         «getTitleFromDisplayPattern(app)»
@@ -35,26 +50,7 @@ class EntityMethods {
         «IF app.targets('1.3.5')»
             «initValidator»
         «ELSE»
-            «val thVal = new ValidationConstraints»
-            «IF hasListFieldsEntity»
-                «FOR listField : getListFieldsEntity»
-
-                    «thVal.validationMethods(listField)»
-                «ENDFOR»
-            «ENDIF»
-            «IF hasUserFieldsEntity»
-                «FOR userField : getUserFieldsEntity»
-
-                    «thVal.validationMethods(userField)»
-                «ENDFOR»
-            «ENDIF»
-            «val dateTimeFields = fields.filter(AbstractDateField)»
-            «IF !dateTimeFields.empty»
-                «FOR dateField : dateTimeFields»
-
-                    «thVal.validationMethods(dateField)»
-                «ENDFOR»
-            «ENDIF»
+            «validationMethods»
         «ENDIF»
 
         «initWorkflow(app)»
@@ -78,6 +74,29 @@ class EntityMethods {
         «toStringImpl(app)»
 
         «cloneImpl(app, thProp)»
+    '''
+
+    def validationMethods(DataObject it) '''
+        «val thVal = new ValidationConstraints»
+        «IF hasListFieldsEntity»
+            «FOR listField : getListFieldsEntity»
+
+                «thVal.validationMethods(listField)»
+            «ENDFOR»
+        «ENDIF»
+        «IF hasUserFieldsEntity»
+            «FOR userField : getUserFieldsEntity»
+
+                «thVal.validationMethods(userField)»
+            «ENDFOR»
+        «ENDIF»
+        «val dateTimeFields = fields.filter(AbstractDateField)»
+        «IF !dateTimeFields.empty»
+            «FOR dateField : dateTimeFields»
+
+                «thVal.validationMethods(dateField)»
+            «ENDFOR»
+        «ENDIF»
     '''
 
     def private propertyChangedListener(Entity it) '''
@@ -247,7 +266,7 @@ class EntityMethods {
     /**
      * Performs validation.
      */
-    def private validate(Entity it) '''
+    def private validate(DataObject it) '''
         /**
          * Start validation and raise exception if invalid data is found.
          *
@@ -413,7 +432,7 @@ class EntityMethods {
         }
     '''
 
-    def private toStringImpl(Entity it, Application app) '''
+    def private toStringImpl(DataObject it, Application app) '''
         /**
          * ToString interceptor implementation.
          * This method is useful for debugging purposes.
@@ -436,7 +455,7 @@ class EntityMethods {
         }
     '''
 
-    def private relatedObjectsImpl(Entity it, Application app) '''
+    def private relatedObjectsImpl(DataObject it, Application app) '''
         /**
          * Returns an array of all related objects that need to be persited after clone.
          * 
@@ -467,7 +486,7 @@ class EntityMethods {
          }
     '''
 
-    def private cloneImpl(Entity it, Application app, Property thProp) '''
+    def private cloneImpl(DataObject it, Application app, Property thProp) '''
         «val joinsIn = incomingJoinRelationsForCloning»
         «val joinsOut = outgoingJoinRelationsForCloning»
         /**
@@ -509,7 +528,7 @@ class EntityMethods {
                         $this->set«field.name.formatForCodeCapital»Meta(array());
                     «ENDFOR»
                 «ENDIF»
-                «IF standardFields»
+                «IF it instanceof Entity && (it as Entity).standardFields»
 
                     $this->setCreatedDate(null);
                     $this->setCreatedUserId(null);
@@ -532,27 +551,29 @@ class EntityMethods {
                         «ENDFOR»
                     «ENDFOR»
                 «ENDIF»
-                «IF categorisable»
+                «IF it instanceof Entity»
+                    «IF categorisable»
 
-                    // clone categories
-                    $categories = $this->categories;
-                    $this->categories = new ArrayCollection();
-                    foreach ($categories as $c) {
-                        $newCat = clone $c;
-                        $this->categories->add($newCat);
-                        $newCat->setEntity($this);
-                    }
-                «ENDIF»
-                «IF attributable»
+                        // clone categories
+                        $categories = $this->categories;
+                        $this->categories = new ArrayCollection();
+                        foreach ($categories as $c) {
+                            $newCat = clone $c;
+                            $this->categories->add($newCat);
+                            $newCat->setEntity($this);
+                        }
+                    «ENDIF»
+                    «IF attributable»
 
-                    // clone attributes
-                    $attributes = $this->attributes;
-                    $this->attributes = new ArrayCollection();
-                    foreach ($attributes as $a) {
-                        $newAttr = clone $a;
-                        $this->attributes->add($newAttr);
-                        $newAttr->setEntity($this);
-                    }
+                        // clone attributes
+                        $attributes = $this->attributes;
+                        $this->attributes = new ArrayCollection();
+                        foreach ($attributes as $a) {
+                            $newAttr = clone $a;
+                            $this->attributes->add($newAttr);
+                            $newAttr->setEntity($this);
+                        }
+                    «ENDIF»
                 «ENDIF»
                 «/* TODO consider other extensions here (meta data, translatable, loggable, maybe more) */»
             }

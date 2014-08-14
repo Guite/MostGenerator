@@ -35,7 +35,7 @@ class PersistenceTransformer {
 
         println('Starting model transformation')
         // handle all entities
-        for (entity : entities) {
+        for (entity : getAllEntities) {
             entity.handleEntity
         }
 
@@ -178,7 +178,7 @@ class PersistenceTransformer {
     }
 
     def private addWorkflowSettings(Application it) {
-        val entitiesWithWorkflow = entities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
         if (entitiesWithWorkflow.empty) {
             return
         }

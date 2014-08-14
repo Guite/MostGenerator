@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -111,7 +112,7 @@ class NamingExtensions {
     /**
      * Returns the class name for a certain entity class.
      */
-    def entityClassName(Entity it, String suffix, Boolean isBase) {
+    def entityClassName(DataObject it, String suffix, Boolean isBase) {
         val app = application
         if (app.targets('1.3.5'))
             app.appName + '_Entity_' + (if (isBase) 'Base_' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital

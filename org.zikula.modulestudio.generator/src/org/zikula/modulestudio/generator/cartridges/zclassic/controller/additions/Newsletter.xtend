@@ -106,7 +106,7 @@ class Newsletter {
         {
             $objectTypes = array();
             if (ModUtil::available($this->modname) && ModUtil::loadApi($this->modname)) {
-                «FOR entity : entities»
+                «FOR entity : getAllEntities»
                     $objectTypes['«entity.name.formatForCode»'] = array('name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'));
                 «ENDFOR»
             }

@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.EmailField
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityField
 import de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
@@ -47,11 +48,11 @@ class Property {
     /**
      * Do only use integer (no smallint or bigint) for version fields.
      * This is just a hack for a minor bug in Doctrine 2.1 (fixed in 2.2).
-     * After we dropped support for Zikula 1.3.5 (#260) the following define for IntegerField
+     * After we dropped support for Zikula 1.3.x (#260) the following define for IntegerField
      * can be removed completely as the define for DerivedField can be used then instead.
      */
     def dispatch persistentProperty(IntegerField it) {
-        if (version && entity.hasOptimisticLock && entity.application.targets('1.3.5')) {
+        if (version && entity instanceof Entity && (entity as Entity).hasOptimisticLock && entity.application.targets('1.3.5')) {
             persistentProperty(name.formatForCode, 'integer', '')
         } else {
             persistentProperty(name.formatForCode, fieldTypeAsString, '')
@@ -112,8 +113,8 @@ class Property {
          «IF primaryKey»
              «IF !entity.hasCompositeKeys»«/* || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»*/»
               * @ORM\Id
-              «IF entity.identifierStrategy != EntityIdentifierStrategy::NONE»
-               * @ORM\GeneratedValue(strategy="«entity.identifierStrategy.literal»")
+              «IF entity instanceof Entity && (entity as Entity).identifierStrategy != EntityIdentifierStrategy::NONE»
+               * @ORM\GeneratedValue(strategy="«(entity as Entity).identifierStrategy.literal»")
               «ENDIF»
             «ELSE»
               * @ORM\Id
@@ -154,11 +155,11 @@ class Property {
     def private persistentPropertyAdditions(DerivedField it) {
         switch it {
             IntegerField:
-                if (it.version && entity.hasOptimisticLock) '''
+                if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''
                     «''» * @ORM\Version
                 '''
             DatetimeField:
-                if (it.version && entity.hasOptimisticLock) '''
+                if (it.version && entity instanceof Entity && (entity as Entity).hasOptimisticLock) '''
                     «''» * @ORM\Version
                 '''
         }

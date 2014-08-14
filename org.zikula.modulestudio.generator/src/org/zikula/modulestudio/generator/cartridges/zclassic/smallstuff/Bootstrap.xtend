@@ -133,7 +133,7 @@ class Bootstrap {
     '''
 
     def private archiveObjectsCall(Application it) '''
-        «val entitiesWithArchive = entities.filter[hasArchive && getEndDateField !== null]»
+        «val entitiesWithArchive = getAllEntities.filter[hasArchive && getEndDateField !== null]»
         «IF !entitiesWithArchive.empty»
             «prefix()»PerformRegularAmendments();
             

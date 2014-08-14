@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
 import de.guite.modulestudio.metamodel.modulestudio.CascadeType
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
@@ -83,10 +84,18 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
+    def private getDisplayNameDependingOnType(DataObject it) {
+        if (it instanceof Entity) {
+            nameMultiple.formatForDisplay
+        } else {
+            name.formatForDisplay
+        }
+    }
+
     def private dispatch incomingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
         switch it {
             OneToOneRelationship: '''One «targetName» [«target.name.formatForDisplay»] is linked by one «sourceName» [«source.name.formatForDisplay»] (INVERSE SIDE)'''
-            OneToManyRelationship: '''Many «targetName» [«target.nameMultiple.formatForDisplay»] are linked by one «sourceName» [«source.name.formatForDisplay»] (OWNING SIDE)'''
+            OneToManyRelationship: '''Many «targetName» [«target.getDisplayNameDependingOnType»] are linked by one «sourceName» [«source.name.formatForDisplay»] (OWNING SIDE)'''
             default: ''
         }
     }
@@ -127,7 +136,7 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
-    def private dispatch incomingMappingDescription(ManyToOneRelationship it, String sourceName, String targetName) '''One «targetName» [«target.name.formatForDisplay»] is linked by many «sourceName» [«source.nameMultiple.formatForDisplay»] (INVERSE SIDE)'''
+    def private dispatch incomingMappingDescription(ManyToOneRelationship it, String sourceName, String targetName) '''One «targetName» [«target.name.formatForDisplay»] is linked by many «sourceName» [«source.getDisplayNameDependingOnType»] (INVERSE SIDE)'''
 
     def private dispatch incoming(ManyToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         «IF bidirectional»
@@ -154,7 +163,7 @@ class Association {
         «ENDIF»
     '''
 
-    def private dispatch incomingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «targetName» [«target.nameMultiple.formatForDisplay»] are linked by many «sourceName» [«source.nameMultiple.formatForDisplay»] (INVERSE SIDE)'''
+    def private dispatch incomingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «targetName» [«target.getDisplayNameDependingOnType»] are linked by many «sourceName» [«source.getDisplayNameDependingOnType»] (INVERSE SIDE)'''
 
     /**
      * This default rule is used for OneToOne and ManyToOne.
@@ -188,7 +197,7 @@ class Association {
     def private dispatch outgoingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
         switch it {
             OneToOneRelationship: '''One «sourceName» [«source.name.formatForDisplay»] has one «targetName» [«target.name.formatForDisplay»] (INVERSE SIDE)'''
-            ManyToOneRelationship: '''Many «sourceName» [«source.nameMultiple.formatForDisplay»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
+            ManyToOneRelationship: '''Many «sourceName» [«source.getDisplayNameDependingOnType»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
             default: ''
         }
     }
@@ -234,7 +243,7 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
-    def private dispatch outgoingMappingDescription(OneToManyRelationship it, String sourceName, String targetName) '''One «sourceName» [«source.name.formatForDisplay»] has many «targetName» [«target.nameMultiple.formatForDisplay»] (INVERSE SIDE)'''
+    def private dispatch outgoingMappingDescription(OneToManyRelationship it, String sourceName, String targetName) '''One «sourceName» [«source.name.formatForDisplay»] has many «targetName» [«target.getDisplayNameDependingOnType»] (INVERSE SIDE)'''
 
     def private dispatch outgoing(ManyToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -260,7 +269,7 @@ class Association {
         protected $«targetName» = null;
     '''
 
-    def private dispatch outgoingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «sourceName» [«source.nameMultiple.formatForDisplay»] have many «targetName» [«target.nameMultiple.formatForDisplay»] (OWNING SIDE)'''
+    def private dispatch outgoingMappingDescription(ManyToManyRelationship it, String sourceName, String targetName) '''Many «sourceName» [«source.getDisplayNameDependingOnType»] have many «targetName» [«target.getDisplayNameDependingOnType»] (OWNING SIDE)'''
 
 
     def private joinDetails(JoinRelationship it, Boolean useTarget) {
@@ -289,9 +298,9 @@ class Association {
         «ENDIF»
     '''
 
-    def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, Entity joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«FOR joinColumnLocal : joinColumnsLocal SEPARATOR ', '»«joinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»«ENDFOR»},'''
+    def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«FOR joinColumnLocal : joinColumnsLocal SEPARATOR ', '»«joinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»«ENDFOR»},'''
 
-    def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, Entity joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»},'''
+    def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, DataObject joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»},'''
 
     def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget) '''
         @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF onDelete != ''», onDelete="«onDelete»"«ENDIF»)'''

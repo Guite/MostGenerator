@@ -70,7 +70,7 @@ class Plugins {
         if (hasListFields) {
             new GetListEntry().generate(it, fsa)
         }
-        if (entities.exists[geographical]) {
+        if (hasGeographical) {
             new FormatGeoData().generate(it, fsa)
         }
         if (hasTrees) {
@@ -92,7 +92,7 @@ class Plugins {
         if (hasCountryFields) {
             new CountrySelector().generate(it, fsa)
         }
-        if (entities.exists[geographical]) {
+        if (hasGeographical) {
             new GeoInput().generate(it, fsa)
         }
         val hasRelations = !relations.empty

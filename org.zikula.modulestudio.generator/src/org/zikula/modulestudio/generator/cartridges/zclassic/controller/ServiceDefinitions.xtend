@@ -80,7 +80,7 @@ class ServiceDefinitions {
         «modPrefix».routing.ajax: ajax
         «modPrefix».routing.external: external
         «modPrefix».routing.view.suffix: view
-        «FOR entity : entities»
+        «FOR entity : getAllEntities»
             «modPrefix».routing.«entity.name.formatForCode».singular: «entity.name.formatForCode»
             «modPrefix».routing.«entity.name.formatForCode».plural: «entity.nameMultiple.formatForCode»
         «ENDFOR»

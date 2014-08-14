@@ -28,7 +28,7 @@ class SearchView {
         {* Purpose of this template: Display search options *}
         <input type="hidden" id="«appName.toFirstLower»Active" name="active[«appName»]" value="1" checked="checked" />
         «val appLower = appName.toFirstLower»
-        «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
+        «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
             «val nameMulti = entity.nameMultiple.formatForCodeCapital»
             <div>
                 <input type="checkbox" id="active_«appLower»«nameMulti»" name="«appLower»SearchTypes[]" value="«entity.name.formatForCode»"{if $active_«entity.name.formatForCode»} checked="checked"{/if} />

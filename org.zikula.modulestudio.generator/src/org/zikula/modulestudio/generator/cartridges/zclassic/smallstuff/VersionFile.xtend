@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -17,6 +18,7 @@ import static de.guite.modulestudio.metamodel.modulestudio.ApplicationDependency
 class VersionFile {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions 
+    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -114,7 +116,7 @@ class VersionFile {
             protected function setupHookBundles()
             {
         «val appName = appName.formatForDB»
-                «FOR entity : entities»
+                «FOR entity : getAllEntities»
                     «/* we register one hook subscriber bundle foreach entity type */»
                     «val areaName = entity.nameMultiple.formatForDB»
                     $bundle = new «IF targets('1.3.5')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
@@ -186,7 +188,7 @@ class VersionFile {
             «IF needsApproval»
                 '«appName»:ModerationBlock:' => 'Block title::',
             «ENDIF»
-            «FOR entity : entities»«entity.permissionSchema(appName)»«ENDFOR»
+            «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
         );
         // DEBUG: permission schema aspect ends
     '''

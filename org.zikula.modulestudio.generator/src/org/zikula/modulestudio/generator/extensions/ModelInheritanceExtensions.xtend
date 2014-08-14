@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
 
 /**
@@ -11,42 +11,42 @@ class ModelInheritanceExtensions {
     /**
      * Checks if this entity has child relations, but no parent.
      */
-    def isTopSuperClass(Entity it) {
+    def isTopSuperClass(DataObject it) {
         isInheriter && !isInheriting
     }
 
     /**
      * Checks if this entity has a parent.
      */
-    def isInheriting(Entity it) {
+    def isInheriting(DataObject it) {
         !outgoing.filter(InheritanceRelationship).empty
     }
 
     /**
      * Returns the relationship pointing to the parent.
      */
-    def getRelationToParentType(Entity it) {
+    def getRelationToParentType(DataObject it) {
         outgoing.filter(InheritanceRelationship).head
     }
 
     /**
      * Returns the parent entity.
      */
-    def parentType(Entity it) {
+    def parentType(DataObject it) {
         getRelationToParentType.target
     }
 
     /**
      * Checks if this entity has at least one child.
      */
-    def isInheriter(Entity it) {
+    def isInheriter(DataObject it) {
         !getChildRelations.empty
     }
 
     /**
      * Returns a list of all child relationships.
      */
-    def getChildRelations(Entity it) {
+    def getChildRelations(DataObject it) {
         incoming.filter(InheritanceRelationship)
     }
 }

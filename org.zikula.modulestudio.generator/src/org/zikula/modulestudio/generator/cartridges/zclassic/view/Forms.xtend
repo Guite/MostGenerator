@@ -53,7 +53,7 @@ class Forms {
      * Entry point for form templates for each action.
      */
     def private generate(Action it, Application app, IFileSystemAccess fsa) {
-        for (entity : app.entities) {
+        for (entity : app.getAllEntities) {
             entity.generate(app, 'edit', fsa)
             entity.entityInlineRedirectHandlerFile(app, fsa)
         }

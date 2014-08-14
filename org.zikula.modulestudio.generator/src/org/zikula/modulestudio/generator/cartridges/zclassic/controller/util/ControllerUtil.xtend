@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -274,7 +275,7 @@ class ControllerUtil {
             $basePath = FileUtil::getDataDirectory() . '/«appName»/';
 
             switch ($objectType) {
-                «FOR entity : getUploadEntities»
+                «FOR entity : getUploadEntities.filter(Entity)»
                     «val uploadFields = entity.getUploadFieldsEntity»
                     case '«entity.name.formatForCode»':
                         «IF uploadFields.size > 1»

@@ -55,7 +55,7 @@ class Repository {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         app = it
-        entities.filter[!mappedSuperClass].forEach(e|e.generate)
+        getAllEntities.forEach(e|e.generate)
 
         val linkTable = new LinkTable
         for (relation : getJoinRelations.filter(ManyToManyRelationship)) linkTable.generate(relation, it, fsa)

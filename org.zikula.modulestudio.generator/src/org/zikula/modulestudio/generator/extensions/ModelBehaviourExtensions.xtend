@@ -33,7 +33,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the loggable extension enabled.
      */
     def getLoggableEntities(Application it) {
-        entities.filter[loggable]
+        getAllEntities.filter[loggable]
     }
 
     /**
@@ -47,35 +47,35 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the geographical extension enabled.
      */
     def getGeographicalEntities(Application it) {
-        entities.filter[geographical]
+        getAllEntities.filter[geographical]
     }
 
     /**
      * Checks whether the application contains at least one entity with the sluggable extension enabled.
      */
     def hasSluggable(Application it) {
-        entities.exists[hasSluggableFields]
+        getAllEntities.exists[hasSluggableFields]
     }
 
     /**
      * Checks whether the application contains at least one entity with the softDeletable extension enabled.
      */
     def hasSoftDeleteable(Application it) {
-        entities.exists[softDeleteable]
+        getAllEntities.exists[softDeleteable]
     }
 
     /**
      * Checks whether the application contains at least one entity with the sortable extension enabled.
      */
     def hasSortable(Application it) {
-        entities.exists[hasSortableFields]
+        getAllEntities.exists[hasSortableFields]
     }
 
     /**
      * Checks whether the application contains at least one entity with the timestampable extension enabled.
      */
     def hasTimestampable(Application it) {
-        entities.exists[hasTimestampableFields]
+        getAllEntities.exists[hasTimestampableFields]
     }
 
     /**
@@ -89,7 +89,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the translatable extension enabled.
      */
     def getTranslatableEntities(Application it) {
-        entities.filter[hasTranslatableFields]
+        getAllEntities.filter[hasTranslatableFields]
     }
 
     /**
@@ -103,7 +103,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the tree extension enabled.
      */
     def getTreeEntities(Application it) {
-        entities.filter[tree != EntityTreeType.NONE]
+        getAllEntities.filter[tree != EntityTreeType.NONE]
     }
 
     /**
@@ -117,7 +117,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the categorisable extension enabled.
      */
     def getCategorisableEntities(Application it) {
-        entities.filter[categorisable]
+        getAllEntities.filter[categorisable]
     }
 
     /**
@@ -131,7 +131,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the meta data extension enabled.
      */
     def getMetaDataEntities(Application it) {
-        entities.filter[metaData]
+        getAllEntities.filter[metaData]
     }
 
     /**
@@ -145,7 +145,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the attributable extension enabled.
      */
     def getAttributableEntities(Application it) {
-        entities.filter[attributable]
+        getAllEntities.filter[attributable]
     }
 
     /**
@@ -159,7 +159,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the standard field extension enabled.
      */
     def getStandardFieldEntities(Application it) {
-        entities.filter[standardFields]
+        getAllEntities.filter[standardFields]
     }
 
 

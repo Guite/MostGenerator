@@ -62,9 +62,9 @@ class ExampleData {
     '''
 
     def private exampleRows(Application it) '''
-        «FOR entity : entities»«entity.truncateTable»«ENDFOR»
+        «FOR entity : getAllEntities»«entity.truncateTable»«ENDFOR»
         «IF amountOfExampleRows > 0»
-            «IF !entities.filter[tree != EntityTreeType::NONE].empty»
+            «IF !getAllEntities.filter[tree != EntityTreeType::NONE].empty»
                 $treeCounterRoot = 1;
             «ENDIF»
             «createExampleRows»
@@ -83,8 +83,8 @@ class ExampleData {
 
     def private createExampleRows(Application it) '''
         «initDateValues»
-        «FOR entity : entities»«entity.initExampleObjects(it)»«ENDFOR»
-        «FOR entity : entities»«entity.createExampleRows(it)»«ENDFOR»
+        «FOR entity : getAllEntities»«entity.initExampleObjects(it)»«ENDFOR»
+        «FOR entity : getAllEntities»«entity.createExampleRows(it)»«ENDFOR»
         «persistExampleObjects»
     '''
 
@@ -215,7 +215,7 @@ class ExampleData {
             $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
         «ENDIF»
         try {
-            «FOR entity : entities»«entity.persistEntities(it)»«ENDFOR»
+            «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
         } catch(\Exception $e) {
             «IF targets('1.3.5')»
                 LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));

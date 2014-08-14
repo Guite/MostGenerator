@@ -124,7 +124,7 @@ class ControllerAction {
 
     def private actionDocMethodDescription(Action it) {
         switch it {
-            MainAction: 'This method is the default function handling the ' + controller.formattedName + ' area called without defining arguments.'
+            MainAction: 'This method is the default function handling the ' + controllerName + ' area called without defining arguments.'
             ViewAction: 'This method provides a item list overview.'
             DisplayAction: 'This method provides a item detail view.'
             EditAction: 'This method provides a handling of edit requests.'
@@ -157,11 +157,11 @@ class ControllerAction {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
             + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
-            + (if (action.controller.application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
 
-    def private actionDocAdditionalParams(Action it, Entity entity) {
+    def private actionDocAdditionalParams(Action it, Entity refEntity) {
         switch it {
             ViewAction:
                  ' * @param string  $sort         Sorting field.\n'
@@ -169,10 +169,10 @@ class ControllerAction {
                + ' * @param int     $pos          Current pager position.\n'
                + ' * @param int     $num          Amount of entries to display.\n'
             DisplayAction:
-                (if (entity !== null && !controller.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
+                (if (refEntity !== null && !refEntity.application.targets('1.3.5')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
             DeleteAction:
-                (if (entity !== null && !controller.application.targets('1.3.5')) ' * @param ' + entity.name.formatForCodeCapital + 'Entity $' + entity.name.formatForCode + '      Treated ' + entity.name.formatForDisplay + ' instance.\n'
+                (if (refEntity !== null && !refEntity.application.targets('1.3.5')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
                + ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n'
             default: ''

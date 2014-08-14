@@ -122,7 +122,7 @@ class User {
                     $uid = $userRecord['uid'];
                     $serviceManager = ServiceUtil::getManager();
                     $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
-                    «FOR entity : entities»«entity.userDelete»«ENDFOR»
+                    «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
             «ENDIF»
         }
@@ -163,12 +163,14 @@ class User {
     '''
 
     def private onAccountDeletionHandler(UserField it) '''
-        «IF onAccountDeletion != AccountDeletionHandler.DELETE»
-            // set last editor to «onAccountDeletion.adhAsConstant» («onAccountDeletion.adhUid») for all «entity.nameMultiple.formatForDisplay» affected by this user
-            $repo->updateUserField('«name.formatForCode»', $uid, «onAccountDeletion.adhUid»);
-        «ELSE»
-            // delete all «entity.nameMultiple.formatForDisplay» affected by this user
-            $repo->deleteByUserField('«name.formatForCode»', $uid);
+        «IF entity instanceof Entity»
+            «IF onAccountDeletion != AccountDeletionHandler.DELETE»
+                // set last editor to «onAccountDeletion.adhAsConstant» («onAccountDeletion.adhUid») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
+                $repo->updateUserField('«name.formatForCode»', $uid, «onAccountDeletion.adhUid»);
+            «ELSE»
+                // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
+                $repo->deleteByUserField('«name.formatForCode»', $uid);
+            «ENDIF»
         «ENDIF»
     '''
 }

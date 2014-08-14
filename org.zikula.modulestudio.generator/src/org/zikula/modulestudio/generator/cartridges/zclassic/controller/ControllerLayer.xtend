@@ -49,7 +49,7 @@ class ControllerLayer {
 
         // controllers and apis
         controllers.forEach[generateControllerAndApi(fsa)]
-        entities.forEach[generateController(fsa)]
+        getAllEntities.forEach[generateController(fsa)]
 
         new UtilMethods().generate(it, fsa)
         if (targets('1.3.5')) {
@@ -150,7 +150,7 @@ class ControllerLayer {
             «new ControllerHelper().controllerPostInitialize(it, false, '')»
 
             «val actionHelper = new ControllerAction(app)»
-            «FOR action : app.getActionsOfAdminAndUserControllers»«actionHelper.generate(it, action, true)»«ENDFOR»
+            «FOR action : actions»«actionHelper.generate(it, action, true)»«ENDFOR»
             «IF hasActions('view') && app.hasAdminController»
 
                 «handleSelectedObjects(true)»
@@ -602,7 +602,7 @@ class ControllerLayer {
         {
             «IF !app.targets('1.3.5')»
                 «val actionHelper = new ControllerAction(app)»
-                «FOR action : app.getActionsOfAdminAndUserControllers»«actionHelper.generate(it, action, false)»«ENDFOR»
+                «FOR action : actions»«actionHelper.generate(it, action, false)»«ENDFOR»
                 «IF hasActions('view') && app.hasAdminController»
 
                     «handleSelectedObjects(false)»
@@ -658,7 +658,7 @@ class ControllerLayer {
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 
                 «IF hasActions('view')»
-                    «FOR entity : app.entities»
+                    «FOR entity : app.getAllEntities»
                         if (in_array('«entity.name.formatForCode»', $allowedObjectTypes)
                             && SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
                             «IF app.targets('1.3.5')»

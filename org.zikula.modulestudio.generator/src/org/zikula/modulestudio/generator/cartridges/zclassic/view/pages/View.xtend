@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -162,8 +163,8 @@ class View {
 
     def private viewItemList(Entity it, String appName) '''
             «val listItemsFields = getDisplayFieldsForView»
-            «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional]»
-            «val listItemsOut = outgoing.filter(OneToOneRelationship)»
+            «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
+            «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
             «viewItemListHeader(appName, listItemsFields, listItemsIn, listItemsOut)»
 
             «viewItemListBody(appName, listItemsFields, listItemsIn, listItemsOut)»
@@ -412,19 +413,19 @@ class View {
         </th>
     '''
 
-    def private headerSortingLink(Object it, Entity entity, String fieldName, String label) '''
+    def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
         {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=«IF entity.application.targets('1.3.5')»$lct«ELSE»'«entity.name.formatForCode»'«ENDIF» func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)»«IF entity.application.targets('1.3.5')» ot='«entity.name.formatForCode»'«ELSE» lct=$lct«ENDIF»}
     '''
 
-    def private headerSortingLinkParameters(Entity it) ''' sortdir=$sdir all=$all own=$own«IF categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«sortParamsForLocaleFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
+    def private headerSortingLinkParameters(DataObject it) ''' sortdir=$sdir all=$all own=$own«IF it instanceof Entity && (it as Entity).categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«sortParamsForLocaleFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
 
-    def private sortParamsForIncomingRelations(Entity it) '''«IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»«FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCode» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
-    def private sortParamsForListFields(Entity it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
-    def private sortParamsForUserFields(Entity it) '''«IF hasUserFieldsEntity»«FOR field : getUserFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
-    def private sortParamsForCountryFields(Entity it) '''«IF hasCountryFieldsEntity»«FOR field : getCountryFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
-    def private sortParamsForLanguageFields(Entity it) '''«IF hasLanguageFieldsEntity»«FOR field : getLanguageFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
-    def private sortParamsForLocaleFields(Entity it) '''«IF hasLocaleFieldsEntity»«FOR field : getLocaleFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
-    def private sortParamsForBooleanFields(Entity it) '''«IF hasBooleanFieldsEntity»«FOR field : getBooleanFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForIncomingRelations(DataObject it) '''«IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»«FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCode» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForListFields(DataObject it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForUserFields(DataObject it) '''«IF hasUserFieldsEntity»«FOR field : getUserFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForCountryFields(DataObject it) '''«IF hasCountryFieldsEntity»«FOR field : getCountryFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForLanguageFields(DataObject it) '''«IF hasLanguageFieldsEntity»«FOR field : getLanguageFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForLocaleFields(DataObject it) '''«IF hasLocaleFieldsEntity»«FOR field : getLocaleFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForBooleanFields(DataObject it) '''«IF hasBooleanFieldsEntity»«FOR field : getBooleanFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
 
     def private displayEntry(Object it, Boolean useTarget) '''
         «val cssClass = entryContainerCssClass»
@@ -455,11 +456,11 @@ class View {
 
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF newArrayList('name', 'title').contains(name)»
-            «IF entity.hasActions('display')»
+            «IF entity instanceof Entity && entity.hasActions('display')»
                 «IF entity.application.targets('1.3.5')»
-                    <a href="{modurl modname='«entity.application.appName»' type=$lct func='display' ot='«entity.name.formatForCode»' «entity.routeParamsLegacy(entity.name.formatForCode, true, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
+                    <a href="{modurl modname='«entity.application.appName»' type=$lct func='display' ot='«entity.name.formatForCode»' «(entity as Entity).routeParamsLegacy(entity.name.formatForCode, true, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ELSE»
-                    <a href="{route name='«entity.application.appName.formatForDB»_«entity.name.formatForCode»_display' «entity.routeParams(entity.name.formatForCode, true)» lct=$lct}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
+                    <a href="{route name='«entity.application.appName.formatForDB»_«entity.name.formatForCode»_display' «(entity as Entity).routeParams(entity.name.formatForCode, true)» lct=$lct}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ENDIF»
             «ELSE»
                 «displayLeadingEntry»
@@ -471,12 +472,12 @@ class View {
         «ENDIF»
     '''
 
-    def private displayLeadingEntry(DerivedField it) '''{$«entity.name.formatForCode».«name.formatForCode»|notifyfilters:'«entity.application.appName.formatForDB».filterhook.«entity.nameMultiple.formatForDB»'}'''
+    def private displayLeadingEntry(DerivedField it) '''{$«entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity»|notifyfilters:'«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»'«ENDIF»}'''
 
     def private dispatch displayEntryInner(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
-        «val mainEntity = (if (!useTarget) target else source)»
-        «val linkEntity = (if (useTarget) target else source)»
+        «val mainEntity = (if (!useTarget) target else source) as Entity»
+        «val linkEntity = (if (useTarget) target else source) as Entity»
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {if isset($«relObjName») && $«relObjName» ne null}
             «IF linkEntity.hasActions('display')»

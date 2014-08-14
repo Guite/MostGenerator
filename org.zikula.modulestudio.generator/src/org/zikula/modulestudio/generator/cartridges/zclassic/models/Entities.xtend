@@ -1,11 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndex
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndexItem
 import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
+import de.guite.modulestudio.metamodel.modulestudio.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidatorLegacy
@@ -50,12 +52,12 @@ class Entities {
         if (targets('1.3.5')) {
             val validator = new ValidatorLegacy()
             validator.generateCommon(it, fsa)
-            for (entity : entities) {
+            for (entity : getAllEntities) {
                 validator.generateWrapper(entity, fsa)
             }
         }
 
-        for (entity : entities) {
+        for (entity : getAllEntities) {
             extMan = new ExtensionManager(entity)
             extMan.extensionClasses(fsa)
         }
@@ -64,9 +66,11 @@ class Entities {
     /**
      * Creates an entity class file for every Entity instance.
      */
-    def private generate(Entity it, Application app, IFileSystemAccess fsa) {
+    def private generate(DataObject it, Application app, IFileSystemAccess fsa) {
         println('Generating entity classes for entity "' + name.formatForDisplay + '"')
-        extMan = new ExtensionManager(it)
+        if (it instanceof Entity) {
+            extMan = new ExtensionManager(it)
+        }
         thProp = new Property(extMan)
         val entityPath = app.getAppSourceLibPath + 'Entity/'
         val entityClassSuffix = if (!app.targets('1.3.5')) 'Entity' else ''
@@ -95,7 +99,21 @@ class Entities {
         }
     }
 
-    def private imports(Entity it) '''
+    def private dispatch imports(MappedSuperClass it) '''
+        use Doctrine\ORM\Mapping as ORM;
+        «IF hasCollections»
+            use Doctrine\Common\Collections\ArrayCollection;
+        «ENDIF»
+        use Gedmo\Mapping\Annotation as Gedmo;
+        «IF !application.targets('1.3.5')»
+            use Symfony\Component\Validator\Constraints as Assert;
+            «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
+                use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+            «ENDIF»
+        «ENDIF»
+    '''
+
+    def private dispatch imports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
         «IF hasCollections || attributable || categorisable»
             use Doctrine\Common\Collections\ArrayCollection;
@@ -116,7 +134,7 @@ class Entities {
         «ENDIF»
     '''
 
-    def private modelEntityBaseImpl(Entity it, Application app) '''
+    def private modelEntityBaseImpl(DataObject it, Application app) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Base;
 
@@ -151,26 +169,29 @@ class Entities {
          * @abstract
          */
         «IF app.targets('1.3.5')»
-        abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital»Entity extends Zikula_EntityAccess«IF hasNotifyPolicy» implements
-            NotifyPropertyChanged«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ENDIF»
         {
             «val validatorClassLegacy = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
             «memberVars(validatorClassLegacy)»
     
-            «new EntityConstructor().constructor(it, false)»
-    
+            «IF it instanceof Entity»
+                «new EntityConstructor().constructor(it, false)»
+
+            «ENDIF»
             «accessors(validatorClassLegacy)»
     
-            «thEvLi.generateBase(it)»
-    
+            «IF it instanceof Entity»
+                «thEvLi.generateBase(it)»
+
+            «ENDIF»
             «new EntityMethods().generate(it, app, thProp)»
         }
     '''
 
-    def private memberVars(Entity it, String validatorClassLegacy) '''
+    def private memberVars(DataObject it, String validatorClassLegacy) '''
         /**
          * @var string The tablename this object maps to.
          */
@@ -190,7 +211,7 @@ class Entities {
          * @var boolean Option to bypass validation if needed.
          */
         protected $_bypassValidation = false;
-        «IF hasNotifyPolicy»
+        «IF it instanceof Entity && (it as Entity).hasNotifyPolicy»
 
             /**
              «IF !application.targets('1.3.5')»
@@ -221,7 +242,7 @@ class Entities {
         «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
     '''
 
-    def private accessors(Entity it, String validatorClassLegacy) '''
+    def private accessors(DataObject it, String validatorClassLegacy) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
         «IF application.targets('1.3.5')»
             «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
@@ -237,7 +258,7 @@ class Entities {
         «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
     '''
 
-    def private modelEntityImpl(Entity it, Application app) '''
+    def private modelEntityImpl(DataObject it, Application app) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity;
 
@@ -260,31 +281,40 @@ class Entities {
 
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.generate(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.generate(relation, true)»«ENDFOR»
-                «new EntityConstructor().constructor(it, true)»
+                «IF it instanceof Entity»
+                    «new EntityConstructor().constructor(it, true)»
 
+                «ENDIF»
                 «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
                 «extMan.additionalAccessors»
 
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
             «ENDIF»
+            «IF it instanceof Entity»
 
-            «thEvLi.generateImpl(it)»
+                «thEvLi.generateImpl(it)»
+            «ENDIF»
         }
     '''
 
-    def private entityImplClassDocblock(Entity it, Application app) '''
+    def private entityImplClassDocblock(DataObject it, Application app) '''
         /**
          * Entity class that defines the entity structure and behaviours.
          *
          * This is the concrete entity class for «name.formatForDisplay» entities.
          «extMan.classAnnotations»
-         «IF mappedSuperClass»
+         «IF it instanceof MappedSuperClass»
           * @ORM\MappedSuperclass
-         «ELSE»
-          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF readOnly», readOnly=true«ENDIF»)
+         «ELSEIF it instanceof Entity»
+          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
          «ENDIF»
-        «entityImplClassDocblockAdditions(app)»
+        «IF it instanceof Entity»
+            «entityImplClassDocblockAdditions(app)»
+        «ENDIF»
+        «IF !app.targets('1.3.5')»
+            «new ValidationConstraints().classAnnotations(it)»
+        «ENDIF»
          */
     '''
 
@@ -314,9 +344,6 @@ class Entities {
           * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
          «ENDIF»
          * @ORM\HasLifecycleCallbacks
-        «IF !app.targets('1.3.5')»
-            «new ValidationConstraints().classAnnotations(it)»
-        «ENDIF»
     '''
 
     def private index(EntityIndex it, String indexType) '''

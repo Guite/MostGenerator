@@ -25,7 +25,7 @@ class Loggable extends AbstractExtension implements EntityExtensionInterface {
      * Additional field annotations.
      */
     override columnAnnotations(DerivedField it) '''
-        «IF entity.loggable» * @Gedmo\Versioned
+        «IF entity instanceof Entity && (entity as Entity).loggable» * @Gedmo\Versioned
         «ENDIF»
     '''
 

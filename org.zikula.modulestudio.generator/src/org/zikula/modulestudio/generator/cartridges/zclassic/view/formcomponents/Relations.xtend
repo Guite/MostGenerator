@@ -38,8 +38,8 @@ class Relations {
      * This method creates the Smarty include statement.
      */
     def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app]»«relation.generate(app, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter[target.application == app]»«relation.generate(app, true, false, fsa)»«ENDFOR»
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app && source instanceof Entity]»«relation.generate(app, true, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter[target.application == app && target instanceof Entity]»«relation.generate(app, true, false, fsa)»«ENDFOR»
     '''
 
     def private generate(JoinRelationship it, Application app, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
@@ -59,8 +59,8 @@ class Relations {
 
         val templateName = getTemplateName(useTarget, editSnippet)
 
-        val ownEntity = if (incoming) source else target
-        val otherEntity = if (!incoming) source else target
+        val ownEntity = (if (incoming) source else target) as Entity
+        val otherEntity = (if (!incoming) source else target) as Entity
         val many = isManySide(useTarget)
 
         if (onlyInclude) {

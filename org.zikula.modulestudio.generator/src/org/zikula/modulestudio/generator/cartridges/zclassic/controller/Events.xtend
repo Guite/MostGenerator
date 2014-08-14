@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -14,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class Events {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -34,7 +36,7 @@ class Events {
             fh.phpFileContent(it, eventDefinitionsBaseClass), fh.phpFileContent(it, eventDefinitionsImpl)
         )
 
-        for (entity : entities) {
+        for (entity : getAllEntities) {
             generateClassPair(fsa, getAppSourceLibPath + 'Event/Filter' + entity.name.formatForCodeCapital + 'Event.php',
                 fh.phpFileContent(it, filterEventBaseClass(entity)), fh.phpFileContent(it, filterEventImpl(entity))
             )
@@ -49,7 +51,7 @@ class Events {
          */
         class «name.formatForCodeCapital»Events
         {
-            «FOR entity : entities»
+            «FOR entity : getAllEntities»
                 «entity.eventDefinitions»
             «ENDFOR»
         }

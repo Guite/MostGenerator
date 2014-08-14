@@ -8,12 +8,14 @@ import de.guite.modulestudio.metamodel.modulestudio.RelationEditType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModelUtil {
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -80,7 +82,7 @@ class ModelUtil {
             $result = false;
 
             switch ($objectType) {
-                «FOR entity : entities.filter[tree == EntityTreeType.NONE]»
+                «FOR entity : getAllEntities.filter[tree == EntityTreeType.NONE]»
                     case '«entity.name.formatForCode»':
                         «entity.canBeCreatedImpl»
                         break;

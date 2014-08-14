@@ -20,7 +20,7 @@ class WorkflowExtensions {
      * Returns all entities using the given workflow type.
      */
     def getEntitiesForWorkflow(Application it, EntityWorkflowType wfType) {
-        entities.filter[workflow == wfType]
+        entities.filter(Entity).filter[workflow == wfType]
     }
 
     /**
@@ -53,7 +53,7 @@ class WorkflowExtensions {
     def getRequiredStateList(Application it) {
         var states = new ArrayList<ListFieldItem>
         var stateIds = new ArrayList<String>
-        for (entity : entities) {
+        for (entity : entities.filter(Entity)) {
             for (item : entity.getWorkflowStateField.items) {
                 if (!stateIds.contains(item.value)) {
                     states.add(item)
@@ -75,7 +75,7 @@ class WorkflowExtensions {
      * Determines whether any entity in the given application can have the given state.
      */
     def hasWorkflowState(Application it, String state) {
-        !entities.filter[hasWorkflowStateEntity(state)].empty
+        !entities.filter(Entity).filter[hasWorkflowStateEntity(state)].empty
     }
 
     /**

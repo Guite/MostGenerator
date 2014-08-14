@@ -33,7 +33,7 @@ class Uploads {
     def private createUploadFolders(Application it) {
         /* This index.html files will be removed later. At the moment we need them to create according directories. */
         fsa.generateFile(getAppUploadPath + 'index.html', msUrl)
-        for (entity : getUploadEntities) {
+        for (entity : getUploadEntities.filter(Entity)) {
             val subFolderName = entity.nameMultiple.formatForDB + '/'
             fsa.generateFile(getAppUploadPath + subFolderName + '/index.html', msUrl)
             val uploadFields = entity.getUploadFieldsEntity
@@ -409,7 +409,7 @@ class Uploads {
             // determine the allowed extensions
             $allowedExtensions = array();
             switch ($objectType) {
-                «FOR entity : getUploadEntities»«entity.isAllowedFileExtensionEntityCase»«ENDFOR»
+                «FOR entity : getUploadEntities.filter(Entity)»«entity.isAllowedFileExtensionEntityCase»«ENDFOR»
             }
 
             if (count($allowedExtensions) > 0) {
@@ -466,7 +466,7 @@ class Uploads {
             $namingScheme = 0;
 
             switch ($objectType) {
-                «FOR entity : getUploadEntities»«entity.determineFileNameEntityCase»«ENDFOR»
+                «FOR entity : getUploadEntities.filter(Entity)»«entity.determineFileNameEntityCase»«ENDFOR»
             }
 
 

@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -107,7 +108,7 @@ class FileHelper {
     '''
 
     def triggerPropertyChangeListeners(DerivedField it, String name) '''
-        «IF entity.hasNotifyPolicy»
+        «IF entity instanceof Entity && (entity as Entity).hasNotifyPolicy»
             $this->_onPropertyChanged('«name.formatForCode»', $this->«name.formatForCode», $«name»);
         «ENDIF»
     '''

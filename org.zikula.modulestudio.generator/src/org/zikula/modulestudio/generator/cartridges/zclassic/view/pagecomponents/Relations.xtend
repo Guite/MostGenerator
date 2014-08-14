@@ -116,7 +116,7 @@ class Relations {
         «val useTarget = !incoming»
         «val relationAliasName = getRelationAliasName(useTarget).formatForCode.toFirstLower»
         «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCode»
-        «val otherEntity = (if (!useTarget) source else target)»
+        «val otherEntity = (if (!useTarget) source else target) as Entity»
         «val many = isManySideDisplay(useTarget)»
         {if $lct eq 'admin'}
             <h4>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»'}</h4>

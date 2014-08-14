@@ -38,7 +38,7 @@ class Ajax {
             «getItemListAutoCompletionBase(app)»
         «ENDIF»
         «IF app.entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (app.hasSluggable && !app.entities.filter[hasSluggableFields && slugUnique].empty)»
+        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
 
             «checkForDuplicateBase(app)»
         «ENDIF»
@@ -517,7 +517,7 @@ class Ajax {
 
         $result = false;
         switch ($objectType) {
-        «FOR entity : app.entities»
+        «FOR entity : app.getAllEntities»
             «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
             «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                 case '«entity.name.formatForCode»':
@@ -574,7 +574,7 @@ class Ajax {
         // check if the given field is existing and unique
         $uniqueFields = array();
         switch ($objectType) {
-            «FOR entity : app.entities»
+            «FOR entity : app.getAllEntities»
                 «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
@@ -1046,7 +1046,7 @@ class Ajax {
             «getItemListAutoCompletionImpl(app)»
         «ENDIF»
         «IF app.entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
-        || (app.hasSluggable && !app.entities.filter[hasSluggableFields && slugUnique].empty)»
+        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
 
             «checkForDuplicateImpl(app)»
         «ENDIF»

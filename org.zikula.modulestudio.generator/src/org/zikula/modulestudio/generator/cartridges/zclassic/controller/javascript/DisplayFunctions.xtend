@@ -236,7 +236,7 @@ class DisplayFunctions {
             «ENDIF»
 
             switch (objectType) {
-            «FOR entity : entities»
+            «FOR entity : getAllEntities»
                 «entity.initQuickNavigationEntity»
             «ENDFOR»
             default:

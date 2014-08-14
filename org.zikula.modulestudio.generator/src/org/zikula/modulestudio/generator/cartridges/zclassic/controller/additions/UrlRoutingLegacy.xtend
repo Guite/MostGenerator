@@ -181,12 +181,12 @@ class UrlRoutingLegacy {
 
             if ($func == 'view') {
                 switch ($objectType) {
-                    «FOR entity : entities»«entity.getGroupingFolderFromObjectType(true)»«ENDFOR»
+                    «FOR entity : getAllEntities»«entity.getGroupingFolderFromObjectType(true)»«ENDFOR»
                     default: return '';
                 }
             } else if ($func == 'display') {
                 switch ($objectType) {
-                    «FOR entity : entities»«entity.getGroupingFolderFromObjectType(false)»«ENDFOR»
+                    «FOR entity : getAllEntities»«entity.getGroupingFolderFromObjectType(false)»«ENDFOR»
                     default: return '';
                 }
             }
@@ -211,12 +211,12 @@ class UrlRoutingLegacy {
 
             if ($func == 'view') {
                 switch ($groupFolder) {
-                    «FOR entity : entities»«entity.getObjectTypeFromGroupingFolder(true)»«ENDFOR»
+                    «FOR entity : getAllEntities»«entity.getObjectTypeFromGroupingFolder(true)»«ENDFOR»
                     default: return '';
                 }
             } else if ($func == 'display') {
                 switch ($groupFolder) {
-                    «FOR entity : entities»«entity.getObjectTypeFromGroupingFolder(false)»«ENDFOR»
+                    «FOR entity : getAllEntities»«entity.getObjectTypeFromGroupingFolder(false)»«ENDFOR»
                     default: return '';
                 }
             }
@@ -253,7 +253,7 @@ class UrlRoutingLegacy {
             $slug = '';
 
             switch ($objectType) {
-                «FOR entity : entities»«entity.getSlugForItem»«ENDFOR»
+                «FOR entity : getAllEntities»«entity.getSlugForItem»«ENDFOR»
             }
 
             return $slug;

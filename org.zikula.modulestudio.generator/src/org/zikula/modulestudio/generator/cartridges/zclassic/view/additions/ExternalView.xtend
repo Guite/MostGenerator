@@ -26,7 +26,7 @@ class ExternalView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = ''
-        for (entity : entities) {
+        for (entity : getAllEntities) {
             val templatePath = getViewPath + (if (targets('1.3.5')) 'external/' + entity.name.formatForCode else 'External/' + entity.name.formatForCodeCapital) + '/'
 
             fileName = 'display.tpl'
@@ -224,16 +224,16 @@ class ExternalView {
     '''
 
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''
-        «IF app.entities.size > 1»
+        «IF app.getAllEntities.size > 1»
             «IF app.targets('1.3.5')»
                 <p>{gt text='Switch to'}:
-                «FOR entity : app.entities.filter[e|e.name != name] SEPARATOR ' | '»
+                «FOR entity : app.getAllEntities.filter[e|e.name != name] SEPARATOR ' | '»
                     <a href="{modurl modname='«app.appName»' type='external' func='finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a>
                 «ENDFOR»
                 </p>
             «ELSE»
                 <ul class="nav nav-pills nav-justified">
-                «FOR entity : app.entities.filter[e|e.name != name] SEPARATOR ' | '»
+                «FOR entity : app.getAllEntities.filter[e|e.name != name] SEPARATOR ' | '»
                     <li{if $objectType eq '«entity.name.formatForCode»'} class="active"{/if}><a href="{route name='«app.appName.formatForDB»_external_finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a></li>
                 «ENDFOR»
                 </ul>

@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.extensions
 
+import de.guite.modulestudio.metamodel.modulestudio.Action
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
@@ -29,6 +30,18 @@ class ControllerExtensions {
      * Makes a controller name lowercase. 
      */
     def formattedName(Controller it) {
+        name.formatForDB
+    }
+
+    /**
+     * Returns name of container (controller or entity). 
+     */
+    def controllerName(Action it) {
+        if (controller !== null) {
+            controller.formattedName
+        } else if (entity !== null) {
+            entity.name.formatForCode
+        }
         name.formatForDB
     }
 
@@ -80,10 +93,35 @@ class ControllerExtensions {
     }
 
     /**
+     * Temporary bridge from legacy to entity controllers.
+     */
+    def private hasActionsBridge(Controller it, String type) {
+        switch type {
+            case 'index'    : !actions.filter(MainAction).empty || !application.entities.filter(Entity).map[actions].filter(MainAction).empty 
+            case 'view'     : !application.entities.filter(Entity).map[actions].filter(ViewAction).empty 
+            case 'display'  : !application.entities.filter(Entity).map[actions].filter(DisplayAction).empty 
+            case 'edit'     : !application.entities.filter(Entity).map[actions].filter(EditAction).empty
+            case 'delete'   : !application.entities.filter(Entity).map[actions].filter(DeleteAction).empty
+            case 'custom'   : !actions.filter(CustomAction).empty || !application.entities.filter(Entity).map[actions].filter(CustomAction).empty
+            default : false
+        }
+    }
+
+    def dispatch hasActions(AdminController it, String type) {
+        hasActionsBridge(type)
+    }
+
+    /**
+     * Temporary bridge from legacy to entity controllers.
+     */
+    def dispatch hasActions(UserController it, String type) {
+        hasActionsBridge(type)
+    }
+
+    /**
      * Checks whether an entity owns actions of a given type.
      */
     def dispatch hasActions(Entity it, String type) {
-        val actions = application.getAdminAndUserControllers.map[actions].flatten.toList
         switch type {
             case 'index'    : !actions.filter(MainAction).empty 
             case 'view'     : !actions.filter(ViewAction).empty 
@@ -99,23 +137,6 @@ class ControllerExtensions {
      * Determines the default action used for linking to a certain entity.
      */
     def defaultAction(Entity it) '''«IF hasActions('display')»display«ELSEIF hasActions('view')»view«ELSE»«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»'''
-
-    /**
-     * Returns a unique list of actions contained in either admin or user controller.
-     */
-    def getActionsOfAdminAndUserControllers(Application it) {
-        var actions = newArrayList
-        var actionNames = newArrayList
-        for (controller : getAdminAndUserControllers) {
-            for (action : controller.actions) {
-                if (!actionNames.contains(action.name.formatForCode)) {
-                    actionNames.add(action.name.formatForCode)
-                    actions.add(action)
-                }
-            }
-        }
-        actions
-    }
 
     /**
      * Checks whether the application has at least one view action or not.

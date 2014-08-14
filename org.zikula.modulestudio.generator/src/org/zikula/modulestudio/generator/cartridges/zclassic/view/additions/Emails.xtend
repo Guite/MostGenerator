@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -13,11 +14,12 @@ class Emails {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val entitiesWithWorkflow = entities.filter[workflow != EntityWorkflowType.NONE]
+        val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]
         if (entitiesWithWorkflow.empty) {
             return
         }

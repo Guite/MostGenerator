@@ -2,8 +2,8 @@ package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.CascadeType
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
@@ -32,14 +32,14 @@ class ModelJoinExtensions {
     /**
      * Returns the table name for a certain join side, including the application specific prefix.
      */
-    def fullJoinTableName(JoinRelationship it, Boolean useTarget, Entity joinedEntityForeign) {
+    def fullJoinTableName(JoinRelationship it, Boolean useTarget, DataObject joinedEntityForeign) {
         tableNameWithPrefix((if (useTarget) target.application else source.application), getJoinTableName(useTarget, joinedEntityForeign))
     }
 
     /**
      * Returns the table name for a certain join side.
      */
-    def private getJoinTableName(JoinRelationship it, Boolean useTarget, Entity joinedEntityForeign) {
+    def private getJoinTableName(JoinRelationship it, Boolean useTarget, DataObject joinedEntityForeign) {
         switch it {
             OneToManyRelationship case useTarget: sourceAlias.formatForDB + targetAlias.formatForDB
             ManyToManyRelationship: source.name.formatForDB + '_' + target.name.formatForDB
@@ -57,21 +57,21 @@ class ModelJoinExtensions {
     /**
      * Returns a list of all outgoing join relations (excluding inheritance).
      */
-    def getOutgoingJoinRelations(Entity it) {
+    def getOutgoingJoinRelations(DataObject it) {
         outgoing.filter(JoinRelationship)
     }
 
     /**
      * Returns a list of all incoming join relations (excluding inheritance).
      */
-    def getIncomingJoinRelations(Entity it) {
+    def getIncomingJoinRelations(DataObject it) {
         incoming.filter(JoinRelationship)
     }
 
     /**
      * Returns a list of all incoming bidirectional join relations (excluding inheritance).
      */
-    def getBidirectionalIncomingJoinRelations(Entity it) {
+    def getBidirectionalIncomingJoinRelations(DataObject it) {
         getIncomingJoinRelations.filter[bidirectional]
     }
 
@@ -79,27 +79,27 @@ class ModelJoinExtensions {
      * Returns a list of all incoming bidirectional join relations (excluding inheritance)
      * which are not nullable.
      */
-    def getBidirectionalIncomingAndMandatoryJoinRelations(Entity it) {
+    def getBidirectionalIncomingAndMandatoryJoinRelations(DataObject it) {
         getBidirectionalIncomingJoinRelations.filter[!nullable]
     }
 
     /**
      * Returns a list of all incoming join relations which are either one2one or one2many.
      */
-    def getIncomingJoinRelationsWithOneSource(Entity it) {
+    def getIncomingJoinRelationsWithOneSource(DataObject it) {
         incoming.filter(OneToOneRelationship) + incoming.filter(OneToManyRelationship)
     }
     /**
      * Returns a list of all incoming bidirectional join relations which are either one2one or one2many.
      */
-    def getBidirectionalIncomingJoinRelationsWithOneSource(Entity it) {
+    def getBidirectionalIncomingJoinRelationsWithOneSource(DataObject it) {
         getIncomingJoinRelationsWithOneSource.filter[bidirectional]
     }
     
     /**
      * Returns a list of all incoming join relations which are either one2one, one2many or many2one.
      */
-    def getIncomingJoinRelationsWithoutManyToMany(Entity it) {
+    def getIncomingJoinRelationsWithoutManyToMany(DataObject it) {
         getIncomingJoinRelationsWithOneSource + incoming.filter(ManyToOneRelationship)
     }
     
@@ -107,7 +107,7 @@ class ModelJoinExtensions {
      * Returns a list of all incoming bidirectional join relations (excluding inheritance) 
      * which have the many cardinality on the source side and cascade persist active.
      */
-    def getIncomingJoinRelationsForCloning(Entity it) {
+    def getIncomingJoinRelationsForCloning(DataObject it) {
         getBidirectionalIncomingJoinRelations.filter[isManySide(false) && hasCascadePersist]
     }
 
@@ -115,7 +115,7 @@ class ModelJoinExtensions {
      * Returns a list of all outgoing join relations (excluding inheritance) 
      * which have the many cardinality on the target side and cascade persist active.
      */
-    def getOutgoingJoinRelationsForCloning(Entity it) {
+    def getOutgoingJoinRelationsForCloning(DataObject it) {
         getOutgoingJoinRelations.filter[isManySide(true) && hasCascadePersist]
     }
     
@@ -135,14 +135,14 @@ class ModelJoinExtensions {
     /**
      * Returns a list of all outgoing join relations which are either one2many or many2many.
      */
-    def getOutgoingCollections(Entity it) {
+    def getOutgoingCollections(DataObject it) {
         outgoing.filter(OneToManyRelationship) + outgoing.filter(ManyToManyRelationship)
     }
 
     /**
      * Returns a list of all incoming join relations which are either many2one or many2many.
      */
-    def getIncomingCollections(Entity it) {
+    def getIncomingCollections(DataObject it) {
         (outgoing.filter(ManyToOneRelationship) + incoming.filter(ManyToManyRelationship)).filter[bidirectional]
     }
 
@@ -150,21 +150,21 @@ class ModelJoinExtensions {
      * Returns a list combining all outgoing join relations which are either one2many or many2many
      * with all incoming join relations which are either many2one or many2many.
      */
-    def getCollections(Entity it) {
+    def getCollections(DataObject it) {
         getOutgoingCollections + getIncomingCollections
     }
 
     /**
      * Checks for whether the entity has outgoing join relations which are either one2many or many2many.
      */
-    def hasOutgoingCollections(Entity it) {
+    def hasOutgoingCollections(DataObject it) {
         !getOutgoingCollections.empty
     }
 
     /**
      * Checks for whether the entity has incoming join relations which are either many2one or many2many.
      */
-    def hasIncomingCollections(Entity it) {
+    def hasIncomingCollections(DataObject it) {
         !getIncomingCollections.empty
     }
 
@@ -172,7 +172,7 @@ class ModelJoinExtensions {
      * Checks for whether the entity has either outgoing join relations which are either
      * one2many or many2many, or incoming join relations which are either many2one or many2many.
      */
-    def hasCollections(Entity it) {
+    def hasCollections(DataObject it) {
         !getCollections.empty
     }
 
@@ -181,7 +181,7 @@ class ModelJoinExtensions {
      * Returns unified name for relation fields. If we have id or fooid the function returns foo_id.
      * Otherwise it returns the actual field name of the referenced field.
      */
-    def relationFieldName(Entity it, String refField) {
+    def relationFieldName(DataObject it, String refField) {
         if (isDefaultIdFieldName(refField))
             name.formatForDB + '_id'
         else
@@ -233,7 +233,7 @@ class ModelJoinExtensions {
      * Returns a unique name for a relationship used by JavaScript during editing entities with auto completion fields.
      * The name is concatenated from the edited entity as well as the relation alias name.
      */
-    def getUniqueRelationNameForJs(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) {
+    def getUniqueRelationNameForJs(JoinRelationship it, Application app, DataObject targetEntity, Boolean many, Boolean incoming, String relationAliasName) {
         app.prefix
         + targetEntity.name.formatForCodeCapital
         + '_'
@@ -269,7 +269,7 @@ class ModelJoinExtensions {
      * Checks whether the entity is target of an indexed relationship.
      * That is true if at least one incoming relation has an indexBy field set. 
      */
-    def isIndexByTarget(Entity it) {
+    def isIndexByTarget(DataObject it) {
         !incoming.filter[getIndexByField !== null && getIndexByField != ''].empty
     }
 
@@ -343,14 +343,14 @@ class ModelJoinExtensions {
     /**
      * Returns a list of all incoming relationships aggregating any fields of this entity. 
      */
-    def getAggregators(Entity it) {
+    def getAggregators(DataObject it) {
         getDerivedFields.filter[!getAggregatingRelationships.empty]
     }
 
     /**
      * Checks whether there is at least one field used as aggregate field. 
      */
-    def isAggregated(Entity it) {
+    def isAggregated(DataObject it) {
         !getAggregators.empty
     }
 }

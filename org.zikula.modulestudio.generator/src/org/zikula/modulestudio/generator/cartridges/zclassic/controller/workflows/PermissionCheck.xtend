@@ -82,7 +82,7 @@ class PermissionCheck {
          */
         function «app.appName»_workflow_«wfType.textualName»_permissioncheck($obj, $permLevel, $currentUser, $actionId)
         {
-            «IF !app.entities.filter[hasArchive && getEndDateField !== null].empty»
+            «IF !app.getAllEntities.filter[hasArchive && getEndDateField !== null].empty»
                 // every user is allowed to perform automatic archiving 
                 if (PageUtil::getVar('«app.appName»AutomaticArchiving', false) === true) {
                     return true;
@@ -106,7 +106,7 @@ class PermissionCheck {
 
             // now perform the permission check
             $result = SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
-            «val entitiesWithOwnerPermission = app.entities.filter[standardFields && ownerPermission]»
+            «val entitiesWithOwnerPermission = app.getAllEntities.filter[standardFields && ownerPermission]»
             «IF !entitiesWithOwnerPermission.empty»
 
                 // check whether the current user is the owner

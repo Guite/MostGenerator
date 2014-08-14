@@ -446,7 +446,7 @@ class Installer {
         protected function listEntityClasses()
         {
             $classNames = array();
-            «FOR entity : entities»
+            «FOR entity : getAllEntities»
                 $classNames[] = '«entity.entityClassName('', false)»';
                 «IF entity.loggable»
                     $classNames[] = '«entity.entityClassName('logEntry', false)»';

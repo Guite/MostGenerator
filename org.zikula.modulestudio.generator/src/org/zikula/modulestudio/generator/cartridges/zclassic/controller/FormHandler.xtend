@@ -41,7 +41,7 @@ class FormHandler {
         app = it
         if (hasEditActions()) {
             generateCommon('edit', fsa)
-            for (entity : entities) {
+            for (entity : getAllEntities) {
                 if (entity.hasActions('edit')) {
                     entity.generate('edit', fsa)
                 }
@@ -993,7 +993,7 @@ class FormHandler {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
-            «IF hasUserFields || hasUploads || hasListFields || (hasSluggable && !entities.filter[slugUpdatable].empty)»
+            «IF hasUserFields || hasUploads || hasListFields || (hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
 
                 if ($args['commandName'] != 'cancel') {
                     «IF hasUserFields»

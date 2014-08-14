@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.ArrayField
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
+import de.guite.modulestudio.metamodel.modulestudio.DataObject
 import de.guite.modulestudio.metamodel.modulestudio.DateField
 import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
@@ -400,13 +401,13 @@ class ValidationConstraints {
         «ENDIF»
     '''
 
-    def classAnnotations(Entity it) '''
+    def classAnnotations(DataObject it) '''
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty»
             «FOR udf : getUniqueDerivedFields.filter[!primaryKey]»
                 «' '»* @Assert\UniqueEntity(fields="«udf.name.formatForCode»", ignoreNull="«udf.nullable.displayBool»")
             «ENDFOR»
         «ENDIF»
-        «IF hasSluggableFields && slugUnique»
+        «IF it instanceof Entity && (it as Entity).slugUnique && (it as Entity).hasSluggableFields»
             «' '»* @Assert\UniqueEntity(fields="slug", ignoreNull="false")
         «ENDIF»
         «IF !getIncomingJoinRelations.filter[unique].empty»
@@ -421,8 +422,8 @@ class ValidationConstraints {
                 «' '»* @Assert\UniqueEntity(fields="«aliasName.formatForCode»", ignoreNull="«rel.nullable.displayBool»")
             «ENDFOR»
         «ENDIF»
-        «IF !getUniqueIndexes.empty»
-            «FOR index : getUniqueIndexes»
+        «IF it instanceof Entity && !(it as Entity).getUniqueIndexes.empty»
+            «FOR index : (it as Entity).getUniqueIndexes»
                 «index.uniqueAnnotation»
             «ENDFOR»
         «ENDIF»
