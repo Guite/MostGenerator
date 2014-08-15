@@ -34,13 +34,11 @@ describe 'Tests for generator application classes' {
                 email 'info@guite.de'
                 url 'http://guite.de'
                 prefix 'sinew'
-                modelLayer {
-                    modelContainer Models {
+                entities {
+                    entity article {
                     }
                 }
-                controllingLayer {
-                    controllerContainer Controller {
-                    }
+                controller {
                 }
             }
         '''.parse
