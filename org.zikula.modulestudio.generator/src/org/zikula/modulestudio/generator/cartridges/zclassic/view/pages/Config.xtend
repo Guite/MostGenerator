@@ -178,6 +178,10 @@ class Config {
         «ENDIF»
     '''
 
+    def private dispatch inputField(TextVar it) '''
+        {formtextinput id='«name.formatForCode»' group='config' maxLength=«IF maxLength > 0»«maxLength»«ELSE»255«ENDIF» __title='Enter the «name.formatForDisplay».'«IF !container.application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+    '''
+
     def private dispatch inputField(BoolVar it) '''
         {formcheckbox id='«name.formatForCode»' group='config'}
     '''
