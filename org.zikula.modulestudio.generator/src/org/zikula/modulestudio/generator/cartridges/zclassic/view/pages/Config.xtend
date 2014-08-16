@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.BoolVar
 import de.guite.modulestudio.metamodel.modulestudio.IntVar
 import de.guite.modulestudio.metamodel.modulestudio.ListVar
+import de.guite.modulestudio.metamodel.modulestudio.TextVar
 import de.guite.modulestudio.metamodel.modulestudio.Variable
 import de.guite.modulestudio.metamodel.modulestudio.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
