@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.CoreVersion
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.CoreVersion
 
 /**
  * This class contains several helper functions for accessing and using generator settings.

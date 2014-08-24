@@ -1,14 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import de.guite.modulestudio.metamodel.modulestudio.Action
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.CustomAction
-import de.guite.modulestudio.metamodel.modulestudio.DeleteAction
-import de.guite.modulestudio.metamodel.modulestudio.DisplayAction
-import de.guite.modulestudio.metamodel.modulestudio.EditAction
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.MainAction
-import de.guite.modulestudio.metamodel.modulestudio.ViewAction
+import de.guite.modulestudio.metamodel.Action
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.CustomAction
+import de.guite.modulestudio.metamodel.DeleteAction
+import de.guite.modulestudio.metamodel.DisplayAction
+import de.guite.modulestudio.metamodel.EditAction
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.MainAction
+import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Actions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

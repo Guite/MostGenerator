@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityTimestampableType
+import de.guite.modulestudio.metamodel.AbstractDateField
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTimestampableType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class Timestampable extends AbstractExtension implements EntityExtensionInterface {

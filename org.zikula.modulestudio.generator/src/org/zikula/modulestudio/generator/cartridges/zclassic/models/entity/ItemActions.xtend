@@ -1,11 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
-import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.AdminController
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Controller
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions

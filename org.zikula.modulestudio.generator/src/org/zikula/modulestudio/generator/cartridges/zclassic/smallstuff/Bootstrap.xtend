@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions

@@ -1,12 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents
 
-import de.guite.modulestudio.metamodel.modulestudio.BooleanField
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ListField
-import de.guite.modulestudio.metamodel.modulestudio.StringField
-import de.guite.modulestudio.metamodel.modulestudio.UserField
+import de.guite.modulestudio.metamodel.BooleanField
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.UserField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions

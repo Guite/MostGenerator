@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.DateField
-import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
-import de.guite.modulestudio.metamodel.modulestudio.TimeField
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions

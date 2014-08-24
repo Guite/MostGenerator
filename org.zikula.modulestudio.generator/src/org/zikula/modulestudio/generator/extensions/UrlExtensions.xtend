@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Entity
 
 /**
  * This class contains extension methods for building routes.
@@ -28,7 +28,7 @@ class UrlExtensions {
      * either for a Zikula_View template or for php source code.
      * Old version for ZK 1.3.x where pk fields are required also if a unique slug is present.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param withSlug Whether to append the slug or not (since in 1.3.x only display pages use it)
@@ -41,7 +41,7 @@ class UrlExtensions {
      * either for a Zikula_View template or for php source code.
      * New version for ZK 1.4.x using Symfony routing.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
@@ -53,7 +53,7 @@ class UrlExtensions {
      * either for a Zikula_View template or for php source code.
      * Old version for ZK 1.3.x where pk fields are required also if a unique slug is present.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param withSlug Whether to append the slug or not (since in 1.3.x only display pages use it)
@@ -67,7 +67,7 @@ class UrlExtensions {
      * either for a Zikula_View template or for php source code.
      * New version for ZK 1.4.x using Symfony routing.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param customVarName Custom name for using another field name as url parameter
@@ -79,7 +79,7 @@ class UrlExtensions {
      * Collects primary key parameters for a route relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
@@ -95,7 +95,7 @@ class UrlExtensions {
      * Collects primary key parameters for a route relating a given entity,
      * either for a Zikula_View template or for php source code.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @param customVarName Custom name for using another field name as url parameter
@@ -111,7 +111,7 @@ class UrlExtensions {
     /**
      * Appends the slug parameter (if available) to url arguments for display, edit and delete pages.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.modulestudio.Entity} to be linked to
+     * @param it The {@link de.guite.modulestudio.metamodel.Entity} to be linked to
      * @param objName The name of the object variable carrying the entity object in the output
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String the slug parameter assignment.

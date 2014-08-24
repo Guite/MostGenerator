@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ActionUrl
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData

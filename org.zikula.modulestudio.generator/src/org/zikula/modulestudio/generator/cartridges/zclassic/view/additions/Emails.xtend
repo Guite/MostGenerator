@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

@@ -1,16 +1,16 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
-import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
-import de.guite.modulestudio.metamodel.modulestudio.AccountDeletionHandler
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntitySlugStyle
-import de.guite.modulestudio.metamodel.modulestudio.EntityTimestampableType
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
-import de.guite.modulestudio.metamodel.modulestudio.IntegerField
+import de.guite.modulestudio.metamodel.AbstractDateField
+import de.guite.modulestudio.metamodel.AbstractStringField
+import de.guite.modulestudio.metamodel.AccountDeletionHandler
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntitySlugStyle
+import de.guite.modulestudio.metamodel.EntityTimestampableType
+import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.IntegerField
 
-import static de.guite.modulestudio.metamodel.modulestudio.EntitySlugStyle.*
+import static de.guite.modulestudio.metamodel.EntitySlugStyle.*
 
 /**
  * This class contains model behaviour related extension methods.

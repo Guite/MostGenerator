@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
-import de.guite.modulestudio.metamodel.modulestudio.AccountDeletionHandler
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.UserField
+import de.guite.modulestudio.metamodel.AccountDeletionHandler
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions

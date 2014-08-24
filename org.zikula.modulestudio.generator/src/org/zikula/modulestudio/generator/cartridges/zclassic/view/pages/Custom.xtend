@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
-import de.guite.modulestudio.metamodel.modulestudio.Action
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.CustomAction
+import de.guite.modulestudio.metamodel.Action
+import de.guite.modulestudio.metamodel.AdminController
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Controller
+import de.guite.modulestudio.metamodel.CustomAction
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

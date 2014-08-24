@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.Application
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess

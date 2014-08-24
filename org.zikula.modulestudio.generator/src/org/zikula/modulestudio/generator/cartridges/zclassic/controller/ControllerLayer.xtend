@@ -1,13 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
-import de.guite.modulestudio.metamodel.modulestudio.AjaxController
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
-import de.guite.modulestudio.metamodel.modulestudio.NamedObject
-import de.guite.modulestudio.metamodel.modulestudio.UserController
+import de.guite.modulestudio.metamodel.AdminController
+import de.guite.modulestudio.metamodel.AjaxController
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Controller
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.NamedObject
+import de.guite.modulestudio.metamodel.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Ajax
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController

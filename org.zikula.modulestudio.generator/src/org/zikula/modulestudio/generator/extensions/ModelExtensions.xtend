@@ -1,38 +1,38 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
-import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.ArrayField
-import de.guite.modulestudio.metamodel.modulestudio.BooleanField
-import de.guite.modulestudio.metamodel.modulestudio.DataObject
-import de.guite.modulestudio.metamodel.modulestudio.DateField
-import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
-import de.guite.modulestudio.metamodel.modulestudio.DecimalField
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.EmailField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
-import de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy
-import de.guite.modulestudio.metamodel.modulestudio.EntityIndexType
-import de.guite.modulestudio.metamodel.modulestudio.EntityLockType
-import de.guite.modulestudio.metamodel.modulestudio.FloatField
-import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
-import de.guite.modulestudio.metamodel.modulestudio.IntegerField
-import de.guite.modulestudio.metamodel.modulestudio.IpAddressScope
-import de.guite.modulestudio.metamodel.modulestudio.ListField
-import de.guite.modulestudio.metamodel.modulestudio.ListVar
-import de.guite.modulestudio.metamodel.modulestudio.ObjectField
-import de.guite.modulestudio.metamodel.modulestudio.StringField
-import de.guite.modulestudio.metamodel.modulestudio.TextField
-import de.guite.modulestudio.metamodel.modulestudio.TimeField
-import de.guite.modulestudio.metamodel.modulestudio.UploadField
-import de.guite.modulestudio.metamodel.modulestudio.UrlField
-import de.guite.modulestudio.metamodel.modulestudio.UserField
+import de.guite.modulestudio.metamodel.AbstractIntegerField
+import de.guite.modulestudio.metamodel.AbstractStringField
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ArrayField
+import de.guite.modulestudio.metamodel.BooleanField
+import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.DecimalField
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.EmailField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
+import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
+import de.guite.modulestudio.metamodel.EntityIndexType
+import de.guite.modulestudio.metamodel.EntityLockType
+import de.guite.modulestudio.metamodel.FloatField
+import de.guite.modulestudio.metamodel.InheritanceRelationship
+import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.IpAddressScope
+import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.ListVar
+import de.guite.modulestudio.metamodel.ObjectField
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.TimeField
+import de.guite.modulestudio.metamodel.UploadField
+import de.guite.modulestudio.metamodel.UrlField
+import de.guite.modulestudio.metamodel.UserField
 import java.util.List
 
-import static de.guite.modulestudio.metamodel.modulestudio.EntityLockType.*
-import static de.guite.modulestudio.metamodel.modulestudio.IpAddressScope.*
+import static de.guite.modulestudio.metamodel.EntityLockType.*
+import static de.guite.modulestudio.metamodel.IpAddressScope.*
 
 /**
  * This class contains model related extension methods.

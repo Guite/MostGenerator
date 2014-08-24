@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.extensions.transformation
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
-import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
@@ -74,7 +74,7 @@ class PersistenceTransformer {
      * @return IntegerField The created column object.
      */
     def private createIdColumn(String colName, Boolean isPrimary) {
-        val factory = ModulestudioFactory.eINSTANCE
+        val factory = ModuleStudioFactory.eINSTANCE
         val idField = factory.createIntegerField => [
             name = if (isPrimary) 'id' else colName.formatForCode + '_id'
             length = 9
@@ -90,7 +90,7 @@ class PersistenceTransformer {
      * @param entity The given {@link Entity} instance.
      */
     def private addWorkflowState(Entity entity) {
-        val factory = ModulestudioFactory.eINSTANCE
+        val factory = ModuleStudioFactory.eINSTANCE
         val listField = factory.createListField => [
             name = 'workflowState'
             documentation = 'the current workflow state'
@@ -184,7 +184,7 @@ class PersistenceTransformer {
         }
 
         val varContainer = createVarContainerForWorkflowSettings
-        val factory = ModulestudioFactory.eINSTANCE
+        val factory = ModuleStudioFactory.eINSTANCE
 
         for (entity : entitiesWithWorkflow) {
             varContainer.vars += factory.createIntVar => [
@@ -212,7 +212,7 @@ class PersistenceTransformer {
 
         val newSortNumber = lastVarContainerSortNumber + 1
 
-        val factory = ModulestudioFactory.eINSTANCE
+        val factory = ModuleStudioFactory.eINSTANCE
 
         val varContainer = factory.createVariables => [
             name = 'Moderation'

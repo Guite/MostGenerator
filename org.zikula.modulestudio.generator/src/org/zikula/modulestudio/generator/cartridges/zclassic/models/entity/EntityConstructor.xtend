@@ -1,16 +1,16 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
-import de.guite.modulestudio.metamodel.modulestudio.DateField
-import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
-import de.guite.modulestudio.metamodel.modulestudio.DecimalField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.FloatField
-import de.guite.modulestudio.metamodel.modulestudio.IntegerField
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.TimeField
-import de.guite.modulestudio.metamodel.modulestudio.UserField
+import de.guite.modulestudio.metamodel.AbstractDateField
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
+import de.guite.modulestudio.metamodel.DecimalField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.FloatField
+import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.TimeField
+import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions

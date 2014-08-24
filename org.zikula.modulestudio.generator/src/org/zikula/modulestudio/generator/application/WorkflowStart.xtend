@@ -2,8 +2,8 @@
 package org.zikula.modulestudio.generator.application
 
 import com.google.inject.Injector
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.CoreVersion
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.CoreVersion
 import java.io.IOException
 import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.ecore.resource.Resource

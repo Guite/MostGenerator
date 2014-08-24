@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.AbstractIntegerField
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Entity
 
 class Sortable extends AbstractExtension implements EntityExtensionInterface {
 

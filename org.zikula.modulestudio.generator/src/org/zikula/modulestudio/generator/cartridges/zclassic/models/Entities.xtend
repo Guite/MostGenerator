@@ -1,13 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.DataObject
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
-import de.guite.modulestudio.metamodel.modulestudio.EntityIndex
-import de.guite.modulestudio.metamodel.modulestudio.EntityIndexItem
-import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
-import de.guite.modulestudio.metamodel.modulestudio.MappedSuperClass
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
+import de.guite.modulestudio.metamodel.EntityIndex
+import de.guite.modulestudio.metamodel.EntityIndexItem
+import de.guite.modulestudio.metamodel.InheritanceRelationship
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidatorLegacy

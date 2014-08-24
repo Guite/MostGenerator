@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer
 
-import de.guite.modulestudio.metamodel.modulestudio.Variable
-import de.guite.modulestudio.metamodel.modulestudio.BoolVar
-import de.guite.modulestudio.metamodel.modulestudio.IntVar
-import de.guite.modulestudio.metamodel.modulestudio.ListVar
-import de.guite.modulestudio.metamodel.modulestudio.ListVarItem
+import de.guite.modulestudio.metamodel.Variable
+import de.guite.modulestudio.metamodel.BoolVar
+import de.guite.modulestudio.metamodel.IntVar
+import de.guite.modulestudio.metamodel.ListVar
+import de.guite.modulestudio.metamodel.ListVarItem
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 

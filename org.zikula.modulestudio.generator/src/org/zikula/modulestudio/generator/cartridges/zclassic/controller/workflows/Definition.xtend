@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.workflows
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
-import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.ListFieldItem
 import java.util.ArrayList
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
-import static de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType.*
+import static de.guite.modulestudio.metamodel.EntityWorkflowType.*
 
 /**
  * Workflow definitions in xml format.

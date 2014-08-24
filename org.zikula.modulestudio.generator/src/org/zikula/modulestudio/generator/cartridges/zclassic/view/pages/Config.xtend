@@ -1,12 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.BoolVar
-import de.guite.modulestudio.metamodel.modulestudio.IntVar
-import de.guite.modulestudio.metamodel.modulestudio.ListVar
-import de.guite.modulestudio.metamodel.modulestudio.TextVar
-import de.guite.modulestudio.metamodel.modulestudio.Variable
-import de.guite.modulestudio.metamodel.modulestudio.Variables
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.BoolVar
+import de.guite.modulestudio.metamodel.IntVar
+import de.guite.modulestudio.metamodel.ListVar
+import de.guite.modulestudio.metamodel.TextVar
+import de.guite.modulestudio.metamodel.Variable
+import de.guite.modulestudio.metamodel.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

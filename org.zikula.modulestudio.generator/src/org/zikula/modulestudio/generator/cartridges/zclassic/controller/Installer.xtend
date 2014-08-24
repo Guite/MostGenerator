@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.EntityTreeType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.EventListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ExampleData

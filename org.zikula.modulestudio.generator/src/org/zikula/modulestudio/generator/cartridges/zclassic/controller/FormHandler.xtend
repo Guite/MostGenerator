@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import de.guite.modulestudio.metamodel.modulestudio.Action
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
-import de.guite.modulestudio.metamodel.modulestudio.TimeField
+import de.guite.modulestudio.metamodel.Action
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect

@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.DataObject
-import de.guite.modulestudio.metamodel.modulestudio.InheritanceRelationship
+import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.InheritanceRelationship
 
 /**
  * This class contains model inheritance related extension methods.

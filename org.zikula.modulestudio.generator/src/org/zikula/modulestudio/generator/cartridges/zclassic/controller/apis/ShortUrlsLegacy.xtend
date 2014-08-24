@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.UserController
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Controller
+import de.guite.modulestudio.metamodel.UserController
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils

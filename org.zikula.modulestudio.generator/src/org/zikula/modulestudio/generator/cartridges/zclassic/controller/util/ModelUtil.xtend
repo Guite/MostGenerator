@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.RelationEditType
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.RelationEditType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

@@ -1,12 +1,12 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
-import de.guite.modulestudio.metamodel.modulestudio.DataObject
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
+import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations

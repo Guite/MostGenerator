@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.IntVar
-import de.guite.modulestudio.metamodel.modulestudio.ListVar
-import de.guite.modulestudio.metamodel.modulestudio.ListVarItem
-import de.guite.modulestudio.metamodel.modulestudio.Variable
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.IntVar
+import de.guite.modulestudio.metamodel.ListVar
+import de.guite.modulestudio.metamodel.ListVarItem
+import de.guite.modulestudio.metamodel.Variable
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions

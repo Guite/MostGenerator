@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.repository
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

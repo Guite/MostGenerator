@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions
 
-import de.guite.modulestudio.metamodel.modulestudio.AjaxController
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.StringField
-import de.guite.modulestudio.metamodel.modulestudio.TextField
+import de.guite.modulestudio.metamodel.AjaxController
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Controller
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.TextField
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

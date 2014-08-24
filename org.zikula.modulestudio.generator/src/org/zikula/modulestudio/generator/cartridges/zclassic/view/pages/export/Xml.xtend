@@ -1,15 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 
-import de.guite.modulestudio.metamodel.modulestudio.BooleanField
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.StringField
-import de.guite.modulestudio.metamodel.modulestudio.TextField
-import de.guite.modulestudio.metamodel.modulestudio.UploadField
+import de.guite.modulestudio.metamodel.BooleanField
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions

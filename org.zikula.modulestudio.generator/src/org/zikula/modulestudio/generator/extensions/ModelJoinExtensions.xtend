@@ -1,18 +1,18 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.CascadeType
-import de.guite.modulestudio.metamodel.modulestudio.DataObject
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.IntegerField
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.Relationship
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.CascadeType
+import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.Relationship
 
-import static de.guite.modulestudio.metamodel.modulestudio.RelationAutoCompletionUsage.*
+import static de.guite.modulestudio.metamodel.RelationAutoCompletionUsage.*
 
 /**
  * This class contains model join relationship related extension methods.

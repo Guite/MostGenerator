@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.extensions
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
-import de.guite.modulestudio.metamodel.modulestudio.ListField
-import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.ListFieldItem
 import java.util.ArrayList
 
 class WorkflowExtensions {

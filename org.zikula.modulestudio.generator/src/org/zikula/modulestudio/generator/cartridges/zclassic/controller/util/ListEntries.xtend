@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.ListField
-import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
+import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions

@@ -1,14 +1,14 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
-import de.guite.modulestudio.metamodel.modulestudio.CascadeType
-import de.guite.modulestudio.metamodel.modulestudio.DataObject
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
-import de.guite.modulestudio.metamodel.modulestudio.RelationFetchType
+import de.guite.modulestudio.metamodel.CascadeType
+import de.guite.modulestudio.metamodel.DataObject
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.RelationFetchType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions

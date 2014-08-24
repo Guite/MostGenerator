@@ -1,7 +1,7 @@
 package org.zikula.modulestudio.generator.tests.application
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess

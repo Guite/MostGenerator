@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.Application
 
 class ErrorsLegacy {
 

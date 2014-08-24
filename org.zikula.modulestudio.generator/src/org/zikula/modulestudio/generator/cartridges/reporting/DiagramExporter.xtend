@@ -1,6 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.reporting
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.Application
 import java.io.File
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.Path

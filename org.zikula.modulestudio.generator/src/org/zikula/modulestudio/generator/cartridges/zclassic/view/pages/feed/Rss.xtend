@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.feed
 
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.StringField
-import de.guite.modulestudio.metamodel.modulestudio.TextField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
