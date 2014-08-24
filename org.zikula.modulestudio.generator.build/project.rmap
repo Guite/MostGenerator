@@ -13,12 +13,7 @@
             </uri>
         </provider>
     </searchPath>
-    <searchPath name="most.metamodel">
-        <provider readerType="p2" componentTypes="eclipse.feature,osgi.bundle" mutable="false" source="false">
-            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/site.p2.artifact" />
-        </provider>
-    </searchPath>
-    <searchPath name="most.textual">
+    <searchPath name="most.dsl">
         <provider readerType="p2" componentTypes="eclipse.feature,osgi.bundle" mutable="false" source="false">
             <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-3_TextualEditor/lastSuccessful/archive/site.p2.artifact" />
         </provider>
@@ -41,8 +36,8 @@
     </searchPath>
 
     <locator searchPathRef="local.sources" pattern="^org\.zikula\.modulestudio\.generator(\..*)?" />
-    <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
-    <locator searchPathRef="most.textual" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
+    <locator searchPathRef="most.dsl" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
+    <locator searchPathRef="most.dsl" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio\.branding" />
     <locator searchPathRef="most.product.helpers.reporting" pattern="org\.eclipse\.datatools\.enablement\.oda\.ecore" />
 </rmap>
