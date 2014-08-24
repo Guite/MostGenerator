@@ -463,7 +463,8 @@ class EntityMethods {
          * 
          * @return array of entity objects.
          */
-        public function getRelatedObjectsToPersist(&$objects = array()) {
+        public function getRelatedObjectsToPersist(&$objects = array()) 
+        {
             «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «IF !joinsIn.empty || !joinsOut.empty»
@@ -480,10 +481,10 @@ class EntityMethods {
                 «ENDFOR»
 
                 return $objects;
-             «ELSE»
+            «ELSE»
                 return array();
-             «ENDIF»
-         }
+            «ENDIF»
+        }
     '''
 
     def private cloneImpl(DataObject it, Application app, Property thProp) '''
