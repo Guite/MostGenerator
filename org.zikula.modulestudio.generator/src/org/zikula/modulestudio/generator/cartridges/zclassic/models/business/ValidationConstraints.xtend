@@ -223,7 +223,7 @@ class ValidationConstraints {
          * Returns a list of possible choices for the «name.formatForCode» list field.
          * This method is used for validation.
          */
-        static public function get«name.formatForCodeCapital»AllowedValues()
+        public static function get«name.formatForCodeCapital»AllowedValues()
         {
             $serviceManager = ServiceUtil::getManager();
             «IF app.targets('1.3.5')»
