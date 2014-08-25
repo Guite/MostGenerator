@@ -11,6 +11,7 @@ import de.guite.modulestudio.metamodel.IntegerField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -18,6 +19,7 @@ class FileHelper {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension Utils = new Utils
 
@@ -114,10 +116,14 @@ class FileHelper {
     '''
 
     def private dispatch setterMethodImpl(DerivedField it, String name, String type) '''
-        if ($«name» != $this->«name.formatForCode») {
-            «triggerPropertyChangeListeners(name)»
+        «IF (entity instanceof Entity && (entity as Entity).hasNotifyPolicy) || entity.getInheritingEntities.exists[hasNotifyPolicy]»
+            if ($«name» !== $this->«name.formatForCode») {
+                «triggerPropertyChangeListeners(name)»
+                «setterAssignment(name, type)»
+            }
+        «ELSE»
             «setterAssignment(name, type)»
-        }
+        «ENDIF»
     '''
 
     def private dispatch setterMethodImpl(BooleanField it, String name, String type) '''
