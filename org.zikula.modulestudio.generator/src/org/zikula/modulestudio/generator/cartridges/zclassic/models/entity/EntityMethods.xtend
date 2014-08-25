@@ -16,6 +16,7 @@ import de.guite.modulestudio.metamodel.TimeField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -24,6 +25,7 @@ class EntityMethods {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -154,7 +156,20 @@ class EntityMethods {
 
     def private parseDisplayPattern(Entity it) {
         var result = ''
-        val patternParts = displayPattern.split('#')
+        var usedDisplayPattern = displayPattern
+
+        if (isInheriting && (usedDisplayPattern === null || usedDisplayPattern == '')) {
+            // fetch inherited display pattern from parent entity
+            if (parentType instanceof Entity) {
+                usedDisplayPattern = (parentType as Entity).displayPattern
+            }
+        }
+
+        if (usedDisplayPattern === null || usedDisplayPattern == '') {
+            usedDisplayPattern = name.formatForDisplay
+        }
+
+        val patternParts = usedDisplayPattern.split('#')
         for (patternPart : patternParts) {
             if (result != '') {
                 result = result.concat("\n" + '        . ')
