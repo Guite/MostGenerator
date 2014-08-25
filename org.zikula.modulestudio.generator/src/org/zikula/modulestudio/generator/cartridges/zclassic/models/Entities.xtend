@@ -157,6 +157,10 @@ class Entities {
             use ZLanguage;
         «ENDIF»
 
+        «modelEntityBaseImplClass(app)»
+    '''
+
+    def private modelEntityBaseImplClass(DataObject it, Application app) '''
         /**
          * Entity class that defines the entity structure and behaviours.
          *
@@ -174,21 +178,25 @@ class Entities {
         abstract class Abstract«name.formatForCodeCapital»Entity extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ENDIF»
         {
-            «val validatorClassLegacy = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
-            «memberVars(validatorClassLegacy)»
-    
-            «IF it instanceof Entity»
-                «new EntityConstructor().constructor(it, false)»
-
-            «ENDIF»
-            «accessors(validatorClassLegacy)»
-    
-            «IF it instanceof Entity»
-                «thEvLi.generateBase(it)»
-
-            «ENDIF»
-            «new EntityMethods().generate(it, app, thProp)»
+            «modelEntityBaseImplBody(app)»
         }
+    '''
+
+    def private modelEntityBaseImplBody(DataObject it, Application app) '''
+        «val validatorClassLegacy = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
+        «memberVars(validatorClassLegacy)»
+
+        «IF it instanceof Entity»
+            «new EntityConstructor().constructor(it, false)»
+
+        «ENDIF»
+        «accessors(validatorClassLegacy)»
+
+        «IF it instanceof Entity»
+            «thEvLi.generateBase(it)»
+
+        «ENDIF»
+        «new EntityMethods().generate(it, app, thProp)»
     '''
 
     def private memberVars(DataObject it, String validatorClassLegacy) '''

@@ -55,7 +55,7 @@ Workflow {
         // URI's starting with 'platform:/resource/' are normalized to the (canonical) path to the platform URI
         //platformUri = '.'
         //registerGeneratedEPackage = 'org.eclipse.emf.ecore.EcorePackage'
-        registerGeneratedEPackage = 'de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage'
+        registerGeneratedEPackage = 'de.guite.modulestudio.metamodel.ModuleStudioPackage'
     }
 
     // init time measurement

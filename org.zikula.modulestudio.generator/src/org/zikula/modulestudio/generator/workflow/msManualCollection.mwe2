@@ -51,10 +51,12 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'SimpleClaims' }
     component = @msManual { dir = 'customers' name = 'SimplePolls' }
     component = @msManual { dir = 'customers' name = 'SimpleProductList' }
+    component = @msManual { dir = 'customers' name = 'SimpleSupport' }
     component = @msManual { dir = 'customers' name = 'SimpleVarieties' }
     component = @msManual { dir = 'customers' name = 'SurveyManager' }
     component = @msManual { dir = 'customers' name = 'VineyardManager' }
     component = @msManual { dir = 'customers' name = 'YouthWorkout' }
+    component = @msManual { dir = 'customers' name = 'XaliaBench' }
 
     component = @msManual { dir = 'examples' name = 'AutoBugs' }
     component = @msManual { dir = 'examples' name = 'AutoCustomer' }
