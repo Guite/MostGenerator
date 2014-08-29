@@ -391,7 +391,7 @@ class BlockList {
 
             $this->view->setCaching(Zikula_View::CACHE_DISABLED);
 
-            // assign the approriate values
+            // assign the appropriate values
             $this->view->assign($vars);
 
             // clear the block cache
