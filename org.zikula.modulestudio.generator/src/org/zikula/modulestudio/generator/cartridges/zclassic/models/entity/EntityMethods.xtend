@@ -472,7 +472,7 @@ class EntityMethods {
 
     def private relatedObjectsImpl(DataObject it, Application app) '''
         /**
-         * Returns an array of all related objects that need to be persited after clone.
+         * Returns an array of all related objects that need to be persisted after clone.
          * 
          * @param array $objects The objects are added to this array. Default: array()
          * 
