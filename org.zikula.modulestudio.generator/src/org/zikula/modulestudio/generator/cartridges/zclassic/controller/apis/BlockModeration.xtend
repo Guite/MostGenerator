@@ -121,7 +121,7 @@ class BlockModeration {
             $template = $this->getDisplayTemplate($vars);
 
             «IF targets('1.3.5')»
-                $workflowHelper = new appName»_Util_Workflow($this->serviceManager);
+                $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
             «ELSE»
                 $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
             «ENDIF»
