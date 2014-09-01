@@ -30,7 +30,7 @@ class Tag {
             use SecurityUtil;
             use ServiceUtil;
             use UserUtil;
-            use Zikula\Core\ModUrl;
+            use Zikula\Core\UrlInterface;
 
         «ENDIF»
         /**
@@ -54,9 +54,9 @@ class Tag {
          * @param integer             $areaId    Name of hook area.
          * @param string              $module    Name of the owning module.
          * @param string              $urlString **deprecated**
-         * @param «IF targets('1.3.5')»Zikula_«ENDIF»ModUrl $urlObject Object carrying url arguments.
+         * @param «IF targets('1.3.5')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject Object carrying url arguments.
          */
-        function __construct($objectId, $areaId, $module, $urlString = null, «IF targets('1.3.5')»Zikula_«ENDIF»ModUrl $urlObject = null)
+        function __construct($objectId, $areaId, $module, $urlString = null, «IF targets('1.3.5')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject = null)
         {
             // call base constructor to store arguments in member vars
             parent::__construct($objectId, $areaId, $module, $urlString, $urlObject);

@@ -224,7 +224,7 @@ class Repository {
             use UserUtil;
             «IF hasArchive && getEndDateField !== null»
                 use ZLanguage;
-                use Zikula\Core\ModUrl;
+                use Zikula\Core\RouteUrl;
                 use Zikula\Core\Hook\ProcessHook;
                 use Zikula\Core\Hook\ValidationHook;
                 use Zikula\Core\Hook\ValidationProviders;
@@ -1520,7 +1520,7 @@ class Repository {
                 // Let any hooks know that we have updated an item
                 $hookType = 'process_edit';
                 $urlArgs = $entity->createUrlArgs();
-                $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                $url = new «IF app.targets('1.3.5')»Zikula_ModUrl«ELSE»RouteUrl«ENDIF»($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 «IF app.targets('1.3.5')»
                     $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                     $serviceManager->getService('zikula.hookmanager')->notify($hook);

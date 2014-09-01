@@ -50,7 +50,7 @@ class Search {
         use ServiceUtil;
         use ZLanguage;
 
-        use Zikula\Core\ModUrl;
+        use Zikula\Core\RouteUrl;
         use Zikula\Module\SearchModule\AbstractSearchable;
 
         /**
@@ -377,7 +377,7 @@ class Search {
                         'module' => $this->name,
                         'sesid' => $sessionId,
                         'created' => $created«IF hasUserDisplay»,
-                        'url' => new ModUrl($this->name, $objectType, 'display', $languageCode, $urlArgs)«ENDIF»
+                        'url' => new RouteUrl($this->name, $objectType, 'display', $languageCode, $urlArgs)«ENDIF»
                     );
                 }
             }

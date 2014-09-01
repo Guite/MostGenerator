@@ -203,7 +203,7 @@ class ControllerLayer {
                 use Zikula\Core\Hook\ValidationHook;
                 use Zikula\Core\Hook\ValidationProviders;
             «ENDIF»
-            use Zikula\Core\ModUrl;
+            use Zikula\Core\RouteUrl;
             «controllerBaseImportsResponse»
 
         «ENDIF»
@@ -245,7 +245,7 @@ class ControllerLayer {
                 use Zikula\Core\Hook\ValidationHook;
                 use Zikula\Core\Hook\ValidationProviders;
             «ENDIF»
-            use Zikula\Core\ModUrl;
+            use Zikula\Core\RouteUrl;
             «entityControllerBaseImportsResponse»
 
         «ENDIF»
@@ -400,7 +400,7 @@ class ControllerLayer {
             $url = null;
             if ($action != 'delete') {
                 $urlArgs = $entity->createUrlArgs();
-                $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                $url = new «IF app.targets('1.3.5')»Zikula_ModUrl«ENDIF»RouteUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
             }
             «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);

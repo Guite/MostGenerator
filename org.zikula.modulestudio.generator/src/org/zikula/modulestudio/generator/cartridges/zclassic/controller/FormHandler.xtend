@@ -105,7 +105,7 @@ class FormHandler {
             use Zikula\Core\Hook\ProcessHook;
             use Zikula\Core\Hook\ValidationHook;
             use Zikula\Core\Hook\ValidationProviders;
-            use Zikula\Core\ModUrl;
+            use Zikula\Core\RouteUrl;
 
         «ENDIF»
         /**
@@ -784,7 +784,7 @@ class FormHandler {
                 $url = null;
                 if ($action != 'delete') {
                     $urlArgs = $entity->createUrlArgs();
-                    $url = new «IF targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, «IF targets('1.3.5')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$this->objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    $url = new «IF targets('1.3.5')»Zikula_ModUrl«ELSE»RouteUrl«ENDIF»($this->name, «IF targets('1.3.5')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$this->objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 }
                 «IF targets('1.3.5')»
                     $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
