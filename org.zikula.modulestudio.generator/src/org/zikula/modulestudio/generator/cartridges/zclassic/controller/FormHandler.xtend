@@ -784,7 +784,11 @@ class FormHandler {
                 $url = null;
                 if ($action != 'delete') {
                     $urlArgs = $entity->createUrlArgs();
-                    $url = new «IF targets('1.3.5')»Zikula_ModUrl«ELSE»RouteUrl«ENDIF»($this->name, «IF targets('1.3.5')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$this->objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    «IF targets('1.3.5')»
+                        $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    «ELSE»
+                        $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
+                    «ENDIF»
                 }
                 «IF targets('1.3.5')»
                     $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);

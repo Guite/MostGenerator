@@ -377,7 +377,7 @@ class Search {
                         'module' => $this->name,
                         'sesid' => $sessionId,
                         'created' => $created«IF hasUserDisplay»,
-                        'url' => new RouteUrl($this->name, $objectType, 'display', $languageCode, $urlArgs)«ENDIF»
+                        'url' => new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs)«ENDIF»
                     );
                 }
             }

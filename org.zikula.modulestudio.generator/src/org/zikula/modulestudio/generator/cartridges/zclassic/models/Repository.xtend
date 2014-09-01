@@ -1520,11 +1520,12 @@ class Repository {
                 // Let any hooks know that we have updated an item
                 $hookType = 'process_edit';
                 $urlArgs = $entity->createUrlArgs();
-                $url = new «IF app.targets('1.3.5')»Zikula_ModUrl«ELSE»RouteUrl«ENDIF»($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 «IF app.targets('1.3.5')»
+                    $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                     $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                     $serviceManager->getService('zikula.hookmanager')->notify($hook);
                 «ELSE»
+                    $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
                     $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
                     $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
