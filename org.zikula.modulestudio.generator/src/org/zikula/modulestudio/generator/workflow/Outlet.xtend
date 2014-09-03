@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.workflow
 
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 /**
@@ -10,12 +11,12 @@ public class Outlet {
     /**
      * Name of the outlet.
      */
-    @Property
+    @Accessors
     String outletName = IFileSystemAccess.DEFAULT_OUTPUT
 
     /**
      * The output path.
      */
-    @Property
+    @Accessors
     String path
 }

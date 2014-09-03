@@ -7,6 +7,7 @@ import java.io.IOException
 import java.nio.channels.FileChannel
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Workflow component class for copying model files into the output folder.
@@ -21,37 +22,37 @@ class ModelFileCopier implements IWorkflowComponent {
     /**
      * Path to the source application model file.
      */
-    @Property
+    @Accessors
     String sourceModelFile = '' //$NON-NLS-1$
 
     /**
      * Path to the enriched source application model file.
      */
-    @Property
+    @Accessors
     String sourceModelFileEnriched = '' //$NON-NLS-1$
 
     /**
      * Path to the source diagram model file.
      */
-    @Property
+    @Accessors
     String sourceDiagramFile = '' //$NON-NLS-1$
 
     /**
      * Path to the target application model file.
      */
-    @Property
+    @Accessors
     String targetModelFile = '' //$NON-NLS-1$
 
     /**
      * Path to the enriched target application model file.
      */
-    @Property
+    @Accessors
     String targetModelFileEnriched = '' //$NON-NLS-1$
 
     /**
      * Path to the target diagram model file.
      */
-    @Property
+    @Accessors
     String targetDiagramFile = '' //$NON-NLS-1$
 
     /**
@@ -65,7 +66,7 @@ class ModelFileCopier implements IWorkflowComponent {
      * Invokes the workflow component from a workflow.
      * 
      * @param ctx
-     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
+     *            The given {@link IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         invokeInternal

@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.workflow.components
 import java.io.File
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Workflow component class for cleaning a certain directory.
@@ -12,14 +13,14 @@ class DirectoryCreator implements IWorkflowComponent {
     /**
      * The treated directory.
      */
-    @Property
+    @Accessors
     String directory = '' //$NON-NLS-1$
 
     /**
      * Invokes the workflow component.
      * 
      * @param ctx
-     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
+     *            The given {@link IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         if (!directory.empty) {

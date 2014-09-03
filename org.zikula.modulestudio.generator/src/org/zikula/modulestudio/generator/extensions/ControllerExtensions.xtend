@@ -16,8 +16,6 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.UserController
 import de.guite.modulestudio.metamodel.ViewAction
 
-import static de.guite.modulestudio.metamodel.RelationEditType.*
-
 /**
  * This class contains controller related extension methods.
  */

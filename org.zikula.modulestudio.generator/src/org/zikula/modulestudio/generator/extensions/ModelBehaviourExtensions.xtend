@@ -10,8 +10,6 @@ import de.guite.modulestudio.metamodel.EntityTimestampableType
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.IntegerField
 
-import static de.guite.modulestudio.metamodel.EntitySlugStyle.*
-
 /**
  * This class contains model behaviour related extension methods.
  */

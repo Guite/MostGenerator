@@ -7,6 +7,7 @@ import java.util.Map
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ISetup
 import org.eclipse.xtext.generator.GeneratorComponent
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -23,25 +24,25 @@ class MostGeneratorComponent extends GeneratorComponent implements
     /**
      * The injector.
      */
-    @Property
+    @Accessors
     Injector injector
 
     /**
      * List of slot names.
      */
-    @Property
+    @Accessors
     List<String> slotNames = newArrayList()
 
     /**
      * List of outlets.
      */
-    @Property
+    @Accessors
     Map<String, String> outlets = newHashMap()
 
     /**
      * Name of current cartridge.
      */
-    @Property
+    @Accessors
     String cartridge = '' //$NON-NLS-1$
 
     /**

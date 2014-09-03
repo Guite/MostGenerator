@@ -9,8 +9,6 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
-import static de.guite.modulestudio.metamodel.EntityWorkflowType.*
-
 /**
  * Workflow definitions in xml format.
  */

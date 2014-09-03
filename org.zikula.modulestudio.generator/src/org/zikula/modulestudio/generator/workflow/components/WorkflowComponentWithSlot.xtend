@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.workflow.components
 
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Common super class for components working with a model.
@@ -10,7 +11,7 @@ abstract class WorkflowComponentWithSlot implements IWorkflowComponent {
     /**
      * Name of used slot.
      */
-    @Property
+    @Accessors
     String slot = 'model' //$NON-NLS-1$
 
     /**

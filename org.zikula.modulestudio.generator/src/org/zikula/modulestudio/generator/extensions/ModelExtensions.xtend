@@ -31,9 +31,6 @@ import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.util.List
 
-import static de.guite.modulestudio.metamodel.EntityLockType.*
-import static de.guite.modulestudio.metamodel.IpAddressScope.*
-
 /**
  * This class contains model related extension methods.
  * TODO document class and methods.

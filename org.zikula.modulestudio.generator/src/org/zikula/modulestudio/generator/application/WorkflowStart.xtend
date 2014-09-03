@@ -8,6 +8,7 @@ import java.io.IOException
 import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.Diagnostician
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
 import org.eclipse.xtext.util.EmfFormatter
 import org.eclipse.xtext.validation.FeatureBasedDiagnostic
@@ -31,7 +32,7 @@ class WorkflowStart {
     /**
      * Name of currently processed generator cartridge.
      */
-    private String currentCartridge = ''
+    String currentCartridge = ''
 
     public WorkflowSettings settings = new WorkflowSettings
 
@@ -40,14 +41,14 @@ class WorkflowStart {
     /**
      * Reference to the model's {@link Resource} object.
      */
-    private Resource model = null
+    Resource model = null
 
     /**
      * The Guice injector instance which may be provided
      * if the generator is executed inside MOST.
      */
-    @Property
-    private Injector injector = null
+    @Accessors
+    Injector injector = null
 
     /**
      * Validates the model.

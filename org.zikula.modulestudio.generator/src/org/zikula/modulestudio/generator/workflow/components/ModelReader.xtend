@@ -8,6 +8,7 @@ import de.guite.modulestudio.MostDslStandaloneSetup
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.XtextResourceSet
 
@@ -24,7 +25,7 @@ class ModelReader extends WorkflowComponentWithSlot {
     /**
      * The treated uri.
      */
-    @Property
+    @Accessors
     String uri = '' //$NON-NLS-1$
 
     /**
@@ -45,7 +46,7 @@ class ModelReader extends WorkflowComponentWithSlot {
      * Invokes the workflow component from a workflow.
      * 
      * @param ctx
-     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
+     *            The given {@link IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         ctx.put(slot, getResource)
@@ -85,7 +86,7 @@ class ModelReader extends WorkflowComponentWithSlot {
      * Sets the injector.
      * 
      * @param injector
-     *            The given {@link com.google.inject.Injector} instance.
+     *            The given {@link Injector} instance.
      */
     def setInjector(Injector injector) {
         this.injector = injector

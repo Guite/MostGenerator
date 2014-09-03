@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint
 import org.eclipse.gmf.runtime.notation.Diagram
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.zikula.modulestudio.generator.cartridges.reporting.ReportFilenameFilter
 
 /**
@@ -38,49 +39,49 @@ class WorkflowSettings {
     /**
      * The model path.
      */
-    @Property
+    @Accessors
     String modelPath = null
 
     /**
      * The destination path for copying the model.
      */
-    @Property
+    @Accessors
     String modelDestinationPath = null
 
     /**
      * Reference to current diagram.
      */
-    @Property
+    @Accessors
     Diagram diagram = null
 
     /**
      * Name of the vendor of the application instance described by the model.
      */
-    @Property
+    @Accessors
     String appVendor = ''
 
     /**
      * Name of the application instance described by the model.
      */
-    @Property
+    @Accessors
     String appName = ''
 
     /**
      * Version of the application instance described by the model.
      */
-    @Property
+    @Accessors
     String appVersion = ''
 
     /**
      * Preference hint for reporting.
      */
-    @Property
+    @Accessors
     PreferencesHint diagramPreferencesHint = null
 
     /**
      * The progress monitor.
      */
-    @Property
+    @Accessors
     IProgressMonitor progressMonitor = null
 
     /**
@@ -91,23 +92,23 @@ class WorkflowSettings {
     /**
      * List of selected reports.
      */
-    @Property
+    @Accessors
     Object[] selectedReports = null
 
     /**
      * Path containing the report files.
      */
-    @Property
+    @Accessors
     String reportPath = '/org/zikula/modulestudio/generator/cartridges/reporting/reports' //$NON-NLS-1$
 
     /**
      * The constructor.
      */
     new() {
-        availableCartridges.add('zclassic') //$NON-NLS-1$
-        availableCartridges.add('reporting') //$NON-NLS-1$
-        selectedCartridges.add('zclassic') //$NON-NLS-1$
-        selectedCartridges.add('reporting') //$NON-NLS-1$
+        availableCartridges += 'zclassic' //$NON-NLS-1$
+        availableCartridges += 'reporting' //$NON-NLS-1$
+        selectedCartridges += 'zclassic' //$NON-NLS-1$
+        selectedCartridges += 'reporting' //$NON-NLS-1$
 
         try {
             collectAvailableReports

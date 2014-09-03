@@ -5,6 +5,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.common.util.WrappedException
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Workflow component class for writing the enriched model for debugging
@@ -15,14 +16,14 @@ class ModelWriter extends WorkflowComponentWithSlot {
     /**
      * The treated uri.
      */
-    @Property
+    @Accessors
     String uri = '' //$NON-NLS-1$
 
     /**
      * Invokes the workflow component.
      * 
      * @param ctx
-     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
+     *            The given {@link IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         val resource = ctx.get(slot) as Resource

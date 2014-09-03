@@ -3,8 +3,6 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.Application
 import java.util.Date
 
-import static de.guite.modulestudio.metamodel.CoreVersion.*
-
 /**
  * Miscellaneous utility methods.
  */

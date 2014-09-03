@@ -12,8 +12,6 @@ import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.Relationship
 
-import static de.guite.modulestudio.metamodel.RelationAutoCompletionUsage.*
-
 /**
  * This class contains model join relationship related extension methods.
  */

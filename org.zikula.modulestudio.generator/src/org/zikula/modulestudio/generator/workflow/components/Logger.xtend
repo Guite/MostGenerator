@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.workflow.components
 
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Workflow component class for logging some messages.
@@ -11,14 +12,14 @@ class Logger implements IWorkflowComponent {
     /**
      * Currently stored message.
      */
-    @Property
+    @Accessors
     String message = 'Hello World!' //$NON-NLS-1$
 
     /**
      * Invokes the workflow component.
      * 
      * @param ctx
-     *            The given {@link org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext} instance.
+     *            The given {@link IWorkflowContext} instance.
      */
     override invoke(IWorkflowContext ctx) {
         println(getMessage)
