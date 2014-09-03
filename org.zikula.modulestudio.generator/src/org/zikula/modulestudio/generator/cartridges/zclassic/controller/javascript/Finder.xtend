@@ -146,17 +146,18 @@ class Finder {
 
         function getPasteSnippet(mode, itemId)
         {
-            var itemUrl, itemTitle, itemDescription, pasteMode;
+            var quoteFinder, itemUrl, itemTitle, itemDescription, pasteMode;
 
+            quoteFinder = new RegExp('"', 'g');
             «IF targets('1.3.5')»
-                itemUrl = $F('url' + itemId);
-                itemTitle = $F('title' + itemId);
-                itemDescription = $F('desc' + itemId);
+                itemUrl = $F('url' + itemId).replace(quoteFinder, '');
+                itemTitle = $F('title' + itemId).replace(quoteFinder, '');
+                itemDescription = $F('desc' + itemId).replace(quoteFinder, '');
                 pasteMode = $F('«appName.toFirstLower»PasteAs');
             «ELSE»
-                itemUrl = $('#url' + itemId).val();
-                itemTitle = $('#title' + itemId).val();
-                itemDescription = $('#desc' + itemId).val();
+                itemUrl = $('#url' + itemId).val().replace(quoteFinder, '');
+                itemTitle = $('#title' + itemId).val().replace(quoteFinder, '');
+                itemDescription = $('#desc' + itemId).val().replace(quoteFinder, '');
                 pasteMode = $('#«appName.toFirstLower»PasteAs').val();
             «ENDIF»
 
