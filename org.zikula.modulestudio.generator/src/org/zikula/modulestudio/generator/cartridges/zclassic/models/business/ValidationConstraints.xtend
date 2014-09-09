@@ -171,21 +171,21 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(TextField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»)
+        «' '»* @Assert\Length(min="«minLength»", max="«length»")
     '''
     def dispatch fieldAnnotations(EmailField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»)
+        «' '»* @Assert\Length(min="«minLength»", max="«length»")
         «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
     '''
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»)
+        «' '»* @Assert\Length(min="«minLength»", max="«length»")
         «' '»* @Assert\Url(«/* protocols={"http", "https"} */»)
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
-        «' '»* @Assert\Length(min="«minLength»", max="«length»)
+        «' '»* @Assert\Length(min="«minLength»", max="«length»")
     '''
     def dispatch fieldAnnotations(ListField it) '''
         «fieldAnnotationsMandatory»
