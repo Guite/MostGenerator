@@ -205,8 +205,15 @@ class WorkflowUtil {
         {
             // get possible actions for this object in it's current workflow state
             $objectType = $entity['_objectType'];
-            «IF !targets('1.3.5')»
 
+            «IF targets('1.3.5')»
+                // ensure the correct module name is set, even if another page is called by the user
+                if (!isset($entity['__WORKFLOW__']['module'])) {
+                    $workflow = $entity['__WORKFLOW__'];
+                    $workflow['module'] = $this->name;
+                    $entity['__WORKFLOW__'] = $workflow;
+                }
+            «ELSE»
                 $this->normaliseWorkflowData($entity);
             «ENDIF»
 
