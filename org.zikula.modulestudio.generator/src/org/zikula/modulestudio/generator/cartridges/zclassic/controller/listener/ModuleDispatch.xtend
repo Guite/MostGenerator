@@ -49,7 +49,7 @@ class ModuleDispatch {
         /**
          * Listener for the `module_dispatch.preexecute` event.
          *
-         * Occurs in `ModUtil::exec()` after function call with the following args:
+         * Occurs in `ModUtil::exec()` before function call with the following args:
          *     `array('modname' => $modname,
          *            'modfunc' => $modfunc,
          *            'args' => $args,
