@@ -26,7 +26,7 @@ class SearchView {
 
     def private optionsTemplate(Application it) '''
         {* Purpose of this template: Display search options *}
-        <input type="hidden" id="«appName.toFirstLower»Active" name="active[«appName»]" value="1" checked="checked" />
+        <input type="hidden" id="«appName.toFirstLower»Active" name="active[«appName»]" value="1" />
         «val appLower = appName.toFirstLower»
         «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
             «val nameMulti = entity.nameMultiple.formatForCodeCapital»
