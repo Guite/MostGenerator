@@ -6,12 +6,15 @@ import de.guite.modulestudio.metamodel.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Uploads {
+
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -55,7 +58,7 @@ class Uploads {
     }
 
     def private htAccess(UploadField it) '''
-        # generated at «timestamp» by ModuleStudio «msVersion» («msUrl»)
+        # «fh.generatedBy(entity.application, entity.application.timestampAllGeneratedFiles)»
         # ----------------------------------------------------------------------
         # Purpose of file: give access to upload files treated in this directory
         # ----------------------------------------------------------------------
@@ -67,7 +70,7 @@ class Uploads {
     '''
 
     def private htAccessTemplate(Application it) '''
-        # generated at «timestamp» by ModuleStudio «msVersion» («msUrl»)
+        # «fh.generatedBy(it, timestampAllGeneratedFiles)»
         # ----------------------------------------------------------------------
         # Purpose of file: give access to upload files treated in this directory
         # ----------------------------------------------------------------------
