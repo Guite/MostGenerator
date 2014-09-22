@@ -44,19 +44,22 @@ class Forms {
     def generate(Application it, IFileSystemAccess fsa) {
         for (controller : controllers) {
             if (!(controller instanceof AjaxController)) {
-                for (action : controller.actions.filter(EditAction)) action.generate(it, fsa)
+                for (action : controller.actions.filter(EditAction)) {
+                    action.generate(it, fsa)
+                }
             }
+        }
+
+        for (entity : getAllEntities.filter[hasActions('edit')]) {
+            entity.generate(it, 'edit', fsa)
+            entity.entityInlineRedirectHandlerFile(it, fsa)
         }
     }
 
     /**
-     * Entry point for form templates for each action.
+     * Entry point for form templates for each edit action in legacy controllers.
      */
     def private generate(Action it, Application app, IFileSystemAccess fsa) {
-        for (entity : app.getAllEntities) {
-            entity.generate(app, 'edit', fsa)
-            entity.entityInlineRedirectHandlerFile(app, fsa)
-        }
         controller.inlineRedirectHandlerFile(app, fsa)
     }
 

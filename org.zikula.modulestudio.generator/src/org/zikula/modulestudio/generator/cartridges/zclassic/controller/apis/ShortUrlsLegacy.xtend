@@ -192,7 +192,7 @@ class ShortUrlsLegacy {
             }
 
             // define the available user functions
-            $funcs = array(«FOR action : actions SEPARATOR ", "»'«IF !application.targets('1.3.5') && action.name.toLowerCase == 'main'»index«ELSE»«action.name.formatForCode.toFirstLower»«ENDIF»'«ENDFOR»);
+            $funcs = array(«FOR action : getAllUserActions SEPARATOR ', '»'«IF !application.targets('1.3.5') && action.toLowerCase == 'main'»index«ELSE»«action»«ENDIF»'«ENDFOR»);
 
             // return if function url scheme is not being customised
             $customFuncs = array(«IF hasActions('view')»'view'«IF hasActions('display')», «ENDIF»«ENDIF»«IF hasActions('display')»'display'«ENDIF»);

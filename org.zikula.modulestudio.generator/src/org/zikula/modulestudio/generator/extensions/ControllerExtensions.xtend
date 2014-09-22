@@ -95,13 +95,14 @@ class ControllerExtensions {
      * Temporary bridge from legacy to entity controllers.
      */
     def private hasActionsBridge(Controller it, String type) {
+        val allEntityActions = application.getAllEntities.map[actions]
         switch type {
-            case 'index'    : !actions.filter(MainAction).empty || !application.entities.filter(Entity).map[actions].filter(MainAction).empty 
-            case 'view'     : !application.entities.filter(Entity).map[actions].filter(ViewAction).empty 
-            case 'display'  : !application.entities.filter(Entity).map[actions].filter(DisplayAction).empty 
-            case 'edit'     : !application.entities.filter(Entity).map[actions].filter(EditAction).empty
-            case 'delete'   : !application.entities.filter(Entity).map[actions].filter(DeleteAction).empty
-            case 'custom'   : !actions.filter(CustomAction).empty || !application.entities.filter(Entity).map[actions].filter(CustomAction).empty
+            case 'index'    : !actions.filter(MainAction).empty || allEntityActions.filter(MainAction).empty 
+            case 'view'     : application.hasViewActions 
+            case 'display'  : application.hasDisplayActions 
+            case 'edit'     : application.hasEditActions
+            case 'delete'   : application.hasDeleteActions
+            case 'custom'   : !actions.filter(CustomAction).empty || !allEntityActions.filter(CustomAction).empty
             default : false
         }
     }
@@ -115,6 +116,29 @@ class ControllerExtensions {
      */
     def dispatch hasActions(UserController it, String type) {
         hasActionsBridge(type)
+    }
+
+    /**
+     * Returns a list of all actions in the user controller.
+     * Cares for BC by collecting all distinct entity actions, too.
+     */
+    def getAllUserActions(UserController it) {
+        var allActions = newArrayList
+        allActions += actions.map[name.formatForCode.toFirstLower]
+        if (application.hasViewActions) {
+            allActions += 'view'
+        }
+        if (application.hasDisplayActions) {
+            allActions += 'display'
+        }
+        if (application.hasEditActions) {
+            allActions += 'edit'
+        }
+        if (application.hasDeleteActions) {
+            allActions += 'delete'
+        }
+
+        allActions
     }
 
     /**
@@ -148,7 +172,7 @@ class ControllerExtensions {
      * Returns a list of all view actions in the given application.
      */
     def getViewActions(Application it) {
-        controllers.map[actions].flatten.filter(ViewAction)
+        controllers.map[actions].flatten.filter(ViewAction) + getAllEntities.map[actions].flatten.filter(ViewAction)
     }
 
     /**
@@ -162,7 +186,7 @@ class ControllerExtensions {
      * Returns a list of all display actions in the given application.
      */
     def getDisplayActions(Application it) {
-        controllers.map[actions].flatten.filter(DisplayAction)
+        controllers.map[actions].flatten.filter(DisplayAction) + getAllEntities.map[actions].flatten.filter(DisplayAction)
     }
 
     /**
@@ -190,7 +214,7 @@ class ControllerExtensions {
      * Returns a list of all delete actions in the given application.
      */
     def getDeleteActions(Application it) {
-        controllers.map[actions].flatten.filter(DeleteAction)
+        controllers.map[actions].flatten.filter(DeleteAction) + getAllEntities.map[actions].flatten.filter(DeleteAction)
     }
 
     /**

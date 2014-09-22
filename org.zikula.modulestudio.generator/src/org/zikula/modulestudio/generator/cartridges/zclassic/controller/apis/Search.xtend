@@ -207,18 +207,22 @@ class Search {
 
                 $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $descriptionField = $repository->getDescriptionFieldName();
-                «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
+
+                $entitiesWithDisplayAction = array(«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+
                 foreach ($entities as $entity) {
-                    «IF hasUserDisplay»
-                        $urlArgs = $entity->createUrlArgs();
-                    «ENDIF»
-                    $instanceId = $entity->createCompositeIdentifier();
-                    «IF hasUserDisplay»
-                        // could exceed the maximum length of the 'extra' field, improved in 1.4.0
+                    $urlArgs = $entity->createUrlArgs();
+                    $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
+
+                    if ($hasDisplayAction) {
+                        $urlArgs['type'] = $objectType;
+                        // slug could exceed the maximum length of the 'extra' field, improved in 1.4.0
                         if (isset($urlArgs['slug'])) {
                             unset($urlArgs['slug']);
                         }
-                    «ENDIF»
+                    }
+
+                    $instanceId = $entity->createCompositeIdentifier();
 
                     // perform permission check
                     if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
@@ -232,7 +236,7 @@ class Search {
                     $searchItemData = array(
                         'title'   => $title,
                         'text'    => $description,
-                        'extra'   => «IF hasUserDisplay»serialize($urlArgs)«ELSE»''«ENDIF»,
+                        'extra'   => $hasDisplayAction ? serialize($urlArgs) : '',
                         'created' => $created,
                         'module'  => $this->name,
                         'session' => $sessionId
@@ -258,14 +262,15 @@ class Search {
          */
         public function search_check(array $args = array())
         {
-            «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
-            «IF hasUserDisplay»
-                $datarow = &$args['datarow'];
+            $datarow = &$args['datarow'];
+            if ($datarow['extra'] != '') {
                 $urlArgs = unserialize($datarow['extra']);
-                $datarow['url'] = ModUtil::url($this->name, 'user', 'display', $urlArgs);
-            «ELSE»
-                // nothing to do as we have no display pages which could be linked
-            «ENDIF»
+                $objectType = $urlArgs['type'];
+                unset($urlArgs['type']);
+                if (in_array($objectType, array(«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»))) {
+                    $datarow['url'] = ModUtil::url($this->name, $objectType, 'display', $urlArgs);
+                }
+            }
 
             return true;
         }
@@ -350,14 +355,14 @@ class Search {
 
                 $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $descriptionField = $repository->getDescriptionFieldName();
-                «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
+
+                $entitiesWithDisplayAction = array(«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
 
                 foreach ($entities as $entity) {
-                    «IF hasUserDisplay»
-                        $urlArgs = $entity->createUrlArgs();
-                    «ENDIF»
-                    $instanceId = $entity->createCompositeIdentifier();
+                    $urlArgs = $entity->createUrlArgs();
+                    $hasDisplayAction = in_array($objectType, $entitiesWithDisplayAction);
 
+                    $instanceId = $entity->createCompositeIdentifier();
                     // perform permission check
                     if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
@@ -371,13 +376,15 @@ class Search {
                         $languageCode = $entity[$languageField];
                     }
 
+                    $displayUrl = $hasDisplayAction ? new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs) : '';
+
                     $records[] = array(
                         'title' => $entity->getTitleFromDisplayPattern(),
                         'text' => $description,
                         'module' => $this->name,
                         'sesid' => $sessionId,
-                        'created' => $created«IF hasUserDisplay»,
-                        'url' => new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs)«ENDIF»
+                        'created' => $created,
+                        'url' => $displayUrl
                     );
                 }
             }
