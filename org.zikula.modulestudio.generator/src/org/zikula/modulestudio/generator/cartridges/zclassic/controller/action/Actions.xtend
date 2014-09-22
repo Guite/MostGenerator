@@ -393,7 +393,7 @@ class Actions {
         }
 
         $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
-        $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sortdir;
+        $cacheId = $objectType . '_view|_sort_' . $sort . '_' . $sortdir;
         $resultsPerPage = 0;
         if ($showAllEntries == 1) {
             // set cache id
@@ -679,7 +679,7 @@ class Actions {
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
-        $this->view->setCacheId($objectType . '|' . $instanceId . '|a' . $accessLevel);
+        $this->view->setCacheId($objectType . '_display|' . $instanceId . '|a' . $accessLevel);
 
         // assign output data to view object.
         $this->view->assign($objectType, $entity)

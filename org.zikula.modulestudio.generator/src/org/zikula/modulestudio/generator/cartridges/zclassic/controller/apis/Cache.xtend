@@ -2,16 +2,20 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CustomAction
+import de.guite.modulestudio.metamodel.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Cache {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -33,6 +37,7 @@ class Cache {
             use Zikula_AbstractApi;
             use Zikula_View;
             use Zikula_View_Theme;
+
         «ENDIF»
         /**
          * Cache api base class.
@@ -78,7 +83,6 @@ class Cache {
             }
 
             $instanceId = $item->createCompositeIdentifier();
-
             «IF !targets('1.3.5')»
 
                 $logger = $this->serviceManager->get('logger');
@@ -89,26 +93,19 @@ class Cache {
             $cacheIds = array();
             «IF hasUserController»
                 «IF getMainUserController.hasActions('index')»
-                    $cacheIds[] = '«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
+                    $cacheIds[] = 'user_«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
                 «ENDIF»
-                «IF getMainUserController.hasActions('view')»
-                    $cacheIds[] = 'view';
-                «ENDIF»
-                «IF getMainUserController.hasActions('display')»
-                    $cacheIds[] = $instanceId;
-                «ENDIF»
-                «/* edit is not needed as Forms are not cached IF getMainUserController.hasActions('edit')»
-                    $cacheIds[] = 'edit';
-                «ENDIF*/»
-                «/*delete is not needed as we disable caching there IF getMainUserController.hasActions('delete')»
-                    $cacheIds[] = 'delete';
-                «ENDIF*/»
                 «IF getMainUserController.hasActions('custom')»
                     «FOR customAction : getMainUserController.actions.filter(CustomAction)»
-                        $cacheIds[] = '«customAction.name.formatForCode.toFirstLower»';
+                        $cacheIds[] = 'user_«customAction.name.formatForCode.toFirstLower»';
                     «ENDFOR»
                 «ENDIF»
             «ENDIF»
+            switch ($objectType) {
+                «FOR entity : getAllEntities»
+                    «entity.clearCache(it, 'view')»
+                «ENDFOR»
+            }
 
             $view = Zikula_View::getInstance('«appName»');
             foreach ($cacheIds as $cacheId) {
@@ -120,30 +117,75 @@ class Cache {
             $cacheIds = array();
             $cacheIds[] = 'homepage'; // for homepage (can be assigned in the Settings module)
             «IF hasUserController»
-            «IF getMainUserController.hasActions('index')»
-                $cacheIds[] = '«appName»/user/«IF targets('1.3.5')»main«ELSE»index«ENDIF»'; // «IF targets('1.3.5')»main«ELSE»index«ENDIF» function
+                «IF getMainUserController.hasActions('index')»
+                    $cacheIds[] = '«appName»/user/«IF targets('1.3.5')»main«ELSE»index«ENDIF»'; // «IF targets('1.3.5')»main«ELSE»index«ENDIF» function
+                «ENDIF»
+                «IF getMainUserController.hasActions('custom')»
+                    «FOR customAction : getMainUserController.actions.filter(CustomAction)»
+                        $cacheIds[] = '«appName»/user/«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForDisplay» function
+                    «ENDFOR»
+                «ENDIF»
             «ENDIF»
-            «IF getMainUserController.hasActions('view')»
-                $cacheIds[] = '«appName»/user/view/' . $objectType; // view function (list views)
-            «ENDIF»
-            «IF getMainUserController.hasActions('display')»
-                $cacheIds[] = '«appName»/user/display/' . $objectType . '|' . $instanceId; // display function (detail views)
-            «ENDIF»
-            «/* edit is not needed as Forms are not cached IF getMainUserController.hasActions('edit')»
-                $cacheIds[] = '«appName»/user/edit/' . $objectType; // edit function (forms)
-            «ENDIF*/»
-            «/*delete is not needed as we disable caching there IF getMainUserController.hasActions('delete')»
-                $cacheIds[] = '«appName»/user/delete/' . $objectType; // delete function (forms)
-            «ENDIF*/»
-            «IF getMainUserController.hasActions('custom')»
-                «FOR customAction : getMainUserController.actions.filter(CustomAction)»
-                    $cacheIds[] = '«appName»/user/«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForDisplay» function
+            switch ($objectType) {
+                «FOR entity : getAllEntities»
+                    «entity.clearCache(it, 'theme')»
                 «ENDFOR»
-            «ENDIF»
-            «ENDIF»
+            }
             $theme = Zikula_View_Theme::getInstance();
             $theme->clear_cacheid_allthemes($cacheIds);
         }
+    '''
+
+    def private clearCache(Entity it, Application app, String cacheType) '''
+        case '«name.formatForCode»':
+            «IF cacheType == 'theme'»
+                $cacheIdPrefix = '«app.appName»/' . $objectType . '/';
+            «ENDIF»
+            «IF hasActions('index')»
+                «IF cacheType == 'view'»
+                    $cacheIds[] = '«name.formatForCode»_«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»';
+                «ELSEIF cacheType == 'theme'»
+                    $cacheIds[] = $cacheIdPrefix . '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'; // «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» function
+                «ENDIF»
+            «ENDIF»
+            «IF hasActions('view')»
+                «IF cacheType == 'view'»
+                    $cacheIds[] = $objectType . '_view';
+                «ELSEIF cacheType == 'theme'»
+                    $cacheIds[] = $cacheIdPrefix . 'view/'; // view function (list views)
+                «ENDIF»
+            «ENDIF»
+            «IF hasActions('display')»
+                «IF cacheType == 'view'»
+                    $cacheIds[] = $objectType . '_display|' . $instanceId;
+                «ELSEIF cacheType == 'theme'»
+                    $cacheIds[] = $cacheIdPrefix . 'display/' . $instanceId; // display function (detail views)
+                «ENDIF»
+            «ENDIF»
+            «/* edit is not needed as Forms are not cached IF hasActions('edit')»
+                «IF cacheType == 'view'»
+                    $cacheIds[] = $objectType . '_edit|' . $instanceId;
+                «ELSEIF cacheType == 'theme'»
+                    $cacheIds[] = $cacheIdPrefix . 'edit/' . $instanceId; // edit function (forms)
+                «ENDIF»
+            «ENDIF*/»
+            «/*delete is not needed as we disable caching there IF hasActions('delete')»
+                «IF cacheType == 'view'»
+                    $cacheIds[] = $objectType . '_delete|' . $instanceId;
+                «ELSEIF cacheType == 'theme'»
+                    $cacheIds[] = $cacheIdPrefix . 'delete/' . $instanceId; // delete function (forms)
+                «ENDIF»
+            «ENDIF*/»
+            «IF hasActions('custom')»
+                «FOR customAction : actions.filter(CustomAction)»
+                    «IF cacheType == 'view'»
+                        $cacheIds[] = $objectType . '|' . '«customAction.name.formatForCode.toFirstLower»';
+                    «ELSEIF cacheType == 'theme'»
+                        $cacheIds[] = $cacheIdPrefix . '«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForDisplay» function
+                    «ENDIF»
+                «ENDFOR»
+            «ENDIF»
+            break;
     '''
 
     def private cacheApiImpl(Application it) '''
