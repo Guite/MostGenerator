@@ -22,6 +22,7 @@ import de.guite.modulestudio.metamodel.ViewAction
 class ControllerExtensions {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     /**
@@ -175,7 +176,7 @@ class ControllerExtensions {
      * Returns a list of all edit actions in the given application.
      */
     def getEditActions(Application it) {
-        controllers.map[actions].flatten.filter(EditAction)
+        controllers.map[actions].flatten.filter(EditAction) + getAllEntities.map[actions].flatten.filter(EditAction)
     }
 
     /**

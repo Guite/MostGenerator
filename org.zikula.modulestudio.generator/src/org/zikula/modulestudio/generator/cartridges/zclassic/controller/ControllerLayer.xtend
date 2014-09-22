@@ -661,21 +661,15 @@ class ControllerLayer {
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 
-                «IF hasActions('view')»
-                    «FOR entity : app.getAllEntities»
-                        if (in_array('«entity.name.formatForCode»', $allowedObjectTypes)
-                            && SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
-                            «IF app.targets('1.3.5')»
-                                $links[] = array('url' => ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»'«IF entity.tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
-                            «ELSE»
-                                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«entity.name.formatForCode»_view', array('lct' => '«formattedName»'«IF entity.tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
-                            «ENDIF»
-                                             'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
-                                             'title' => $this->__('«entity.name.formatForDisplayCapital» list'));
-                        }
+                $currentType = $this->request->query->filter('type', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $currentLegacyType = $this->request->query->filter('lct', 'user', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $permLevel = in_array('admin', array($currentType, $currentLegacyType)) ? ACCESS_ADMIN : ACCESS_READ;
+
+                «IF it instanceof UserController»
+                    «FOR entity : app.getAllEntities.filter[hasActions('view')]»
+                        «entity.menuLinkToViewAction»
                     «ENDFOR»
-                «ENDIF»
-                «IF app.needsConfig && isConfigController»
+                «ELSEIF app.needsConfig && isConfigController»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         «IF app.targets('1.3.5')»
                             $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
@@ -692,6 +686,19 @@ class ControllerLayer {
             }
             «ENDIF»
             «additionalApiMethods»
+        }
+    '''
+
+    def private menuLinkToViewAction(Entity it) '''
+        if (in_array('«name.formatForCode»', $allowedObjectTypes)
+            && SecurityUtil::checkPermission($this->name . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
+            «IF app.targets('1.3.5')»
+                $links[] = array('url' => ModUtil::url($this->name, '«name.formatForCode»', 'view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
+            «ELSE»
+                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
+            «ENDIF»
+                             'text' => $this->__('«nameMultiple.formatForDisplayCapital»'),
+                             'title' => $this->__('«name.formatForDisplayCapital» list'));
         }
     '''
 
@@ -715,13 +722,6 @@ class ControllerLayer {
                                          «IF application.targets('1.3.5')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
                     }
                     '''
-        }
-    }
-
-    def private menuLinksPermissionLevel(Controller it) {
-        switch it {
-            AdminController case !application.getAllUserControllers.empty: 'ADMIN'
-            default: 'READ'
         }
     }
 

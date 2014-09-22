@@ -243,7 +243,8 @@ class ZclassicGenerator implements IGenerator {
         }
         if (generateTagSupport &&
             ((hasUserController && getMainUserController.hasActions('display'))
-            || (!getAllAdminControllers.empty && getAllAdminControllers.head.hasActions('display')))) {
+            || (!getAllAdminControllers.empty && getAllAdminControllers.head.hasActions('display'))
+            || !getAllEntities.filter[hasActions('display')].empty)) {
             pm?.subTask('Integration: Tag support')
             println('Generating tag support')
             new Tag().generate(it, fsa)
