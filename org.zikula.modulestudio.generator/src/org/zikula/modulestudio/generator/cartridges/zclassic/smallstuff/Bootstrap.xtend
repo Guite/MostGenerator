@@ -29,10 +29,6 @@ class Bootstrap {
          *
          * This is only called once, and only if the core has reason to initialise this module,
          * usually to dispatch a controller request or API.
-         *
-         * For example you can register additional AutoLoaders with ZLoader::addAutoloader($namespace, $path)
-         * whereby $namespace is the first part of the PEAR class name
-         * and $path is the path to the containing folder.
          */
     '''
 
@@ -53,22 +49,26 @@ class Bootstrap {
     '''
 
     def private initExtensions(Application it) '''
-        «IF needsExtensionListener»
-            // initialise doctrine extension listeners
-            $helper = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine_extensions');
-            «initTree»
+        «IF targets('1.3.5')»
+            «IF needsExtensionListener»
+                // initialise doctrine extension listeners
+                $helper = ServiceUtil::getService('doctrine_extensions');
+                «initTree»
+                «initLoggable»
+                «initSluggable»
+                «initSoftDeleteable»
+                «initSortable»
+                «initTimestampable»
+                «initStandardFields»
+                «initTranslatable»
+            «ENDIF»
+        «ELSE»
             «initLoggable»
-            «initSluggable»
-            «initSoftDeleteable»
-            «initSortable»
-            «initTimestampable»
-            «initStandardFields»
-            «initTranslatable»
         «ENDIF»
     '''
 
     def private needsExtensionListener(Application it) {
-        (hasTrees || hasLoggable || hasSluggable || hasSortable || hasTimestampable || hasTranslatable || hasStandardFieldEntities)
+        (hasTrees || hasLoggable || hasSluggable || hasSoftDeleteable || hasSortable || hasTimestampable || hasTranslatable || hasStandardFieldEntities)
     }
 
     def private initTree(Application it) '''
@@ -79,8 +79,12 @@ class Bootstrap {
 
     def private initLoggable(Application it) '''
         «IF hasLoggable»
-            $loggableListener = $helper->getListener('loggable');
             // set current user name to loggable listener
+            «IF targets('1.3.5')»
+                $loggableListener = $helper->getListener('loggable');
+            «ELSE»
+                $loggableListener = ServiceUtil::get('stof_doctrine_extensions.listener.loggable');
+            «ENDIF»
             $userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
             $loggableListener->setUsername($userName);
         «ENDIF»
