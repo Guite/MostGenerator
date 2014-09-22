@@ -27,7 +27,7 @@ class Emails {
         val templatePath = getViewPath + if (targets('1.3.5')) 'email' else 'Email' + '/'
 
         for (entity : entitiesWithWorkflow) {
-            var fileName = 'notify' + entity.name.formatForCode + 'Creator.tpl'
+            var fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.generated.tpl'
@@ -35,7 +35,7 @@ class Emails {
                 fsa.generateFile(templatePath + fileName, entity.notifyCreatorTemplate)
             }
 
-            fileName = 'notify' + entity.name.formatForCode + 'Moderator.tpl'
+            fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
                     fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator.generated.tpl'

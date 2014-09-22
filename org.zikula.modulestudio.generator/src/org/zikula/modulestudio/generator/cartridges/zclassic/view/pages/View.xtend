@@ -132,7 +132,7 @@ class View {
                 <a href="{route name='«appName.formatForDB»_«objName»_view' lct=$lct all=1}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
             «ENDIF»
         {/if}
-        «IF tree != EntityTreeType::NONE»
+        «IF tree != EntityTreeType.NONE»
             {gt text='Switch to hierarchy view' assign='linkTitle'}
             «IF application.targets('1.3.5')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»' tpl='tree'}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>

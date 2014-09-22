@@ -228,7 +228,7 @@ class ItemActions {
                 'linkText' => __('Edit', $dom)
             );
         «ENDIF»
-        «IF tree == EntityTreeType::NONE»
+        «IF tree == EntityTreeType.NONE»
                 $this->_actions[] = array(
                     «IF application.targets('1.3.5')»
                         'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false, 'astemplate')»)),

@@ -64,7 +64,7 @@ class ExampleData {
     def private exampleRows(Application it) '''
         «FOR entity : getAllEntities»«entity.truncateTable»«ENDFOR»
         «IF amountOfExampleRows > 0»
-            «IF !getAllEntities.filter[tree != EntityTreeType::NONE].empty»
+            «IF !getAllEntities.filter[tree != EntityTreeType.NONE].empty»
                 $treeCounterRoot = 1;
             «ENDIF»
             «createExampleRows»
@@ -148,7 +148,7 @@ class ExampleData {
             «/*«IF hasTranslatableFields»
                 $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
             «ENDIF»*/»
-            «IF tree != EntityTreeType::NONE»
+            «IF tree != EntityTreeType.NONE»
                 $«entityName»«number»->setParent(«IF number == 1»null«ELSE»$«entityName»1«ENDIF»);
                 $«entityName»«number»->setLvl(«IF number == 1»1«ELSE»2«ENDIF»);
                 $«entityName»«number»->setLft(«IF number == 1»1«ELSE»«((number-1)*2)»«ENDIF»);
@@ -200,7 +200,7 @@ class ExampleData {
                 $«entityName»«number»->setMetadata($metaData);
             «ENDIF»
         «ENDFOR»
-        «IF tree != EntityTreeType::NONE»
+        «IF tree != EntityTreeType.NONE»
             $treeCounterRoot++;
         «ENDIF»
         «/* this last line is on purpose */»

@@ -93,9 +93,9 @@ class Repository {
          * This is the base repository class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.5')»
-        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
             «val stringFields = fields.filter(StringField).filter[!password]»
@@ -187,7 +187,7 @@ class Repository {
             namespace «app.appNamespace»\Entity\Repository\Base;
 
         «ENDIF»
-        «IF tree != EntityTreeType::NONE»
+        «IF tree != EntityTreeType.NONE»
             use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
         «ELSEIF hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;

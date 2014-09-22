@@ -98,14 +98,14 @@ class Redirect {
                 $serviceManager = $this->view->getServiceManager();
 
             «ENDIF»
-            «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType::NONE»
+            «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType.NONE»
                 $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
 
             «ENDIF»
             «IF hasActions('view')»
                 // redirect to the list of «nameMultiple.formatForCode»
                 $viewArgs = array(«IF app.targets('1.3.5')»'ot' => $this->objectType, «ENDIF»'lct' => $legacyControllerType);
-                «IF tree != EntityTreeType::NONE»
+                «IF tree != EntityTreeType.NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
                 «IF app.targets('1.3.5')»
@@ -124,7 +124,7 @@ class Redirect {
             «ELSE»
                 $url = System::getHomepageUrl();
             «ENDIF»
-            «IF hasActions('display') && tree != EntityTreeType::NONE»
+            «IF hasActions('display') && tree != EntityTreeType.NONE»
 
                 if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
                     // redirect to the detail page of treated «name.formatForCode»

@@ -39,7 +39,7 @@ class Display {
         if (!application.shouldBeSkipped(templateFilePath)) {
             fsa.generateFile(templateFilePath, displayView(appName))
         }
-        if (tree != EntityTreeType::NONE) {
+        if (tree != EntityTreeType.NONE) {
             templateFilePath = templateFile('display_treeRelatives')
             if (!application.shouldBeSkipped(templateFilePath)) {
                 fsa.generateFile(templateFilePath, treeRelatives(appName))
@@ -315,7 +315,7 @@ class Display {
         «IF categorisable»
             {include file='«IF isLegacyApp»helper«ELSE»Helper«ENDIF»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
-        «IF tree != EntityTreeType::NONE»
+        «IF tree != EntityTreeType.NONE»
             «IF useGroupingPanels('display')»
                 «IF isLegacyApp»
                     <h3 class="relatives z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{gt text='Relatives'}</h3>

@@ -451,7 +451,7 @@ class Installer {
                 «IF entity.loggable»
                     $classNames[] = '«entity.entityClassName('logEntry', false)»';
                 «ENDIF»
-                «IF entity.tree == EntityTreeType::CLOSURE»
+                «IF entity.tree == EntityTreeType.CLOSURE»
                     $classNames[] = '«entity.entityClassName('closure', false)»';
                 «ENDIF»
                 «IF entity.hasTranslatableFields»

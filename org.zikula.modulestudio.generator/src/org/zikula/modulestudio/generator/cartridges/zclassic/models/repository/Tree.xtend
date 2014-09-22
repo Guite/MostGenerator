@@ -9,7 +9,7 @@ class Tree {
     extension FormattingExtensions = new FormattingExtensions
 
     def generate(Entity it, Application app) '''
-        «IF tree != EntityTreeType::NONE»
+        «IF tree != EntityTreeType.NONE»
 
             «selectTree»
 
