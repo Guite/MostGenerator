@@ -58,7 +58,7 @@ class Uploads {
     }
 
     def private htAccess(UploadField it) '''
-        # «fh.generatedBy(entity.application, entity.application.timestampAllGeneratedFiles)»
+        # «fh.generatedBy(entity.application, entity.application.timestampAllGeneratedFiles, entity.application.versionAllGeneratedFiles)»
         # ----------------------------------------------------------------------
         # Purpose of file: give access to upload files treated in this directory
         # ----------------------------------------------------------------------
@@ -70,7 +70,7 @@ class Uploads {
     '''
 
     def private htAccessTemplate(Application it) '''
-        # «fh.generatedBy(it, timestampAllGeneratedFiles)»
+        # «fh.generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
         # ----------------------------------------------------------------------
         # Purpose of file: give access to upload files treated in this directory
         # ----------------------------------------------------------------------
