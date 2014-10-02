@@ -207,7 +207,7 @@ class ExternalView {
 
                     «findTemplateSearch(app)»
                     <div style="margin-left: 6em">
-                        {pager display='page' rowcount=$pager.numitems limit=$pager.itemsperpage posvar='pos' template='pagercss.tpl' maxpages='10'}
+                        {pager display='page' rowcount=$pager.numitems limit=$pager.itemsperpage posvar='pos' template='pagercss.tpl' maxpages='10'«IF !app.targets('1.3.5')» route='«app.appName.formatForDB»_external_finder'«ENDIF»}
                     </div>
                     <input type="submit" id="«app.appName.toFirstLower»Submit" name="submitButton" value="{gt text='Change selection'}"«IF !app.targets('1.3.5')» class="btn btn-success"«ENDIF» />
                     <input type="button" id="«app.appName.toFirstLower»Cancel" name="cancelButton" value="{gt text='Cancel'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />

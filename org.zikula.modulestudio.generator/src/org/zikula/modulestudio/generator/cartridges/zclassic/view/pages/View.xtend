@@ -273,7 +273,7 @@ class View {
             «IF application.targets('1.3.5')»
                 {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}
             «ELSE»
-                {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type='«name.formatForCode»' func='view' lct=$lct}
+                {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' lct=$lct route='«appName.formatForDB»_«name.formatForCode»_view'}
             «ENDIF»
         {/if}
     '''
