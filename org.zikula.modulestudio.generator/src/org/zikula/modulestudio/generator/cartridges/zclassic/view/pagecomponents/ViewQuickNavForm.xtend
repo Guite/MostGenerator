@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
@@ -257,7 +258,9 @@ class ViewQuickNavForm {
                 &nbsp;
                 <select id="sortBy" name="sort"«IF !application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
                     «FOR field : getDerivedFields»
-                        <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                        «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
+                            <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                        «ENDIF»
                     «ENDFOR»
                     «IF standardFields»
                     <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
