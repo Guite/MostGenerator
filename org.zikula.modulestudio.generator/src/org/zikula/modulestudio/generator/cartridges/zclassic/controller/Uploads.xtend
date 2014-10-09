@@ -494,10 +494,10 @@ class Uploads {
                     } else {
                         $iterIndex++;
                     }
-                } else if ($namingScheme == 1) {
+                } elseif ($namingScheme == 1) {
                     // md5 name
                     $fileName = md5(uniqid(mt_rand(), TRUE)) . '.' . $extension;
-                } else if ($namingScheme == 2) {
+                } elseif ($namingScheme == 2) {
                     // prefix with random number
                     $fileName = $fieldName . mt_rand(1, 999999) . '.' . $extension;
                 }
