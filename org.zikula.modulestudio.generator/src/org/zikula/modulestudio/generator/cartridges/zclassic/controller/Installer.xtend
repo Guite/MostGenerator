@@ -153,7 +153,11 @@ class Installer {
                 }
                 $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
                 if (!System::isDevelopmentMode()) {
-                    $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
+                    «IF targets('1.3.5')»
+                        $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
+                    «ELSE»
+                        $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /app/config/parameters.yml file (change the env variable to dev) in order to reveal the error details.');
+                    «ENDIF»
                 }
                 «IF targets('1.3.5')»
                     return LogUtil::registerError($returnMessage);
