@@ -209,17 +209,17 @@ class EditFunctions {
          */
         function «prefix()»InitUploadField(fieldName)
         {
+            var fieldNameCapitalised;
+
+            fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
             «IF targets('1.3.5')»
-                if ($('reset' + fieldName.capitalize() + 'Val') != null) {
-                    $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
+                if ($('reset' + fieldNameCapitalised + 'Val') != null) {
+                    $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
                         «prefix()»ResetUploadField(fieldName);
-                    }).removeClassName('z-hide');
+                    }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                var fieldNameCapitalised;
-
-                fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
                 if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
                     $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
@@ -260,17 +260,17 @@ class EditFunctions {
          */
         function «prefix()»InitDateField(fieldName)
         {
+            var fieldNameCapitalised;
+
+            fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
             «IF targets('1.3.5')»
-                if ($('reset' + fieldName.capitalize() + 'Val') != null) {
-                    $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
+                if ($('reset' + fieldNameCapitalised + 'Val') != null) {
+                    $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
                         «prefix()»ResetDateField(fieldName);
-                    }).removeClassName('z-hide');
+                    }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                var fieldNameCapitalised;
-
-                fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
                 if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
                     $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
