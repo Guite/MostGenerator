@@ -1387,7 +1387,10 @@ class FormHandler {
          */
         public function initialize(Zikula_Form_View $view)
         {
-            parent::initialize($view);
+            $result = parent::initialize($view);
+            if ($result === false) {
+                return $result;
+            }
 
             if ($this->mode == 'create') {
                 «IF app.targets('1.3.5')»
