@@ -181,7 +181,7 @@ class DisplayFunctions {
     def private initQuickNavigation(Application it) '''
         function «prefix()»CapitaliseFirstLetter(string)
         {
-            return string.charAt(0).toUpperCase() + string.slice(1);
+            return string.charAt(0).toUpperCase() + string.substring(1);
         }
 
         /**
@@ -409,7 +409,7 @@ class DisplayFunctions {
          */
         function «prefix()»ToggleFlag(objectType, fieldName, itemId)
         {
-            fieldName = «prefix()»CapitaliseFirstLetter(fieldName);
+            var fieldNameCapitalised = «prefix()»CapitaliseFirstLetter(fieldName);
             var params = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
             «IF targets('1.3.5')»
@@ -419,7 +419,7 @@ class DisplayFunctions {
                         method: 'post',
                         parameters: params,
                         onComplete: function(req) {
-                            var idSuffix = fieldName + '_' + itemId;
+                            var idSuffix = fieldNameCapitalised + '_' + itemId;
                             if (!req.isSuccess()) {
                                 Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                                 return;
