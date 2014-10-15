@@ -231,6 +231,13 @@ class ViewQuickNavForm {
                 <div class="form-group">
             «ENDIF»
                 <label for="«sourceAliasName»">{gt text='«(source as Entity).nameMultiple.formatForDisplayCapital»'}</label>
+                {php}
+                    $mainSearchTerm = '';
+                    if (isset($_GET['searchterm'])) {
+                        $mainSearchTerm = $_GET['searchterm'];
+                        unset($_GET['searchterm']);
+                    }
+                {/php}
                 {modapifunc modname='«source.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' useJoins=false assign='listEntries'}
                 <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
                     <option value="">{$lblDefault}</option>
@@ -243,6 +250,11 @@ class ViewQuickNavForm {
                     <option value="{$entryId}"{if $entryId eq $«sourceAliasName»} selected="selected"{/if}>{$option->getTitleFromDisplayPattern()}</option>
                 {/foreach}
                 </select>
+                {php}
+                    if (!empty($mainSearchTerm)) {
+                        $_GET['searchterm'] = $mainSearchTerm;
+                    }
+                {/php}
             «IF !application.targets('1.3.5')»
                 </div>
             «ENDIF»
