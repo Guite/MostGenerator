@@ -638,7 +638,7 @@ class EventListener {
                 «ENDIF»
             }
 
-            $fullPath = $basePath .  $this['«realName»'];
+            $fullPath = $basePath . $this['«realName»'];
             $this['«realName»FullPath'] = $fullPath;
             $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
 
