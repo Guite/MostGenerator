@@ -311,7 +311,7 @@ class Finder {
                 }
                 params += 'sort=' + $F(baseId + 'Sort') + '&' +
                           'sortdir=' + $F(baseId + 'SortDir') + '&' +
-                          'searchterm=' + $F(baseId + 'SearchTerm');
+                          'q=' + $F(baseId + 'SearchTerm');
             «ELSE»
                 if ($('#' + baseId + '_catidMain').size() > 0) {
                     params += 'catidMain=' + $('#' + baseId + '_catidMain').val() + '&';
@@ -320,7 +320,7 @@ class Finder {
                 }
                 params += 'sort=' + $('#' + baseId + 'Sort').val() + '&' +
                           'sortdir=' + $('#' + baseId + 'SortDir').val() + '&' +
-                          'searchterm=' + $('#' + baseId + 'SearchTerm').val();
+                          'q=' + $('#' + baseId + 'SearchTerm').val();
             «ENDIF»
 
             «IF targets('1.3.5')»

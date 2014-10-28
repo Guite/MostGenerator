@@ -374,7 +374,7 @@ class ExternalView {
             «IF !app.targets('1.3.5')»
                 <div class="col-lg-9">
             «ENDIF»
-                    <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="searchterm" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="margin-right: 10px" />
+                    <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="q" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="margin-right: 10px" />
                     <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" style="width: 80px"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
             «IF !app.targets('1.3.5')»
                 </div>
@@ -486,7 +486,7 @@ class ExternalView {
         «IF hasAbstractStringFieldsEntity»
             <p>
                 <label for="{$baseID}SearchTerm"{$leftSide}>{gt text='Search for'}:</label>
-                <input type="text" id="{$baseID}SearchTerm" name="searchterm"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»{$rightSide} />
+                <input type="text" id="{$baseID}SearchTerm" name="q"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»{$rightSide} />
                 <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />
                 <br{$break} />
             </p>

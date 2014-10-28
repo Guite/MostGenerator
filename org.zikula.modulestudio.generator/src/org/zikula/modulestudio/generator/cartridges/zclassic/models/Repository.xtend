@@ -475,9 +475,12 @@ class Repository {
             «ENDIF»
             «IF hasAbstractStringFieldsEntity»
                 «IF app.targets('1.3.5')»
-                    $parameters['searchterm'] = isset($this->controllerArguments['searchterm']) ? $this->controllerArguments['searchterm'] : FormUtil::getPassedValue('searchterm', '', 'GET');
+                    $parameters['q'] = isset($this->controllerArguments['q']) ? $this->controllerArguments['q'] : 
+                        (isset($this->controllerArguments['searchterm']) ? $this->controllerArguments['searchterm'] :
+                            FormUtil::getPassedValue('q', FormUtil::getPassedValue('searchterm', '', 'GET'), 'GET')
+                        );
                 «ELSE»
-                    $parameters['searchterm'] = $this->request->query->get('searchterm', '');
+                    $parameters['q'] = $this->request->query->get('q', '');
                 «ENDIF»
             «ENDIF»
             «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«app.appName»', 'pageSize', 10);
@@ -858,7 +861,7 @@ class Repository {
                        ->setParameter('categories', $v);
                      */
                     $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v));
-                } elseif ($k == 'searchterm') {
+                } elseif (in_array($k, array('q', 'searchterm'))) {
                     // quick search
                     if (!empty($v)) {
                         $qb = $this->addSearchFilter($qb, $v);

@@ -118,7 +118,7 @@ class ViewQuickNavForm {
                     <div class="form-group">
                 «ENDIF»
                     <label for="searchTerm">{gt text='Search'}</label>
-                    <input type="text" id="searchTerm" name="searchterm" value="{$searchterm}"«IF !application.targets('1.3.5')» class="form-control input-sm"«ENDIF» />
+                    <input type="text" id="searchTerm" name="q" value="{$q}"«IF !application.targets('1.3.5')» class="form-control input-sm"«ENDIF» />
                 «IF !application.targets('1.3.5')»
                     </div>
                 «ENDIF»
@@ -233,9 +233,9 @@ class ViewQuickNavForm {
                 <label for="«sourceAliasName»">{gt text='«(source as Entity).nameMultiple.formatForDisplayCapital»'}</label>
                 {php}
                     $mainSearchTerm = '';
-                    if (isset($_GET['searchterm'])) {
-                        $mainSearchTerm = $_GET['searchterm'];
-                        unset($_GET['searchterm']);
+                    if (isset($_GET['q'])) {
+                        $mainSearchTerm = $_GET['q'];
+                        unset($_GET['q']);
                     }
                 {/php}
                 {modapifunc modname='«source.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' useJoins=false assign='listEntries'}
@@ -252,7 +252,7 @@ class ViewQuickNavForm {
                 </select>
                 {php}
                     if (!empty($mainSearchTerm)) {
-                        $_GET['searchterm'] = $mainSearchTerm;
+                        $_GET['q'] = $mainSearchTerm;
                     }
                 {/php}
             «IF !application.targets('1.3.5')»
