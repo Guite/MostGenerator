@@ -1010,6 +1010,7 @@ class Repository {
                 return $qb;
             }
 
+            $fragment = str_replace('\'', '', \DataUtil::formatForStore($fragment));
             $fragmentIsNumeric = is_numeric($fragment);
 
             «val searchFields = getDisplayFields.filter[isContainedInTextualSearch]»
