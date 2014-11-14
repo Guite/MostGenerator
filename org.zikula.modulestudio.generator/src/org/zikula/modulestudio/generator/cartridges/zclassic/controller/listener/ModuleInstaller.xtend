@@ -18,6 +18,7 @@ class ModuleInstaller {
                 «IF isBase»
                     return array(
                         CoreEvents::MODULE_INSTALL             => array('moduleInstalled', 5),
+                        CoreEvents::MODULE_POSTINSTALL         => array('modulePostInstalled', 5),
                         CoreEvents::MODULE_UPGRADE             => array('moduleUpgraded', 5),
                         CoreEvents::MODULE_ENABLE              => array('moduleEnabled', 5),
                         CoreEvents::MODULE_DISABLE             => array('moduleDisabled', 5),
@@ -47,6 +48,25 @@ class ModuleInstaller {
             «ENDIF»
         }
 
+        «IF !targets('1.3.5')»
+            /**
+             * Listener for the `module.postinstall` event.
+             *
+             * Called after a module has been installed (on reload of the extensions view).
+             * Receives `$modinfo` as args.
+             *
+             * @param ModuleStateEvent $event The event instance.
+             */
+            public function modulePostInstalled(ModuleStateEvent $event)
+            {
+                «IF !isBase»
+                    parent::modulePostInstalled($event);
+
+                    «commonExample.generalEventProperties(it)»
+                «ENDIF»
+            }
+
+        «ENDIF»
         /**
          * Listener for the `«IF targets('1.3.5')»installer.module.upgraded«ELSE»module.upgrade«ENDIF»` event.
          *
