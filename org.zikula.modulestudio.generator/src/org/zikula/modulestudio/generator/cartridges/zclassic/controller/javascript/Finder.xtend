@@ -220,7 +220,7 @@ class Finder {
                 }
             } else if (editor === 'tinymce') {
                 html = getPasteSnippet('html', itemId);
-                window.opener.tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
+                tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
                 // other tinymce commands: mceImage, mceInsertLink, mceReplaceContent, see http://www.tinymce.com/wiki.php/Command_identifiers
             } else if (editor === 'ckeditor') {
                 if (window.opener.current«appName»Editor !== null) {
