@@ -159,14 +159,26 @@ class Actions {
     def private dispatch actionImplBody(MainAction it) '''
         «IF controller instanceof AjaxController»
         «ELSE»
-            «IF controller.hasActions('view')»
 
+            «IF controller.hasActions('view')»
+                // redirect to view action
                 «IF app.targets('1.3.5')»
                     $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'view', array('lct' => '«controller.formattedName»'));
 
                     return $this->redirect($redirectUrl);
                 «ELSE»
                     $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $objectType . '_view', array('lct' => '«controller.formattedName»'));
+
+                    return new RedirectResponse(System::normalizeUrl($redirectUrl));
+                «ENDIF»
+            «ELSEIF controller.isConfigController»
+                // redirect to config action
+                «IF app.targets('1.3.5')»
+                    $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'config', array('lct' => '«controller.formattedName»'));
+
+                    return $this->redirect($redirectUrl);
+                «ELSE»
+                    $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«controller.formattedName»_config');
 
                     return new RedirectResponse(System::normalizeUrl($redirectUrl));
                 «ENDIF»
