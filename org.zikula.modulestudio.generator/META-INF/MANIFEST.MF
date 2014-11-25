@@ -30,11 +30,11 @@ Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="1.0.0",
  org.eclipse.gmf.runtime.diagram.ui.render;bundle-version="1.7.0",
  org.eclipse.jface.text;bundle-version="3.9.1",
  org.eclipse.ui;bundle-version="3.106.0",
- org.eclipse.xtend.core;bundle-version="2.7.2",
- org.eclipse.xtend.standalone;bundle-version="2.7.2";resolution:=optional,
- org.eclipse.xtend2.lib;bundle-version="2.7.2",
- org.eclipse.xtext;bundle-version="2.7.2",
- org.eclipse.xtext.builder;bundle-version="2.7.2",
+ org.eclipse.xtend.core;bundle-version="2.7.3",
+ org.eclipse.xtend.standalone;bundle-version="2.7.3";resolution:=optional,
+ org.eclipse.xtend2.lib;bundle-version="2.7.3",
+ org.eclipse.xtext;bundle-version="2.7.3",
+ org.eclipse.xtext.builder;bundle-version="2.7.3",
  org.objectweb.asm;bundle-version="5.0.1"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
