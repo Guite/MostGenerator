@@ -198,11 +198,11 @@ class SimpleFields {
                 {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it, true)»}
             {else}
                 {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassOptional(it, true)»}
-                <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
+                <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
             {/if}
         «ELSE»
             {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassOptional(it, true)»}
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»" «IF isLegacyApp»style="clear:left;"«ENDIF»>{gt text='Reset to empty value'}</a></span>
+            <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»" «IF isLegacyApp»style="clear:left;"«ENDIF»>{gt text='Reset to empty value'}</a></span>
         «ENDIF»
 
             <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file extensions:'} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
@@ -289,7 +289,7 @@ class SimpleFields {
         {/if}
         «/*TODO: visible=false*/»
         «IF !mandatory && nullable»
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
+            <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
         «ENDIF»
     '''
 
@@ -300,7 +300,7 @@ class SimpleFields {
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         {/if}
         «IF !mandatory && nullable»
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
+            <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
         «ENDIF»
     '''
 
