@@ -163,7 +163,7 @@ class Actions {
             «IF controller.hasActions('view')»
                 // redirect to view action
                 «IF app.targets('1.3.5')»
-                    $redirectUrl = ModUtil::url($this->name, $objectType, 'view', array('lct' => '«controller.formattedName»'));
+                    $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'view', array('lct' => '«controller.formattedName»'));
 
                     return $this->redirect($redirectUrl);
                 «ELSE»
