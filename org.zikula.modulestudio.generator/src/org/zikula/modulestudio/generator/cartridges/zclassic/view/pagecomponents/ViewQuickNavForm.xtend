@@ -238,7 +238,7 @@ class ViewQuickNavForm {
                         unset($_GET['q']);
                     }
                 {/php}
-                {modapifunc modname='«source.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' useJoins=false assign='listEntries'}
+                {modapifunc modname='«source.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»'«IF !(source as Entity).categorisable» useJoins=false«ENDIF» assign='listEntries'}
                 <select id="«sourceAliasName»" name="«sourceAliasName»"«IF !application.targets('1.3.5')» class="form-control input-sm"«ENDIF»>
                     <option value="">{$lblDefault}</option>
                 {foreach item='option' from=$listEntries}
