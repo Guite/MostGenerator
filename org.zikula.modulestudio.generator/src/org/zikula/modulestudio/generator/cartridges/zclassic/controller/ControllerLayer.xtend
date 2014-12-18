@@ -665,21 +665,22 @@ class ControllerLayer {
                 $currentLegacyType = $this->request->query->filter('lct', 'user', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
                 $permLevel = in_array('admin', array($currentType, $currentLegacyType)) ? ACCESS_ADMIN : ACCESS_READ;
 
-                «IF it instanceof UserController»
+                «IF it instanceof AdminController || it instanceof UserController»
                     «FOR entity : app.getAllEntities.filter[hasActions('view')]»
-                        «entity.menuLinkToViewAction»
+                        «entity.menuLinkToViewAction(it)»
                     «ENDFOR»
-                «ELSEIF app.needsConfig && isConfigController»
-                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        «IF app.targets('1.3.5')»
-                            $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
-                        «ELSE»
-                            $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
-                        «ENDIF»
-                                         'text' => $this->__('Configuration'),
-                                         'title' => $this->__('Manage settings for this application')«IF !app.targets('1.3.5')»,
-                                         'icon' => 'wrench'«ENDIF»);
-                    }
+                    «IF app.needsConfig && isConfigController»
+                        if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                            «IF app.targets('1.3.5')»
+                                $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
+                            «ELSE»
+                                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
+                            «ENDIF»
+                                             'text' => $this->__('Configuration'),
+                                             'title' => $this->__('Manage settings for this application')«IF !app.targets('1.3.5')»,
+                                             'icon' => 'wrench'«ENDIF»);
+                        }
+                    «ENDIF»
                 «ENDIF»
 
                 return $links;
@@ -689,11 +690,11 @@ class ControllerLayer {
         }
     '''
 
-    def private menuLinkToViewAction(Entity it) '''
+    def private menuLinkToViewAction(Entity it, Controller controller) '''
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
             && SecurityUtil::checkPermission($this->name . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
             «IF app.targets('1.3.5')»
-                $links[] = array('url' => ModUtil::url($this->name, '«name.formatForCode»', 'view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
+                $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
                 $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
             «ENDIF»
