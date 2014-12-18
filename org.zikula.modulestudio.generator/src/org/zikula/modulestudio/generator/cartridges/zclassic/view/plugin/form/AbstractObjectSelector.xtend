@@ -439,10 +439,7 @@ class AbstractObjectSelector {
                 $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
             «ENDIF»
 
-            $inputValue = $this->getSelectedValue();
-            if (empty($inputValue) || !$inputValue) {
-                $inputValue = FormUtil::getPassedValue($this->inputName, '', $source);
-            }
+            $inputValue = FormUtil::getPassedValue($this->inputName, $this->getSelectedValue(), $source);
             if (empty($inputValue)) {
                 return $many ? array() : null;
             }
