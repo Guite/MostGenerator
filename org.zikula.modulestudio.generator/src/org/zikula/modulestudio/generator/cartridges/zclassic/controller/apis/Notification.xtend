@@ -194,7 +194,7 @@ class Notification {
                      ->assign('mailData', $mailData);
 
                 $mailArgs = array(
-                    'fromname' => $siteName),
+                    'fromname' => $siteName,
                     'toname' => $recipient['name'],
                     'toaddress' => $recipient['email'],
                     'subject' => $this->getMailSubject(),
