@@ -93,7 +93,7 @@ class Section {
                 «IF useGroupingPanels('edit')»
                     «IF app.targets('1.3.5')»
                         <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
-                        <fieldset class="hook z-panel-content" style="display: none">{$hook}</div>
+                        <fieldset class="hook z-panel-content" style="display: none">
                     «ELSE»
                         <div class="panel panel-default">
                             <div class="panel-heading">
