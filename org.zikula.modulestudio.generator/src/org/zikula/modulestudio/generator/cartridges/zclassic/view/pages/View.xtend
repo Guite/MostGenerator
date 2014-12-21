@@ -318,12 +318,13 @@ class View {
 
     def private callDisplayHooks(Entity it, String appName) '''
 
-        {if $lct ne 'admin'}
+        {* here you can activate calling display hooks for the view page if you need it *}
+        {*if $lct ne 'admin'}
             {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' urlobject=$currentUrlObject assign='hooks'}
             {foreach key='providerArea' item='hook' from=$hooks}
                 {$hook}
             {/foreach}
-        {/if}
+        {/if*}
     '''
 
     def private ajaxToggle(Entity it) '''
