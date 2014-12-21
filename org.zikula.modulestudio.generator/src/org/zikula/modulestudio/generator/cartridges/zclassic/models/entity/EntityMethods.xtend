@@ -358,7 +358,7 @@ class EntityMethods {
                 $args['«getFirstPrimaryKey.name.formatForCode»'] = $this['«getFirstPrimaryKey.name.formatForCode»'];
             «ENDIF»
 
-            if (isset($this['slug'])) {
+            if (property_exists($this, 'slug')) {
                 $args['slug'] = $this['slug'];
             }
 
