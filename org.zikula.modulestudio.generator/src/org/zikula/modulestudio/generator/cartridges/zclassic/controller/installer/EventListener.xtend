@@ -109,6 +109,11 @@ class EventListener {
                 «IF generateListContentType || needsDetailContentType»
                     EventUtil::registerPersistentModuleHandler('«appName»', 'module.content.gettypes', array('«callableClass»', 'contentGetTypes'));
                 «ENDIF»
+                «IF generateScribitePlugins»
+                    EventUtil::registerPersistentModuleHandler('«appName»', 'module.scribite.editorhelpers', array('«callableClass»', 'getEditorHelpers'));
+                    EventUtil::registerPersistentModuleHandler('«appName»', 'moduleplugin.tinymce.externalplugins', array('«callableClass»', 'getTinyMcePlugins'));
+                    EventUtil::registerPersistentModuleHandler('«appName»', 'moduleplugin.ckeditor.externalplugins', array('«callableClass»', 'getCKEditorPlugins'));
+                «ENDIF»
             «ENDIF»
         }
     '''

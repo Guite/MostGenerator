@@ -55,7 +55,7 @@ class Scribite {
     }
 
     def private pluginCk(Application it) {
-        val pluginPath = docPath + 'ckeditor/plugins/' + name.formatForDB + '/'
+        val pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
 
         var fileName = 'plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
@@ -180,7 +180,7 @@ class Scribite {
     '''
 
     def private ckPlugin(Application it) '''
-        CKEDITOR.plugins.add('«appName»', {
+        CKEDITOR.plugins.add('«appName.formatForDB»', {
             requires: 'popup',
             lang: 'en,nl,de',
             init: function (editor) {
@@ -196,7 +196,7 @@ class Scribite {
                     }
                 });
                 editor.ui.addButton('«appName.formatForDB»', {
-                    label: editor.lang.«appName».title,
+                    label: editor.lang.«appName.formatForDB».title,
                     command: 'insert«appName»',
                  // icon: this.path + 'images/ed_«appName.formatForDB».png'
                     icon: '/images/icons/extrasmall/favorites.png'
@@ -206,21 +206,21 @@ class Scribite {
     '''
 
     def private ckLangDe(Application it) '''
-        CKEDITOR.plugins.setLang('«appName»', 'de', {
+        CKEDITOR.plugins.setLang('«appName.formatForDB»', 'de', {
             title : '«appName»-Objekt einfügen',
             alt: '«appName»-Objekt einfügen'
         });
     '''
 
     def private ckLangEn(Application it) '''
-        CKEDITOR.plugins.setLang('«appName»', 'en', {
+        CKEDITOR.plugins.setLang('«appName.formatForDB»', 'en', {
             title: 'Insert «appName» object',
             alt: 'Insert «appName» object'
         });
     '''
 
     def private ckLangNl(Application it) '''
-        CKEDITOR.plugins.setLang('«appName»', 'nl', {
+        CKEDITOR.plugins.setLang('«appName.formatForDB»', 'nl', {
             title : '«appName» Object invoegen',
             alt: '«appName» Object invoegen'
         });
@@ -275,12 +275,15 @@ class Scribite {
                         title : '«name.formatForDB».desc',
                         cmd : 'mce«appName»',
                      // image : url + '/img/«appName».gif'
-                        image : '/images/icons/extrasmall/favorites.png'
-                    });
-
-                    // Add a node change handler, selects the button in the UI when a image is selected
-                    ed.onNodeChange.add(function (ed, cm, n) {
-                        cm.setActive('«name.formatForDB»', n.nodeName === 'IMG');
+                        image : '/images/icons/extrasmall/favorites.png',
+                        onPostRender: function() {
+                            var ctrl = this;
+        
+                            // Add a node change handler, selects the button in the UI when an anchor or an image is selected
+                            ed.on('NodeChange', function(e) {
+                                ctrl.active(e.element.nodeName == 'A' || e.element.nodeName == 'IMG');
+                            });
+                        }
                     });
                 },
 
