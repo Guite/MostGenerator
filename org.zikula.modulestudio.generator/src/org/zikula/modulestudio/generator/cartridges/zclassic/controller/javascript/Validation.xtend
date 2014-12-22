@@ -156,7 +156,7 @@ class Validation {
                 «ELSE»
                     $.ajax({
                         type: 'POST',
-                        url: Routing.generate('«appName.formatForDB»_ajax_checkForDuplicate'),
+                        url: Routing.generate('«appName.formatForDB»_ajax_checkforduplicate'),
                         data: params
                     }).done(function(res) {
                         if (res.data.isDuplicate !== '1') {

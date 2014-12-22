@@ -111,7 +111,7 @@ class Redirect {
                 «IF app.targets('1.3.5')»
                     $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'view', $viewArgs);
                 «ELSE»
-                    $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_view', $viewArgs);
+                    $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_view', $viewArgs);
                 «ENDIF»
             «ELSEIF hasActions('index')»
                 // redirect to the «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page
@@ -119,7 +119,7 @@ class Redirect {
                 «IF app.targets('1.3.5')»
                     $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'main', $indexArgs);
                 «ELSE»
-                    $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_index', $indexArgs);
+                    $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_index', $indexArgs);
                 «ENDIF»
             «ELSE»
                 $url = System::getHomepageUrl();
@@ -135,7 +135,7 @@ class Redirect {
                     «ELSE»
                         $displayArgs = array(«routeParams('this->idValues', false)»);
                         $displayArgs['lct'] = $legacyControllerType;
-                        $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_display', $displayArgs);
+                        $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_display', $displayArgs);
                     «ENDIF»
                 }
             «ENDIF»
@@ -193,7 +193,7 @@ class Redirect {
                             «IF app.targets('1.3.5')»
                                 return ModUtil::url($this->name, '«controllerName»', 'main');
                             «ELSE»
-                                return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_index', array('lct' => '«controllerName»'));
+                                return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_index', array('lct' => '«controllerName»'));
                             «ENDIF»
                     «ENDIF»
                     «IF someController.hasActions('view')»
@@ -201,7 +201,7 @@ class Redirect {
                             «IF app.targets('1.3.5')»
                                 return ModUtil::url($this->name, '«controllerName»', 'view', array('ot' => $this->objectType));
                             «ELSE»
-                                return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_view', array('lct' => '«controllerName»'));
+                                return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_view', array('lct' => '«controllerName»'));
                             «ENDIF»
                     «ENDIF»
                     «IF someController.hasActions('display')»
@@ -217,7 +217,7 @@ class Redirect {
                                     return ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
                                 «ELSE»
                                     $urlArgs['lct'] = '«controllerName»';
-                                    return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
+                                    return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_display', $urlArgs);
                                 «ENDIF»
                             }
                             return $this->getDefaultReturnUrl($args);
@@ -235,7 +235,7 @@ class Redirect {
                                     «IF app.targets('1.3.5')»
                                         return ModUtil::url($this->name, '«controllerName»', 'view', array('ot' => '«sourceEntity.name.formatForCode»'));
                                     «ELSE»
-                                        return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForCode»_view', array('lct' => '«controllerName»'));
+                                        return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_view', array('lct' => '«controllerName»'));
                                     «ENDIF»
                             «ENDIF»
                             «IF someController.hasActions('display')»
@@ -244,7 +244,7 @@ class Redirect {
                                         «IF app.targets('1.3.5')»
                                             return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                         «ELSE»
-                                            return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForCode»_display',  array('id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
+                                            return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_display',  array('id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                         «ENDIF»
                                     }
                                     return $this->getDefaultReturnUrl($args);

@@ -259,7 +259,7 @@ class Notification {
                     «IF targets('1.3.5')»
                         $displayUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'display', $urlArgs, null, null, true); // absolute
                     «ELSE»
-                        $displayUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $objectType . '_display', $urlArgs, true);
+                        $displayUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
                     «ENDIF»
                 «ENDIF»
                 «IF hasAdminController && getAllAdminControllers.head.hasActions('edit')
@@ -267,7 +267,7 @@ class Notification {
                     «IF targets('1.3.5')»
                         $editUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'edit', $urlArgs, null, null, true); // absolute
                     «ELSE»
-                        $editUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $objectType . '_edit', $urlArgs, true);
+                        $editUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
                     «ENDIF»
                 «ENDIF»
             } elseif ($this->recipientType == 'creator') {
@@ -279,14 +279,14 @@ class Notification {
                         «IF targets('1.3.5')»
                             $displayUrl = ModUtil::url($this->name, 'user', 'display', $urlArgs, null, null, true); // absolute
                         «ELSE»
-                            $displayUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $objectType . '_display', $urlArgs, true);
+                            $displayUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
                         «ENDIF»
                     «ENDIF»
                     «IF getMainUserController.hasActions('edit')»
                         «IF targets('1.3.5')»
                             $editUrl = ModUtil::url($this->name, 'user', 'edit', $urlArgs, null, null, true); // absolute
                         «ELSE»
-                            $editUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $objectType . '_edit', $urlArgs, true);
+                            $editUrl = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
                         «ENDIF»
                     «ENDIF»
                 «ELSE»

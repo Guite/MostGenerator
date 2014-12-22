@@ -444,7 +444,7 @@ class DisplayFunctions {
             «ELSE»
                 $.ajax({
                     type: 'POST',
-                    url: Routing.generate('«appName.formatForDB»_ajax_toggleFlag'),
+                    url: Routing.generate('«appName.formatForDB»_ajax_toggleflag'),
                     data: params
                 }).done(function(res) {
                     // get data returned by the ajax response

@@ -72,7 +72,7 @@ class ExternalView {
                 «IF app.targets('1.3.5')»
                     <a href="{modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
                 «ELSE»
-                    <a href="{route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams(name.formatForCode, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
+                    <a href="{route name='«app.appName.formatForDB»_«name.formatForDB»_display' «routeParams(name.formatForCode, true)»}" title="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}">
                 «ENDIF»
             «ENDIF»
             {$«name.formatForCode»->getTitleFromDisplayPattern()|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}
@@ -305,7 +305,7 @@ class ExternalView {
                     {foreach item='«name.formatForCode»' from=$items}
                         <li>
                             <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})">{$«name.formatForCode»->getTitleFromDisplayPattern()}</a>
-                            <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»«IF app.targets('1.3.5')»{modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}«ELSE»{route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams(name.formatForCode, true)» absolute=true}«ENDIF»«ENDIF»" />
+                            <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»«IF app.targets('1.3.5')»{modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}«ELSE»{route name='«app.appName.formatForDB»_«name.formatForDB»_display' «routeParams(name.formatForCode, true)» absolute=true}«ENDIF»«ENDIF»" />
                             <input type="hidden" id="title{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}" />
                             <input type="hidden" id="desc{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{capture assign='description'}«displayDescription('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
                         </li>

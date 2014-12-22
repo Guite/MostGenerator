@@ -68,8 +68,8 @@ class Rss {
                     <link>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</link>
                     <guid>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</guid>
                 «ELSE»
-                    <link>{route name='«appName.formatForDB»_«name.formatForCode»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</link>
-                    <guid>{route name='«appName.formatForDB»_«name.formatForCode»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</guid>
+                    <link>{route name='«appName.formatForDB»_«name.formatForDB»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</link>
+                    <guid>{route name='«appName.formatForDB»_«name.formatForDB»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</guid>
                 «ENDIF»
                 «IF !standardFields»
                     «IF metaData»

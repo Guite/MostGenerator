@@ -261,7 +261,7 @@ class Newsletter {
                     «IF targets('1.3.5')»
                         $items[$k]['nl_url_title'] = ModUtil::url($this->modname, 'user', 'display', $urlArgs, null, null, true);
                     «ELSE»
-                        $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $objectType . '_display', $urlArgs, true);
+                        $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
                     «ENDIF»
                 «ELSE»
                     $items[$k]['nl_url_title'] = null;

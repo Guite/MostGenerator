@@ -224,7 +224,7 @@ class Display {
               «IF linkEntity.isLegacyApp»
                   <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
               «ELSE»
-                  <a href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
+                  <a href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
               «ENDIF»
           «ENDIF»
             {$«relObjName»->getTitleFromDisplayPattern()|default:""}
@@ -233,7 +233,7 @@ class Display {
             «IF linkEntity.isLegacyApp»
                 <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»' theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             «ELSE»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForCode»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
             «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
@@ -427,7 +427,7 @@ class Display {
                         «IF isLegacyApp»
                             <li><a href="{modurl modname='«appName»' type=$lct func='display' ot='«objName»' «routeParamsLegacy('directParent', true, true)»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
                         «ELSE»
-                            <li><a href="{route name='«appName.formatForDB»_«objName»_display' «routeParams('directParent', true)» lct=$lct}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
+                            <li><a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_display' «routeParams('directParent', true)» lct=$lct}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
                         «ENDIF»
                     </ul>
                 {/if}
@@ -479,7 +479,7 @@ class Display {
             «IF isLegacyApp»
                 <li><a href="{modurl modname='«appName»' type=$lct func='display' ot='«objName»' «routeParamsLegacy('node', true, true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
             «ELSE»
-                <li><a href="{route name='«appName.formatForDB»_«objName»_display' «routeParams('node', true)» lct=$lct}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                <li><a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_display' «routeParams('node', true)» lct=$lct}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
             «ENDIF»
         {/foreach}
         </ul>

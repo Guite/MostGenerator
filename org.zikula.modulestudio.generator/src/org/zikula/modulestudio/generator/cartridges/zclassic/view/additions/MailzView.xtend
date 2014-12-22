@@ -83,7 +83,7 @@ class MailzView {
         «IF application.targets('1.3.5')»
             {modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»'«routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}
         «ELSE»
-            {route name='«app.appName.formatForDB»_«name.formatForCode»_display'«routeParams(name.formatForCode, true)» absolute=true}
+            {route name='«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)» absolute=true}
         «ENDIF»'''
 
     def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
@@ -98,11 +98,11 @@ class MailzView {
                 «ENDIF»
             «ELSE»
                 «IF app.getMainUserController.hasActions('view')»
-                    {route name='«app.appName.formatForDB»_«name.formatForCode»_view' absolute=true}
+                    {route name='«app.appName.formatForDB»_«name.formatForDB»_view' absolute=true}
                 «ELSEIF app.getMainUserController.hasActions('index')»
-                    {route name='«app.appName.formatForDB»_«name.formatForCode»_index' absolute=true}
+                    {route name='«app.appName.formatForDB»_«name.formatForDB»_index' absolute=true}
                 «ELSE»
-                    {route name='«app.appName.formatForDB»_«name.formatForCode»_index' absolute=true}
+                    {route name='«app.appName.formatForDB»_«name.formatForDB»_index' absolute=true}
                 «ENDIF»
             «ENDIF»
         «ELSE»

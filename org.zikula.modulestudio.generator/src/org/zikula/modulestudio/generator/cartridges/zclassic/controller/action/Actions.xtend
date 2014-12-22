@@ -100,7 +100,7 @@ class Actions {
             $logger = $this->serviceManager->get('logger');
             $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', array('app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»'));
 
-            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $objectType . '_«name.formatForCode»', $redirectArgs);
+            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($objectType) . '_«name.formatForDB»', $redirectArgs);
 
             return new RedirectResponse(System::normalizeUrl($redirectUrl));
         «ENDIF»
@@ -167,7 +167,7 @@ class Actions {
 
                     return $this->redirect($redirectUrl);
                 «ELSE»
-                    $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $objectType . '_view', array('lct' => '«controller.formattedName»'));
+                    $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($objectType) . '_view', array('lct' => '«controller.formattedName»'));
 
                     return new RedirectResponse(System::normalizeUrl($redirectUrl));
                 «ENDIF»
@@ -178,7 +178,7 @@ class Actions {
 
                     return $this->redirect($redirectUrl);
                 «ELSE»
-                    $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«controller.formattedName»_config');
+                    $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«controller.formattedName.toLowerCase»_config');
 
                     return new RedirectResponse(System::normalizeUrl($redirectUrl));
                 «ENDIF»
@@ -229,7 +229,7 @@ class Actions {
 
             return $this->redirect($redirectUrl);
         «ELSE»
-            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_view', array('lct' => $legacyControllerType));
+            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_view', array('lct' => $legacyControllerType));
 
             return new RedirectResponse(System::normalizeUrl($redirectUrl));
         «ENDIF»
@@ -976,7 +976,7 @@ class Actions {
             $redirectUrl = ModUtil::url($this->name, '«name.formatForCode»', '«IF controller.hasActions('view')»view«ELSE»main«ENDIF»', array('lct' => $legacyControllerType));
         «ELSE»
             // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
-            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_«IF controller.hasActions('view')»view«ELSE»index«ENDIF»', array('lct' => $legacyControllerType));
+            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller.hasActions('view')»view«ELSE»index«ENDIF»', array('lct' => $legacyControllerType));
         «ENDIF»
     '''
 

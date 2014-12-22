@@ -245,6 +245,7 @@ class ControllerLayer {
                 use Zikula\Core\Hook\ValidationHook;
                 use Zikula\Core\Hook\ValidationProviders;
             «ENDIF»
+            use Zikula\Core\ModUrl;
             use Zikula\Core\RouteUrl;
             «entityControllerBaseImportsResponse»
 
@@ -308,7 +309,7 @@ class ControllerLayer {
         «IF app.targets('1.3.5')»
             $redirectUrl = ModUtil::url($this->name, 'admin', 'main', array('ot' => '«name.formatForCode»'));
         «ELSE»
-            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_index', array('lct' => 'admin'));
+            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_index', array('lct' => 'admin'));
         «ENDIF»
 
         $objectType = '«name.formatForCode»';
@@ -695,7 +696,7 @@ class ControllerLayer {
             «IF app.targets('1.3.5')»
                 $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
-                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForCode»_view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
+                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
             «ENDIF»
                              'text' => $this->__('«nameMultiple.formatForDisplayCapital»'),
                              'title' => $this->__('«name.formatForDisplayCapital» list'));

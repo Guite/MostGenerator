@@ -56,7 +56,7 @@ class Relations {
                         «IF app.targets('1.3.5')»
                             <a href="{modurl modname='«app.appName»' type=$lct func='display' ot='«name.formatForCode»' «routeParamsLegacy('item', true, true)»}" title="{$item->getTitleFromDisplayPattern()|replace:"\"":""}">
                         «ELSE»
-                            <a href="{route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams('item', true)» lct=$lct}" title="{$item->getTitleFromDisplayPattern()|replace:"\"":""}">
+                            <a href="{route name='«app.appName.formatForDB»_«name.formatForDB»_display' «routeParams('item', true)» lct=$lct}" title="{$item->getTitleFromDisplayPattern()|replace:"\"":""}">
                         «ENDIF»
                     {/if}
                 «ENDIF»
@@ -67,7 +67,7 @@ class Relations {
                         «IF app.targets('1.3.5')»
                             <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type=$lct func='display' ot='«name.formatForCode»' «routeParamsLegacy('item', true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                         «ELSE»
-                            <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«app.appName.formatForDB»_«name.formatForCode»_display' «routeParams('item', true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                            <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«app.appName.formatForDB»_«name.formatForDB»_display' «routeParams('item', true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
                         «ENDIF»
                     {/if}
                     {/strip}
@@ -143,7 +143,7 @@ class Relations {
                 «IF application.targets('1.3.5')»
                     <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo="`$lct`Display«relatedEntity.name.formatForCodeCapital»"'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
                 «ELSE»
-                    <a href="{route name='«appName.formatForDB»_«otherEntity.name.formatForCode»_edit' lct=$lct «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo="`$lct`Display«relatedEntity.name.formatForCodeCapital»"'}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
+                    <a href="{route name='«appName.formatForDB»_«otherEntity.name.formatForDB»_edit' lct=$lct «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo="`$lct`Display«relatedEntity.name.formatForCodeCapital»"'}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
                 «ENDIF»
             </p>
             {/if}

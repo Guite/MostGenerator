@@ -346,7 +346,7 @@ class Finder {
             «ELSE»
                 $.ajax({
                     type: 'POST',
-                    url: Routing.generate('«appName.formatForDB»_ajax_getItemListFinder'),
+                    url: Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'),
                     data: params
                 }).done(function(res) {
                     // get data returned by the ajax response

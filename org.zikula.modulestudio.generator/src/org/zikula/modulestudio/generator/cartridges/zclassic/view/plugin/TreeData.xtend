@@ -148,7 +148,7 @@ class TreeData {
                 if ($controllerHasEditAction) {
                     $urlArgs = $item->createUrlArgs();
                     $urlArgs['lct'] = $params['lct'];
-                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . $params['objectType'] . '_edit', $urlArgs);
+                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($params['objectType']) . '_edit', $urlArgs);
 
                     $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
 

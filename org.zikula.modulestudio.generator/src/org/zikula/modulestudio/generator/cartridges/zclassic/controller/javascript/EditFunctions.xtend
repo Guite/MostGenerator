@@ -122,7 +122,7 @@ class EditFunctions {
 
                             // Retrieve data from server using "query" parameter as it contains the search string entered by the user
                             $('#' + fieldName + 'Indicator').removeClass('hidden')
-                            $.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName, { fragment: query }), function( data ) {
+                            $.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
 
                                 if (data.length > 0) {
                                     $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
@@ -875,7 +875,7 @@ class EditFunctions {
                     if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && relationHandler.acInstance === null) {
                         relationHandler.acInstance = 'yes';
 
-                        acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getItemListAutoCompletion');
+                        acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion');
                         acUrl += '&ot=' + objectType;
                         if ($('#' + idPrefix + 'ItemList').size() > 0) {
                             acUrl += '&exclude=' + $('#' + idPrefix + 'ItemList').val();

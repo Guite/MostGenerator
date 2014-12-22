@@ -217,7 +217,8 @@ class Views {
                                     <a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a>
                                 «ELSE»
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    <a href="{route name="«appName.formatForDB»_`$modItem.objectType`_view" lct='admin' workflowState=$modItem.state}" class="bold alert-link">{$modItem.message}</a>
+                                    {assign var='itemObjectType' value=$modItem.objectType|lower}
+                                    <a href="{route name="«appName.formatForDB»_`$itemObjectType`_view" lct='admin' workflowState=$modItem.state}" class="bold alert-link">{$modItem.message}</a>
                                 «ENDIF»
                             </p>
                         {/foreach}

@@ -85,7 +85,7 @@ class ViewHierarchy {
                 «IF isLegacyApp»
                     <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">{$switchTitle}</a>
                 «ELSE»
-                    <a href="{route name='«appName.formatForDB»_«objName»_view' lct=$lct}" title="{$switchTitle}" class="fa fa-table">{$switchTitle}</a>
+                    <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct}" title="{$switchTitle}" class="fa fa-table">{$switchTitle}</a>
                 «ENDIF»
             </p>
 
