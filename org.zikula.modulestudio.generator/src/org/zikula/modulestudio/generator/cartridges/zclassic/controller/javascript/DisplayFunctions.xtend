@@ -484,11 +484,11 @@ class DisplayFunctions {
         {
             var alertBox;
 
-            alertBox = '
-                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade">
-                  <button type="button" class="close" data-dismiss="alert">&times;</button>
-                  <h4>' + title + '</h4>
-                  <p>' + content + '</p>
+            alertBox = ' \
+                <div id="' + alertId + '" class="alert alert-' + cssClass + ' fade"> \
+                  <button type="button" class="close" data-dismiss="alert">&times;</button> \
+                  <h4>' + title + '</h4> \
+                  <p>' + content + '</p> \
                 </div>';
 
             // insert alert before the given element
