@@ -696,7 +696,7 @@ class ControllerLayer {
             «IF app.targets('1.3.5')»
                 $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
-                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
+                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_view', array('lct' => '«controller.formattedName»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ENDIF»
                              'text' => $this->__('«nameMultiple.formatForDisplayCapital»'),
                              'title' => $this->__('«name.formatForDisplayCapital» list'));
