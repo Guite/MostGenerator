@@ -169,7 +169,7 @@ class Redirect {
                 «IF app.targets('1.3.5')»
                     return ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'handleInlineRedirect', $urlArgs);
                 «ELSE»
-                    return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . $this->objectType . '_handleInlineRedirect', $urlArgs);
+                    return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_handleinlineredirect', $urlArgs);
                 «ENDIF»
             }
 

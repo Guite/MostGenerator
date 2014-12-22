@@ -287,7 +287,6 @@ class ControllerLayer {
          «IF !app.targets('1.3.5') && !isBase»
          *
          * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».plural%/handleSelectedEntries",
-         *        name = "«app.appName.formatForDB»_«name.formatForCode»_handleSelectedEntries",
          *        methods = {"POST"}
          * )
          «ENDIF»
@@ -447,7 +446,6 @@ class ControllerLayer {
          «IF it instanceof Entity && !app.targets('1.3.5') && !isBase»
          *
          * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
-         *        name = "«app.appName.formatForDB»_«name.formatForCode»_handleInlineRedirect",
          *        requirements = {"id" = "\d+"},
          *        defaults = {"commandName" = "", "id" = 0},
          *        methods = {"GET"}
@@ -510,7 +508,6 @@ class ControllerLayer {
          «IF !app.targets('1.3.5') && !isBase»
          *
          * @Route("/config",
-         *        name = "«app.appName.formatForDB»_«formattedName»_config",
          *        methods = {"GET", "POST"}
          * )
          «ENDIF»

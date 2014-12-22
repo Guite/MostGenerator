@@ -194,7 +194,6 @@ class ControllerAction {
     def private dispatch actionRoute(MainAction it, Entity entity) '''
          «' '»*
          «' '»* @Route("/%«app.appName.formatForDB».routing.«entity.name.formatForCode».plural%",
-         «' '»*        name = "«app.appName.formatForDB»_«entity.name.formatForCode»_index",
          «' '»*        methods = {"GET"}
          «' '»* )
     '''
@@ -202,7 +201,6 @@ class ControllerAction {
     def private dispatch actionRoute(ViewAction it, Entity entity) '''
          «' '»*
          «' '»* @Route("/%«app.appName.formatForDB».routing.«entity.name.formatForCode».plural%/%«app.appName.formatForDB».routing.view.suffix%/{sort}/{sortdir}/{pos}/{num}.{_format}",
-         «' '»*        name = "«app.appName.formatForDB»_«entity.name.formatForCode»_view",
          «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "%«app.appName.formatForDB».routing.formats.view%"},
          «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0, "_format" = "html"},
          «' '»*        methods = {"GET"}
@@ -212,7 +210,6 @@ class ControllerAction {
     def private actionRouteForSingleEntity(Entity it, Action action) '''
          «' '»*
          «' '»* @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
-         «' '»*        name = "«app.appName.formatForDB»_«name.formatForCode»_«action.name.formatForCode»",
          «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "«IF action instanceof DisplayAction»%«app.appName.formatForDB».routing.formats.display%«ELSE»html«ENDIF»"},
          «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»"_format" = "html"},
          «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}
@@ -286,7 +283,6 @@ class ControllerAction {
     def private dispatch actionRoute(CustomAction it, Entity entity) '''
          «' '»*
          «' '»* @Route("/%«app.appName.formatForDB».routing.«entity.name.formatForCode».plural%/«name.formatForCode»",
-         «' '»*        name = "«app.appName.formatForDB»_«entity.name.formatForCode»_«name.formatForCode»",
          «' '»*        methods = {"GET", "POST"}
          «' '»* )
     '''

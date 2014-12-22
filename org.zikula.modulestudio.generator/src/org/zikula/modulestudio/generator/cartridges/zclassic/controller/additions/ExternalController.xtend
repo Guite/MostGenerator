@@ -90,7 +90,6 @@ class ExternalController {
          «IF !targets('1.3.5') && !isBase»
          *
          * @Route("/display/{ot}/{id}/{source}/{displayMode}",
-         *        name = "«appName.formatForDB»_external_display",
          *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
          *        defaults = {"source" = "contentType", "contentType" = "embed"},
          *        methods = {"GET"}
@@ -207,7 +206,6 @@ class ExternalController {
          «IF !targets('1.3.5') && !isBase»
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
-         *        name = "«appName.formatForDB»_external_finder",
          *        requirements = {"editor" = "xinha|tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
          *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
          *        methods = {"GET"},
