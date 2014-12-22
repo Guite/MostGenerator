@@ -533,7 +533,7 @@ class ControllerLayer {
         «ENDIF»
 
         // Create new Form reference
-        $view = FormUtil::newForm($this->name, $this);
+        $view = \FormUtil::newForm($this->name, $this);
 
         $templateName = '«IF app.targets('1.3.5')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
 
