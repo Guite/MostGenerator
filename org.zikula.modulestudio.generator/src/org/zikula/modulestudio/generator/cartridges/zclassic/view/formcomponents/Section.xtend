@@ -94,6 +94,8 @@ class Section {
                     «IF app.targets('1.3.5')»
                         <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
                         <fieldset class="hook z-panel-content" style="display: none">
+                            {$hook}
+                        </fieldset>
                     «ELSE»
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -101,17 +103,15 @@ class Section {
                             </div>
                             <div id="collapseHook{$smarty.foreach.hookLoop.iteration}" class="panel-collapse collapse in">
                                 <div class="panel-body">
+                                    {$hook}
+                                </div>
+                            </div>
+                        </div>
                     «ENDIF»
                 «ELSE»
                     <fieldset>
-                «ENDIF»
-                    {$hook}
-                «IF app.targets('1.3.5')»
+                        {$hook}
                     </fieldset>
-                «ELSE»
-                            </div>
-                        </div>
-                    </div>
                 «ENDIF»
             {/foreach}
         {/if}
