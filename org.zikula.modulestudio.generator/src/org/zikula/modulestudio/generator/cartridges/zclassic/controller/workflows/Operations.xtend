@@ -166,7 +166,7 @@ class Operations {
 
     def private notifyImpl() '''
         // workflow parameters are always lower-cased (#656)
-        $recipientType = $params['recipienttype'];
+        $recipientType = isset($params['recipientType']) ? $params['recipientType'] : $params['recipienttype'];
 
         $notifyArgs = array(
             'recipientType' => $recipientType,
