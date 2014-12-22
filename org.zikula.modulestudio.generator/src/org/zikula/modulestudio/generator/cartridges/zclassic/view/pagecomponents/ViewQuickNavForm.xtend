@@ -57,7 +57,7 @@ class ViewQuickNavForm {
         /* <![CDATA[ */
             «IF application.targets('1.3.5')»
                 document.observe('dom:loaded', function() {
-                    «application.prefix()»InitQuickNavigation('«name.formatForCode»');
+                    «application.vendorAndName»InitQuickNavigation('«name.formatForCode»');
                     {{if isset($searchFilter) && $searchFilter eq false}}
                         {{* we can hide the submit button if we have no quick search field *}}
                         $('quicknavSubmit').addClassName('z-hide');
@@ -66,7 +66,7 @@ class ViewQuickNavForm {
             «ELSE»
                 ( function($) {
                     $(document).ready(function() {
-                        «application.prefix()»InitQuickNavigation('«name.formatForCode»');
+                        «application.vendorAndName»InitQuickNavigation('«name.formatForCode»');
                         {{if isset($searchFilter) && $searchFilter eq false}}
                             {{* we can hide the submit button if we have no quick search field *}}
                             $('#quicknavSubmit').addClass('hidden');

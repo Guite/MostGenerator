@@ -389,12 +389,12 @@ class ExternalView {
         /* <![CDATA[ */
             «IF app.targets('1.3.5')»
                 document.observe('dom:loaded', function() {
-                    «app.name.formatForDB».finder.onLoad();
+                    «app.appName.toFirstLower».finder.onLoad();
                 });
             «ELSE»
                 ( function($) {
                     $(document).ready(function() {
-                        «app.name.formatForDB».finder.onLoad();
+                        «app.appName.toFirstLower».finder.onLoad();
                     });
                 })(jQuery);
             «ENDIF»
@@ -498,12 +498,12 @@ class ExternalView {
         /* <![CDATA[ */
             «IF app.targets('1.3.5')»
                 document.observe('dom:loaded', function() {
-                    «app.name.formatForDB».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
+                    «app.appName.toFirstLower».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
                 });
             «ELSE»
                 ( function($) {
                     $(document).ready(function() {
-                        «app.name.formatForDB».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
+                        «app.appName.toFirstLower».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
                     });
                 })(jQuery);
             «ENDIF»

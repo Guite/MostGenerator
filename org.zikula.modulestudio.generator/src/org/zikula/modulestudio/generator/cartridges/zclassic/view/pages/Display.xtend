@@ -158,7 +158,7 @@ class Display {
         «IF hasBooleansWithAjaxToggleEntity»
             {{assign var='itemid' value=$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}}
             «FOR field : getBooleansWithAjaxToggleEntity»
-                «application.prefix()»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
+                «application.vendorAndName»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
             «ENDFOR»
         «ENDIF»
     '''
@@ -239,12 +239,12 @@ class Display {
             /* <![CDATA[ */
                 «IF linkEntity.isLegacyApp»
                     document.observe('dom:loaded', function() {
-                        «application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                        «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                     });
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            «application.prefix()»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                            «application.vendorAndName»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                         });
                     })(jQuery);
                 «ENDIF»

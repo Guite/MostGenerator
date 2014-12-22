@@ -261,7 +261,7 @@ class ContentTypeListView {
         «IF targets('1.3.5')»
             <script type="text/javascript">
             /* <![CDATA[ */
-                function «prefix()»ToggleCustomTemplate() {
+                function «vendorAndName»ToggleCustomTemplate() {
                     if ($F('«appName.toFirstLower»Template') == 'custom') {
                         $('customTemplateArea').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                     } else {
@@ -270,9 +270,9 @@ class ContentTypeListView {
                 }
 
                 document.observe('dom:loaded', function() {
-                    «prefix()»ToggleCustomTemplate();
+                    «vendorAndName»ToggleCustomTemplate();
                     $('«appName.toFirstLower»Template').observe('change', function(e) {
-                        «prefix()»ToggleCustomTemplate();
+                        «vendorAndName»ToggleCustomTemplate();
                     });
                 });
             /* ]]> */

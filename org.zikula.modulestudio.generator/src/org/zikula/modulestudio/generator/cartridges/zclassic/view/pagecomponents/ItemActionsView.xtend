@@ -71,7 +71,7 @@ class ItemActionsView {
         /* <![CDATA[ */
             «IF application.targets('1.3.5')»
                 document.observe('dom:loaded', function() {
-                    «application.prefix()»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
+                    «application.vendorAndName»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
                 });
             «ELSE»
                 ( function($) {

@@ -61,9 +61,9 @@ class DisplayFunctions {
     '''
 
     def private initItemActions(Application it) '''
-        var «prefix()»ContextMenu;
+        var «vendorAndName»ContextMenu;
 
-        «prefix()»ContextMenu = Class.create(Zikula.UI.ContextMenu, {
+        «vendorAndName»ContextMenu = Class.create(Zikula.UI.ContextMenu, {
             selectMenuItem: function ($super, event, item, item_container) {
                 // open in new tab / window when right-clicked
                 if (event.isRightClick()) {
@@ -83,14 +83,14 @@ class DisplayFunctions {
         /**
          * Initialises the context menu for item actions.
          */
-        function «prefix()»InitItemActions(objectType, func, containerId)
+        function «vendorAndName»InitItemActions(objectType, func, containerId)
         {
             var triggerId, contextMenu, icon;
 
             triggerId = containerId + 'Trigger';
 
             // attach context menu
-            contextMenu = new «prefix()»ContextMenu(triggerId, { leftClick: true, animation: false });
+            contextMenu = new «vendorAndName»ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
             «IF targets('1.3.5')»$«ENDIF»$('#' + containerId + ' a').each(function (elem) {
@@ -179,7 +179,7 @@ class DisplayFunctions {
     '''
 
     def private initQuickNavigation(Application it) '''
-        function «prefix()»CapitaliseFirstLetter(string)
+        function «vendorAndName»CapitaliseFirstLetter(string)
         {
             return string.charAt(0).toUpperCase() + string.substring(1);
         }
@@ -187,51 +187,51 @@ class DisplayFunctions {
         /**
          * Submits a quick navigation form.
          */
-        function «prefix()»SubmitQuickNavForm(objectType)
+        function «vendorAndName»SubmitQuickNavForm(objectType)
         {
-            $('«IF !targets('1.3.5')»#«ENDIF»«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
+            $('«IF !targets('1.3.5')»#«ENDIF»«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
          * Initialise the quick navigation panel in list views.
          */
-        function «prefix()»InitQuickNavigation(objectType)
+        function «vendorAndName»InitQuickNavigation(objectType)
         {
             «IF targets('1.3.5')»
-                if ($('«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
+                if ($('«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
                     return;
                 }
             «ELSE»
-                if ($('#«appName.toLowerCase»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').size() < 1) {
+                if ($('#«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').size() < 1) {
                     return;
                 }
             «ENDIF»
 
             «IF targets('1.3.5')»
                 if ($('catid') != undefined) {
-                    $('catid').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                    $('catid').observe('change', «initQuickNavigationSubmitCall»);
                 }
                 if ($('sortby') != undefined) {
-                    $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                    $('sortby').observe('change', «initQuickNavigationSubmitCall»);
                 }
                 if ($('sortdir') != undefined) {
-                    $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                    $('sortdir').observe('change', «initQuickNavigationSubmitCall»);
                 }
                 if ($('num') != undefined) {
-                    $('num').observe('change', «initQuickNavigationSubmitCall(prefix())»);
+                    $('num').observe('change', «initQuickNavigationSubmitCall»);
                 }
             «ELSE»
                 if ($('#catid').size() > 0) {
-                    $('#catid').change(«initQuickNavigationSubmitCall(prefix())»);
+                    $('#catid').change(«initQuickNavigationSubmitCall»);
                 }
                 if ($('#sortby').size() > 0) {
-                    $('#sortby').change(«initQuickNavigationSubmitCall(prefix())»);
+                    $('#sortby').change(«initQuickNavigationSubmitCall»);
                 }
                 if ($('#sortdir').size() > 0) {
-                    $('#sortdir').change(«initQuickNavigationSubmitCall(prefix())»);
+                    $('#sortdir').change(«initQuickNavigationSubmitCall»);
                 }
                 if ($('#num').size() > 0) {
-                    $('#num').change(«initQuickNavigationSubmitCall(prefix())»);
+                    $('#num').change(«initQuickNavigationSubmitCall»);
                 }
             «ENDIF»
 
@@ -245,7 +245,7 @@ class DisplayFunctions {
         }
     '''
 
-    def private initQuickNavigationSubmitCall(String prefix) '''function () { «prefix»SubmitQuickNavForm(objectType); }'''
+    def private initQuickNavigationSubmitCall(Application it) '''function () { «vendorAndName»SubmitQuickNavForm(objectType); }'''
 
     def private initQuickNavigationEntity(Entity it) '''
         case '«name.formatForCode»':
@@ -290,11 +290,11 @@ class DisplayFunctions {
     def private dispatch jsInit(DerivedField it) '''
         «IF entity.application.targets('1.3.5')»
             if ($('«name.formatForCode»') != undefined) {
-                $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.application.prefix())»);
+                $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.application)»);
             }
         «ELSE»
             if ($('#«name.formatForCode»').size() > 0) {
-                $('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application.prefix())»);
+                $('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application)»);
             }
         «ENDIF»
     '''
@@ -303,11 +303,11 @@ class DisplayFunctions {
         «val sourceAliasName = getRelationAliasName(false)»
         «IF application.targets('1.3.5')»
             if ($('«sourceAliasName»') != undefined) {
-                $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(application.prefix())»);
+                $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(application)»);
             }
         «ELSE»
             if ($('#«sourceAliasName»').size() > 0) {
-                $('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(application.prefix())»);
+                $('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(application)»);
             }
         «ENDIF»
     '''
@@ -324,7 +324,7 @@ class DisplayFunctions {
              * Helper function to create new Bootstrap modal window instances.
              */
          «ENDIF»
-        function «prefix()»InitInlineWindow(containerElem, title)
+        function «vendorAndName»InitInlineWindow(containerElem, title)
         {
             var newWindow«IF !targets('1.3.5')»Id«ENDIF»;
 
@@ -381,22 +381,22 @@ class DisplayFunctions {
         /**
          * Initialise ajax-based toggle for boolean fields.
          */
-        function «prefix()»InitToggle(objectType, fieldName, itemId)
+        function «vendorAndName»InitToggle(objectType, fieldName, itemId)
         {
-            var idSuffix = «prefix()»CapitaliseFirstLetter(fieldName) + itemId;
+            var idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
             «IF targets('1.3.5')»
                 if ($('toggle' + idSuffix) == undefined) {
                     return;
                 }
                 $('toggle' + idSuffix).observe('click', function() {
-                    «prefix()»ToggleFlag(objectType, fieldName, itemId);
+                    «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
                 }).removeClassName('z-hide');
             «ELSE»
                 if ($('#toggle' + idSuffix).size() < 1) {
                     return;
                 }
                 $('#toggle' + idSuffix).click( function() {
-                    «prefix()»ToggleFlag(objectType, fieldName, itemId);
+                    «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
                 }).removeClass('hidden');
             «ENDIF»
         }
@@ -405,11 +405,11 @@ class DisplayFunctions {
 
     def private toggleFlag(Application it) '''
         /**
-         * Toggle a certain flag for a given item.
+         * Toggles a certain flag for a given item.
          */
-        function «prefix()»ToggleFlag(objectType, fieldName, itemId)
+        function «vendorAndName»ToggleFlag(objectType, fieldName, itemId)
         {
-            var fieldNameCapitalised = «prefix()»CapitaliseFirstLetter(fieldName);
+            var fieldNameCapitalised = «vendorAndName»CapitaliseFirstLetter(fieldName);
             var params = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
             «IF targets('1.3.5')»
@@ -454,7 +454,7 @@ class DisplayFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «prefix()»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Success', 'module_«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                        «vendorAndName»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Success', 'module_«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                     }*/
 
                     idSuffix = idSuffix.toLowerCase();
@@ -469,7 +469,7 @@ class DisplayFunctions {
                 })«/*.fail(function(jqXHR, textStatus) {
                     // nothing to do yet
                     var idSuffix = fieldName + '_' + itemId;
-                    «prefix()»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                    «vendorAndName)»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
                 })*/»;
             «ENDIF»
         }
@@ -480,7 +480,7 @@ class DisplayFunctions {
         /**
          * Simulates a simple alert using bootstrap.
          */
-        function «prefix()»SimpleAlert(beforeElem, title, content, alertId, cssClass)
+        function «vendorAndName»SimpleAlert(beforeElem, title, content, alertId, cssClass)
         {
             var alertBox;
 

@@ -71,7 +71,7 @@ class EditFunctions {
             /**
              * Initialises a user field with auto completion.
              */
-            function «prefix()»InitUserField(fieldName, getterName)
+            function «vendorAndName»InitUserField(fieldName, getterName)
             {
                 «IF !targets('1.3.5')»
                     var users, userMap;
@@ -187,7 +187,7 @@ class EditFunctions {
         /**
          * Resets the value of an upload / file input field.
          */
-        function «prefix()»ResetUploadField(fieldName)
+        function «vendorAndName»ResetUploadField(fieldName)
         {
             «IF targets('1.3.5')»
                 if ($(fieldName) != null) {
@@ -207,7 +207,7 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain upload input.
          */
-        function «prefix()»InitUploadField(fieldName)
+        function «vendorAndName»InitUploadField(fieldName)
         {
             var fieldNameCapitalised;
 
@@ -216,14 +216,14 @@ class EditFunctions {
                 if ($('reset' + fieldNameCapitalised + 'Val') != null) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
-                        «prefix()»ResetUploadField(fieldName);
+                        «vendorAndName»ResetUploadField(fieldName);
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
                 if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
                     $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
-                        «prefix()»ResetUploadField(fieldName);
+                        «vendorAndName»ResetUploadField(fieldName);
                     }).removeClass('hidden');
                 }
             «ENDIF»
@@ -234,7 +234,7 @@ class EditFunctions {
         /**
          * Resets the value of a date or datetime input field.
          */
-        function «prefix()»ResetDateField(fieldName)
+        function «vendorAndName»ResetDateField(fieldName)
         {
             «IF targets('1.3.5')»
                 if ($(fieldName) != null) {
@@ -258,7 +258,7 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain date input.
          */
-        function «prefix()»InitDateField(fieldName)
+        function «vendorAndName»InitDateField(fieldName)
         {
             var fieldNameCapitalised;
 
@@ -267,14 +267,14 @@ class EditFunctions {
                 if ($('reset' + fieldNameCapitalised + 'Val') != null) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
-                        «prefix()»ResetDateField(fieldName);
+                        «vendorAndName»ResetDateField(fieldName);
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
                 if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
                     $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
-                        «prefix()»ResetDateField(fieldName);
+                        «vendorAndName»ResetDateField(fieldName);
                     }).removeClass('hidden');
                 }
             «ENDIF»
@@ -288,15 +288,15 @@ class EditFunctions {
          * Uses a callback function for retrieving the address to be converted, so that it can be easily customised in each edit template.
          * There is also a method on PHP level available in the \«IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Util\ControllerUtil«ENDIF» class.
          */
-        function «prefix()»InitGeoCoding(addressCallback)
+        function «vendorAndName»InitGeoCoding(addressCallback)
         {
             «IF targets('1.3.5')»
                 $('linkGetCoordinates').observe('click', function (evt) {
-                    «prefix()»DoGeoCoding(addressCallback);
+                    «vendorAndName»DoGeoCoding(addressCallback);
                 });
             «ELSE»
                 $('#linkGetCoordinates').click( function (evt) {
-                    «prefix()»DoGeoCoding(addressCallback);
+                    «vendorAndName»DoGeoCoding(addressCallback);
                 });
             «ENDIF»
         }
@@ -304,7 +304,7 @@ class EditFunctions {
         /**
          * Performs the actual geo coding using Mapstraction.
          */
-        function «prefix()»DoGeoCoding(addressCallback)
+        function «vendorAndName»DoGeoCoding(addressCallback)
         {
             «IF targets('1.3.5')»
                 var address = {
@@ -321,18 +321,18 @@ class EditFunctions {
                 address = addressCallback();
             }
 
-            var geocoder = new mxn.Geocoder('googlev3', «prefix()»GeoCodeReturn, «prefix()»GeoCodeErrorCallback);
+            var geocoder = new mxn.Geocoder('googlev3', «vendorAndName»GeoCodeReturn, «vendorAndName»GeoCodeErrorCallback);
             geocoder.geocode(address);
 
-            function «prefix()»GeoCodeErrorCallback (status) {
+            function «vendorAndName»GeoCodeErrorCallback (status) {
                 «IF targets('1.3.5')»
                     Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
                 «ELSE»
-                    «prefix()»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', 'module_«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
+                    «vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', 'module_«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
                 «ENDIF»
             }
 
-            function «prefix()»GeoCodeReturn (location) {
+            function «vendorAndName»GeoCodeReturn (location) {
                 «IF targets('1.3.5')»
                     Form.Element.setValue('latitude', location.point.lat.toFixed(4));
                     Form.Element.setValue('longitude', location.point.lng.toFixed(4));
@@ -407,7 +407,7 @@ class EditFunctions {
 
             «selectRelatedItem»
 
-            «initRelatedItemsForm(prefix())»
+            «initRelatedItemsForm»
 
             «closeWindowFromInside»
         «ENDIF»
@@ -417,7 +417,7 @@ class EditFunctions {
         /**
          * Toggles the fields of an auto completion field.
          */
-        function «prefix()»ToggleRelatedItemForm(idPrefix)
+        function «vendorAndName»ToggleRelatedItemForm(idPrefix)
         {
             «IF targets('1.3.5')»
                 // if we don't have a toggle link do nothing
@@ -449,10 +449,10 @@ class EditFunctions {
         /**
          * Resets an auto completion field.
          */
-        function «prefix()»ResetRelatedItemForm(idPrefix)
+        function «vendorAndName»ResetRelatedItemForm(idPrefix)
         {
             // hide the sub form
-            «prefix()»ToggleRelatedItemForm(idPrefix);
+            «vendorAndName»ToggleRelatedItemForm(idPrefix);
 
             // reset value of the auto completion field
             «IF targets('1.3.5')»
@@ -469,7 +469,7 @@ class EditFunctions {
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
-        function «prefix()»CreateRelationWindowInstance(containerElem, useIframe)
+        function «vendorAndName»CreateRelationWindowInstance(containerElem, useIframe)
         {
             var newWindow«IF !targets('1.3.5')»Id«ENDIF»;
 
@@ -521,7 +521,7 @@ class EditFunctions {
         /**
          * Observe a link for opening an inline window
          */
-        function «prefix()»initInlineRelationWindow(objectType, containerID)
+        function «vendorAndName»InitInlineRelationWindow(objectType, containerID)
         {
             var found, newItem;
 
@@ -544,7 +544,7 @@ class EditFunctions {
                         «ENDIF»
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «prefix()»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
+                    relationHandler.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
                 }
             });
 
@@ -556,7 +556,7 @@ class EditFunctions {
                 newItem.alias = '«/*TODO*/»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
-                newItem.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «prefix()»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
+                newItem.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
 
                 // add it to the list of handlers
                 relationHandler.push(newItem);
@@ -568,7 +568,7 @@ class EditFunctions {
         /**
          * Removes a related item from the list of selected ones.
          */
-        function «prefix()»RemoveRelatedItem(idPrefix, removeId)
+        function «vendorAndName»RemoveRelatedItem(idPrefix, removeId)
         {
             var itemIds, itemIdsArr;
 
@@ -603,7 +603,7 @@ class EditFunctions {
         /**
          * Adds a related item to selection which has been chosen by auto completion.
          */
-        function «prefix()»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem)
+        function «vendorAndName»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem)
         {
             var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
 
@@ -636,7 +636,7 @@ class EditFunctions {
                     editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
                     li.appendChild(editLink);
                 }
-                removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefix()»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
+                removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
                 li.appendChild(removeLink);
                 if (itemPreview !== '') {
                     fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
@@ -652,7 +652,7 @@ class EditFunctions {
                     editLink = $('<a>', {id: elemPrefix + 'Edit', href: editHref, text: 'edit'});
                     li.append(editLink);
                 }
-                removeLink = $('<a>', {id: elemPrefix + 'Remove', href: 'javascript:«prefix()»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove'});
+                removeLink = $('<a>', {id: elemPrefix + 'Remove', href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove'});
                 li.append(removeLink);
                 if (itemPreview !== '') {
                     fldPreview = $('<div>', {id: elemPrefix + 'preview', name: idPrefix + 'preview'});
@@ -672,12 +672,12 @@ class EditFunctions {
 
                 «IF targets('1.3.5')»
                     $(elemPrefix + 'Edit').observe('click', function (e) {
-                        «prefix()»initInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
+                        «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
                         e.stop();
                     });
                 «ELSE»
                     $('#' + elemPrefix + 'Edit').click( function (e) {
-                        «prefix()»initInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
+                        «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
                         e.stopPropagation();
                     });
                 «ENDIF»
@@ -695,7 +695,7 @@ class EditFunctions {
                         itemIdsArr = itemIds.split(',');
                         itemIdsArr.each(function (existingId) {
                             if (existingId) {
-                                «prefix()»RemoveRelatedItem(idPrefix, existingId);
+                                «vendorAndName»RemoveRelatedItem(idPrefix, existingId);
                             }
                         });
                         itemIds = '';
@@ -712,7 +712,7 @@ class EditFunctions {
                         itemIdsArr = itemIds.split(',');
                         itemIdsArr.each(function (existingId) {
                             if (existingId) {
-                                «prefix()»RemoveRelatedItem(idPrefix, existingId);
+                                «vendorAndName»RemoveRelatedItem(idPrefix, existingId);
                             }
                         });
                         itemIds = '';
@@ -724,15 +724,15 @@ class EditFunctions {
                 $('#' + idPrefix + 'ItemList').val(itemIds);
             «ENDIF»
 
-            «prefix()»ResetRelatedItemForm(idPrefix);
+            «vendorAndName»ResetRelatedItemForm(idPrefix);
         }
     '''
 
-    def private initRelatedItemsForm(Application it, String prefixSmall) '''
+    def private initRelatedItemsForm(Application it) '''
         /**
          * Initialise a relation field section with autocompletion and optional edit capabilities
          */
-        function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
+        function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
             var acOptions, itemIds, itemIdsArr«IF !targets('1.3.5')», listItems, listItemMap, acUrl«ENDIF»;
 
@@ -740,31 +740,31 @@ class EditFunctions {
                 // add handling for the toggle link if existing
                 if ($(idPrefix + 'AddLink') !== null) {
                     $(idPrefix + 'AddLink').observe('click', function (e) {
-                        «prefixSmall»ToggleRelatedItemForm(idPrefix);
+                        «vendorAndName»ToggleRelatedItemForm(idPrefix);
                     });
                 }
                 // add handling for the cancel button
                 if ($(idPrefix + 'SelectorDoCancel') !== null) {
                     $(idPrefix + 'SelectorDoCancel').observe('click', function (e) {
-                        «prefixSmall»ResetRelatedItemForm(idPrefix);
+                        «vendorAndName»ResetRelatedItemForm(idPrefix);
                     });
                 }
             «ELSE»
                 // add handling for the toggle link if existing
                 if ($('#' + idPrefix + 'AddLink').size() > 0) {
                     $('#' + idPrefix + 'AddLink').click( function (e) {
-                        «prefixSmall»ToggleRelatedItemForm(idPrefix);
+                        «vendorAndName»ToggleRelatedItemForm(idPrefix);
                     });
                 }
                 // add handling for the cancel button
                 if ($('#' + idPrefix + 'SelectorDoCancel').size() > 0) {
                     $('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
-                        «prefixSmall»ResetRelatedItemForm(idPrefix);
+                        «vendorAndName»ResetRelatedItemForm(idPrefix);
                     });
                 }
             «ENDIF»
             // clear values and ensure starting state
-            «prefixSmall»ResetRelatedItemForm(idPrefix);
+            «vendorAndName»ResetRelatedItemForm(idPrefix);
 
             «IF targets('1.3.5')»
                 acOptions = {
@@ -789,7 +789,7 @@ class EditFunctions {
                     afterUpdateElement: function (inputField, selectedListItem) {
                         // Called after the input element has been updated (i.e. when the user has selected an entry).
                         // This function is called after the built-in function that adds the list item text to the input field.
-                        «prefixSmall»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem);
+                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem);
                     }
                 };
                 relationHandler.each(function (relationHandler) {
@@ -864,7 +864,7 @@ class EditFunctions {
                         inputField = $('#' + idPrefix);
                         listItem = listItemMap[idPrefix][item];
 
-                        «prefixSmall»SelectRelatedItem(objectType, idPrefix, inputField, listItem);
+                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, inputField, listItem);
                         inputField.val(listItemId);
 
                         return item;
@@ -907,13 +907,13 @@ class EditFunctions {
             «IF targets('1.3.5')»
                 $(idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
                 $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
-                    «prefixSmall»initInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
+                    «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
                     e.stop();
                 });
             «ELSE»
                 $('#' + idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
                 $('#' + idPrefix + 'SelectorDoNew').click( function(e) {
-                    «prefixSmall»initInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
+                    «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
                     e.stopPropagation();
                 });
             «ENDIF»
@@ -932,13 +932,13 @@ class EditFunctions {
                     «IF targets('1.3.5')»
                         $(elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
                         $(elemPrefix).observe('click', function (e) {
-                            «prefixSmall»initInlineRelationWindow(objectType, elemPrefix);
+                            «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
                             e.stop();
                         });
                     «ELSE»
                         $('#' + elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
                         $('#' + elemPrefix).click( function (e) {
-                            «prefixSmall»initInlineRelationWindow(objectType, elemPrefix);
+                            «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
                             e.stopPropagation();
                         });
                     «ENDIF»
@@ -951,7 +951,7 @@ class EditFunctions {
         /**
          * Closes an iframe from the document displayed in it
          */
-        function «prefix()»CloseWindowFromInside(idPrefix, itemId)
+        function «vendorAndName»CloseWindowFromInside(idPrefix, itemId)
         {
             // if there is no parent window do nothing
             if (window.parent === '') {
@@ -978,7 +978,7 @@ class EditFunctions {
                                     autoClose: 3 // time in seconds
                                 });
                             «ELSE»
-                                «prefix()»SimpleAlert($('.«appName.toLowerCase»-form'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
+                                «vendorAndName»SimpleAlert($('.«appName.toLowerCase»-form'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
                             «ENDIF»
                         }
                     }

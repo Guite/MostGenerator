@@ -44,7 +44,7 @@ class Finder {
          * Returns the attributes used for the popup window. 
          * @return {String}
          */
-        function getPopupAttributes()
+        function get«appName»PopupAttributes()
         {
             var pWidth, pHeight;
 
@@ -57,21 +57,21 @@ class Finder {
         /**
          * Open a popup window with the finder triggered by a Xinha button.
          */
-        function «appName»FinderXinha(editor, «prefix()»URL)
+        function «appName»FinderXinha(editor, «prefix()»Url)
         {
             var popupAttributes;
 
             // Save editor for access in selector window
             current«appName»Editor = editor;
 
-            popupAttributes = getPopupAttributes();
-            window.open(«prefix()»URL, '', popupAttributes);
+            popupAttributes = get«appName»PopupAttributes();
+            window.open(«prefix()»Url, '', popupAttributes);
         }
 
         /**
          * Open a popup window with the finder triggered by a CKEditor button.
          */
-        function «appName»FinderCKEditor(editor, «prefix()»URL)
+        function «appName»FinderCKEditor(editor, «prefix()»Url)
         {
             // Save editor for access in selector window
             current«appName»Editor = editor;
@@ -88,40 +88,41 @@ class Finder {
         }
 
 
+        «val elemPrefix = appName.toFirstLower»
+        «val objName = appName.toFirstLower»
+        var «objName» = {};
 
-        var «name.formatForDB» = {};
+        «objName».finder = {};
 
-        «name.formatForDB».finder = {};
-
-        «name.formatForDB».finder.onLoad = function (baseId, selectedId)
+        «objName».finder.onLoad = function (baseId, selectedId)
         {
             «IF targets('1.3.5')»
-                $$('div.categoryselector select').invoke('observe', 'change', «name.formatForDB».finder.onParamChanged);
-                $('«appName.toFirstLower»Sort').observe('change', «name.formatForDB».finder.onParamChanged);
-                $('«appName.toFirstLower»SortDir').observe('change', «name.formatForDB».finder.onParamChanged);
-                $('«appName.toFirstLower»PageSize').observe('change', «name.formatForDB».finder.onParamChanged);
-                $('«appName.toFirstLower»SearchGo').observe('click', «name.formatForDB».finder.onParamChanged);
-                $('«appName.toFirstLower»SearchGo').observe('keypress', «name.formatForDB».finder.onParamChanged);
-                $('«appName.toFirstLower»Submit').addClassName('z-hide');
-                $('«appName.toFirstLower»Cancel').observe('click', «name.formatForDB».finder.handleCancel);
+                $$('div.categoryselector select').invoke('observe', 'change', «objName».finder.onParamChanged);
+                $('«elemPrefix»Sort').observe('change', «objName».finder.onParamChanged);
+                $('«elemPrefix»SortDir').observe('change', «objName».finder.onParamChanged);
+                $('«elemPrefix»PageSize').observe('change', «objName».finder.onParamChanged);
+                $('«elemPrefix»SearchGo').observe('click', «objName».finder.onParamChanged);
+                $('«elemPrefix»SearchGo').observe('keypress', «objName».finder.onParamChanged);
+                $('«elemPrefix»Submit').addClassName('z-hide');
+                $('«elemPrefix»Cancel').observe('click', «objName».finder.handleCancel);
             «ELSE»
-                $('div.categoryselector select').change(«name.formatForDB».finder.onParamChanged);
-                $('#«appName.toFirstLower»Sort').change(«name.formatForDB».finder.onParamChanged);
-                $('#«appName.toFirstLower»SortDir').change(«name.formatForDB».finder.onParamChanged);
-                $('#«appName.toFirstLower»PageSize').change(«name.formatForDB».finder.onParamChanged);
-                $('#«appName.toFirstLower»SearchGo').click(«name.formatForDB».finder.onParamChanged);
-                $('#«appName.toFirstLower»SearchGo').keypress(«name.formatForDB».finder.onParamChanged);
-                $('#«appName.toFirstLower»Submit').addClass('hidden');
-                $('#«appName.toFirstLower»Cancel').click(«name.formatForDB».finder.handleCancel);
+                $('div.categoryselector select').change(«objName».finder.onParamChanged);
+                $('#«elemPrefix»Sort').change(«objName».finder.onParamChanged);
+                $('#«elemPrefix»SortDir').change(«objName».finder.onParamChanged);
+                $('#«elemPrefix»PageSize').change(«objName».finder.onParamChanged);
+                $('#«elemPrefix»SearchGo').click(«objName».finder.onParamChanged);
+                $('#«elemPrefix»SearchGo').keypress(«objName».finder.onParamChanged);
+                $('#«elemPrefix»Submit').addClass('hidden');
+                $('#«elemPrefix»Cancel').click(«objName».finder.handleCancel);
             «ENDIF»
         };
 
-        «name.formatForDB».finder.onParamChanged = function ()
+        «objName».finder.onParamChanged = function ()
         {
-            $('«IF !targets('1.3.5')»#«ENDIF»«appName.toFirstLower»SelectorForm').submit();
+            $('«IF !targets('1.3.5')»#«ENDIF»«elemPrefix»SelectorForm').submit();
         };
 
-        «name.formatForDB».finder.handleCancel = function ()
+        «objName».finder.handleCancel = function ()
         {
             var editor, w;
 
@@ -135,16 +136,16 @@ class Finder {
                 window.close();
                 w.focus();
             } else if (editor === 'tinymce') {
-                «prefix()»ClosePopup();
+                «vendorAndName»ClosePopup();
             } else if (editor === 'ckeditor') {
-                «prefix()»ClosePopup();
+                «vendorAndName»ClosePopup();
             } else {
                 alert('Close Editor: ' + editor);
             }
         };
 
 
-        function getPasteSnippet(mode, itemId)
+        function «vendorAndName»GetPasteSnippet(mode, itemId)
         {
             var quoteFinder, itemUrl, itemTitle, itemDescription, pasteMode;
 
@@ -153,12 +154,12 @@ class Finder {
                 itemUrl = $F('url' + itemId).replace(quoteFinder, '');
                 itemTitle = $F('title' + itemId).replace(quoteFinder, '');
                 itemDescription = $F('desc' + itemId).replace(quoteFinder, '');
-                pasteMode = $F('«appName.toFirstLower»PasteAs');
+                pasteMode = $F('«elemPrefix»PasteAs');
             «ELSE»
                 itemUrl = $('#url' + itemId).val().replace(quoteFinder, '');
                 itemTitle = $('#title' + itemId).val().replace(quoteFinder, '');
                 itemDescription = $('#desc' + itemId).val().replace(quoteFinder, '');
-                pasteMode = $('#«appName.toFirstLower»PasteAs').val();
+                pasteMode = $('#«elemPrefix»PasteAs').val();
             «ENDIF»
 
             if (pasteMode === '2' || pasteMode !== '1') {
@@ -177,7 +178,7 @@ class Finder {
 
 
         // User clicks on "select item" button
-        «name.formatForDB».finder.selectItem = function (itemId)
+        «objName».finder.selectItem = function (itemId)
         {
             var editor, html;
 
@@ -188,12 +189,12 @@ class Finder {
             «ENDIF»
             if (editor === 'xinha') {
                 if (window.opener.current«appName»Editor !== null) {
-                    html = getPasteSnippet('html', itemId);
+                    html = «vendorAndName»GetPasteSnippet('html', itemId);
 
                     window.opener.current«appName»Editor.focusEditor();
                     window.opener.current«appName»Editor.insertHTML(html);
                 } else {
-                    html = getPasteSnippet('url', itemId);
+                    html = «vendorAndName»GetPasteSnippet('url', itemId);
                     var currentInput = window.opener.current«appName»Input;
 
                     if (currentInput.tagName === 'INPUT') {
@@ -219,23 +220,23 @@ class Finder {
                     }
                 }
             } else if (editor === 'tinymce') {
-                html = getPasteSnippet('html', itemId);
+                html = «vendorAndName»GetPasteSnippet('html', itemId);
                 tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
                 // other tinymce commands: mceImage, mceInsertLink, mceReplaceContent, see http://www.tinymce.com/wiki.php/Command_identifiers
             } else if (editor === 'ckeditor') {
                 if (window.opener.current«appName»Editor !== null) {
-                    html = getPasteSnippet('html', itemId);
+                    html = «vendorAndName»GetPasteSnippet('html', itemId);
 
                     window.opener.current«appName»Editor.insertHtml(html);
                 }
             } else {
                 alert('Insert into Editor: ' + editor);
             }
-            «prefix()»ClosePopup();
+            «vendorAndName»ClosePopup();
         };
 
 
-        function «prefix()»ClosePopup()
+        function «vendorAndName»ClosePopup()
         {
             window.opener.focus();
             window.close();
@@ -248,56 +249,56 @@ class Finder {
         // «appName» item selector for Forms
         //=============================================================================
 
-        «name.formatForDB».itemSelector = {};
-        «name.formatForDB».itemSelector.items = {};
-        «name.formatForDB».itemSelector.baseId = 0;
-        «name.formatForDB».itemSelector.selectedId = 0;
+        «objName».itemSelector = {};
+        «objName».itemSelector.items = {};
+        «objName».itemSelector.baseId = 0;
+        «objName».itemSelector.selectedId = 0;
 
-        «name.formatForDB».itemSelector.onLoad = function (baseId, selectedId)
+        «objName».itemSelector.onLoad = function (baseId, selectedId)
         {
-            «name.formatForDB».itemSelector.baseId = baseId;
-            «name.formatForDB».itemSelector.selectedId = selectedId;
+            «objName».itemSelector.baseId = baseId;
+            «objName».itemSelector.selectedId = selectedId;
 
             // required as a changed object type requires a new instance of the item selector plugin
             «IF targets('1.3.5')»
-                $('«appName.toFirstLower»ObjectType').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+                $('«elemPrefix»ObjectType').observe('change', «objName».itemSelector.onParamChanged);
 
                 if ($(baseId + '_catidMain') != undefined) {
-                    $(baseId + '_catidMain').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+                    $(baseId + '_catidMain').observe('change', «objName».itemSelector.onParamChanged);
                 } else if ($(baseId + '_catidsMain') != undefined) {
-                    $(baseId + '_catidsMain').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+                    $(baseId + '_catidsMain').observe('change', «objName».itemSelector.onParamChanged);
                 }
-                $(baseId + 'Id').observe('change', «name.formatForDB».itemSelector.onItemChanged);
-                $(baseId + 'Sort').observe('change', «name.formatForDB».itemSelector.onParamChanged);
-                $(baseId + 'SortDir').observe('change', «name.formatForDB».itemSelector.onParamChanged);
-                $('«appName.toFirstLower»SearchGo').observe('click', «name.formatForDB».itemSelector.onParamChanged);
-                $('«appName.toFirstLower»SearchGo').observe('keypress', «name.formatForDB».itemSelector.onParamChanged);
+                $(baseId + 'Id').observe('change', «objName».itemSelector.onItemChanged);
+                $(baseId + 'Sort').observe('change', «objName».itemSelector.onParamChanged);
+                $(baseId + 'SortDir').observe('change', «objName».itemSelector.onParamChanged);
+                $('«elemPrefix»SearchGo').observe('click', «objName».itemSelector.onParamChanged);
+                $('«elemPrefix»SearchGo').observe('keypress', «objName».itemSelector.onParamChanged);
             «ELSE»
-                $('#«appName.toFirstLower»ObjectType').change(«name.formatForDB».itemSelector.onParamChanged);
+                $('#«elemPrefix»ObjectType').change(«objName».itemSelector.onParamChanged);
 
                 if ($('#' + baseId + '_catidMain').size() > 0) {
-                    $('#' + baseId + '_catidMain').change(«name.formatForDB».itemSelector.onParamChanged);
+                    $('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
                 } else if ($('#' + baseId + '_catidsMain').size() > 0) {
-                    $('#' + baseId + '_catidsMain').change(«name.formatForDB».itemSelector.onParamChanged);
+                    $('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
                 }
-                $('#' + baseId + 'Id').change(«name.formatForDB».itemSelector.onItemChanged);
-                $('#' + baseId + 'Sort').change(«name.formatForDB».itemSelector.onParamChanged);
-                $('#' + baseId + 'SortDir').change(«name.formatForDB».itemSelector.onParamChanged);
-                $('#«appName.toFirstLower»SearchGo').click(«name.formatForDB».itemSelector.onParamChanged);
-                $('#«appName.toFirstLower»SearchGo').keypress(«name.formatForDB».itemSelector.onParamChanged);
+                $('#' + baseId + 'Id').change(«objName».itemSelector.onItemChanged);
+                $('#' + baseId + 'Sort').change(«objName».itemSelector.onParamChanged);
+                $('#' + baseId + 'SortDir').change(«objName».itemSelector.onParamChanged);
+                $('#«elemPrefix»SearchGo').click(«objName».itemSelector.onParamChanged);
+                $('#«elemPrefix»SearchGo').keypress(«objName».itemSelector.onParamChanged);
             «ENDIF»
 
-            «name.formatForDB».itemSelector.getItemList();
+            «objName».itemSelector.getItemList();
         };
 
-        «name.formatForDB».itemSelector.onParamChanged = function ()
+        «objName».itemSelector.onParamChanged = function ()
         {
             $('ajax_indicator').removeClass«IF targets('1.3.5')»Name«ENDIF»('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
 
-            «name.formatForDB».itemSelector.getItemList();
+            «objName».itemSelector.getItemList();
         };
 
-        «name.formatForDB».itemSelector.getItemList = function ()
+        «objName».itemSelector.getItemList = function ()
         {
             var baseId, params«IF targets('1.3.5')», request«ENDIF»;
 
@@ -334,11 +335,11 @@ class Finder {
                         },
                         onSuccess: function(req) {
                             var baseId;
-                            baseId = «name.formatForDB».itemSelector.baseId;
-                            «name.formatForDB».itemSelector.items[baseId] = req.getData();
+                            baseId = «objName».itemSelector.baseId;
+                            «objName».itemSelector.items[baseId] = req.getData();
                             $('ajax_indicator').addClassName('z-hide');
-                            «name.formatForDB».itemSelector.updateItemDropdownEntries();
-                            «name.formatForDB».itemSelector.updatePreview();
+                            «objName».itemSelector.updateItemDropdownEntries();
+                            «objName».itemSelector.updatePreview();
                         }
                     }
                 );
@@ -350,46 +351,46 @@ class Finder {
                 }).done(function(res) {
                     // get data returned by the ajax response
                     var baseId;
-                    baseId = «name.formatForDB».itemSelector.baseId;
-                    «name.formatForDB».itemSelector.items[baseId] = res.data;
+                    baseId = «objName».itemSelector.baseId;
+                    «objName».itemSelector.items[baseId] = res.data;
                     $('#ajax_indicator').addClass('hidden');
-                    «name.formatForDB».itemSelector.updateItemDropdownEntries();
-                    «name.formatForDB».itemSelector.updatePreview();
+                    «objName».itemSelector.updateItemDropdownEntries();
+                    «objName».itemSelector.updatePreview();
                 })«/*.fail(function(jqXHR, textStatus) {
                     // nothing to do yet
                 })*/»;
             «ENDIF»
         };
 
-        «name.formatForDB».itemSelector.updateItemDropdownEntries = function ()
+        «objName».itemSelector.updateItemDropdownEntries = function ()
         {
             var baseId, itemSelector, items, i, item;
 
-            baseId = «name.formatForDB».itemSelector.baseId;
+            baseId = «objName».itemSelector.baseId;
             itemSelector = $(«IF !targets('1.3.5')»'#' + «ENDIF»baseId + 'Id');
             itemSelector.length = 0;
 
-            items = «name.formatForDB».itemSelector.items[baseId];
+            items = «objName».itemSelector.items[baseId];
             for (i = 0; i < items.length; ++i) {
                 item = items[i];
                 itemSelector.options[i] = new Option(item.title, item.id, false);
             }
 
-            if («name.formatForDB».itemSelector.selectedId > 0) {
+            if («objName».itemSelector.selectedId > 0) {
                 «IF targets('1.3.5')»
-                    $(baseId + 'Id').value = «name.formatForDB».itemSelector.selectedId;
+                    $(baseId + 'Id').value = «objName».itemSelector.selectedId;
                 «ELSE»
-                    $('#' + baseId + 'Id').val(«name.formatForDB».itemSelector.selectedId);
+                    $('#' + baseId + 'Id').val(«objName».itemSelector.selectedId);
                 «ENDIF»
             }
         };
 
-        «name.formatForDB».itemSelector.updatePreview = function ()
+        «objName».itemSelector.updatePreview = function ()
         {
             var baseId, items, selectedElement, i;
 
-            baseId = «name.formatForDB».itemSelector.baseId;
-            items = «name.formatForDB».itemSelector.items[baseId];
+            baseId = «objName».itemSelector.baseId;
+            items = «objName».itemSelector.items[baseId];
 
             «IF targets('1.3.5')»
                 $(baseId + 'PreviewContainer').addClassName('z-hide');
@@ -402,9 +403,9 @@ class Finder {
             }
 
             selectedElement = items[0];
-            if («name.formatForDB».itemSelector.selectedId > 0) {
+            if («objName».itemSelector.selectedId > 0) {
                 for (var i = 0; i < items.length; ++i) {
-                    if (items[i].id === «name.formatForDB».itemSelector.selectedId) {
+                    if (items[i].id === «objName».itemSelector.selectedId) {
                         selectedElement = items[i];
                         break;
                     }
@@ -424,16 +425,16 @@ class Finder {
             }
         };
 
-        «name.formatForDB».itemSelector.onItemChanged = function ()
+        «objName».itemSelector.onItemChanged = function ()
         {
             var baseId, itemSelector, preview;
 
-            baseId = «name.formatForDB».itemSelector.baseId;
+            baseId = «objName».itemSelector.baseId;
             itemSelector = $(«IF !targets('1.3.5')»'#' + «ENDIF»baseId + 'Id');
-            preview = window.atob(«name.formatForDB».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
+            preview = window.atob(«objName».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
 
             $(baseId + 'PreviewContainer').«IF targets('1.3.5')»update«ELSE»html«ENDIF»(preview);
-            «name.formatForDB».itemSelector.selectedId = «IF targets('1.3.5')»$F(baseId + 'Id')«ELSE»$('#' + baseId + 'Id').val()«ENDIF»;
+            «objName».itemSelector.selectedId = «IF targets('1.3.5')»$F(baseId + 'Id')«ELSE»$('#' + baseId + 'Id').val()«ENDIF»;
         };
     '''
 }

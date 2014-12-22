@@ -31,7 +31,6 @@ class ViewHierarchy {
 
     def private hierarchyView(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        «val appPrefix = application.prefix()»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree view *}
         {assign var='lct' value='user'}
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
@@ -63,7 +62,7 @@ class ViewHierarchy {
                     «IF isLegacyApp»
                         document.observe('dom:loaded', function() {
                             $('treeAddRoot').observe('click', function(event) {
-                                «appPrefix»PerformTreeOperation('«objName»', 1, 'addRootNode');
+                                «application.vendorAndName»PerformTreeOperation('«objName»', 1, 'addRootNode');
                                 Event.stop(event);
                             }).removeClassName('z-hide');
                         });
@@ -71,7 +70,7 @@ class ViewHierarchy {
                         ( function($) {
                             $(document).ready(function() {
                                 $('#treeAddRoot').click( function(event) {
-                                    «appPrefix»PerformTreeOperation('«objName»', 1, 'addRootNode');
+                                    «application.vendorAndName»PerformTreeOperation('«objName»', 1, 'addRootNode');
                                     event.stopPropagation();
                                 }).removeClass('hidden');
                             });
@@ -124,7 +123,6 @@ class ViewHierarchy {
     '''
 
     def private hierarchyItemsView(Entity it, String appName) '''
-        «val appPrefix = application.prefix()»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree items *}
         {assign var='hasNodes' value=false}
         {if isset($items) && (is_object($items) && $items->count() gt 0) || (is_array($items) && count($items) gt 0)}
@@ -164,13 +162,13 @@ class ViewHierarchy {
             /* <![CDATA[ */
                 «IF isLegacyApp»
                     document.observe('dom:loaded', function() {
-                        «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
-                        Zikula.TreeSortable.trees.itemTree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
+                        «application.vendorAndName»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
+                        Zikula.TreeSortable.trees.itemTree{{$rootId}}.config.onSave = «application.vendorAndName»TreeSave;
                     });
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            «appPrefix»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
+                            «application.vendorAndName»InitTreeNodes('«name.formatForCode»', '{{$rootId}}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
 
                             var tree = $('#{{$idPrefix}}').jstree({
                                 'core': {
@@ -198,7 +196,7 @@ class ViewHierarchy {
                                 var parentId = data.parent;
                                 var parentNode = $tree.jstree('get_node', parentId, false);
 
-                                «appPrefix»TreeSave(node, parentNode, 'bottom');
+                                «application.vendorAndName»TreeSave(node, parentNode, 'bottom');
                             });
 
                             var searchStartDelay = false;

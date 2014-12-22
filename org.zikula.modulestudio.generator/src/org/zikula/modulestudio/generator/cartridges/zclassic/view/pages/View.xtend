@@ -360,7 +360,7 @@ class View {
             {{foreach item='«objName»' from=$items}}
                 {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
                 «FOR field : getBooleansWithAjaxToggleEntity»
-                    «application.prefix()»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
+                    «application.vendorAndName»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
                 «ENDFOR»
             {{/foreach}}
         «ENDIF»
@@ -504,12 +504,12 @@ class View {
                 /* <![CDATA[ */
                     «IF application.targets('1.3.5')»
                         document.observe('dom:loaded', function() {
-                            «application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                            «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                         });
                     «ELSE»
                         ( function($) {
                             $(document).ready(function() {
-                                «application.prefix()»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                                «application.vendorAndName»InitInlineWindow($('#«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                             });
                         })(jQuery);
                     «ENDIF»

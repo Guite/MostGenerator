@@ -163,7 +163,7 @@ class NewsletterView {
         «IF targets('1.3.5')»
             <script type="text/javascript">
             /* <![CDATA[ * /
-                function «prefix()»ToggleCustomTemplate(objectType) {
+                function «vendorAndName»ToggleCustomTemplate(objectType) {
                     if ($F('«appName.toFirstLower»Args_' + objectType + '_template') == 'custom') {
                         $('customTemplateArea_' + objectType).removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
                     } else {
@@ -173,9 +173,9 @@ class NewsletterView {
     
                 document.observe('dom:loaded', function() {
                     {{foreach key='objectType' item='objectTypeData' from=$objectTypes}}
-                        «prefix()»ToggleCustomTemplate('{{$objectType}}');
+                        «vendorAndName»ToggleCustomTemplate('{{$objectType}}');
                         $('«appName.toFirstLower»Args_{{$objectType}}_template').observe('change', function(e) {
-                            «prefix()»ToggleCustomTemplate('{{$objectType}}');
+                            «vendorAndName»ToggleCustomTemplate('{{$objectType}}');
                         });
                     {{/foreach}}
                 });

@@ -360,12 +360,12 @@ class Forms {
                     // initialise auto completion for user fields
                     «FOR userField : userFields»
                         «val realName = userField.name.formatForCode»
-                        «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
+                        «app.vendorAndName»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
                     «ENDFOR»
                 «ENDIF»
                 «relationHelper.initJs(it, app, true)»
 
-                «application.prefix()»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                «application.vendorAndName»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                 {{* observe validation on button events instead of form submit to exclude the cancel command *}}
                 formValidator = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
                 {{if $mode ne 'create'}}
@@ -398,7 +398,7 @@ class Forms {
             var formButtons;
 
             function handleFormButton (event) {
-                «application.prefix()»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                 var result = document.getElementById('{{$__formid}}').checkValidity();
                 if (!result) {
                     // validation error, abort form submit
@@ -420,7 +420,7 @@ class Forms {
                         // initialise auto completion for user fields
                         «FOR userField : userFields»
                             «val realName = userField.name.formatForCode»
-                            «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
+                            «app.vendorAndName»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
                         «ENDFOR»
                     «ENDIF»
                     «relationHelper.initJs(it, app, true)»
@@ -530,7 +530,7 @@ class Forms {
             «IF app.targets('1.3.5')»
                 Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
             «ELSE»
-                «app.prefix()»SimpleAlert($('#mapContainer'), Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'), evt.message, 'geoLocationAlert', 'danger');
+                «app.vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'), evt.message, 'geoLocationAlert', 'danger');
             «ENDIF»
         }
 
@@ -553,7 +553,7 @@ class Forms {
                 return address;
             }
 
-            «app.prefix()»InitGeoCoding(determineAddressForGeoCoding);
+            «app.vendorAndName»InitGeoCoding(determineAddressForGeoCoding);
         *}}
     '''
 
@@ -575,12 +575,12 @@ class Forms {
     }
 
     def private additionalInitScriptUpload(UploadField it) '''
-        «entity.application.prefix()»InitUploadField('«name.formatForCode»');
+        «entity.application.vendorAndName»InitUploadField('«name.formatForCode»');
     '''
 
     def private additionalInitScriptCalendar(AbstractDateField it) '''
         «IF !mandatory && nullable»
-            «entity.application.prefix()»InitDateField('«name.formatForCode»');
+            «entity.application.vendorAndName»InitDateField('«name.formatForCode»');
         «ENDIF»
     '''
 
@@ -633,12 +633,12 @@ class Forms {
                     // close window from parent document
                     «IF targets('1.3.5')»
                         document.observe('dom:loaded', function() {
-                            «prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
+                            «vendorAndName»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
                         });
                     «ELSE»
                         ( function($) {
                             $(document).ready(function() {
-                                «prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
+                                «vendorAndName»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
                             });
                         })(jQuery);
                     «ENDIF»

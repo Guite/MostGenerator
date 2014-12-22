@@ -48,9 +48,9 @@ class TreeFunctions {
 
     def private initTreeNodes(Application it) '''
         «IF targets('1.3.5')»
-            var «prefix()»TreeContextMenu;
+            var «vendorAndName»TreeContextMenu;
 
-            «prefix()»TreeContextMenu = Class.create(Zikula.UI.ContextMenu, {
+            «vendorAndName»TreeContextMenu = Class.create(Zikula.UI.ContextMenu, {
                 selectMenuItem: function ($super, event, item, item_container) {
                     // open in new tab / window when right-clicked
                     if (event.isRightClick()) {
@@ -71,7 +71,7 @@ class TreeFunctions {
         /**
          * Initialise event handlers for all nodes of a given tree root.
          */
-        function «prefix()»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
+        function «vendorAndName»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
         {
             «IF targets('1.3.5')»$«ENDIF»$('#itemTree' + rootId + ' a').each(function (elem) {
                 «IF targets('1.3.5')»
@@ -128,7 +128,7 @@ class TreeFunctions {
                     .append(Zikula.__('Add child node', 'module_«appName.formatForDB»_js'))
                     .click(function (evt) {
                         evt.preventDefault();
-                        «prefix()»PerformTreeOperation(objectType, rootId, 'addChildNode');
+                        «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
                     })
             )
         );
@@ -147,7 +147,7 @@ class TreeFunctions {
                             confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?', 'module_«appName.formatForDB»_js');
                         }
                         if (window.confirm(confirmQuestion) !== false) {
-                            «prefix()»PerformTreeOperation(objectType, rootId, 'deleteNode');
+                            «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
                         }
                     })
             )
@@ -169,7 +169,7 @@ class TreeFunctions {
                         .append(Zikula.__('Move up', 'module_«appName.formatForDB»_js'))
                         .click(function (evt) {
                             evt.preventDefault();
-                            «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
+                            «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
                         })
                 )
             );
@@ -184,7 +184,7 @@ class TreeFunctions {
                         .append(Zikula.__('Move down', 'module_«appName.formatForDB»_js'))
                         .click(function (evt) {
                             evt.preventDefault();
-                            «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
+                            «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
                         })
                 )
             );
@@ -202,7 +202,7 @@ class TreeFunctions {
         elem.id = liRef.id + 'link';
 
         // and use it to attach a context menu
-        contextMenu = new «prefix()»TreeContextMenu(elem.id, { leftClick: true, animation: false });
+        contextMenu = new «vendorAndName»TreeContextMenu(elem.id, { leftClick: true, animation: false });
         if (hasDisplay === true) {
             contextMenu.addItem({
                 label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/kview.png" width="16" height="16" alt="' + Zikula.__('Display', 'module_«appName.formatForDB»_js') + '" /> '
@@ -246,7 +246,7 @@ class TreeFunctions {
                  + Zikula.__('Add child node', 'module_«appName.formatForDB»_js'),
             callback: function () {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformTreeOperation(objectType, rootId, 'addChildNode');
+                «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
             }
         });
         contextMenu.addItem({
@@ -261,7 +261,7 @@ class TreeFunctions {
                 }
                 if (window.confirm(confirmQuestion) !== false) {
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    «prefix()»PerformTreeOperation(objectType, rootId, 'deleteNode');
+                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
                 }
             }
         });
@@ -273,7 +273,7 @@ class TreeFunctions {
             },
             callback: function () {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
+                «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
             }
         });
         contextMenu.addItem({
@@ -284,7 +284,7 @@ class TreeFunctions {
             },
             callback: function () {
                 currentNodeId = liRef.attr('id').replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
+                «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
             }
         });
     '''
@@ -294,7 +294,7 @@ class TreeFunctions {
          * Helper function to start several different ajax actions
          * performing tree related amendments and operations.
          */
-        function «prefix()»PerformTreeOperation(objectType, rootId, op)
+        function «vendorAndName»PerformTreeOperation(objectType, rootId, op)
         {
             var opParam, params«IF targets('1.3.5')», request«ENDIF»;
 
@@ -308,7 +308,7 @@ class TreeFunctions {
                     «IF targets('1.3.5')»
                         Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                     «ELSE»
-                        «prefix()»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
+                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
                     «ENDIF»
                 }
                 params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + currentNodeId;
@@ -351,12 +351,12 @@ class TreeFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «prefix()»SimpleAlert($('.tree-container'), Zikula.__('Success', 'module_«appName.formatForDB»_js'), data.message, 'treeAjaxDoneAlert', 'success');
+                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Success', 'module_«appName.formatForDB»_js'), data.message, 'treeAjaxDoneAlert', 'success');
                     }*/
 
                     window.location.reload();
                 }).fail(function(jqXHR, textStatus) {
-                    «prefix()»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
                 });
             «ENDIF»
         }
@@ -380,7 +380,7 @@ class TreeFunctions {
          *
          * @return true on success, otherwise the change will be reverted
          */
-        function «prefix()»TreeSave(node, «IF targets('1.3.5')»params, data«ELSE»parentNode, position«ENDIF»)
+        function «vendorAndName»TreeSave(node, «IF targets('1.3.5')»params, data«ELSE»parentNode, position«ENDIF»)
         {
             var nodeParts, rootId, nodeId, destId, requestParams«IF targets('1.3.5')», request«ENDIF»;
 
@@ -443,7 +443,7 @@ class TreeFunctions {
                     return true;
                 }).fail(function(jqXHR, textStatus) {
                     var treeName = 'itemTree' + rootId;
-                    «prefix()»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
 
                     window.location.reload();
                     return false;

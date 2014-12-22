@@ -42,7 +42,7 @@ class Validation {
     def private generate(Application it) '''
         'use strict';
 
-        function «prefix()»Today(format)
+        function «vendorAndName»Today(format)
         {
             var timestamp, todayDate, month, day, hours, minutes, seconds;
 
@@ -81,7 +81,7 @@ class Validation {
         }
 
         // returns YYYY-MM-DD even if date is in DD.MM.YYYY
-        function «prefix()»ReadDate(val, includeTime)
+        function «vendorAndName»ReadDate(val, includeTime)
         {
             // look if we have YYYY-MM-DD
             if (val.substr(4, 1) === '-' && val.substr(7, 1) === '-') {
@@ -102,7 +102,7 @@ class Validation {
             /**
              * Performs a duplicate check for unique fields
              */
-            function «prefix()»UniqueCheck(ucOt, val, elem, ucEx)
+            function «vendorAndName»UniqueCheck(ucOt, val, elem, ucEx)
             {
                 var params«IF targets('1.3.5')», request«ENDIF»;
 
@@ -177,7 +177,7 @@ class Validation {
             }
         «ENDIF»
 
-        function «prefix()»ValidateNoSpace(val)
+        function «vendorAndName»ValidateNoSpace(val)
         {
             var valStr;
             valStr = new String(val);
@@ -186,7 +186,7 @@ class Validation {
         }
         «IF hasColourFields»
 
-            function «prefix()»ValidateHtmlColour(val)
+            function «vendorAndName»ValidateHtmlColour(val)
             {
                 var valStr;
                 valStr = new String(val);
@@ -196,7 +196,7 @@ class Validation {
         «ENDIF»
         «IF hasUploads»
 
-            function «prefix()»ValidateUploadExtension(val, elem)
+            function «vendorAndName»ValidateUploadExtension(val, elem)
             {
                 var fileExtension, allowedExtensions;
                 if (val === '') {
@@ -214,24 +214,24 @@ class Validation {
         «IF !datetimeFields.empty»
             «IF datetimeFields.exists[past]»
 
-                function «prefix()»ValidateDatetimePast(val)
+                function «vendorAndName»ValidateDatetimePast(val)
                 {
                     var valStr, cmpVal;
                     valStr = new String(val);
-                    cmpVal = «prefix()»ReadDate(valStr, true);
+                    cmpVal = «vendorAndName»ReadDate(valStr, true);
 
-                    return valStr === '' || (cmpVal < «prefix()»Today('datetime'));
+                    return valStr === '' || (cmpVal < «vendorAndName»Today('datetime'));
                 }
             «ENDIF»
             «IF datetimeFields.exists[future]»
 
-                function «prefix()»ValidateDatetimeFuture(val)
+                function «vendorAndName»ValidateDatetimeFuture(val)
                 {
                     var valStr, cmpVal;
                     valStr = new String(val);
-                    cmpVal = «prefix()»ReadDate(valStr, true);
+                    cmpVal = «vendorAndName»ReadDate(valStr, true);
 
-                    return valStr === '' || (cmpVal >= «prefix()»Today('datetime'));
+                    return valStr === '' || (cmpVal >= «vendorAndName»Today('datetime'));
                 }
             «ENDIF»
         «ENDIF»
@@ -239,24 +239,24 @@ class Validation {
         «IF !dateFields.empty»
             «IF dateFields.exists[past]»
 
-                function «prefix()»ValidateDatePast(val)
+                function «vendorAndName»ValidateDatePast(val)
                 {
                     var valStr, cmpVal;
                     valStr = new String(val);
-                    cmpVal = «prefix()»ReadDate(valStr, false);
+                    cmpVal = «vendorAndName»ReadDate(valStr, false);
 
-                    return valStr === '' || (cmpVal < «prefix()»Today('date'));
+                    return valStr === '' || (cmpVal < «vendorAndName»Today('date'));
                 }
             «ENDIF»
             «IF dateFields.exists[future]»
 
-                function «prefix()»ValidateDateFuture(val)
+                function «vendorAndName»ValidateDateFuture(val)
                 {
                     var valStr, cmpVal;
                     valStr = new String(val);
-                    cmpVal = «prefix()»ReadDate(valStr, false);
+                    cmpVal = «vendorAndName»ReadDate(valStr, false);
 
-                    return valStr === '' || (cmpVal >= «prefix()»Today('date'));
+                    return valStr === '' || (cmpVal >= «vendorAndName»Today('date'));
                 }
             «ENDIF»
         «ENDIF»
@@ -264,22 +264,22 @@ class Validation {
         «IF !timeFields.empty»
             «IF timeFields.exists[past]»
 
-                function «prefix()»ValidateTimePast(val)
+                function «vendorAndName»ValidateTimePast(val)
                 {
                     var cmpVal;
                     cmpVal = new String(val);
 
-                    return cmpVal === '' || (cmpVal < «prefix()»Today('time'));
+                    return cmpVal === '' || (cmpVal < «vendorAndName»Today('time'));
                 }
             «ENDIF»
             «IF timeFields.exists[future]»
 
-                function «prefix()»ValidateTimeFuture(val)
+                function «vendorAndName»ValidateTimeFuture(val)
                 {
                     var cmpVal;
                     cmpVal = new String(val);
 
-                    return cmpVal === '' || (cmpVal >= «prefix()»Today('time'));
+                    return cmpVal === '' || (cmpVal >= «vendorAndName»Today('time'));
                 }
             «ENDIF»
         «ENDIF»
@@ -288,14 +288,14 @@ class Validation {
             «val endDateField = entity.getEndDateField»
             «IF startDateField !== null && endDateField !== null»
 
-                function «prefix()»ValidateDateRange«entity.name.formatForCodeCapital»(val)
+                function «vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(val)
                 {
                     «val validateClass = 'validate-daterange-' + entity.name.formatForDB»
                     «val startFieldName = startDateField.name.formatForCode»
                     «val endFieldName = endDateField.name.formatForCode»
                     «IF targets('1.3.5')»
-                        cmpVal = «prefix()»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
-                        cmpVal2 = «prefix()»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
+                        cmpVal = «vendorAndName»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
+                        cmpVal2 = «vendorAndName»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
                         result = (cmpVal <= cmpVal2);
                         if (result) {
                             $('advice-«validateClass»-«startFieldName»').hide();
@@ -312,8 +312,8 @@ class Validation {
                             $('«endFieldName»').removeClassName('validation-passed').addClassName('validation-failed');
                         }
                     «ELSE»
-                        cmpVal = «prefix()»ReadDate($('#«startFieldName»').val(), «(startDateField instanceof DatetimeField).displayBool»);
-                        cmpVal2 = «prefix()»ReadDate($('#«endFieldName»').val(), «(endDateField instanceof DatetimeField).displayBool»);
+                        cmpVal = «vendorAndName»ReadDate($('#«startFieldName»').val(), «(startDateField instanceof DatetimeField).displayBool»);
+                        cmpVal2 = «vendorAndName»ReadDate($('#«endFieldName»').val(), «(endDateField instanceof DatetimeField).displayBool»);
                         result = (cmpVal <= cmpVal2);
                         if (result) {
                             $('#advice-«validateClass»-«startFieldName»').hide();
@@ -339,56 +339,56 @@ class Validation {
         /**
          * «IF targets('1.3.5')»Adds«ELSE»Runs«ENDIF» special validation rules.
          */
-        function «prefix()»«IF targets('1.3.5')»AddCommonValidationRules«ELSE»PerformCustomValidationRules«ENDIF»(objectType, id)
+        function «vendorAndName»«IF targets('1.3.5')»AddCommonValidationRules«ELSE»PerformCustomValidationRules«ENDIF»(objectType, id)
         {
             «IF targets('1.3.5')»
                 Validation.addAllThese([
                     ['validate-nospace', Zikula.__('No spaces', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                        return «prefix()»ValidateNoSpace(val);
+                        return «vendorAndName»ValidateNoSpace(val);
                     }],
                     «IF hasColourFields»
                         ['validate-htmlcolour', Zikula.__('Please select a valid html colour code.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                            return «prefix()»ValidateHtmlColour(val);
+                            return «vendorAndName»ValidateHtmlColour(val);
                         }],
                     «ENDIF»
                     «IF hasUploads»
                         ['validate-upload', Zikula.__('Please select a valid file extension.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                            return «prefix()»ValidateUploadExtension(val, elem);
+                            return «vendorAndName»ValidateUploadExtension(val, elem);
                         }],
                     «ENDIF»
                     «IF !datetimeFields.empty»
                         «IF datetimeFields.exists[past]»
                             ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                                return «prefix()»ValidateDatetimePast(val);
+                                return «vendorAndName»ValidateDatetimePast(val);
                             }],
                         «ENDIF»
                         «IF datetimeFields.exists[future]»
                             ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                                return «prefix()»ValidateDatetimeFuture(val);
+                                return «vendorAndName»ValidateDatetimeFuture(val);
                             }],
                         «ENDIF»
                     «ENDIF»
                     «IF !dateFields.empty»
                         «IF dateFields.exists[past]»
                             ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                                return «prefix()»ValidateDatePast(val);
+                                return «vendorAndName»ValidateDatePast(val);
                             }],
                         «ENDIF»
                         «IF dateFields.exists[future]»
                             ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                                return «prefix()»ValidateDateFuture(val);
+                                return «vendorAndName»ValidateDateFuture(val);
                             }],
                         «ENDIF»
                     «ENDIF»
                     «IF !timeFields.empty»
                         «IF timeFields.exists[past]»
                             ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                                return «prefix()»ValidateTimePast(val);
+                                return «vendorAndName»ValidateTimePast(val);
                             }],
                         «ENDIF»
                         «IF timeFields.exists[future]»
                             ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                                return «prefix()»ValidateTimeFuture(val);
+                                return «vendorAndName»ValidateTimeFuture(val);
                             }],
                         «ENDIF»
                     «ENDIF»
@@ -397,19 +397,19 @@ class Validation {
                         «val endDateField = entity.getEndDateField»
                         «IF startDateField !== null && endDateField !== null»
                             ['validate-daterange-«entity.name.formatForDB»', Zikula.__('The start must be before the end.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                                return «prefix()»ValidateDateRange«entity.name.formatForCodeCapital»(val);
+                                return «vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(val);
                             }],
                         «ENDIF»
                     «ENDFOR»
                     «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                         ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                            return «prefix()»UniqueCheck('«name.formatForCode»', val, elem, id);
+                            return «vendorAndName»UniqueCheck('«name.formatForCode»', val, elem, id);
                         }]
                     «ENDIF»
                 ]);
             «ELSE»
                 $('.validate-nospace').each( function() {
-                    if («prefix()»ValidateNoSpace($(this).val())) {
+                    if («vendorAndName»ValidateNoSpace($(this).val())) {
                         $(this).setCustomValidity(Zikula.__('This value must not contain spaces.', 'module_«appName.formatForDB»_js'));
                     } else {
                         $(this).setCustomValidity('');
@@ -417,7 +417,7 @@ class Validation {
                 });
                 «IF hasColourFields»
                     $('.validate-htmlcolour').each( function() {
-                        if («prefix()»ValidateHtmlColour($(this).val())) {
+                        if («vendorAndName»ValidateHtmlColour($(this).val())) {
                             $(this).setCustomValidity(Zikula.__('Please select a valid html colour code.', 'module_«appName.formatForDB»_js'));
                         } else {
                             $(this).setCustomValidity('');
@@ -426,7 +426,7 @@ class Validation {
                 «ENDIF»
                 «IF hasUploads»
                     $('.validate-upload').each( function() {
-                        if («prefix()»ValidateUploadExtension($(this).val(), $(this))) {
+                        if («vendorAndName»ValidateUploadExtension($(this).val(), $(this))) {
                             $(this).setCustomValidity(Zikula.__('Please select a valid file extension.', 'module_«appName.formatForDB»_js'));
                         } else {
                             $(this).setCustomValidity('');
@@ -436,7 +436,7 @@ class Validation {
                 «IF !datetimeFields.empty»
                     «IF datetimeFields.exists[past]»
                         $('.validate-datetime-past').each( function() {
-                            if («prefix()»ValidateDatetimePast($(this).val())) {
+                            if («vendorAndName»ValidateDatetimePast($(this).val())) {
                                 $(this).setCustomValidity(Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'));
                             } else {
                                 $(this).setCustomValidity('');
@@ -445,7 +445,7 @@ class Validation {
                     «ENDIF»
                     «IF datetimeFields.exists[future]»
                         $('.validate-datetime-future').each( function() {
-                            if («prefix()»ValidateDatetimeFuture($(this).val())) {
+                            if («vendorAndName»ValidateDatetimeFuture($(this).val())) {
                                 $(this).setCustomValidity(Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'));
                             } else {
                                 $(this).setCustomValidity('');
@@ -456,7 +456,7 @@ class Validation {
                 «IF !dateFields.empty»
                     «IF dateFields.exists[past]»
                         $('.validate-date-past').each( function() {
-                            if («prefix()»ValidateDatePast($(this).val())) {
+                            if («vendorAndName»ValidateDatePast($(this).val())) {
                                 $(this).setCustomValidity(Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'));
                             } else {
                                 $(this).setCustomValidity('');
@@ -465,7 +465,7 @@ class Validation {
                     «ENDIF»
                     «IF dateFields.exists[future]»
                         $('.validate-date-future').each( function() {
-                            if («prefix()»ValidateDateFuture($(this).val())) {
+                            if («vendorAndName»ValidateDateFuture($(this).val())) {
                                 $(this).setCustomValidity(Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'));
                             } else {
                                 $(this).setCustomValidity('');
@@ -476,7 +476,7 @@ class Validation {
                 «IF !timeFields.empty»
                     «IF timeFields.exists[past]»
                         $('.validate-time-past').each( function() {
-                            if («prefix()»ValidateTimePast($(this).val())) {
+                            if («vendorAndName»ValidateTimePast($(this).val())) {
                                 $(this).setCustomValidity(Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'));
                             } else {
                                 $(this).setCustomValidity('');
@@ -485,7 +485,7 @@ class Validation {
                     «ENDIF»
                     «IF timeFields.exists[future]»
                         $('.validate-time-future').each( function() {
-                            if («prefix()»ValidateTimeFuture($(this).val())) {
+                            if («vendorAndName»ValidateTimeFuture($(this).val())) {
                                 $(this).setCustomValidity(Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'));
                             } else {
                                 $(this).setCustomValidity('');
@@ -498,7 +498,7 @@ class Validation {
                     «val endDateField = entity.getEndDateField»
                     «IF startDateField !== null && endDateField !== null»
                         $('.validate-daterange-«entity.name.formatForDB»').each( function() {
-                            if («prefix()»ValidateDateRange«entity.name.formatForCodeCapital»($(this).val())) {
+                            if («vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»($(this).val())) {
                                 $(this).setCustomValidity(Zikula.__('The start must be before the end.', 'module_«appName.formatForDB»_js'));
                             } else {
                                 $(this).setCustomValidity('');
@@ -508,7 +508,7 @@ class Validation {
                 «ENDFOR»
                 «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                     $('.validate-unique').each( function() {
-                        if («prefix()»UniqueCheck('«name.formatForCode»', $(this).val(), $(this), id)) {
+                        if («vendorAndName»UniqueCheck('«name.formatForCode»', $(this).val(), $(this), id)) {
                             $(this).setCustomValidity(Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'));
                         } else {
                             $(this).setCustomValidity('');

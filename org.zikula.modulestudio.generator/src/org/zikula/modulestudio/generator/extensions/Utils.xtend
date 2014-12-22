@@ -37,6 +37,17 @@ class Utils {
     }
 
     /**
+     * Returns a combined title consisting of vendor and name.
+     *
+     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     *
+     * @return String The formatted name.
+     */
+    def String vendorAndName(Application it) {
+        vendor.formatForCode + name.formatForCodeCapital
+    }
+
+    /**
      * Returns the formatted name of the application.
      *
      * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
