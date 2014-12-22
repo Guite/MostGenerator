@@ -431,7 +431,7 @@ class WorkflowUtil {
                 // nothing required here as no entities use enhanced workflows including approval actions
             «ELSE»
                 «IF !targets('1.3.5')»
-                    $logger = $serviceManager->get('logger');
+                    $logger = $this->get('logger');
 
                 «ENDIF»
                 // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
