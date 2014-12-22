@@ -217,8 +217,8 @@ class WorkflowUtil {
                 $this->normaliseWorkflowData($entity);
             «ENDIF»
 
-            $idcolumn = $entity['__WORKFLOW__']['«IF targets('1.3.5')»obj_idcolumn«ELSE»objIdcolumn«ENDIF»'];
-            $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
+            $idColumn = $entity['__WORKFLOW__']['obj_idcolumn'];
+            $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idColumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
             «IF targets('1.3.5')»
@@ -345,13 +345,13 @@ class WorkflowUtil {
             $schemaName = $this->getWorkflowName($objectType);
 
             $entity->initWorkflow(true);
-            $idcolumn = $entity['__WORKFLOW__']['«IF targets('1.3.5')»obj_idcolumn«ELSE»objIdcolumn«ENDIF»'];
+            $idColumn = $entity['__WORKFLOW__']['obj_idcolumn'];
             «IF !targets('1.3.5')»
 
                 $this->normaliseWorkflowData($entity);
             «ENDIF»
 
-            $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
+            $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idColumn);
 
             if ($result !== false && !$recursive) {
                 $entities = $entity->getRelatedObjectsToPersist();
@@ -396,15 +396,9 @@ class WorkflowUtil {
                 'module'        => '«appName»',
                 'id'            => $workflow->getId(),
                 'state'         => $workflow->getState(),
-                «IF targets('1.3.5')»
-                    'obj_table'     => $workflow->getObjTable(),
-                    'obj_idcolumn'  => $workflow->getObjIdcolumn(),
-                    'obj_id'        => $workflow->getObjId(),
-                «ELSE»
-                    'objTable'      => $workflow->getObjTable(),
-                    'objIdcolumn'   => $workflow->getObjIdcolumn(),
-                    'objId'         => $workflow->getObjId(),
-                «ENDIF»
+                'obj_table'     => $workflow->getObjTable(),
+                'obj_idcolumn'  => $workflow->getObjIdcolumn(),
+                'obj_id'        => $workflow->getObjId(),
                 'schemaname'    => $workflow->getSchemaname()
             );
 
