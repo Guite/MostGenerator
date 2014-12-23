@@ -369,8 +369,8 @@ class View {
     def private initMassToggle(Entity it) '''
         {{if $lct eq 'admin'}}
             {{* init the "toggle all" functionality *}}
-            if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
-                $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
+            if ($('#toggle«nameMultiple.formatForCodeCapital»') != undefined) {
+                $('#toggle«nameMultiple.formatForCodeCapital»').on('click', function (e) {
                     Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
                     e.stop()
                 });
