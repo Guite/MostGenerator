@@ -342,6 +342,7 @@ class View {
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
+                            «new ItemActionsView().generateView(it, 'javascript')»
                             «initAjaxSingleToggle»
                             «IF listType == 3»
                                 «initMassToggle»
@@ -558,7 +559,7 @@ class View {
         «ELSE»
             <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF application.targets('1.3.5')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
         «ENDIF»
-            «new ItemActionsView().generate(it, 'view')»
+            «new ItemActionsView().generateView(it, 'markup')»
         </«listType.asItemTag»>
     '''
 

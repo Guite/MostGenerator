@@ -11,11 +11,23 @@ class ItemActionsView {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
-    def generate(Entity it, String context) '''
-        {if count($«name.formatForCode»._actions) gt 0}
-            «markup(context)»
+    def generateView(Entity it, String subject) '''
+        «IF subject == 'markup'»
+            {if count($«name.formatForCode»._actions) gt 0}
+                «markup('view')»
+                «IF application.targets('1.3.5')»
+                    «javaScript('view')»
+                «ENDIF»
+            {/if}
+        «ELSEIF subject == 'javascript'»
+            «javaScript('view')»
+        «ENDIF»
+    '''
 
-            «javaScript(context)»
+    def generateDisplay(Entity it) '''
+        {if count($«name.formatForCode»._actions) gt 0}
+            «markup('display')»
+            «javaScript('display')»
         {/if}
     '''
 

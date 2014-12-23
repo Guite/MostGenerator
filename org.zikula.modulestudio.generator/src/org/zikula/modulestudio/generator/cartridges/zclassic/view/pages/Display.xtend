@@ -111,7 +111,7 @@ class Display {
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
                 «callDisplayHooks(appName)»
                 «IF isLegacyApp»
-                    «new ItemActionsView().generate(it, 'display')»
+                    «new ItemActionsView().generateDisplay(it)»
                 «ENDIF»
                 «IF useGroupingPanels('display')»
                     </div>«/* panels */»
@@ -194,7 +194,7 @@ class Display {
                 <h3>
                     <span class="fa fa-eye"></span>
                     «templateHeading(appName)»
-                    «new ItemActionsView().generate(it, 'display')»
+                    «new ItemActionsView().generateDisplay(it)»
                 </h3>
             «ENDIF»
         {else}
@@ -203,7 +203,7 @@ class Display {
             «ELSE»
                 <h2>
                     «templateHeading(appName)»
-                    «new ItemActionsView().generate(it, 'display')»
+                    «new ItemActionsView().generateDisplay(it)»
                 </h2>
             «ENDIF»
         {/if}
