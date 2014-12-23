@@ -188,7 +188,11 @@ class Views {
                 {pageaddvar name='javascript' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.js'}
             «ENDIF»
         «ENDIF»
-        {pageaddvar name='javascript' value='«rootFolder»/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName».js'}
+        «IF targets('1.3.5')»
+            {pageaddvar name='javascript' value='«rootFolder»/«appName»/javascript/«appName».js'}
+        «ELSE»
+            {pageaddvar name='javascript' value='@«appName»/Resources/public/js/«appName».js'}
+        «ENDIF»
 
         {* initialise additional gettext domain for translations within javascript *}
         {pageaddvar name='jsgettext' value='module_«appName.formatForDB»_js:«appName»'}
@@ -244,13 +248,14 @@ class Views {
         «IF hasEditActions»
         {elseif isset($smarty.get.func) && $smarty.get.func eq 'edit'}
             {pageaddvar name='stylesheet' value='style/core.css'}
-            {pageaddvar name='stylesheet' value='«rootFolder»/«appName»/«IF targets('1.3.5')»style/«ELSE»«getAppCssPath»«ENDIF»style.css'}
             «IF targets('1.3.5')»
+                {pageaddvar name='stylesheet' value='«rootFolder»/«appName»/style/style.css'}
                 {pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
                 {pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}
             «ELSE»
-                {pageaddvar name='stylesheet' value='system/Zikula/Module/ThemeModule/Resources/public/css/form/style.css'}
-                {pageaddvar name='stylesheet' value='themes/Zikula/Theme/Andreas08Theme/Resources/public/css/fluid960gs/reset.css'}
+                {pageaddvar name='stylesheet' value='@«appName»/Resources/public/css/style.css'}
+                {pageaddvar name='stylesheet' value='@ZikulaThemeModule/Resources/public/css/form/style.css'}
+                {pageaddvar name='stylesheet' value='@ZikulaAndreas08Theme/Resources/public/css/fluid960gs/reset.css'}
             «ENDIF»
             {capture assign='pageStyles'}
             <style type="text/css">

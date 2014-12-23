@@ -121,13 +121,14 @@ class ItemSelector {
                         PageUtil::addVar('javascript', 'prototype');
                         PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
                         PageUtil::addVar('javascript', '«rootFolder»/«appName»/javascript/«appName»_finder.js');
+                        PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
                     «ELSE»
                         PageUtil::addVar('javascript', 'jquery');
                         PageUtil::addVar('javascript', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js');
                         PageUtil::addVar('stylesheet', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css');
-                        PageUtil::addVar('javascript', '«getAppJsPath»«appName».Finder.js');
+                        PageUtil::addVar('javascript', '@«appName»/Resources/public/js/«appName».Finder.js');
+                        PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
                     «ENDIF»
-                    PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
                 }
                 $firstTime = false;
 

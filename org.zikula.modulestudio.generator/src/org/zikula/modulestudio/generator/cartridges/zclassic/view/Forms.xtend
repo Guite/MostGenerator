@@ -90,8 +90,13 @@ class Forms {
             {assign var='lctUc' value=$lct|ucfirst}
             {include file="`$lctUc`/header.tpl"}
         «ENDIF»
-        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js'}
-        {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.5')»_v«ELSE».V«ENDIF»alidation.js'}
+        «IF app.targets('1.3.5')»
+            {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_editFunctions.js'}
+            {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_validation.js'}
+        «ELSE»
+            {pageaddvar name='javascript' value='@«app.appName»/Resources/public/js/«app.appName».EditFunctions.js'}
+            {pageaddvar name='javascript' value='@«app.appName»/Resources/public/js/«app.appName».Validation.js'}
+        «ENDIF»
         «IF !app.targets('1.3.5') && (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
             {pageaddvar name='javascript' value='web/bootstrap-3-typeahead/bootstrap3-typeahead.min.js'}
         «ENDIF»

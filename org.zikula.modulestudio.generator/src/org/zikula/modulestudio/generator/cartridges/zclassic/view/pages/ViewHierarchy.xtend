@@ -152,7 +152,11 @@ class ViewHierarchy {
             «ENDIF»
         </div>
 
-        {pageaddvar name='javascript' value='«application.rootFolder»/«IF isLegacyApp»«appName»/javascript/«ELSE»«application.getAppJsPath»«ENDIF»«appName»«IF isLegacyApp»_t«ELSE».T«ENDIF»ree.js'}
+        «IF isLegacyApp»
+            {pageaddvar name='javascript' value='«application.rootFolder»/«appName»/javascript/«appName»_tree.js'}
+        «ELSE»
+            {pageaddvar name='javascript' value='@«appName»/Resources/public/js/«appName».Tree.js'}
+        «ENDIF»
         {if $hasNodes}
             «IF !isLegacyApp»
                 {pageaddvar name='javascript' value='web/jstree/dist/jstree.min.js'}

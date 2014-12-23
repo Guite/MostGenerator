@@ -233,7 +233,11 @@ class ExternalController {
     '''
 
     def private finderBaseImpl(Application it) '''
-        PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
+        «IF targets('1.3.5')»
+            PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
+        «ELSE»
+            PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
+        «ENDIF»
 
         $getData = $this->request->query;
         «IF targets('1.3.5')»
