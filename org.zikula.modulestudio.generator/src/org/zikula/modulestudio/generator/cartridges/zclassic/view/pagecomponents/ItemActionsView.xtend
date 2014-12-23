@@ -77,22 +77,27 @@ class ItemActionsView {
     def private linkEntryCommonAttributes(Entity it) '''href="{$option.url.type|«application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
 
     def private javaScript(Entity it, String context) '''
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            «IF application.targets('1.3.5')»
-                document.observe('dom:loaded', function() {
-                    «application.vendorAndName»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
-                });
-            «ELSE»
-                ( function($) {
-                    $(document).ready(function() {
-                        $('.dropdown-toggle').dropdown();
-                        $('a.fa-zoom-in').attr('target', '_blank');
+        «IF !application.targets('1.3.5') && context == 'view'»
+            $('.dropdown-toggle').dropdown();
+            $('a.fa-zoom-in').attr('target', '_blank');
+        «ELSE»
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                «IF application.targets('1.3.5')»
+                    document.observe('dom:loaded', function() {
+                        «application.vendorAndName»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
                     });
-                })(jQuery);
-            «ENDIF»
-        /* ]]> */
-        </script>
+                «ELSE»
+                    ( function($) {
+                        $(document).ready(function() {
+                            $('.dropdown-toggle').dropdown();
+                            $('a.fa-zoom-in').attr('target', '_blank');
+                        });
+                    })(jQuery);
+                «ENDIF»
+            /* ]]> */
+            </script>
+        «ENDIF»
     '''
 
     def trigger(Entity it, String context) '''
