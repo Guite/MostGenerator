@@ -30,10 +30,8 @@ class ItemActionsView {
                 «linkList(context)»
             «ENDIF»
         «ELSE»
-            «IF context == 'view'»
-                «trigger(context)»
-            «ENDIF»
             <div class="dropdown">
+                «trigger(context)»
                 <ul class="dropdown-menu" role="menu" aria-labelledby="«itemActionContainerViewId»DropDownToggle">
                     «linkList(context)»
                 </ul>

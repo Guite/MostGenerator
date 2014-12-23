@@ -110,7 +110,9 @@ class Display {
 
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
                 «callDisplayHooks(appName)»
-                «new ItemActionsView().generate(it, 'display')»
+                «IF isLegacyApp»
+                    «new ItemActionsView().generate(it, 'display')»
+                «ENDIF»
                 «IF useGroupingPanels('display')»
                     </div>«/* panels */»
                 «ENDIF»
@@ -186,20 +188,28 @@ class Display {
             «IF isLegacyApp»
                 <div class="z-admin-content-pagetitle">
                     {icon type='display' size='small' __alt='Details'}
-                    <h3>«templateHeading(appName)»</h3>
+                    <h3>«templateHeading(appName)»«new ItemActionsView().trigger(it, 'display')»</h3>
                 </div>
             «ELSE»
                 <h3>
                     <span class="fa fa-eye"></span>
                     «templateHeading(appName)»
+                    «new ItemActionsView().generate(it, 'display')»
                 </h3>
             «ENDIF»
         {else}
-            <h2>«templateHeading(appName)»</h2>
+            «IF isLegacyApp»
+                <h2>«templateHeading(appName)»«new ItemActionsView().trigger(it, 'display')»</h2>
+            «ELSE»
+                <h2>
+                    «templateHeading(appName)»
+                    «new ItemActionsView().generate(it, 'display')»
+                </h2>
+            «ENDIF»
         {/if}
     '''
 
-    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»«new ItemActionsView().trigger(it, 'display')»'''
+    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»'''
 
     def private displayEntry(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
