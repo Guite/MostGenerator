@@ -390,27 +390,29 @@ class Display {
         {* include display hooks *}
         {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' id=«displayHookId» urlobject=$currentUrlObject assign='hooks'}
         {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
-            «IF useGroupingPanels('display')»
-                «IF isLegacyApp»
-                    <h3 class="z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
-                    <div class="z-panel-content" style="display: none">
-                        {$hook}
-                    </div>
-                «ELSE»
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{$smarty.foreach.hookLoop.iteration}">{$providerArea}</a></h3>
+            {if $providerArea ne 'provider.scribite.ui_hooks.editor'}{* fix for #664 *}
+                «IF useGroupingPanels('display')»
+                    «IF isLegacyApp»
+                        <h3 class="z-panel-header z-panel-indicator «IF isLegacyApp»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
+                        <div class="z-panel-content" style="display: none">
+                            {$hook}
                         </div>
-                        <div id="collapseHook{$smarty.foreach.hookLoop.iteration}" class="panel-collapse collapse in">
-                            <div class="panel-body">
-                                {$hook}
+                    «ELSE»
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{$smarty.foreach.hookLoop.iteration}">{$providerArea}</a></h3>
+                            </div>
+                            <div id="collapseHook{$smarty.foreach.hookLoop.iteration}" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    {$hook}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    «ENDIF»
+                «ELSE»
+                    {$hook}
                 «ENDIF»
-            «ELSE»
-                {$hook}
-            «ENDIF»
+            {/if}
         {/foreach}
     '''
 
