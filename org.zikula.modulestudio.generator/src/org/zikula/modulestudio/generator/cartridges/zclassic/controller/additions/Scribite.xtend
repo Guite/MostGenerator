@@ -102,10 +102,17 @@ class Scribite {
     def private pluginTinyMce(Application it) {
         var pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
 
-        var fileName = 'editor_plugin.js'
+        var fileName = 'plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
             if (shouldBeMarked(pluginPath + fileName)) {
-                fileName = 'editor_plugin.generated.js'
+                fileName = 'plugin.generated.js'
+            }
+            fsa.generateFile(pluginPath + fileName, tinyPlugin)
+        }
+        fileName = 'plugin.min.js'
+        if (!shouldBeSkipped(pluginPath + fileName)) {
+            if (shouldBeMarked(pluginPath + fileName)) {
+                fileName = 'plugin.min.generated.js'
             }
             fsa.generateFile(pluginPath + fileName, tinyPlugin)
         }
@@ -228,7 +235,7 @@ class Scribite {
 
     def private tinyPlugin(Application it) '''
         /**
-         * editor_plugin_src.js
+         * plugin.js
          *
          * Copyright 2009, Moxiecode Systems AB
          * Released under LGPL License.
