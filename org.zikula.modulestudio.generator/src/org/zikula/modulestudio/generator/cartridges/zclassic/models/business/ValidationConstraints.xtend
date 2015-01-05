@@ -404,22 +404,22 @@ class ValidationConstraints {
     def classAnnotations(DataObject it) '''
         «IF !getUniqueDerivedFields.filter[!primaryKey].empty»
             «FOR udf : getUniqueDerivedFields.filter[!primaryKey]»
-                «' '»* @Assert\UniqueEntity(fields="«udf.name.formatForCode»", ignoreNull="«udf.nullable.displayBool»")
+                «' '»* @UniqueEntity(fields="«udf.name.formatForCode»", ignoreNull="«udf.nullable.displayBool»")
             «ENDFOR»
         «ENDIF»
         «IF it instanceof Entity && (it as Entity).slugUnique && (it as Entity).hasSluggableFields»
-            «' '»* @Assert\UniqueEntity(fields="slug", ignoreNull="false")
+            «' '»* @UniqueEntity(fields="slug", ignoreNull="false")
         «ENDIF»
         «IF !getIncomingJoinRelations.filter[unique].empty»
             «FOR rel : getIncomingJoinRelations.filter[unique]»
                 «val aliasName = rel.getRelationAliasName(false).toFirstLower»
-                «' '»* @Assert\UniqueEntity(fields="«aliasName.formatForCode»", ignoreNull="«rel.nullable.displayBool»")
+                «' '»* @UniqueEntity(fields="«aliasName.formatForCode»", ignoreNull="«rel.nullable.displayBool»")
             «ENDFOR»
         «ENDIF»
         «IF !getOutgoingJoinRelations.filter[unique].empty»
             «FOR rel : getOutgoingJoinRelations.filter[unique]»
                 «val aliasName = rel.getRelationAliasName(true).toFirstLower»
-                «' '»* @Assert\UniqueEntity(fields="«aliasName.formatForCode»", ignoreNull="«rel.nullable.displayBool»")
+                «' '»* @UniqueEntity(fields="«aliasName.formatForCode»", ignoreNull="«rel.nullable.displayBool»")
             «ENDFOR»
         «ENDIF»
         «IF it instanceof Entity && !(it as Entity).getUniqueIndexes.empty»
@@ -437,6 +437,6 @@ class ValidationConstraints {
                 «includesNotNullableField = true»
             «ENDIF»
         «ENDFOR»
-        «' '»* @Assert\UniqueEntity(fields={«FOR item : items SEPARATOR ', '»"«item.name.formatForCode»"«ENDFOR»}, ignoreNull="«(!includesNotNullableField).displayBool»")
+        «' '»* @UniqueEntity(fields={«FOR item : items SEPARATOR ', '»"«item.name.formatForCode»"«ENDFOR»}, ignoreNull="«(!includesNotNullableField).displayBool»")
     '''
 }
