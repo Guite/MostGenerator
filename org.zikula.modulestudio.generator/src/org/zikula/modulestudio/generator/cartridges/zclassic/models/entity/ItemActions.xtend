@@ -36,6 +36,8 @@ class ItemActions {
 
             $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+            $component = '«app.appName»:«name.formatForCodeCapital»:';
+            $instance = «idFieldsAsParameterCode('this')» . '::';
             «val appName = app.appName»
             $dom = ZLanguage::getModuleDomain('«appName»');
             «FOR controller : app.getAdminAndUserControllers»
@@ -83,10 +85,6 @@ class ItemActions {
     def private itemActionsTargetingEdit(Entity it, Application app, Controller controller) '''
         «IF controller.hasActions('view') || controller.hasActions('display')»
             if (in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
-                «IF controller.hasActions('edit') || controller.hasActions('delete')»
-                     $component = '«app.appName»:«name.formatForCodeCapital»:';
-                     $instance = «idFieldsAsParameterCode('this')» . '::';
-                «ENDIF»
                 «IF controller.hasActions('edit')»
                     if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
                         «IF ownerPermission && standardFields»
