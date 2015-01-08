@@ -546,6 +546,7 @@ class ControllerLayer {
             use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
 
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+            use Symfony\Component\HttpFoundation\Request;
 
         «ENDIF»
         /**
