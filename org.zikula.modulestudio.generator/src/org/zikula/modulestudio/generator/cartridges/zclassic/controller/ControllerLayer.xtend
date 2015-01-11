@@ -545,6 +545,9 @@ class ControllerLayer {
 
             use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
 
+            «IF it instanceof AjaxController»
+                use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+            «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
             use Symfony\Component\HttpFoundation\Request;
 
