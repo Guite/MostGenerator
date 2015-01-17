@@ -579,7 +579,7 @@ class EventListener {
             «ENDIF»
         «ENDIF»
 
-        «FOR field : fields»«field.sanitizeForOutput»«ENDFOR»
+        «FOR field : fields»«IF !(field instanceof ArrayField)»«field.sanitizeForOutput»«ENDIF»«ENDFOR»
     '''
 
     def private sanitizeForOutput(EntityField it) {
@@ -598,9 +598,6 @@ class EventListener {
             EmailField: sanitizeForOutputHTML
             ListField: sanitizeForOutputHTMLWithZero
             UploadField: sanitizeForOutputUpload
-            ArrayField: '''
-                            $this['«name.formatForCode»'] = ((isset($this['«name.formatForCode»']) && is_array($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : array());
-                         '''
             ObjectField: '''
                             $this->formatObjectField('«it.name.formatForCode»', $currentFunc, $usesCsvOutput);
             '''
