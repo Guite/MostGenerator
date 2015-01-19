@@ -206,7 +206,7 @@ class ViewHierarchy {
                             var searchStartDelay = false;
                             $('#{{$idPrefix}}SearchTerm').keyup(function () {
                                 if (searchStartDelay) {
-                                    clearTimeout(to);
+                                    clearTimeout(searchStartDelay);
                                 }
                                 searchStartDelay = setTimeout(function () {
                                     var v = $('#{{$idPrefix}}SearchTerm').val();
