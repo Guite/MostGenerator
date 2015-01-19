@@ -93,8 +93,9 @@ class DisplayFunctions {
             contextMenu = new «vendorAndName»ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
-            «IF targets('1.3.5')»$«ENDIF»$('#' + containerId + ' a').each(function (elem) {
+            «IF targets('1.3.5')»$«ENDIF»$('#' + containerId + ' a').each(function («IF targets('1.3.5')»elem«ELSE»index«ENDIF») {
                 «IF !targets('1.3.5')»
+                    var elem = $(this);
                     // save css class before hiding (#428)
                     var elemClass = elem.attr('class');
                 «ENDIF»
