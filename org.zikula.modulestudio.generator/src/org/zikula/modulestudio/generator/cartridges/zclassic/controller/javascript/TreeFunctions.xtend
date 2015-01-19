@@ -73,7 +73,7 @@ class TreeFunctions {
          */
         function «vendorAndName»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
         {
-            «IF targets('1.3.5')»$«ENDIF»$('#itemTree' + rootId + ' a').each(function (elem) {
+            «IF targets('1.3.5')»$«ENDIF»$('#itemTree' + rootId + ' a').each(function («IF targets('1.3.5')»elem«ELSE»index«ENDIF») {
                 «IF targets('1.3.5')»
                     «initTreeNodesLegacy»
                 «ELSE»
@@ -87,7 +87,7 @@ class TreeFunctions {
         var liRef, isRoot, contextMenu;
 
         // get reference to list item
-        liRef = elem.parent();
+        liRef = $(this).parent();
         isRoot = (liRef.attr('id') === 'tree' + rootId + 'node_' + rootId);
         currentNodeId = liRef.attr('id').replace('tree' + rootId + 'node_', '');
 
