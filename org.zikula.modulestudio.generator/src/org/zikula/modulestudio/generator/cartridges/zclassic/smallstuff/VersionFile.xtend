@@ -182,7 +182,9 @@ class VersionFile {
         $meta['securityschema'] = array(
             '«appName»::' => '::',
             '«appName»::Ajax' => '::',
-            '«appName»:ItemListBlock:' => 'Block title::',
+            «IF generateListBlock»
+                '«appName»:ItemListBlock:' => 'Block title::',
+            «ENDIF»
             «IF needsApproval»
                 '«appName»:ModerationBlock:' => 'Block title::',
             «ENDIF»
