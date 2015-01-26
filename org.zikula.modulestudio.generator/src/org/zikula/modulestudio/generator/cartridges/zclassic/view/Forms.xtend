@@ -305,6 +305,8 @@ class Forms {
             {pageaddvarblock name='header'}
                 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
                 <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
+                {*<script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
+                <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>*}
                 <script type="text/javascript">
                 /* <![CDATA[ */
 
