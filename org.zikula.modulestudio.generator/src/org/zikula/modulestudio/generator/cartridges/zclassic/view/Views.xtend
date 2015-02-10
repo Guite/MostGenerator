@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -34,6 +35,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -45,6 +47,7 @@ class Views {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
@@ -137,8 +140,8 @@ class Views {
             new Delete().generate(entity, appName, fsa)
         }
 
-        if (entity.hasActions('display')) {
-            // TODO: use relations to generate only required ones (???)
+        val refedElems = entity.getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == entity.application] + entity.incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == entity.application]
+        if (!refedElems.empty) {
             relationHelper.displayItemList(entity, it, false, fsa)
             relationHelper.displayItemList(entity, it, true, fsa)
         }

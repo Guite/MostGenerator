@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 import de.guite.modulestudio.metamodel.AjaxController
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.EditAction
+import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
@@ -121,7 +122,8 @@ class OverrideTemplates {
             «IF entity.hasActions('delete')»
                 «sourcePath»«templateFolder»delete.tpl: «destinationPath»«templateFolder»delete.tpl
             «ENDIF»
-            «IF entity.hasActions('display')»
+            «val refedElems = entity.getIncomingJoinRelations.filter[e|e.source instanceof Entity && e.source.application == entity.application] + entity.outgoing.filter(ManyToManyRelationship).filter[e|e.target instanceof Entity && e.target.application == entity.application]»
+            «IF !refedElems.empty»
                 «sourcePath»«templateFolder»include_displayItemListOne.tpl: «destinationPath»«templateFolder»include_displayItemListOne.tpl
                 «sourcePath»«templateFolder»include_displayItemListMany.tpl: «destinationPath»«templateFolder»include_displayItemListMany.tpl
             «ENDIF»
