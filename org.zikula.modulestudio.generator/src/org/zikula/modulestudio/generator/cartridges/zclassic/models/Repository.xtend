@@ -1507,7 +1507,7 @@ class Repository {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
-                	$dom = ZLanguage::getModuleDomain($this->name);
+                    $dom = ZLanguage::getModuleDomain($this->name);
                     «IF app.targets('1.3.5')»
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
