@@ -41,7 +41,7 @@ class Custom {
         val templatePath = app.getViewPath + (if (app.targets('1.3.5')) entity.name.formatForDisplay else entity.name.formatForDisplayCapital) + '/'
         var fileName = name.formatForCode.toFirstLower + '.tpl'
         if (!app.shouldBeSkipped(templatePath + fileName)) {
-            println('Generating ' + controller.formattedName + ' templates for custom action "' + name.formatForDisplay + '"')
+            println('Generating ' + entity.name.formatForDisplay + ' templates for custom action "' + name.formatForDisplay + '"')
             if (app.shouldBeMarked(templatePath + fileName)) {
                 fileName = name.formatForCode.toFirstLower + '.generated.tpl'
             }
