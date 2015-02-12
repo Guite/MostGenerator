@@ -122,6 +122,9 @@ class OverrideTemplates {
             «IF entity.hasActions('delete')»
                 «sourcePath»«templateFolder»delete.tpl: «destinationPath»«templateFolder»delete.tpl
             «ENDIF»
+            «FOR action : entity.getCustomActions»
+                «sourcePath»«templateFolder»«action.name.formatForCode.toFirstLower».tpl: «destinationPath»«templateFolder»«action.name.formatForCode.toFirstLower».tpl
+            «ENDFOR»
             «val refedElems = entity.getIncomingJoinRelations.filter[e|e.source instanceof Entity && e.source.application == entity.application] + entity.outgoing.filter(ManyToManyRelationship).filter[e|e.target instanceof Entity && e.target.application == entity.application]»
             «IF !refedElems.empty»
                 «sourcePath»«templateFolder»include_displayItemListOne.tpl: «destinationPath»«templateFolder»include_displayItemListOne.tpl

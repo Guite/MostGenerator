@@ -260,7 +260,14 @@ class ControllerExtensions {
     /**
      * Returns a list of all custom actions contained by a given controller.
      */
-    def getCustomActions(Controller it) {
+    def dispatch getCustomActions(Controller it) {
+        actions.filter(CustomAction)
+    }
+
+    /**
+     * Returns a list of all custom actions contained by a given entity.
+     */
+    def dispatch getCustomActions(Entity it) {
         actions.filter(CustomAction)
     }
 

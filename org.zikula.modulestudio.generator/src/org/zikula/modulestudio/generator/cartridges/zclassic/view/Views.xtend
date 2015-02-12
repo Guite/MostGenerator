@@ -140,6 +140,11 @@ class Views {
             new Delete().generate(entity, appName, fsa)
         }
 
+        var customHelper = new Custom()
+        for (action : entity.getCustomActions) {
+            customHelper.generate(action, it, entity, fsa)
+        }
+
         val refedElems = entity.getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == entity.application] + entity.incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == entity.application]
         if (!refedElems.empty) {
             relationHelper.displayItemList(entity, it, false, fsa)
