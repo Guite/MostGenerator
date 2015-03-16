@@ -55,14 +55,14 @@ class FormattingExtensions {
      * @return String formatted for display.
      */
     def formatForDisplay(String s) {
-        var result = ""
+        var result = ''
         val helpString = replaceSpecialChars(s)
 
         val helpChars = helpString.toCharArray
 
         for (c : helpChars) {
             val sc = c.toString
-            if (sc.matches("[A-Z]")) {
+            if (sc.matches("[A-Z0-9]")) {
                 result = result + ' '
             }
             result = result + sc.toLowerCase
