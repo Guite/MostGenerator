@@ -49,18 +49,6 @@ class ServiceDefinitions {
         parameters:
             «parametersRouting»
 
-            «IF hasUploads»
-                «parametersUploadHandler»
-
-            «ENDIF»
-            «parametersEntityFactories»
-
-            «parametersEventSubscriber»
-
-            «parametersHelper»
-
-            «parametersLogger»
-
         services:
             «IF hasUploads»
                 «servicesUploadHandler»
@@ -88,49 +76,17 @@ class ServiceDefinitions {
         «modPrefix».routing.formats.display: html«IF getListOfDisplayFormats.size > 0»|«FOR format : getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
     '''
 
-    def private parametersUploadHandler(Application it) '''
-        # Upload handler class
-        «modPrefix».upload_handler.class: «appNamespace»\UploadHandler
-    '''
-
-    def private parametersEntityFactories(Application it) '''
-        # Entity factory classes
-        «FOR entity : entities»
-            «modPrefix».entity.factory.«entity.name.formatForCode».class: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«entity.name.formatForCodeCapital»Factory
-        «ENDFOR»
-    '''
-
-    def private parametersEventSubscriber(Application it) '''
-        «val nsBase = appNamespace + '\\Listener\\'»
-        # Listener classes
-        «FOR className : getSubscriberNames»
-            «modPrefix».«className.toLowerCase»_listener.class: «nsBase»«className»Listener
-        «ENDFOR»
-    '''
-
-    def private parametersHelper(Application it) '''
-        «val nsBase = appNamespace + '\\Util\\'»
-        # Util classes
-        «FOR className : getHelperNames»
-            «modPrefix».«className.toLowerCase»_helper.class: «nsBase»«className»Util
-        «ENDFOR»
-    '''
-
-    def private parametersLogger(Application it) '''
-
-        # Log processor
-        «modPrefix».log.processor.class: Monolog\Processor\PsrLogMessageProcessor
-    '''
-
     def private servicesUploadHandler(Application it) '''
+        # Upload handler class
         «modPrefix».upload_handler:
-            class: "%«modPrefix».upload_handler.class%"
+            class: "«appNamespace»\UploadHandler"
     '''
 
     def private servicesEntityFactories(Application it) '''
+        # Entity factory classes
         «FOR entity : entities»
             «modPrefix».«entity.name.formatForCode»_factory:
-                class: "%«modPrefix».entity.factory.«entity.name.formatForCode».class%"
+                class: "«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«entity.name.formatForCodeCapital»Factory"
                 arguments:
                     objectManager: "@doctrine.orm.entity_manager"
                     className: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\«entity.name.formatForCodeCapital»Entity
@@ -139,9 +95,11 @@ class ServiceDefinitions {
     '''
 
     def private servicesEventSubscriber(Application it) '''
+        # Event subscriber and listener classes
+        «val nsBase = appNamespace + '\\Listener\\'»
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
-                class: "%«modPrefix».«className.toLowerCase»_listener.class%"
+                class: "«nsBase»«className»Listener"
                 tags:
                     - { name: kernel.event_subscriber }
 
@@ -149,17 +107,20 @@ class ServiceDefinitions {
     '''
 
     def private servicesHelper(Application it) '''
+        # Util classes
+        «val nsBase = appNamespace + '\\Util\\'»
         «FOR className : getHelperNames»
             «modPrefix».«className.toLowerCase»_helper:
-                class: "%«modPrefix».«className.toLowerCase»_helper.class%"
+                class: "«nsBase»«className»Util"
                 arguments: ["@service_container", "@=service('kernel').getBundle('«appName»')"]
 
         «ENDFOR»
     '''
 
     def private servicesLogger(Application it) '''
+        # Log processor
         «modPrefix».log.processor:
-            class: "%«modPrefix».log.processor.class%"
+            class: "Monolog\Processor\PsrLogMessageProcessor"
             tags:
                 - { name: monolog.processor }
     '''
