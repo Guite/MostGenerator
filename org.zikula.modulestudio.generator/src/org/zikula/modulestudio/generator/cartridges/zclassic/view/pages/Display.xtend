@@ -498,6 +498,6 @@ class Display {
     '''
 
     def private isLegacyApp(DataObject it) {
-        application.targets('1.3.5')
+        application.targets('1.3.x')
     }
 }

@@ -22,14 +22,14 @@ class ExternalController {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating external controller')
-        generateClassPair(fsa, getAppSourceLibPath + 'Controller/External' + (if (targets('1.3.5')) '' else 'Controller') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Controller/External' + (if (targets('1.3.x')) '' else 'Controller') + '.php',
             fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
         )
         new ExternalView().generate(it, fsa)
     }
 
     def private externalBaseClass(Application it) '''
-    «IF !targets('1.3.5')»
+    «IF !targets('1.3.x')»
         namespace «appNamespace»\Controller\Base;
 
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -48,7 +48,7 @@ class ExternalController {
     /**
      * Controller for external calls base class.
      */
-    class «IF targets('1.3.5')»«appName»_Controller_Base_External«ELSE»ExternalController«ENDIF» extends Zikula_AbstractController
+    class «IF targets('1.3.x')»«appName»_Controller_Base_External«ELSE»ExternalController«ENDIF» extends Zikula_AbstractController
     {
         «IF hasCategorisableEntities»
             /**
@@ -87,7 +87,7 @@ class ExternalController {
     def private displayDocBlock(Application it, Boolean isBase) '''
         /**
          * Displays one item of a certain object type using a separate template for external usages.
-         «IF !targets('1.3.5') && !isBase»
+         «IF !targets('1.3.x') && !isBase»
          *
          * @Route("/display/{ot}/{id}/{source}/{displayMode}",
          *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
@@ -106,23 +106,23 @@ class ExternalController {
     '''
 
     def private displaySignature(Application it) '''
-        public function display«IF targets('1.3.5')»(array $args = array())«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
+        public function display«IF targets('1.3.x')»(array $args = array())«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
     '''
 
     def private displayBaseImpl(Application it) '''
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $getData = $this->request->query;
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
             $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
         «ENDIF»
 
-        $objectType = «IF targets('1.3.5')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
+        $objectType = «IF targets('1.3.x')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
         $utilArgs = array('controller' => 'external', 'action' => 'display');
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
         }
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
 
             $id = isset($args['id']) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
         «ENDIF»
@@ -132,7 +132,7 @@ class ExternalController {
             return '';
         }
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $source = isset($args['source']) ? $args['source'] : $getData->filter('source', '', FILTER_SANITIZE_STRING);
             if (!in_array($source, array('contentType', 'scribite'))) {
                 $source = 'contentType';
@@ -184,7 +184,7 @@ class ExternalController {
                   ->assign($objectType, $entity)
                   ->assign('displayMode', $displayMode);
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             return $this->view->fetch('external/' . $objectType . '/display.tpl');
         «ELSE»
             return $this->response($this->view->fetch('External/' . ucfirst($objectType) . '/display.tpl'));
@@ -203,7 +203,7 @@ class ExternalController {
         /**
          * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
-         «IF !targets('1.3.5') && !isBase»
+         «IF !targets('1.3.x') && !isBase»
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
          *        requirements = {"editor" = "xinha|tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
@@ -221,7 +221,7 @@ class ExternalController {
          * @param int    $num        Amount of entries to display.
          *
          * @return output The external item finder page
-         «IF !targets('1.3.5')»
+         «IF !targets('1.3.x')»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
@@ -229,24 +229,24 @@ class ExternalController {
     '''
 
     def private finderSignature(Application it) '''
-        public function finder«IF targets('1.3.5')»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
+        public function finder«IF targets('1.3.x')»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
     '''
 
     def private finderBaseImpl(Application it) '''
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
         «ELSE»
             PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
         «ENDIF»
 
         $getData = $this->request->query;
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
             $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
         «ENDIF»
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $objectType = $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
         «ENDIF»
         $utilArgs = array('controller' => 'external', 'action' => 'finder');
@@ -254,7 +254,7 @@ class ExternalController {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
         }
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
         «ELSE»
             if (!SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
@@ -262,7 +262,7 @@ class ExternalController {
             }
         «ENDIF»
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
@@ -271,7 +271,7 @@ class ExternalController {
             $repository->setRequest($this->request);
         «ENDIF»
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
         «ENDIF»
         if (empty($editor) || !in_array($editor, array('xinha', 'tinymce', 'ckeditor'))) {
@@ -283,14 +283,14 @@ class ExternalController {
             // the actual filtering is done inside the repository class
             $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
         «ENDIF»
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);
         «ENDIF»
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();
         }
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $sortdir = $getData->filter('sortdir', '', FILTER_SANITIZE_STRING);
         «ENDIF»
         $sdir = strtolower($sortdir);
@@ -301,10 +301,10 @@ class ExternalController {
         $sortParam = $sort . ' ' . $sdir;
 
         // the current offset which is used to calculate the pagination
-        $currentPage = (int) «IF targets('1.3.5')»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
+        $currentPage = (int) «IF targets('1.3.x')»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
 
         // the number of items displayed on a page for pagination
-        $resultsPerPage = (int) «IF targets('1.3.5')»$getData->filter('num', 0, FILTER_VALIDATE_INT)«ELSE»$num«ENDIF»;
+        $resultsPerPage = (int) «IF targets('1.3.x')»$getData->filter('num', 0, FILTER_VALIDATE_INT)«ELSE»$num«ENDIF»;
         if ($resultsPerPage == 0) {
             $resultsPerPage = $this->getVar('pageSize', 20);
         }
@@ -336,7 +336,7 @@ class ExternalController {
                  ->assign('catIds', $categoryIds);
         «ENDIF»
 
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
             return new PlainResponse($view->display('External/' . ucfirst($objectType) . '/find.tpl'));
@@ -344,7 +344,7 @@ class ExternalController {
     '''
 
     def private externalImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Controller;
 
             use «appNamespace»\Controller\Base\ExternalController as BaseExternalController;
@@ -354,18 +354,18 @@ class ExternalController {
         «ENDIF»
         /**
          * Controller for external calls implementation class.
-         «IF !targets('1.3.5')»
+         «IF !targets('1.3.x')»
          *
          * @Route("/%«appName.formatForDB».routing.external%")
          «ENDIF»
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Controller_External extends «appName»_Controller_Base_External
         «ELSE»
         class ExternalController extends BaseExternalController
         «ENDIF»
         {
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
                 «displayImpl»
 
                 «finderImpl»

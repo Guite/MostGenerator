@@ -36,7 +36,7 @@ class DisplayFunctions {
 
     def private generate(Application it) '''
         'use strict';
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
 
             «initItemActions»
         «ENDIF»
@@ -54,7 +54,7 @@ class DisplayFunctions {
 
             «toggleFlag»
         «ENDIF»
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
 
             «simpleAlert»
         «ENDIF»
@@ -68,7 +68,7 @@ class DisplayFunctions {
                 // open in new tab / window when right-clicked
                 if (event.isRightClick()) {
                     item.callback(this.clicked, true);
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         event.stop(); // close the menu
                     «ELSE»
                         event.stopPropagation(); // close the menu
@@ -93,14 +93,14 @@ class DisplayFunctions {
             contextMenu = new «vendorAndName»ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
-            «IF targets('1.3.5')»$«ENDIF»$('#' + containerId + ' a').each(function («IF targets('1.3.5')»elem«ELSE»index«ENDIF») {
-                «IF !targets('1.3.5')»
+            «IF targets('1.3.x')»$«ENDIF»$('#' + containerId + ' a').each(function («IF targets('1.3.x')»elem«ELSE»index«ENDIF») {
+                «IF !targets('1.3.x')»
                     var elem = $(this);
                     // save css class before hiding (#428)
                     var elemClass = elem.attr('class');
                 «ENDIF»
                 // hide it
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     elem.addClassName('z-hide');
                 «ELSE»
                     elem.addClass('hidden');
@@ -110,7 +110,7 @@ class DisplayFunctions {
                 if (func === 'display') {
                     linkText = elem.innerHTML;
                 } else if (func === 'view') {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         elem.select('img').each(function (imgElem) {
                             linkText = imgElem.readAttribute('alt');
                         });
@@ -121,7 +121,7 @@ class DisplayFunctions {
 
                 // determine the icon
                 icon = '';
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     if (func === 'display') {
                         if (elem.hasClassName('z-icon-es-preview')) {
                             icon = 'xeyes.png';
@@ -158,7 +158,7 @@ class DisplayFunctions {
                     callback: function (selectedMenuItem, isRightClick) {
                         var url;
 
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             url = elem.readAttribute('href');
                         «ELSE»
                             url = elem.attr('href');
@@ -171,7 +171,7 @@ class DisplayFunctions {
                     }
                 });
             });
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $(triggerId).removeClassName('z-hide');
             «ELSE»
                 $('#' + triggerId).removeClass('hidden');
@@ -190,7 +190,7 @@ class DisplayFunctions {
          */
         function «vendorAndName»SubmitQuickNavForm(objectType)
         {
-            $('«IF !targets('1.3.5')»#«ENDIF»«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
+            $('«IF !targets('1.3.x')»#«ENDIF»«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
@@ -198,7 +198,7 @@ class DisplayFunctions {
          */
         function «vendorAndName»InitQuickNavigation(objectType)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($('«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
                     return;
                 }
@@ -208,7 +208,7 @@ class DisplayFunctions {
                 }
             «ENDIF»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($('catid') != undefined) {
                     $('catid').observe('change', «initQuickNavigationSubmitCall»);
                 }
@@ -289,7 +289,7 @@ class DisplayFunctions {
     '''
 
     def private dispatch jsInit(DerivedField it) '''
-        «IF entity.application.targets('1.3.5')»
+        «IF entity.application.targets('1.3.x')»
             if ($('«name.formatForCode»') != undefined) {
                 $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.application)»);
             }
@@ -302,7 +302,7 @@ class DisplayFunctions {
 
     def private dispatch jsInit(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             if ($('«sourceAliasName»') != undefined) {
                 $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(application)»);
             }
@@ -314,7 +314,7 @@ class DisplayFunctions {
     '''
 
     def private initRelationWindow(Application it) '''
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             /**
              * Helper function to create new Zikula.UI.Window instances.
              * For edit forms we use "iframe: true" to ensure file uploads work without problems.
@@ -327,17 +327,17 @@ class DisplayFunctions {
          «ENDIF»
         function «vendorAndName»InitInlineWindow(containerElem, title)
         {
-            var newWindow«IF !targets('1.3.5')»Id«ENDIF»;
+            var newWindow«IF !targets('1.3.x')»Id«ENDIF»;
 
             // show the container (hidden for users without JavaScript)
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 containerElem.removeClassName('z-hide');
             «ELSE»
                 containerElem.removeClass('hidden');
             «ENDIF»
 
             // define the new window instance
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 newWindow = new Zikula.UI.Window(
                     containerElem,
                     {
@@ -372,8 +372,8 @@ class DisplayFunctions {
                     .dialog('open');
             «ENDIF»
 
-            // return the «IF targets('1.3.5')»instance«ELSE»dialog selector id«ENDIF»;
-            return newWindow«IF !targets('1.3.5')»Id«ENDIF»;
+            // return the «IF targets('1.3.x')»instance«ELSE»dialog selector id«ENDIF»;
+            return newWindow«IF !targets('1.3.x')»Id«ENDIF»;
         }
 
     '''
@@ -385,7 +385,7 @@ class DisplayFunctions {
         function «vendorAndName»InitToggle(objectType, fieldName, itemId)
         {
             var idSuffix = «vendorAndName»CapitaliseFirstLetter(fieldName) + itemId;
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($('toggle' + idSuffix) == undefined) {
                     return;
                 }
@@ -413,7 +413,7 @@ class DisplayFunctions {
             var fieldNameCapitalised = «vendorAndName»CapitaliseFirstLetter(fieldName);
             var params = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 new Zikula.Ajax.Request(
                     Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=toggleFlag',
                     {

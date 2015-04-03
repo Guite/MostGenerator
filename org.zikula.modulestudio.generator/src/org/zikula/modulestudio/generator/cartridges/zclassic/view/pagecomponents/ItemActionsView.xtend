@@ -15,7 +15,7 @@ class ItemActionsView {
         «IF subject == 'markup'»
             {if count($«name.formatForCode»._actions) gt 0}
                 «markup('view')»
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     «javaScript('view')»
                 «ENDIF»
             {/if}
@@ -32,7 +32,7 @@ class ItemActionsView {
     '''
 
     def private markup(Entity it, String context) '''
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             «IF context == 'display'»
                 <p id="«itemActionContainerViewId»">
                     «linkList(context)»
@@ -58,7 +58,7 @@ class ItemActionsView {
     '''
 
     def private linkEntry(Entity it, String context) '''
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             «IF context == 'display'»
                 <a «linkEntryCommonAttributes» class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
             «ELSEIF context == 'view'»
@@ -77,13 +77,13 @@ class ItemActionsView {
     def private linkEntryCommonAttributes(Entity it) '''href="{$option.url.type|«application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
 
     def private javaScript(Entity it, String context) '''
-        «IF !application.targets('1.3.5') && context == 'view'»
+        «IF !application.targets('1.3.x') && context == 'view'»
             $('.dropdown-toggle').dropdown();
             $('a.fa-zoom-in').attr('target', '_blank');
         «ELSE»
             <script type="text/javascript">
             /* <![CDATA[ */
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     document.observe('dom:loaded', function() {
                         «application.vendorAndName»InitItemActions('«name.formatForCode»', '«context»', '«itemActionContainerViewIdForJs»');
                     });
@@ -101,7 +101,7 @@ class ItemActionsView {
     '''
 
     def trigger(Entity it, String context) '''
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             {icon id="«itemActionContainerViewIdForSmarty»Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
         «ELSE»
             <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {gt text='Actions'}«ENDIF» <span class="caret"></span></a>

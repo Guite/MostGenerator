@@ -11,7 +11,7 @@ class Kernel {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
 
             /**
              * Makes our handlers known to the event system.

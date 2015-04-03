@@ -25,7 +25,7 @@ class LinkTable {
     }
 
     def private modelRefRepositoryBaseImpl(ManyToManyRelationship it, Application app) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository\Base;
 
             use UserUtil;
@@ -37,7 +37,7 @@ class LinkTable {
          * This is the base repository class for the many to many relationship
          * between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_Base_«refClass.formatForCodeCapital» extends EntityRepository
         «ELSE»
         class «refClass.formatForCodeCapital» extends \EntityRepository
@@ -46,14 +46,14 @@ class LinkTable {
             public function truncateTable()
             {
                 $qb = $this->getEntityManager()->createQueryBuilder();
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $qb->delete('«app.appName»_Entity_«refClass.formatForCodeCapital»', 'tbl');
                 «ELSE»
                     $qb->delete('\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«refClass.formatForCodeCapital»', 'tbl');
                 «ENDIF»
                 $query = $qb->getQuery();
                 $query->execute();
-                «IF !app.targets('1.3.5')»
+                «IF !app.targets('1.3.x')»
 
                     $serviceManager = ServiceUtil::getManager();
                     $logger = $serviceManager->get('logger');
@@ -64,7 +64,7 @@ class LinkTable {
     '''
 
     def private modelRefRepositoryImpl(ManyToManyRelationship it, Application app) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository;
 
             use «app.appNamespace»\Entity\Repository\Base\«refClass.formatForCodeCapital» as Base«refClass.formatForCodeCapital»;
@@ -76,7 +76,7 @@ class LinkTable {
          * This is the concrete repository class for the many to many relationship
          * between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_«refClass.formatForCodeCapital» extends «app.appName»_Entity_Repository_Base_«refClass.formatForCodeCapital»
         «ELSE»
         class «refClass.formatForCodeCapital» extends Base«refClass.formatForCodeCapital»

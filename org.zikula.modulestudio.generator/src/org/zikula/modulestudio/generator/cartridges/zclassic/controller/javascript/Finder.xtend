@@ -16,7 +16,7 @@ class Finder {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = ''
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             fileName = appName + '_finder.js'
         } else {
             fileName = appName + '.Finder.js'
@@ -24,7 +24,7 @@ class Finder {
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for finder component')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                if (targets('1.3.5')) {
+                if (targets('1.3.x')) {
                     fileName = appName + '_finder.generated.js'
                 } else {
                     fileName = appName + '.Finder.generated.js'
@@ -77,7 +77,7 @@ class Finder {
             current«appName»Editor = editor;
 
             editor.popup(
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor',
                 «ELSE»
                     Routing.generate('«appName.formatForDB»_external_finder', { editor: 'ckeditor' }),
@@ -96,7 +96,7 @@ class Finder {
 
         «objName».finder.onLoad = function (baseId, selectedId)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $$('div.categoryselector select').invoke('observe', 'change', «objName».finder.onParamChanged);
                 $('«elemPrefix»Sort').observe('change', «objName».finder.onParamChanged);
                 $('«elemPrefix»SortDir').observe('change', «objName».finder.onParamChanged);
@@ -119,14 +119,14 @@ class Finder {
 
         «objName».finder.onParamChanged = function ()
         {
-            $('«IF !targets('1.3.5')»#«ENDIF»«elemPrefix»SelectorForm').submit();
+            $('«IF !targets('1.3.x')»#«ENDIF»«elemPrefix»SelectorForm').submit();
         };
 
         «objName».finder.handleCancel = function ()
         {
             var editor, w;
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
                 editor = $('#editorName').val();
@@ -150,7 +150,7 @@ class Finder {
             var quoteFinder, itemUrl, itemTitle, itemDescription, pasteMode;
 
             quoteFinder = new RegExp('"', 'g');
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 itemUrl = $F('url' + itemId).replace(quoteFinder, '');
                 itemTitle = $F('title' + itemId).replace(quoteFinder, '');
                 itemDescription = $F('desc' + itemId).replace(quoteFinder, '');
@@ -182,7 +182,7 @@ class Finder {
         {
             var editor, html;
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
                 editor = $('#editorName').val();
@@ -260,7 +260,7 @@ class Finder {
             «objName».itemSelector.selectedId = selectedId;
 
             // required as a changed object type requires a new instance of the item selector plugin
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $('«elemPrefix»ObjectType').observe('change', «objName».itemSelector.onParamChanged);
 
                 if ($(baseId + '_catidMain') != undefined) {
@@ -293,18 +293,18 @@ class Finder {
 
         «objName».itemSelector.onParamChanged = function ()
         {
-            $('ajax_indicator').removeClass«IF targets('1.3.5')»Name«ENDIF»('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+            $('ajax_indicator').removeClass«IF targets('1.3.x')»Name«ENDIF»('«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»');
 
             «objName».itemSelector.getItemList();
         };
 
         «objName».itemSelector.getItemList = function ()
         {
-            var baseId, params«IF targets('1.3.5')», request«ENDIF»;
+            var baseId, params«IF targets('1.3.x')», request«ENDIF»;
 
             baseId = «name.formatForDB».itemSelector.baseId;
             params = 'ot=' + baseId + '&';
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($(baseId + '_catidMain') != undefined) {
                     params += 'catidMain=' + $F(baseId + '_catidMain') + '&';
                 } else if ($(baseId + '_catidsMain') != undefined) {
@@ -324,7 +324,7 @@ class Finder {
                           'q=' + $('#' + baseId + 'SearchTerm').val();
             «ENDIF»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 request = new Zikula.Ajax.Request(
                     Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=getItemListFinder',
                     {
@@ -367,7 +367,7 @@ class Finder {
             var baseId, itemSelector, items, i, item;
 
             baseId = «objName».itemSelector.baseId;
-            itemSelector = $(«IF !targets('1.3.5')»'#' + «ENDIF»baseId + 'Id');
+            itemSelector = $(«IF !targets('1.3.x')»'#' + «ENDIF»baseId + 'Id');
             itemSelector.length = 0;
 
             items = «objName».itemSelector.items[baseId];
@@ -377,7 +377,7 @@ class Finder {
             }
 
             if («objName».itemSelector.selectedId > 0) {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $(baseId + 'Id').value = «objName».itemSelector.selectedId;
                 «ELSE»
                     $('#' + baseId + 'Id').val(«objName».itemSelector.selectedId);
@@ -392,7 +392,7 @@ class Finder {
             baseId = «objName».itemSelector.baseId;
             items = «objName».itemSelector.items[baseId];
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $(baseId + 'PreviewContainer').addClassName('z-hide');
             «ELSE»
                 $('#' + baseId + 'PreviewContainer').addClass('hidden');
@@ -413,7 +413,7 @@ class Finder {
             }
 
             if (selectedElement !== null) {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $(baseId + 'PreviewContainer')
                         .update(window.atob(selectedElement.previewInfo))
                         .removeClassName('z-hide');
@@ -430,11 +430,11 @@ class Finder {
             var baseId, itemSelector, preview;
 
             baseId = «objName».itemSelector.baseId;
-            itemSelector = $(«IF !targets('1.3.5')»'#' + «ENDIF»baseId + 'Id');
+            itemSelector = $(«IF !targets('1.3.x')»'#' + «ENDIF»baseId + 'Id');
             preview = window.atob(«objName».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
 
-            $(baseId + 'PreviewContainer').«IF targets('1.3.5')»update«ELSE»html«ENDIF»(preview);
-            «objName».itemSelector.selectedId = «IF targets('1.3.5')»$F(baseId + 'Id')«ELSE»$('#' + baseId + 'Id').val()«ENDIF»;
+            $(baseId + 'PreviewContainer').«IF targets('1.3.x')»update«ELSE»html«ENDIF»(preview);
+            «objName».itemSelector.selectedId = «IF targets('1.3.x')»$F(baseId + 'Id')«ELSE»$('#' + baseId + 'Id').val()«ENDIF»;
         };
     '''
 }

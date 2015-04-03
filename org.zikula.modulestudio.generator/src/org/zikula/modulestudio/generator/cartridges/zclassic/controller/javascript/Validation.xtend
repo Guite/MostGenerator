@@ -21,7 +21,7 @@ class Validation {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = ''
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             fileName = appName + '_validation.js'
         } else {
             fileName = appName + '.Validation.js'
@@ -29,7 +29,7 @@ class Validation {
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for validation')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                if (targets('1.3.5')) {
+                if (targets('1.3.x')) {
                     fileName = appName + '_validation.generated.js'
                 } else {
                     fileName = appName + '.Validation.generated.js'
@@ -104,9 +104,9 @@ class Validation {
              */
             function «vendorAndName»UniqueCheck(ucOt, val, elem, ucEx)
             {
-                var params«IF targets('1.3.5')», request«ENDIF»;
+                var params«IF targets('1.3.x')», request«ENDIF»;
 
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $('advice-validate-unique-' + elem.id).hide();
                     elem.removeClassName('validation-failed').removeClassName('validation-passed');
                 «ELSE»
@@ -117,7 +117,7 @@ class Validation {
                 // build parameters object
                 params = {
                     ot: ucOt,
-                    fn: encodeURIComponent(elem.«IF targets('1.3.5')»id«ELSE»attr('id')«ENDIF»),
+                    fn: encodeURIComponent(elem.«IF targets('1.3.x')»id«ELSE»attr('id')«ENDIF»),
                     v: encodeURIComponent(val),
                     ex: ucEx
                 };
@@ -125,7 +125,7 @@ class Validation {
                 /** TODO fix the following call to work within validation context */
                 return true;
 
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     request = new Zikula.Ajax.Request(
                         Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=checkForDuplicate',
                         {
@@ -203,7 +203,7 @@ class Validation {
                     return true;
                 }
                 fileExtension = '.' + val.substr(val.lastIndexOf('.') + 1);
-                allowedExtensions = $(«IF !targets('1.3.5')»'#' + elem.attr('id')«ELSE»elem.id«ENDIF» + 'FileExtensions').innerHTML;
+                allowedExtensions = $(«IF !targets('1.3.x')»'#' + elem.attr('id')«ELSE»elem.id«ENDIF» + 'FileExtensions').innerHTML;
                 allowedExtensions = '(.' + allowedExtensions.replace(/, /g, '|.').replace(/,/g, '|.') + ')$';
                 allowedExtensions = new RegExp(allowedExtensions, 'i');
 
@@ -293,7 +293,7 @@ class Validation {
                     «val validateClass = 'validate-daterange-' + entity.name.formatForDB»
                     «val startFieldName = startDateField.name.formatForCode»
                     «val endFieldName = endDateField.name.formatForCode»
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         cmpVal = «vendorAndName»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
                         cmpVal2 = «vendorAndName»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
                         result = (cmpVal <= cmpVal2);
@@ -337,11 +337,11 @@ class Validation {
         «ENDFOR»
 
         /**
-         * «IF targets('1.3.5')»Adds«ELSE»Runs«ENDIF» special validation rules.
+         * «IF targets('1.3.x')»Adds«ELSE»Runs«ENDIF» special validation rules.
          */
-        function «vendorAndName»«IF targets('1.3.5')»AddCommonValidationRules«ELSE»PerformCustomValidationRules«ENDIF»(objectType, id)
+        function «vendorAndName»«IF targets('1.3.x')»AddCommonValidationRules«ELSE»PerformCustomValidationRules«ENDIF»(objectType, id)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 Validation.addAllThese([
                     ['validate-nospace', Zikula.__('No spaces', 'module_«appName.formatForDB»_js'), function(val, elem) {
                         return «vendorAndName»ValidateNoSpace(val);

@@ -58,7 +58,7 @@ class PersistenceTransformer {
         addWorkflowSettings
 
         // add legacy bridge methods to admin/user controllers
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             val factory = ModuleStudioFactory.eINSTANCE
             for (legacyController : getAdminAndUserControllers) {
                 if (legacyController.hasActions('view') && legacyController.actions.filter(ViewAction).empty) {

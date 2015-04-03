@@ -26,13 +26,13 @@ class WorkflowUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for workflows')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflow' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflow' + (if (targets('1.3.x')) '' else 'Util') + '.php',
             fh.phpFileContent(it, workflowFunctionsBaseImpl), fh.phpFileContent(it, workflowFunctionsImpl)
         )
     }
 
     def private workflowFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util\Base;
 
             use ModUtil;
@@ -44,7 +44,7 @@ class WorkflowUtil {
         /**
          * Utility base class for workflow helper methods.
          */
-        class «IF targets('1.3.5')»«appName»_Util_Base_Workflow«ELSE»WorkflowUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Workflow«ELSE»WorkflowUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getObjectStates»
             «getStateInfo»
@@ -52,7 +52,7 @@ class WorkflowUtil {
             «getWorkflowSchema»
             «getActionsForObject»
             «executeAction»
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
                 «normaliseWorkflowData»
             «ENDIF»
             «collectAmountOfModerationItems»
@@ -86,7 +86,7 @@ class WorkflowUtil {
     '''
 
     def private uiFeedback(Application it, ListFieldItem item) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             return item.stateIcon135
         } else {
             return item.stateLabel
@@ -206,7 +206,7 @@ class WorkflowUtil {
             // get possible actions for this object in it's current workflow state
             $objectType = $entity['_objectType'];
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 // ensure the correct module name is set, even if another page is called by the user
                 if (!isset($entity['__WORKFLOW__']['module'])) {
                     $workflow = $entity['__WORKFLOW__'];
@@ -221,7 +221,7 @@ class WorkflowUtil {
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idColumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $listHelper = new «appName»_Util_ListEntries($this->serviceManager);
             «ELSE»
                 $listHelper = $this->serviceManager->get('«appName.formatForDB».listentries_helper');
@@ -261,10 +261,10 @@ class WorkflowUtil {
                         break;
                 «ENDIF»
                 case 'submit':
-                    $buttonClass = '«IF targets('1.3.5')»ok«ELSE»success«ENDIF»';
+                    $buttonClass = '«IF targets('1.3.x')»ok«ELSE»success«ENDIF»';
                     break;
                 case 'update':
-                    $buttonClass = '«IF targets('1.3.5')»ok«ELSE»success«ENDIF»';
+                    $buttonClass = '«IF targets('1.3.x')»ok«ELSE»success«ENDIF»';
                     break;
                 «IF hasWorkflowState('deferred')»
                     case 'reject':
@@ -273,12 +273,12 @@ class WorkflowUtil {
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
                     case 'accept':
-                        $buttonClass = '«IF targets('1.3.5')»ok«ELSE»default«ENDIF»';
+                        $buttonClass = '«IF targets('1.3.x')»ok«ELSE»default«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
                     case 'approve':
-                        $buttonClass = '«IF targets('1.3.5')»ok«ENDIF»';
+                        $buttonClass = '«IF targets('1.3.x')»ok«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('accepted')»
@@ -291,12 +291,12 @@ class WorkflowUtil {
                         $buttonClass = '';
                         break;
                     case 'publish':
-                        $buttonClass = '«IF targets('1.3.5')»ok«ENDIF»';
+                        $buttonClass = '«IF targets('1.3.x')»ok«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('archived')»
                     case 'archive':
-                        $buttonClass = '«IF targets('1.3.5')»archive«ENDIF»';
+                        $buttonClass = '«IF targets('1.3.x')»archive«ENDIF»';
                         break;
                 «ENDIF»
                 «IF hasWorkflowState('trashed')»
@@ -304,15 +304,15 @@ class WorkflowUtil {
                         $buttonClass = '';
                         break;
                     case 'recover':
-                        $buttonClass = '«IF targets('1.3.5')»ok«ENDIF»';
+                        $buttonClass = '«IF targets('1.3.x')»ok«ENDIF»';
                         break;
                 «ENDIF»
                 case 'delete':
-                    $buttonClass = '«IF targets('1.3.5')»delete z-btred«ELSE»danger«ENDIF»';
+                    $buttonClass = '«IF targets('1.3.x')»delete z-btred«ELSE»danger«ENDIF»';
                     break;
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if (!empty($buttonClass)) {
                     $buttonClass = 'z-bt-' . $buttonClass;
                 }
@@ -346,7 +346,7 @@ class WorkflowUtil {
 
             $entity->initWorkflow(true);
             $idColumn = $entity['__WORKFLOW__']['obj_idcolumn'];
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
 
                 $this->normaliseWorkflowData($entity);
             «ENDIF»
@@ -424,7 +424,7 @@ class WorkflowUtil {
             «IF entitiesNotNone.empty»
                 // nothing required here as no entities use enhanced workflows including approval actions
             «ELSE»
-                «IF !targets('1.3.5')»
+                «IF !targets('1.3.x')»
                     $logger = $this->get('logger');
 
                 «ENDIF»
@@ -464,7 +464,7 @@ class WorkflowUtil {
                     'state' => $state,
                     'message' => $this->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
                 );
-                «IF !application.targets('1.3.5')»
+                «IF !application.targets('1.3.x')»
 
                     if ($amounts > 0) {
                         $logger->info('{app}: There are {amount} {entities} waiting for approval.', array('app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»'));
@@ -486,9 +486,9 @@ class WorkflowUtil {
          */
         public function getAmountOfModerationItems($objectType, $state)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-                $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
@@ -504,7 +504,7 @@ class WorkflowUtil {
     '''
 
     def private workflowFunctionsImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util;
 
             use «appNamespace»\Util\Base\WorkflowUtil as BaseWorkflowUtil;
@@ -513,7 +513,7 @@ class WorkflowUtil {
         /**
          * Utility implementation class for workflow helper methods.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Util_Workflow extends «appName»_Util_Base_Workflow
         «ELSE»
         class WorkflowUtil extends BaseWorkflowUtil

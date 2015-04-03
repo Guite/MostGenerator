@@ -38,7 +38,7 @@ class GetListEntry {
             }
 
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $helper = new «appName»_Util_ListEntries($serviceManager);
             «ELSE»
                 $helper = $serviceManager->get('«appName.formatForDB».listentries_helper');

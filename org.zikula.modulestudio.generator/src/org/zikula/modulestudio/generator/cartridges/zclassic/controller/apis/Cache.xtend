@@ -23,13 +23,13 @@ class Cache {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating cache api')
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Cache' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Cache' + (if (targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(it, cacheApiBaseClass), fh.phpFileContent(it, cacheApiImpl)
         )
     }
 
     def private cacheApiBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
@@ -42,7 +42,7 @@ class Cache {
         /**
          * Cache api base class.
          */
-        class «IF targets('1.3.5')»«appName»_Api_Base_Cache«ELSE»CacheApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Cache«ELSE»CacheApi«ENDIF» extends Zikula_AbstractApi
         {
             «cacheApiBaseImpl»
         }
@@ -64,7 +64,7 @@ class Cache {
             $objectType = $args['ot'];
             $item = $args['item'];
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -83,7 +83,7 @@ class Cache {
             }
 
             $instanceId = $item->createCompositeIdentifier();
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
 
                 $logger = $this->serviceManager->get('logger');
                 $logger->info('{app}: User {user} caused clearing the cache for entity {entity} with id {id}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId));
@@ -93,7 +93,7 @@ class Cache {
             $cacheIds = array();
             «IF hasUserController»
                 «IF getMainUserController.hasActions('index')»
-                    $cacheIds[] = 'user_«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
+                    $cacheIds[] = 'user_«IF targets('1.3.x')»main«ELSE»index«ENDIF»';
                 «ENDIF»
                 «IF getMainUserController.hasActions('custom')»
                     «FOR customAction : getMainUserController.actions.filter(CustomAction)»
@@ -118,7 +118,7 @@ class Cache {
             $cacheIds[] = 'homepage'; // for homepage (can be assigned in the Settings module)
             «IF hasUserController»
                 «IF getMainUserController.hasActions('index')»
-                    $cacheIds[] = '«appName»/user/«IF targets('1.3.5')»main«ELSE»index«ENDIF»'; // «IF targets('1.3.5')»main«ELSE»index«ENDIF» function
+                    $cacheIds[] = '«appName»/user/«IF targets('1.3.x')»main«ELSE»index«ENDIF»'; // «IF targets('1.3.x')»main«ELSE»index«ENDIF» function
                 «ENDIF»
                 «IF getMainUserController.hasActions('custom')»
                     «FOR customAction : getMainUserController.actions.filter(CustomAction)»
@@ -143,9 +143,9 @@ class Cache {
             «ENDIF»
             «IF hasActions('index')»
                 «IF cacheType == 'view'»
-                    $cacheIds[] = '«name.formatForCode»_«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»';
+                    $cacheIds[] = '«name.formatForCode»_«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»';
                 «ELSEIF cacheType == 'theme'»
-                    $cacheIds[] = $cacheIdPrefix . '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'; // «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» function
+                    $cacheIds[] = $cacheIdPrefix . '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»'; // «IF app.targets('1.3.x')»main«ELSE»index«ENDIF» function
                 «ENDIF»
             «ENDIF»
             «IF hasActions('view')»
@@ -189,7 +189,7 @@ class Cache {
     '''
 
     def private cacheApiImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
             use «appNamespace»\Api\Base\CacheApi as BaseCacheApi;
@@ -198,7 +198,7 @@ class Cache {
         /**
          * Cache api implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Api_Cache extends «appName»_Api_Base_Cache
         «ELSE»
         class CacheApi extends BaseCacheApi

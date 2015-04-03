@@ -31,7 +31,7 @@ class Delete {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
             {assign var='lctUc' value=$lct|ucfirst}
@@ -42,26 +42,26 @@ class Delete {
             {pagesetvar name='title' value=$templateTitle}
             «templateHeader»
 
-            <p class="«IF app.targets('1.3.5')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
+            <p class="«IF app.targets('1.3.x')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
 
-            <form class="«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»" action="«IF app.targets('1.3.5')»{modurl modname='«appName»' type=$lct func='delete' ot='«name.formatForCode»' «routeParamsLegacy(name, true, false)»}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_delete' «routeParams(name, true)» lct=$lct}«ENDIF»" method="post"«IF !app.targets('1.3.5')» role="form"«ENDIF»>
+            <form class="«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»" action="«IF app.targets('1.3.x')»{modurl modname='«appName»' type=$lct func='delete' ot='«name.formatForCode»' «routeParamsLegacy(name, true, false)»}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_delete' «routeParams(name, true)» lct=$lct}«ENDIF»" method="post"«IF !app.targets('1.3.x')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
                     <input type="hidden" id="confirmation" name="confirmation" value="1" />
                     <fieldset>
                         <legend>{gt text='Confirmation prompt'}</legend>
-                        <div class="«IF app.targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
-                        «IF !app.targets('1.3.5')»
+                        <div class="«IF app.targets('1.3.x')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
+                        «IF !app.targets('1.3.x')»
                             <div class="col-sm-offset-3 col-sm-9">
                         «ENDIF»
                             {gt text='Delete' assign='deleteTitle'}
-                            {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF app.targets('1.3.5')»z-btred«ELSE»btn btn-danger«ENDIF»'}
-                            «IF app.targets('1.3.5')»
+                            {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF app.targets('1.3.x')»z-btred«ELSE»btn btn-danger«ENDIF»'}
+                            «IF app.targets('1.3.x')»
                                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
                             «ELSE»
                                 <a href="{route name='«appName.formatForDB»_«name.formatForDB»_view' lct=$lct}" class="btn btn-default" role="button"><span class="fa fa-times"></span> {gt text='Cancel'}</a>
                             «ENDIF»
-                        «IF !app.targets('1.3.5')»
+                        «IF !app.targets('1.3.x')»
                             </div>
                         «ENDIF»
                         </div>
@@ -71,7 +71,7 @@ class Delete {
                 </div>
             </form>
         </div>
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {include file="`$lctUc`/footer.tpl"}
@@ -80,7 +80,7 @@ class Delete {
 
     def private templateHeader(Entity it) '''
         {if $lct eq 'admin'}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 <div class="z-admin-content-pagetitle">
                     {icon type='delete' size='small' __alt='Delete'}
                     <h3>{$templateTitle}</h3>

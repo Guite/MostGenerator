@@ -22,7 +22,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
     override classAnnotations(Entity it) '''
         «' '»* @Gedmo\Tree(type="«tree.literal.toLowerCase»")
         «IF tree == EntityTreeType.CLOSURE»
-             «' '»* @Gedmo\TreeClosure(class="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('closure', false)»")
+             «' '»* @Gedmo\TreeClosure(class="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('closure', false)»")
         «ENDIF»
     '''
 
@@ -43,7 +43,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\TreeLeft
          * @ORM\Column(type="integer")
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
          * @var integer $lft.
@@ -56,7 +56,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\TreeLevel
          * @ORM\Column(type="integer")
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
          * @var integer $lvl.
@@ -69,7 +69,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\TreeRight
          * @ORM\Column(type="integer")
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
          * @var integer $rgt.
@@ -90,18 +90,18 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * Bidirectional - Many children [«name.formatForDisplay»] are linked by one parent [«name.formatForDisplay»] (OWNING SIDE).
          *
          * @Gedmo\TreeParent
-         * @ORM\ManyToOne(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="children")
+         * @ORM\ManyToOne(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)»", inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKeyFields.head.name.formatForDisplay»", onDelete="SET NULL")
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» $parent.
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)» $parent.
          */
         protected $parent;
 
         /**
          * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
          *
-         * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", mappedBy="parent")
+         * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)»", mappedBy="parent")
          * @ORM\OrderBy({"lft" = "ASC"})
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» $children.
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)» $children.
          */
         protected $children;
     '''
@@ -115,7 +115,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
         «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, false, '', '')»
         «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, false, '', '')»
         «fh.getterAndSetterMethods(it, 'root', 'integer', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'parent', (if (!application.targets('1.3.5')) '\\' else '') + entityClassName('', false), false, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'parent', (if (!application.targets('1.3.x')) '\\' else '') + entityClassName('', false), false, true, 'null', '')»
         «fh.getterAndSetterMethods(it, 'children', 'array', true, false, '', '')»
     '''
 
@@ -134,7 +134,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
-        use Gedmo\Tree\Entity\«IF !application.targets('1.3.5')»MappedSuperclass\«ENDIF»«extensionBaseClass»;
+        use Gedmo\Tree\Entity\«IF !application.targets('1.3.x')»MappedSuperclass\«ENDIF»«extensionBaseClass»;
     '''
 
     /**

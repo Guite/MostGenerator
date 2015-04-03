@@ -33,10 +33,10 @@ class MetaData extends AbstractExtension implements EntityExtensionInterface {
     override properties(Entity it) '''
 
         /**
-         * @ORM\OneToOne(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('metaData', false)»", 
+         * @ORM\OneToOne(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('metaData', false)»", 
          *               mappedBy="entity", cascade={"all"},
          *               orphanRemoval=true)
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('metaData', false)»
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('metaData', false)»
          */
         protected $metadata = null;
     '''
@@ -46,7 +46,7 @@ class MetaData extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'metadata', (if (!application.targets('1.3.5')) '\\' else '') + entityClassName('metaData', false), false, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'metadata', (if (!application.targets('1.3.x')) '\\' else '') + entityClassName('metaData', false), false, true, 'null', '')»
     '''
 
     /**
@@ -61,7 +61,7 @@ class MetaData extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             use Zikula\Core\Doctrine\Entity\«extensionBaseClass»;
         «ENDIF»
     '''
@@ -70,7 +70,7 @@ class MetaData extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension base class.
      */
     override extensionBaseClass(Entity it) {
-        if (!application.targets('1.3.5')) {
+        if (!application.targets('1.3.x')) {
             'AbstractEntityMetadata'
         } else {
             'Zikula_Doctrine2_Entity_EntityMetadata'
@@ -89,9 +89,9 @@ class MetaData extends AbstractExtension implements EntityExtensionInterface {
      */
     override extensionClassBaseAnnotations(Entity it) '''
         /**
-         * @ORM\OneToOne(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="metadata")
+         * @ORM\OneToOne(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)»", inversedBy="metadata")
          * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields.head.name.formatForCode»", unique=true)
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)»
          */
         protected $entity;
 
@@ -102,7 +102,7 @@ class MetaData extends AbstractExtension implements EntityExtensionInterface {
      * Returns the extension implementation class ORM annotations.
      */
     override extensionClassImplAnnotations(Entity it) '''
-         «' '»* @ORM\Entity(repositoryClass="«IF !application.targets('1.3.5')»\«ENDIF»«repositoryClass(extensionClassType)»")
+         «' '»* @ORM\Entity(repositoryClass="«IF !application.targets('1.3.x')»\«ENDIF»«repositoryClass(extensionClassType)»")
          «' '»* @ORM\Table(name="«fullEntityTableName»_metadata")
     '''
 }

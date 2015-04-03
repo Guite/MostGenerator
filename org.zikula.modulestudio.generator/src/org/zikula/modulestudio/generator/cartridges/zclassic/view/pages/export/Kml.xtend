@@ -35,7 +35,7 @@ class Kml {
 
     def private kmlView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» view kml view *}
-        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}«ENDIF»<?xml version="1.0" encoding="UTF-8"?>
+        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}«ENDIF»<?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
         {foreach item='item' from=$items}
@@ -54,7 +54,7 @@ class Kml {
     def private kmlDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display kml view *}
-        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}«ENDIF»<?xml version="1.0" encoding="UTF-8"?>
+        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}«ENDIF»<?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
             <Placemark>

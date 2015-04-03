@@ -15,7 +15,7 @@ class ValidationError {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!targets('1.3.5')) {
+        if (!targets('1.3.x')) {
             return
         }
         val pluginFilePath = viewPluginFilePath('function', 'ValidationError')
@@ -79,7 +79,7 @@ class ValidationError {
                 «ENDIF»
             }
 
-            $message = '<span id="advice-' . $class . '-' . $id . '" class="validation-advice «IF targets('1.3.5')»z-formnote«ELSE»help-block«ENDIF»" style="display: none">' . $message . '</span>';
+            $message = '<span id="advice-' . $class . '-' . $id . '" class="validation-advice «IF targets('1.3.x')»z-formnote«ELSE»help-block«ENDIF»" style="display: none">' . $message . '</span>';
 
             if (array_key_exists('assign', $params)) {
                 $view->assign($params['assign'], $message);

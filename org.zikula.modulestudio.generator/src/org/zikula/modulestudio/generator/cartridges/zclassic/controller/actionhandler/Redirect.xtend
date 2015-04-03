@@ -36,7 +36,7 @@ class Redirect {
             «FOR someController : controllers»
                 «val controllerName = someController.formattedName»
                 «IF someController.hasActions('index')»
-                    // «IF targets('1.3.5')»main«ELSE»index«ENDIF» page of «controllerName» area
+                    // «IF targets('1.3.x')»main«ELSE»index«ENDIF» page of «controllerName» area
                     $codes[] = '«controllerName»';
                 «ENDIF»
                 «IF someController.hasActions('view')»
@@ -94,7 +94,7 @@ class Redirect {
          */
         protected function getDefaultReturnUrl($args)
         {
-            «IF !app.targets('1.3.5')»
+            «IF !app.targets('1.3.x')»
                 $serviceManager = $this->view->getServiceManager();
 
             «ENDIF»
@@ -104,19 +104,19 @@ class Redirect {
             «ENDIF»
             «IF hasActions('view')»
                 // redirect to the list of «nameMultiple.formatForCode»
-                $viewArgs = array(«IF app.targets('1.3.5')»'ot' => $this->objectType, «ENDIF»'lct' => $legacyControllerType);
+                $viewArgs = array(«IF app.targets('1.3.x')»'ot' => $this->objectType, «ENDIF»'lct' => $legacyControllerType);
                 «IF tree != EntityTreeType.NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'view', $viewArgs);
                 «ELSE»
                     $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_view', $viewArgs);
                 «ENDIF»
             «ELSEIF hasActions('index')»
-                // redirect to the «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page
+                // redirect to the «IF app.targets('1.3.x')»main«ELSE»index«ENDIF» page
                 $indexArgs = array('lct' => $legacyControllerType);
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $url = ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'main', $indexArgs);
                 «ELSE»
                     $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_index', $indexArgs);
@@ -128,7 +128,7 @@ class Redirect {
 
                 if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
                         $displayArgs = array('ot' => $this->objectType, «routeParamsLegacy('this->idValues', false, true)»);
                         $url = ModUtil::url($this->name, $currentType, 'display', $displayArgs);
@@ -154,7 +154,7 @@ class Redirect {
          */
         protected function getRedirectUrl($args)
         {
-            «IF !app.targets('1.3.5')»
+            «IF !app.targets('1.3.x')»
                 $serviceManager = $this->view->getContainer();
 
             «ENDIF»
@@ -166,7 +166,7 @@ class Redirect {
                 }
 
                 // inline usage, return to special function for closing the Zikula.UI.Window instance
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     return ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'handleInlineRedirect', $urlArgs);
                 «ELSE»
                     return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_handleinlineredirect', $urlArgs);
@@ -190,7 +190,7 @@ class Redirect {
                     «val controllerName = someController.formattedName»
                     «IF someController.hasActions('index')»
                         case '«controllerName»':
-                            «IF app.targets('1.3.5')»
+                            «IF app.targets('1.3.x')»
                                 return ModUtil::url($this->name, '«controllerName»', 'main');
                             «ELSE»
                                 return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_index', array('lct' => '«controllerName»'));
@@ -198,7 +198,7 @@ class Redirect {
                     «ENDIF»
                     «IF someController.hasActions('view')»
                         case '«controllerName»View':
-                            «IF app.targets('1.3.5')»
+                            «IF app.targets('1.3.x')»
                                 return ModUtil::url($this->name, '«controllerName»', 'view', array('ot' => $this->objectType));
                             «ELSE»
                                 return $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_view', array('lct' => '«controllerName»'));
@@ -207,13 +207,13 @@ class Redirect {
                     «IF someController.hasActions('display')»
                         case '«controllerName»Display':
                             if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
-                                «IF app.targets('1.3.5')»
+                                «IF app.targets('1.3.x')»
                                     $urlArgs['ot'] = $this->objectType;
                                 «ENDIF»
                                 foreach ($this->idFields as $idField) {
                                     $urlArgs[$idField] = $this->idValues[$idField];
                                 }
-                                «IF app.targets('1.3.5')»
+                                «IF app.targets('1.3.x')»
                                     return ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
                                 «ELSE»
                                     $urlArgs['lct'] = '«controllerName»';
@@ -232,7 +232,7 @@ class Redirect {
                             «val controllerName = someController.formattedName»
                             «IF someController.hasActions('view')»
                                 case '«controllerName»View«sourceEntity.name.formatForCodeCapital»':
-                                    «IF app.targets('1.3.5')»
+                                    «IF app.targets('1.3.x')»
                                         return ModUtil::url($this->name, '«controllerName»', 'view', array('ot' => '«sourceEntity.name.formatForCode»'));
                                     «ELSE»
                                         return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_view', array('lct' => '«controllerName»'));
@@ -241,7 +241,7 @@ class Redirect {
                             «IF someController.hasActions('display')»
                                 case '«controllerName»Display«sourceEntity.name.formatForCodeCapital»':
                                     if (!empty($this->relationPresets['«incomingRelation.getRelationAliasName(false)»'])) {
-                                        «IF app.targets('1.3.5')»
+                                        «IF app.targets('1.3.x')»
                                             return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                         «ELSE»
                                             return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_display',  array('id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));

@@ -29,7 +29,7 @@ class ContentTypeSingle {
     }
 
     def private contentTypeBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\ContentType\Base;
 
             use ModUtil;
@@ -40,7 +40,7 @@ class ContentTypeSingle {
         /**
          * Generic single item display content plugin base class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_ContentType_Base_Item extends Content_AbstractContentType
         «ELSE»
         class Item extends \Content_AbstractContentType
@@ -107,7 +107,7 @@ class ContentTypeSingle {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
                 $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
@@ -190,7 +190,7 @@ class ContentTypeSingle {
         public function startEditing()
         {
             // ensure our custom plugins are loaded
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 array_push($this->view->plugins_dir, '«rootFolder»/«appName»/templates/plugins');
             «ELSE»
                 array_push($this->view->plugins_dir, '«rootFolder»/«getViewPath»/plugins');
@@ -202,7 +202,7 @@ class ContentTypeSingle {
     '''
 
     def private contentTypeImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\ContentType;
 
             use «appNamespace»\ContentType\Base\Item as BaseItem;
@@ -211,7 +211,7 @@ class ContentTypeSingle {
         /**
          * Generic single item display content plugin implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_ContentType_Item extends «appName»_ContentType_Base_Item
         «ELSE»
         class Item extends BaseItem

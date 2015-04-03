@@ -33,7 +33,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
              * @Gedmo\Versioned
          «ENDIF»
          * @ORM\Column(type="decimal", precision=10, scale=7)
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
          «ENDIF»
          * @var decimal $latitude.
@@ -47,7 +47,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
              * @Gedmo\Versioned
          «ENDIF»
          * @ORM\Column(type="decimal", precision=10, scale=7)
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
          «ENDIF»
          * @var decimal $longitude.

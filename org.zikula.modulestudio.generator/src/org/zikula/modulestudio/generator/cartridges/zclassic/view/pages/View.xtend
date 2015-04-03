@@ -66,7 +66,7 @@ class View {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
             {assign var='lctUc' value=$lct|ucfirst}
@@ -78,18 +78,18 @@ class View {
             «templateHeader»
             «IF documentation !== null && documentation != ''»
 
-                <p class="«IF application.targets('1.3.5')»z-informationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replace('\'', '\\\'')»'}</p>
+                <p class="«IF application.targets('1.3.x')»z-informationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replace('\'', '\\\'')»'}</p>
             «ENDIF»
 
             «pageNavLinks(appName)»
 
-            {include file='«IF application.targets('1.3.5')»«name.formatForCode»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_quickNav.tpl' all=$all own=$own«IF !hasVisibleWorkflow» workflowStateFilter=false«ENDIF»}{* see template file for available options *}
+            {include file='«IF application.targets('1.3.x')»«name.formatForCode»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_quickNav.tpl' all=$all own=$own«IF !hasVisibleWorkflow» workflowStateFilter=false«ENDIF»}{* see template file for available options *}
 
             «viewForm(appName)»
 
             «callDisplayHooks(appName)»
         </div>
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {include file="`$lctUc`/footer.tpl"}
@@ -103,7 +103,7 @@ class View {
             {if $canBeCreated}
                 {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
                     {gt text='Create «name.formatForDisplay»' assign='createTitle'}
-                    «IF application.targets('1.3.5')»
+                    «IF application.targets('1.3.x')»
                         <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
                     «ELSE»
                         <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_edit' lct=$lct}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
@@ -118,7 +118,7 @@ class View {
         {assign var='all' value=0}
         {if isset($showAllEntries) && $showAllEntries eq 1}
             {gt text='Back to paginated view' assign='linkTitle'}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»'}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
                 <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
@@ -126,7 +126,7 @@ class View {
             {assign var='all' value=1}
         {else}
             {gt text='Show all entries' assign='linkTitle'}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»' all=1}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
                 <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct all=1}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
@@ -134,7 +134,7 @@ class View {
         {/if}
         «IF tree != EntityTreeType.NONE»
             {gt text='Switch to hierarchy view' assign='linkTitle'}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»' tpl='tree'}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
                 <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct tpl='tree'}" title="{$linkTitle}" class="fa fa-code-fork">{$linkTitle}</a>
@@ -145,7 +145,7 @@ class View {
     def private viewForm(Entity it, String appName) '''
         «IF listType == 3»
             {if $lct eq 'admin'}
-            <form action="«IF application.targets('1.3.5')»{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_handleselectedentries' lct=$lct}«ENDIF»" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF application.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»"«IF !application.targets('1.3.5')» role="form"«ENDIF»>
+            <form action="«IF application.targets('1.3.x')»{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_handleselectedentries' lct=$lct}«ENDIF»" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF application.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»"«IF !application.targets('1.3.x')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
             {/if}
@@ -176,10 +176,10 @@ class View {
         «IF listType != 3»
             <«listType.asListTag»>
         «ELSE»
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 <div class="table-responsive">
             «ENDIF»
-            <table class="«IF application.targets('1.3.5')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $lct eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
+            <table class="«IF application.targets('1.3.x')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $lct eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
                 <colgroup>
                     {if $lct eq 'admin'}
                         <col id="cSelect" />
@@ -202,7 +202,7 @@ class View {
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
-                    <th id="hItemActions" scope="col" class="«IF application.targets('1.3.5')»z-right «ENDIF»z-order-unsorted">{gt text='Actions'}</th>
+                    <th id="hItemActions" scope="col" class="«IF application.targets('1.3.x')»z-right «ENDIF»z-order-unsorted">{gt text='Actions'}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -216,7 +216,7 @@ class View {
             «ELSEIF listType == 2»
                 <dt>
             «ELSEIF listType == 3»
-                <tr«IF application.targets('1.3.5')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
+                <tr«IF application.targets('1.3.x')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
                     {if $lct eq 'admin'}
                         <td headers="hselect" align="center" valign="top">
                             <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
@@ -241,7 +241,7 @@ class View {
                 <dt>
             «ELSEIF listType == 3»
                 <tr class="z-{if $lct eq 'admin'}admin{else}data{/if}tableempty">
-                  <td class="«IF application.targets('1.3.5')»z«ELSE»text«ENDIF»-left" colspan="{if $lct eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
+                  <td class="«IF application.targets('1.3.x')»z«ELSE»text«ENDIF»-left" colspan="{if $lct eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
             «ENDIF»
             {gt text='No «nameMultiple.formatForDisplay» found.'}
             «IF listType < 2»
@@ -261,7 +261,7 @@ class View {
         «ELSE»
                 </tbody>
             </table>
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 </div>
             «ENDIF»
         «ENDIF»
@@ -270,7 +270,7 @@ class View {
     def private pagerCall(Entity it, String appName) '''
 
         {if !isset($showAllEntries) || $showAllEntries ne 1}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}
             «ELSE»
                 {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' lct=$lct route='«appName.formatForDB»_«name.formatForCode»_view'}
@@ -280,11 +280,11 @@ class View {
 
     def private massActionFields(Entity it, String appName) '''
         <fieldset>
-            <label for="«appName.toFirstLower»Action"«IF !application.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
-            «IF !application.targets('1.3.5')»
+            <label for="«appName.toFirstLower»Action"«IF !application.targets('1.3.x')» class="col-sm-3 control-label"«ENDIF»>{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
+            «IF !application.targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
-            <select id="«appName.toFirstLower»Action" name="action"«IF !application.targets('1.3.5')» class="form-control"«ENDIF»>
+            <select id="«appName.toFirstLower»Action" name="action"«IF !application.targets('1.3.x')» class="form-control"«ENDIF»>
                 <option value="">{gt text='Choose action'}</option>
             «IF workflow != EntityWorkflowType::NONE»
                 «IF workflow == EntityWorkflowType::ENTERPRISE»
@@ -309,7 +309,7 @@ class View {
             «ENDIF»
                 <option value="delete" title="{gt text='«getWorkflowActionDescription(workflow, 'Delete')»'}">{gt text='Delete'}</option>
             </select>
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 </div>
             «ENDIF»
             <input type="submit" value="{gt text='Submit'}" />
@@ -332,7 +332,7 @@ class View {
 
             <script type="text/javascript">
             /* <![CDATA[ */
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     document.observe('dom:loaded', function() {
                         «initAjaxSingleToggle»
                         «IF listType == 3»
@@ -370,7 +370,7 @@ class View {
     def private initMassToggle(Entity it) '''
         {{if $lct eq 'admin'}}
             {{* init the "toggle all" functionality *}}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
                     $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
                         Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
@@ -390,7 +390,7 @@ class View {
 
     def private templateHeader(Entity it) '''
         {if $lct eq 'admin'}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 <div class="z-admin-content-pagetitle">
                     {icon type='view' size='small' alt=$templateTitle}
                     <h3>{$templateTitle}</h3>
@@ -415,21 +415,21 @@ class View {
     '''
 
     def private headerLine(DerivedField it) '''
-        <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.application.targets('1.3.5')»z«ELSE»text«ENDIF»-«alignment»">
+        <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.application.targets('1.3.x')»z«ELSE»text«ENDIF»-«alignment»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
             «headerSortingLink(entity, name.formatForCode, fieldLabel)»
         </th>
     '''
 
     def private headerLine(JoinRelationship it, Boolean useTarget) '''
-        <th id="h«markupIdCode(useTarget)»" scope="col" class="«IF application.targets('1.3.5')»z«ELSE»text«ENDIF»-left">
+        <th id="h«markupIdCode(useTarget)»" scope="col" class="«IF application.targets('1.3.x')»z«ELSE»text«ENDIF»-left">
             «val mainEntity = (if (useTarget) source else target)»
             «headerSortingLink(mainEntity, getRelationAliasName(useTarget).formatForCode, getRelationAliasName(useTarget).formatForCodeCapital)»
         </th>
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=«IF entity.application.targets('1.3.5')»$lct«ELSE»'«entity.name.formatForCode»'«ENDIF» func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)»«IF entity.application.targets('1.3.5')» ot='«entity.name.formatForCode»'«ELSE» lct=$lct«ENDIF»}
+        {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=«IF entity.application.targets('1.3.x')»$lct«ELSE»'«entity.name.formatForCode»'«ENDIF» func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)»«IF entity.application.targets('1.3.x')» ot='«entity.name.formatForCode»'«ELSE» lct=$lct«ENDIF»}
     '''
 
     def private headerSortingLinkParameters(DataObject it) ''' sortdir=$sdir all=$all own=$own«IF it instanceof Entity && (it as Entity).categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«sortParamsForLocaleFields»«IF hasAbstractStringFieldsEntity» q=$q«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
@@ -458,7 +458,7 @@ class View {
     }
     def private dispatch entryContainerCssClass(ListField it) {
         if (name == 'workflowState') {
-            if (entity.application.targets('1.3.5')) {
+            if (entity.application.targets('1.3.x')) {
                 'z-nowrap'
             } else {
                 'nowrap'
@@ -472,7 +472,7 @@ class View {
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF newArrayList('name', 'title').contains(name)»
             «IF entity instanceof Entity && entity.hasActions('display')»
-                «IF entity.application.targets('1.3.5')»
+                «IF entity.application.targets('1.3.x')»
                     <a href="{modurl modname='«entity.application.appName»' type=$lct func='display' ot='«entity.name.formatForCode»' «(entity as Entity).routeParamsLegacy(entity.name.formatForCode, true, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ELSE»
                     <a href="{route name='«entity.application.appName.formatForDB»_«entity.name.formatForDB»_display' «(entity as Entity).routeParams(entity.name.formatForCode, true)» lct=$lct}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
@@ -496,7 +496,7 @@ class View {
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {if isset($«relObjName») && $«relObjName» ne null}
             «IF linkEntity.hasActions('display')»
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
                 «ELSE»
                     <a href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
@@ -505,14 +505,14 @@ class View {
               {$«relObjName»->getTitleFromDisplayPattern()|default:""}
             «IF linkEntity.hasActions('display')»
                 {/strip}</a>
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 «ELSE»
                     <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
                 «ENDIF»
                 <script type="text/javascript">
                 /* <![CDATA[ */
-                    «IF application.targets('1.3.5')»
+                    «IF application.targets('1.3.x')»
                         document.observe('dom:loaded', function() {
                             «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                         });
@@ -557,7 +557,7 @@ class View {
         «IF listType != 3»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF application.targets('1.3.5')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
+            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF application.targets('1.3.x')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
         «ENDIF»
             «new ItemActionsView().generateView(it, 'markup')»
         </«listType.asItemTag»>

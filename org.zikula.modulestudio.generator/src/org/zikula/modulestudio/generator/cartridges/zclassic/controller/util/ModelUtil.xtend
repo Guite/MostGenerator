@@ -27,13 +27,13 @@ class ModelUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for model layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Model' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Model' + (if (targets('1.3.x')) '' else 'Util') + '.php',
             fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
         )
     }
 
     def private modelFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util\Base;
 
             use ModUtil;
@@ -43,7 +43,7 @@ class ModelUtil {
         /**
          * Utility base class for model helper methods.
          */
-        class «IF targets('1.3.5')»«appName»_Util_Base_Model«ELSE»ModelUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Model«ELSE»ModelUtil«ENDIF» extends Zikula_AbstractBase
         {
             «canBeCreated»
 
@@ -70,7 +70,7 @@ class ModelUtil {
          */
         public function canBeCreated($objectType)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -133,7 +133,7 @@ class ModelUtil {
          */
         protected function hasExistingInstances($objectType)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -142,7 +142,7 @@ class ModelUtil {
                 throw new \Exception('Error! Invalid object type received.');
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
@@ -154,7 +154,7 @@ class ModelUtil {
     '''
 
     def private modelFunctionsImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util;
 
             use «appNamespace»\Util\Base\ModelUtil as BaseModelUtil;
@@ -163,7 +163,7 @@ class ModelUtil {
         /**
          * Utility implementation class for model helper methods.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Util_Model extends «appName»_Util_Base_Model
         «ELSE»
         class ModelUtil extends BaseModelUtil

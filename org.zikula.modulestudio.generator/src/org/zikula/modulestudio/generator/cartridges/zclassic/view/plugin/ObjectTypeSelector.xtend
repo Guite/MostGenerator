@@ -35,7 +35,7 @@ class ObjectTypeSelector {
          */
         function smarty_function_«appName.formatForDB»ObjectTypeSelector($params, $view)
         {
-            $dom = «IF !targets('1.3.5')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
+            $dom = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
             $result = array();
 
             «entityEntries»

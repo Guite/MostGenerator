@@ -24,7 +24,7 @@ class Emails {
             return
         }
 
-        val templatePath = getViewPath + if (targets('1.3.5')) 'email' else 'Email' + '/'
+        val templatePath = getViewPath + if (targets('1.3.x')) 'email' else 'Email' + '/'
 
         for (entity : entitiesWithWorkflow) {
             var fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.tpl'

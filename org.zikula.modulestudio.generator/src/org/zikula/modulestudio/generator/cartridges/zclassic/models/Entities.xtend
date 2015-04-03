@@ -49,7 +49,7 @@ class Entities {
     def generate(Application it, IFileSystemAccess fsa) {
         entities.forEach(e|e.generate(it, fsa))
 
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             val validator = new ValidatorLegacy()
             validator.generateCommon(it, fsa)
             for (entity : getAllEntities) {
@@ -73,12 +73,12 @@ class Entities {
         }
         thProp = new Property(extMan)
         val entityPath = app.getAppSourceLibPath + 'Entity/'
-        val entityClassSuffix = if (!app.targets('1.3.5')) 'Entity' else ''
+        val entityClassSuffix = if (!app.targets('1.3.x')) 'Entity' else ''
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
         var fileName = ''
         if (!isInheriting) {
             fileName = entityFileName + '.php'
-            if (app.targets('1.3.5') && !app.shouldBeSkipped(entityPath + 'Base/' + fileName)) {
+            if (app.targets('1.3.x') && !app.shouldBeSkipped(entityPath + 'Base/' + fileName)) {
                 if (app.shouldBeMarked(entityPath + 'Base/' + fileName)) {
                     fileName = entityFileName + '.generated.php'
                 }
@@ -105,7 +105,7 @@ class Entities {
             use Doctrine\Common\Collections\ArrayCollection;
         «ENDIF»
         use Gedmo\Mapping\Annotation as Gedmo;
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             use Symfony\Component\Validator\Constraints as Assert;
             «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -126,7 +126,7 @@ class Entities {
         «IF standardFields»
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
         «ENDIF»
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             use Symfony\Component\Validator\Constraints as Assert;
             «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -135,14 +135,14 @@ class Entities {
     '''
 
     def private modelEntityBaseImpl(DataObject it, Application app) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Base;
 
             use «app.appNamespace»\«app.name.formatForCodeCapital»Events;
             use «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event;
         «ENDIF»
         «imports»
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
 
             use DataUtil;
             use FormUtil;
@@ -172,7 +172,7 @@ class Entities {
          *
          * @abstract
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
         abstract class Abstract«name.formatForCodeCapital»Entity extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
@@ -183,7 +183,7 @@ class Entities {
     '''
 
     def private modelEntityBaseImplBody(DataObject it, Application app) '''
-        «val validatorClassLegacy = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
+        «val validatorClassLegacy = if (app.targets('1.3.x')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
         «memberVars(validatorClassLegacy)»
 
         «IF it instanceof Entity»
@@ -204,7 +204,7 @@ class Entities {
          * @var string The tablename this object maps to.
          */
         protected $_objectType = '«name.formatForCode»';
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
 
             /**
              * @var «validatorClassLegacy» The validator for this entity.
@@ -213,7 +213,7 @@ class Entities {
         «ENDIF»
 
         /**
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="bool")
          «ENDIF»
          * @var boolean Option to bypass validation if needed.
@@ -222,7 +222,7 @@ class Entities {
         «IF it instanceof Entity && (it as Entity).hasNotifyPolicy»
 
             /**
-             «IF !application.targets('1.3.5')»
+             «IF !application.targets('1.3.x')»
              * @Assert\Type(type="array")
              «ENDIF»
              * @var array List of change notification listeners.
@@ -231,7 +231,7 @@ class Entities {
         «ENDIF»
 
         /**
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="array")
          «ENDIF»
          * @var array List of available item actions.
@@ -252,7 +252,7 @@ class Entities {
 
     def private accessors(DataObject it, String validatorClassLegacy) '''
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
         «ENDIF»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
@@ -267,7 +267,7 @@ class Entities {
     '''
 
     def private modelEntityImpl(DataObject it, Application app) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity;
 
             use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»;
@@ -276,7 +276,7 @@ class Entities {
         «imports»
 
         «entityImplClassDocblock(app)»
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital»Entity extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»
@@ -315,12 +315,12 @@ class Entities {
          «IF it instanceof MappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSEIF it instanceof Entity»
-          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.x')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
          «ENDIF»
         «IF it instanceof Entity»
             «entityImplClassDocblockAdditions(app)»
         «ENDIF»
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             «new ValidationConstraints().classAnnotations(it)»
         «ENDIF»
          */

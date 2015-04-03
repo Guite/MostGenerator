@@ -33,13 +33,13 @@ class Translatable {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for translatable entities')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Translatable' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Translatable' + (if (targets('1.3.x')) '' else 'Util') + '.php',
             fh.phpFileContent(it, translatableFunctionsBaseImpl), fh.phpFileContent(it, translatableFunctionsImpl)
         )
     }
 
     def private translatableFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util\Base;
 
             use ServiceUtil;
@@ -51,7 +51,7 @@ class Translatable {
         /**
          * Utility base class for translatable helper methods.
          */
-        class «IF targets('1.3.5')»«appName»_Util_Base_Translatable«ELSE»TranslatableUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Translatable«ELSE»TranslatableUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getTranslatableFieldsImpl»
 
@@ -116,12 +116,12 @@ class Translatable {
             }
 
             // prepare form data to edit multiple translations at once
-            «IF targets('1.3.5')»
-                $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.x')»
+                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
             «ENDIF»
 
             // get translations
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType) . 'Translation';
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
@@ -253,7 +253,7 @@ class Translatable {
                           'default' => '')'''
 
     def private translatableFunctionsImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util;
 
             use «appNamespace»\Util\Base\TranslatableUtil as BaseTranslatableUtil;
@@ -262,7 +262,7 @@ class Translatable {
         /**
          * Utility implementation class for translatable helper methods.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Util_Translatable extends «appName»_Util_Base_Translatable
         «ELSE»
         class TranslatableUtil extends BaseTranslatableUtil

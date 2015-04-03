@@ -18,14 +18,14 @@ class BlockModeration {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for moderation')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/Moderation' + (if (targets('1.3.5')) '' else 'Block') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Block/Moderation' + (if (targets('1.3.x')) '' else 'Block') + '.php',
             fh.phpFileContent(it, moderationBlockBaseClass), fh.phpFileContent(it, moderationBlockImpl)
         )
         new BlockModerationView().generate(it, fsa)
     }
 
     def private moderationBlockBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
             use BlockUtil;
@@ -39,7 +39,7 @@ class BlockModeration {
         /**
          * Moderation block base class.
          */
-        class «IF targets('1.3.5')»«appName»_Block_Base_Moderation«ELSE»ModerationBlock«ENDIF» extends Zikula_Controller_AbstractBlock
+        class «IF targets('1.3.x')»«appName»_Block_Base_Moderation«ELSE»ModerationBlock«ENDIF» extends Zikula_Controller_AbstractBlock
         {
             «moderationBlockBaseImpl»
         }
@@ -120,7 +120,7 @@ class BlockModeration {
             $this->view->setCaching(Zikula_View::CACHE_DISABLED);
             $template = $this->getDisplayTemplate($vars);
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
             «ELSE»
                 $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
@@ -152,14 +152,14 @@ class BlockModeration {
          */
         protected function getDisplayTemplate($vars)
         {
-            $template = '«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/moderation.tpl';
+            $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/moderation.tpl';
 
             return $template;
         }
     '''
 
     def private moderationBlockImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Block;
 
             use «appNamespace»\Block\Base\ModerationBlock as BaseModerationBlock;
@@ -168,7 +168,7 @@ class BlockModeration {
         /**
          * Moderation block implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Block_Moderation extends «appName»_Block_Base_Moderation
         «ELSE»
         class ModerationBlock extends BaseModerationBlock

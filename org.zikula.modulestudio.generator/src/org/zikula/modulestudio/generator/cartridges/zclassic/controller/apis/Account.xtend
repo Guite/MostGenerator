@@ -19,13 +19,13 @@ class Account {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Account' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Account' + (if (targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(it, accountApiBaseClass), fh.phpFileContent(it, accountApiImpl)
         )
     }
 
     def private accountApiBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
@@ -38,7 +38,7 @@ class Account {
         /**
          * Account api base class.
          */
-        class «IF targets('1.3.5')»«appName»_Api_Base_Account«ELSE»AccountApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Account«ELSE»AccountApi«ENDIF» extends Zikula_AbstractApi
         {
             «accountApiBaseImpl»
         }
@@ -73,7 +73,7 @@ class Account {
                 return $items;
             }
 
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
             «ENDIF»
 
@@ -83,7 +83,7 @@ class Account {
                     $objectType = '«entity.name.formatForCode»';
                     if (SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                         $items[] = array(
-                            «IF targets('1.3.5')»
+                            «IF targets('1.3.x')»
                                 'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
                             «ELSE»
                                 'url' => $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', array('lct' => 'user', 'own' => 1)),
@@ -99,7 +99,7 @@ class Account {
             «IF !getAllAdminControllers.empty»
                 if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                     $items[] = array(
-                        'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»'),
+                        'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'),
                         'title' => $this->__('«name.formatForDisplayCapital» Backend'),
                         'icon'   => 'configure.png',
                         'module' => 'core',
@@ -114,7 +114,7 @@ class Account {
     '''
 
     def private accountApiImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
             use «appNamespace»\Api\Base\AccountApi as BaseAccountApi;
@@ -123,7 +123,7 @@ class Account {
         /**
          * Account api implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Api_Account extends «appName»_Api_Base_Account
         «ELSE»
         class AccountApi extends BaseAccountApi

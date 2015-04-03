@@ -11,7 +11,7 @@ class Page {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             /**
              * Makes our handlers known to the event system.
              */
@@ -37,16 +37,16 @@ class Page {
          * This single filter can be used to override all css or js scripts or any other var types
          * sent to `PageUtil::addVar()`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function pageutilAddvarFilter(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function pageutilAddvarFilter(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::pageutilAddvarFilter($event);
 
                 // Simply test with something like
                 /*
-                    if (($key = array_search('system/Users/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»somescript.js', $event->data)) !== false) {
+                    if (($key = array_search('system/Users/«IF targets('1.3.x')»javascript/«ELSE»«getAppJsPath»«ENDIF»somescript.js', $event->data)) !== false) {
                         $event->data[$key] = 'config/javascript/myoverride.js';
                     }
                 */
@@ -60,9 +60,9 @@ class Page {
          *
          * Filter type event for output filter HTML sanitisation.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function systemOutputFilter(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function systemOutputFilter(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::systemOutputFilter($event);

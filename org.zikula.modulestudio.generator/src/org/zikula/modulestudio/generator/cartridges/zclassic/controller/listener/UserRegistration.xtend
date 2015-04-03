@@ -9,7 +9,7 @@ class UserRegistration {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             /**
              * Makes our handlers known to the event system.
              */
@@ -35,9 +35,9 @@ class UserRegistration {
          *
          * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function started(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function started(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::started($event);
@@ -112,9 +112,9 @@ class UserRegistration {
          * all event handlers are being notified of this event. This is not a `notify()` event. An event handler that was notified 
          * prior to the current handler may already have changed the `'redirecturl'`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function succeeded(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function succeeded(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::succeeded($event);
@@ -146,9 +146,9 @@ class UserRegistration {
          * This is not a `notify()` event.
          * An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function failed(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function failed(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::failed($event);
@@ -166,9 +166,9 @@ class UserRegistration {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the registration record that was created.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function create(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);
@@ -184,9 +184,9 @@ class UserRegistration {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the registration record, with the updated values.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function update(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::update($event);
@@ -203,9 +203,9 @@ class UserRegistration {
          * will not fire if a registration record is converted to a full user account record. Instead, a `user.account.create`
          * event will fire. This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function delete(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::delete($event);

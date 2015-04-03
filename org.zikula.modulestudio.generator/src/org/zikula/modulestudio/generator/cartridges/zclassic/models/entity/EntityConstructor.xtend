@@ -97,7 +97,7 @@ class EntityConstructor {
         «IF !getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)].empty»
 
             $serviceManager = ServiceUtil::getManager();
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 $listHelper = new «application.appName»_Util_ListEntries(ServiceUtil::getManager());
             «ELSE»
                 $listHelper = $serviceManager->get('«application.appName.formatForDB».listentries_helper');
@@ -132,7 +132,7 @@ class EntityConstructor {
             «ENDFOR»
         «ELSE»
         «ENDIF»
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             $this->initValidator();
         «ENDIF»
         $this->initWorkflow();

@@ -20,7 +20,7 @@ class User {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             /**
              * Makes our handlers known to the event system.
              */
@@ -45,11 +45,11 @@ class User {
          * Called during UserUtil::getTheme() and is used to filter the results.
          * Receives arg['type'] with the type of result to be filtered
          * and the $themeName in the $event->data which can be modified.
-         * Must $event->stop«IF !targets('1.3.5')»Propagation«ENDIF»() if handler performs filter.
+         * Must $event->stop«IF !targets('1.3.x')»Propagation«ENDIF»() if handler performs filter.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function getTheme(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function getTheme(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getTheme($event);
@@ -67,9 +67,9 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function create(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);
@@ -86,9 +86,9 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record, with the updated values.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function update(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::update($event);
@@ -106,9 +106,9 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that is being deleted.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function delete(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::delete($event);
@@ -121,7 +121,7 @@ class User {
                     $userRecord = $event->getSubject();
                     $uid = $userRecord['uid'];
                     $serviceManager = ServiceUtil::getManager();
-                    $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
             «ENDIF»
@@ -154,7 +154,7 @@ class User {
                     «userField.onAccountDeletionHandler»
                 «ENDFOR»
             «ENDIF»
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
                 $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»'));

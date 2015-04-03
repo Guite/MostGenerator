@@ -13,7 +13,7 @@ class SoftDeleteable extends AbstractExtension implements EntityExtensionInterfa
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
             «' '»* @Gedmo\SoftDeleteable(fieldName="deletedAt")
          «ENDIF»
     '''
@@ -36,7 +36,7 @@ class SoftDeleteable extends AbstractExtension implements EntityExtensionInterfa
              * @Gedmo\Versioned
          «ENDIF»
          * @ORM\Column(type="datetime", nullable=true)
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
          * @var datetime $deletedAt.

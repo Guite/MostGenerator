@@ -21,14 +21,14 @@ class BlockList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for multiple objects')
-        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemList' + (if (targets('1.3.5')) '' else 'Block') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Block/ItemList' + (if (targets('1.3.x')) '' else 'Block') + '.php',
             fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
         )
         new BlocksView().generate(it, fsa)
     }
 
     def private listBlockBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
             use BlockUtil;
@@ -42,7 +42,7 @@ class BlockList {
         /**
          * Generic item list block base class.
          */
-        class «IF targets('1.3.5')»«appName»_Block_Base_ItemList«ELSE»ItemListBlock«ENDIF» extends Zikula_Controller_AbstractBlock
+        class «IF targets('1.3.x')»«appName»_Block_Base_ItemList«ELSE»ItemListBlock«ENDIF» extends Zikula_Controller_AbstractBlock
         {
             «listBlockBaseImpl»
         }
@@ -134,7 +134,7 @@ class BlockList {
             }
 
             // get current block content
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $vars = BlockUtil::varsFromContent($blockinfo['content']);
             «ELSE»
                 //$vars = BlockUtil::varsFromContent($blockinfo['content']);
@@ -178,7 +178,7 @@ class BlockList {
 
             ModUtil::initOOModule('«appName»');
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -190,9 +190,9 @@ class BlockList {
 
             $objectType = $vars['objectType'];
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-                $entityManager = $this->serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
@@ -285,16 +285,16 @@ class BlockList {
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_', $templateFile);
 
             $template = '';
-            if ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
-                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateForObjectType)) {
-                $template = '«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
-                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
-            } elseif ($this->view->template_exists('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
-                $template = '«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateFile;
+            if ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
+                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
+            } elseif ($this->view->template_exists('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateForObjectType)) {
+                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateForObjectType;
+            } elseif ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
+                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
+            } elseif ($this->view->template_exists('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
+                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile;
             } else {
-                $template = '«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist.tpl';
+                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist.tpl';
             }
 
             return $template;
@@ -348,7 +348,7 @@ class BlockList {
         public function modify($blockinfo)
         {
             // Get current content
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $vars = BlockUtil::varsFromContent($blockinfo['content']);
             «ELSE»
                 //$vars = BlockUtil::varsFromContent($blockinfo['content']);
@@ -395,13 +395,13 @@ class BlockList {
             $this->view->assign($vars);
 
             // clear the block cache
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display_description.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display_description.tpl');
 
             // Return the output that has been generated by this function
-            return $this->view->fetch('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_modify.tpl');
+            return $this->view->fetch('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_modify.tpl');
         }
     '''
 
@@ -418,14 +418,14 @@ class BlockList {
             // Get current content
             $vars = BlockUtil::varsFromContent($blockinfo['content']);
 
-            $vars['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $vars['sorting'] = $this->request->request->filter('sorting', 'default', «IF !targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $vars['amount'] = (int) $this->request->request->filter('amount', 5, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+            $vars['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $vars['sorting'] = $this->request->request->filter('sorting', 'default', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $vars['amount'] = (int) $this->request->request->filter('amount', 5, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
             $vars['template'] = $this->request->request->get('template', '');
             $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
             $vars['filter'] = $this->request->request->get('filter', '');
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -446,17 +446,17 @@ class BlockList {
             $blockinfo['content'] = BlockUtil::varsToContent($vars);
 
             // clear the block cache
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($vars['objectType']) . '_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($vars['objectType']) . '_display_description.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($vars['objectType']) . '_display.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
+            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($vars['objectType']) . '_display_description.tpl');
 
             return $blockinfo;
         }
     '''
 
     def private listBlockImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Block;
 
             use «appNamespace»\Block\Base\ItemListBlock as BaseItemListBlock;
@@ -465,7 +465,7 @@ class BlockList {
         /**
          * Generic item list block implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Block_ItemList extends «appName»_Block_Base_ItemList
         «ELSE»
         class ItemListBlock extends BaseItemListBlock

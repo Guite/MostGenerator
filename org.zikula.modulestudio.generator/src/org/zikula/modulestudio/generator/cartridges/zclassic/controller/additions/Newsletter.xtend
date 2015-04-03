@@ -23,7 +23,7 @@ class Newsletter {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginPath = getAppSourceLibPath + 'NewsletterPlugin/'
-        val pluginClassSuffix = if (!targets('1.3.5')) 'Plugin' else ''
+        val pluginClassSuffix = if (!targets('1.3.x')) 'Plugin' else ''
         var pluginFileName = 'ItemList' + pluginClassSuffix + '.php'
         if (!generateOnlyBaseClasses && !shouldBeSkipped(pluginPath + pluginFileName)) {
             if (shouldBeMarked(pluginPath + pluginFileName)) {
@@ -35,7 +35,7 @@ class Newsletter {
     }
 
     def private newsletterClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\NewsletterPlugin;
 
             use FormUtil;
@@ -48,7 +48,7 @@ class Newsletter {
         /**
          * Newsletter plugin class.
          */
-        class «IF targets('1.3.5')»«appName»_NewsletterPlugin_ItemList«ELSE»ItemListPlugin«ENDIF» extends Newsletter_AbstractPlugin
+        class «IF targets('1.3.x')»«appName»_NewsletterPlugin_ItemList«ELSE»ItemListPlugin«ENDIF» extends Newsletter_AbstractPlugin
         {
             «newsletterImpl»
         }
@@ -211,12 +211,12 @@ class Newsletter {
         protected function selectPluginData($args, $filtAfterDate = null)
         {
             $objectType = $args['objectType'];
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
-                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.x')»
+                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
@@ -258,7 +258,7 @@ class Newsletter {
                     // Set (full qualified) link of title
                     $urlArgs = $item->createUrlArgs();
                     $urlArgs['lang'] = $this->lang;
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         $items[$k]['nl_url_title'] = ModUtil::url($this->modname, 'user', 'display', $urlArgs, null, null, true);
                     «ELSE»
                         $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);

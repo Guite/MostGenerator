@@ -9,7 +9,7 @@ class ModuleInstaller {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             /**
              * Makes our handlers known to the event system.
              */
@@ -32,14 +32,14 @@ class ModuleInstaller {
 
         «ENDIF»
         /**
-         * Listener for the `«IF targets('1.3.5')»installer.module.installed«ELSE»module.install«ENDIF»` event.
+         * Listener for the `«IF targets('1.3.x')»installer.module.installed«ELSE»module.install«ENDIF»` event.
          *
          * Called after a module has been successfully installed.
          * Receives `$modinfo` as args.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function moduleInstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function moduleInstalled(«IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::moduleInstalled($event);
@@ -48,7 +48,7 @@ class ModuleInstaller {
             «ENDIF»
         }
 
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             /**
              * Listener for the `module.postinstall` event.
              *
@@ -68,14 +68,14 @@ class ModuleInstaller {
 
         «ENDIF»
         /**
-         * Listener for the `«IF targets('1.3.5')»installer.module.upgraded«ELSE»module.upgrade«ENDIF»` event.
+         * Listener for the `«IF targets('1.3.x')»installer.module.upgraded«ELSE»module.upgrade«ENDIF»` event.
          *
          * Called after a module has been successfully upgraded.
          * Receives `$modinfo` as args.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function moduleUpgraded(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function moduleUpgraded(«IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::moduleUpgraded($event);
@@ -83,7 +83,7 @@ class ModuleInstaller {
                 «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
 
             /**
              * Listener for the `module.enable` event.
@@ -91,9 +91,9 @@ class ModuleInstaller {
              * Called after a module has been successfully enabled.
              * Receives `$modinfo` as args.
              *
-             * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
+             * @param «IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
              */
-            public function moduleEnabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+            public function moduleEnabled(«IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
             {
                 «IF !isBase»
                     parent::moduleEnabled($event);
@@ -108,9 +108,9 @@ class ModuleInstaller {
              * Called after a module has been successfully disabled.
              * Receives `$modinfo` as args.
              *
-             * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
+             * @param «IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
              */
-            public function moduleDisabled(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+            public function moduleDisabled(«IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
             {
                 «IF !isBase»
                     parent::moduleDisabled($event);
@@ -121,17 +121,17 @@ class ModuleInstaller {
         «ENDIF»
 
         /**
-         * Listener for the `«IF targets('1.3.5')»installer.module.uninstalled«ELSE»module.remove«ENDIF»` event.
+         * Listener for the `«IF targets('1.3.x')»installer.module.uninstalled«ELSE»module.remove«ENDIF»` event.
          *
-         * Called after a module has been successfully «IF targets('1.3.5')»uninstalled«ELSE»removed«ENDIF».
+         * Called after a module has been successfully «IF targets('1.3.x')»uninstalled«ELSE»removed«ENDIF».
          * Receives `$modinfo` as args.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»(«IF targets('1.3.5')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function module«IF targets('1.3.x')»Uninstalled«ELSE»Removed«ENDIF»(«IF targets('1.3.x')»Zikula_Event«ELSE»ModuleStateEvent«ENDIF» $event)
         {
             «IF !isBase»
-                parent::module«IF targets('1.3.5')»Uninstalled«ELSE»Removed«ENDIF»($event);
+                parent::module«IF targets('1.3.x')»Uninstalled«ELSE»Removed«ENDIF»($event);
 
                 «commonExample.generalEventProperties(it)»
             «ENDIF»
@@ -143,9 +143,9 @@ class ModuleInstaller {
          * Called after a hook subscriber area has been unregistered.
          * Receives args['areaid'] as the areaId. Use this to remove orphan data associated with this area.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function subscriberAreaUninstalled(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function subscriberAreaUninstalled(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::subscriberAreaUninstalled($event);

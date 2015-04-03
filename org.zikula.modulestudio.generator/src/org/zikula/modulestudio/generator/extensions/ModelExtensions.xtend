@@ -152,7 +152,7 @@ class ModelExtensions {
      * Beginning with Zikula 1.4.0 the vendor is prefixed, too.
      */
     def tableNameWithPrefix(Application it, String inputString) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             prefix + '_' + inputString
         } else {
             vendor.formatForDB + '_' + prefix() + '_' + inputString

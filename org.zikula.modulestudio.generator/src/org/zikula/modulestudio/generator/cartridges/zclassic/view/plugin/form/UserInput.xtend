@@ -24,7 +24,7 @@ class UserInput {
     }
 
     def private formUserInputBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
             use DataUtil;
@@ -41,7 +41,7 @@ class UserInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the user input inherits from it.
          */
-        class «IF targets('1.3.5')»«appName»_Form_Plugin_Base_«ENDIF»UserInput extends Zikula_Form_Plugin_TextInput
+        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»UserInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Get filename of this file.
@@ -82,7 +82,7 @@ class UserInput {
             {
                 $class = parent::getStyleClass();
 
-                return str_replace('z-form-text', 'z-form-user«IF !targets('1.3.5')» typeahead«ENDIF»', $class);
+                return str_replace('z-form-text', 'z-form-user«IF !targets('1.3.x')» typeahead«ENDIF»', $class);
             }
 
             /**
@@ -120,7 +120,7 @@ class UserInput {
 
                 $searchTitle = __('Search user', $dom);
                 $selectorAttributes = $titleHtml . $sizeHtml . $maxLengthHtml . $readOnlyHtml . ' value="' . $selectorDefaultValue . '" class="' . $class . '"' . $attributes;
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $result = '<div id="' . $this->getId() . 'LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user z-hide">
                             <img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchTitle . '" title="' . $searchTitle . '" />
                             <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector"' . $selectorAttributes . ' />
@@ -133,11 +133,11 @@ class UserInput {
                 «ENDIF»
 
                 if ($this->mandatory && $this->mandatorysym) {
-                    $result .= '<span class="«IF targets('1.3.5')»z-form-mandatory-flag«ELSE»requires«ENDIF»">*</span>';
+                    $result .= '<span class="«IF targets('1.3.x')»z-form-mandatory-flag«ELSE»requires«ENDIF»">*</span>';
                 }
 
                 $result .= '<noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>' . "\n";
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />' . "\n";
                 «ELSE»
                     $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />
@@ -195,7 +195,7 @@ class UserInput {
     '''
 
     def private formUserInputImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
             use «appNamespace»\Form\Plugin\Base\UserInput as BaseUserInput;
@@ -207,7 +207,7 @@ class UserInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the user input inherits from it.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_UserInput extends «appName»_Form_Plugin_Base_UserInput
         «ELSE»
         class UserInput extends BaseUserInput
@@ -229,7 +229,7 @@ class UserInput {
          */
         function smarty_function_«appName.formatForDB»UserInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_UserInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\UserInput«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_UserInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\UserInput«ENDIF»', $params);
         }
     '''
 }

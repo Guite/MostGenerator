@@ -29,7 +29,7 @@ class TreeSelector {
     }
 
     def private treeSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
             use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
@@ -45,7 +45,7 @@ class TreeSelector {
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
         class TreeSelector extends BaseAbstractObjectSelector
@@ -106,13 +106,13 @@ class TreeSelector {
 
                 parent::create($view, $params);
 
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 «ELSE»
                     $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($this->objectType) . 'Entity';
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $this->repository = $entityManager->getRepository($entityClass);
             }
 
@@ -192,7 +192,7 @@ class TreeSelector {
     '''
 
     def private treeSelectorImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
             use «appNamespace»\Form\Plugin\Base\TreeSelector as BaseTreeSelector;
@@ -204,7 +204,7 @@ class TreeSelector {
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_TreeSelector extends «appName»_Form_Plugin_Base_TreeSelector
         «ELSE»
         class TreeSelector extends BaseTreeSelector
@@ -226,7 +226,7 @@ class TreeSelector {
          */
         function smarty_function_«appName.formatForDB»TreeSelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
         }
     '''
 }

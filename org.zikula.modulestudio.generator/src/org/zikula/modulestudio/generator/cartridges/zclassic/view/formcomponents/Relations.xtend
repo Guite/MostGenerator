@@ -97,7 +97,7 @@ class Relations {
     }
 
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
-        {include file='«IF application.targets('1.3.5')»«ownEntity.name.formatForCode»«ELSE»«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
+        {include file='«IF application.targets('1.3.x')»«ownEntity.name.formatForCode»«ELSE»«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
     '''
 
     def private includedEditTemplate(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
@@ -110,8 +110,8 @@ class Relations {
             {assign var='allowEditing' value=false}
         {/if}
         {if isset($panel) && $panel eq true}
-            «IF app.targets('1.3.5')»
-                <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
+            «IF app.targets('1.3.x')»
+                <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
                 <fieldset class="«ownEntityName.formatForDB» z-panel-content" style="display: none">
             «ELSE»
                 <div class="panel panel-default">
@@ -127,7 +127,7 @@ class Relations {
             <legend>{gt text='«ownEntityName.formatForDisplayCapital»'}</legend>
             «includedEditTemplateBody(app, ownEntity, linkingEntity, incoming, hasEdit, many)»
         {if isset($panel) && $panel eq true}
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 </fieldset>
             «ELSE»
                         </div>
@@ -141,16 +141,16 @@ class Relations {
 
     def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        <div class="«IF application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
+        <div class="«IF application.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
         «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
         «val appnameLower = application.appName.formatForDB»
         {if $displayMode eq 'dropdown'}
-            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
-            «IF !app.targets('1.3.5')»
+            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
+            «IF !app.targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
-                {«appnameLower»RelationSelectorList «pluginAttributes»«IF !application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
-            «IF !app.targets('1.3.5')»
+                {«appnameLower»RelationSelectorList «pluginAttributes»«IF !application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+            «IF !app.targets('1.3.x')»
                 </div>
             «ENDIF»
         {elseif $displayMode eq 'autocomplete'}
@@ -159,13 +159,13 @@ class Relations {
             «ELSE»
                 {assign var='createLink' value=''}
                 {if $allowEditing eq true}
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
                     «ELSE»
                         {route name='«app.appName.formatForDB»_«ownEntity.name.formatForDB»_edit' lct=$lct assign='createLink'}
                     «ENDIF»
                 {/if}
-                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
+                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
                 «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
             «ENDIF»
         {/if}
@@ -193,23 +193,23 @@ class Relations {
                 {«includeStatement»}
             {/if}
         </div>
-        <br «IF app.targets('1.3.5')»class="z-clearer"«ELSE»style="clear: both"«ENDIF» />
+        <br «IF app.targets('1.3.x')»class="z-clearer"«ELSE»style="clear: both"«ENDIF» />
     '''
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        include file='«IF application.targets('1.3.5')»«targetEntity.name.formatForCode»«ELSE»«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
+        include file='«IF application.targets('1.3.x')»«targetEntity.name.formatForCode»«ELSE»«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
 
     def private component_ItemList(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» *}
         «IF includeEditing»
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 {icon type='edit' size='extrasmall' assign='editImageArray'}
                 {assign var='editImage' value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
             «ELSE»
                 {assign var='editImage' value='<span class="fa fa-pencil-square-o"></span>'}
             «ENDIF»
         «ENDIF»
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
             {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
         «ELSE»
@@ -228,7 +228,7 @@ class Relations {
         <li id="{$idPrefixItem}">
             {$item->getTitleFromDisplayPattern()}
             «IF includeEditing»
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type=$lct func='edit' ot='«targetEntity.name.formatForCode»' «targetEntity.routeParamsLegacy('item', true, false)» forcelongurl=true}">{$editImage}</a>
                 «ELSE»
                     <a id="{$idPrefixItem}Edit" href="{route name='«app.appName.formatForDB»_«targetEntity.name.formatForDB»_edit' «targetEntity.routeParams('item', true)» lct=$lct}">{$editImage}</a>
@@ -239,7 +239,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !application.targets('1.3.5')» img_class='img-rounded'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !application.targets('1.3.x')» img_class='img-rounded'«ENDIF»}
                 {/if}
             «ENDIF»
         </li>
@@ -255,7 +255,7 @@ class Relations {
         «val outgoingJoins = outgoingJoinRelations.filter[target.application == app && usesAutoCompletion(false)]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
                     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
                 «ELSE»

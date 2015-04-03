@@ -18,13 +18,13 @@ class Selection {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating selection api')
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Selection' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Selection' + (if (targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(it, selectionBaseClass), fh.phpFileContent(it, selectionImpl)
         )
     }
 
     def private selectionBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
@@ -34,7 +34,7 @@ class Selection {
         /**
          * Selection api base class.
          */
-        class «IF targets('1.3.5')»«appName»_Api_Base_Selection«ELSE»SelectionApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Selection«ELSE»SelectionApi«ENDIF» extends Zikula_AbstractApi
         {
             «selectionBaseImpl»
         }
@@ -51,7 +51,7 @@ class Selection {
         public function getIdFields(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getIdFields');
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             «ELSE»
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
@@ -76,7 +76,7 @@ class Selection {
          */
         protected function hasCompositeKeys($objectType)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -196,7 +196,7 @@ class Selection {
         protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -222,7 +222,7 @@ class Selection {
                 throw new \InvalidArgumentException(__('Invalid object type received.'));
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
@@ -278,7 +278,7 @@ class Selection {
     '''
 
     def private selectionImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
             use «appNamespace»\Api\Base\SelectionApi as BaseSelectionApi;
@@ -287,7 +287,7 @@ class Selection {
         /**
          * Selection api implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Api_Selection extends «appName»_Api_Base_Selection
         «ELSE»
         class SelectionApi extends BaseSelectionApi

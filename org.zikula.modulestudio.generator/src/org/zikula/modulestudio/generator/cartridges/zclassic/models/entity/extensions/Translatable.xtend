@@ -19,7 +19,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Generates additional annotations on class level.
      */
     override classAnnotations(Entity it) '''
-         «' '»* @Gedmo\TranslationEntity(class="«IF !application.targets('1.3.5')»\«ENDIF»«entityClassName('translation', false)»")
+         «' '»* @Gedmo\TranslationEntity(class="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('translation', false)»")
     '''
 
     /**
@@ -42,7 +42,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
              * Assert\Locale()
          «ENDIF»
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
@@ -70,7 +70,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      * Returns the extension class import statements.
      */
     override extensionClassImports(Entity it) '''
-        use Gedmo\Translatable\Entity\«IF !application.targets('1.3.5')»MappedSuperclass\«ENDIF»«extensionBaseClass»;
+        use Gedmo\Translatable\Entity\«IF !application.targets('1.3.x')»MappedSuperclass\«ENDIF»«extensionBaseClass»;
     '''
 
     /**

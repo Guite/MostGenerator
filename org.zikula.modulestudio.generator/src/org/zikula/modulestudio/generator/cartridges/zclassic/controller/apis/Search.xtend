@@ -20,7 +20,7 @@ class Search {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             generateClassPair(fsa, getAppSourceLibPath + 'Api/Search.php',
                 fh.phpFileContent(it, searchApiBaseClass), fh.phpFileContent(it, searchApiImpl)
             )
@@ -168,8 +168,8 @@ class Search {
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
-            «IF targets('1.3.5')»
-                $entityManager = ServiceUtil::get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.x')»
+                $entityManager = ServiceUtil::get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
             «ENDIF»
             $currentPage = 1;
             $resultsPerPage = 50;

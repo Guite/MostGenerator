@@ -23,13 +23,13 @@ class ListEntries {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for list entries')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/ListEntries' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/ListEntries' + (if (targets('1.3.x')) '' else 'Util') + '.php',
             fh.phpFileContent(it, listFieldFunctionsBaseImpl), fh.phpFileContent(it, listFieldFunctionsImpl)
         )
     }
 
     def private listFieldFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util\Base;
 
             use Zikula_AbstractBase;
@@ -37,7 +37,7 @@ class ListEntries {
         /**
          * Utility base class for list field entries related methods.
          */
-        class «IF targets('1.3.5')»«appName»_Util_Base_ListEntries«ELSE»ListEntriesUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_ListEntries«ELSE»ListEntriesUtil«ENDIF» extends Zikula_AbstractBase
         {
             «resolve»
 
@@ -241,7 +241,7 @@ class ListEntries {
     '''
 
     def private listFieldFunctionsImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util;
 
             use «appNamespace»\Util\Base\ListEntriesUtil as BaseListEntriesUtil;
@@ -250,7 +250,7 @@ class ListEntries {
         /**
          * Utility implementation class for list field entries related methods.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Util_ListEntries extends «appName»_Util_Base_ListEntries
         «ELSE»
         class ListEntriesUtil extends BaseListEntriesUtil

@@ -84,32 +84,32 @@ class Forms {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             {include file="`$lct`/header.tpl"}
         «ELSE»
             {assign var='lctUc' value=$lct|ucfirst}
             {include file="`$lctUc`/header.tpl"}
         «ENDIF»
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_editFunctions.js'}
             {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_validation.js'}
         «ELSE»
             {pageaddvar name='javascript' value='@«app.appName»/Resources/public/js/«app.appName».EditFunctions.js'}
             {pageaddvar name='javascript' value='@«app.appName»/Resources/public/js/«app.appName».Validation.js'}
         «ENDIF»
-        «IF !app.targets('1.3.5') && (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
+        «IF !app.targets('1.3.x') && (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
             {pageaddvar name='javascript' value='web/bootstrap-3-typeahead/bootstrap3-typeahead.min.js'}
         «ENDIF»
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
+            «pageIcon(if (app.targets('1.3.x')) 'edit' else 'pencil-square-o')»
         {elseif $mode eq 'create'}
             {gt text='Create «name.formatForDisplay»' assign='templateTitle'}
-            «pageIcon(if (app.targets('1.3.5')) 'new' else 'plus')»
+            «pageIcon(if (app.targets('1.3.x')) 'new' else 'plus')»
         {else}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «pageIcon(if (app.targets('1.3.5')) 'edit' else 'pencil-square-o')»
+            «pageIcon(if (app.targets('1.3.x')) 'edit' else 'pencil-square-o')»
         {/if}
         <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
             {pagesetvar name='title' value=$templateTitle}
@@ -124,7 +124,7 @@ class Forms {
 
     def private templateHeader(Entity it) '''
         {if $lct eq 'admin'}
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 <div class="z-admin-content-pagetitle">
                     {icon type=$adminPageIcon size='small' alt=$templateTitle}
                     <h3>{$templateTitle}</h3>
@@ -141,7 +141,7 @@ class Forms {
     '''
 
     def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
-        {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.5')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.5')» role='form'«ENDIF»}
+        {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.x')» role='form'«ENDIF»}
             {* add validation summary and a <div> element for styling the form *}
             {«app.appName.formatForDB»FormFrame}
             «IF !getEditableFields.empty»
@@ -153,9 +153,9 @@ class Forms {
             «ENDIF»
 
             «IF useGroupingPanels('edit')»
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     <div id="«app.appName.toFirstLower»Panel" class="z-panels">
-                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
+                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
                         <div class="z-panel-content z-panel-active" style="overflow: visible">
                             «fieldDetails(app)»
                         </div>
@@ -183,7 +183,7 @@ class Forms {
             {/«app.appName.formatForDB»FormFrame}
         {/form}
         </div>
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {include file="`$lctUc`/footer.tpl"}
@@ -254,16 +254,16 @@ class Forms {
             «ENDIF»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                        {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
-                        «IF !app.targets('1.3.5')»
+                    <div class="«IF app.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
+                        {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
+                        «IF !app.targets('1.3.x')»
                             <div class="col-sm-9">
                         «ENDIF»
-                            {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.5')» form-control«ENDIF»'}
-                            «IF app.targets('1.3.5')»
+                            {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.x')» form-control«ENDIF»'}
+                            «IF app.targets('1.3.x')»
                                 {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
                             «ENDIF»
-                        «IF !app.targets('1.3.5')»
+                        «IF !app.targets('1.3.x')»
                             </div>
                         «ENDIF»
                     </div>
@@ -273,19 +273,19 @@ class Forms {
     '''
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
-        «IF hasSluggableFields && slugUpdatable && !application.targets('1.3.5')»
-            <div class="«IF application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !application.targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
-                «IF !application.targets('1.3.5')»
+        «IF hasSluggableFields && slugUpdatable && !application.targets('1.3.x')»
+            <div class="«IF application.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !application.targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
+                «IF !application.targets('1.3.x')»
                     <div class="col-sm-9">
                 «ENDIF»
-                    {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !application.targets('1.3.5')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
-                    <span class="«IF application.targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>
-                «IF slugUnique && application.targets('1.3.5')»
+                    {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !application.targets('1.3.x')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
+                    <span class="«IF application.targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>
+                «IF slugUnique && application.targets('1.3.x')»
                     «/*{«application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
                     {«application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
                 «ENDIF»
-                «IF !application.targets('1.3.5')»
+                «IF !application.targets('1.3.x')»
                     </div>
                 «ENDIF»
         </div>
@@ -293,7 +293,7 @@ class Forms {
     '''
 
     def private formTemplateJS(Entity it, Application app, String actionName) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             {icon type='edit' size='extrasmall' assign='editImageArray'}
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
         «ELSE»
@@ -313,7 +313,7 @@ class Forms {
                     var mapstraction;
                     var marker;
 
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         «newCoordinatesEventHandler»
 
                         Event.observe(window, 'load', function() {
@@ -341,7 +341,7 @@ class Forms {
     '''
 
     def private jsInitImpl(Entity it, Application app) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             «relationHelper.initJs(it, app, false)»
 
             var formButtons, formValidator;
@@ -456,7 +456,7 @@ class Forms {
 
     def private newCoordinatesEventHandler(Entity it) '''
         function newCoordinatesEventHandler() {
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
             «ELSE»
                 var location = new mxn.LatLonPoint($('#latitude').val(), $('#longitude').val());
@@ -488,14 +488,14 @@ class Forms {
         mapstraction.addMarker(marker, true);
 
         // init event handler
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             $('latitude').observe('change', newCoordinatesEventHandler);
             $('longitude').observe('change', newCoordinatesEventHandler);
         «ELSE»
             $('#latitude').change(newCoordinatesEventHandler);
             $('#longitude').change(newCoordinatesEventHandler);
         «ENDIF»
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
 
             $('#collapseMap').on('hidden.bs.collapse', function () {
                 // redraw the map after it's panel has been opened (see also #340)
@@ -505,7 +505,7 @@ class Forms {
 
         mapstraction.click.addHandler(function(event_name, event_source, event_args) {
             var coords = event_args.location;
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 Form.Element.setValue('latitude', coords.lat.toFixed(7));
                 Form.Element.setValue('longitude', coords.lng.toFixed(7));
             «ELSE»
@@ -523,7 +523,7 @@ class Forms {
         {{/if}}
 
         function setDefaultCoordinates(position) {
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $('latitude').value = position.coords.latitude.toFixed(7);
                 $('longitude').value = position.coords.longitude.toFixed(7);
             «ELSE»
@@ -535,7 +535,7 @@ class Forms {
 
         function handlePositionError(evt) {
             if (evt.message != 'ZERO_RESULTS') {
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
                 «ELSE»
                     «app.vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'), evt.message, 'geoLocationAlert', 'danger');
@@ -552,7 +552,7 @@ class Forms {
 
             var determineAddressForGeoCoding = function () {
                 var address = {
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
                     «ELSE»
                         address : $('#street').val() + ' ' + $('#houseNumber').val() + ' ' + $('#zipcode').val() + ' ' + $('#city').val() + ' ' + $('#country').val()
@@ -569,7 +569,7 @@ class Forms {
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
         «/*No input fields for foreign keys, relations are processed further down*/»
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
-            <div class="«IF entity.application.targets('1.3.5')»z-formrow«IF !visible» z-hide«ENDIF»«ELSE»form-group«IF !visible» hidden«ENDIF»«ENDIF»">
+            <div class="«IF entity.application.targets('1.3.x')»z-formrow«IF !visible» z-hide«ENDIF»«ELSE»form-group«IF !visible» hidden«ENDIF»«ENDIF»">
                 «fieldHelper.formRow(it, groupSuffix, idSuffix)»
             </div>
         «ENDIF»
@@ -594,7 +594,7 @@ class Forms {
     '''
 
     def private entityInlineRedirectHandlerFile(Entity it, Application app, IFileSystemAccess fsa) {
-        val templatePath = app.getViewPath + (if (app.targets('1.3.5')) name.formatForCode else name.formatForCodeCapital) + '/'
+        val templatePath = app.getViewPath + (if (app.targets('1.3.x')) name.formatForCode else name.formatForCodeCapital) + '/'
         var fileName = 'inlineRedirectHandler.tpl'
         if (!app.shouldBeSkipped(templatePath + fileName)) {
             if (app.shouldBeMarked(templatePath + fileName)) {
@@ -605,7 +605,7 @@ class Forms {
     }
 
     def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
-        val templatePath = app.getViewPath + (if (app.targets('1.3.5')) formattedName else formattedName.toFirstUpper) + '/'
+        val templatePath = app.getViewPath + (if (app.targets('1.3.x')) formattedName else formattedName.toFirstUpper) + '/'
         var fileName = 'inlineRedirectHandler.tpl'
         if (!app.shouldBeSkipped(templatePath + fileName)) {
             if (app.shouldBeMarked(templatePath + fileName)) {
@@ -622,7 +622,7 @@ class Forms {
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 {$jcssConfig}
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     <script type="text/javascript" src="{$baseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
                     <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
                     <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
@@ -634,13 +634,13 @@ class Forms {
                     <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
                     <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
                 «ENDIF»
-                <script type="text/javascript" src="{$baseurl}«rootFolder»/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js"></script>
+                <script type="text/javascript" src="{$baseurl}«rootFolder»/«appName»/«IF targets('1.3.x')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_e«ELSE».E«ENDIF»ditFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     // close window from parent document
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         document.observe('dom:loaded', function() {
                             «vendorAndName»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
                         });

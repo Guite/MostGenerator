@@ -24,7 +24,7 @@ class RelationSelectorList {
     }
 
     def private relationSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
             use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
@@ -35,7 +35,7 @@ class RelationSelectorList {
         /**
          * Relation selector plugin base class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_Base_RelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
         class RelationSelectorList extends BaseAbstractObjectSelector
@@ -97,7 +97,7 @@ class RelationSelectorList {
     '''
 
     def private relationSelectorImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
             use «appNamespace»\Form\Plugin\Base\RelationSelectorList as BaseRelationSelectorList;
@@ -106,7 +106,7 @@ class RelationSelectorList {
         /**
          * Relation selector plugin implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_RelationSelectorList extends «appName»_Form_Plugin_Base_RelationSelectorList
         «ELSE»
         class RelationSelectorList extends BaseRelationSelectorList
@@ -127,7 +127,7 @@ class RelationSelectorList {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorList($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
         }
     '''
 }

@@ -17,7 +17,7 @@ class MetaData {
 
     def generate (Application it, IFileSystemAccess fsa) {
         this.app = it
-        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) 'helper' else 'Helper') + '/'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
@@ -44,8 +44,8 @@ class MetaData {
         {* purpose of this template: reusable display of meta data fields *}
         {if isset($obj.metadata)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
-                    <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
+                «IF targets('1.3.x')»
+                    <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
                     <div class="metadata z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -60,7 +60,7 @@ class MetaData {
             {/if}
             «viewBody»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     </div>
                 «ELSE»
                             </div>
@@ -114,8 +114,8 @@ class MetaData {
     def private metaDataEditImpl(Application it) '''
         {* purpose of this template: reusable editing of meta data fields *}
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.5')»
-                <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
+            «IF targets('1.3.x')»
+                <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
                 <fieldset class="metadata z-panel-content" style="display: none">
             «ELSE»
                 <div class="panel panel-default">
@@ -131,7 +131,7 @@ class MetaData {
             <legend>{gt text='Metadata'}</legend>
             «editBody»
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 </fieldset>
             «ELSE»
                         </div>
@@ -166,7 +166,7 @@ class MetaData {
     '''
 
     def private formRow(String fieldName, Integer length) '''
-        «val useBootstrap = !app.targets('1.3.5')»
+        «val useBootstrap = !app.targets('1.3.x')»
         «val label = fieldName.formatForDisplayCapital»
 
         <div class="«IF useBootstrap»form-group«ELSE»z-formrow«ENDIF»">

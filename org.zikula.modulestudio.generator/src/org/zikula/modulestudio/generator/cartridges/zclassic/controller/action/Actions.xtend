@@ -39,19 +39,19 @@ class Actions {
     def actionImpl(Action it) '''
         «IF it instanceof MainAction»
             // parameter specifying which type of objects we are treating
-            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $objectType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
 
             $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
             «permissionCheck('', '')»
         «ELSE»
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
             «ENDIF»
 
             // parameter specifying which type of objects we are treating
-            $objectType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $objectType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -64,9 +64,9 @@ class Actions {
 
     def private redirectLegacyAction(Action it) '''
 
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             // forward GET parameters
-            $redirectArgs = $this->request->query->«IF app.targets('1.3.5')»getCollection«ELSE»all«ENDIF»();
+            $redirectArgs = $this->request->query->«IF app.targets('1.3.x')»getCollection«ELSE»all«ENDIF»();
 
             // remove unrequired fields
             if (isset($redirectArgs['module'])) {
@@ -87,7 +87,7 @@ class Actions {
 
         «ENDIF»
         // redirect to entity controller
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             «/*
             $redirectUrl = ModUtil::url($this->name, $objectType, '«name.formatForCode»', $redirectArgs);
 
@@ -110,7 +110,7 @@ class Actions {
         «IF it instanceof MainAction»
             «permissionCheck('', '')»
         «ELSE»
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
@@ -129,7 +129,7 @@ class Actions {
      * Permission checks in system use cases.
      */
     def private permissionCheck(Action it, String objectTypeVar, String instanceId) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel), LogUtil::getErrorMsgPermission());
         «ELSE»
             if (!SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel)) {
@@ -162,7 +162,7 @@ class Actions {
 
             «IF controller.hasActions('view')»
                 // redirect to view action
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'view', array('lct' => '«controller.formattedName»'));
 
                     return $this->redirect($redirectUrl);
@@ -173,7 +173,7 @@ class Actions {
                 «ENDIF»
             «ELSEIF controller.isConfigController»
                 // redirect to config action
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'config', array('lct' => '«controller.formattedName»'));
 
                     return $this->redirect($redirectUrl);
@@ -185,10 +185,10 @@ class Actions {
             «ELSE»
                 «redirectLegacyAction»
 «/*                // set caching id
-                $this->view->setCacheId('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+                $this->view->setCacheId('«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»');
 
-                // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
-                «IF app.targets('1.3.5')»
+                // return «IF app.targets('1.3.x')»main«ELSE»index«ENDIF» template
+                «IF app.targets('1.3.x')»
                     return $this->view->fetch('«controller.formattedName»/main.tpl');
                 «ELSE»
                     return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/index.tpl'));
@@ -212,10 +212,10 @@ class Actions {
         «ENDIF»
 
         // set caching id
-        $this->view->setCacheId('«name.formatForCode»_«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+        $this->view->setCacheId('«name.formatForCode»_«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»');
 
-        // return «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» template
-        «IF app.targets('1.3.5')»
+        // return «IF app.targets('1.3.x')»main«ELSE»index«ENDIF» template
+        «IF app.targets('1.3.x')»
             return $this->view->fetch('«name.formatForCode»/main.tpl');
         «ELSE»
             return $this->response($this->view->fetch('«name.formatForCodeCapital»/index.tpl'));
@@ -224,7 +224,7 @@ class Actions {
 
     def private redirectFromIndexToView(Entity it, Controller controller) '''
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $redirectUrl = ModUtil::url($this->name, '«name.formatForCode»', 'view', array('lct' => $legacyControllerType));
 
             return $this->redirect($redirectUrl);
@@ -236,7 +236,7 @@ class Actions {
     '''
 
     def private actionImplBodyAjaxView(ViewAction it) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
@@ -246,7 +246,7 @@ class Actions {
         «ENDIF»
 
         // parameter for used sorting field
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
         «ELSE»
             $sort = $request->query->filter('sort', '', false, FILTER_SANITIZE_STRING);
@@ -254,7 +254,7 @@ class Actions {
         «new ControllerHelper().defaultSorting(it)»
 
         // parameter for used sort order
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
         «ELSE»
             $sortdir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
@@ -267,7 +267,7 @@ class Actions {
         // convenience vars to make code clearer
         $currentUrlArgs = array('ot' => $objectType);
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $where = $this->request->query->filter('where', '');
         «ELSE»
             $where = $request->query->filter('where', '', false);
@@ -300,14 +300,14 @@ class Actions {
             $objectCount = count($entities);
         } else {
             // the current offset which is used to calculate the pagination
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $currentPage = (int) $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
             «ELSE»
                 $currentPage = (int) $request->query->filter('pos', 1, false, FILTER_VALIDATE_INT);
             «ENDIF»
 
             // the number of items displayed on a page for pagination
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
             «ELSE»
                 $resultsPerPage = (int) $request->query->filter('num', 0, false, FILTER_VALIDATE_INT);
@@ -337,7 +337,7 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, ViewAction action) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
@@ -345,30 +345,30 @@ class Actions {
             $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->request);
         «ENDIF»
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
         «ELSE»
             $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
 
-            $tpl = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('tpl', '', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $tpl = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('tpl', '', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
             if ($tpl == 'tree') {
                 $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
                 $this->view->assign('trees', $trees)
                            ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
                 // fetch and return the appropriate template
-                return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
+                return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF»);
             }
         «ENDIF»
 
         // parameter for used sorting field
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
         «ENDIF»
         «new ControllerHelper().defaultSorting(it)»
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             // parameter for used sort order
             $sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
             $sortdir = strtolower($sortdir);
@@ -404,7 +404,7 @@ class Actions {
             $accessLevel = ACCESS_EDIT;
         }
 
-        $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
+        $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF»);
         $cacheId = $objectType . '_view|_sort_' . $sort . '_' . $sortdir;
         $resultsPerPage = 0;
         if ($showAllEntries == 1) {
@@ -413,21 +413,21 @@ class Actions {
 
             // if page is cached return cached content
             if ($this->view->is_cached($templateFile)) {
-                return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF», $templateFile);
+                return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF», $templateFile);
             }
 
             // retrieve item list without pagination
             $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
         } else {
             // the current offset which is used to calculate the pagination
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $currentPage = (int) $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
             «ELSE»
                 $currentPage = $pos;
             «ENDIF»
 
             // the number of items displayed on a page for pagination
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
             «ELSE»
                 $resultsPerPage = $num;
@@ -441,7 +441,7 @@ class Actions {
 
             // if page is cached return cached content
             if ($this->view->is_cached($templateFile)) {
-                return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF», $templateFile);
+                return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF», $templateFile);
             }
 
             // retrieve item list with pagination
@@ -461,7 +461,7 @@ class Actions {
     '''
 
     def private prepareViewUrlArgs(NamedObject it, Boolean hasView) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $showOwnEntries = (int) $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
             $showAllEntries = (int) $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
         «ELSE»
@@ -470,7 +470,7 @@ class Actions {
         «ENDIF»
 
         if (!$showAllEntries) {
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
             «ELSE»
                 $csv = $request->getRequestFormat() == 'csv' ? 1 : 0;
@@ -495,7 +495,7 @@ class Actions {
     def private prepareViewItemsEntity(Entity it) '''
 
         // build ModUrl instance for display hooks
-        $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $entities)
@@ -505,7 +505,7 @@ class Actions {
                    ->assign('currentUrlObject', $currentUrlObject)
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $modelHelper = new «app.appName»_Util_Model($this->serviceManager);
         «ELSE»
             $modelHelper = $this->serviceManager->get('«app.appName.formatForDB».model_helper');
@@ -513,13 +513,13 @@ class Actions {
         $this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF», $templateFile);
+        return $viewHelper->processTemplate($this->view, $objectType, 'view', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF», $templateFile);
     '''
 
     def private prepareViewItemsAjax(Controller it) '''
         $items = array();
         «IF app.hasListFields»
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $listHelper = new «app.appName»_Util_ListEntries($this->serviceManager);
             «ELSE»
                 $listHelper = $this->serviceManager->get('«app.appName.formatForDB».listentries_helper');
@@ -553,7 +553,7 @@ class Actions {
         $result = array('objectCount' => $objectCount,
                         'items' => $items);
 
-        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        return new «IF app.targets('1.3.x')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
     '''
 
     def private dispatch actionImplBody(DisplayAction it) '''
@@ -565,7 +565,7 @@ class Actions {
     '''
 
     def private actionImplBodyAjaxDisplay(DisplayAction it) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
@@ -580,7 +580,7 @@ class Actions {
         $idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
         «ELSE»
             if (!$hasIdentifier) {
@@ -589,7 +589,7 @@ class Actions {
         «ENDIF»
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         «ELSE»
             if ($entity === null) {
@@ -609,11 +609,11 @@ class Actions {
             $objectType => $entity->toArray()
         );
 
-        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        return new «IF app.targets('1.3.x')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
     '''
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
@@ -670,16 +670,16 @@ class Actions {
         $currentUrlArgs = $entity->createUrlArgs();
         $instanceId = $entity->createCompositeIdentifier();
         $currentUrlArgs['id'] = $instanceId; // TODO remove this
-        $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
     '''
 
     def private processDisplayOutput(Entity it) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
         «ELSE»
             $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
         «ENDIF»
-        $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'display', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
+        $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'display', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF»);
 
         // set cache id
         $component = $this->name . ':' . ucfirst($objectType) . ':';
@@ -699,7 +699,7 @@ class Actions {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return $viewHelper->processTemplate($this->view, $objectType, 'display', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF», $templateFile);
+        return $viewHelper->processTemplate($this->view, $objectType, 'display', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF», $templateFile);
     '''
 
     def private dispatch actionImplBody(EditAction it) {
@@ -708,7 +708,7 @@ class Actions {
         $this->checkAjaxToken();
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
-        $data = $this->request->query->filter('data', null«IF !app.targets('1.3.5')», false«ENDIF»);
+        $data = $this->request->query->filter('data', null«IF !app.targets('1.3.x')», false«ENDIF»);
         $data = json_decode($data, true);
 
         $idValues = array();
@@ -716,7 +716,7 @@ class Actions {
             $idValues[$idField] = isset($data[$idField]) ? $data[$idField] : '';
         }
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
         «ELSE»
             if (!$hasIdentifier) {
@@ -725,7 +725,7 @@ class Actions {
         «ENDIF»
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         «ELSE»
             if ($entity === null) {
@@ -746,7 +746,7 @@ class Actions {
         $hookAreaPrefix = $entity->getHookAreaPrefix();
         $hookType = 'validate_edit';
         // Let any hooks perform additional validation actions
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
         «ELSE»
@@ -767,10 +767,10 @@ class Actions {
             $url = null;
             if ($action != 'delete') {
                 $urlArgs = $entity->createUrlArgs();
-                $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, «IF app.targets('1.3.5')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                $url = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, «IF app.targets('1.3.x')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
             }
 
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
             «ELSE»
@@ -787,7 +787,7 @@ class Actions {
             $objectType => $entity->toArray()
         );
 
-        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        return new «IF app.targets('1.3.x')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
                     '''
             default: '''
         «redirectLegacyAction»
@@ -801,22 +801,22 @@ class Actions {
         $view = FormUtil::newForm($this->name, $this);
 
         // build form handler class name
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $handlerClass = $this->name . '_Form_Handler_«name.formatForCodeCapital»_Edit';
         «ELSE»
             $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«name.formatForCodeCapital»\\EditHandler';
         «ENDIF»
 
         // determine the output template
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
         «ELSE»
             $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
         «ENDIF»
-        $template = $viewHelper->getViewTemplate($this->view, $objectType, 'edit', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
+        $template = $viewHelper->getViewTemplate($this->view, $objectType, 'edit', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF»);
 
         // execute form using supplied template and page event handler
-        return «IF !app.targets('1.3.5')»$this->response(«ENDIF»$view->execute($template, new $handlerClass())«IF !app.targets('1.3.5')»)«ENDIF»;
+        return «IF !app.targets('1.3.x')»$this->response(«ENDIF»$view->execute($template, new $handlerClass())«IF !app.targets('1.3.x')»)«ENDIF»;
     '''
 
     def private dispatch actionImplBody(DeleteAction it) '''
@@ -824,7 +824,7 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
             // retrieve identifier of the object we wish to delete
@@ -849,14 +849,14 @@ class Actions {
         $entity->initWorkflow();
 
         // determine available workflow actions
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
         «ELSE»
             $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
         «ENDIF»
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
             «ELSE»
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
@@ -877,7 +877,7 @@ class Actions {
             break;
         }
         if (!$deleteAllowed) {
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 return LogUtil::registerError($this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
             «ELSE»
                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
@@ -886,14 +886,14 @@ class Actions {
             «ENDIF»
         }
 
-        $confirmation = (bool) $«IF app.targets('1.3.5')»this->«ENDIF»request->request->filter('confirmation', false, «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
+        $confirmation = (bool) $«IF app.targets('1.3.x')»this->«ENDIF»request->request->filter('confirmation', false, «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
         if ($confirmation && $deleteAllowed) {
             $this->checkCsrfToken();
 
             $hookAreaPrefix = $entity->getHookAreaPrefix();
             $hookType = 'validate_delete';
             // Let any hooks perform additional validation actions
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
             «ELSE»
@@ -904,7 +904,7 @@ class Actions {
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $deleteActionId);
                 if ($success) {
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $this->registerStatus($this->__('Done! Item deleted.'));
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
@@ -915,7 +915,7 @@ class Actions {
 
                 // Let any hooks know that we have created, updated or deleted the «name.formatForDisplay»
                 $hookType = 'process_delete';
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
                     $this->notifyHooks($hook);
                 «ELSE»
@@ -938,7 +938,7 @@ class Actions {
                 «ELSEIF app.hasUserController»
                     «redirectAfterDeletion(app.getMainUserController)»
                 «ENDIF»
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     return $this->redirect($redirectUrl);
                 «ELSE»
                     return new RedirectResponse(System::normalizeUrl($redirectUrl));
@@ -946,7 +946,7 @@ class Actions {
             }
         }
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
@@ -961,17 +961,17 @@ class Actions {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
         «ELSE»
             $viewHelper = $this->serviceManager->get('«app.appName.formatForDB».view_helper');
         «ENDIF»
 
-        return $viewHelper->processTemplate($this->view, $objectType, 'delete', «IF app.targets('1.3.5')»array()«ELSE»$request«ENDIF»);
+        return $viewHelper->processTemplate($this->view, $objectType, 'delete', «IF app.targets('1.3.x')»array()«ELSE»$request«ENDIF»);
     '''
 
     def private redirectAfterDeletion(Entity it, Controller controller) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»main page«ENDIF»
             $redirectUrl = ModUtil::url($this->name, '«name.formatForCode»', '«IF controller.hasActions('view')»view«ELSE»main«ENDIF»', array('lct' => $legacyControllerType));
         «ELSE»
@@ -989,10 +989,10 @@ class Actions {
         «ENDIF»
 
         «IF controller instanceof AjaxController»
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true));
+            return new «IF app.targets('1.3.x')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true));
         «ELSE»
             // return template
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 return $this->view->fetch('«controller.formattedName»/«name.formatForCode.toFirstLower».tpl');
             «ELSE»
                 return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl'));
@@ -1004,7 +1004,7 @@ class Actions {
         /** TODO: custom logic */
 
         // return template
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             return $this->view->fetch('«name.formatForCode»/«action.name.formatForCode.toFirstLower».tpl');
         «ELSE»
             return $this->response($this->view->fetch('«name.formatForCodeCapital»/«action.name.formatForCode.toFirstLower».tpl'));

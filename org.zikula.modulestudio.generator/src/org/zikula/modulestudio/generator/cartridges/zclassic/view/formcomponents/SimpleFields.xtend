@@ -310,6 +310,6 @@ class SimpleFields {
     '''
 
     def private isLegacyApp(DerivedField it) {
-        entity.application.targets('1.3.5')
+        entity.application.targets('1.3.x')
     }
 }

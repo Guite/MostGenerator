@@ -25,7 +25,7 @@ class VersionFile {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + (if (targets('1.3.5')) '' else name.formatForCodeCapital + 'Module') + 'Version.php', versionBaseFile, versionFile)
+        generateClassPair(fsa, getAppSourceLibPath + (if (targets('1.3.x')) '' else name.formatForCodeCapital + 'Module') + 'Version.php', versionBaseFile, versionFile)
     }
 
     def private versionBaseFile(Application it) '''
@@ -39,7 +39,7 @@ class VersionFile {
     '''
 
     def private appInfoBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Base;
 
             use HookUtil;
@@ -55,7 +55,7 @@ class VersionFile {
         /**
          * Version information base class.
          */
-        class «IF targets('1.3.5')»«appName»_Base_«ELSE»«name.formatForCodeCapital»Module«ENDIF»Version extends Zikula_AbstractVersion
+        class «IF targets('1.3.x')»«appName»_Base_«ELSE»«name.formatForCodeCapital»Module«ENDIF»Version extends Zikula_AbstractVersion
         {
             /**
              * Retrieves meta data information for this application.
@@ -74,7 +74,7 @@ class VersionFile {
                 //! url version of name, should be in lowercase without space
                 $meta['url']                  = $this->__('«name.formatForDB»');
                 // core requirement
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $meta['core_min']             = '1.3.5'; // requires minimum 1.3.5
                     $meta['core_max']             = '1.3.99'; // not ready for 1.4.0 yet
                 «ELSE»
@@ -84,7 +84,7 @@ class VersionFile {
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
-                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.5') && generateSearchApi»,
+                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.x') && generateSearchApi»,
                                   AbstractSearchable::SEARCHABLE => array('class' => '«appNamespace»\Helper\SearchHelper'),
                                   «ENDIF»
         /*,
@@ -117,7 +117,7 @@ class VersionFile {
                 «FOR entity : getAllEntities»
                     «/* we register one hook subscriber bundle foreach entity type */»
                     «val areaName = entity.nameMultiple.formatForDB»
-                    $bundle = new «IF targets('1.3.5')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
+                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
                     «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
                     // Display hook for view/display templates.
                     $bundle->addEvent('display_view', '«appName».ui_hooks.«areaName».display_view');
@@ -135,7 +135,7 @@ class VersionFile {
                     $bundle->addEvent('process_delete', '«appName».ui_hooks.«areaName».process_delete');
                     $this->registerHookSubscriberBundle($bundle);
 
-                    $bundle = new «IF targets('1.3.5')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
+                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
                     // A filter applied to the given area.
                     $bundle->addEvent('filter', '«appName».filter_hooks.«areaName».filter');
                     $this->registerHookSubscriberBundle($bundle);
@@ -144,7 +144,7 @@ class VersionFile {
                 «/* TODO see #15
                     Example for name of provider area: provider_area.comments.general
 
-                    $bundle = new «IF targets('1.3.5')»Zikula_HookManager_«ENDIF»ProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Poviders'));
+                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»ProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Poviders'));
                     $bundle->addServiceHandler('display_view', 'Ratings_Hooks', 'uiView', 'ratings.service');
                     // add other hooks as needed
                     $this->registerHookProviderBundle($bundle);
@@ -156,7 +156,7 @@ class VersionFile {
     '''
 
     def private appInfoImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
             use «appNamespace»\Base\«name.formatForCodeCapital»ModuleVersion as Base«name.formatForCodeCapital»ModuleVersion;
@@ -165,7 +165,7 @@ class VersionFile {
         /**
          * Version information implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Version extends «appName»_Base_Version
         «ELSE»
         class «name.formatForCodeCapital»ModuleVersion extends Base«name.formatForCodeCapital»ModuleVersion
@@ -197,7 +197,7 @@ class VersionFile {
         array('modname'    => '«name.formatForCode.toFirstUpper»',
               'minversion' => '«minVersion»',
               'maxversion' => '«maxVersion»',
-              'status'     => ModUtil::DEPENDENCY_«appDependencyType»«IF !app.targets('1.3.5')»,
+              'status'     => ModUtil::DEPENDENCY_«appDependencyType»«IF !app.targets('1.3.x')»,
               'reason'     => '«documentation.replace("'", "")»'«ENDIF»)
     '''
 

@@ -29,7 +29,7 @@ class GetCountryName {
          */
         function smarty_modifier_«appName.formatForDB»GetCountryName($countryCode)
         {
-            $result = «IF !targets('1.3.5')»\«ENDIF»ZLanguage::getCountryName($countryCode);
+            $result = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getCountryName($countryCode);
             if ($result === false) {
                 $result = $countryCode;
             }

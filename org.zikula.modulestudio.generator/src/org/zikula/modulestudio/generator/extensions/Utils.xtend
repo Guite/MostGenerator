@@ -55,7 +55,7 @@ class Utils {
      * @return String The formatted name.
      */
     def String appName(Application it) {
-        if (targets('1.3.5')) name.formatForCodeCapital
+        if (targets('1.3.x')) name.formatForCodeCapital
         else vendor.formatForCodeCapital + name.formatForCodeCapital + 'Module'
     }
 
@@ -67,7 +67,7 @@ class Utils {
      * @return String The formatted namespace.
      */
     def appNamespace(Application it) {
-        if (targets('1.3.5')) ''
+        if (targets('1.3.x')) ''
         else vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module'
     }
 
@@ -91,8 +91,8 @@ class Utils {
      * @return Boolean The result.
      */
     def Boolean targets(Application it, String version) {
-        // we query '1.3.5' for BC
-        val useSymfony = (version != '1.3.5')
+        // we query '1.3.x' for BC
+        val useSymfony = (version != '1.3.x')
 
         switch getCoreVersion {
             case ZK135:

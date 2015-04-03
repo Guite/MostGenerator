@@ -32,7 +32,7 @@ class Rss {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='application/rss+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='application/rss+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
         <rss version="2.0"
             xmlns:dc="http://purl.org/dc/elements/1.1/"
             xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
@@ -64,7 +64,7 @@ class Rss {
         {foreach item='«objName»' from=$items}
             <item>
                 <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName»->getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}]]></title>
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     <link>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</link>
                     <guid>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</guid>
                 «ELSE»

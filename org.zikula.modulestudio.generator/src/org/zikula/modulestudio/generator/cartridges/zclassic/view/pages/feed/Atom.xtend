@@ -36,7 +36,7 @@ class Atom {
         {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
             {assign var='lct' value='admin'}
         {/if}
-        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='application/atom+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='application/atom+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
         <feed xmlns="http://www.w3.org/2005/Atom">
         {gt text='Latest «nameMultiple.formatForDisplay»' assign='channelTitle'}
         {gt text='A direct feed showing the list of «nameMultiple.formatForDisplay»' assign='channelDesc'}
@@ -47,11 +47,11 @@ class Atom {
             </author>
         {assign var='numItems' value=$items|@count}
         {if $numItems}
-        {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$items[0].createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:«IF app.targets('1.3.5')»{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy('items[0]', true, true)»«ENDIF»}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_«IF hasActions('display')»display«ELSE»«IF hasActions('view')»view«ELSE»index«ENDIF»«ENDIF»'«IF hasActions('display')» «routeParams('items[0]', true)»«ENDIF» lct=$lct}«ENDIF»{/capture}
+        {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$items[0].createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:«IF app.targets('1.3.x')»{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy('items[0]', true, true)»«ENDIF»}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_«IF hasActions('display')»display«ELSE»«IF hasActions('view')»view«ELSE»index«ENDIF»«ENDIF»'«IF hasActions('display')» «routeParams('items[0]', true)»«ENDIF» lct=$lct}«ENDIF»{/capture}
             <id>{$uniqueID}</id>
             <updated>{$items[0].updatedDate|default:$smarty.now|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</updated>
         {/if}
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' type=$lct func='«IF hasActions('index')»main«ELSEIF hasActions('view')»view' ot='«name.formatForCode»«ELSE»«app.getAdminAndUserControllers.map[actions].flatten.toList.head.name.formatForCode»«ENDIF»' fqurl=true}" />
         «ELSE»
             <link rel="alternate" type="text/html" hreflang="{lang}" href="{route name='«appName.formatForDB»_«name.formatForDB»_«IF hasActions('index')»index«ELSEIF hasActions('view')»view' lct=$lct«ELSE»«app.getAdminAndUserControllers.map[actions].flatten.toList.head.name.formatForCode»«ENDIF»' absolute=true}" />
@@ -63,7 +63,7 @@ class Atom {
         {foreach item='«objName»' from=$items}
             <entry>
                 <title type="html">{$«objName»->getTitleFromDisplayPattern()|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}</title>
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}" />
                     {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF»}{/capture}
                 «ELSE»

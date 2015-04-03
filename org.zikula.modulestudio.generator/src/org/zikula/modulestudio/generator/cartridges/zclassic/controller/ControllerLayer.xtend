@@ -52,7 +52,7 @@ class ControllerLayer {
         getAllEntities.forEach[generateController(fsa)]
 
         new UtilMethods().generate(it, fsa)
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             if (hasUserController) {
                 new UrlRoutingLegacy().generate(it, fsa)
             }
@@ -89,12 +89,12 @@ class ControllerLayer {
      */
     def private generateControllerAndApi(Controller it, IFileSystemAccess fsa) {
         println('Generating "' + formattedName + '" controller classes')
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Controller/' + name.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Controller') + '.php',
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Controller/' + name.formatForCodeCapital + (if (app.targets('1.3.x')) '' else 'Controller') + '.php',
             fh.phpFileContent(app, controllerBaseImpl), fh.phpFileContent(app, controllerImpl)
         )
 
         println('Generating "' + formattedName + '" api classes')
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Api/' + name.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Api') + '.php',
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Api/' + name.formatForCodeCapital + (if (app.targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(app, apiBaseImpl), fh.phpFileContent(app, apiImpl)
         )
     }
@@ -104,7 +104,7 @@ class ControllerLayer {
      */
     def private generateController(Entity it, IFileSystemAccess fsa) {
         println('Generating "' + name.formatForDisplay + '" controller classes')
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Controller/' + name.formatForCodeCapital + (if (app.targets('1.3.5')) '' else 'Controller') + '.php',
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Controller/' + name.formatForCodeCapital + (if (app.targets('1.3.x')) '' else 'Controller') + '.php',
             fh.phpFileContent(app, entityControllerBaseImpl), fh.phpFileContent(app, entityControllerImpl)
         )
     }
@@ -115,7 +115,7 @@ class ControllerLayer {
         /**
          * «name» controller class.
          */
-        class «IF app.targets('1.3.5')»«app.appName»_Controller_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Controller«ENDIF» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
+        class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Controller«ENDIF» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
         {
             «IF isAjaxController»
 
@@ -145,7 +145,7 @@ class ControllerLayer {
         /**
          * «name.formatForDisplayCapital» controller base class.
          */
-        class «IF app.targets('1.3.5')»«app.appName»_Controller_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Controller«ENDIF» extends Zikula_AbstractController
+        class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Controller«ENDIF» extends Zikula_AbstractController
         {
             «new ControllerHelper().controllerPostInitialize(it, false, '')»
 
@@ -165,7 +165,7 @@ class ControllerLayer {
     def private controllerBaseImports(Controller it) '''
         «val isAdminController = (it instanceof AdminController)»
         «val isAjaxController = (it instanceof AjaxController)»
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Controller\Base;
 
             «IF app.needsConfig && isConfigController»
@@ -210,7 +210,7 @@ class ControllerLayer {
     '''
 
     def private entityControllerBaseImports(Entity it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Controller\Base;
 
             use «entityClassName('', false)»;
@@ -269,7 +269,7 @@ class ControllerLayer {
 
     def private handleSelectedObjects(Entity it, Boolean isBase) '''
         «handleSelectedObjectsDocBlock(isBase)»
-        public function handleSelectedEntries«IF app.targets('1.3.5')»()«ELSE»Action(Request $request)«ENDIF»
+        public function handleSelectedEntries«IF app.targets('1.3.x')»()«ELSE»Action(Request $request)«ENDIF»
         {
             «IF isBase»
                 «handleSelectedObjectsBaseImpl»
@@ -285,7 +285,7 @@ class ControllerLayer {
          *
          * This function processes the items selected in the admin view page.
          * Multiple items may have their state changed or be deleted.
-         «IF !app.targets('1.3.5') && !isBase»
+         «IF !app.targets('1.3.x') && !isBase»
          *
          * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».plural%/handleSelectedEntries",
          *        methods = {"POST"}
@@ -296,7 +296,7 @@ class ControllerLayer {
          * @param array  $items  Identifier list of the items to be processed.
          *
          * @return bool true on sucess, false on failure.
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ENDIF»
@@ -306,7 +306,7 @@ class ControllerLayer {
     def private handleSelectedObjectsBaseImpl(Entity it) '''
         $this->checkCsrfToken();
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $redirectUrl = ModUtil::url($this->name, 'admin', 'main', array('ot' => '«name.formatForCode»'));
         «ELSE»
             $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_index', array('lct' => 'admin'));
@@ -315,12 +315,12 @@ class ControllerLayer {
         $objectType = '«name.formatForCode»';
 
         // Get parameters
-        $action = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('action', null);
-        $items = $«IF app.targets('1.3.5')»this->«ENDIF»request->request->get('items', null);
+        $action = $«IF app.targets('1.3.x')»this->«ENDIF»request->request->get('action', null);
+        $items = $«IF app.targets('1.3.x')»this->«ENDIF»request->request->get('items', null);
 
         $action = strtolower($action);
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
         «ELSE»
             $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
@@ -348,7 +348,7 @@ class ControllerLayer {
 
             // Let any hooks perform additional validation actions
             $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
             «ELSE»
@@ -364,7 +364,7 @@ class ControllerLayer {
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $action);
             } catch(\Exception $e) {
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
@@ -378,7 +378,7 @@ class ControllerLayer {
             }
 
             if ($action == 'delete') {
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
@@ -386,7 +386,7 @@ class ControllerLayer {
                     $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
                 «ENDIF»
             } else {
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     LogUtil::registerStatus($this->__('Done! Item updated.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item updated.'));
@@ -400,13 +400,13 @@ class ControllerLayer {
             $url = null;
             if ($action != 'delete') {
                 $urlArgs = $entity->createUrlArgs();
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 «ELSE»
                     $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
                 «ENDIF»
             }
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
             «ELSE»
@@ -422,7 +422,7 @@ class ControllerLayer {
         // clear view cache to reflect our changes
         $this->view->clear_cache();
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             return $this->redirect($redirectUrl);
         «ELSE»
             return new RedirectResponse(System::normalizeUrl($redirectUrl));
@@ -431,7 +431,7 @@ class ControllerLayer {
 
     def private handleInlineRedirect(NamedObject it, Boolean isBase) '''
         «handleInlineRedirectDocBlock(isBase)»
-        public function handleInlineRedirect«IF app.targets('1.3.5')»()«ELSE»Action($idPrefix, $commandName, $id = 0)«ENDIF»
+        public function handleInlineRedirect«IF app.targets('1.3.x')»()«ELSE»Action($idPrefix, $commandName, $id = 0)«ENDIF»
         {
             «IF isBase»
                 «handleInlineRedirectBaseImpl»
@@ -444,7 +444,7 @@ class ControllerLayer {
     def private handleInlineRedirectDocBlock(NamedObject it, Boolean isBase) '''
         /**
          * This method cares for a redirect within an inline frame.
-         «IF it instanceof Entity && !app.targets('1.3.5') && !isBase»
+         «IF it instanceof Entity && !app.targets('1.3.x') && !isBase»
          *
          * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
          *        requirements = {"id" = "\d+"},
@@ -462,7 +462,7 @@ class ControllerLayer {
     '''
 
     def private handleInlineRedirectBaseImpl(NamedObject it) '''
-        «IF app.targets('1.3.5') || it instanceof Controller»
+        «IF app.targets('1.3.x') || it instanceof Controller»
             $id = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
             $idPrefix = $this->request->query->filter('idPrefix', '', FILTER_SANITIZE_STRING);
             $commandName = $this->request->query->filter('commandName', '', FILTER_SANITIZE_STRING);
@@ -482,7 +482,7 @@ class ControllerLayer {
         «ELSEIF it instanceof Entity»
             «{typeName = it.name.formatForCode; ''}»
         «ENDIF»
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $this->view->display('«typeName»/inlineRedirectHandler.tpl');
 
             return true;
@@ -493,7 +493,7 @@ class ControllerLayer {
 
     def private configAction(Controller it, Boolean isBase) '''
         «configDocBlock(isBase)»
-        public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
+        public function config«IF !app.targets('1.3.x')»Action«ENDIF»()
         {
             «IF isBase»
                 «configBaseImpl»
@@ -506,7 +506,7 @@ class ControllerLayer {
     def private configDocBlock(Controller it, Boolean isBase) '''
         /**
          * This method takes care of the application configuration.
-         «IF !app.targets('1.3.5') && !isBase»
+         «IF !app.targets('1.3.x') && !isBase»
          *
          * @Route("/config",
          *        methods = {"GET", "POST"}
@@ -514,7 +514,7 @@ class ControllerLayer {
          «ENDIF»
          *
          * @return string Output
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.x')»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
@@ -522,7 +522,7 @@ class ControllerLayer {
     '''
 
     def private configBaseImpl(Controller it) '''
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
         «ELSE»
             if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
@@ -533,14 +533,14 @@ class ControllerLayer {
         // Create new Form reference
         $view = \FormUtil::newForm($this->name, $this);
 
-        $templateName = '«IF app.targets('1.3.5')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
+        $templateName = '«IF app.targets('1.3.x')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
 
         // Execute form using supplied template and page event handler
-        return «IF !app.targets('1.3.5')»$this->response(«ENDIF»$view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»())«IF !app.targets('1.3.5')»)«ENDIF»;
+        return «IF !app.targets('1.3.x')»$this->response(«ENDIF»$view->execute($templateName, new «IF app.targets('1.3.x')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»())«IF !app.targets('1.3.x')»)«ENDIF»;
     '''
 
     def private controllerImpl(Controller it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Controller;
 
             use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
@@ -554,18 +554,18 @@ class ControllerLayer {
         «ENDIF»
         /**
          * «name» controller class providing navigation and interaction functionality.
-        «IF !app.targets('1.3.5') && it instanceof AjaxController»
+        «IF !app.targets('1.3.x') && it instanceof AjaxController»
          «' '»*
          «' '»* @Route("/%«app.appName.formatForDB».routing.ajax%")
         «ENDIF»
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
         «ELSE»
         class «name.formatForCodeCapital»Controller extends Base«name.formatForCodeCapital»Controller
         «ENDIF»
         {
-            «IF !app.targets('1.3.5')»
+            «IF !app.targets('1.3.x')»
                 «val actionHelper = new ControllerAction(app)»
                 «FOR action : actions»«actionHelper.generate(action, false)»«ENDFOR»
                 «IF hasActions('edit')»
@@ -585,7 +585,7 @@ class ControllerLayer {
     '''
 
     def private entityControllerImpl(Entity it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Controller;
 
             use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
@@ -602,13 +602,13 @@ class ControllerLayer {
         /**
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
         «ELSE»
         class «name.formatForCodeCapital»Controller extends Base«name.formatForCodeCapital»Controller
         «ENDIF»
         {
-            «IF !app.targets('1.3.5')»
+            «IF !app.targets('1.3.x')»
                 «val actionHelper = new ControllerAction(app)»
                 «FOR action : actions»«actionHelper.generate(it, action, false)»«ENDFOR»
                 «IF hasActions('view') && app.hasAdminController»
@@ -629,7 +629,7 @@ class ControllerLayer {
     def private apiBaseImpl(Controller it) '''
         «val isUserController = (it instanceof UserController)»
         «val isAjaxController = (it instanceof AjaxController)»
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Api\Base;
 
             use ModUtil;
@@ -643,7 +643,7 @@ class ControllerLayer {
         /**
          * This is the «name» api helper class.
          */
-        class «IF app.targets('1.3.5')»«app.appName»_Api_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Api«ENDIF» extends Zikula_AbstractApi
+        class «IF app.targets('1.3.x')»«app.appName»_Api_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Api«ENDIF» extends Zikula_AbstractApi
         {
             «IF !isAjaxController»
             /**
@@ -657,7 +657,7 @@ class ControllerLayer {
 
                 «menuLinksBetweenControllers»
 
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
                 «ELSE»
                     $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
@@ -665,8 +665,8 @@ class ControllerLayer {
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 
-                $currentType = $this->request->query->filter('type', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
-                $currentLegacyType = $this->request->query->filter('lct', 'user', «IF !app.targets('1.3.5')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $currentType = $this->request->query->filter('type', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $currentLegacyType = $this->request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
                 $permLevel = in_array('admin', array($currentType, $currentLegacyType)) ? ACCESS_ADMIN : ACCESS_READ;
 
                 «IF it instanceof AdminController || it instanceof UserController»
@@ -675,13 +675,13 @@ class ControllerLayer {
                     «ENDFOR»
                     «IF app.needsConfig && isConfigController»
                         if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                            «IF app.targets('1.3.5')»
+                            «IF app.targets('1.3.x')»
                                 $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                             «ELSE»
                                 $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
                             «ENDIF»
                                              'text' => $this->__('Configuration'),
-                                             'title' => $this->__('Manage settings for this application')«IF !app.targets('1.3.5')»,
+                                             'title' => $this->__('Manage settings for this application')«IF !app.targets('1.3.x')»,
                                              'icon' => 'wrench'«ENDIF»);
                         }
                     «ENDIF»
@@ -697,7 +697,7 @@ class ControllerLayer {
     def private menuLinkToViewAction(Entity it, Controller controller) '''
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
             && SecurityUtil::checkPermission($this->name . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
                 $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_view', array('lct' => '«controller.formattedName»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
@@ -715,7 +715,7 @@ class ControllerLayer {
                         $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
-                                         «IF application.targets('1.3.5')»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
+                                         «IF application.targets('1.3.x')»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
                     }
                     '''
             UserController case !application.getAllAdminControllers.empty: '''
@@ -724,7 +724,7 @@ class ControllerLayer {
                         $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
-                                         «IF application.targets('1.3.5')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
+                                         «IF application.targets('1.3.x')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
                     }
                     '''
         }
@@ -732,13 +732,13 @@ class ControllerLayer {
 
     def private additionalApiMethods(Controller it) {
         switch it {
-            UserController: if (application.targets('1.3.5')) new ShortUrlsLegacy(app).generate(it) else ''
+            UserController: if (application.targets('1.3.x')) new ShortUrlsLegacy(app).generate(it) else ''
             default: ''
         }
     }
 
     def private apiImpl(Controller it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Api;
 
             use «app.appNamespace»\Api\Base\«name.formatForCodeCapital»Api as Base«name.formatForCodeCapital»Api;
@@ -747,7 +747,7 @@ class ControllerLayer {
         /**
          * This is the «name» api helper class.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Api_«name.formatForCodeCapital» extends «app.appName»_Api_Base_«name.formatForCodeCapital»
         «ELSE»
         class «name.formatForCodeCapital»Api extends Base«name.formatForCodeCapital»Api
@@ -758,7 +758,7 @@ class ControllerLayer {
     '''
 
     def private indexUrlDetails(Controller it) {
-        if (hasActions('index')) '\'' + (if (app.targets('1.3.5')) 'main' else 'index') + '\''
+        if (hasActions('index')) '\'' + (if (app.targets('1.3.x')) 'main' else 'index') + '\''
         else if (hasActions('view')) '\'view\', array(\'ot\' => \'' + application.getLeadingEntity.name.formatForCode + '\')'
         else if (application.needsConfig && isConfigController) '\'config\''
         else '\'hooks\''

@@ -34,7 +34,7 @@ class ObjectState {
         function smarty_modifier_«appName.formatForDB»ObjectState($state = 'initial', $uiFeedback = true)
         {
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
             «ELSE»
                 $workflowHelper = $serviceManager->get('«appName.formatForDB».workflow_helper');
@@ -44,7 +44,7 @@ class ObjectState {
 
             $result = $stateInfo['text'];
             if ($uiFeedback === true) {
-                «IF targets('1.3.5')»«/* led images (legacy) */»
+                «IF targets('1.3.x')»«/* led images (legacy) */»
                     $result = '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/' . $stateInfo['ui'] . 'led.png" width="16" height="16" alt="' . $result . '" />&nbsp;&nbsp;' . $result;
                 «ELSE»«/* use Bootstrap labels instead of images */»
                     $result = '<span class="label label-' . $stateInfo['ui'] . '">' . $result . '</span>';

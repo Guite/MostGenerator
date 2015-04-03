@@ -54,7 +54,7 @@ class ValidatorLegacy {
         this.app = it
         println("Generating base validator class")
         var fileName = 'Validator.php'
-        if (!targets('1.3.5')) {
+        if (!targets('1.3.x')) {
             fileName = 'Abstract' + fileName
         }
         generateClassPair(fsa, getAppSourceLibPath + fileName,
@@ -63,7 +63,7 @@ class ValidatorLegacy {
     }
 
     def private validatorCommonBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Base;
 
             use UserUtil;
@@ -77,7 +77,7 @@ class ValidatorLegacy {
          *
          * This is the base validation class with general checks.
          */
-        abstract class «IF targets('1.3.5')»«appName»_Base_Validator«ELSE»AbstractValidator«ENDIF» extends Zikula_AbstractBase
+        abstract class «IF targets('1.3.x')»«appName»_Base_Validator«ELSE»AbstractValidator«ENDIF» extends Zikula_AbstractBase
         {
             /**
              * @var Zikula_EntityAccess The entity instance which is treated by this validator.
@@ -471,7 +471,7 @@ class ValidatorLegacy {
     '''
 
     def private validatorCommonImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
             use «appNamespace»\Base\AbstractValidator as BaseAbstractValidator;
@@ -482,7 +482,7 @@ class ValidatorLegacy {
          *
          * This is the concrete validation class with general checks.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Validator extends «appName»_Base_Validator
         «ELSE»
         class AbstractValidator extends BaseAbstractValidator
@@ -498,7 +498,7 @@ class ValidatorLegacy {
     def generateWrapper(Entity it, IFileSystemAccess fsa) {
         println('Generating validator classes for entity "' + name.formatForDisplay + '"')
         val validatorPath = app.getAppSourceLibPath + 'Entity/Validator/'
-        val validatorSuffix = (if (app.targets('1.3.5')) '' else 'Validator')
+        val validatorSuffix = (if (app.targets('1.3.x')) '' else 'Validator')
         val validatorFileName = name.formatForCodeCapital + validatorSuffix + '.php'
         if (!isInheriting) {
             if (!app.shouldBeSkipped(validatorPath + 'Base/' + validatorFileName)) {
@@ -519,7 +519,7 @@ class ValidatorLegacy {
     }
 
     def private validatorBaseImpl(Entity it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Validator\Base;
 
             use «app.appNamespace»\AbstractValidator as BaseAbstractValidator;
@@ -534,7 +534,7 @@ class ValidatorLegacy {
          *
          * This is the base validation class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Validator_Base_«name.formatForCodeCapital» extends «app.appName»_Validator
         «ELSE»
         class «name.formatForCodeCapital»Validator extends BaseAbstractValidator
@@ -545,7 +545,7 @@ class ValidatorLegacy {
     '''
 
     def private validatorImpl(Entity it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Validator;
 
             «IF isInheriting»
@@ -565,7 +565,7 @@ class ValidatorLegacy {
          *
          * This is the concrete validation class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Validator_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForCodeCapital»«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital»Validator extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»Validator
@@ -623,13 +623,13 @@ class ValidatorLegacy {
                 return false;
             }
 
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
             «ELSE»
                 $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:«name.formatForCodeCapital»Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->get«IF app.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             $excludeid = $this->entity['«getFirstPrimaryKey.name.formatForCode»'];
@@ -838,7 +838,7 @@ class ValidatorLegacy {
         «ENDIF»
         «IF multiple && (min > 0 || max > 0)»
             $serviceManager = ServiceUtil::getManager();
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $helper = new «app.appName»_Util_ListEntries($serviceManager);
             «ELSE»
                 $helper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');

@@ -51,7 +51,7 @@ class Styles {
         }
 
         /* display pages */
-        .«cssPrefix»-display.with-rightbox div.«IF targets('1.3.5')»z-panel-content«ELSE»panel«ENDIF» {
+        .«cssPrefix»-display.with-rightbox div.«IF targets('1.3.x')»z-panel-content«ELSE»panel«ENDIF» {
             float: left;
             width: 79%;
         }
@@ -81,7 +81,7 @@ class Styles {
         «ENDIF»
         «IF hasTrees»
 
-            .«IF targets('1.3.5')»z-«ENDIF»tree-container {
+            .«IF targets('1.3.x')»z-«ENDIF»tree-container {
                 border: 1px solid #ccc;
                 width: 400px;
                 float: left;
@@ -113,7 +113,7 @@ class Styles {
         div.«fieldGroupClass» input.required, div.«fieldGroupClass» textarea.required {
             border: 1px solid #00a8e6;
         }
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             div.«fieldGroupClass» input.validation-failed, div.«fieldGroupClass» textarea.validation-failed {
                 border: 1px solid #f30;
                 color: #f30;
@@ -133,7 +133,7 @@ class Styles {
         }
     '''
 
-    def private fieldGroupClass(Application it) '''«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»'''
+    def private fieldGroupClass(Application it) '''«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»'''
 
     def private autoCompletion(Application it) '''
         «val hasUserFields = hasUserFields»
@@ -142,7 +142,7 @@ class Styles {
         «IF !joinRelations.empty || hasUserFields»
 
             /* edit pages */
-            «IF targets('1.3.5')»«/* fix for #413 */»
+            «IF targets('1.3.x')»«/* fix for #413 */»
                 form.z-form select.z-form-dropdownlist,
                 form.z-form input.z-form-upload {
                     float: left;
@@ -161,11 +161,11 @@ class Styles {
 
             «ENDIF»
             /* hide legends if z-panels are used as both contain the same labels */
-            div.«name.formatForDB»-edit .«IF targets('1.3.5')»z-panel-content«ELSE»panel«ENDIF» legend {
+            div.«name.formatForDB»-edit .«IF targets('1.3.x')»z-panel-content«ELSE»panel«ENDIF» legend {
                 display: none;
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 «IF hasUserFields»
                     div.«cssPrefix»-livesearch-user {
                         margin: 0;

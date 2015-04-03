@@ -12,7 +12,7 @@ class Attributes {
     extension Utils = new Utils
 
     def generate (Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) 'helper' else 'Helper') + '/'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
@@ -39,8 +39,8 @@ class Attributes {
         {* purpose of this template: reusable display of entity attributes *}
         {if isset($obj.attributes)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
-                    <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
+                «IF targets('1.3.x')»
+                    <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
                     <div class="attributes z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -55,7 +55,7 @@ class Attributes {
             {/if}
             «viewBody»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     </div>
                 «ELSE»
                             </div>
@@ -78,8 +78,8 @@ class Attributes {
     def private attributesEditImpl(Application it) '''
         {* purpose of this template: reusable editing of entity attributes *}
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.5')»
-                <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
+            «IF targets('1.3.x')»
+                <h3 class="attributes z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Attributes'}</h3>
                 <fieldset class="attributes z-panel-content" style="display: none">
             «ELSE»
                 <div class="panel panel-default">
@@ -95,7 +95,7 @@ class Attributes {
             <legend>{gt text='Attributes'}</legend>
             «editBody»
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 </fieldset>
             «ELSE»
                         </div>
@@ -110,13 +110,13 @@ class Attributes {
     def private editBody(Application it) '''
         {formvolatile}
         {foreach key='fieldName' item='fieldValue' from=$attributes}
-            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for="attributes`$fieldName`"' text=$fieldName«IF !targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
-                «IF !targets('1.3.5')»
+            <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for="attributes`$fieldName`"' text=$fieldName«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
+                «IF !targets('1.3.x')»
                     <div class="col-sm-9">
                 «ENDIF»
-                    {formtextinput id="attributes`$fieldName`" group='attributes' dataField=$fieldName maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
-                «IF !targets('1.3.5')»
+                    {formtextinput id="attributes`$fieldName`" group='attributes' dataField=$fieldName maxLength=255«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
+                «IF !targets('1.3.x')»
                     </div>
                 «ENDIF»
             </div>

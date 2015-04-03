@@ -19,13 +19,13 @@ class Category {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating category api')
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Category' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Category' + (if (targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(it, categoryBaseClass), fh.phpFileContent(it, categoryImpl)
         )
     }
 
     def private categoryBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api\Base;
 
             use CategoryRegistryUtil;
@@ -38,7 +38,7 @@ class Category {
         /**
          * Category api base class.
          */
-        class «IF targets('1.3.5')»«appName»_Api_Base_Category«ELSE»CategoryApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Category«ELSE»CategoryApi«ENDIF» extends Zikula_AbstractApi
         {
             «categoryBaseImpl»
         }
@@ -61,7 +61,7 @@ class Category {
             }
 
             $objectType = $this->determineObjectType($args, 'getMainCat');
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
 
                 $logger = $this->serviceManager->get('logger');
                 $logger->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
@@ -133,7 +133,7 @@ class Category {
                     }
                 } else {
                     $argName = 'catid' . $propertyName;
-                    $inputVal = (int) $dataSource->filter($argName, 0, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    $inputVal = (int) $dataSource->filter($argName, 0, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
                     $inputValue = array();
                     if ($inputVal > 0) {
                         $inputValue[] = $inputVal;
@@ -279,7 +279,7 @@ class Category {
         protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
@@ -294,7 +294,7 @@ class Category {
     '''
 
     def private categoryImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
             use «appNamespace»\Api\Base\CategoryApi as BaseCategoryApi;
@@ -303,7 +303,7 @@ class Category {
         /**
          * Category api implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Api_Category extends «appName»_Api_Base_Category
         «ELSE»
         class CategoryApi extends BaseCategoryApi

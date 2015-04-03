@@ -12,7 +12,7 @@ class ZikulaManifest {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             return
         }
         var fileName = 'zikula.manifest.json'

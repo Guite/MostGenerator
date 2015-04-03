@@ -31,7 +31,7 @@ class TreeData {
          *   - tree:       Object collection with tree items.
          *   - controller: Optional name of controller, defaults to 'user'.
          *   - root:       Optional id of root node, defaults to 1.
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             «' '»*   - sortable:   Whether tree nodes should be sortable or not, defaults to true.
         «ENDIF»
          *   - assign:     If set, the results are assigned to the corresponding variable instead of printed out.
@@ -58,7 +58,7 @@ class TreeData {
             if (!isset($params['controller']) || empty($params['controller'])) {
                 $params['controller'] = 'user';
             }
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
 
                 $params['lct'] = $params['controller'];
                 $params['controller'] = $params['objectType'];
@@ -74,12 +74,12 @@ class TreeData {
                 «controllerEditActionFlags»
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($params['objectType']);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
-                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.x')»
+                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $serviceManager->get('«appName.formatForDB».«name.formatForCode»_factory')->getRepository();
@@ -87,7 +87,7 @@ class TreeData {
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
             $result = '';
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $treeData = array();
 
                 foreach ($params['tree'] as $item) {
@@ -135,7 +135,7 @@ class TreeData {
 
             return $result;
         }
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
 
             function processTreeItemWithChildren($node, $rootId, $descriptionFieldName, $controllerHasEditAction)
             {
@@ -185,7 +185,7 @@ class TreeData {
         «FOR controller : controllers.filter[hasActions('edit')]»
             case '«controller.formattedName»': $controllerHasEditAction = true; break;
         «ENDFOR»
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             «FOR entity : entities.filter[hasActions('edit')]»
                 case '«entity.name.formatForCode»': $controllerHasEditAction = true; break;
             «ENDFOR»

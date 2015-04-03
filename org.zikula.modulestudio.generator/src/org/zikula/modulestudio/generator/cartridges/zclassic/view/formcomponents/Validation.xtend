@@ -150,6 +150,6 @@ class Validation {
     def private dispatch fieldValidationCssClassDateRange(DateField it) '''«IF entity.getStartDateField !== null && entity.getEndDateField !== null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
 
     def private isLegacyApp(DerivedField it) {
-        entity.application.targets('1.3.5')
+        entity.application.targets('1.3.x')
     }
 }

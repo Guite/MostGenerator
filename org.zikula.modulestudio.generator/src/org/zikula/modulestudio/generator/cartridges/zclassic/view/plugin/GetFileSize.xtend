@@ -46,7 +46,7 @@ class GetFileSize {
             }
 
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $viewHelper = new «appName»_Util_View($serviceManager);
             «ELSE»
                 $viewHelper = $serviceManager->get('«appName.formatForDB».view_helper');

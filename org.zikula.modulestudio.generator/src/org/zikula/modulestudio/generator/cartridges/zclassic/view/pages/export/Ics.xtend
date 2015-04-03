@@ -28,7 +28,7 @@ class Ics {
     def private icsDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display ics view *}
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             {«appName.formatForDB»TemplateHeaders contentType='text/calendar; charset=iso-8859-15'}{*charset=utf-8'*}
         «ENDIF»
         {php}

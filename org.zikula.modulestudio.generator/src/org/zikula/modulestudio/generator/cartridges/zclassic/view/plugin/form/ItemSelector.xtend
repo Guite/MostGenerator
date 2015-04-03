@@ -31,7 +31,7 @@ class ItemSelector {
     }
 
     def private itemSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
             use FormUtil;
@@ -48,7 +48,7 @@ class ItemSelector {
         /**
          * Item selector plugin base class.
          */
-        class «IF targets('1.3.5')»«appName»_Form_Plugin_Base_«ENDIF»ItemSelector extends Zikula_Form_Plugin_TextInput
+        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»ItemSelector extends Zikula_Form_Plugin_TextInput
         {
             /**
              * The treated object type.
@@ -117,7 +117,7 @@ class ItemSelector {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         PageUtil::addVar('javascript', 'prototype');
                         PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
                         PageUtil::addVar('javascript', '«rootFolder»/«appName»/javascript/«appName»_finder.js');
@@ -148,12 +148,12 @@ class ItemSelector {
 
                 $this->selectedItemId = $this->text;
 
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
-                «IF targets('1.3.5')»
-                    $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                «IF targets('1.3.x')»
+                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                     $repository = $entityManager->getRepository($entityClass);
                 «ELSE»
                     $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
@@ -183,7 +183,7 @@ class ItemSelector {
                          ->assign('catIds', $catIds);
                 «ENDIF»
 
-                return $view->fetch(«IF targets('1.3.5')»'external/' . $this->objectType«ELSE»'External/' . ucfirst($this->objectType)«ENDIF» . '/select.tpl');
+                return $view->fetch(«IF targets('1.3.x')»'external/' . $this->objectType«ELSE»'External/' . ucfirst($this->objectType)«ENDIF» . '/select.tpl');
             }
 
             /**
@@ -203,7 +203,7 @@ class ItemSelector {
     '''
 
     def private itemSelectorImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
             use «appNamespace»\Form\Plugin\Base\ItemSelector as BaseItemSelector;
@@ -212,7 +212,7 @@ class ItemSelector {
         /**
          * Item selector plugin implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_ItemSelector extends «appName»_Form_Plugin_Base_ItemSelector
         «ELSE»
         class ItemSelector extends BaseItemSelector
@@ -233,7 +233,7 @@ class ItemSelector {
          */
         function smarty_function_«appName.formatForDB»ItemSelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ItemSelector«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\ItemSelector«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_ItemSelector«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\ItemSelector«ENDIF»', $params);
         }
     '''
 }

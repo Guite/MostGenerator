@@ -51,7 +51,7 @@ class Xml {
 
     def private xmlView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» view xml view *}
-        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
+        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
         <«nameMultiple.formatForCode»>
         {foreach item='item' from=$items}
             {include file='«name.formatForCode»/include.xml.tpl'}
@@ -63,7 +63,7 @@ class Xml {
 
     def private xmlDisplay(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» display xml view *}
-        «IF application.targets('1.3.5')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
+        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='text/xml'}«ENDIF»<?xml version="1.0" encoding="{charset}" ?>
         {getbaseurl assign='baseurl'}
         {include file='«name.formatForCode»/include.xml.tpl' item=$«name.formatForCode»}
     '''

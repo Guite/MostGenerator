@@ -69,7 +69,7 @@ class Operations {
          * @param array  $params Additional arguments.
          *
          * @return bool False on failure or true if everything worked well.
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
          «ENDIF»
@@ -115,7 +115,7 @@ class Operations {
 
         // get entity manager
         $serviceManager = ServiceUtil::getManager();
-        $entityManager = $serviceManager->get«IF app.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
 
         // save entity data
         try {
@@ -124,14 +124,14 @@ class Operations {
             $entityManager->flush();
             //});
             $result = true;
-            «IF !app.targets('1.3.5')»
+            «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
                 $logger->notice('{app}: User {user} updated an entity.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
             «ENDIF»
         } catch (\Exception $e) {
-            «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
-            «IF !app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+            «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
                 $logger->error('{app}: User {user} tried to update an entity, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
@@ -142,21 +142,21 @@ class Operations {
     def private deleteImpl() '''
         // get entity manager
         $serviceManager = ServiceUtil::getManager();
-        $entityManager = $serviceManager->get«IF app.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
 
         // delete entity
         try {
             $entityManager->remove($entity);
             $entityManager->flush();
             $result = true;
-            «IF !app.targets('1.3.5')»
+            «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
                 $logger->notice('{app}: User {user} deleted an entity.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
             «ENDIF»
         } catch (\Exception $e) {
-            «IF app.targets('1.3.5')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
-            «IF !app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
+            «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
                 $logger->error('{app}: User {user} tried to delete an entity, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));

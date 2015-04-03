@@ -12,7 +12,7 @@ class StandardFields {
     extension Utils = new Utils
 
     def generate (Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) 'helper' else 'Helper') + '/'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
@@ -39,8 +39,8 @@ class StandardFields {
         {* purpose of this template: reusable display of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
-                    <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
+                «IF targets('1.3.x')»
+                    <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
                     <div class="standardfields z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -55,7 +55,7 @@ class StandardFields {
             {/if}
             «viewBody»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     </div>
                 «ELSE»
                             </div>
@@ -105,8 +105,8 @@ class StandardFields {
         {* purpose of this template: reusable editing of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
-                    <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
+                «IF targets('1.3.x')»
+                    <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
                     <fieldset class="standardfields z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -122,7 +122,7 @@ class StandardFields {
                 <legend>{gt text='Creation and update'}</legend>
                 «editBody»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     </fieldset>
                 «ELSE»
                             </div>

@@ -15,7 +15,7 @@ class SearchView {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) 'search' else 'Search') + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) 'search' else 'Search') + '/'
         var fileName = 'options.tpl'
         if (!shouldBeSkipped(templatePath + fileName)) {
             if (shouldBeMarked(templatePath + fileName)) {

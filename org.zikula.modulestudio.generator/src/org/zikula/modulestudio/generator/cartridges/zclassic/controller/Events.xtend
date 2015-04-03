@@ -26,7 +26,7 @@ class Events {
      * Entry point for event definition class.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             return
         }
 

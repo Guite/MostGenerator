@@ -33,7 +33,7 @@ class Json {
 
     def private jsonView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» view json view *}
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             {«appName.formatForDB»TemplateHeaders contentType='application/json'}
         «ENDIF»
         [
@@ -47,7 +47,7 @@ class Json {
     def private jsonDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display json view *}
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             {«appName.formatForDB»TemplateHeaders contentType='application/json'}
         «ENDIF»
         {$«objName»->toJson()}

@@ -31,7 +31,7 @@ class EntityMethods {
     extension Utils = new Utils
 
     def dispatch generate(DataObject it, Application app, Property thProp) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             «validationMethods»
         «ENDIF»
 
@@ -49,7 +49,7 @@ class EntityMethods {
 
         «getTitleFromDisplayPattern(app)»
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             «initValidator»
         «ELSE»
             «validationMethods»
@@ -141,7 +141,7 @@ class EntityMethods {
         {
             «IF hasListFieldsEntity»
                 $serviceManager = ServiceUtil::getManager();
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
                 «ELSE»
                     $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
@@ -231,14 +231,14 @@ class EntityMethods {
          * Sets/retrieves the workflow details.
          *
          * @param boolean $forceLoading load the workflow record.
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if retrieving the workflow object fails
          «ENDIF»
          */
         public function initWorkflow($forceLoading = false)
         {
-            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             $isReuse = FormUtil::getPassedValue('astemplate', '', 'GETPOST', FILTER_SANITIZE_STRING);
 
             «loadWorkflow»
@@ -255,7 +255,7 @@ class EntityMethods {
             $this->setWorkflowState('initial');
 
             $serviceManager = ServiceUtil::getManager();
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
             «ELSE»
                 $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
@@ -280,7 +280,7 @@ class EntityMethods {
          * Start validation and raise exception if invalid data is found.
          *
          * @return void.
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             «' '»*
             «' '»* @throws Zikula_Exception Thrown if a validation error occurs
         «ENDIF»
@@ -300,7 +300,7 @@ class EntityMethods {
                     }
                 «ENDFOR»
             «ENDIF»
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 $result = $this->initValidator()->validateAll();
                 if (is_array($result)) {
                     throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
@@ -342,7 +342,7 @@ class EntityMethods {
          */
         public function createUrlArgs()
         {
-            $args = array(«IF application.targets('1.3.5')»'ot' => $this['_objectType']«ENDIF»);
+            $args = array(«IF application.targets('1.3.x')»'ot' => $this['_objectType']«ENDIF»);
 
             «IF hasCompositeKeys»
                 «FOR pkField : getPrimaryKeyFields»
@@ -398,7 +398,7 @@ class EntityMethods {
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
 
         $serviceManager = ServiceUtil::getManager();
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             $workflowHelper = new «application.appName»_Util_Workflow($serviceManager);
         «ELSE»
             $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
@@ -414,11 +414,11 @@ class EntityMethods {
             'schemaname' => $schemaName);
 
         // load the real workflow only when required (e. g. when func is edit or delete)
-        if ((!in_array($currentFunc, array('«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display')) && empty($isReuse)) || $forceLoading) {
+        if ((!in_array($currentFunc, array('«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display')) && empty($isReuse)) || $forceLoading) {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«application.appName»');
             if (!$result) {
                 $dom = ZLanguage::getModuleDomain('«application.appName»');
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
@@ -516,7 +516,7 @@ class EntityMethods {
                 «FOR field : primaryKeyFields»
                     $this->set«field.name.formatForCodeCapital»(«thProp.defaultFieldData(field)»);
                 «ENDFOR»
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
 
                     // init validator
                     $this->initValidator();

@@ -23,7 +23,7 @@ class EditFunctions {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = ''
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             fileName = appName + '_editFunctions.js'
         } else {
             fileName = appName + '.EditFunctions.js'
@@ -31,7 +31,7 @@ class EditFunctions {
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for edit functions')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                if (targets('1.3.5')) {
+                if (targets('1.3.x')) {
                     fileName = appName + '_editFunctions.generated.js'
                 } else {
                     fileName = appName + '.EditFunctions.generated.js'
@@ -73,11 +73,11 @@ class EditFunctions {
              */
             function «vendorAndName»InitUserField(fieldName, getterName)
             {
-                «IF !targets('1.3.5')»
+                «IF !targets('1.3.x')»
                     var users, userMap;
 
                 «ENDIF»
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     if ($(fieldName + 'LiveSearch') === null) {
                         return;
                     }
@@ -89,7 +89,7 @@ class EditFunctions {
                     $('#' + fieldName + 'LiveSearch').removeClass('hidden');
                 «ENDIF»
 
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     new Ajax.Autocompleter(
                         fieldName + 'Selector',
                         fieldName + 'SelectorChoices',
@@ -189,7 +189,7 @@ class EditFunctions {
          */
         function «vendorAndName»ResetUploadField(fieldName)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($(fieldName) != null) {
                     $(fieldName).setAttribute('type', 'input');
                     $(fieldName).setAttribute('type', 'file');
@@ -212,7 +212,7 @@ class EditFunctions {
             var fieldNameCapitalised;
 
             fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($('reset' + fieldNameCapitalised + 'Val') != null) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
@@ -236,7 +236,7 @@ class EditFunctions {
          */
         function «vendorAndName»ResetDateField(fieldName)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($(fieldName) != null) {
                     $(fieldName).value = '';
                 }
@@ -263,7 +263,7 @@ class EditFunctions {
             var fieldNameCapitalised;
 
             fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($('reset' + fieldNameCapitalised + 'Val') != null) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
@@ -286,11 +286,11 @@ class EditFunctions {
          * Example method for initialising geo coding functionality in JavaScript.
          * In contrast to the map picker this one determines coordinates for a given address.
          * Uses a callback function for retrieving the address to be converted, so that it can be easily customised in each edit template.
-         * There is also a method on PHP level available in the \«IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Util\ControllerUtil«ENDIF» class.
+         * There is also a method on PHP level available in the \«IF targets('1.3.x')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Util\ControllerUtil«ENDIF» class.
          */
         function «vendorAndName»InitGeoCoding(addressCallback)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $('linkGetCoordinates').observe('click', function (evt) {
                     «vendorAndName»DoGeoCoding(addressCallback);
                 });
@@ -306,7 +306,7 @@ class EditFunctions {
          */
         function «vendorAndName»DoGeoCoding(addressCallback)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 var address = {
                     address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
                 };
@@ -325,7 +325,7 @@ class EditFunctions {
             geocoder.geocode(address);
 
             function «vendorAndName»GeoCodeErrorCallback (status) {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
                 «ELSE»
                     «vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', 'module_«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
@@ -333,7 +333,7 @@ class EditFunctions {
             }
 
             function «vendorAndName»GeoCodeReturn (location) {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     Form.Element.setValue('latitude', location.point.lat.toFixed(4));
                     Form.Element.setValue('longitude', location.point.lng.toFixed(4));
                 «ELSE»
@@ -346,7 +346,7 @@ class EditFunctions {
     '''
 
     def private relationFunctionsPreparation(Application it) '''
-        «IF !getJoinRelations.empty && targets('1.3.5')»
+        «IF !getJoinRelations.empty && targets('1.3.x')»
 
             /**
              * Override method of Scriptaculous auto completer method.
@@ -360,7 +360,7 @@ class EditFunctions {
                         this.stopIndicator();
                         var idPrefix = this.options.indicator.replace('Indicator', '');
                         if ($(idPrefix + 'NoResultsHint') != null) {
-                            $(idPrefix + 'NoResultsHint').removeClassName('«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»');
+                            $(idPrefix + 'NoResultsHint').removeClassName('«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»');
                         }
                     } else {
                         this.update.innerHTML = choices;
@@ -419,7 +419,7 @@ class EditFunctions {
          */
         function «vendorAndName»ToggleRelatedItemForm(idPrefix)
         {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 // if we don't have a toggle link do nothing
                 if ($(idPrefix + 'AddLink') === null) {
                     return;
@@ -455,7 +455,7 @@ class EditFunctions {
             «vendorAndName»ToggleRelatedItemForm(idPrefix);
 
             // reset value of the auto completion field
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $(idPrefix + 'Selector').value = '';
             «ELSE»
                 $('#' + idPrefix + 'Selector').val('');
@@ -465,16 +465,16 @@ class EditFunctions {
 
     def private createRelationWindowInstance(Application it) '''
         /**
-         * Helper function to create new «IF targets('1.3.5')»Zikula.UI.Window«ELSE»modal form dialog«ENDIF» instances.
+         * Helper function to create new «IF targets('1.3.x')»Zikula.UI.Window«ELSE»modal form dialog«ENDIF» instances.
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
         function «vendorAndName»CreateRelationWindowInstance(containerElem, useIframe)
         {
-            var newWindow«IF !targets('1.3.5')»Id«ENDIF»;
+            var newWindow«IF !targets('1.3.x')»Id«ENDIF»;
 
             // define the new window instance
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 newWindow = new Zikula.UI.Window(
                     containerElem,
                     {
@@ -513,7 +513,7 @@ class EditFunctions {
             «ENDIF»
 
             // return the instance
-            return newWindow«IF !targets('1.3.5')»Id«ENDIF»;
+            return newWindow«IF !targets('1.3.x')»Id«ENDIF»;
         }
     '''
 
@@ -537,14 +537,14 @@ class EditFunctions {
                     // look whether there is already a window instance
                     if (relationHandler.windowInstance !== null) {
                         // unset it
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             relationHandler.windowInstance.destroy();
                         «ELSE»
                             $(containerID + 'Dialog').dialog('destroy');
                         «ENDIF»
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
+                    relationHandler.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.x')»'#' + «ENDIF»containerID), true);
                 }
             });
 
@@ -556,7 +556,7 @@ class EditFunctions {
                 newItem.alias = '«/*TODO*/»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
-                newItem.windowInstance«IF !targets('1.3.5')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.5')»'#' + «ENDIF»containerID), true);
+                newItem.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.x')»'#' + «ENDIF»containerID), true);
 
                 // add it to the list of handlers
                 relationHandler.push(newItem);
@@ -572,14 +572,14 @@ class EditFunctions {
         {
             var itemIds, itemIdsArr;
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 itemIds = $F(idPrefix + 'ItemList');
             «ELSE»
                 itemIds = $('#' + idPrefix + 'ItemList').val();
             «ENDIF»
             itemIdsArr = itemIds.split(',');
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 itemIdsArr = itemIdsArr.without(removeId);
             «ELSE»
                 itemIdsArr = $.grep(itemIdsArr, function(value) {
@@ -589,7 +589,7 @@ class EditFunctions {
 
             itemIds = itemIdsArr.join(',');
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $(idPrefix + 'ItemList').value = itemIds;
                 $(idPrefix + 'Reference_' + removeId).remove();
             «ELSE»
@@ -607,7 +607,7 @@ class EditFunctions {
         {
             var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 newItemId = selectedListItem.id;
                 newTitle = $F(idPrefix + 'Selector');
                 includeEditing = !!(($F(idPrefix + 'Mode') == '1'));
@@ -619,7 +619,7 @@ class EditFunctions {
             elemPrefix = idPrefix + 'Reference_' + newItemId;
             itemPreview = '';
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if ($('itemPreview' + selectedListItem.id) !== null) {
                     itemPreview = $('itemPreview' + selectedListItem.id).innerHTML;
                 }
@@ -629,7 +629,7 @@ class EditFunctions {
                 }
             «ENDIF»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 var li = Builder.node('li', {id: elemPrefix}, newTitle);
                 if (includeEditing === true) {
                     var editHref = $(idPrefix + 'SelectorDoNew').href + '&id=' + newItemId;
@@ -664,13 +664,13 @@ class EditFunctions {
             «ENDIF»
 
             if (includeEditing === true) {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     editLink.update(' ' + editImage);
                 «ELSE»
                     editLink.html(' ' + editImage);
                 «ENDIF»
 
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $(elemPrefix + 'Edit').observe('click', function (e) {
                         «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
                         e.stop();
@@ -682,13 +682,13 @@ class EditFunctions {
                     });
                 «ENDIF»
             }
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 removeLink.update(' ' + removeImage);
             «ELSE»
                 removeLink.html(' ' + removeImage);
             «ENDIF»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 itemIds = $F(idPrefix + 'ItemList');
                 if (itemIds !== '') {
                     if ($F(idPrefix + 'Scope') === '0') {
@@ -734,9 +734,9 @@ class EditFunctions {
          */
         function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
-            var acOptions, itemIds, itemIdsArr«IF !targets('1.3.5')», listItems, listItemMap, acUrl«ENDIF»;
+            var acOptions, itemIds, itemIdsArr«IF !targets('1.3.x')», listItems, listItemMap, acUrl«ENDIF»;
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 // add handling for the toggle link if existing
                 if ($(idPrefix + 'AddLink') !== null) {
                     $(idPrefix + 'AddLink').observe('click', function (e) {
@@ -766,7 +766,7 @@ class EditFunctions {
             // clear values and ensure starting state
             «vendorAndName»ResetRelatedItemForm(idPrefix);
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 acOptions = {
                     paramName: 'fragment',
                     minChars: 2,
@@ -893,7 +893,7 @@ class EditFunctions {
                 });
             «ENDIF»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if (!includeEditing || $(idPrefix + 'SelectorDoNew') === null) {
                     return;
                 }
@@ -904,7 +904,7 @@ class EditFunctions {
             «ENDIF»
 
             // from here inline editing will be handled
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $(idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
                 $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
                     «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
@@ -918,7 +918,7 @@ class EditFunctions {
                 });
             «ENDIF»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 itemIds = $F(idPrefix + 'ItemList');
             «ELSE»
                 itemIds = $('#' + idPrefix + 'ItemList').val();
@@ -929,7 +929,7 @@ class EditFunctions {
 
                 if (existingId) {
                     elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         $(elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
                         $(elemPrefix).observe('click', function (e) {
                             «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
@@ -967,13 +967,13 @@ class EditFunctions {
                         // look whether there is an auto completion instance
                         if (relationHandler.acInstance !== null) {
                             // activate it
-                            «IF targets('1.3.5')»
+                            «IF targets('1.3.x')»
                                 relationHandler.acInstance.activate();
                             «ELSE»
                                 $('#' + idPrefix + 'Selector').lookup();
                             «ENDIF»
                             // show a message
-                            «IF targets('1.3.5')»
+                            «IF targets('1.3.x')»
                                 Zikula.UI.Alert(Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), {
                                     autoClose: 3 // time in seconds
                                 });

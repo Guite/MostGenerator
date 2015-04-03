@@ -24,7 +24,7 @@ class RelationSelectorAutoComplete {
     }
 
     def private relationSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
             use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
@@ -37,7 +37,7 @@ class RelationSelectorAutoComplete {
         /**
          * Relation selector plugin base class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_Base_RelationSelectorAutoComplete extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
         class RelationSelectorAutoComplete extends BaseAbstractObjectSelector
@@ -116,7 +116,7 @@ class RelationSelectorAutoComplete {
              */
             protected function getStyleClass()
             {
-                return 'z-form-relationlist «IF targets('1.3.5')»autocomplete«ELSE»typeahead«ENDIF»';
+                return 'z-form-relationlist «IF targets('1.3.x')»autocomplete«ELSE»typeahead«ENDIF»';
             }
 
             /**
@@ -146,10 +146,10 @@ class RelationSelectorAutoComplete {
 
                 $idPrefix = $this->idPrefix;
 
-                $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="«IF targets('1.3.5')»z-hide«ELSE»hidden«ENDIF»">' . $addLinkText . '</a>';
+                $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
                 }
 
                 $alias = $this->id;
@@ -162,7 +162,7 @@ class RelationSelectorAutoComplete {
                             <label for="' . $idPrefix . 'Selector">' . $selectLabelText . '</label>
                             <br />';
 
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $result .= '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchIconText . '" />
                                 <input type="text" name="' . $idPrefix . 'Selector" id="' . $idPrefix . 'Selector" value="" />
                                 <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . ((!$many) ? '0' : '1') . '" />
@@ -177,7 +177,7 @@ class RelationSelectorAutoComplete {
                                 <span id="' . $idPrefix . 'NoResultsHint" class="hidden">' . __('No results found!', $dom) . '</span>';
                 «ENDIF»
                 $result .= '
-                                <input type="button" id="' . $idPrefix . 'SelectorDoCancel" name="' . $idPrefix . 'SelectorDoCancel" value="' . __('Cancel', $dom) . '" class="«IF targets('1.3.5')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button" />'
+                                <input type="button" id="' . $idPrefix . 'SelectorDoCancel" name="' . $idPrefix . 'SelectorDoCancel" value="' . __('Cancel', $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button" />'
                                 . $createLink . '
                                 <noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>
                             </div>
@@ -204,7 +204,7 @@ class RelationSelectorAutoComplete {
     '''
 
     def private relationSelectorImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
             use «appNamespace»\Form\Plugin\Base\RelationSelectorAutoComplete as BaseRelationSelectorAutoComplete;
@@ -213,7 +213,7 @@ class RelationSelectorAutoComplete {
         /**
          * Relation selector plugin implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_RelationSelectorAutoComplete extends «appName»_Form_Plugin_Base_RelationSelectorAutoComplete
         «ELSE»
         class RelationSelectorAutoComplete extends BaseRelationSelectorAutoComplete
@@ -234,7 +234,7 @@ class RelationSelectorAutoComplete {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorAutoComplete($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorAutoComplete«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorAutoComplete«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_RelationSelectorAutoComplete«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorAutoComplete«ENDIF»', $params);
         }
     '''
 }

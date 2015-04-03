@@ -69,7 +69,7 @@ class UserDeletion {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
@@ -107,7 +107,7 @@ class UserDeletion {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
@@ -141,7 +141,7 @@ class UserDeletion {
             «initDeleteQueryAdditions»
 
             $query->execute();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
@@ -175,7 +175,7 @@ class UserDeletion {
             «initDeleteQueryAdditions»
 
             $query->execute();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
@@ -218,7 +218,7 @@ class UserDeletion {
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
             «ENDIF»
             $query->execute();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
@@ -257,7 +257,7 @@ class UserDeletion {
             «initDeleteQueryAdditions»
 
             $query->execute();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');

@@ -29,7 +29,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
         /**
          * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="create")
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
          * @var integer $createdUserId.
@@ -42,7 +42,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «ENDIF»
          * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="update")
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
          * @var integer $updatedUserId.
@@ -52,7 +52,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
         /**
          * @ORM\Column(type="datetime")
          * @Gedmo\Timestampable(on="create")
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
          * @var datetime $createdDate.
@@ -65,7 +65,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «ENDIF»
          * @ORM\Column(type="datetime")
          * @Gedmo\Timestampable(on="update")
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
          * @var datetime $updatedDate.

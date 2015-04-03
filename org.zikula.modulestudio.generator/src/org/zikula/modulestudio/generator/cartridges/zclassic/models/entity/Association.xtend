@@ -62,9 +62,9 @@ class Association {
          * Bidirectional - «incomingMappingDescription(it, sourceName, targetName)».
          *
         «incomingMappingDetails»
-         * @ORM\«incomingMappingType»(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
+         * @ORM\«incomingMappingType»(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
         «joinDetails(false)»
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(false).toFirstLower»
                 «IF !isManySide(false)»
@@ -78,7 +78,7 @@ class Association {
             «ENDIF»
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -120,9 +120,9 @@ class Association {
          «IF primaryKey»
              * @ORM\Id
          «ENDIF»
-         * @ORM\OneToOne(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClass»")
+         * @ORM\OneToOne(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»")
         «joinDetails(false)»
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(false).toFirstLower»
                 «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
@@ -130,7 +130,7 @@ class Association {
             «' '»* @Assert\Type(type="\«entityClass»")
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -143,11 +143,11 @@ class Association {
             /**
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
-             * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
+             * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
              «IF orderByReverse !== null && orderByReverse != ''»
               * @ORM\OrderBy({"«orderByReverse»" = "ASC"})
              «ENDIF»
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 «IF !nullable»
                     «val aliasName = getRelationAliasName(false).toFirstLower»
                     «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
@@ -157,7 +157,7 @@ class Association {
                 «ENDIF»
                 «' '»* @Assert\Valid()
             «ENDIF»
-             * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«sourceName».
+             * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«sourceName».
              */
             protected $«sourceName» = null;
         «ENDIF»
@@ -172,9 +172,9 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\«outgoingMappingType»(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»)
+         * @ORM\«outgoingMappingType»(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»)
         «joinDetails(true)»
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(true).toFirstLower»
                 «IF !isManySide(true)»
@@ -188,7 +188,7 @@ class Association {
             «ENDIF»
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClass» $«targetName».
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass» $«targetName».
          */
         protected $«targetName»;
         «/* this last line is on purpose */»
@@ -219,15 +219,15 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          «IF !bidirectional»
-          * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClass»"«additionalOptions(false)»)
+          * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»"«additionalOptions(false)»)
          «ELSE»
-          * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
+          * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
          «ENDIF»
         «joinDetails(true)»
          «IF orderBy !== null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(true).toFirstLower»
                 «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
@@ -237,7 +237,7 @@ class Association {
             «ENDIF»
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
         «/* this last line is on purpose */»
@@ -249,12 +249,12 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
+         * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
          «IF orderBy !== null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
-        «IF !application.targets('1.3.5')»
+        «IF !application.targets('1.3.x')»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(true).toFirstLower»
                 «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
@@ -264,7 +264,7 @@ class Association {
             «ENDIF»
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var «IF !application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
     '''
@@ -369,7 +369,7 @@ class Association {
         «val entityClass = { (if (useTarget) target else source).entityClassName('', false) }»
         «val nameSingle = { (if (useTarget) target else source).name }»
         «val isMany = isManySide(useTarget)»
-        «val entityClassPrefix = (if (!application.targets('1.3.5')) '\\' else '')»
+        «val entityClassPrefix = (if (!application.targets('1.3.x')) '\\' else '')»
         «IF isMany»
             «fh.getterAndSetterMethods(it, aliasName, entityClassPrefix + entityClass, true, false, '', relationSetterCustomImpl(useTarget, aliasName))»
             «relationAccessorAdditions(useTarget, aliasName, nameSingle)»
@@ -423,7 +423,7 @@ class Association {
 
     def private addMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
         /**
-         * Adds an instance of «IF !application.targets('1.3.5')»\«ENDIF»«type» to the list of «name.formatForDisplay».
+         * Adds an instance of «IF !application.targets('1.3.x')»\«ENDIF»«type» to the list of «name.formatForDisplay».
          *
          * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection.
          *
@@ -441,12 +441,12 @@ class Association {
     }
 
     def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
-        «IF !application.targets('1.3.5')»\«ENDIF»«type» $«name»'''
+        «IF !application.targets('1.3.x')»\«ENDIF»«type» $«name»'''
     def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type) '''
         «IF !useTarget && !source.getAggregateFields.empty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-            «IF !application.targets('1.3.5')»\«ENDIF»«targetField.fieldTypeAsString» $«targetField.name.formatForCode»
-        «ELSE»«IF !application.targets('1.3.5')»\«ENDIF»«type» $«name»«ENDIF»'''
+            «IF !application.targets('1.3.x')»\«ENDIF»«targetField.fieldTypeAsString» $«targetField.name.formatForCode»
+        «ELSE»«IF !application.targets('1.3.x')»\«ENDIF»«type» $«name»«ENDIF»'''
 
     def private addMethodSignature(JoinRelationship it, Boolean useTarget, String name, String nameSingle, String type) '''
         public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)'''
@@ -520,13 +520,13 @@ class Association {
 
     def private removeMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
         /**
-         * Removes an instance of «IF !application.targets('1.3.5')»\«ENDIF»«type» from the list of «name.formatForDisplay».
+         * Removes an instance of «IF !application.targets('1.3.x')»\«ENDIF»«type» from the list of «name.formatForDisplay».
          *
-         * @param «IF !application.targets('1.3.5')»\«ENDIF»«type» $«nameSingle» The instance to be removed from the collection.
+         * @param «IF !application.targets('1.3.x')»\«ENDIF»«type» $«nameSingle» The instance to be removed from the collection.
          *
          * @return void
          */
-        public function remove«name.toFirstUpper»(«IF !application.targets('1.3.5')»\«ENDIF»«type» $«nameSingle»)
+        public function remove«name.toFirstUpper»(«IF !application.targets('1.3.x')»\«ENDIF»«type» $«nameSingle»)
         {
             «IF selfIsMany»
                 $this->«name»->removeElement($«nameSingle»);

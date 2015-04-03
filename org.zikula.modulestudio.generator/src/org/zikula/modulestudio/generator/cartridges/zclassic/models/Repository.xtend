@@ -92,7 +92,7 @@ class Repository {
          *
          * This is the base repository class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
@@ -104,7 +104,7 @@ class Repository {
              */
             protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else getDerivedFields.head).name.formatForCode»';
 
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 /**
                  * @var array Additional arguments given by the calling controller.
                  */
@@ -130,7 +130,7 @@ class Repository {
             }
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 «fh.getterAndSetterMethods(it, 'controllerArguments', 'array', false, true, 'Array()', '')»
             «ELSE»
                 «fh.getterAndSetterMethods(it, 'request', 'Request', false, false, '', '')»
@@ -183,7 +183,7 @@ class Repository {
     '''
 
     def private imports(Entity it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository\Base;
 
         «ENDIF»
@@ -200,13 +200,13 @@ class Repository {
             use Doctrine\DBAL\LockMode;
         «ENDIF»
 
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         use DoctrineExtensions\Paginate\Paginate;
         «ELSE»
         use Doctrine\ORM\Tools\Pagination\Paginator;
         «ENDIF»
 
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             use Symfony\Component\HttpFoundation\Request;
             use Zikula\Component\FilterUtil\FilterUtil;
             use Zikula\Component\FilterUtil\Config as FilterConfig;
@@ -333,16 +333,16 @@ class Repository {
             $templateParameters = array();
 
             if ($context == 'controllerAction') {
-                «IF app.hasUploads || (hasListFieldsEntity && !app.targets('1.3.5'))»
+                «IF app.hasUploads || (hasListFieldsEntity && !app.targets('1.3.x'))»
                     $serviceManager = ServiceUtil::getManager();
                 «ENDIF»
                 if (!isset($args['action'])) {
-                    $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
+                    $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST');
                 }
-                if (in_array($args['action'], array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
+                if (in_array($args['action'], array('«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'))) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
-                        «IF app.targets('1.3.5')»
+                        «IF app.targets('1.3.x')»
                             $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
                         «ELSE»
                             $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
@@ -366,7 +366,7 @@ class Repository {
 
                 «IF app.hasUploads»
                     // initialise Imagine preset instances
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $imageHelper = new «app.appName»_Util_Image($serviceManager);
                     «ELSE»
                         $imageHelper = $serviceManager->get('«app.appName.formatForDB».image_helper');
@@ -416,7 +416,7 @@ class Repository {
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $parameters['«sourceAliasName»'] = isset($this->controllerArguments['«sourceAliasName»']) ? $this->controllerArguments['«sourceAliasName»'] : FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                     «ELSE»
                         $parameters['«sourceAliasName»'] = $this->request->query->get('«sourceAliasName»', 0);
@@ -426,7 +426,7 @@ class Repository {
             «IF hasListFieldsEntity»
                 «FOR field : getListFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
                         $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
@@ -436,7 +436,7 @@ class Repository {
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
                     «ELSE»
                         $parameters['«fieldName»'] = (int) $this->request->query->get('«fieldName»', 0);
@@ -446,7 +446,7 @@ class Repository {
             «IF hasCountryFieldsEntity»
                 «FOR field : getCountryFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
                         $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
@@ -456,7 +456,7 @@ class Repository {
             «IF hasLanguageFieldsEntity»
                 «FOR field : getLanguageFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
                         $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
@@ -466,7 +466,7 @@ class Repository {
             «IF hasLocaleFieldsEntity»
                 «FOR field : getLocaleFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
                         $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
@@ -474,7 +474,7 @@ class Repository {
                 «ENDFOR»
             «ENDIF»
             «IF hasAbstractStringFieldsEntity»
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $parameters['q'] = isset($this->controllerArguments['q']) ? $this->controllerArguments['q'] : 
                         (isset($this->controllerArguments['searchterm']) ? $this->controllerArguments['searchterm'] :
                             FormUtil::getPassedValue('q', FormUtil::getPassedValue('searchterm', '', 'GET'), 'GET')
@@ -488,7 +488,7 @@ class Repository {
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
                         $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
@@ -531,7 +531,7 @@ class Repository {
             «ENDIF»
 
             $query->execute();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
@@ -736,7 +736,7 @@ class Repository {
             $query = $this->getQueryFromBuilder($qb);
             $offset = ($currentPage-1) * $resultsPerPage;
 
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 // count the total number of affected items
                 $count = Paginate::getTotalQueryResults($query);
 
@@ -787,26 +787,26 @@ class Repository {
 
             «val sessionVar = app.appName + nameMultiple.formatForCodeCapital + 'CurrentPage'»
             if (!$hasFilters) {
-                «IF !app.targets('1.3.5')»
+                «IF !app.targets('1.3.x')»
                     $serviceManager = ServiceUtil::getManager();
                     $session = $serviceManager->get('session');
                 «ENDIF»
                 if ($page > 1 || isset($_GET['pos'])) {
                     // store current page in session
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         SessionUtil::setVar('«sessionVar»', $page);
                     «ELSE»
                         $session->set('«sessionVar»', $page);
                     «ENDIF»
                 } else {
                     // restore current page from session
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         $page = SessionUtil::getVar('«sessionVar»', 1);
                     «ELSE»
                         $page = $session->get('«sessionVar»', 1);
                     «ENDIF»
                     System::queryStringSetVar('pos', $page);
-                    «IF !app.targets('1.3.5')»
+                    «IF !app.targets('1.3.x')»
                         if ($this->getRequest() !== null) {
                             $this->getRequest()->query->set('pos', $page);
                         }
@@ -816,7 +816,7 @@ class Repository {
 
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $page, $resultsPerPage);
 
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $result = $this->retrieveCollectionResult($query, $orderBy, true);
 
                 return array($result, $count);
@@ -834,12 +834,12 @@ class Repository {
          */
         public function addCommonViewFilters(QueryBuilder $qb)
         {
-            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
+            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST');
             if ($currentFunc == 'edit') {«/* fix for #547 */»
                 return $qb;
             }
 
-            «IF !app.targets('1.3.5')»
+            «IF !app.targets('1.3.x')»
                 if ($this->getRequest() === null) {
                     // if no request is set we return (#433)
                     return $qb;
@@ -987,7 +987,7 @@ class Repository {
 
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $result = $this->retrieveCollectionResult($query, $orderBy, true);
 
                 return array($result, $count);
@@ -1043,11 +1043,11 @@ class Repository {
          * @param string             $orderBy     The order-by clause to use when retrieving the collection (optional) (default='').
          * @param boolean            $isPaginated Whether the given query uses a paginator or not (optional) (default=false).
          *
-         * @return Array with retrieved collection«IF !app.targets('1.3.5')» and (for paginated queries) the amount of total records affected«ENDIF».
+         * @return Array with retrieved collection«IF !app.targets('1.3.x')» and (for paginated queries) the amount of total records affected«ENDIF».
          */
         public function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
         {
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $result = $query->getResult();
             «ELSE»
                 if (!$isPaginated) {
@@ -1064,7 +1064,7 @@ class Repository {
                 }
             «ENDIF»
 
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 if ($orderBy == 'RAND()') {
                     // each entry in $result looks like array(0 => actualRecord, 'randomIdentifiers' => randomId)
                     $resRaw = array();
@@ -1239,7 +1239,7 @@ class Repository {
         protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
             if (!empty($where)) {
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $qb->where($where);
             «ELSE»
                 // Use FilterUtil to support generic filtering.
@@ -1327,7 +1327,7 @@ class Repository {
         {
             if ($orderBy == 'RAND()') {
                 // random selection
-                $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS «IF !app.targets('1.3.5')»HIDDEN «ENDIF»randomIdentifiers')
+                $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS «IF !app.targets('1.3.x')»HIDDEN «ENDIF»randomIdentifiers')
                    ->add('orderBy', 'randomIdentifiers');
                 $orderBy = '';
             } elseif (empty($orderBy)) {
@@ -1425,7 +1425,7 @@ class Repository {
              'latitude',
              'longitude',
         «ENDIF»
-        «IF softDeleteable && !app.targets('1.3.5')»
+        «IF softDeleteable && !app.targets('1.3.x')»
              'deletedAt',
         «ENDIF»
         «IF standardFields»
@@ -1441,7 +1441,7 @@ class Repository {
          * Update for «nameMultiple.formatForDisplay» becoming archived.
          *
          * @return bool If everything went right or not.
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if workflow action execution fails
          «ENDIF»
@@ -1478,7 +1478,7 @@ class Repository {
 
             $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             $action = 'archive';
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
             «ELSE»
                 $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
@@ -1491,7 +1491,7 @@ class Repository {
 
                 // Let any hooks perform additional validation actions
                 $hookType = 'validate_edit';
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                     $validators = $serviceManager->getService('zikula.hookmanager')->notify($hook)->getValidators();
                 «ELSE»
@@ -1508,7 +1508,7 @@ class Repository {
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
                     $dom = ZLanguage::getModuleDomain($this->name);
-                    «IF app.targets('1.3.5')»
+                    «IF app.targets('1.3.x')»
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
                         $serviceManager = ServiceUtil::getManager();
@@ -1524,7 +1524,7 @@ class Repository {
                 // Let any hooks know that we have updated an item
                 $hookType = 'process_edit';
                 $urlArgs = $entity->createUrlArgs();
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                     $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                     $serviceManager->getService('zikula.hookmanager')->notify($hook);
@@ -1545,7 +1545,7 @@ class Repository {
 
 
     def private modelRepositoryImpl(Entity it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository;
 
             use «app.appNamespace»\Entity\Repository\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF» as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»;
@@ -1556,7 +1556,7 @@ class Repository {
          *
          * This is the concrete repository class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Repository_Base_«name.formatForCodeCapital»«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital» extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»

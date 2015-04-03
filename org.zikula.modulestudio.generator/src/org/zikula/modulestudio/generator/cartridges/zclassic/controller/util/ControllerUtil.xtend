@@ -26,13 +26,13 @@ class ControllerUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for controller layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Controller' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Controller' + (if (targets('1.3.x')) '' else 'Util') + '.php',
             fh.phpFileContent(it, controllerFunctionsBaseImpl), fh.phpFileContent(it, controllerFunctionsImpl)
         )
     }
 
     def private controllerFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util\Base;
 
             «IF hasUploads»
@@ -57,7 +57,7 @@ class ControllerUtil {
         /**
          * Utility base class for controller helper methods.
          */
-        class «IF targets('1.3.5')»«appName»_Util_Base_Controller«ELSE»ControllerUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Controller«ELSE»ControllerUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getObjectTypes»
 
@@ -89,14 +89,14 @@ class ControllerUtil {
         /**
          * Returns an array of all allowed object types in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.5')», helper«ENDIF», actionHandler, block, contentType, util).
+         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util).
          * @param array  $args    Additional arguments.
          *
          * @return array List of allowed object types.
          */
         public function getObjectTypes($context = '', $args = array())
         {
-            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.5')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
+            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
                 $context = 'controllerAction';
             }
 
@@ -113,14 +113,14 @@ class ControllerUtil {
         /**
          * Returns the default object type in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.5')», helper«ENDIF», actionHandler, block, contentType, util).
+         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util).
          * @param array  $args    Additional arguments.
          *
          * @return string The name of the default object type.
          */
         public function getDefaultObjectType($context = '', $args = array())
         {
-            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.5')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
+            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
                 $context = 'controllerAction';
             }
 
@@ -165,28 +165,28 @@ class ControllerUtil {
         public function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
         {
             $idValues = array();
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
                 $routeParams = $request->get('_route_params', array());
             «ENDIF»
             foreach ($idFields as $idField) {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
                 if ($this->hasCompositeKeys($objectType)) {
                     // composite key may be alphanumeric
-                    «IF !targets('1.3.5')»
+                    «IF !targets('1.3.x')»
                     if (array_key_exists($idField, $routeParams)) {
                         $id = !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
                     } else«ENDIF»if ($request->query->has($idField)) {
-                        $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.5')», false«ENDIF»);
+                        $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.x')», false«ENDIF»);
                     } else {
                         $id = $defaultValue;
                     }
                 } else {
                     // single identifier
-                    «IF !targets('1.3.5')»
+                    «IF !targets('1.3.x')»
                     if (array_key_exists($idField, $routeParams)) {
                         $id = (int) !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
                     } else«ENDIF»if ($request->query->has($idField)) {
-                        $id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                        $id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
                     } else {
                         $id = $defaultValue;
                     }
@@ -195,11 +195,11 @@ class ControllerUtil {
                 // fallback if id has not been found yet
                 if (!$id && $idField != 'id' && count($idFields) == 1) {
                     $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
-                    «IF !targets('1.3.5')»
+                    «IF !targets('1.3.x')»
                     if (array_key_exists('id', $routeParams)) {
                         $id = (int) !empty($routeParams['id']) ? $routeParams['id'] : $defaultValue;
                     } else«ENDIF»if ($request->query->has('id')) {
-                        $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.5')»false, «ENDIF»FILTER_VALIDATE_INT);
+                        $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
                     } else {
                         $id = $defaultValue;
                     }
@@ -342,7 +342,7 @@ class ControllerUtil {
         {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName, true);
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 // Check if directory exist and try to create it if needed
                 if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
                     LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
@@ -411,7 +411,7 @@ class ControllerUtil {
          * To use this please customise it to your needs in the concrete subclass.
          * Also you have to call this method in a PrePersist-Handler of the
          * corresponding entity class.
-         * There is also a method on JS level available in «getAppJsPath»«appName»«IF targets('1.3.5')»_e«ELSE».E«ENDIF»ditFunctions.js.
+         * There is also a method on JS level available in «getAppJsPath»«appName»«IF targets('1.3.x')»_e«ELSE».E«ENDIF»ditFunctions.js.
          *
          * @param string $address The address input string.
          *
@@ -426,7 +426,7 @@ class ControllerUtil {
             $json = '';
 
             // we can either use Snoopy if available
-            //require_once('«rootFolder»/«IF targets('1.3.5')»«appName»/lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
+            //require_once('«rootFolder»/«IF targets('1.3.x')»«appName»/lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$json = $snoopy->results;
@@ -460,7 +460,7 @@ class ControllerUtil {
                     $result['latitude'] = str_replace(',', '.', $location->lat);
                     $result['longitude'] = str_replace(',', '.', $location->lng);
                 } else {
-                    «IF !targets('1.3.5')»
+                    «IF !targets('1.3.x')»
                         $logger = $this->serviceManager->get('logger');
                         $logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'address' => $address));
                     «ENDIF»
@@ -472,7 +472,7 @@ class ControllerUtil {
     '''
 
     def private controllerFunctionsImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util;
 
             use «appNamespace»\Util\Base\ControllerUtil as BaseControllerUtil;
@@ -481,7 +481,7 @@ class ControllerUtil {
         /**
          * Utility implementation class for controller helper methods.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Util_Controller extends «appName»_Util_Base_Controller
         «ELSE»
         class ControllerUtil extends BaseControllerUtil

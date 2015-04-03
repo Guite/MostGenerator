@@ -19,7 +19,7 @@ class Routing {
      * This generates xml files describing the workflows used in the application.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             return
         }
         var configFileName = getResourcesPath + 'config/routing.yml'

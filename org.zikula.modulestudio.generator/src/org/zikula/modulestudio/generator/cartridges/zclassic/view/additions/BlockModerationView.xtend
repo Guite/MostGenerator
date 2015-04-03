@@ -13,7 +13,7 @@ class BlockModerationView {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) 'block' else 'Block') + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) 'block' else 'Block') + '/'
         var fileName = 'moderation.tpl'
         if (!shouldBeSkipped(templatePath + fileName)) {
             if (shouldBeMarked(templatePath + fileName)) {
@@ -28,7 +28,7 @@ class BlockModerationView {
         {if count($moderationObjects) gt 0}
             <ul>
             {foreach item='modItem' from=$moderationObjects}
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     <li><a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a></li>
                 «ELSE»
                     {assign var='itemObjectType' value=$modItem.objectType|lower}

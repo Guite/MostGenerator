@@ -17,13 +17,13 @@ class Image {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for image handling')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Image' + (if (targets('1.3.5')) '' else 'Util') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Util/Image' + (if (targets('1.3.x')) '' else 'Util') + '.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
         )
     }
 
     def private imageFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util\Base;
 
             use SystemPlugin_Imagine_Preset;
@@ -33,7 +33,7 @@ class Image {
         /**
          * Utility base class for image helper methods.
          */
-        class «IF targets('1.3.5')»«appName»_Util_Base_Image«ELSE»ImageUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Image«ELSE»ImageUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getPreset»
 
@@ -64,7 +64,7 @@ class Image {
                     $args['controller'] = 'user';
                 }
                 if (!isset($args['action'])) {
-                    $args['action'] = '«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
+                    $args['action'] = '«IF targets('1.3.x')»main«ELSE»index«ENDIF»';
                 }
 
                 if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
@@ -127,7 +127,7 @@ class Image {
     '''
 
     def private imageFunctionsImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Util;
 
             use «appNamespace»\Util\Base\ImageUtil as BaseImageUtil;
@@ -136,7 +136,7 @@ class Image {
         /**
          * Utility implementation class for image helper methods.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Util_Image extends «appName»_Util_Base_Image
         «ELSE»
         class ImageUtil extends BaseImageUtil

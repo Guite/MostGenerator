@@ -12,7 +12,7 @@ class Categories {
     extension Utils = new Utils
 
     def generate (Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) 'helper' else 'Helper') + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) 'helper' else 'Helper') + '/'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
@@ -39,8 +39,8 @@ class Categories {
         {* purpose of this template: reusable display of entity categories *}
         {if isset($obj.categories)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
-                    <h3 class="categories z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Categories'}</h3>
+                «IF targets('1.3.x')»
+                    <h3 class="categories z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Categories'}</h3>
                     <div class="categories z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -55,7 +55,7 @@ class Categories {
             {/if}
             «viewBody»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     </div>
                 «ELSE»
                             </div>
@@ -81,8 +81,8 @@ class Categories {
     def private categoriesEditImpl(Application it) '''
         {* purpose of this template: reusable editing of entity attributes *}
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.5')»
-                <h3 class="categories z-panel-header z-panel-indicator «IF targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Categories'}</h3>
+            «IF targets('1.3.x')»
+                <h3 class="categories z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Categories'}</h3>
                 <fieldset class="categories z-panel-content" style="display: none">
             «ELSE»
                 <div class="panel panel-default">
@@ -98,7 +98,7 @@ class Categories {
             <legend>{gt text='Categories'}</legend>
             «editBody»
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 </fieldset>
             «ELSE»
                         </div>
@@ -119,15 +119,15 @@ class Categories {
                 {gt text='Categories' assign='categorySelectorLabel'}
                 {assign var='selectionMode' value='multiple'}
             {/if}
-            <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for="category_`$registryId`" text=$categorySelectorLabel«IF !targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
-                «IF !targets('1.3.5')»
+            <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
+                {formlabel for="category_`$registryId`" text=$categorySelectorLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
+                «IF !targets('1.3.x')»
                     <div class="col-sm-9">
                 «ENDIF»
                     {formcategoryselector id="category_`$registryId`" category=$registryCid
                                           dataField='categories' group=$groupName registryId=$registryId doctrine2=true
                                           selectionMode=$selectionMode}
-                «IF !targets('1.3.5')»
+                «IF !targets('1.3.x')»
                     </div>
                 «ENDIF»
             </div>

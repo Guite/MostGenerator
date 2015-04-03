@@ -16,7 +16,7 @@ class TreeFunctions {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = ''
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             fileName = appName + '_tree.js'
         } else {
             fileName = appName + '.Tree.js'
@@ -24,7 +24,7 @@ class TreeFunctions {
         if (!shouldBeSkipped(getAppJsPath + fileName)) {
             println('Generating JavaScript for tree functions')
             if (shouldBeMarked(getAppJsPath + fileName)) {
-                if (targets('1.3.5')) {
+                if (targets('1.3.x')) {
                     fileName = appName + '_tree.generated.js'
                 } else {
                     fileName = appName + '.Tree.generated.js'
@@ -47,7 +47,7 @@ class TreeFunctions {
     '''
 
     def private initTreeNodes(Application it) '''
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             var «vendorAndName»TreeContextMenu;
 
             «vendorAndName»TreeContextMenu = Class.create(Zikula.UI.ContextMenu, {
@@ -55,7 +55,7 @@ class TreeFunctions {
                     // open in new tab / window when right-clicked
                     if (event.isRightClick()) {
                         item.callback(this.clicked, true);
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             event.stop(); // close the menu
                         «ELSE»
                             event.stopPropagation(); // close the menu
@@ -73,8 +73,8 @@ class TreeFunctions {
          */
         function «vendorAndName»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
         {
-            «IF targets('1.3.5')»$«ENDIF»$('#itemTree' + rootId + ' a').each(function («IF targets('1.3.5')»elem«ELSE»index«ENDIF») {
-                «IF targets('1.3.5')»
+            «IF targets('1.3.x')»$«ENDIF»$('#itemTree' + rootId + ' a').each(function («IF targets('1.3.x')»elem«ELSE»index«ENDIF») {
+                «IF targets('1.3.x')»
                     «initTreeNodesLegacy»
                 «ELSE»
                     «initTreeNodesImpl»
@@ -296,7 +296,7 @@ class TreeFunctions {
          */
         function «vendorAndName»PerformTreeOperation(objectType, rootId, op)
         {
-            var opParam, params«IF targets('1.3.5')», request«ENDIF»;
+            var opParam, params«IF targets('1.3.x')», request«ENDIF»;
 
             opParam = ((op === 'moveNodeUp' || op === 'moveNodeDown') ? 'moveNode' : op);
             params = 'ot=' + objectType + '&op=' + opParam;
@@ -305,7 +305,7 @@ class TreeFunctions {
                 params += '&root=' + rootId;
 
                 if (!currentNodeId) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                     «ELSE»
                         «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
@@ -320,7 +320,7 @@ class TreeFunctions {
                 }
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 request = new Zikula.Ajax.Request(
                     Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=handleTreeOperation',
                     {
@@ -367,7 +367,7 @@ class TreeFunctions {
          * Callback function for config.onSave. This function is called after each tree change.
          *
          * @param node - the node which is currently being moved
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             «' '»* @param params - array with insertion params, which are [relativenode, dir];
             «' '»*     - "dir" is a string with value "after", "before" or "bottom" and defines
             «' '»*       whether the affected node is inserted after, before or as last child of "relativenode"
@@ -380,12 +380,12 @@ class TreeFunctions {
          *
          * @return true on success, otherwise the change will be reverted
          */
-        function «vendorAndName»TreeSave(node, «IF targets('1.3.5')»params, data«ELSE»parentNode, position«ENDIF»)
+        function «vendorAndName»TreeSave(node, «IF targets('1.3.x')»params, data«ELSE»parentNode, position«ENDIF»)
         {
-            var nodeParts, rootId, nodeId, destId, requestParams«IF targets('1.3.5')», request«ENDIF»;
+            var nodeParts, rootId, nodeId, destId, requestParams«IF targets('1.3.x')», request«ENDIF»;
 
             // do not allow inserts on root level
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 if (node.up('li') === undefined) {
                     return false;
                 }
@@ -395,7 +395,7 @@ class TreeFunctions {
                 }
             «ENDIF»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 nodeParts = node.id.split('node_');
                 rootId = nodeParts[0].replace('tree', '');
                 nodeId = nodeParts[1];
@@ -409,13 +409,13 @@ class TreeFunctions {
 
             requestParams = {
                 'op': 'moveNodeTo',
-                'direction': «IF targets('1.3.5')»params[0]«ELSE»position«ENDIF»,
+                'direction': «IF targets('1.3.x')»params[0]«ELSE»position«ENDIF»,
                 'root': rootId,
                 'id': nodeId,
                 'destid': destId
             };
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 request = new Zikula.Ajax.Request(
                     Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=handleTreeOperation',
                     {

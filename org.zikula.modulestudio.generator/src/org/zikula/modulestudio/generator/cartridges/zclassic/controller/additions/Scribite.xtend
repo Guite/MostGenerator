@@ -183,7 +183,7 @@ class Scribite {
         To activate the popup for the editor of your choice (currently supported: CKEditor, TinyMCE, Xinha)
         check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins.
         If not then copy from
-            «rootFolder»/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
+            «rootFolder»/«IF targets('1.3.x')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''
@@ -193,12 +193,12 @@ class Scribite {
             init: function (editor) {
                 editor.addCommand('insert«appName»', {
                     exec: function (editor) {
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             var url = Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor';
                         «ELSE»
                             var url = Routing.generate('«appName.formatForDB»_external_finder', { editor: 'ckeditor' });
                         «ENDIF»
-                        // call method in «appName»«IF targets('1.3.5')»_f«ELSE».F«ENDIF»inder.js and provide current editor
+                        // call method in «appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js and provide current editor
                         «appName»FinderCKEditor(editor, url);
                     }
                 });
@@ -261,7 +261,7 @@ class Scribite {
                     // Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mce«appName»');
                     ed.addCommand('mce«appName»', function () {
                         ed.windowManager.open({
-                            «IF targets('1.3.5')»
+                            «IF targets('1.3.x')»
                                 file : Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=tinymce',
                             «ELSE»
                                 file : Routing.generate('«appName.formatForDB»_external_finder', { editor: 'tinymce' }),
@@ -373,7 +373,7 @@ class Scribite {
                 image    : '/images/icons/extrasmall/favorites.png',
                 textMode : false,
                 action   : function (editor) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         var url = Zikula.Config.baseURL + 'index.php'/*Zikula.Config.entrypoint*/ + '?module=«appName»&type=external&func=finder&editor=xinha';
                     «ELSE»
                         var url = Routing.generate('«appName.formatForDB»_external_finder', { editor: 'xinha' });

@@ -34,7 +34,7 @@ class UrlRoutingLegacy {
     }
 
     def private routerFacadeBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Base;
 
             use ModUtil;
@@ -46,14 +46,14 @@ class UrlRoutingLegacy {
         /**
          * Url router facade base class
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Base_RouterFacade
         «ELSE»
         class RouterFacade
         «ENDIF»
         {
             /**
-             * @var «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRouter The router which is used internally
+             * @var «IF targets('1.3.x')»Zikula_Routing_«ENDIF»UrlRouter The router which is used internally
              */
             protected $router;
 
@@ -79,7 +79,7 @@ class UrlRoutingLegacy {
                 );
 
                 // initialise and reference router instance
-                $this->router = new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRouter();
+                $this->router = new «IF targets('1.3.x')»Zikula_Routing_«ENDIF»UrlRouter();
 
                 // add generic routes
                 return $this->initUrlRoutes();
@@ -93,7 +93,7 @@ class UrlRoutingLegacy {
 
             «getFormattedSlug»
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', false, true, 'null', '')»
             «ELSE»
                 «fh.getterAndSetterMethods(it, 'router', '\\Zikula\\Routing\\UrlRouter', false, true, 'null', '')»
@@ -106,7 +106,7 @@ class UrlRoutingLegacy {
         /**
          * Initialise the url routes for this application.
          *
-         * @return «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ENDIF»UrlRouter The router instance treating all initialised routes
+         * @return «IF targets('1.3.x')»Zikula_Routing_UrlRouter«ENDIF»UrlRouter The router instance treating all initialised routes
          */
         protected function initUrlRoutes()
         {
@@ -124,7 +124,7 @@ class UrlRoutingLegacy {
                 $defaults['func'] = 'view';
                 $viewFolder = 'view';
                 // normal views (e.g. orders/ or customers.xml)
-                $this->router->set('va', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
+                $this->router->set('va', new «IF targets('1.3.x')»Zikula_Routing_«ENDIF»UrlRoute($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
 
                 // TODO filter views (e.g. /orders/customer/mr-smith.csv)
                 // $this->initRouteForEachSlugType('vn', $modulePrefix . $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
@@ -155,13 +155,13 @@ class UrlRoutingLegacy {
         protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
         {
             // entities with unique slug (slug only)
-            $this->router->set($prefix . 'a', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.' . $patternEnd,     $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'a', new «IF targets('1.3.x')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.' . $patternEnd,     $defaults, $fieldRequirements));
 
             // entities with non-unique slug (slug and id)
-            $this->router->set($prefix . 'b', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.:id.' . $patternEnd, $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'b', new «IF targets('1.3.x')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.:id.' . $patternEnd, $defaults, $fieldRequirements));
 
             // entities without slug (id)
-            $this->router->set($prefix . 'c', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . 'id.:id.' . $patternEnd,    $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'c', new «IF targets('1.3.x')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . 'id.:id.' . $patternEnd,    $defaults, $fieldRequirements));
         }
     '''
 
@@ -284,7 +284,7 @@ class UrlRoutingLegacy {
     '''
 
     def private routerFacadeImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
             use «appNamespace»\Base\RouterFacade as BaseRouterFacade;
@@ -293,7 +293,7 @@ class UrlRoutingLegacy {
         /**
          * Url router facade implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_RouterFacade extends «appName»_Base_RouterFacade
         «ELSE»
         class RouterFacade extends BaseRouterFacade

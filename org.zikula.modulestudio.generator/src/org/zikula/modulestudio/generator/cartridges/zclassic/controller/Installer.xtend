@@ -32,13 +32,13 @@ class Installer {
      * Entry point for application installer.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        val installerPrefix = if (!targets('1.3.5')) name.formatForCodeCapital + 'Module' else ''
+        val installerPrefix = if (!targets('1.3.x')) name.formatForCodeCapital + 'Module' else ''
         generateClassPair(fsa, getAppSourceLibPath + installerPrefix + 'Installer.php',
             fh.phpFileContent(it, installerBaseClass), fh.phpFileContent(it, installerImpl)
         )
 
         if (interactiveInstallation == true) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Controller/InteractiveInstaller' + (if (targets('1.3.5')) '' else 'Controller') + '.php',
+            generateClassPair(fsa, getAppSourceLibPath + 'Controller/InteractiveInstaller' + (if (targets('1.3.x')) '' else 'Controller') + '.php',
                 fh.phpFileContent(it, interactiveBaseClass), fh.phpFileContent(it, interactiveImpl)
             )
             new InstallerView().generate(it, fsa)
@@ -46,7 +46,7 @@ class Installer {
     }
 
     def private installerBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Base;
 
             «IF hasCategorisableEntities»
@@ -70,14 +70,14 @@ class Installer {
         /**
          * Installer base class.
          */
-        class «IF targets('1.3.5')»«appName»_Base_«ELSE»«name.formatForCodeCapital»Module«ENDIF»Installer extends Zikula_AbstractInstaller
+        class «IF targets('1.3.x')»«appName»_Base_«ELSE»«name.formatForCodeCapital»Module«ENDIF»Installer extends Zikula_AbstractInstaller
         {
             «installerBaseImpl»
         }
     '''
 
     def private interactiveBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Controller\Base;
 
             use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -98,7 +98,7 @@ class Installer {
         /**
          * Interactive installer base class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Controller_Base_InteractiveInstaller extends Zikula_Controller_AbstractInteractiveInstaller
         «ELSE»
         class InteractiveInstallerController extends Zikula_Controller_AbstractInteractiveInstaller
@@ -118,7 +118,7 @@ class Installer {
         «funcListEntityClasses»
 
         «new ExampleData().generate(it)»
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
 
         «new EventListener().generate(it)»
         «ENDIF»
@@ -129,12 +129,12 @@ class Installer {
          * Install the «appName» application.
          *
          * @return boolean True on success, or false.
-         «IF !targets('1.3.5')»
+         «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables can not be created or another error occurs
          «ENDIF»
          */
-        public function install«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»()
+        public function install«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.x')»Action«ENDIF*/»()
         {
             «processUploadFolders»
             // create all tables from according entity definitions
@@ -142,7 +142,7 @@ class Installer {
                 DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
@@ -153,13 +153,13 @@ class Installer {
                 }
                 $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
                 if (!System::isDevelopmentMode()) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                     «ELSE»
                         $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /app/config/parameters.yml file (change the env variable to dev) in order to reveal the error details.');
                     «ENDIF»
                 }
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     return LogUtil::registerError($returnMessage);
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $returnMessage);
@@ -174,13 +174,13 @@ class Installer {
                 «val modvarHelper = new ModVars()»
                 «FOR modvar : getAllVariables»
                     «IF interactiveInstallation == true»
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
                         «ELSE»
                             $sessionValue = $this->request->getSession()->get('«formatForCode(name + '_' + modvar.name)»');
                         «ENDIF»
                         $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
                         «ELSE»
                             $this->request->getSession()->del(«formatForCode(name + '_' + modvar.name)»);
@@ -195,7 +195,7 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // add default entry for category registry (property named Main)
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     include_once '«rootFolder»/«appName»/lib/«appName»/Api/Base/Category.php';
                     include_once '«rootFolder»/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
@@ -203,7 +203,7 @@ class Installer {
                     $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi($this->serviceManager);
                 «ENDIF»
                 $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     «FOR entity : getCategorisableEntities»
 
                         $registryData = array();
@@ -242,7 +242,7 @@ class Installer {
             // create the default data
             $this->createDefaultData($categoryRegistryIdsPerEntity);
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 // register persistent event handlers
                 $this->registerPersistentEventHandlers();
 
@@ -263,14 +263,14 @@ class Installer {
         «IF hasUploads»
             // Check if upload directories exist and if needed create them
             try {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
                 «ELSE»
                     $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
                 «ENDIF»
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $e->getMessage());
@@ -291,12 +291,12 @@ class Installer {
          * @param integer $oldVersion Version to upgrade from.
          *
          * @return boolean True on success, false otherwise.
-         «IF !targets('1.3.5')»
+         «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables can not be updated
          «ENDIF»
          */
-        public function upgrade«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»($oldVersion)
+        public function upgrade«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.x')»Action«ENDIF*/»($oldVersion)
         {
         /*
             // Upgrade dependent on old version number
@@ -309,7 +309,7 @@ class Installer {
                         DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                     } catch (\Exception $e) {
                         if (System::isDevelopmentMode()) {
-                            «IF targets('1.3.5')»
+                            «IF targets('1.3.x')»
                                 return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                             «ELSE»
                                 $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
@@ -318,7 +318,7 @@ class Installer {
                                 return false;
                             «ENDIF»
                         }
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                         «ELSE»
                             $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
@@ -328,7 +328,7 @@ class Installer {
                         «ENDIF»
                     }
             }
-            «IF !targets('1.3.5')»
+            «IF !targets('1.3.x')»
 
                 // Note there are several helpers available for making migration of your extension easier.
                 // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.4.0.
@@ -344,7 +344,7 @@ class Installer {
             // update successful
             return true;
         }
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
 
             «new MigrationHelper().generate(it)»
         «ENDIF»
@@ -355,17 +355,17 @@ class Installer {
          * Uninstall «appName».
          *
          * @return boolean True on success, false otherwise.
-         «IF !targets('1.3.5')»
+         «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables or stored workflows can not be removed
          «ENDIF»
          */
-        public function uninstall«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.5')»Action«ENDIF*/»()
+        public function uninstall«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.x')»Action«ENDIF*/»()
         {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
@@ -379,7 +379,7 @@ class Installer {
                 DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
@@ -388,7 +388,7 @@ class Installer {
                         return false;
                     «ENDIF»
                 }
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
@@ -398,7 +398,7 @@ class Installer {
                 «ENDIF»
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 // unregister persistent event handlers
                 EventUtil::unregisterPersistentModuleHandlers($this->name);
 
@@ -423,13 +423,13 @@ class Installer {
             «IF hasUploads»
 
                 // remove all thumbnails
-                $manager = $this->getServiceManager()->get«IF targets('1.3.5')»Service«ENDIF»('systemplugin.imagine.manager');
+                $manager = $this->getServiceManager()->get«IF targets('1.3.x')»Service«ENDIF»('systemplugin.imagine.manager');
                 $manager->setModule($this->name);
                 $manager->cleanupModuleThumbs();
 
                 // remind user about upload folders not being deleted
                 $uploadPath = FileUtil::getDataDirectory() . '/' . $this->name . '/';
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
                 «ELSE»
                     $this->request->getSession()-getFlashBag()->add('status', $this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
@@ -477,7 +477,7 @@ class Installer {
     '''
 
     def private installerImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
             use «appNamespace»\Base\«name.formatForCodeCapital»ModuleInstaller as Base«name.formatForCodeCapital»ModuleInstaller;
@@ -486,7 +486,7 @@ class Installer {
         /**
          * Installer implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Installer extends «appName»_Base_Installer
         «ELSE»
         class «name.formatForCodeCapital»ModuleInstaller extends Base«name.formatForCodeCapital»ModuleInstaller
@@ -497,7 +497,7 @@ class Installer {
     '''
 
     def private interactiveImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Controller;
 
             use «appNamespace»\Controller\Base\InteractiveInstaller as BaseInteractiveInstaller;
@@ -506,7 +506,7 @@ class Installer {
         /**
          * Interactive installer implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Controller_InteractiveInstaller extends «appName»_Controller_Base_InteractiveInstaller
         «ELSE»
         class InteractiveInstaller extends BaseInteractiveInstaller

@@ -23,7 +23,7 @@ class Tag {
     }
 
     def private tagBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\TaggedObjectMeta\Base;
 
             use DateUtil;
@@ -36,7 +36,7 @@ class Tag {
         /**
          * This class provides object meta data for the Tag module.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_TaggedObjectMeta_Base_«appName» extends Tag_AbstractTaggedObjectMeta
         «ELSE»
         class «appName» extends \Tag\AbstractTaggedObjectMeta
@@ -54,9 +54,9 @@ class Tag {
          * @param integer             $areaId    Name of hook area.
          * @param string              $module    Name of the owning module.
          * @param string              $urlString **deprecated**
-         * @param «IF targets('1.3.5')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject Object carrying url arguments.
+         * @param «IF targets('1.3.x')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject Object carrying url arguments.
          */
-        function __construct($objectId, $areaId, $module, $urlString = null, «IF targets('1.3.5')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject = null)
+        function __construct($objectId, $areaId, $module, $urlString = null, «IF targets('1.3.x')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject = null)
         {
             // call base constructor to store arguments in member vars
             parent::__construct($objectId, $areaId, $module, $urlString, $urlObject);
@@ -71,12 +71,12 @@ class Tag {
                 return;
             }
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = $module . '_Entity_' . ucfirst($objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
-                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.x')»
+                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
@@ -138,7 +138,7 @@ class Tag {
     '''
 
     def private tagImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\TaggedObjectMeta;
 
             use «appNamespace»\TaggedObjectMeta\Base\«appName» as Base«appName»;
@@ -147,7 +147,7 @@ class Tag {
         /**
          * This class provides object meta data for the Tag module.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_TaggedObjectMeta_«appName» extends «appName»_TaggedObjectMeta_Base_«appName»
         «ELSE»
         class «appName» extends Base«appName»

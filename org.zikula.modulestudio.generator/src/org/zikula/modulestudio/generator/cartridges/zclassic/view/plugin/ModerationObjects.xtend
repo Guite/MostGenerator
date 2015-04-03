@@ -39,7 +39,7 @@ class ModerationObjects {
             }
 
             $serviceManager = $view->getServiceManager();
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
             «ELSE»
                 $workflowHelper = $serviceManager->get('«appName.formatForDB».workflow_helper');

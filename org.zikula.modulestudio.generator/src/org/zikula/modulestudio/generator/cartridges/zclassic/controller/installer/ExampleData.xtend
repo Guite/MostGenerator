@@ -73,7 +73,7 @@ class ExampleData {
 
     def private truncateTable(Entity it) '''
         «val app = application»
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
             $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
         «ELSE»
             $entityClass = '«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity';
@@ -129,7 +129,7 @@ class ExampleData {
 
     def private initExampleObjects(Entity it, Application app) '''
         «FOR number : 1..app.amountOfExampleRows»
-            $«name.formatForCode»«number» = new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
+            $«name.formatForCode»«number» = new «IF app.targets('1.3.x')»\«app.appName»_Entity_«name.formatForCodeCapital»«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
         «ENDFOR»
         «/* this last line is on purpose */»
     '''
@@ -138,7 +138,7 @@ class ExampleData {
         «val entityName = name.formatForCode»
         «IF categorisable»
             $categoryId = 41; // Business and work
-            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»CategoriesModule:CategoryEntity«ENDIF»', $categoryId);
+            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.x')»_Doctrine2_Entity_Category«ELSE»CategoriesModule:CategoryEntity«ENDIF»', $categoryId);
         «ENDIF»
         «FOR number : 1..app.amountOfExampleRows»
             «IF isInheriting»
@@ -161,7 +161,7 @@ class ExampleData {
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
-                $«entityName»«number»->getCategories()->add(new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»Category«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
+                $«entityName»«number»->getCategories()->add(new «IF app.targets('1.3.x')»\«app.appName»_Entity_«name.formatForCodeCapital»Category«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
             «ENDIF»
             «IF attributable»
                 // create example attributes
@@ -171,7 +171,7 @@ class ExampleData {
             «ENDIF»
             «IF metaData»
                 // create meta data assignment
-                «IF app.targets('1.3.5')»
+                «IF app.targets('1.3.x')»
                     $metaDataEntityClass = $this->name . '_Entity_«name.formatForCodeCapital»MetaData';
                 «ELSE»
                     $metaDataEntityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«name.formatForCodeCapital»MetaDataEntity';
@@ -209,7 +209,7 @@ class ExampleData {
     def private persistExampleObjects(Application it) '''
         // execute the workflow action for each entity
         $action = 'submit';
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
         «ELSE»
             $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
@@ -217,7 +217,7 @@ class ExampleData {
         try {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
         } catch(\Exception $e) {
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ELSE»
                 $this->request->getSession()->getFlashBag()->add('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));

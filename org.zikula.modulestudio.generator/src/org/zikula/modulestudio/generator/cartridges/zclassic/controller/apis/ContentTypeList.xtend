@@ -31,7 +31,7 @@ class ContentTypeList {
     }
 
     def private contentTypeBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\ContentType\Base;
 
             «IF hasCategorisableEntities»
@@ -47,7 +47,7 @@ class ContentTypeList {
         /**
          * Generic item list content plugin base class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_ContentType_Base_ItemList extends Content_AbstractContentType
         «ELSE»
         class ItemList extends \Content_AbstractContentType
@@ -182,7 +182,7 @@ class ContentTypeList {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
                 $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
@@ -274,12 +274,12 @@ class ContentTypeList {
             $dom = ZLanguage::getModuleDomain('«appName»');
             ModUtil::initOOModule('«appName»');
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
-                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.x')»
+                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
@@ -368,12 +368,12 @@ class ContentTypeList {
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $templateFile);
 
             $template = '';
-            if ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
-                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
-                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
+            if ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
+                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
+            } elseif ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
+                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
             } else {
-                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.tpl';
+                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.tpl';
             }
 
             return $template;
@@ -444,7 +444,7 @@ class ContentTypeList {
             $this->view->toplevelmodule = '«appName»';
 
             // ensure our custom plugins are loaded
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
             array_push($this->view->plugins_dir, '«rootFolder»/«appName»/templates/plugins');
             «ELSE»
             array_push($this->view->plugins_dir, '«rootFolder»/«getViewPath»»/plugins');
@@ -486,7 +486,7 @@ class ContentTypeList {
     '''
 
     def private contentTypeImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\ContentType;
 
             use «appNamespace»\ContentType\Base\ItemList as BaseItemList;
@@ -495,7 +495,7 @@ class ContentTypeList {
         /**
          * Generic item list content plugin implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_ContentType_ItemList extends «appName»_ContentType_Base_ItemList
         «ELSE»
         class ItemList extends BaseItemList

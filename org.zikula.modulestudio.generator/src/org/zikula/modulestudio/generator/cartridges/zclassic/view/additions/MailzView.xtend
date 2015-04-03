@@ -19,7 +19,7 @@ class MailzView {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) 'mailz' else 'Mailz') + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) 'mailz' else 'Mailz') + '/'
         var entityTemplate = ''
         for (entity : getAllEntities) {
             entityTemplate = templatePath + 'itemlist_' + entity.name.formatForCode + '_text.tpl'
@@ -63,7 +63,7 @@ class MailzView {
         </ul>
         *}
 
-        {include file='«IF app.targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_«name.formatForCode»_display_description.tpl'}
+        {include file='«IF app.targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/itemlist_«name.formatForCode»_display_description.tpl'}
     '''
 
     def private mailzEntryText(Entity it, String appName) '''
@@ -80,7 +80,7 @@ class MailzView {
     '''
 
     def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
-        «IF application.targets('1.3.5')»
+        «IF application.targets('1.3.x')»
             {modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»'«routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}
         «ELSE»
             {route name='«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)» absolute=true}
@@ -88,7 +88,7 @@ class MailzView {
 
     def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
         «IF app.hasUserController»
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 «IF app.getMainUserController.hasActions('view')»
                     {modurl modname='«app.appName»' type='user' func='view' fqurl=true}
                 «ELSEIF app.getMainUserController.hasActions('index')»

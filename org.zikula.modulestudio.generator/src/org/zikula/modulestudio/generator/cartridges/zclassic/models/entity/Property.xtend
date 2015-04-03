@@ -52,7 +52,7 @@ class Property {
      * can be removed completely as the define for DerivedField can be used then instead.
      */
     def dispatch persistentProperty(IntegerField it) {
-        if (version && entity instanceof Entity && (entity as Entity).hasOptimisticLock && entity.application.targets('1.3.5')) {
+        if (version && entity instanceof Entity && (entity as Entity).hasOptimisticLock && entity.application.targets('1.3.x')) {
             persistentProperty(name.formatForCode, 'integer', '')
         } else {
             persistentProperty(name.formatForCode, fieldTypeAsString, '')
@@ -67,7 +67,7 @@ class Property {
          «IF translatable»
           * @Gedmo\Translatable
          «ENDIF»
-         «IF !entity.application.targets('1.3.5')»
+         «IF !entity.application.targets('1.3.x')»
          * @Assert\Type(type="array")
          «ENDIF»
          * @var array $«name.formatForCode»Meta.
@@ -78,7 +78,7 @@ class Property {
         /**
          * The full path to the «name.formatForDisplay».
          *
-         «IF !entity.application.targets('1.3.5')»
+         «IF !entity.application.targets('1.3.x')»
          * @Assert\Type(type="string")
          «ENDIF»
          * @var string $«name.formatForCode»FullPath.
@@ -88,7 +88,7 @@ class Property {
         /**
          * Full «name.formatForDisplay» path as url.
          *
-         «IF !entity.application.targets('1.3.5')»
+         «IF !entity.application.targets('1.3.x')»
          * @Assert\Type(type="string")
          «ENDIF»
          * @var string $«name.formatForCode»FullPathUrl.
@@ -123,7 +123,7 @@ class Property {
         «extMan.columnAnnotations(it)»
          * @ORM\Column(«IF dbName !== null && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
-        «IF !entity.application.targets('1.3.5')»
+        «IF !entity.application.targets('1.3.x')»
             «thVal.fieldAnnotations(it)»
         «ENDIF»
          * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSE»«type»«ENDIF» $«name.formatForCode».
@@ -143,7 +143,7 @@ class Property {
             UrlField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ArrayField:
-                '''type="«IF entity.application.targets('1.3.5')»array«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
+                '''type="«IF entity.application.targets('1.3.x')»array«ELSE»«arrayType.literal.toLowerCase»«ENDIF»"«/*», length=«it.length*/»'''
             UploadField:
                 '''«/*type="«type»", */»length=«it.length»'''
             ListField:

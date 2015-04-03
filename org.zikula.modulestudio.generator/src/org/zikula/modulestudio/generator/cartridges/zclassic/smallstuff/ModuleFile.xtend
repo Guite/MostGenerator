@@ -15,7 +15,7 @@ class ModuleFile {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             return
         }
         generateClassPair(fsa, getAppSourceLibPath + appName + '.php',

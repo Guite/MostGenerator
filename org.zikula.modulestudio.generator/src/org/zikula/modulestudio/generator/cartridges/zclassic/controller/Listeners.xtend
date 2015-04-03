@@ -52,10 +52,10 @@ class Listeners {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         this.app = it
-        listenerSuffix = (if (targets('1.3.5')) '' else 'Listener') + '.php'
+        listenerSuffix = (if (targets('1.3.x')) '' else 'Listener') + '.php'
 
         val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
-        needsThirdPartyListener = (generatePendingContentSupport || generateListContentType || needsDetailContentType || (!targets('1.3.5') && generateScribitePlugins))
+        needsThirdPartyListener = (generatePendingContentSupport || generateListContentType || needsDetailContentType || (!targets('1.3.x') && generateScribitePlugins))
 
         println('Generating event listener base classes')
         listenerPath = getAppSourceLibPath + 'Listener/Base/'
@@ -74,7 +74,7 @@ class Listeners {
 
     def private generateListenerClasses(Application it) {
         listenerFile('Core', listenersCoreFile)
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             listenerFile('FrontController', listenersFrontControllerFile)
         } else {
             listenerFile('Kernel', listenersKernelFile)
@@ -83,7 +83,7 @@ class Listeners {
         listenerFile('ModuleDispatch', listenersModuleDispatchFile)
         listenerFile('Mailer', listenersMailerFile)
         listenerFile('Page', listenersPageFile)
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             listenerFile('Errors', listenersErrorsFile)
         }
         listenerFile('Theme', listenersThemeFile)
@@ -111,7 +111,7 @@ class Listeners {
     }
 
     def private listenersCoreFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -126,7 +126,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
         «ELSE»
         class CoreListener«IF !isBase» extends BaseCoreListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -148,7 +148,7 @@ class Listeners {
     '''
 
     def private listenersInstallerFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -165,7 +165,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
         «ELSE»
         class InstallerListener«IF !isBase» extends BaseInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -205,7 +205,7 @@ class Listeners {
     '''
 
     def private listenersModuleDispatchFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -221,7 +221,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
         «ELSE»
         class ModuleDispatchListener«IF !isBase» extends BaseModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -232,7 +232,7 @@ class Listeners {
     '''
 
     def private listenersMailerFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -247,7 +247,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
         «ELSE»
         class MailerListener«IF !isBase» extends BaseMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -258,7 +258,7 @@ class Listeners {
     '''
 
     def private listenersPageFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -273,7 +273,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for page-related events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
         «ELSE»
         class PageListener«IF !isBase» extends BasePageListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -295,7 +295,7 @@ class Listeners {
     '''
 
     def private listenersThemeFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -310,7 +310,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
         «ELSE»
         class ThemeListener«IF !isBase» extends BaseThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -321,7 +321,7 @@ class Listeners {
     '''
 
     def private listenersViewFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -336,7 +336,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for view-related events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
         «ELSE»
         class ViewListener«IF !isBase» extends BaseViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -347,7 +347,7 @@ class Listeners {
     '''
 
     def private listenersUserLoginFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -362,7 +362,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
         «ELSE»
         class UserLoginListener«IF !isBase» extends BaseUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -373,7 +373,7 @@ class Listeners {
     '''
 
     def private listenersUserLogoutFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -388,7 +388,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user logout events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
         «ELSE»
         class UserLogoutListener«IF !isBase» extends BaseUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -399,7 +399,7 @@ class Listeners {
     '''
 
     def private listenersUserFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -419,7 +419,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user-related events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
         «ELSE»
         class UserListener«IF !isBase» extends BaseUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -430,7 +430,7 @@ class Listeners {
     '''
 
     def private listenersUserRegistrationFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -445,7 +445,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user registration events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
         «ELSE»
         class UserRegistrationListener«IF !isBase» extends BaseUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -456,7 +456,7 @@ class Listeners {
     '''
 
     def private listenersUsersFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -471,7 +471,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for events of the Users module.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
         «ELSE»
         class UsersListener«IF !isBase» extends BaseUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -482,7 +482,7 @@ class Listeners {
     '''
 
     def private listenersGroupFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -497,7 +497,7 @@ class Listeners {
         /**
          * Event handler implementation class for group-related events.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
         «ELSE»
         class GroupListener«IF !isBase» extends BaseGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
@@ -508,7 +508,7 @@ class Listeners {
     '''
 
     def private listenersThirdPartyFile(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
@@ -532,7 +532,7 @@ class Listeners {
         /**
          * Event handler implementation class for special purposes and 3rd party api support.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
         «ELSE»
         class ThirdPartyListener«IF !isBase» extends BaseThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»

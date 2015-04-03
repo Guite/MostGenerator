@@ -44,7 +44,7 @@ class NamingExtensions {
      * Returns the base path for a certain template file.
      */
     def templateFileBase(Entity it, String actionName) {
-        if (application.targets('1.3.5'))
+        if (application.targets('1.3.x'))
             application.getViewPath + name.formatForCode + '/' + actionName
         else
             application.getViewPath + name.formatForCodeCapital + '/' + actionName
@@ -114,7 +114,7 @@ class NamingExtensions {
      */
     def entityClassName(DataObject it, String suffix, Boolean isBase) {
         val app = application
-        if (app.targets('1.3.5'))
+        if (app.targets('1.3.x'))
             app.appName + '_Entity_' + (if (isBase) 'Base_' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
         else
             app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\' + (if (isBase) 'Base\\' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
@@ -171,7 +171,7 @@ class NamingExtensions {
      * Returns the base path for the generated application.
      */
     def getAppSourcePath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             'src/' + rootFolder + '/' + appName + '/'
         else
             ''
@@ -181,7 +181,7 @@ class NamingExtensions {
      * Returns the base path for the source code of the generated application.
      */
     def getAppSourceLibPath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             getAppSourcePath + 'lib/' + appName + '/'
         else
             getAppSourcePath
@@ -191,7 +191,7 @@ class NamingExtensions {
      * Returns the base path for any documentation.
      */
     def getAppDocPath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             getAppSourcePath + 'docs/'
         else
             getResourcesPath + 'docs/'
@@ -201,7 +201,7 @@ class NamingExtensions {
      * Returns the base path for the locale artifacts.
      */
     def getAppLocalePath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             getAppSourcePath + 'locale/'
         else
             getResourcesPath + 'locale/'
@@ -225,7 +225,7 @@ class NamingExtensions {
      * Returns the base path for all view templates.
      */
     def getViewPath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             getAppSourcePath + 'templates/'
         else
             getResourcesPath + 'views/'
@@ -235,7 +235,7 @@ class NamingExtensions {
      * Returns the base path for image files.
      */
     def getAppImagePath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             getAppSourcePath + 'images/'
         else
             getAssetPath + 'images/'
@@ -245,7 +245,7 @@ class NamingExtensions {
      * Returns the base path for css files.
      */
     def getAppCssPath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             getAppSourcePath + 'style/'
         else
             getAssetPath + 'css/'
@@ -255,7 +255,7 @@ class NamingExtensions {
      * Returns the base path for js files.
      */
     def getAppJsPath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             getAppSourcePath + 'javascript/'
         else
             getAssetPath + 'js/'
@@ -265,7 +265,7 @@ class NamingExtensions {
      * Returns the base path for uploaded files of the generated application.
      */
     def getAppUploadPath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             'src/userdata/' + appName + '/'
         else
             getResourcesPath + 'userdata/' + appName + '/'
@@ -275,7 +275,7 @@ class NamingExtensions {
      * Returns the base path for the test source code of the generated application.
      */
     def getAppTestsPath(Application it) {
-        if (targets('1.3.5'))
+        if (targets('1.3.x'))
             'tests/'
         else
             getAppSourcePath + 'Tests/'

@@ -24,7 +24,7 @@ class ColourInput {
     }
 
     def private formColourInputBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
             use DataUtil;
@@ -42,7 +42,7 @@ class ColourInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the colour input inherits from it.
          */
-        class «IF targets('1.3.5')»«appName»_Form_Plugin_Base_«ENDIF»ColourInput extends Zikula_Form_Plugin_TextInput
+        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»ColourInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Get filename of this file.
@@ -97,7 +97,7 @@ class ColourInput {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
                         PageUtil::addVar('javascript', 'javascript/picky_color/picky_color.js');
                     «ELSE»
@@ -118,7 +118,7 @@ class ColourInput {
 
                 $result .= "<script type=\"text/javascript\">
                     /* <![CDATA[ */
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             var namePicky = new PickyColor({
                                 field: '" . $this->getId() . "',
                                 color: '" . DataUtil::formatForDisplay($this->text) . "',
@@ -183,7 +183,7 @@ class ColourInput {
     '''
 
     def private formColourInputImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
             use «appNamespace»\Form\Plugin\Base\ColourInput as BaseColourInput;
@@ -197,7 +197,7 @@ class ColourInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the colour input inherits from it.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_ColourInput extends «appName»_Form_Plugin_Base_ColourInput
         «ELSE»
         class ColourInput extends BaseColourInput
@@ -219,7 +219,7 @@ class ColourInput {
          */
         function smarty_function_«appName.formatForDB»ColourInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ColourInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\ColourInput«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_ColourInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\ColourInput«ENDIF»', $params);
         }
     '''
 }

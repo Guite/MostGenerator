@@ -24,7 +24,7 @@ class GeoInput {
     }
 
     def private formGeoInputBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
             use Zikula_Form_Plugin_TextInput;
@@ -37,7 +37,7 @@ class GeoInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the geo input inherits from it.
          */
-        class «IF targets('1.3.5')»«appName»_Form_Plugin_Base_«ENDIF»GeoInput extends Zikula_Form_Plugin_TextInput
+        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»GeoInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Get filename of this file.
@@ -140,7 +140,7 @@ class GeoInput {
     '''
 
     def private formGeoInputImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
             use «appNamespace»\Form\Plugin\Base\GeoInput as BaseGeoInput;
@@ -152,7 +152,7 @@ class GeoInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the geo input inherits from it.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_GeoInput extends «appName»_Form_Plugin_Base_GeoInput
         «ELSE»
         class GeoInput extends BaseGeoInput
@@ -173,7 +173,7 @@ class GeoInput {
          */
         function smarty_function_«appName.formatForDB»GeoInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_GeoInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\GeoInput«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_GeoInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\GeoInput«ENDIF»', $params);
         }
     '''
 }

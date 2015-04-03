@@ -35,7 +35,7 @@ class UploadProcessing {
             }
 
             // initialise the upload handler
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $uploadManager = new «appName»_UploadHandler();
             «ELSE»
                 $uploadManager = $this->view->getServiceManager()->get('«appName.formatForDB».upload_handler');

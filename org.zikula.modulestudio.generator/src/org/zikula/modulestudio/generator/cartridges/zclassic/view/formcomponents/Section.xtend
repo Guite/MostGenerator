@@ -37,8 +37,8 @@ class Section {
     def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa) '''
         «IF geographical»
             «IF useGroupingPanels('edit')»
-                «IF app.targets('1.3.5')»
-                    <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+                «IF app.targets('1.3.x')»
+                    <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
                     <fieldset class="«app.appName.toLowerCase»-map z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
@@ -54,7 +54,7 @@ class Section {
                 <legend>{gt text='Map'}</legend>
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
-            «IF app.targets('1.3.5')»
+            «IF app.targets('1.3.x')»
                 </fieldset>
             «ELSE»
                         </div>
@@ -64,18 +64,18 @@ class Section {
 
         «ENDIF»
         «IF attributable»
-            {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_attributes_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_attributes_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «IF categorisable»
-            {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «relationHelper.generateIncludeStatement(it, app, fsa)»
         «IF metaData»
-            {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «IF standardFields»
             {if $mode ne 'create'}
-                {include file='«IF app.targets('1.3.5')»helper«ELSE»Helper«ENDIF»/include_standardfields_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+                {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_standardfields_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
             {/if}
         «ENDIF»
     '''
@@ -92,8 +92,8 @@ class Section {
             {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
                 {if $providerArea ne 'provider.scribite.ui_hooks.editor'}{* fix for #664 *}
                     «IF useGroupingPanels('edit')»
-                        «IF app.targets('1.3.5')»
-                            <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.5')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
+                        «IF app.targets('1.3.x')»
+                            <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
                             <fieldset class="hook z-panel-content" style="display: none">
                                 {$hook}
                             </fieldset>
@@ -189,6 +189,6 @@ class Section {
     '''
 
     def private isLegacyApp(Entity it) {
-        application.targets('1.3.5')
+        application.targets('1.3.x')
     }
 }

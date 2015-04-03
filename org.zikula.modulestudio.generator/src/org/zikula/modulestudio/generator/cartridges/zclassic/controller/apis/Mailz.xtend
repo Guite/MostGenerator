@@ -18,14 +18,14 @@ class Mailz {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Mailz' + (if (targets('1.3.5')) '' else 'Api') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Mailz' + (if (targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(it, mailzBaseClass), fh.phpFileContent(it, mailzImpl)
         )
         new MailzView().generate(it, fsa)
     }
 
     def private mailzBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
@@ -37,7 +37,7 @@ class Mailz {
         /**
          * Mailz api base class.
          */
-        class «IF targets('1.3.5')»«appName»_Api_Base_Mailz«ELSE»MailzApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Mailz«ELSE»MailzApi«ENDIF» extends Zikula_AbstractApi
         {
             «mailzBaseImpl»
         }
@@ -91,12 +91,12 @@ class Mailz {
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.5')»
-                $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+            «IF targets('1.3.x')»
+                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
@@ -143,16 +143,16 @@ class Mailz {
                  ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
 
             if ($args['contenttype'] == 't') { /* text */
-                return $view->fetch('«IF targets('1.3.5')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_text.tpl');
+                return $view->fetch('«IF targets('1.3.x')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_text.tpl');
             }
 
-            //return $view->fetch('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.html');
-            return $view->fetch('«IF targets('1.3.5')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
+            //return $view->fetch('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.html');
+            return $view->fetch('«IF targets('1.3.x')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
         }
     '''
 
     def private mailzImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
             use «appNamespace»\Api\Base\MailzApi as BaseMailzApi;
@@ -161,7 +161,7 @@ class Mailz {
         /**
          * Mailz api implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Api_Mailz extends «appName»_Api_Base_Mailz
         «ELSE»
         class MailzApi extends BaseMailzApi

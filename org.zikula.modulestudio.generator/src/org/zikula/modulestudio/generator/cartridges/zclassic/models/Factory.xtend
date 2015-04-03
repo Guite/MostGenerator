@@ -24,7 +24,7 @@ class Factory {
     Application app
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.5')) {
+        if (targets('1.3.x')) {
             return
         }
         this.fsa = fsa
@@ -66,7 +66,7 @@ class Factory {
          *
          * This is the base factory class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Factory_Base_«name.formatForCodeCapital»
         «ELSE»
         class «name.formatForCodeCapital»Factory
@@ -114,7 +114,7 @@ class Factory {
     '''
 
     def private modelFactoryImpl(Entity it) '''
-        «IF !app.targets('1.3.5')»
+        «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Factory;
 
             use «app.appNamespace»\Entity\Factory\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF»Factory as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»Factory;
@@ -125,7 +125,7 @@ class Factory {
          *
          * This is the concrete factory class for «name.formatForDisplay» entities.
          */
-        «IF app.targets('1.3.5')»
+        «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Factory_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Factory_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Factory_Base_«name.formatForCodeCapital»«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital»Factory extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»Factory

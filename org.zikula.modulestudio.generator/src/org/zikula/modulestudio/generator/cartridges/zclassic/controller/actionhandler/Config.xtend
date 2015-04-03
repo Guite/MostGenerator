@@ -27,13 +27,13 @@ class Config {
         if (!needsConfig) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/Config' + (if (targets('1.3.5')) '' else 'Handler') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/Config' + (if (targets('1.3.x')) '' else 'Handler') + '.php',
             fh.phpFileContent(it, configHandlerBaseImpl), fh.phpFileContent(it, configHandlerImpl)
         )
     }
 
     def private configHandlerBaseImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base;
 
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -49,7 +49,7 @@ class Config {
         /**
          * Configuration handler base class.
          */
-        class «IF targets('1.3.5')»«appName»_Form_Handler_«configController.toFirstUpper»_Base_Config«ELSE»ConfigHandler«ENDIF» extends Zikula_Form_AbstractHandler
+        class «IF targets('1.3.x')»«appName»_Form_Handler_«configController.toFirstUpper»_Base_Config«ELSE»ConfigHandler«ENDIF» extends Zikula_Form_AbstractHandler
         {
             /**
              * Post construction hook.
@@ -68,7 +68,7 @@ class Config {
              * @param Zikula_Form_View $view The form view instance.
              *
              * @return boolean False in case of initialization errors, otherwise true.
-             «IF !targets('1.3.5')»
+             «IF !targets('1.3.x')»
              *
              * @throws AccessDeniedException Thrown if the user doesn't have admin permissions
              * @throws RuntimeException          Thrown if persisting configuration vars fails
@@ -78,7 +78,7 @@ class Config {
             {
                 // permission check
                 if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         return $view->registerError(LogUtil::registerPermissionError());
                     «ELSE»
                         throw new AccessDeniedException();
@@ -87,7 +87,7 @@ class Config {
                 «IF !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty»
 
                     // prepare list of user groups for moderation group selectors
-                    $userGroups = ModUtil::apiFunc('«IF targets('1.3.5')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'getall');
+                    $userGroups = ModUtil::apiFunc('«IF targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'getall');
                     $userGroupItems = array();
                     foreach ($userGroups as $userGroup) {
                         $userGroupItems[] = array(
@@ -156,7 +156,7 @@ class Config {
              */
             public function handleCommand(Zikula_Form_View $view, &$args)
             {
-                «IF !targets('1.3.5')»
+                «IF !targets('1.3.x')»
                     $serviceManager = ServiceUtil::getManager();
 
                 «ENDIF»
@@ -177,7 +177,7 @@ class Config {
                         if (System::isDevelopmentMode()) {
                             $msg .= ' ' . $e->getMessage();
                         }
-                        «IF targets('1.3.5')»
+                        «IF targets('1.3.x')»
                             return LogUtil::registerError($msg);
                         «ELSE»
                             $this->request->getSession()->getFlashBag()->add('error', $msg);
@@ -185,7 +185,7 @@ class Config {
                         «ENDIF»
                     }
 
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Module configuration updated.'));
@@ -198,7 +198,7 @@ class Config {
                 }
 
                 // redirect back to the config page
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
                 «ELSE»
                     $url = $serviceManager->get('router')->generate('«appName.formatForDB»_«configController.formatForDB»_config');
@@ -230,7 +230,7 @@ class Config {
     '''
 
     def private configHandlerImpl(Application it) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»;
 
             use «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base\ConfigHandler as BaseConfigHandler;
@@ -239,7 +239,7 @@ class Config {
         /**
          * Configuration handler implementation class.
          */
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
         class «appName»_Form_Handler_«configController.toFirstUpper»_Config extends «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config
         «ELSE»
         class ConfigHandler extends BaseConfigHandler

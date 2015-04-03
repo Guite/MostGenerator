@@ -9,7 +9,7 @@ class Mailer {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
-        «IF !targets('1.3.5')»
+        «IF !targets('1.3.x')»
             /**
              * Makes our handlers known to the event system.
              */
@@ -30,12 +30,12 @@ class Mailer {
          *
          * Invoked from `Mailer_Api_User#sendmessage`.
          * Subject is `Mailer_Api_User` with `$args`.
-         * This is a notifyUntil event so the event must `$event->stop«IF !targets('1.3.5')»Propagation«ENDIF»()` and set any
+         * This is a notifyUntil event so the event must `$event->stop«IF !targets('1.3.x')»Propagation«ENDIF»()` and set any
          * return data into `$event->data`, or `$event->setData()`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.5')»static «ENDIF»function sendMessage(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function sendMessage(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::sendMessage($event);

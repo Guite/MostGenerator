@@ -86,7 +86,7 @@ class Views {
             new MetaData().generate(it, fsa)
         }
 
-        if (!targets('1.3.5')) {
+        if (!targets('1.3.x')) {
             new FilterSyntaxDialog().generate(it, fsa)
         }
         if (needsConfig) {
@@ -153,7 +153,7 @@ class Views {
     }
 
     def private headerFooterFile(Application it, Controller controller) {
-        val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+        val templatePath = getViewPath + (if (targets('1.3.x')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
         var fileName = 'header.tpl'
         if (!shouldBeSkipped(templatePath + fileName)) {
             if (shouldBeMarked(templatePath + fileName)) {
@@ -172,7 +172,7 @@ class Views {
 
     def private headerImpl(Application it, Controller controller) '''
         {* purpose of this template: header for «controller.formattedName» area *}
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             {pageaddvar name='javascript' value='prototype'}
             {pageaddvar name='javascript' value='validation'}
             {pageaddvar name='javascript' value='zikula'}
@@ -196,7 +196,7 @@ class Views {
                 {pageaddvar name='javascript' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.js'}
             «ENDIF»
         «ENDIF»
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             {pageaddvar name='javascript' value='«rootFolder»/«appName»/javascript/«appName».js'}
         «ELSE»
             {pageaddvar name='javascript' value='@«appName»/Resources/public/js/«appName».js'}
@@ -209,7 +209,7 @@ class Views {
             «IF controller instanceof AdminController»
                 {adminheader}
             «ELSE»
-                «IF targets('1.3.5')»
+                «IF targets('1.3.x')»
                     <div class="z-frontendbox">
                         <h2>{gt text='«name.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
                         {modulelinks modname='«appName»' type='«controller.formattedName»'}
@@ -224,8 +224,8 @@ class Views {
                     {«appName.formatForDB»ModerationObjects assign='moderationObjects'}
                     {if count($moderationObjects) gt 0}
                         {foreach item='modItem' from=$moderationObjects}
-                            <p class="«IF targets('1.3.5')»z-informationmsg z«ELSE»alert alert-info alert-dismissable text«ENDIF»-center">
-                                «IF targets('1.3.5')»
+                            <p class="«IF targets('1.3.x')»z-informationmsg z«ELSE»alert alert-info alert-dismissable text«ENDIF»-center">
+                                «IF targets('1.3.x')»
                                     <a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a>
                                 «ELSE»
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -256,7 +256,7 @@ class Views {
         «IF hasEditActions»
         {elseif isset($smarty.get.func) && $smarty.get.func eq 'edit'}
             {pageaddvar name='stylesheet' value='style/core.css'}
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 {pageaddvar name='stylesheet' value='«rootFolder»/«appName»/style/style.css'}
                 {pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
                 {pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}

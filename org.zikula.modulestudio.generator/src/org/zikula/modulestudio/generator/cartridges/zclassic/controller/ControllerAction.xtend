@@ -34,7 +34,7 @@ class ControllerAction {
     def generate(Action it, Boolean isBase) '''
         «IF isBase»
             «actionDoc(null, isBase)»
-            public function «methodName»«IF app.targets('1.3.5')»()«ELSE»Action(«methodArgs»)«ENDIF»
+            public function «methodName»«IF app.targets('1.3.x')»()«ELSE»Action(«methodArgs»)«ENDIF»
             {
                 «actionsImpl.actionImpl(it)»
             }
@@ -44,14 +44,14 @@ class ControllerAction {
 
     def generate(Entity it, Action action, Boolean isBase) '''
         «action.actionDoc(it, isBase)»
-        public function «action.methodName»«IF app.targets('1.3.5')»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
+        public function «action.methodName»«IF app.targets('1.3.x')»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
         {
             «IF isBase»
-                $legacyControllerType = $«IF app.targets('1.3.5')»this->«ENDIF»request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+                $legacyControllerType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
                 System::queryStringSetVar('type', $legacyControllerType);
-                $«IF app.targets('1.3.5')»this->«ENDIF»request->query->set('type', $legacyControllerType);
+                $«IF app.targets('1.3.x')»this->«ENDIF»request->query->set('type', $legacyControllerType);
 
-                «IF softDeleteable && !app.targets('1.3.5')»
+                «IF softDeleteable && !app.targets('1.3.x')»
                     if ($legacyControllerType == 'admin') {
                         //$this->entityManager->getFilters()->disable('softdeleteable');
                     } else {
@@ -71,7 +71,7 @@ class ControllerAction {
         /**
          * «actionDocMethodDescription»
         «actionDocMethodDocumentation»
-        «IF !app.targets('1.3.5') && entity !== null»
+        «IF !app.targets('1.3.x') && entity !== null»
             «IF !isBase»
                 «actionRoute(entity)»
             «ELSE»
@@ -96,7 +96,7 @@ class ControllerAction {
             «ENDIF»
         «ENDIF»
          *
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.x')»
          * @param Request  $request      Current request instance
          «ENDIF»
         «IF entity !== null»
@@ -106,7 +106,7 @@ class ControllerAction {
         «ENDIF»
          *
          * @return mixed Output.
-         «IF !app.targets('1.3.5')»
+         «IF !app.targets('1.3.x')»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions.
          «IF it instanceof DisplayAction»
@@ -143,13 +143,13 @@ class ControllerAction {
     }
 
     def private actionDocMethodParams(Action it) {
-        if (!controller.application.targets('1.3.5') && it instanceof MainAction) {
+        if (!controller.application.targets('1.3.x') && it instanceof MainAction) {
             ' * @param string  $ot           Treated object type.\n'
         } else if (!(it instanceof MainAction || it instanceof CustomAction)) {
             ' * @param string  $ot           Treated object type.\n'
             + '''«actionDocAdditionalParams(null)»'''
             + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
-            + (if (controller.application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (controller.application.targets('1.3.x')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
 
@@ -157,7 +157,7 @@ class ControllerAction {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
             + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
-            + (if (application.targets('1.3.5')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (application.targets('1.3.x')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
 
@@ -169,10 +169,10 @@ class ControllerAction {
                + ' * @param int     $pos          Current pager position.\n'
                + ' * @param int     $num          Amount of entries to display.\n'
             DisplayAction:
-                (if (refEntity !== null && !refEntity.application.targets('1.3.5')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
+                (if (refEntity !== null && !refEntity.application.targets('1.3.x')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
             DeleteAction:
-                (if (refEntity !== null && !refEntity.application.targets('1.3.5')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
+                (if (refEntity !== null && !refEntity.application.targets('1.3.x')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
                + ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n'
             default: ''
@@ -181,7 +181,7 @@ class ControllerAction {
 
     def private dispatch methodName(Action it) '''«name.formatForCode.toFirstLower»'''
 
-    def private dispatch methodName(MainAction it) '''«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'''
+    def private dispatch methodName(MainAction it) '''«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»'''
 
     def private methodArgs(Action action) '''Request $request''' 
 

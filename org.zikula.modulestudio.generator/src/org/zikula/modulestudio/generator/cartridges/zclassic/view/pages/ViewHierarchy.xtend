@@ -225,6 +225,6 @@ class ViewHierarchy {
     '''
 
     def private isLegacyApp(Entity it) {
-        application.targets('1.3.5')
+        application.targets('1.3.x')
     }
 }

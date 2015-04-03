@@ -49,7 +49,7 @@ class Bootstrap {
     '''
 
     def private initExtensions(Application it) '''
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             «IF needsExtensionListener»
                 // initialise doctrine extension listeners
                 $helper = ServiceUtil::getService('doctrine_extensions');
@@ -80,7 +80,7 @@ class Bootstrap {
     def private initLoggable(Application it) '''
         «IF hasLoggable»
             // set current user name to loggable listener
-            «IF targets('1.3.5')»
+            «IF targets('1.3.x')»
                 $loggableListener = $helper->getListener('loggable');
             «ELSE»
                 $loggableListener = ServiceUtil::get('stof_doctrine_extensions.listener.loggable');
@@ -97,7 +97,7 @@ class Bootstrap {
     '''
 
     def private initSoftDeleteable(Application it) '''
-        «IF hasSoftDeleteable && !targets('1.3.5')»
+        «IF hasSoftDeleteable && !targets('1.3.x')»
             $helper->getListener('softdeleteable');
         «ENDIF»
     '''
@@ -143,7 +143,7 @@ class Bootstrap {
             
             function «prefix()»PerformRegularAmendments()
             {
-                $currentFunc = FormUtil::getPassedValue('func', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+                $currentFunc = FormUtil::getPassedValue('func', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
                 if ($currentFunc == 'edit' || $currentFunc == 'initialize') {
                     return;
                 }
@@ -156,25 +156,25 @@ class Bootstrap {
 
                 PageUtil::registerVar('«appName»AutomaticArchiving', false, true);
                 $serviceManager = ServiceUtil::getManager();
-                «IF targets('1.3.5')»
-                    $entityManager = $serviceManager->get«IF targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                «IF targets('1.3.x')»
+                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 «ELSE»
                     $logger = $serviceManager->get('logger');
                 «ENDIF»
                 «FOR entity : entitiesWithArchive»
 
                     // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
-                    «IF !targets('1.3.5')»
+                    «IF !targets('1.3.x')»
                         $logger->notice('{app}: Automatic archiving for the {entity} entity started.', array('app' => '«appName»', 'entity' => '«entity.name.formatForCode»'));
                     «ENDIF»
-                    «IF targets('1.3.5')»
+                    «IF targets('1.3.x')»
                         $entityClass = '«appName»_Entity_«entity.name.formatForCodeCapital»';
                         $repository = $entityManager->getRepository($entityClass);
                     «ELSE»
                         $repository = $serviceManager->get('«appName.formatForDB».«entity.name.formatForCode»_factory')->getRepository();
                     «ENDIF»
                     $repository->archiveObjects();
-                    «IF !targets('1.3.5')»
+                    «IF !targets('1.3.x')»
                         $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', array('app' => '«appName»', 'entity' => '«entity.name.formatForCode»'));
                     «ENDIF»
                 «ENDFOR»

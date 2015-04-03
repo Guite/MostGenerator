@@ -40,7 +40,7 @@ class EventListener {
          *
          * @see «entityClassName('', false)»::postLoadCallback()
          * @return boolean true if completed successfully else false.
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if upload file base path retrieval fails
          «ENDIF»
@@ -51,7 +51,7 @@ class EventListener {
             «postLoadImpl»
 
             $this->prepareItemActions();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
@@ -156,7 +156,7 @@ class EventListener {
         protected function performPrePersistCallback()
         {
             $this->validate();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
@@ -186,7 +186,7 @@ class EventListener {
          */
         protected function performPostPersistCallback()
         {
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
@@ -212,14 +212,14 @@ class EventListener {
          *
          * @see «entityClassName('', false)»::preRemoveCallback()
          * @return boolean true if completed successfully else false.
-         «IF !application.targets('1.3.5')»
+         «IF !application.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if workflow deletion fails
          «ENDIF»
          */
         protected function performPreRemoveCallback()
         {
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -232,18 +232,18 @@ class EventListener {
 
             «ENDIF»
             // delete workflow for this entity
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
                 $workflowHelper->normaliseWorkflowData($this);
             «ENDIF»
             $workflow = $this['__WORKFLOW__'];
             if ($workflow['id'] > 0) {
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
-                    $entityManager = $serviceManager->get«IF application.targets('1.3.5')»Service«ENDIF»('doctrine.entitymanager');
+                    $entityManager = $serviceManager->get«IF application.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                     $result = true;
                     try {
                         $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
@@ -255,7 +255,7 @@ class EventListener {
                 «ENDIF»
                 if ($result === false) {
                     $dom = ZLanguage::getModuleDomain('«application.appName»');
-                    «IF application.targets('1.3.5')»
+                    «IF application.targets('1.3.x')»
                         return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
                     «ELSE»
                         $session = $serviceManager->get('session');
@@ -282,16 +282,16 @@ class EventListener {
          */
         protected function performPostRemoveCallback()
         {
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
 
             «ENDIF»
-            «IF it.hasUploadFieldsEntity || !application.targets('1.3.5')»
+            «IF it.hasUploadFieldsEntity || !application.targets('1.3.x')»
                 $objectId = $this->createCompositeIdentifier();
 
             «ENDIF»
             «IF it.hasUploadFieldsEntity»
-                «IF application.targets('1.3.5')»
+                «IF application.targets('1.3.x')»
                     // initialise the upload handler
                     $uploadManager = new «application.appName»_UploadHandler();
                 «ELSE»
@@ -309,7 +309,7 @@ class EventListener {
                     $uploadManager->deleteUploadFile('«it.name.formatForCode»', $this, $uploadField, $objectId);
                 }
             «ENDIF»
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
                 $logger->debug('{app}: User {user} removed the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
@@ -341,7 +341,7 @@ class EventListener {
         protected function performPreUpdateCallback()
         {
             $this->validate();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
@@ -370,7 +370,7 @@ class EventListener {
          */
         protected function performPostUpdateCallback()
         {
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
@@ -397,7 +397,7 @@ class EventListener {
         protected function performPreSaveCallback()
         {
             $this->validate();
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
 
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
@@ -423,7 +423,7 @@ class EventListener {
          */
         protected function performPostSaveCallback()
         {
-            «IF !application.targets('1.3.5')»
+            «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
@@ -555,8 +555,8 @@ class EventListener {
 
 
     def private postLoadImpl(Entity it) '''
-        $currentFunc = FormUtil::getPassedValue('func', '«IF application.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
-        «IF application.targets('1.3.5')»
+        $currentFunc = FormUtil::getPassedValue('func', '«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+        «IF application.targets('1.3.x')»
             $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
         «ELSE»
             $serviceManager = ServiceUtil::getManager();
@@ -566,12 +566,12 @@ class EventListener {
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 $uploadManager = new «application.appName»_UploadHandler();
             «ELSE»
                 $uploadManager = $serviceManager->get('«application.appName.formatForDB».upload_handler');
             «ENDIF»
-            «IF application.targets('1.3.5')»
+            «IF application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $controllerHelper = new «application.appName»_Util_Controller($serviceManager);
             «ELSE»
@@ -625,7 +625,7 @@ class EventListener {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
             } catch (\Exception $e) {
-                «IF entity.application.targets('1.3.5')»
+                «IF entity.application.targets('1.3.x')»
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
