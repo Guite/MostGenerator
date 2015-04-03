@@ -170,9 +170,9 @@ class MetaData {
         «val label = fieldName.formatForDisplayCapital»
 
         <div class="«IF useBootstrap»form-group«ELSE»z-formrow«ENDIF»">
-            {formlabel for='metadata«label»' __text='«label»'«IF useBootstrap» cssClass='col-lg-3 control-label'«ENDIF»}
+            {formlabel for='metadata«label»' __text='«label»'«IF useBootstrap» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF useBootstrap»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 «IF 'startdate'.equals(fieldName) || 'enddate'.equals(fieldName)»
                 {if $mode ne 'create'}

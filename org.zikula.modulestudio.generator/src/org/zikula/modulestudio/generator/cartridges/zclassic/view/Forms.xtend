@@ -255,9 +255,9 @@ class Forms {
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                        {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                        {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
                         «IF !app.targets('1.3.5')»
-                            <div class="col-lg-9">
+                            <div class="col-sm-9">
                         «ENDIF»
                             {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.5')» form-control«ENDIF»'}
                             «IF app.targets('1.3.5')»
@@ -275,9 +275,9 @@ class Forms {
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
         «IF hasSluggableFields && slugUpdatable && !application.targets('1.3.5')»
             <div class="«IF application.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !application.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !application.targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
                 «IF !application.targets('1.3.5')»
-                    <div class="col-lg-9">
+                    <div class="col-sm-9">
                 «ENDIF»
                     {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !application.targets('1.3.5')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
                     <span class="«IF application.targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>

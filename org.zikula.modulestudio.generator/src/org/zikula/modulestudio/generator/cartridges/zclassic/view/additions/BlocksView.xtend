@@ -55,9 +55,9 @@ class BlocksView {
 
     def private editTemplateObjectType(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName.toFirstLower»ObjectType"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Object type'}:</label>
+            <label for="«appName.toFirstLower»ObjectType"«IF !targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Object type'}:</label>
             «IF !targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <select id="«appName.toFirstLower»ObjectType" name="objecttype" size="1"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
                     «FOR entity : getAllEntities»
@@ -88,9 +88,9 @@ class BlocksView {
                         {assign var='categorySelectorId' value='catids__'}
                         {assign var='categorySelectorSize' value='8'}
                     {/if}
-                    <label for="{$categorySelectorId}{$propertyName}"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{$categoryLabel}</label>
+                    <label for="{$categorySelectorId}{$propertyName}"«IF !targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{$categoryLabel}</label>
                     «IF !targets('1.3.5')»
-                        <div class="col-lg-9">
+                        <div class="col-sm-9">
                     «ELSE»
                         &nbsp;
                     «ENDIF»
@@ -107,9 +107,9 @@ class BlocksView {
 
     def private editTemplateSorting(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName.toFirstLower»Sorting"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
+            <label for="«appName.toFirstLower»Sorting"«IF !targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Sorting'}:</label>
             «IF !targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <select id="«appName.toFirstLower»Sorting" name="sorting"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="random"{if $sorting eq 'random'} selected="selected"{/if}>{gt text='Random'}</option>
@@ -124,9 +124,9 @@ class BlocksView {
 
     def private editTemplateAmount(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName.toFirstLower»Amount"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
+            <label for="«appName.toFirstLower»Amount"«IF !targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Amount'}:</label>
             «IF !targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <input type="text" id="«appName.toFirstLower»Amount" name="amount" maxlength="2" size="10" value="{$amount|default:"5"}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
             «IF !targets('1.3.5')»
@@ -137,9 +137,9 @@ class BlocksView {
 
     def private editTemplateTemplate(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«appName.toFirstLower»Template"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Template'}:</label>
+            <label for="«appName.toFirstLower»Template"«IF !targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Template'}:</label>
             «IF !targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <select id="«appName.toFirstLower»Template" name="template"«IF !targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="itemlist_display.tpl"{if $template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
@@ -152,9 +152,9 @@ class BlocksView {
         </div>
 
         <div id="customTemplateArea" class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»"«IF !targets('1.3.5')» data-switch="«appName.toFirstLower»Template" data-switch-value="custom"«ENDIF»>
-            <label for="«appName.toFirstLower»CustomTemplate"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
+            <label for="«appName.toFirstLower»CustomTemplate"«IF !targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
             «IF !targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <input type="text" id="«appName.toFirstLower»CustomTemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
                 <span class="«IF targets('1.3.5')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example'}: <em>itemlist_[objectType]_display.tpl</em></span>
@@ -166,9 +166,9 @@ class BlocksView {
 
     def private editTemplateFilter(Application it) '''
         <div class="«IF targets('1.3.5')»z-formrow z-hide«ELSE»form-group«ENDIF»">
-            <label for="«appName.toFirstLower»Filter"«IF !targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
+            <label for="«appName.toFirstLower»Filter"«IF !targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Filter (expert option)'}:</label>
             «IF !targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <input type="text" id="«appName.toFirstLower»Filter" name="filter" size="40" value="{$filterValue|default:''}"«IF !targets('1.3.5')» class="form-control"«ENDIF» />
                 «IF targets('1.3.5')»

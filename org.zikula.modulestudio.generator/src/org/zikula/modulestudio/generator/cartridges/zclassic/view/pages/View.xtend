@@ -280,9 +280,9 @@ class View {
 
     def private massActionFields(Entity it, String appName) '''
         <fieldset>
-            <label for="«appName.toFirstLower»Action"«IF !application.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
+            <label for="«appName.toFirstLower»Action"«IF !application.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
             «IF !application.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
             <select id="«appName.toFirstLower»Action" name="action"«IF !application.targets('1.3.5')» class="form-control"«ENDIF»>
                 <option value="">{gt text='Choose action'}</option>

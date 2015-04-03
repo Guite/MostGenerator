@@ -164,7 +164,7 @@ class InstallerView {
                         <label for="«appName»Activate">{gt text='Activate «appName» after installation?'}</label>
                         <input id="«appName»Activate" name="activate" type="checkbox" value="1" checked="checked" />
                     «ELSE»
-                        <div class="col-lg-offset-3 col-lg-9">
+                        <div class="col-sm-offset-3 col-sm-9">
                             <div class="checkbox">
                                 <label>
                                     <input id="«appName»Activate" name="activate" type="checkbox" value="1" checked="checked" /> {gt text='Activate «appName» after installation?'}
@@ -176,7 +176,7 @@ class InstallerView {
 
                 <div class="«IF targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
                 «IF !targets('1.3.5')»
-                    <div class="col-lg-offset-3 col-lg-9">
+                    <div class="col-sm-offset-3 col-sm-9">
                 «ENDIF»
                     {formbutton commandName='submit' __text='Submit' class='«IF targets('1.3.5')»z-bt-save«ELSE»btn btn-success«ENDIF»'}
                 «IF !targets('1.3.5')»
@@ -189,9 +189,9 @@ class InstallerView {
 
     def private tplInitStep2Var(Variable it, Application app) '''
         <div class="«IF app.targets('1.3.4')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«formatForCode(app.name + '_' + name)»"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='«name»'}</label>
+            <label for="«formatForCode(app.name + '_' + name)»"«IF !app.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='«name»'}</label>
             «IF !app.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <input id="«formatForCode(app.name + '_' + name)»" type="text" name="«name.formatForCode»" value="«value»" size="40"«IF !app.targets('1.3.5')» class="form-control"«ENDIF» />
             «IF !app.targets('1.3.5')»

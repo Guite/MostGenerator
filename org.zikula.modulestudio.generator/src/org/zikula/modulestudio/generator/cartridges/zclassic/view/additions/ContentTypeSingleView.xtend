@@ -27,9 +27,9 @@ class ContentTypeSingleView {
 
         <div style="margin-left: 80px">
             <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for='«appName.toFirstLower»ObjectType' __text='Object type'«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                {formlabel for='«appName.toFirstLower»ObjectType' __text='Object type'«IF !targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
                 «IF !targets('1.3.5')»
-                    <div class="col-lg-9">
+                    <div class="col-sm-9">
                 «ENDIF»
                     {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
                     {formdropdownlist id='«appName.toFirstLower»ObjectType' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}

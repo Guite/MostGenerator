@@ -120,9 +120,9 @@ class Categories {
                 {assign var='selectionMode' value='multiple'}
             {/if}
             <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for="category_`$registryId`" text=$categorySelectorLabel«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                {formlabel for="category_`$registryId`" text=$categorySelectorLabel«IF !targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
                 «IF !targets('1.3.5')»
-                    <div class="col-lg-9">
+                    <div class="col-sm-9">
                 «ENDIF»
                     {formcategoryselector id="category_`$registryId`" category=$registryCid
                                           dataField='categories' group=$groupName registryId=$registryId doctrine2=true

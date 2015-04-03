@@ -32,7 +32,7 @@ class SimpleFields {
     def formRow(DerivedField it, String groupSuffix, String idSuffix) '''
         «formLabel(groupSuffix, idSuffix)»
         «IF !isLegacyApp»
-            <div class="col-lg-9">
+            <div class="col-sm-9">
         «ENDIF»
         «formField(groupSuffix, idSuffix)»
         «IF !isLegacyApp»
@@ -64,7 +64,7 @@ class SimpleFields {
         «ENDIF»
     '''
 
-    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !isLegacyApp» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»«IF !isLegacyApp» data-toggle='tooltip'«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !isLegacyApp» col-sm-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»«IF !isLegacyApp» data-toggle='tooltip'«ENDIF»'''
 
     def private formLabelText(DerivedField it) {
         name.formatForDisplayCapital

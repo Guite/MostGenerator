@@ -260,9 +260,9 @@ class ExternalView {
                             {assign var='categorySelectorId' value='catids__'}
                             {assign var='categorySelectorSize' value='8'}
                         {/if}
-                        <label for="{$categorySelectorId}{$propertyName}"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{$categoryLabel}</label>
+                        <label for="{$categorySelectorId}{$propertyName}"«IF !app.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{$categoryLabel}</label>
                         «IF !app.targets('1.3.5')»
-                            <div class="col-lg-9">
+                            <div class="col-sm-9">
                         «ELSE»
                             &nbsp;
                         «ENDIF»
@@ -280,9 +280,9 @@ class ExternalView {
 
     def private findTemplatePasteAs(Entity it, Application app) '''
         <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«app.appName.toFirstLower»PasteAs"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Paste as'}:</label>
+            <label for="«app.appName.toFirstLower»PasteAs"«IF !app.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Paste as'}:</label>
             «IF !app.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <select id="«app.appName.toFirstLower»PasteAs" name="pasteas"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="1">{gt text='Link to the «name.formatForDisplay»'}</option>
@@ -296,9 +296,9 @@ class ExternalView {
 
     def private findTemplateObjectId(Entity it, Application app) '''
         <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«app.appName.toFirstLower»ObjectId"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='«name.formatForDisplayCapital»'}:</label>
+            <label for="«app.appName.toFirstLower»ObjectId"«IF !app.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='«name.formatForDisplayCapital»'}:</label>
             «IF !app.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <div id="«app.appName.toLowerCase»ItemContainer">
                     <ul>
@@ -322,9 +322,9 @@ class ExternalView {
 
     def private findTemplateSorting(Entity it, Application app) '''
         <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«app.appName.toFirstLower»Sort"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Sort by'}:</label>
+            <label for="«app.appName.toFirstLower»Sort"«IF !app.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Sort by'}:</label>
             «IF !app.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <select id="«app.appName.toFirstLower»Sort" name="sort" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»pull-left«ENDIF»" style="margin-right: 10px">
                 «FOR field : getDerivedFields»
@@ -348,9 +348,9 @@ class ExternalView {
 
     def private findTemplatePageSize(Entity it, Application app) '''
         <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«app.appName.toFirstLower»PageSize"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Page size'}:</label>
+            <label for="«app.appName.toFirstLower»PageSize"«IF !app.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Page size'}:</label>
             «IF !app.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 <select id="«app.appName.toFirstLower»PageSize" name="num" style="width: 50px; text-align: right"«IF !app.targets('1.3.5')» class="form-control"«ENDIF»>
                     <option value="5"{if $pager.itemsperpage eq 5} selected="selected"{/if}>5</option>
@@ -370,9 +370,9 @@ class ExternalView {
     def private findTemplateSearch(Entity it, Application app) '''
         «IF hasAbstractStringFieldsEntity»
             <div class="«IF app.targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                <label for="«app.appName.toFirstLower»SearchTerm"«IF !app.targets('1.3.5')» class="col-lg-3 control-label"«ENDIF»>{gt text='Search for'}:</label>
+                <label for="«app.appName.toFirstLower»SearchTerm"«IF !app.targets('1.3.5')» class="col-sm-3 control-label"«ENDIF»>{gt text='Search for'}:</label>
             «IF !app.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                     <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="q" style="width: 150px" class="«IF app.targets('1.3.5')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="margin-right: 10px" />
                     <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" style="width: 80px"«IF !app.targets('1.3.5')» class="btn btn-default"«ENDIF» />

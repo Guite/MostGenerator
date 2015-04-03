@@ -52,7 +52,7 @@ class Delete {
                         <legend>{gt text='Confirmation prompt'}</legend>
                         <div class="«IF app.targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
                         «IF !app.targets('1.3.5')»
-                            <div class="col-lg-offset-3 col-lg-9">
+                            <div class="col-sm-offset-3 col-sm-9">
                         «ENDIF»
                             {gt text='Delete' assign='deleteTitle'}
                             {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF app.targets('1.3.5')»z-btred«ELSE»btn btn-danger«ENDIF»'}

@@ -83,7 +83,7 @@ class Config {
 
                     <div class="«IF targets('1.3.5')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
                     «IF !targets('1.3.5')»
-                        <div class="col-lg-offset-3 col-lg-9">
+                        <div class="col-sm-offset-3 col-sm-9">
                     «ENDIF»
                         {formbutton commandName='save' __text='Update configuration' class='«IF targets('1.3.5')»z-bt-save«ELSE»btn btn-success«ENDIF»'}
                         {formbutton commandName='cancel' __text='Cancel' class='«IF targets('1.3.5')»z-bt-cancel«ELSE»btn btn-default«ENDIF»'}
@@ -156,9 +156,9 @@ class Config {
             «IF documentation !== null && documentation != ""»
                 {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
             «ENDIF»
-            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»«IF !container.application.targets('1.3.5')» col-lg-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
+            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»«IF !container.application.targets('1.3.5')» col-sm-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
             «IF !container.application.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 «inputField»
             «IF !container.application.targets('1.3.5')»

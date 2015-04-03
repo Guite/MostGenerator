@@ -145,9 +145,9 @@ class Relations {
         «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
         «val appnameLower = application.appName.formatForDB»
         {if $displayMode eq 'dropdown'}
-            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !app.targets('1.3.5')»
-                <div class="col-lg-9">
+                <div class="col-sm-9">
             «ENDIF»
                 {«appnameLower»RelationSelectorList «pluginAttributes»«IF !application.targets('1.3.5')» cssClass='form-control'«ENDIF»}
             «IF !app.targets('1.3.5')»

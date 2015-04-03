@@ -111,9 +111,9 @@ class Attributes {
         {formvolatile}
         {foreach key='fieldName' item='fieldValue' from=$attributes}
             <div class="«IF targets('1.3.5')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for="attributes`$fieldName`"' text=$fieldName«IF !targets('1.3.5')» cssClass='col-lg-3 control-label'«ENDIF»}
+                {formlabel for="attributes`$fieldName`"' text=$fieldName«IF !targets('1.3.5')» cssClass='col-sm-3 control-label'«ENDIF»}
                 «IF !targets('1.3.5')»
-                    <div class="col-lg-9">
+                    <div class="col-sm-9">
                 «ENDIF»
                     {formtextinput id="attributes`$fieldName`" group='attributes' dataField=$fieldName maxLength=255«IF !targets('1.3.5')» cssClass='form-control'«ENDIF»}
                 «IF !targets('1.3.5')»

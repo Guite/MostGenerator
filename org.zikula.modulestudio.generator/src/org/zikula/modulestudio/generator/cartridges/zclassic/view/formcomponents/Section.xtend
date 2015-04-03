@@ -125,7 +125,7 @@ class Section {
                 <legend>{gt text='Communication'}</legend>
                 <div class="«IF isLegacyApp»z-formrow«ELSE»form-group«ENDIF»">
                     {usergetvar name='uid' assign='uid'}
-                    {formlabel for='additionalNotificationRemarks' __text='Additional remarks'«IF !isLegacyApp» cssClass='col-lg-3 control-label'«ENDIF»}
+                    {formlabel for='additionalNotificationRemarks' __text='Additional remarks'«IF !isLegacyApp» cssClass='col-sm-3 control-label'«ENDIF»}
                     {gt text='Enter any additions about your changes' assign='fieldTitle'}
                     {if $mode eq 'create'}
                         {gt text='Enter any additions about your content' assign='fieldTitle'}
@@ -147,9 +147,9 @@ class Section {
             <fieldset>
                 <legend>{gt text='Return control'}</legend>
                 <div class="«IF isLegacyApp»z-formrow«ELSE»form-group«ENDIF»">
-                    {formlabel for='repeatCreation' __text='Create another item after save'«IF !isLegacyApp» cssClass='col-lg-3 control-label'«ENDIF»}
+                    {formlabel for='repeatCreation' __text='Create another item after save'«IF !isLegacyApp» cssClass='col-sm-3 control-label'«ENDIF»}
                 «IF !isLegacyApp»
-                    <div class="col-lg-9">
+                    <div class="col-sm-9">
                 «ENDIF»
                         {formcheckbox group='«name.formatForDB»' id='repeatCreation' readOnly=false}
                 «IF !isLegacyApp»
@@ -164,7 +164,7 @@ class Section {
         {* include possible submit actions *}
         <div class="«IF isLegacyApp»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
         «IF !isLegacyApp»
-            <div class="col-lg-offset-3 col-lg-9">
+            <div class="col-sm-offset-3 col-sm-9">
                 «submitActionsImpl»
             </div>
         «ELSE»
