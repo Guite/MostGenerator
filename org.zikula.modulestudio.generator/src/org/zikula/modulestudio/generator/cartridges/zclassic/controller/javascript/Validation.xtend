@@ -290,6 +290,7 @@ class Validation {
 
                 function «vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(val)
                 {
+                    var cmpVal, cmpVal2, result;
                     «val validateClass = 'validate-daterange-' + entity.name.formatForDB»
                     «val startFieldName = startDateField.name.formatForCode»
                     «val endFieldName = endDateField.name.formatForCode»
