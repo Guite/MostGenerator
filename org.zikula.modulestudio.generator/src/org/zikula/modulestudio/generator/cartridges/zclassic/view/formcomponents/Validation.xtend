@@ -11,6 +11,7 @@ import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
@@ -132,12 +133,16 @@ class Validation {
             AbstractIntegerField: ' validate-digits'
             DecimalField: ' validate-number'
             FloatField: ' validate-number'
-            AbstractStringField case it.nospace: ' validate-nospace'
             StringField case it.htmlcolour: ' validate-nospace validate-htmlcolour ' + entity.application.appName.formatForDB + 'ColourPicker'
             StringField case it.nospace: ' validate-nospace'
+            TextField case it.nospace: ' validate-nospace'
+            EmailField case it.nospace: ' validate-nospace validate-email'
             EmailField: ' validate-email'
+            UrlField case it.nospace: ' validate-nospace validate-url'
             UrlField: ' validate-url'
+            UploadField case it.nospace: ' validate-nospace validate-upload'
             UploadField: ' validate-upload'
+            ListField case it.nospace: ' validate-nospace'
             ListField: ''
             TimeField: fieldValidationCssClassAdditionsDefault
             AbstractDateField: '''«fieldValidationCssClassAdditionsDefault»«fieldValidationCssClassDateRange»'''
