@@ -113,14 +113,14 @@ class ContentTypeListView {
 
     def private editTemplateObjectType(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Object type' domain='module_«appName.formatForDB»' assign='objectTypeSelectorLabel'}
+            {gt text='Object type' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='objectTypeSelectorLabel'}
             {formlabel for='«appName.toFirstLower»ObjectType' text=$objectTypeSelectorLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
                 {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
                 {formdropdownlist id='«appName.toFirstLower»OjectType' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
-                <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='If you change this please save the element once to reload the parameters below.' domain='module_«appName.formatForDB»'}</span>
+                <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='If you change this please save the element once to reload the parameters below.' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»'}</span>
             «IF !targets('1.3.x')»
                 </div>
             «ENDIF»
@@ -140,10 +140,10 @@ class ContentTypeListView {
                 {/foreach}
                 <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
                     {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
-                    {gt text='Category' domain='module_«appName.formatForDB»' assign='categorySelectorLabel'}
+                    {gt text='Category' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='categorySelectorLabel'}
                     {assign var='selectionMode' value='single'}
                     {if $hasMultiSelection eq true}
-                        {gt text='Categories' domain='module_«appName.formatForDB»' assign='categorySelectorLabel'}
+                        {gt text='Categories' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='categorySelectorLabel'}
                         {assign var='selectionMode' value='multiple'}
                     {/if}
                     {formlabel for="«appName.toFirstLower»CatIds`$propertyName`" text=$categorySelectorLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
@@ -151,7 +151,7 @@ class ContentTypeListView {
                         <div class="col-sm-9">
                     «ENDIF»
                         {formdropdownlist id="«appName.toFirstLower»CatIds`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
-                        <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='This is an optional filter.' domain='module_«appName.formatForDB»'}</span>
+                        <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='This is an optional filter.' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»'}</span>
                     «IF !targets('1.3.x')»
                         </div>
                     «ENDIF»
@@ -164,17 +164,17 @@ class ContentTypeListView {
 
     def private editTemplateSorting(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Sorting' domain='module_«appName.formatForDB»' assign='sortingLabel'}
+            {gt text='Sorting' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingLabel'}
             {formlabel text=$sortingLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             <div«IF !targets('1.3.x')» class="col-sm-9"«ENDIF»>
                 {formradiobutton id='«appName.toFirstLower»SortRandom' value='random' dataField='sorting' group='data' mandatory=true}
-                {gt text='Random' domain='module_«appName.formatForDB»' assign='sortingRandomLabel'}
+                {gt text='Random' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingRandomLabel'}
                 {formlabel for='«appName.toFirstLower»SortRandom' text=$sortingRandomLabel}
                 {formradiobutton id='«appName.toFirstLower»SortNewest' value='newest' dataField='sorting' group='data' mandatory=true}
-                {gt text='Newest' domain='module_«appName.formatForDB»' assign='sortingNewestLabel'}
+                {gt text='Newest' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingNewestLabel'}
                 {formlabel for='«appName.toFirstLower»SortNewest' text=$sortingNewestLabel}
                 {formradiobutton id='«appName.toFirstLower»SortDefault' value='default' dataField='sorting' group='data' mandatory=true}
-                {gt text='Default' domain='module_«appName.formatForDB»' assign='sortingDefaultLabel'}
+                {gt text='Default' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingDefaultLabel'}
                 {formlabel for='«appName.toFirstLower»SortDefault' text=$sortingDefaultLabel}
             </div>
         </div>
@@ -182,7 +182,7 @@ class ContentTypeListView {
 
     def private editTemplateAmount(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Amount' domain='module_«appName.formatForDB»' assign='amountLabel'}
+            {gt text='Amount' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='amountLabel'}
             {formlabel for='«appName.toFirstLower»Amount' text=$amountLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
@@ -196,7 +196,7 @@ class ContentTypeListView {
 
     def private editTemplateTemplate(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Template' domain='module_«appName.formatForDB»' assign='templateLabel'}
+            {gt text='Template' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='templateLabel'}
             {formlabel for='«appName.toFirstLower»Template' text=$templateLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
@@ -209,13 +209,13 @@ class ContentTypeListView {
         </div>
 
         <div id="customTemplateArea" class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»"«IF !targets('1.3.x')» data-switch="«appName.toFirstLower»Template" data-switch-value="custom"«ENDIF»>
-            {gt text='Custom template' domain='module_«appName.formatForDB»' assign='customTemplateLabel'}
+            {gt text='Custom template' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='customTemplateLabel'}
             {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
                 {formtextinput id='«appName.toFirstLower»CustomTemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
-                <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objectType]_display.tpl</em></span>
+                <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»'}: <em>itemlist_[objectType]_display.tpl</em></span>
             «IF !targets('1.3.x')»
                 </div>
             «ENDIF»
@@ -224,7 +224,7 @@ class ContentTypeListView {
 
     def private editTemplateFilter(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group«ENDIF»">
-            {gt text='Filter (expert option)' domain='module_«appName.formatForDB»' assign='filterLabel'}
+            {gt text='Filter (expert option)' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='filterLabel'}
             {formlabel for='«appName.toFirstLower»Filter' text=$filterLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
@@ -232,11 +232,11 @@ class ContentTypeListView {
                 {formtextinput id='«appName.toFirstLower»Filter' dataField='filter' group='data' mandatory=false maxLength=255«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
                 «IF targets('1.3.x')»
                     <span class="z-sub z-formnote">
-                        ({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)
+                        ({gt text='Syntax examples' domain='module_«appName.formatForDB»'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)
                     </span>
                 «ELSE»
                     <span class="help-block">
-                        <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples'}</a>
+                        <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples' domain='«appName.formatForDB»'}</a>
                     </span>
                 «ENDIF»
             «IF !targets('1.3.x')»

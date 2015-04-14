@@ -203,7 +203,7 @@ class Views {
         «ENDIF»
 
         {* initialise additional gettext domain for translations within javascript *}
-        {pageaddvar name='jsgettext' value='module_«appName.formatForDB»_js:«appName»'}
+        {pageaddvar name='jsgettext' value='«IF targets('1.3.5')»module_«ENDIF»«appName.formatForDB»_js:«appName»'}
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «IF controller instanceof AdminController»

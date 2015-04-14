@@ -455,7 +455,7 @@ class DisplayFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «vendorAndName»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Success', 'module_«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                        «vendorAndName»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                     }*/
 
                     idSuffix = idSuffix.toLowerCase();
@@ -470,7 +470,7 @@ class DisplayFunctions {
                 })«/*.fail(function(jqXHR, textStatus) {
                     // nothing to do yet
                     var idSuffix = fieldName + '_' + itemId;
-                    «vendorAndName)»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                    «vendorAndName)»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
                 })*/»;
             «ENDIF»
         }

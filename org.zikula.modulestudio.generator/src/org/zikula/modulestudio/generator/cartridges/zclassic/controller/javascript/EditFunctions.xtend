@@ -248,7 +248,7 @@ class EditFunctions {
                     $('#' + fieldName).val('');
                 }
                 if ($('#' + fieldName + 'cal').size() > 0) {
-                    $('#' + fieldName + 'cal').html(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
+                    $('#' + fieldName + 'cal').html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
                 }
             «ENDIF»
         }
@@ -328,7 +328,7 @@ class EditFunctions {
                 «IF targets('1.3.x')»
                     Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
                 «ELSE»
-                    «vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', 'module_«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
+                    «vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', '«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
                 «ENDIF»
             }
 
@@ -978,7 +978,7 @@ class EditFunctions {
                                     autoClose: 3 // time in seconds
                                 });
                             «ELSE»
-                                «vendorAndName»SimpleAlert($('.«appName.toLowerCase»-form'), Zikula.__('Information', 'module_«appName.formatForDB»_js'), Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
+                                «vendorAndName»SimpleAlert($('.«appName.toLowerCase»-form'), Zikula.__('Information', '«appName.formatForDB»_js'), Zikula.__('Action has been completed.', '«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
                             «ENDIF»
                         }
                     }

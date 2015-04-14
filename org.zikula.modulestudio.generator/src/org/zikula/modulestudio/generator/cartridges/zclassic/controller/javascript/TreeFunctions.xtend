@@ -95,7 +95,7 @@ class TreeFunctions {
         contextMenu = liRef.attr('id') + 'DropDownMenu';
 
         contextMenu.append(
-            listItem = $('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Basic actions', 'module_«appName.formatForDB»_js'))
+            listItem = $('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Basic actions', '«appName.formatForDB»_js'))
         );
 
         if (hasDisplay === true) {
@@ -105,7 +105,7 @@ class TreeFunctions {
                         .attr('href', Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=display&id=' + currentNodeId)
                         «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
                         .append($('<i>', class: 'fa fa-eye' }))
-                        .append(Zikula.__('Display', 'module_«appName.formatForDB»_js'))
+                        .append(Zikula.__('Display', '«appName.formatForDB»_js'))
                 )
             );
         }
@@ -116,7 +116,7 @@ class TreeFunctions {
                         .attr('href', Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=edit&id=' + currentNodeId)
                         «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
                         .append($('<i>', class: 'fa fa-pencil-square-o' }))
-                        .append(Zikula.__('Edit', 'module_«appName.formatForDB»_js'))
+                        .append(Zikula.__('Edit', '«appName.formatForDB»_js'))
                 )
             );
         }
@@ -125,7 +125,7 @@ class TreeFunctions {
                 $('<a>', { role: 'menuitem', tabindex: '-1', })
                     .attr('href', '#')
                     .append($('<i>', class: 'fa fa-plus' }))
-                    .append(Zikula.__('Add child node', 'module_«appName.formatForDB»_js'))
+                    .append(Zikula.__('Add child node', '«appName.formatForDB»_js'))
                     .click(function (evt) {
                         evt.preventDefault();
                         «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
@@ -137,14 +137,14 @@ class TreeFunctions {
                 $('<a>', { role: 'menuitem', tabindex: '-1', })
                     .attr('href', '#')
                     .append($('<i>', class: 'fa fa-trash-o' }))
-                    .append(Zikula.__('Delete node', 'module_«appName.formatForDB»_js'))
+                    .append(Zikula.__('Delete node', '«appName.formatForDB»_js'))
                     .click(function (evt) {
                         var confirmQuestion;
 
                         evt.preventDefault();
-                        confirmQuestion = Zikula.__('Do you really want to remove this node?', 'module_«appName.formatForDB»_js');
+                        confirmQuestion = Zikula.__('Do you really want to remove this node?', '«appName.formatForDB»_js');
                         if (!liRef.hasClass('z-tree-leaf')) {
-                            confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?', 'module_«appName.formatForDB»_js');
+                            confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?', '«appName.formatForDB»_js');
                         }
                         if (window.confirm(confirmQuestion) !== false) {
                             «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
@@ -157,7 +157,7 @@ class TreeFunctions {
             listItem = $('<li>', { role: 'presentation', class: 'divider' })
         );
         contextMenu.append(
-            listItem = $('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Sorting', 'module_«appName.formatForDB»_js'))
+            listItem = $('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Sorting', '«appName.formatForDB»_js'))
         );
 
         if (!isRoot && !liRef.is(':first-child')) { // has previous sibling
@@ -166,7 +166,7 @@ class TreeFunctions {
                     $('<a>', { role: 'menuitem', tabindex: '-1', })
                         .attr('href', '#')
                         .append($('<i>', class: 'fa fa-angle-up' }))
-                        .append(Zikula.__('Move up', 'module_«appName.formatForDB»_js'))
+                        .append(Zikula.__('Move up', '«appName.formatForDB»_js'))
                         .click(function (evt) {
                             evt.preventDefault();
                             «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
@@ -181,7 +181,7 @@ class TreeFunctions {
                     $('<a>', { role: 'menuitem', tabindex: '-1', })
                         .attr('href', '#')
                         .append($('<i>', class: 'fa fa-angle-down' }))
-                        .append(Zikula.__('Move down', 'module_«appName.formatForDB»_js'))
+                        .append(Zikula.__('Move down', '«appName.formatForDB»_js'))
                         .click(function (evt) {
                             evt.preventDefault();
                             «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
@@ -308,7 +308,7 @@ class TreeFunctions {
                     «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                     «ELSE»
-                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
+                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Invalid node id', '«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
                     «ENDIF»
                 }
                 params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + currentNodeId;
@@ -351,12 +351,12 @@ class TreeFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Success', 'module_«appName.formatForDB»_js'), data.message, 'treeAjaxDoneAlert', 'success');
+                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'treeAjaxDoneAlert', 'success');
                     }*/
 
                     window.location.reload();
                 }).fail(function(jqXHR, textStatus) {
-                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
                 });
             «ENDIF»
         }
@@ -443,7 +443,7 @@ class TreeFunctions {
                     return true;
                 }).fail(function(jqXHR, textStatus) {
                     var treeName = 'itemTree' + rootId;
-                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', 'module_«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', 'module_«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
 
                     window.location.reload();
                     return false;
