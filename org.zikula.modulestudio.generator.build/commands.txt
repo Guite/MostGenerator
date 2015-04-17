@@ -18,7 +18,7 @@ perform --properties "refProduct/de.guite.modulestudio.build/buckminster.propert
 build
 
 # run tests and code coverage (buckminster emma --help)
-emma --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/AllTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/alltests.xml" --exec "${WORKSPACE}output/test_results/coverage/alltests.exec" --stderr --stdout
+#emma --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/AllTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/alltests.xml" --exec "${WORKSPACE}output/test_results/coverage/alltests.exec" --stderr --stdout
 
 # build feature p2 repository
 perform --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#site.p2"
