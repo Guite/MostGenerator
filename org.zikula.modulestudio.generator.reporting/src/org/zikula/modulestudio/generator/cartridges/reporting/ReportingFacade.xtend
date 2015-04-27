@@ -118,7 +118,7 @@ class ReportingFacade {
      *
      * @param path The given path.
      */
-    def setOutputPath(String path) {
+    def void setOutputPath(String path) {
         outputPath = path
     }
 
@@ -127,7 +127,7 @@ class ReportingFacade {
      *
      * @param path The given path.
      */
-    def setModelPath(String path) {
+    def void setModelPath(String path) {
         modelPath = path
     }
 }

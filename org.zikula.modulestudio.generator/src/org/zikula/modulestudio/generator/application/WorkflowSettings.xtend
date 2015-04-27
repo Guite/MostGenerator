@@ -2,14 +2,9 @@ package org.zikula.modulestudio.generator.application
 
 import java.io.File
 import java.util.ArrayList
-import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.Path
-import org.eclipse.core.runtime.Platform
-import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint
-import org.eclipse.gmf.runtime.notation.Diagram
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.zikula.modulestudio.generator.cartridges.reporting.ReportFilenameFilter
+import org.zikula.modulestudio.generator.cartridges.reporting.ReportingServices
 
 /**
  * This class collects required workflow properties.
@@ -49,12 +44,6 @@ class WorkflowSettings {
     String modelDestinationPath = null
 
     /**
-     * Reference to current diagram.
-     */
-    @Accessors
-    Diagram diagram = null
-
-    /**
      * Name of the vendor of the application instance described by the model.
      */
     @Accessors
@@ -71,12 +60,6 @@ class WorkflowSettings {
      */
     @Accessors
     String appVersion = ''
-
-    /**
-     * Preference hint for reporting.
-     */
-    @Accessors
-    PreferencesHint diagramPreferencesHint = null
 
     /**
      * The progress monitor.
@@ -125,23 +108,8 @@ class WorkflowSettings {
      *             In case something goes wrong.
      */
     def private final collectAvailableReports() throws Exception {
-        var resources = FileLocator.findEntries(
-                Platform.getBundle(Activator.PLUGIN_ID), new Path('/src' //$NON-NLS-1$
-                        + reportPath))
-        val resourcesExported = FileLocator.findEntries(
-                Platform.getBundle(Activator.PLUGIN_ID), new Path(reportPath))
-        if (resources.empty) {
-            resources = resourcesExported
-        }
-
-        if (resources.empty) {
-            throw new Exception('Could not find report directory.')
-        }
-
-        val reportDir = new File(FileLocator.toFileURL(resources.head).toURI)
-        for (file : reportDir.list(new ReportFilenameFilter)) {
-            availableReports.add(file.replace('.rptdesign', '')) //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        val reportingService = new ReportingServices
+        availableReports = reportingService.collectAvailableReports(reportPath)
     }
 
     /**
