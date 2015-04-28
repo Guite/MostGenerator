@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.reporting
 
 import java.io.File
-import java.util.ArrayList
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
@@ -18,7 +17,7 @@ class ReportingServices {
      * @throws Exception
      *             In case something goes wrong.
      */
-    def collectAvailableReports(String reportPath) throws Exception {
+    def static collectAvailableReports(String reportPath) throws Exception {
         var resources = FileLocator.findEntries(
                 Platform.getBundle(Activator.PLUGIN_ID), new Path('/src' //$NON-NLS-1$
                         + reportPath))
@@ -32,7 +31,7 @@ class ReportingServices {
             throw new Exception('Could not find report directory.')
         }
 
-        var reports = new ArrayList<String>
+        var reports = newArrayList
         val reportDir = new File(FileLocator.toFileURL(resources.head).toURI)
         for (file : reportDir.list(new ReportFilenameFilter)) {
             reports += file.replace('.rptdesign', '') //$NON-NLS-1$ //$NON-NLS-2$

@@ -69,8 +69,8 @@ class ReportingFacade {
      */
     def startExport(String reportPath, String outputName) {
         try {
-            singleExport(reportPath, outputName, 'html')
-            singleExport(reportPath, outputName, 'pdf')
+            singleExport(reportPath, outputName, 'html') //$NON-NLS-1$
+            singleExport(reportPath, outputName, 'pdf') //$NON-NLS-1$
         } catch (Exception ex) {
             ex.printStackTrace
         }
@@ -94,7 +94,7 @@ class ReportingFacade {
                 'file:' + (outputPath + '/diagrams/')) //$NON-NLS-1$ //$NON-NLS-2$
 
         var RenderOption renderOptions = new RenderOption
-        renderOptions.outputFileName = outputPath + '/reporting/' + outputName + '.' + fileExtension //$NON-NLS-1$
+        renderOptions.outputFileName = outputPath + '/reporting/' + outputName + '.' + fileExtension //$NON-NLS-1$ $NON-NLS-2$
         renderOptions.outputFormat = fileExtension
         task.renderOption = renderOptions
         task.run
