@@ -6,7 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 /**
  * Represents an outlet of the generator.
  */
-public class Outlet {
+class Outlet {
 
     /**
      * Name of the outlet.
