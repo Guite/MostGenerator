@@ -108,8 +108,7 @@ class WorkflowSettings {
      *             In case something goes wrong.
      */
     def private final collectAvailableReports() throws Exception {
-        val reportingService = new ReportingServices
-        availableReports = reportingService.collectAvailableReports(reportPath)
+        availableReports = ReportingServices.collectAvailableReports(reportPath)
     }
 
     /**
