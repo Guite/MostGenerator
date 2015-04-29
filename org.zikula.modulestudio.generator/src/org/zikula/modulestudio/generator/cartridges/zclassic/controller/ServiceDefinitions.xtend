@@ -79,24 +79,24 @@ class ServiceDefinitions {
     def private servicesUploadHandler(Application it) '''
         # Upload handler class
         «modPrefix».upload_handler:
-            class: "«appNamespace»\UploadHandler"
+            class: "«appNamespace.replace('\\', '\\\\')»\\UploadHandler"
     '''
 
     def private servicesEntityFactories(Application it) '''
         # Entity factory classes
         «FOR entity : entities»
             «modPrefix».«entity.name.formatForCode»_factory:
-                class: "«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\Factory\«entity.name.formatForCodeCapital»Factory"
+                class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\Factory\\«entity.name.formatForCodeCapital»Factory"
                 arguments:
                     objectManager: "@doctrine.orm.entity_manager"
-                    className: «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Entity\«entity.name.formatForCodeCapital»Entity
+                    className: «vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity
 
         «ENDFOR»
     '''
 
     def private servicesEventSubscriber(Application it) '''
         # Event subscriber and listener classes
-        «val nsBase = appNamespace + '\\Listener\\'»
+        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Listener\\\\'»
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
                 class: "«nsBase»«className»Listener"
@@ -108,7 +108,7 @@ class ServiceDefinitions {
 
     def private servicesHelper(Application it) '''
         # Util classes
-        «val nsBase = appNamespace + '\\Util\\'»
+        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Util\\\\'»
         «FOR className : getHelperNames»
             «modPrefix».«className.toLowerCase»_helper:
                 class: "«nsBase»«className»Util"
