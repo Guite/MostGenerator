@@ -120,7 +120,7 @@ class ServiceDefinitions {
     def private servicesLogger(Application it) '''
         # Log processor
         «modPrefix».log.processor:
-            class: "Monolog\Processor\PsrLogMessageProcessor"
+            class: "Monolog\\Processor\\PsrLogMessageProcessor"
             tags:
                 - { name: monolog.processor }
     '''
