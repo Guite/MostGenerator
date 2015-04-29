@@ -57,9 +57,9 @@ class Ajax {
         «IF !userFields.empty»
             «FOR userField : userFields»
 
-                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users()«IF !app.targets('1.3.x')»Action(Request $request)«ENDIF»
+                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users«IF app.targets('1.3.x')»()«ELSE»Action(Request $request)«ENDIF»
                 {
-                    return $this->getCommonUsersList«IF application.targets('1.3.x')»()«ELSE»Action($request)«ENDIF»;
+                    return $this->getCommonUsersList«IF app.targets('1.3.x')»()«ELSE»Action($request)«ENDIF»;
                 }
             «ENDFOR»
 
@@ -1084,7 +1084,7 @@ class Ajax {
         «getCommonUsersListDocBlock(false)»
         «getCommonUsersListSignature»
         {
-            return parent::return $this->getCommonUsersListAction($request);
+            return parent::getCommonUsersListAction($request);
         }
     '''
 
