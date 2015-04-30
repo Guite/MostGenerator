@@ -203,7 +203,7 @@ class DisplayFunctions {
                     return;
                 }
             «ELSE»
-                if ($('#«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').size() < 1) {
+                if ($('#«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').length < 1) {
                     return;
                 }
             «ENDIF»
@@ -222,16 +222,16 @@ class DisplayFunctions {
                     $('num').observe('change', «initQuickNavigationSubmitCall»);
                 }
             «ELSE»
-                if ($('#catid').size() > 0) {
+                if ($('#catid').length > 0) {
                     $('#catid').change(«initQuickNavigationSubmitCall»);
                 }
-                if ($('#sortby').size() > 0) {
+                if ($('#sortby').length > 0) {
                     $('#sortby').change(«initQuickNavigationSubmitCall»);
                 }
-                if ($('#sortdir').size() > 0) {
+                if ($('#sortdir').length > 0) {
                     $('#sortdir').change(«initQuickNavigationSubmitCall»);
                 }
-                if ($('#num').size() > 0) {
+                if ($('#num').length > 0) {
                     $('#num').change(«initQuickNavigationSubmitCall»);
                 }
             «ENDIF»
@@ -294,7 +294,7 @@ class DisplayFunctions {
                 $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.application)»);
             }
         «ELSE»
-            if ($('#«name.formatForCode»').size() > 0) {
+            if ($('#«name.formatForCode»').length > 0) {
                 $('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application)»);
             }
         «ENDIF»
@@ -307,7 +307,7 @@ class DisplayFunctions {
                 $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(application)»);
             }
         «ELSE»
-            if ($('#«sourceAliasName»').size() > 0) {
+            if ($('#«sourceAliasName»').length > 0) {
                 $('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(application)»);
             }
         «ENDIF»
@@ -393,7 +393,7 @@ class DisplayFunctions {
                     «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
                 }).removeClassName('z-hide');
             «ELSE»
-                if ($('#toggle' + idSuffix).size() < 1) {
+                if ($('#toggle' + idSuffix).length < 1) {
                     return;
                 }
                 $('#toggle' + idSuffix).click( function() {
