@@ -352,7 +352,7 @@ class DisplayFunctions {
                 );
             «ELSE»
                 newWindowId = containerElem.attr('id') + 'Dialog';
-                $('<div id="' + newWindowId + "></div>')
+                $('<div id="' + newWindowId + '"></div>')
                     .append($('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
                     .dialog({
                         autoOpen: false,

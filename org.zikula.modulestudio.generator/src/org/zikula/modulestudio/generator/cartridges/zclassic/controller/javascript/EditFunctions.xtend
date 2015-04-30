@@ -121,7 +121,7 @@ class EditFunctions {
                             userMap[fieldName] = {};
 
                             // Retrieve data from server using "query" parameter as it contains the search string entered by the user
-                            $('#' + fieldName + 'Indicator').removeClass('hidden')
+                            $('#' + fieldName + 'Indicator').removeClass('hidden');
                             $.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
 
                                 if (data.length > 0) {
@@ -136,7 +136,7 @@ class EditFunctions {
                                     $('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
                                 }
 
-                                $('#' + fieldName + 'Indicator').addClass('hidden')
+                                $('#' + fieldName + 'Indicator').addClass('hidden');
                             });
 
                             // call process() function with dropdown array
@@ -150,7 +150,7 @@ class EditFunctions {
                             user = userMap[fieldName][item];
 
                             html = '<div class="typeahead">';
-                            html += '<div class="media"><a class="pull-left" href="#"><img src="' + user.avatar + '" /></a>'
+                            html += '<div class="media"><a class="pull-left" href="#"><img src="' + user.avatar + '" /></a>';
                             html += '<div class="media-body">';
                             html += '<p class="media-heading">' + user.uname + '</p>';
                             html += '</div>';
@@ -492,7 +492,7 @@ class EditFunctions {
                 newWindow.openHandler();
             «ELSE»
                 newWindowId = containerElem.attr('id') + 'Dialog';
-                $('<div id="' + newWindowId + "></div>')
+                $('<div id="' + newWindowId + '"></div>')
                     .append($('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
                     .dialog({
                         autoOpen: false,
@@ -730,7 +730,7 @@ class EditFunctions {
 
     def private initRelatedItemsForm(Application it) '''
         /**
-         * Initialise a relation field section with autocompletion and optional edit capabilities
+         * Initialises a relation field section with autocompletion and optional edit capabilities.
          */
         function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
@@ -818,8 +818,8 @@ class EditFunctions {
                         listItemMap[idPrefix] = {};
 
                         // Retrieve data from server using "query" parameter as it contains the search string entered by the user
-                        $('#' + idPrefix + 'Indicator').removeClass('hidden')
-                        $.getJSON( acUrl, { fragment: query }), function( data ) {
+                        $('#' + idPrefix + 'Indicator').removeClass('hidden');
+                        $.getJSON( acUrl, { fragment: query }, function( data ) {
 
                             if (data.length > 0) {
                                 $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
@@ -833,7 +833,7 @@ class EditFunctions {
                                 $('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
                             }
 
-                            $('#' + idPrefix + 'Indicator').addClass('hidden')
+                            $('#' + idPrefix + 'Indicator').addClass('hidden');
                         });
 
                         // call process() function with dropdown array
@@ -847,7 +847,7 @@ class EditFunctions {
                         listItem = listItemMap[idPrefix][item];
 
                         html = '<div class="typeahead">';
-                        html += '<div class="media"><a class="pull-left" href="#"><img src="' + listItem.image + '" /></a>'
+                        html += '<div class="media"><a class="pull-left" href="#"><img src="' + listItem.image + '" /></a>';
                         html += '<div class="media-body">';
                         html += '<p class="media-heading">' + listItem.title + '</p>';
                         html += listItem.description;
@@ -949,7 +949,7 @@ class EditFunctions {
 
     def private closeWindowFromInside(Application it) '''
         /**
-         * Closes an iframe from the document displayed in it
+         * Closes an iframe from the document displayed in it.
          */
         function «vendorAndName»CloseWindowFromInside(idPrefix, itemId)
         {

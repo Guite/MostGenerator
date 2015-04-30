@@ -64,7 +64,7 @@ class SimpleFields {
         «ENDIF»
     '''
 
-    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !isLegacyApp» col-sm-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»«IF !isLegacyApp» data-toggle='tooltip'«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.application.appName.toLowerCase»-form-tooltips«ENDIF»«IF !isLegacyApp» col-sm-3 control-label«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»'''
 
     def private formLabelText(DerivedField it) {
         name.formatForDisplayCapital

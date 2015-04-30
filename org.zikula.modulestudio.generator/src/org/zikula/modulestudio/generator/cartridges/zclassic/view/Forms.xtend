@@ -412,8 +412,8 @@ class Forms {
                     event.stopPropagation();
                 } else {
                     // hide form buttons to prevent double submits by accident
-                    formButtons.each(function (btn) {
-                        btn.addClass('hidden');
+                    formButtons.each(function (index) {
+                        $(this).addClass('hidden');
                     });
                 }
 
@@ -438,16 +438,16 @@ class Forms {
                             document.getElementById('{{$__formid}}').submit();
                         }
                     {{/if}}
+
+                    formButtons = $('#{{$__formid}} .form-buttons input');
     
-                    formButtons = $('#{{$__formid}}').find('div.form-buttons input');
-    
-                    formButtons.each(function (elem) {
-                        if (elem.attr('id') != 'btnCancel') {
-                            elem.click(handleFormButton);
+                    formButtons.each(function (index) {
+                        if ($(this).attr('id') != 'btnCancel') {
+                            $(this).click(handleFormButton);
                         }
                     });
 
-                    $('.«app.appName.toLowerCase»-form-tooltips').tooltip();
+                    $('#{{$__formid}} label').tooltip();
                     «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
                 });
             })(jQuery);
