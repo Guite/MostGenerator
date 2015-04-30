@@ -282,7 +282,7 @@ class View {
         <fieldset>
             <label for="«appName.toFirstLower»Action"«IF !application.targets('1.3.x')» class="col-sm-3 control-label"«ENDIF»>{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
             «IF !application.targets('1.3.x')»
-                <div class="col-sm-9">
+                <div class="col-sm-6">
             «ENDIF»
             <select id="«appName.toFirstLower»Action" name="action"«IF !application.targets('1.3.x')» class="form-control"«ENDIF»>
                 <option value="">{gt text='Choose action'}</option>
@@ -312,7 +312,13 @@ class View {
             «IF !application.targets('1.3.x')»
                 </div>
             «ENDIF»
-            <input type="submit" value="{gt text='Submit'}" />
+            «IF application.targets('1.3.x')»
+                <input type="submit" value="{gt text='Submit'}" />
+            «ELSE»
+                <div class="col-sm-3">
+                    <input type="submit" value="{gt text='Submit'}" class="btn btn-default" />
+                </div>
+            «ENDIF»
         </fieldset>
     '''
 
