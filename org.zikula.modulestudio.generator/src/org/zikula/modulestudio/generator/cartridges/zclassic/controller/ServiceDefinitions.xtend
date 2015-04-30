@@ -89,7 +89,7 @@ class ServiceDefinitions {
                 class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\Factory\\«entity.name.formatForCodeCapital»Factory"
                 arguments:
                     objectManager: "@doctrine.orm.entity_manager"
-                    className: «vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity
+                    className: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"
 
         «ENDFOR»
     '''
