@@ -49,7 +49,7 @@ class ViewQuickNavForm {
                 <input type="hidden" name="own" value="{$own|default:0}" />
                 {gt text='All' assign='lblDefault'}
                 «formFields»
-                <input type="submit" name="updateview" id="quicknavSubmit" value="{gt text='OK'}"«IF !application.targets('1.3.x')» class="btn btn-default"«ENDIF» />
+                <input type="submit" name="updateview" id="quicknavSubmit" value="{gt text='OK'}"«IF !application.targets('1.3.x')» class="btn btn-default btn-sm"«ENDIF» />
             </fieldset>
         </form>
 

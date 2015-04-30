@@ -284,7 +284,7 @@ class View {
             «IF !application.targets('1.3.x')»
                 <div class="col-sm-6">
             «ENDIF»
-            <select id="«appName.toFirstLower»Action" name="action"«IF !application.targets('1.3.x')» class="form-control"«ENDIF»>
+            <select id="«appName.toFirstLower»Action" name="action"«IF !application.targets('1.3.x')» class="form-control input-sm"«ENDIF»>
                 <option value="">{gt text='Choose action'}</option>
             «IF workflow != EntityWorkflowType::NONE»
                 «IF workflow == EntityWorkflowType::ENTERPRISE»
@@ -316,7 +316,7 @@ class View {
                 <input type="submit" value="{gt text='Submit'}" />
             «ELSE»
                 <div class="col-sm-3">
-                    <input type="submit" value="{gt text='Submit'}" class="btn btn-default" />
+                    <input type="submit" value="{gt text='Submit'}" class="btn btn-default btn-sm" />
                 </div>
             «ENDIF»
         </fieldset>
