@@ -177,7 +177,7 @@ class ControllerLayer {
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             «ENDIF»
-            «IF hasActions('main') || hasActions('view') || hasActions('delete')»
+            «IF hasActions('index') || hasActions('view') || hasActions('delete')»
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
             «IF isAjaxController»
@@ -191,7 +191,7 @@ class ControllerLayer {
             «ENDIF»
             use ModUtil;
             use SecurityUtil;
-            «IF (hasActions('view') && isAdminController) || hasActions('main') || hasActions('delete')»
+            «IF (hasActions('view') && isAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
             use UserUtil;
@@ -219,7 +219,7 @@ class ControllerLayer {
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             «ENDIF»
-            «IF hasActions('main') || hasActions('view') || hasActions('delete')»
+            «IF hasActions('index') || hasActions('view') || hasActions('delete')»
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
@@ -233,7 +233,7 @@ class ControllerLayer {
             «ENDIF»
             use ModUtil;
             use SecurityUtil;
-            «IF (hasActions('view') && app.hasAdminController) || hasActions('main') || hasActions('delete')»
+            «IF (hasActions('view') && app.hasAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
             use UserUtil;
