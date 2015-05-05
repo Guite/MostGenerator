@@ -131,7 +131,7 @@ class Forms {
                 </div>
             «ELSE»
                 <h3>
-                    <span class="icon icon-{$adminPageIcon}"></span>
+                    <span class="fa fa-{$adminPageIcon}"></span>
                     {$templateTitle}
                 </h3>
             «ENDIF»
