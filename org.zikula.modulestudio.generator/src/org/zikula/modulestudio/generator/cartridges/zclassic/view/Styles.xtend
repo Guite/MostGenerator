@@ -28,6 +28,7 @@ class Styles {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         cssPrefix = appName.toLowerCase
+
         var fileName = 'style.css'
         if (!shouldBeSkipped(getAppCssPath + fileName)) {
             if (shouldBeMarked(getAppCssPath + fileName)) {
@@ -35,6 +36,7 @@ class Styles {
             }
             fsa.generateFile(getAppCssPath + fileName, appStyles)
         }
+
         fileName = 'finder.css'
         if (generateExternalControllerAndFinder && !shouldBeSkipped(getAppCssPath + fileName)) {
             if (shouldBeMarked(getAppCssPath + fileName)) {
@@ -96,6 +98,7 @@ class Styles {
         «ENDIF»
         «validationStyles»
         «autoCompletion»
+        «viewAdditions»
         «viewFilterForm»
         «IF interactiveInstallation»
 
@@ -256,6 +259,18 @@ class Styles {
                 «ENDIF»
             «ENDIF»
 
+        «ENDIF»
+    '''
+
+    def private viewAdditions(Application it) '''
+        «IF !targets('1.3.x')»
+        «IF !controllers.filter[hasActions('view')].empty»
+            /** fix dropdown visibility inside responsive tables */
+            div.«cssPrefix»-view .table-responsive {
+                overflow-x: visible !important;
+                overflow-y: visible !important;
+            }
+        «ENDIF»
         «ENDIF»
     '''
 
