@@ -267,8 +267,7 @@ class Styles {
         «IF !controllers.filter[hasActions('view')].empty»
             /** fix dropdown visibility inside responsive tables */
             div.«cssPrefix»-view .table-responsive {
-                overflow-x: visible !important;
-                overflow-y: visible !important;
+                min-height: 300px;
             }
         «ENDIF»
         «ENDIF»
