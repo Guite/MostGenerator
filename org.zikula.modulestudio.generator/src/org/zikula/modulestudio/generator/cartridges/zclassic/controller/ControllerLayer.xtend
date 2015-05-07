@@ -717,9 +717,9 @@ class ControllerLayer {
                     «val userController = application.getAllUserControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                         «IF app.targets('1.3.x')»
-                            $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails14»),«/* end quote missing here on purpose */»
-                        «ELSE»
                             $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails13»),
+                        «ELSE»
+                            $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
@@ -730,9 +730,9 @@ class ControllerLayer {
                     «val adminController = application.getAllAdminControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         «IF app.targets('1.3.x')»
-                            $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails14»),«/* end quote missing here on purpose */»
-                        «ELSE»
                             $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails13»),
+                        «ELSE»
+                            $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
