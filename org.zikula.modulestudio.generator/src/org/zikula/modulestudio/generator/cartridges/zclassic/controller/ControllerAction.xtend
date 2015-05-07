@@ -34,14 +34,16 @@ class ControllerAction {
     }
 
     def generate(Action it, Boolean isBase) '''
-        «IF isBase»
-            «actionDoc(null, isBase)»
-            public function «methodName»«IF app.targets('1.3.x')»()«ELSE»Action(«methodArgs»)«ENDIF»
-            {
+        «actionDoc(null, isBase)»
+        public function «methodName»«IF app.targets('1.3.x')»()«ELSE»Action(«methodArgs»)«ENDIF»
+        {
+            «IF isBase»
                 «actionsImpl.actionImpl(it)»
-            }
-            «/* this line is on purpose */»
-        «ENDIF»
+            «ELSE»
+                return parent::«methodName»Action(«IF !app.targets('1.3.x')»$request«ENDIF»);
+            «ENDIF»
+        }
+        «/* this line is on purpose */»
     '''
 
     def generate(Entity it, Action action, Boolean isBase) '''
@@ -73,25 +75,27 @@ class ControllerAction {
         /**
          * «actionDocMethodDescription»
         «actionDocMethodDocumentation»
-        «IF !app.targets('1.3.x') && entity !== null»
+        «IF !app.targets('1.3.x')»
             «IF !isBase»
                 «actionRoute(entity)»
             «ELSE»
-                «IF it instanceof DisplayAction || it instanceof DeleteAction»
-                    «paramConverter(entity)»
-                «ENDIF»
-                «IF it instanceof MainAction»
-                    «' '»* @Cache(expires="+7 days", public=true)
-                «ELSEIF it instanceof ViewAction»
-                    «' '»* @Cache(expires="+2 hours", public=false)
-                «ELSEIF !(it instanceof CustomAction)»
-                    «IF entity.standardFields»
-                        «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map[entity.name.formatForCode + '.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
-                    «ELSE»
-                        «IF it instanceof EditAction»
-                            «' '»* @Cache(expires="+30 minutes", public=false)
+                «IF entity !== null»
+                    «IF it instanceof DisplayAction || it instanceof DeleteAction»
+                        «paramConverter(entity)»
+                    «ENDIF»
+                    «IF it instanceof MainAction»
+                        «' '»* @Cache(expires="+7 days", public=true)
+                    «ELSEIF it instanceof ViewAction»
+                        «' '»* @Cache(expires="+2 hours", public=false)
+                    «ELSEIF !(it instanceof CustomAction)»
+                        «IF entity.standardFields»
+                            «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map[entity.name.formatForCode + '.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
                         «ELSE»
-                            «' '»* @Cache(expires="+12 hours", public=false)
+                            «IF it instanceof EditAction»
+                                «' '»* @Cache(expires="+30 minutes", public=false)
+                            «ELSE»
+                                «' '»* @Cache(expires="+12 hours", public=false)
+                            «ENDIF»
                         «ENDIF»
                     «ENDIF»
                 «ENDIF»
