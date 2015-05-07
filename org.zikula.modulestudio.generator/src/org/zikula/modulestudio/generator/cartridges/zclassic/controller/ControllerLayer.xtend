@@ -655,6 +655,9 @@ class ControllerLayer {
             public function getLinks()
             {
                 $links = array();
+                «IF !app.targets('1.3.x')»
+                    $router = $this->serviceManager->get('router');
+                «ENDIF»
 
                 «menuLinksBetweenControllers»
 
@@ -679,7 +682,7 @@ class ControllerLayer {
                             «IF app.targets('1.3.x')»
                                 $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                             «ELSE»
-                                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
+                                $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
                             «ENDIF»
                                              'text' => $this->__('Configuration'),
                                              'title' => $this->__('Manage settings for this application')«IF !app.targets('1.3.x')»,
@@ -701,7 +704,7 @@ class ControllerLayer {
             «IF app.targets('1.3.x')»
                 $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
-                $links[] = array('url' => $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_view', array('lct' => '«controller.formattedName»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
+                $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', array('lct' => '«controller.formattedName»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ENDIF»
                              'text' => $this->__('«nameMultiple.formatForDisplayCapital»'),
                              'title' => $this->__('«name.formatForDisplayCapital» list'));
@@ -713,7 +716,11 @@ class ControllerLayer {
             AdminController case !application.getAllUserControllers.empty: '''
                     «val userController = application.getAllUserControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
+                        «IF app.targets('1.3.x')»
+                            $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails»'),
+                        «ELSE»
+                            $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
+                        «ENDIF»
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
                                          «IF application.targets('1.3.x')»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
@@ -722,7 +729,11 @@ class ControllerLayer {
             UserController case !application.getAllAdminControllers.empty: '''
                     «val adminController = application.getAllAdminControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
+                        «IF app.targets('1.3.x')»
+                            $links[] = array('url' => $router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails»'),
+                        «ELSE»
+                            $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
+                        «ENDIF»
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
                                          «IF application.targets('1.3.x')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
