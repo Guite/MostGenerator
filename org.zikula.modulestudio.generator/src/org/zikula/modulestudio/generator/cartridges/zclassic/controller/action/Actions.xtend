@@ -251,7 +251,7 @@ class Actions {
         «ELSE»
             $sort = $request->query->filter('sort', '', false, FILTER_SANITIZE_STRING);
         «ENDIF»
-        «new ControllerHelper().defaultSorting(it)»
+        «new ControllerHelper().defaultSorting(it, app)»
 
         // parameter for used sort order
         «IF app.targets('1.3.x')»
@@ -366,7 +366,7 @@ class Actions {
         «IF app.targets('1.3.x')»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
         «ENDIF»
-        «new ControllerHelper().defaultSorting(it)»
+        «new ControllerHelper().defaultSorting(it, app)»
 
         «IF app.targets('1.3.x')»
             // parameter for used sort order
