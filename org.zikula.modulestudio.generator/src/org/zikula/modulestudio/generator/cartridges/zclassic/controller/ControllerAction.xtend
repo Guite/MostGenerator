@@ -199,7 +199,7 @@ class ControllerAction {
 
     def private dispatch actionRoute(MainAction it, Entity entity) '''
          «' '»*
-         «' '»* @Route("/«entity.nameMultiple.formatForCode»",
+         «' '»* @Route("/«IF entity !== null»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»",
          «' '»*        methods = {"GET"}
          «' '»* )
     '''
@@ -288,7 +288,7 @@ class ControllerAction {
 
     def private dispatch actionRoute(CustomAction it, Entity entity) '''
          «' '»*
-         «' '»* @Route("/«entity.nameMultiple.formatForCode»/«name.formatForCode»",
+         «' '»* @Route("/«IF entity !== null»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»/«name.formatForCode»",
          «' '»*        methods = {"GET", "POST"}
          «' '»* )
     '''
