@@ -56,12 +56,12 @@ class OverrideTemplates {
     def overrides(Application it, String mapType) '''
         «val isLegacy = if (targets('1.3.x')) true else false»
         «var sourcePath = getViewPath»
-        «IF targets('1.3.5')»
+        «IF targets('1.3.x')»
             «sourcePath = sourcePath.replace('src/', '')»
         «ELSE»
             «sourcePath = rootFolder + '/' + vendorAndName + '/' + sourcePath»
         «ENDIF»
-        «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (targets('1.3.5')) 'templates' else 'Resources/views') + '/modules/' + appName + '/'»
+        «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (targets('1.3.x')) 'templates' else 'Resources/views') + '/modules/' + appName + '/'»
         «var templateFolder = ''»
         «FOR entity : getAllEntities»
             «{templateFolder = (if (isLegacy) entity.name.formatForCode else entity.name.formatForCodeCapital) + '/';''}»

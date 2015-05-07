@@ -751,7 +751,7 @@ class Repository {
                 $query->setFirstResult($offset)
                       ->setMaxResults($resultsPerPage);
                 $count = 0; // will be set at a later stage (in calling method)
-                «/* TODO remove $count from this method together with 1.3.5 support #260 */»
+                «/* TODO remove $count from this method together with 1.3.x support #260 */»
             «ENDIF»
 
             return array($query, $count);

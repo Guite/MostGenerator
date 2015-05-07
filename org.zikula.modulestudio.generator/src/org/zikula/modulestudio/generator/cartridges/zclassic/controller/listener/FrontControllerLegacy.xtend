@@ -6,7 +6,7 @@ class FrontControllerLegacy {
 
     CommonExample commonExample = new CommonExample()
 
-    // obsolete, used for 1.3.5 only
+    // obsolete, used for 1.3.x only
     def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `frontcontroller.predispatch` event.

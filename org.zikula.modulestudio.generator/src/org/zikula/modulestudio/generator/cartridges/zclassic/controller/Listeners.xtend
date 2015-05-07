@@ -136,7 +136,7 @@ class Listeners {
         }
     '''
 
-    // obsolete, used for 1.3.5 only
+    // obsolete, used for 1.3.x only
     def private listenersFrontControllerFile(Application it) '''
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for frontend controller interaction events.
@@ -283,7 +283,7 @@ class Listeners {
         }
     '''
 
-    // obsolete, used for 1.3.5 only
+    // obsolete, used for 1.3.x only
     def private listenersErrorsFile(Application it) '''
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for error-related events.
