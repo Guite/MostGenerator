@@ -356,7 +356,7 @@ class ExternalController {
          * Controller for external calls implementation class.
          «IF !targets('1.3.x')»
          *
-         * @Route("/%«appName.formatForDB».routing.external%")
+         * @Route("/external")
          «ENDIF»
          */
         «IF targets('1.3.x')»

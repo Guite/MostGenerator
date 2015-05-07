@@ -287,7 +287,7 @@ class ControllerLayer {
          * Multiple items may have their state changed or be deleted.
          «IF !app.targets('1.3.x') && !isBase»
          *
-         * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».plural%/handleSelectedEntries",
+         * @Route("/«nameMultiple.formatForCode»/handleSelectedEntries",
          *        methods = {"POST"}
          * )
          «ENDIF»
@@ -446,7 +446,7 @@ class ControllerLayer {
          * This method cares for a redirect within an inline frame.
          «IF it instanceof Entity && !app.targets('1.3.x') && !isBase»
          *
-         * @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
+         * @Route("/«name.formatForCode»/handleInlineRedirect/{idPrefix}/{commandName}/{id}",
          *        requirements = {"id" = "\d+"},
          *        defaults = {"commandName" = "", "id" = 0},
          *        methods = {"GET"}
@@ -556,7 +556,7 @@ class ControllerLayer {
          * «name» controller class providing navigation and interaction functionality.
         «IF !app.targets('1.3.x') && it instanceof AjaxController»
          «' '»*
-         «' '»* @Route("/%«app.appName.formatForDB».routing.ajax%")
+         «' '»* @Route("/ajax")
         «ENDIF»
          */
         «IF app.targets('1.3.x')»

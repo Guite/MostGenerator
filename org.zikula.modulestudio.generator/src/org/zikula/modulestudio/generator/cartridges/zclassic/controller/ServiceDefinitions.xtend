@@ -9,7 +9,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 /**
  * Service definitions in yaml format.
@@ -23,7 +22,6 @@ class ServiceDefinitions {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
-    extension ViewExtensions = new ViewExtensions
 
     String modPrefix = ''
 
@@ -47,7 +45,6 @@ class ServiceDefinitions {
 
     def private ymlContent(Application it) '''
         parameters:
-            «parametersRouting»
 
         services:
             «IF hasUploads»
@@ -61,19 +58,6 @@ class ServiceDefinitions {
             «servicesHelper»
 
             «servicesLogger»
-    '''
-
-    def private parametersRouting(Application it) '''
-        # Route parts
-        «modPrefix».routing.ajax: ajax
-        «modPrefix».routing.external: external
-        «modPrefix».routing.view.suffix: view
-        «FOR entity : getAllEntities»
-            «modPrefix».routing.«entity.name.formatForCode».singular: «entity.name.formatForCode»
-            «modPrefix».routing.«entity.name.formatForCode».plural: «entity.nameMultiple.formatForCode»
-        «ENDFOR»
-        «modPrefix».routing.formats.view: html«IF getListOfViewFormats.size > 0»|«FOR format : getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
-        «modPrefix».routing.formats.display: html«IF getListOfDisplayFormats.size > 0»|«FOR format : getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»
     '''
 
     def private servicesUploadHandler(Application it) '''

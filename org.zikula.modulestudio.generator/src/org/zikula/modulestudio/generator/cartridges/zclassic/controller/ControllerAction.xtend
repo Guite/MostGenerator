@@ -15,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ControllerAction {
     extension ControllerExtensions = new ControllerExtensions
@@ -22,6 +23,7 @@ class ControllerAction {
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
+    extension ViewExtensions = new ViewExtensions
 
     Application app
     Actions actionsImpl
@@ -193,15 +195,15 @@ class ControllerAction {
 
     def private dispatch actionRoute(MainAction it, Entity entity) '''
          «' '»*
-         «' '»* @Route("/%«app.appName.formatForDB».routing.«entity.name.formatForCode».plural%",
+         «' '»* @Route("/«entity.nameMultiple.formatForCode»",
          «' '»*        methods = {"GET"}
          «' '»* )
     '''
 
     def private dispatch actionRoute(ViewAction it, Entity entity) '''
          «' '»*
-         «' '»* @Route("/%«app.appName.formatForDB».routing.«entity.name.formatForCode».plural%/%«app.appName.formatForDB».routing.view.suffix%/{sort}/{sortdir}/{pos}/{num}.{_format}",
-         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "%«app.appName.formatForDB».routing.formats.view%"},
+         «' '»* @Route("/«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{pos}/{num}.{_format}",
+         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«FOR format : app.getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
          «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0, "_format" = "html"},
          «' '»*        methods = {"GET"}
          «' '»* )
@@ -209,8 +211,8 @@ class ControllerAction {
 
     def private actionRouteForSingleEntity(Entity it, Action action) '''
          «' '»*
-         «' '»* @Route("/%«app.appName.formatForDB».routing.«name.formatForCode».singular%/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
-         «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "«IF action instanceof DisplayAction»%«app.appName.formatForDB».routing.formats.display%«ELSE»html«ENDIF»"},
+         «' '»* @Route("/«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
+         «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«FOR format : app.getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
          «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»"_format" = "html"},
          «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}
          «' '»* )
@@ -282,7 +284,7 @@ class ControllerAction {
 
     def private dispatch actionRoute(CustomAction it, Entity entity) '''
          «' '»*
-         «' '»* @Route("/%«app.appName.formatForDB».routing.«entity.name.formatForCode».plural%/«name.formatForCode»",
+         «' '»* @Route("/«entity.nameMultiple.formatForCode»/«name.formatForCode»",
          «' '»*        methods = {"GET", "POST"}
          «' '»* )
     '''
