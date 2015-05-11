@@ -325,11 +325,13 @@ class EditFunctions {
             geocoder.geocode(address);
 
             function «vendorAndName»GeoCodeErrorCallback (status) {
-                «IF targets('1.3.x')»
-                    Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
-                «ELSE»
-                    «vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', '«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
-                «ENDIF»
+                if (status != 'ZERO_RESULTS') {
+                    «IF targets('1.3.x')»
+                        Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
+                    «ELSE»
+                        «vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', '«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
+                    «ENDIF»
+                }
             }
 
             function «vendorAndName»GeoCodeReturn (location) {

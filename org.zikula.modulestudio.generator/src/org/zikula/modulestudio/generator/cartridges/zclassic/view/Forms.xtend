@@ -534,13 +534,11 @@ class Forms {
         }
 
         function handlePositionError(evt) {
-            if (evt.message != 'ZERO_RESULTS') {
-                «IF app.targets('1.3.x')»
-                    Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
-                «ELSE»
-                    «app.vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geolocation', '«app.appName.formatForDB»_js'), evt.message, 'geoLocationAlert', 'danger');
-                «ENDIF»
-            }
+            «IF app.targets('1.3.x')»
+                Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
+            «ELSE»
+                «app.vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geolocation', '«app.appName.formatForDB»_js'), evt.message, 'geoLocationAlert', 'danger');
+            «ENDIF»
         }
 
         {{*
