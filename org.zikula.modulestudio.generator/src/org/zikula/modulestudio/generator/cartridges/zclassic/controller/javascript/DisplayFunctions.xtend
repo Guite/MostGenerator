@@ -93,7 +93,7 @@ class DisplayFunctions {
             contextMenu = new «vendorAndName»ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
-            «IF targets('1.3.x')»$«ENDIF»$('#' + containerId + ' a').each(function («IF targets('1.3.x')»elem«ELSE»index«ENDIF») {
+            «IF targets('1.3.x')»$$«ELSE»jQuery«ENDIF»('#' + containerId + ' a').each(function («IF targets('1.3.x')»elem«ELSE»index«ENDIF») {
                 «IF !targets('1.3.x')»
                     var elem = $(this);
                     // save css class before hiding (#428)
@@ -174,7 +174,7 @@ class DisplayFunctions {
             «IF targets('1.3.x')»
                 $(triggerId).removeClassName('z-hide');
             «ELSE»
-                $('#' + triggerId).removeClass('hidden');
+                jQuery('#' + triggerId).removeClass('hidden');
             «ENDIF»
         }
     '''
@@ -203,7 +203,7 @@ class DisplayFunctions {
                     return;
                 }
             «ELSE»
-                if ($('#«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').length < 1) {
+                if (jQuery('#«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').length < 1) {
                     return;
                 }
             «ENDIF»
@@ -212,27 +212,27 @@ class DisplayFunctions {
                 if ($('catid') != undefined) {
                     $('catid').observe('change', «initQuickNavigationSubmitCall»);
                 }
-                if ($('sortby') != undefined) {
-                    $('sortby').observe('change', «initQuickNavigationSubmitCall»);
+                if ($('sortBy') != undefined) {
+                    $('sortBy').observe('change', «initQuickNavigationSubmitCall»);
                 }
-                if ($('sortdir') != undefined) {
-                    $('sortdir').observe('change', «initQuickNavigationSubmitCall»);
+                if ($('sortDir') != undefined) {
+                    $('sortDir').observe('change', «initQuickNavigationSubmitCall»);
                 }
                 if ($('num') != undefined) {
                     $('num').observe('change', «initQuickNavigationSubmitCall»);
                 }
             «ELSE»
-                if ($('#catid').length > 0) {
-                    $('#catid').change(«initQuickNavigationSubmitCall»);
+                if (jQuery('#catid').length > 0) {
+                    jQuery('#catid').change(«initQuickNavigationSubmitCall»);
                 }
-                if ($('#sortby').length > 0) {
-                    $('#sortby').change(«initQuickNavigationSubmitCall»);
+                if (jQuery('#sortBy').length > 0) {
+                    jQuery('#sortBy').change(«initQuickNavigationSubmitCall»);
                 }
-                if ($('#sortdir').length > 0) {
-                    $('#sortdir').change(«initQuickNavigationSubmitCall»);
+                if (jQuery('#sortDir').length > 0) {
+                    jQuery('#sortDir').change(«initQuickNavigationSubmitCall»);
                 }
-                if ($('#num').length > 0) {
-                    $('#num').change(«initQuickNavigationSubmitCall»);
+                if (jQuery('#num').length > 0) {
+                    jQuery('#num').change(«initQuickNavigationSubmitCall»);
                 }
             «ENDIF»
 
@@ -294,8 +294,8 @@ class DisplayFunctions {
                 $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.application)»);
             }
         «ELSE»
-            if ($('#«name.formatForCode»').length > 0) {
-                $('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application)»);
+            if (jQuery('#«name.formatForCode»').length > 0) {
+                jQuery('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application)»);
             }
         «ENDIF»
     '''
@@ -307,8 +307,8 @@ class DisplayFunctions {
                 $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(application)»);
             }
         «ELSE»
-            if ($('#«sourceAliasName»').length > 0) {
-                $('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(application)»);
+            if (jQuery('#«sourceAliasName»').length > 0) {
+                jQuery('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(application)»);
             }
         «ENDIF»
     '''
@@ -393,10 +393,10 @@ class DisplayFunctions {
                     «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
                 }).removeClassName('z-hide');
             «ELSE»
-                if ($('#toggle' + idSuffix).length < 1) {
+                if (jQuery('#toggle' + idSuffix).length < 1) {
                     return;
                 }
-                $('#toggle' + idSuffix).click( function() {
+                jQuery('#toggle' + idSuffix).click( function() {
                     «vendorAndName»ToggleFlag(objectType, fieldName, itemId);
                 }).removeClass('hidden');
             «ENDIF»
@@ -455,22 +455,22 @@ class DisplayFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «vendorAndName»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                        «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                     }*/
 
                     idSuffix = idSuffix.toLowerCase();
                     var state = data.state;
                     if (state === true) {
-                        $('#no' + idSuffix).addClass('hidden');
-                        $('#yes' + idSuffix).removeClass('hidden');
+                        jQuery('#no' + idSuffix).addClass('hidden');
+                        jQuery('#yes' + idSuffix).removeClass('hidden');
                     } else {
-                        $('#yes' + idSuffix).addClass('hidden');
-                        $('#no' + idSuffix).removeClass('hidden');
+                        jQuery('#yes' + idSuffix).addClass('hidden');
+                        jQuery('#no' + idSuffix).removeClass('hidden');
                     }
                 })«/*.fail(function(jqXHR, textStatus) {
                     // nothing to do yet
                     var idSuffix = fieldName + '_' + itemId;
-                    «vendorAndName»SimpleAlert($('#toggle' + idSuffix), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
                 })*/»;
             «ENDIF»
         }
@@ -495,7 +495,7 @@ class DisplayFunctions {
             // insert alert before the given element
             beforeElem.before(alertBox);
 
-            $('#' + alertId).delay(200).addClass('in').fadeOut(4000, function () {
+            jQuery('#' + alertId).delay(200).addClass('in').fadeOut(4000, function () {
                 $(this).remove();
             });
         }
