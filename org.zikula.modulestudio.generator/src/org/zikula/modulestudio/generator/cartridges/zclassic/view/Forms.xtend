@@ -406,6 +406,7 @@ class Forms {
 
             function triggerFormValidation()
             {
+                «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                 if (!document.getElementById('{{$__formid}}').checkValidity()) {
                     // This does not really submit the form,
                     // but causes the browser to display the error message
@@ -414,6 +415,7 @@ class Forms {
             }
 
             function handleFormSubmit (event) {
+                triggerFormValidation();
                 if (!document.getElementById('{{$__formid}}').checkValidity()) {
                     event.preventDefault();
                     return false;
@@ -443,7 +445,6 @@ class Forms {
                     allFormFields.change(triggerFormValidation)
                                  .blur(triggerFormValidation);
 
-                    «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                     formButtons = $('#{{$__formid}} .form-buttons input');
                     $('#{{$__formid}}').submit(handleFormSubmit);
 
