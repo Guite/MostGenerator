@@ -185,7 +185,7 @@ class Section {
                 {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
             {/if}
         {/foreach}
-        {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»'}
+        {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»' formnovalidate='formnovalidate'}
     '''
 
     def private isLegacyApp(Entity it) {

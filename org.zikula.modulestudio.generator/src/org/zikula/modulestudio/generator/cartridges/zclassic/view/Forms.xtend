@@ -404,20 +404,27 @@ class Forms {
 
             var formButtons;
 
-            function handleFormButton (event) {
-                «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
-                var result = document.getElementById('{{$__formid}}').checkValidity();
-                if (!result) {
-                    // validation error, abort form submit
-                    event.stopPropagation();
-                } else {
-                    // hide form buttons to prevent double submits by accident
-                    formButtons.each(function (index) {
-                        $(this).addClass('hidden');
-                    });
+            function triggerFormValidation()
+            {
+                if (!document.getElementById('{{$__formid}}').checkValidity()) {
+                    // This does not really submit the form,
+                    // but causes the browser to display the error message
+                    jQuery('#{{$__formid}}').find(':submit').click();
+                }
+            }
+
+            function handleFormSubmit (event) {
+                if (!document.getElementById('{{$__formid}}').checkValidity()) {
+                    event.preventDefault();
+                    return false;
                 }
 
-                return result;
+                // hide form buttons to prevent double submits by accident
+                formButtons.each(function (index) {
+                    jQuery(this).addClass('hidden');
+                });
+
+                return true;
             }
 
             ( function($) {
@@ -432,20 +439,17 @@ class Forms {
                     «ENDIF»
                     «relationHelper.initJs(it, app, true)»
     
-                    {{* observe validation on button events instead of form submit to exclude the cancel command *}}
-                    {{if $mode ne 'create'}}
-                        if (!document.getElementById('{{$__formid}}').checkValidity()) {
-                            document.getElementById('{{$__formid}}').submit();
-                        }
-                    {{/if}}
-
-                    formButtons = $('#{{$__formid}} .form-buttons input');
-    
-                    formButtons.each(function (index) {
-                        if ($(this).attr('id') != 'btnCancel') {
-                            $(this).click(handleFormButton);
-                        }
+                    $('#{{$__formid}} input, #{{$__formid}} select, #{{$__formid}} textarea').change(function() {
+                        triggerFormValidation();
                     });
+
+                    «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                    formButtons = $('#{{$__formid}} .form-buttons input');
+                    $('#{{$__formid}}').submit(handleFormSubmit);
+
+                    {{if $mode ne 'create'}}
+                        triggerFormValidation();
+                    {{/if}}
 
                     $('#{{$__formid}} label').tooltip();
                     «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»

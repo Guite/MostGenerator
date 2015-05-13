@@ -110,8 +110,8 @@ class Validation {
                     $('advice-validate-unique-' + elem.id).hide();
                     elem.removeClassName('validation-failed').removeClassName('validation-passed');
                 «ELSE»
-                    $('advice-validate-unique-' + elem.attr('id')).hide();
-                    elem.parent().parent().removeClass('has-error').removeClassName('has-success');
+                    //$('advice-validate-unique-' + elem.attr('id')).hide();
+                    //elem.parent().parent().removeClass('has-error').removeClassName('has-success');
                 «ENDIF»
 
                 // build parameters object
@@ -154,17 +154,17 @@ class Validation {
                         }
                     );
                 «ELSE»
-                    $.ajax({
+                    jQuery.ajax({
                         type: 'POST',
                         url: Routing.generate('«appName.formatForDB»_ajax_checkforduplicate'),
                         data: params
                     }).done(function(res) {
                         if (res.data.isDuplicate !== '1') {
-                            $('#advice-validate-unique-' + elem.attr('id')).hide();
+                            jQuery('#advice-validate-unique-' + elem.attr('id')).hide();
                             elem.parent().parent().removeClass('has-error').addClass('has-success');
                             return true;
                         } else {
-                            $('#advice-validate-unique-' + elem.attr('id')).show();
+                            jQuery('#advice-validate-unique-' + elem.attr('id')).show();
                             elem.parent().parent().removeClass('has-success').addClass('has-error');
                             return false;
                         }
@@ -203,7 +203,7 @@ class Validation {
                     return true;
                 }
                 fileExtension = '.' + val.substr(val.lastIndexOf('.') + 1);
-                allowedExtensions = $(«IF !targets('1.3.x')»'#' + elem.attr('id')«ELSE»elem.id«ENDIF» + 'FileExtensions').innerHTML;
+                allowedExtensions = «IF targets('1.3.x')»$(elem.id«ELSE»jQuery('#' + elem.attr('id')«ENDIF» + 'FileExtensions').innerHTML;
                 allowedExtensions = '(.' + allowedExtensions.replace(/, /g, '|.').replace(/,/g, '|.') + ')$';
                 allowedExtensions = new RegExp(allowedExtensions, 'i');
 
@@ -313,22 +313,22 @@ class Validation {
                             $('«endFieldName»').removeClassName('validation-passed').addClassName('validation-failed');
                         }
                     «ELSE»
-                        cmpVal = «vendorAndName»ReadDate($('#«startFieldName»').val(), «(startDateField instanceof DatetimeField).displayBool»);
-                        cmpVal2 = «vendorAndName»ReadDate($('#«endFieldName»').val(), «(endDateField instanceof DatetimeField).displayBool»);
+                        cmpVal = «vendorAndName»ReadDate(jQuery('#«startFieldName»').val(), «(startDateField instanceof DatetimeField).displayBool»);
+                        cmpVal2 = «vendorAndName»ReadDate(jQuery('#«endFieldName»').val(), «(endDateField instanceof DatetimeField).displayBool»);
                         result = (cmpVal <= cmpVal2);
                         if (result) {
-                            $('#advice-«validateClass»-«startFieldName»').hide();
-                            $('#advice-«validateClass»-«endFieldName»').hide();
-                            $('#«startFieldName»').parent().parent().removeClass('has-error').addClass('has-success');
-                            $('#«endFieldName»').parent().parent().removeClass('has-error').addClass('has-success');
+                            jQuery('#advice-«validateClass»-«startFieldName»').hide();
+                            jQuery('#advice-«validateClass»-«endFieldName»').hide();
+                            jQuery('#«startFieldName»').parent().parent().removeClass('has-error').addClass('has-success');
+                            jQuery('#«endFieldName»').parent().parent().removeClass('has-error').addClass('has-success');
                         } else {
-                            $('#advice-«validateClass»-«startFieldName»').html(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));
-                            $('#advice-«validateClass»-«endFieldName»').html(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));
+                            jQuery('#advice-«validateClass»-«startFieldName»').html(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));
+                            jQuery('#advice-«validateClass»-«endFieldName»').html(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));
 
-                            $('#advice-«validateClass»-«startFieldName»').show();
-                            $('#advice-«validateClass»-«endFieldName»').show();
-                            $('#«startFieldName»').parent().parent().removeClass('has-success').addClass('has-error');
-                            $('#«endFieldName»').parent().parent().removeClass('has-success').addClass('has-error');
+                            jQuery('#advice-«validateClass»-«startFieldName»').show();
+                            jQuery('#advice-«validateClass»-«endFieldName»').show();
+                            jQuery('#«startFieldName»').parent().parent().removeClass('has-success').addClass('has-error');
+                            jQuery('#«endFieldName»').parent().parent().removeClass('has-success').addClass('has-error');
                         }
                     «ENDIF»
 
@@ -409,87 +409,87 @@ class Validation {
                     «ENDIF»
                 ]);
             «ELSE»
-                $('.validate-nospace').each( function() {
-                    if («vendorAndName»ValidateNoSpace($(this).val())) {
-                        $(this).setCustomValidity(Zikula.__('This value must not contain spaces.', '«appName.formatForDB»_js'));
+                jQuery('.validate-nospace').each( function() {
+                    if («vendorAndName»ValidateNoSpace(jQuery(this).val())) {
+                        document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('This value must not contain spaces.', '«appName.formatForDB»_js'));
                     } else {
-                        $(this).setCustomValidity('');
+                        document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                     }
                 });
                 «IF hasColourFields»
-                    $('.validate-htmlcolour').each( function() {
-                        if («vendorAndName»ValidateHtmlColour($(this).val())) {
-                            $(this).setCustomValidity(Zikula.__('Please select a valid html colour code.', '«appName.formatForDB»_js'));
+                    jQuery('.validate-htmlcolour').each( function() {
+                        if («vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a valid html colour code.', '«appName.formatForDB»_js'));
                         } else {
-                            $(this).setCustomValidity('');
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                         }
                     });
                 «ENDIF»
                 «IF hasUploads»
-                    $('.validate-upload').each( function() {
-                        if («vendorAndName»ValidateUploadExtension($(this).val(), $(this))) {
-                            $(this).setCustomValidity(Zikula.__('Please select a valid file extension.', '«appName.formatForDB»_js'));
+                    jQuery('.validate-upload').each( function() {
+                        if («vendorAndName»ValidateUploadExtension(jQuery(this).val(), jQuery(this))) {
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a valid file extension.', '«appName.formatForDB»_js'));
                         } else {
-                            $(this).setCustomValidity('');
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                         }
                     });
                 «ENDIF»
                 «IF !datetimeFields.empty»
                     «IF datetimeFields.exists[past]»
-                        $('.validate-datetime-past').each( function() {
-                            if («vendorAndName»ValidateDatetimePast($(this).val())) {
-                                $(this).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
+                        jQuery('.validate-datetime-past').each( function() {
+                            if («vendorAndName»ValidateDatetimePast(jQuery(this).val())) {
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
                             } else {
-                                $(this).setCustomValidity('');
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
                         });
                     «ENDIF»
                     «IF datetimeFields.exists[future]»
-                        $('.validate-datetime-future').each( function() {
-                            if («vendorAndName»ValidateDatetimeFuture($(this).val())) {
-                                $(this).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
+                        jQuery('.validate-datetime-future').each( function() {
+                            if («vendorAndName»ValidateDatetimeFuture(jQuery(this).val())) {
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
                             } else {
-                                $(this).setCustomValidity('');
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
                         });
                     «ENDIF»
                 «ENDIF»
                 «IF !dateFields.empty»
                     «IF dateFields.exists[past]»
-                        $('.validate-date-past').each( function() {
-                            if («vendorAndName»ValidateDatePast($(this).val())) {
-                                $(this).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
+                        jQuery('.validate-date-past').each( function() {
+                            if («vendorAndName»ValidateDatePast(jQuery(this).val())) {
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
                             } else {
-                                $(this).setCustomValidity('');
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
                         });
                     «ENDIF»
                     «IF dateFields.exists[future]»
-                        $('.validate-date-future').each( function() {
-                            if («vendorAndName»ValidateDateFuture($(this).val())) {
-                                $(this).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
+                        jQuery('.validate-date-future').each( function() {
+                            if («vendorAndName»ValidateDateFuture(jQuery(this).val())) {
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
                             } else {
-                                $(this).setCustomValidity('');
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
                         });
                     «ENDIF»
                 «ENDIF»
                 «IF !timeFields.empty»
                     «IF timeFields.exists[past]»
-                        $('.validate-time-past').each( function() {
-                            if («vendorAndName»ValidateTimePast($(this).val())) {
-                                $(this).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
+                        jQuery('.validate-time-past').each( function() {
+                            if («vendorAndName»ValidateTimePast(jQuery(this).val())) {
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
                             } else {
-                                $(this).setCustomValidity('');
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
                         });
                     «ENDIF»
                     «IF timeFields.exists[future]»
-                        $('.validate-time-future').each( function() {
-                            if («vendorAndName»ValidateTimeFuture($(this).val())) {
-                                $(this).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
+                        jQuery('.validate-time-future').each( function() {
+                            if («vendorAndName»ValidateTimeFuture(jQuery(this).val())) {
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
                             } else {
-                                $(this).setCustomValidity('');
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
                         });
                     «ENDIF»
@@ -498,21 +498,21 @@ class Validation {
                     «val startDateField = entity.getStartDateField»
                     «val endDateField = entity.getEndDateField»
                     «IF startDateField !== null && endDateField !== null»
-                        $('.validate-daterange-«entity.name.formatForDB»').each( function() {
-                            if («vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»($(this).val())) {
-                                $(this).setCustomValidity(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));
+                        jQuery('.validate-daterange-«entity.name.formatForDB»').each( function() {
+                            if («vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(jQuery(this).val())) {
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));
                             } else {
-                                $(this).setCustomValidity('');
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
                         });
                     «ENDIF»
                 «ENDFOR»
                 «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
-                    $('.validate-unique').each( function() {
-                        if («vendorAndName»UniqueCheck('«name.formatForCode»', $(this).val(), $(this), id)) {
-                            $(this).setCustomValidity(Zikula.__('This value is already assigned, but must be unique. Please change it.', '«appName.formatForDB»_js'));
+                    jQuery('.validate-unique').each( function() {
+                        if («vendorAndName»UniqueCheck('«name.formatForCode»', jQuery(this).val(), jQuery(this), id)) {
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('This value is already assigned, but must be unique. Please change it.', '«appName.formatForDB»_js'));
                         } else {
-                            $(this).setCustomValidity('');
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                         }
                     });
                 «ENDIF»
