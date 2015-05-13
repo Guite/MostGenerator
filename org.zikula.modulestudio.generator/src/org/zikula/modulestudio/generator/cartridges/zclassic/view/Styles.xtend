@@ -113,9 +113,23 @@ class Styles {
 
     def private validationStyles(Application it) '''
         /* validation */
-        div.«fieldGroupClass» input.required, div.«fieldGroupClass» textarea.required {
-            border: 1px solid #00a8e6;
-        }
+        «IF targets('1.3.x')»
+            div.«fieldGroupClass» input.required, div.«fieldGroupClass» textarea.required {
+                /*border: 1px solid #00a8e6;*/
+                background-color: #ffffff;
+            }
+        «ELSE»
+            div.form-group input:required, div.form-group textarea:required, div.form-group select:required {
+                /*border: 1px solid #00a8e6;*/
+                background-color: #ffffff;
+            }
+            div.form-group input:required:valid, div.form-group textarea:required:valid, div.form-group select:required:valid {
+                /*border: 1px solid green;*/
+            }
+            div.form-group input:required:invalid, div.form-group textarea:required:invalid, div.form-group select:required:invalid {
+                border: 1px solid red;
+            }
+        «ENDIF»
         «IF targets('1.3.x')»
             div.«fieldGroupClass» input.validation-failed, div.«fieldGroupClass» textarea.validation-failed {
                 border: 1px solid #f30;
@@ -125,15 +139,15 @@ class Styles {
                 border: 1px solid #0c0;
                 color: #000;
             }
-        «ENDIF»
 
-        .validation-advice {
-            margin: 5px 0;
-            padding: 5px;
-            background-color: #f90;
-            color: #fff;
-            font-weight: 700;
-        }
+            .validation-advice {
+                margin: 5px 0;
+                padding: 5px;
+                background-color: #f90;
+                color: #fff;
+                font-weight: 700;
+            }
+        «ENDIF»
     '''
 
     def private fieldGroupClass(Application it) '''«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»'''
