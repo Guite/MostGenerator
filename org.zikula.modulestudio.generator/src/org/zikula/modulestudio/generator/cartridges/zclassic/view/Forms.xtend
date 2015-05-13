@@ -439,9 +439,9 @@ class Forms {
                     «ENDIF»
                     «relationHelper.initJs(it, app, true)»
     
-                    $('#{{$__formid}} input, #{{$__formid}} select, #{{$__formid}} textarea').change(function() {
-                        triggerFormValidation();
-                    });
+                    var allFormFields = $('#{{$__formid}} input, #{{$__formid}} select, #{{$__formid}} textarea');
+                    allFormFields.change(triggerFormValidation)
+                                 .blur(triggerFormValidation);
 
                     «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
                     formButtons = $('#{{$__formid}} .form-buttons input');
