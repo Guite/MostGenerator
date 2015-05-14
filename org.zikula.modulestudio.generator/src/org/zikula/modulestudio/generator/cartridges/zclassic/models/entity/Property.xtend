@@ -110,6 +110,9 @@ class Property {
 
     def persistentProperty(DerivedField it, String name, String type, String init, String modifier) '''
         /**
+         «IF documentation !== null && documentation != ''»
+          * «documentation»
+         «ENDIF»
          «IF primaryKey»
              «IF !entity.hasCompositeKeys»«/* || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»*/»
               * @ORM\Id
