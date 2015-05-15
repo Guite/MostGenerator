@@ -84,14 +84,16 @@ class VersionFile {
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
-                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.x') && generateSearchApi»,
-                                  AbstractSearchable::SEARCHABLE => array('class' => '«appNamespace»\Helper\SearchHelper'),
-                                  «ENDIF»
+                      «IF capabilities !== null && capabilities != ''»
+                          «FOR capability : capabilities.replaceAll(', ', '').split(',')»
+                              '«capability.formatForDisplay»' => array('version' => '1.0'),
+                          «ENDFOR»
+                      «ENDIF»
+                      HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.x') && generateSearchApi»,
+                      AbstractSearchable::SEARCHABLE => array('class' => '«appNamespace»\Helper\SearchHelper')
+                      «ENDIF»
         /*,
-                                  HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
-                                  'authentication' => array('version' => '1.0'),
-                                  'profile'        => array('version' => '1.0', 'anotherkey' => 'anothervalue'),
-                                  'message'        => array('version' => '1.0', 'anotherkey' => 'anothervalue')
+                      HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
         */
                 );
 
