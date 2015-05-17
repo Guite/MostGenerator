@@ -6,7 +6,6 @@ import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.emf.mwe.utils.FileCopy
-import org.zikula.modulestudio.generator.application.Activator
 import org.zikula.modulestudio.generator.cartridges.reporting.ReportingFacade
 import org.zikula.modulestudio.generator.workflow.components.ModelFileCopier
 
@@ -94,9 +93,9 @@ class WorkflowPostProcess {
      */
     def private exportBirtReports() {
         try {
-            val bundle = Platform.getBundle(Activator.PLUGIN_ID)
-            var resources = FileLocator.findEntries(bundle, new Path(settings.getReportPath))
-            val resourcesExported = FileLocator.findEntries(bundle, new Path('src/' + settings.getReportPath)) //$NON-NLS-1$
+            val reportingBundle = Platform.getBundle(org.zikula.modulestudio.generator.cartridges.reporting.Activator.PLUGIN_ID)
+            var resources = FileLocator.findEntries(reportingBundle, new Path(settings.getReportPath))
+            val resourcesExported = FileLocator.findEntries(reportingBundle, new Path('src/' + settings.getReportPath)) //$NON-NLS-1$
             if (resources.size < 1) {
                 resources = resourcesExported
             }
