@@ -288,7 +288,7 @@ class EntityMethods {
         public function validate()
         {
             if ($this->_bypassValidation === true) {
-                return;
+                return«IF !application.targets('1.3.x')» true«ENDIF»;
             }
 
         «val emailFields = getDerivedFields.filter(EmailField)»
@@ -316,7 +316,10 @@ class EntityMethods {
                     foreach ($errors as $error) {
                         $session->getFlashBag()->add('error', $error->getMessage());
                     }
+                    return false;
                 }
+
+                return true;
             «ENDIF»
         }
     '''
