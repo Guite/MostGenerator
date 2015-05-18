@@ -505,7 +505,11 @@ class AbstractObjectSelector {
             $alias = $this->id;
             $many = ($this->selectionMode == 'multiple');
 
-            $entity[$alias] = $this->preselectedItems;
+            if ($many) {
+                $entity[$alias] = $this->preselectedItems;
+            } else {
+                $entity[$alias] = count($this->preselectedItems) ? $this->preselectedItems[0] : null;
+            }
 
             // remove all existing references
             if ($many) {
