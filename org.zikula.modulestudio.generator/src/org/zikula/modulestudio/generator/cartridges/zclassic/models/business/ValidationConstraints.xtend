@@ -104,20 +104,20 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(DecimalField it) '''
         «fieldAnnotationsNumeric»
-        «IF minValue.toString != '0'»
+        «IF minValue.toString != '0.0'»
             «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
         «ENDIF»
-        «IF maxValue.toString != '0'»
+        «IF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
         «ENDIF»
         «' '»* @Assert\LessThan(value=«(10 ** (length + scale)) as int», message="Length of field value must not be higher than «length».")) {
     '''
     def dispatch fieldAnnotations(FloatField it) '''
         «fieldAnnotationsNumeric»
-        «IF minValue.toString != '0'»
+        «IF minValue.toString != '0.0'»
             «' '»* @Assert\GreaterThanOrEqual(value=«minValue»)
         «ENDIF»
-        «IF maxValue.toString != '0'»
+        «IF maxValue.toString != '0.0'»
             «' '»* @Assert\LessThanOrEqual(value=«maxValue»)
         «ENDIF»
         «' '»* @Assert\LessThan(value=«(10 ** length) as int», message="Length of field value must not be higher than «length».")) {
