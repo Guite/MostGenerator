@@ -155,9 +155,7 @@ class EventListener {
          */
         protected function performPrePersistCallback()
         {
-            $this->validate();
             «IF !application.targets('1.3.x')»
-
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -167,8 +165,8 @@ class EventListener {
                 if ($event->isPropagationStopped()) {
                     return false;
                 }
-            «ENDIF»
 
+            «ENDIF»
             return true;
         }
 
@@ -340,9 +338,7 @@ class EventListener {
          */
         protected function performPreUpdateCallback()
         {
-            $this->validate();
             «IF !application.targets('1.3.x')»
-
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -352,8 +348,8 @@ class EventListener {
                 if ($event->isPropagationStopped()) {
                     return false;
                 }
-            «ENDIF»
 
+            «ENDIF»
             return true;
         }
 
