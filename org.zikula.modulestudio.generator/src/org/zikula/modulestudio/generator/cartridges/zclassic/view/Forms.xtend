@@ -404,9 +404,14 @@ class Forms {
 
             var formButtons;
 
-            function triggerFormValidation()
+            function executeCustomValidationConstraints()
             {
                 «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+            }
+
+            function triggerFormValidation()
+            {
+                executeCustomValidationConstraints();
                 if (!document.getElementById('{{$__formid}}').checkValidity()) {
                     // This does not really submit the form,
                     // but causes the browser to display the error message
@@ -442,8 +447,7 @@ class Forms {
                     «relationHelper.initJs(it, app, true)»
     
                     var allFormFields = $('#{{$__formid}} input, #{{$__formid}} select, #{{$__formid}} textarea');
-                    allFormFields.change(triggerFormValidation)
-                                 .blur(triggerFormValidation);
+                    allFormFields.change(executeCustomValidationConstraints);
 
                     formButtons = $('#{{$__formid}} .form-buttons input');
                     $('#{{$__formid}}').submit(handleFormSubmit);
