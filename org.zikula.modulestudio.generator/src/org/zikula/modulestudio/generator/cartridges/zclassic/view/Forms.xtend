@@ -415,7 +415,7 @@ class Forms {
                 if (!document.getElementById('{{$__formid}}').checkValidity()) {
                     // This does not really submit the form,
                     // but causes the browser to display the error message
-                    jQuery('#{{$__formid}}').find(':submit').click();
+                    jQuery('#{{$__formid}}').find(':submit').not(jQuery('#btnDelete')).click();
                 }
             }
 
