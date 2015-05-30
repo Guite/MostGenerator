@@ -94,7 +94,7 @@ class ReportingFacade {
                 'file:' + (outputPath + '/diagrams/')) //$NON-NLS-1$ //$NON-NLS-2$
 
         var RenderOption renderOptions = new RenderOption
-        renderOptions.outputFileName = outputPath + '/reporting/' + outputName + '.' + fileExtension //$NON-NLS-1$ $NON-NLS-2$
+        renderOptions.outputFileName = outputPath + '/reporting/' + outputName + '.' + fileExtension //$NON-NLS-1$ //$NON-NLS-2$
         renderOptions.outputFormat = fileExtension
         task.renderOption = renderOptions
         task.run
