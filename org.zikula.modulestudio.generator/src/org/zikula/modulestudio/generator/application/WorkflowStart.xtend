@@ -4,6 +4,7 @@ package org.zikula.modulestudio.generator.application
 import com.google.inject.Injector
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.CoreVersion
+import java.io.File
 import java.io.IOException
 import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.ecore.resource.Resource
@@ -105,7 +106,7 @@ class WorkflowStart {
 
         try {
             val progressMonitor = settings.progressMonitor
-            progressMonitor.beginTask('Generating "' + settings.appVendor + '/' + settings.appName + ' ' + settings.appVersion + '" ...', -1)
+            progressMonitor.beginTask('Generating "' + settings.appVendor + File.separator + settings.appName + ' ' + settings.appVersion + '" ...', -1)
 
             for (singleCartridge : settings.getSelectedCartridges) {
                 // The generator cartridge to execute (zclassic, reporting)
@@ -141,7 +142,7 @@ class WorkflowStart {
                 .getInstance(JavaIoFileSystemAccess)
 
         configuredFileSystemAccess.setOutputPath(
-            'DEFAULT_OUTPUT', settings.getOutputPath + '/' + currentCartridge + '/' + settings.getAppName + '/')
+            'DEFAULT_OUTPUT', settings.getOutputPath + File.separator + currentCartridge + File.separator + settings.getAppName + File.separator)
 
         configuredFileSystemAccess
     }
@@ -167,16 +168,16 @@ class WorkflowStart {
         settings.appVersion = if (app.version !== null) app.version else '1.0.0' //$NON-NLS-1$
 
         // compute destination path for model files
-        var modelDestinationPath = '/model/' //$NON-NLS-1$
+        var modelDestinationPath = File.separator + 'model' + File.separator //$NON-NLS-1$
         if (!app.generatorSettings.isEmpty) {
             val genSettings = app.generatorSettings.head
             if (genSettings.writeModelToDocs) {
+                modelDestinationPath = File.separator + 'zclassic' + File.separator + settings.appName + File.separator
                 val targetVersion = genSettings.targetCoreVersion
                 if (targetVersion == CoreVersion.ZK135 || targetVersion == CoreVersion.ZK136) {
-                    modelDestinationPath = '/zclassic/' + settings.appName + '/src/modules/' + settings.appName + '/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                }
-                else {
-                    modelDestinationPath = '/zclassic/' + settings.appName + '/Resources/docs/model/' //$NON-NLS-1$ //$NON-NLS-2$
+                    modelDestinationPath += 'src' + File.separator + 'modules' + File.separator + settings.appName + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                } else {
+                    modelDestinationPath += 'Resources' + File.separator + 'docs' + File.separator + 'model' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
             }
         }

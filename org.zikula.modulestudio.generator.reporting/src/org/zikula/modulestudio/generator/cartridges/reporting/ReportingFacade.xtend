@@ -43,13 +43,13 @@ class ReportingFacade {
             hm.put(EngineConstants.APPCONTEXT_CLASSLOADER_KEY,
                     ReportEngine.classLoader)
             config.appContext = hm
-            val reportPath = outputPath + '/reporting/' //$NON-NLS-1$
+            val reportPath = outputPath + File.separator + 'reporting' + File.separator //$NON-NLS-1$
             val reportPathDir = new File(reportPath)
             if (!reportPathDir.exists && !reportPathDir.mkdir) {
                 return
             }
-            config.setLogConfig(reportPath, //$NON-NLS-1$
-                    Level.WARNING)
+
+            config.setLogConfig(reportPath, Level.WARNING)
 
             Platform.startup(config)
             val factory = Platform.createFactoryObject(IReportEngineFactory.EXTENSION_REPORT_ENGINE_FACTORY) as IReportEngineFactory
@@ -91,10 +91,10 @@ class ReportingFacade {
         task.setParameterValue('modelPath', //$NON-NLS-1$
                 'file:' + (modelPath)) //$NON-NLS-1$
         task.setParameterValue('diagramPath', //$NON-NLS-1$
-                'file:' + (outputPath + '/diagrams/')) //$NON-NLS-1$ //$NON-NLS-2$
+                'file:' + (outputPath + File.separator + 'diagrams' + File.separator)) //$NON-NLS-1$ //$NON-NLS-2$
 
         var RenderOption renderOptions = new RenderOption
-        renderOptions.outputFileName = outputPath + '/reporting/' + outputName + '.' + fileExtension //$NON-NLS-1$ //$NON-NLS-2$
+        renderOptions.outputFileName = outputPath + File.separator + 'reporting' + File.separator + outputName + '.' + fileExtension //$NON-NLS-1$
         renderOptions.outputFormat = fileExtension
         task.renderOption = renderOptions
         task.run

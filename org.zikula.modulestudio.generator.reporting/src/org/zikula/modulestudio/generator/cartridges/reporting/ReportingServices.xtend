@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Platform
  * Report-related utility methods.
  */
 class ReportingServices {
+
     /**
      * Collects and returns the available reports.
      *

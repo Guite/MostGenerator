@@ -28,13 +28,13 @@ class Validator extends WorkflowComponentWithSlot {
         }
         println('Running validation.')
 
-        val resource = ctx.get(getSlot()) as Resource
-        val theModel = resource.getContents().head
+        val resource = ctx.get(slot) as Resource
+        val theModel = resource.contents.head
         val diagnostic = Diagnostician.INSTANCE.validate(theModel)
-        if (diagnostic.severity == Diagnostic.ERROR) {
+        if (Diagnostic.ERROR === diagnostic.severity) {
             println('Model has errors: ' + diagnostic)
             throw new IllegalStateException('Aborting generation as the model has errors: ' + diagnostic)
-        } else if (diagnostic.severity == Diagnostic.WARNING) {
+        } else if (Diagnostic.WARNING === diagnostic.severity) {
             println('Model has warnings: ' + diagnostic)
         }
     }

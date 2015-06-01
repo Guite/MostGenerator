@@ -69,16 +69,16 @@ class WorkflowPostProcess {
                 val file = new File(fileUrl.getPath)
                 fileCopy.sourceFile = file.absolutePath
 
-                val targetBasePath = settings.outputPath + '/zclassic/' + settings.appName.toFirstUpper + '/' //$NON-NLS-1$ //$NON-NLS-2$
-                var imageFolder = 'Resources/public/images' //$NON-NLS-1$
+                val targetBasePath = settings.outputPath + File.separator + 'zclassic' + File.separator + settings.appName.toFirstUpper + File.separator //$NON-NLS-1$
+                var imageFolder = 'Resources' + File.separator + 'public' + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 var targetFolder = new File(targetBasePath + imageFolder)
                 if (!targetFolder.exists) {
                     // BC support for 1.3.x
-                    imageFolder = 'src/modules/' + settings.appName.toFirstUpper + '/images' //$NON-NLS-1$
+                    imageFolder = 'src' + File.separator + 'modules' + File.separator + settings.appName.toFirstUpper + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     targetFolder = new File(targetBasePath + imageFolder)
                 }
                 if (targetFolder.exists) {
-                    fileCopy.targetFile = targetBasePath + imageFolder + '/admin.png' //$NON-NLS-1$
+                    fileCopy.targetFile = targetBasePath + imageFolder + File.separator + 'admin.png' //$NON-NLS-1$
                     fileCopy.invoke(null)
                 }
             } catch (IOException e) {
@@ -107,7 +107,7 @@ class WorkflowPostProcess {
             reportingFacade.setUp
             for (report : settings.getSelectedReports) {
                 settings.getProgressMonitor.subTask('Reporting: ' + report.toString) //$NON-NLS-1$
-                reportingFacade.startExport(dir.toString + '/' + report.toString + '.rptdesign', report.toString) //$NON-NLS-1$ //$NON-NLS-2$
+                reportingFacade.startExport(dir.toString + File.separator + report.toString + '.rptdesign', report.toString) //$NON-NLS-1$
                 settings.getProgressMonitor.subTask('')
             }
             reportingFacade.shutDown

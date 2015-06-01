@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.Path
 
 class GitRevision {
+
 	def static read() throws IOException {
 		val bundle = Activator.getDefault.bundle
 		var url = FileLocator.find(bundle, new Path('gitrevision.txt'), null)
