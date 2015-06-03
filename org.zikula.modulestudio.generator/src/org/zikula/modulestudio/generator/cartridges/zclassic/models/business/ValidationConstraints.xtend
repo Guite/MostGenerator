@@ -176,7 +176,9 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(EmailField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
-        «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
+        «IF mandatory»
+            «' '»* @Assert\Email(checkMX=«checkMX.displayBool», checkHost=«checkHost.displayBool»)
+        «ENDIF»
     '''
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
