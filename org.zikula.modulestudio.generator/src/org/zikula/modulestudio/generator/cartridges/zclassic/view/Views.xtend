@@ -294,7 +294,7 @@ class Views {
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
             <title>{pagegetvar name='title'}</title>
         <style>
-            body {
+            @page {
                 margin: 0 2cm 1cm 1cm;
             }
 
