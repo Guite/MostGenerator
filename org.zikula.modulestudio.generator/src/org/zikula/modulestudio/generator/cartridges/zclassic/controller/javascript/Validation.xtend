@@ -109,11 +109,8 @@ class Validation {
                 «IF targets('1.3.x')»
                     $('advice-validate-unique-' + elem.id).hide();
                     elem.removeClassName('validation-failed').removeClassName('validation-passed');
-                «ELSE»
-                    //$('advice-validate-unique-' + elem.attr('id')).hide();
-                    //elem.parent().parent().removeClass('has-error').removeClassName('has-success');
-                «ENDIF»
 
+                «ENDIF»
                 // build parameters object
                 params = {
                     ot: ucOt,
@@ -122,10 +119,10 @@ class Validation {
                     ex: ucEx
                 };
 
-                /** TODO fix the following call to work within validation context */
-                return true;
-
                 «IF targets('1.3.x')»
+                    /** TODO fix the following call to work within validation context */
+                    return true;
+
                     request = new Zikula.Ajax.Request(
                         Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=checkForDuplicate',
                         {
@@ -153,27 +150,26 @@ class Validation {
                             }
                         }
                     );
+
+                    return true;
                 «ELSE»
+                    var result = true;
+
                     jQuery.ajax({
                         type: 'POST',
                         url: Routing.generate('«appName.formatForDB»_ajax_checkforduplicate'),
-                        data: params
+                        data: params,
+                        async: false
                     }).done(function(res) {
-                        if (res.data.isDuplicate !== '1') {
-                            jQuery('#advice-validate-unique-' + elem.attr('id')).hide();
-                            elem.parent().parent().removeClass('has-error').addClass('has-success');
-                            return true;
-                        } else {
-                            jQuery('#advice-validate-unique-' + elem.attr('id')).show();
-                            elem.parent().parent().removeClass('has-success').addClass('has-error');
-                            return false;
+                        if (res.data.isDuplicate === true) {
+                            result = false;
                         }
                     })«/*.fail(function(jqXHR, textStatus) {
                         // nothing to do yet
                     })*/»;
-                «ENDIF»
 
-                return true;
+                    return result;
+                «ENDIF»
             }
         «ENDIF»
 
