@@ -443,7 +443,7 @@ class DisplayFunctions {
                     }
                 );
             «ELSE»
-                $.ajax({
+                jQuery.ajax({
                     type: 'POST',
                     url: Routing.generate('«appName.formatForDB»_ajax_toggleflag'),
                     data: params
