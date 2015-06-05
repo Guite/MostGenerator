@@ -243,7 +243,7 @@ class Validation {
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, true);
 
-                    return valStr === '' || (cmpVal >= «vendorAndName»Today('datetime'));
+                    return valStr === '' || (cmpVal > «vendorAndName»Today('datetime'));
                 }
             «ENDIF»
         «ENDIF»
@@ -268,7 +268,7 @@ class Validation {
                     valStr = new String(val);
                     cmpVal = «vendorAndName»ReadDate(valStr, false);
 
-                    return valStr === '' || (cmpVal >= «vendorAndName»Today('date'));
+                    return valStr === '' || (cmpVal > «vendorAndName»Today('date'));
                 }
             «ENDIF»
         «ENDIF»
@@ -291,7 +291,7 @@ class Validation {
                     var cmpVal;
                     cmpVal = new String(val);
 
-                    return cmpVal === '' || (cmpVal >= «vendorAndName»Today('time'));
+                    return cmpVal === '' || (cmpVal > «vendorAndName»Today('time'));
                 }
             «ENDIF»
         «ENDIF»
