@@ -75,8 +75,8 @@ class Association {
             «ENDIF»
             «IF !isManySide(false)»
                 «' '»* @Assert\Type(type="\«entityClass»")
+                «' '»* @Assert\Valid()
             «ENDIF»
-            «' '»* @Assert\Valid()
         «ENDIF»
          * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
          */
@@ -155,7 +155,6 @@ class Association {
                 «IF minSource > 0 && maxSource > 0»
                     «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
                 «ENDIF»
-                «' '»* @Assert\Valid()
             «ENDIF»
              * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«sourceName».
              */
@@ -185,8 +184,8 @@ class Association {
             «ENDIF»
             «IF !isManySide(true)»
                 «' '»* @Assert\Type(type="\«entityClass»")
+                «' '»* @Assert\Valid()
             «ENDIF»
-            «' '»* @Assert\Valid()
         «ENDIF»
          * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass» $«targetName».
          */
@@ -235,7 +234,6 @@ class Association {
             «IF minTarget > 0 && maxTarget > 0»
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
-            «' '»* @Assert\Valid()
         «ENDIF»
          * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«targetName».
          */
@@ -262,7 +260,6 @@ class Association {
             «IF minTarget > 0 && maxTarget > 0»
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
-            «' '»* @Assert\Valid()
         «ENDIF»
          * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«targetName».
          */
