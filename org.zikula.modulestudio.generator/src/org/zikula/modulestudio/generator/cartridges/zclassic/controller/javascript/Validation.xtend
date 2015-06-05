@@ -99,6 +99,14 @@ class Validation {
         }
         «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
 
+            «IF !targets('1.3.x')»
+                «FOR entity : entities»
+                    «FOR field : entity.getUniqueDerivedFields.filter[!primaryKey]»
+                        var last«entity.name.formatForCodeCapital»«field.name.formatForCodeCapital» = '';
+                    «ENDFOR»
+                «ENDFOR»
+
+            «ENDIF»
             /**
              * Performs a duplicate check for unique fields
              */
@@ -106,6 +114,14 @@ class Validation {
             {
                 var params«IF targets('1.3.x')», request«ENDIF»;
 
+                «IF !targets('1.3.x')»
+                    if (elem.val() == window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ]) {
+                        return true;
+                    }
+
+                    window['last' + «vendorAndName»CapitaliseFirstLetter(ucOt) + «vendorAndName»CapitaliseFirstLetter(elem.attr('id')) ] = elem.val();
+
+                «ENDIF»
                 «IF targets('1.3.x')»
                     $('advice-validate-unique-' + elem.id).hide();
                     elem.removeClassName('validation-failed').removeClassName('validation-passed');
