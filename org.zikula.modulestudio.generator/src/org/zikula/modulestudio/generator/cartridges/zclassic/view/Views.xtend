@@ -195,7 +195,9 @@ class Views {
                 {pageaddvar name='stylesheet' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.css'}
                 {pageaddvar name='javascript' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.js'}
                 «IF controller.hasActions('edit')»
-                    {pageaddvar name='javascript' value='polyfill' features='forms'}
+                    {if isset($smarty.get.func) && $smarty.get.func eq 'edit'}
+                        {pageaddvar name='javascript' value='polyfill' features='forms'}
+                    {/if}
                 «ENDIF»
             «ENDIF»
         «ENDIF»
