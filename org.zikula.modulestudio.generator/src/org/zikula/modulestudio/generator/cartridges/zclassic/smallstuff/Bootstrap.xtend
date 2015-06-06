@@ -143,8 +143,9 @@ class Bootstrap {
             
             function «prefix()»PerformRegularAmendments()
             {
+                $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
                 $currentFunc = FormUtil::getPassedValue('func', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
-                if ($currentFunc == 'edit' || $currentFunc == 'initialize') {
+                if ($currentType == 'admin' || $currentFunc == 'edit' || $currentFunc == 'initialize') {
                     return;
                 }
             

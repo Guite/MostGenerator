@@ -65,6 +65,9 @@ class Installer {
             use UserUtil;
             use Zikula_AbstractInstaller;
             use Zikula_Workflow_Util;
+            «IF hasCategorisableEntities»
+                use Zikula\Module\CategoriesModule\Entity\CategoryRegistryEntity;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -156,7 +159,7 @@ class Installer {
                     «IF targets('1.3.x')»
                         $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                     «ELSE»
-                        $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /app/config/parameters.yml file (change the env variable to dev) in order to reveal the error details.');
+                        $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /app/config/parameters.yml file (change the env variable to dev) in order to reveal the error details (or look into the log files at /app/logs/).');
                     «ENDIF»
                 }
                 «IF targets('1.3.x')»
@@ -221,7 +224,7 @@ class Installer {
                     «FOR entity : getCategorisableEntities»
 
                         $registry = new CategoryRegistryEntity();
-                        $registry->setModname($this->name);
+                        $registry->setModname('«appName»');
                         $registry->setEntityname('«entity.name.formatForCodeCapital»');
                         $registry->setProperty($categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»')));
                         $registry->setCategory_Id($categoryGlobal['id']);
@@ -266,7 +269,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
                 «ELSE»
-                    $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                    $controllerHelper = new \«appNamespace»\Util\ControllerUtil($this->serviceManager, null);
                 «ENDIF»
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
