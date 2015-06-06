@@ -194,6 +194,9 @@ class Views {
             «IF controller.hasActions('view') || controller.hasActions('display') || controller.hasActions('edit')»
                 {pageaddvar name='stylesheet' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.css'}
                 {pageaddvar name='javascript' value='web/bootstrap-jqueryui/bootstrap-jqueryui.min.js'}
+                «IF controller.hasActions('edit')»
+                    {pageaddvar name='javascript' value='polyfill' features='forms'}
+                «ENDIF»
             «ENDIF»
         «ENDIF»
         «IF targets('1.3.x')»
