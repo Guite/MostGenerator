@@ -32,13 +32,13 @@ class Account {
             use SecurityUtil;
             use ServiceUtil;
             use UserUtil;
-            use Zikula_AbstractApi;
+            use Zikula\Core\Api\AbstractApi;
 
         «ENDIF»
         /**
          * Account api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Account«ELSE»AccountApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Account extends Zikula_AbstractApi«ELSE»AccountApi extends AbstractApi«ENDIF»
         {
             «accountApiBaseImpl»
         }
@@ -57,7 +57,11 @@ class Account {
             // collect items in an array
             $items = array();
 
-            $useAccountPage = $this->getVar('useAccountPage', true);
+            «IF targets('1.3.x')»
+                $useAccountPage = $this->getVar('useAccountPage', true);
+            «ELSE»
+                $useAccountPage = ModUtil::getVar('«vendorAndName»', 'useAccountPage', true);
+            «ENDIF»
             if ($useAccountPage === false) {
                 return $items;
             }
@@ -73,10 +77,6 @@ class Account {
                 return $items;
             }
 
-            «IF !targets('1.3.x')»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
-
             // Create an array of links to return
             «IF !getAllUserControllers.empty && getMainUserController.hasActions('view')»
                 «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
@@ -86,7 +86,7 @@ class Account {
                             «IF targets('1.3.x')»
                                 'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
                             «ELSE»
-                                'url' => $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', array('lct' => 'user', 'own' => 1)),
+                                'url' => $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', array('lct' => 'user', 'own' => 1)),
                             «ENDIF»
                             'title'   => $this->__('My «entity.nameMultiple.formatForDisplay»'),
                             'icon'    => 'windowlist.png',
@@ -99,8 +99,12 @@ class Account {
             «IF !getAllAdminControllers.empty»
                 if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                     $items[] = array(
-                        'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'),
-                        'title' => $this->__('«name.formatForDisplayCapital» Backend'),
+                        «IF targets('1.3.x')»
+                            'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'),
+                        «ELSE»
+                            'url'   => $this->get('router')->generate('«appName.formatForDB»_admin_index'),
+                        «ENDIF»
+                        'title'  => $this->__('«name.formatForDisplayCapital» Backend'),
                         'icon'   => 'configure.png',
                         'module' => 'core',
                         'set'    => 'icons/large'

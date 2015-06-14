@@ -35,14 +35,14 @@ class BlockList {
             use DataUtil;
             use ModUtil;
             use SecurityUtil;
-            use Zikula_Controller_AbstractBlock;
+            use Zikula\Core\Controller\AbstractBlockController;
             use Zikula_View;
 
         «ENDIF»
         /**
          * Generic item list block base class.
          */
-        class «IF targets('1.3.x')»«appName»_Block_Base_ItemList«ELSE»ItemListBlock«ENDIF» extends Zikula_Controller_AbstractBlock
+        class «IF targets('1.3.x')»«appName»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock«ELSE»ItemListBlock extends AbstractBlockController«ENDIF»
         {
             «listBlockBaseImpl»
         }
@@ -181,7 +181,7 @@ class BlockList {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             $utilArgs = array('name' => 'list');
             if (!isset($vars['objectType']) || !in_array($vars['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
@@ -195,7 +195,7 @@ class BlockList {
                 $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
@@ -417,18 +417,21 @@ class BlockList {
         {
             // Get current content
             $vars = BlockUtil::varsFromContent($blockinfo['content']);
+            «IF !targets('1.3.x')»
+                $request = $this->get('request');
+            «ENDIF»
 
-            $vars['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $vars['sorting'] = $this->request->request->filter('sorting', 'default', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $vars['amount'] = (int) $this->request->request->filter('amount', 5, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
-            $vars['template'] = $this->request->request->get('template', '');
-            $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
-            $vars['filter'] = $this->request->request->get('filter', '');
+            $vars['objectType'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $vars['sorting'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->filter('sorting', 'default', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $vars['amount'] = (int) $«IF targets('1.3.x')»this->«ENDIF»request->request->filter('amount', 5, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
+            $vars['template'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->get('template', '');
+            $vars['customTemplate'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->get('customtemplate', '');
+            $vars['filter'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->get('filter', '');
 
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             if (!in_array($vars['objectType'], $controllerHelper->getObjectTypes('block'))) {
                 $vars['objectType'] = $controllerHelper->getDefaultObjectType('block');

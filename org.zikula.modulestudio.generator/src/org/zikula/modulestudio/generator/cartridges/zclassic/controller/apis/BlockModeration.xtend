@@ -32,14 +32,14 @@ class BlockModeration {
             use ModUtil;
             use SecurityUtil;
             use UserUtil;
-            use Zikula_Controller_AbstractBlock;
+            use Zikula\Core\Controller\AbstractBlockController;
             use Zikula_View;
 
         «ENDIF»
         /**
          * Moderation block base class.
          */
-        class «IF targets('1.3.x')»«appName»_Block_Base_Moderation«ELSE»ModerationBlock«ENDIF» extends Zikula_Controller_AbstractBlock
+        class «IF targets('1.3.x')»«appName»_Block_Base_Moderation extends Zikula_Controller_AbstractBlock«ELSE»ModerationBlock extends AbstractBlockController«ENDIF»
         {
             «moderationBlockBaseImpl»
         }
@@ -123,7 +123,7 @@ class BlockModeration {
             «IF targets('1.3.x')»
                 $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
             «ELSE»
-                $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $this->get('«appName.formatForDB».workflow_helper');
             «ENDIF»
             $amounts = $workflowHelper->collectAmountOfModerationItems();
 

@@ -31,14 +31,14 @@ class Category {
             use CategoryRegistryUtil;
             use ModUtil;
             use UserUtil;
-            use Zikula_AbstractApi;
+            use Zikula\Core\Api\AbstractApi;
 
         «ENDIF»
 
         /**
          * Category api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Category«ELSE»CategoryApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Category extends Zikula_AbstractApi«ELSE»CategoryApi extends AbstractApi«ENDIF»
         {
             «categoryBaseImpl»
         }
@@ -63,7 +63,7 @@ class Category {
             $objectType = $this->determineObjectType($args, 'getMainCat');
             «IF !targets('1.3.x')»
 
-                $logger = $this->serviceManager->get('logger');
+                $logger = $this->get('logger');
                 $logger->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
             «ENDIF»
 
@@ -114,10 +114,18 @@ class Category {
          */
         public function retrieveCategoriesFromRequest(array $args = array())
         {
-            $dataSource = $this->request->request;
-            if (isset($args['source']) && $args['source'] == 'GET') {
-                $dataSource = $this->request->query;
-            }
+            «IF targets('1.3.x')»
+                $dataSource = $this->request->request;
+                if (isset($args['source']) && $args['source'] == 'GET') {
+                    $dataSource = $this->request->query;
+                }
+            «ELSE»
+                $request = $this->get('request');
+                $dataSource = $request->request;
+                if (isset($args['source']) && $args['source'] == 'GET') {
+                    $dataSource = $request->query;
+                }
+            «ENDIF»
 
             $catIdsPerRegistry = array();
 

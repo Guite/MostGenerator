@@ -30,14 +30,14 @@ class Mailz {
 
             use ModUtil;
             use ServiceUtil;
-            use Zikula_AbstractApi;
+            use Zikula\Core\Api\AbstractApi;
             use Zikula_View;
 
         «ENDIF»
         /**
          * Mailz api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Mailz«ELSE»MailzApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Mailz extends Zikula_AbstractApi«ELSE»MailzApi extends AbstractApi«ENDIF»
         {
             «mailzBaseImpl»
         }
@@ -93,13 +93,11 @@ class Mailz {
 
             «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-            «ENDIF»
-            $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));

@@ -657,7 +657,8 @@ class ControllerLayer {
             {
                 $links = array();
                 «IF !app.targets('1.3.x')»
-                    $router = $this->serviceManager->get('router');
+                    $router = $this->get('router');
+                    $request = $this->get('request');
                 «ENDIF»
 
                 «menuLinksBetweenControllers»
@@ -665,13 +666,13 @@ class ControllerLayer {
                 «IF app.targets('1.3.x')»
                     $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
                 «ELSE»
-                    $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+                    $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
                 «ENDIF»
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 
-                $currentType = $this->request->query->filter('type', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
-                $currentLegacyType = $this->request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $currentType = $request->query->filter('type', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $currentLegacyType = $request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
                 $permLevel = in_array('admin', array($currentType, $currentLegacyType)) ? ACCESS_ADMIN : ACCESS_READ;
 
                 «IF it instanceof AdminController || it instanceof UserController»

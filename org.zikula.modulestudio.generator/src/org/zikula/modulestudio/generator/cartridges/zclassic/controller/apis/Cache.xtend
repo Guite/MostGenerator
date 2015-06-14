@@ -34,7 +34,7 @@ class Cache {
 
             use ModUtil;
             use UserUtil;
-            use Zikula_AbstractApi;
+            use Zikula\Core\Api\AbstractApi;
             use Zikula_View;
             use Zikula_View_Theme;
 
@@ -42,7 +42,7 @@ class Cache {
         /**
          * Cache api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Cache«ELSE»CacheApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Cache extends Zikula_AbstractApi«ELSE»CacheApi extends AbstractApi«ENDIF»
         {
             «cacheApiBaseImpl»
         }
@@ -67,7 +67,7 @@ class Cache {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             $utilArgs = array('api' => 'cache', 'action' => 'clearItemCache');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
@@ -85,7 +85,7 @@ class Cache {
             $instanceId = $item->createCompositeIdentifier();
             «IF !targets('1.3.x')»
 
-                $logger = $this->serviceManager->get('logger');
+                $logger = $this->get('logger');
                 $logger->info('{app}: User {user} caused clearing the cache for entity {entity} with id {id}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId));
             «ENDIF»
 

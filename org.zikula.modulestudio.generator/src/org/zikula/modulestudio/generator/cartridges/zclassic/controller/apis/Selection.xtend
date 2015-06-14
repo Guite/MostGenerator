@@ -28,13 +28,13 @@ class Selection {
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
-            use Zikula_AbstractApi;
+            use Zikula\Core\Api\AbstractApi;
 
         «ENDIF»
         /**
          * Selection api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Selection«ELSE»SelectionApi«ENDIF» extends Zikula_AbstractApi
+        class «IF targets('1.3.x')»«appName»_Api_Base_Selection extends Zikula_AbstractApi«ELSE»SelectionApi extends AbstractApi«ENDIF»
         {
             «selectionBaseImpl»
         }
@@ -57,7 +57,9 @@ class Selection {
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
             «ENDIF»
 
-            $meta = $this->entityManager->getClassMetadata($entityClass);
+            $em = $this->get('doctrine.entitymanager');
+
+            $meta = $em->getClassMetadata($entityClass);
             if ($this->hasCompositeKeys($objectType)) {
                 $idFields = $meta->getIdentifierFieldNames();
             } else {
@@ -79,7 +81,7 @@ class Selection {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
 
             return $controllerHelper->hasCompositeKeys($objectType);
@@ -199,7 +201,7 @@ class Selection {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             $utilArgs = array('api' => 'selection', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
@@ -226,7 +228,7 @@ class Selection {
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             return $repository;
