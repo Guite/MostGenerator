@@ -30,6 +30,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerLayer {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -638,13 +639,13 @@ class ControllerLayer {
             «IF isUserController»
                 use System;
             «ENDIF»
-            use Zikula_AbstractApi;
+            use Zikula\Core\Api\AbstractApi;
 
         «ENDIF»
         /**
          * This is the «name» api helper class.
          */
-        class «IF app.targets('1.3.x')»«app.appName»_Api_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Api«ENDIF» extends Zikula_AbstractApi
+        class «IF app.targets('1.3.x')»«app.appName»_Api_Base_«name.formatForCodeCapital» extends Zikula_AbstractApi«ELSE»«name.formatForCodeCapital»Api extends AbstractApi«ENDIF»
         {
             «IF !isAjaxController»
             /**
