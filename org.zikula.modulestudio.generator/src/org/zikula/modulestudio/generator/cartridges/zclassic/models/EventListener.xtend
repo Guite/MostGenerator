@@ -30,6 +30,8 @@ class EventListener {
      * Entry point for entity lifecycle callback methods.
      */
     def generateBase(Entity it) '''
+        protected $processedLoadCallback = false;
+
         /**
          * Post-Process the data after the entity has been constructed by the entity manager.
          * The event happens after the entity has been loaded from database or after a refresh call.
@@ -48,6 +50,10 @@ class EventListener {
         protected function performPostLoadCallback()
         {
             // echo 'loaded a record ...';
+            if ($this->processedLoadCallback) {
+                return true;
+            }
+
             «postLoadImpl»
 
             $this->prepareItemActions();
@@ -60,6 +66,8 @@ class EventListener {
                 $event = new Filter«name.formatForCodeCapital»Event($this);
                 $dispatcher->dispatch(«application.name.formatForCodeCapital»Events::«name.formatForDB.toUpperCase»_POST_LOAD, $event);
             «ENDIF»
+
+            $this->processedLoadCallback = true;
 
             return true;
         }
