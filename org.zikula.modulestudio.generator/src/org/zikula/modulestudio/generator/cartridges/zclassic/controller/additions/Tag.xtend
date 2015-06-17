@@ -30,6 +30,7 @@ class Tag {
             use SecurityUtil;
             use ServiceUtil;
             use UserUtil;
+            use Zikula\TagModule\AbstractTaggedObjectMeta;
             use Zikula\Core\UrlInterface;
 
         «ENDIF»
@@ -39,7 +40,7 @@ class Tag {
         «IF targets('1.3.x')»
         class «appName»_TaggedObjectMeta_Base_«appName» extends Tag_AbstractTaggedObjectMeta
         «ELSE»
-        class «appName» extends \Tag\AbstractTaggedObjectMeta
+        class «appName» extends AbstractTaggedObjectMeta
         «ENDIF»
         {
             «tagBaseImpl»
