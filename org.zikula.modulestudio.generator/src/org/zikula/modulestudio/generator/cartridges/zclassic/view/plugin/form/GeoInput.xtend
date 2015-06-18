@@ -78,6 +78,7 @@ class GeoInput {
             protected function getStyleClass()
             {
                 $class = parent::getStyleClass();
+
                 return str_replace('z-form-text', 'z-form-geo', $class);
             }
 

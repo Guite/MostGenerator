@@ -287,7 +287,6 @@ class SimpleFields {
         {else}
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         {/if}
-        «/*TODO: visible=false*/»
         «IF !mandatory && nullable»
             <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
         «ENDIF»
@@ -295,9 +294,9 @@ class SimpleFields {
 
     def private dispatch formFieldDetails(DateField it, String groupSuffix, String idSuffix) '''
         {if $mode ne 'create'}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«validationHelper.fieldValidationCssClass(it, true)»}
+            {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it, true)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
+            {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         {/if}
         «IF !mandatory && nullable»
             <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
@@ -305,8 +304,7 @@ class SimpleFields {
     '''
 
     def private dispatch formFieldDetails(TimeField it, String groupSuffix, String idSuffix) '''
-        {* TODO: support time fields in Zikula (see https://github.com/Guite/MostGenerator/issues/87 for more information) *}
-        {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8«validationHelper.fieldValidationCssClass(it, true)»}
+        {«entity.application.appName.formatForDB»TimeInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8«validationHelper.fieldValidationCssClass(it, true)»}
     '''
 
     def private isLegacyApp(DerivedField it) {

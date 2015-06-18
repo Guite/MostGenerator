@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ActionUrl
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
@@ -24,6 +25,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Ge
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ItemSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.RelationSelectorAutoComplete
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.RelationSelectorList
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TimeInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.UserInput
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -94,6 +96,9 @@ class Plugins {
         }
         if (hasGeographical) {
             new GeoInput().generate(it, fsa)
+        }
+        if (!entities.filter[!fields.filter(TimeField).empty].empty) {
+            new TimeInput().generate(it, fsa)
         }
         val hasRelations = !relations.empty
         if (hasTrees || hasRelations) {

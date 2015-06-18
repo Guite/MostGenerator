@@ -103,6 +103,7 @@ class ItemSelector {
             protected function getStyleClass()
             {
                 $class = parent::getStyleClass();
+
                 return str_replace('z-form-text', 'z-form-itemlist ' . strtolower($this->objectType), $class);
             }
 

@@ -83,6 +83,7 @@ class ColourInput {
             protected function getStyleClass()
             {
                 $class = parent::getStyleClass();
+
                 return str_replace('z-form-text', 'z-form-colour', $class);
             }
 
@@ -96,6 +97,13 @@ class ColourInput {
             public function render(Zikula_Form_View $view)
             {
                 static $firstTime = true;
+
+                $result = parent::render($view);
+
+                if ($this->readOnly) {
+                    return $result;
+                }
+
                 if ($firstTime) {
                     «IF targets('1.3.x')»
                         PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
@@ -109,12 +117,6 @@ class ColourInput {
                 $firstTime = false;
 
                 $dom = ZLanguage::getModuleDomain('«appName»');
-
-                $result = parent::render($view);
-
-                if ($this->readOnly) {
-                    return $result;
-                }
 
                 $result .= "<script type=\"text/javascript\">
                     /* <![CDATA[ */
