@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ActionUrl
@@ -20,6 +21,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.Validat
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.AbstractObjectSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ColourInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.CountrySelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.DateInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Frame
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.GeoInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ItemSelector
@@ -96,6 +98,9 @@ class Plugins {
         }
         if (hasGeographical) {
             new GeoInput().generate(it, fsa)
+        }
+        if (!entities.filter[!fields.filter(DateField).empty].empty) {
+            new DateInput().generate(it, fsa)
         }
         if (!entities.filter[!fields.filter(TimeField).empty].empty) {
             new TimeInput().generate(it, fsa)
