@@ -68,9 +68,6 @@ class TimeInput {
              */
             public function create(Zikula_Form_View $view, &$params)
             {
-                $params['maxLength'] = 11;
-                $params['width'] = '6em';
-
                 if (isset($params['use24Hour'])) {
                     $this->use24Hour = (bool) $params['use24Hour'];
                 } else {
@@ -129,6 +126,11 @@ class TimeInput {
                         })(jQuery);
                     /* ]]> */
                     </script>";
+
+                $attributes = $this->renderAttributes($view);
+                if ($attributes != '') {
+                    $result = str_replace('id=\'' . $this->getId() . '\' name=\'' . $this->getId() . '\' ', 'id=\'' . $this->getId() . '\' name=\'' . $this->getId() . '\' ' . $attributes, $result);
+                }
 
                 return $result;
             }

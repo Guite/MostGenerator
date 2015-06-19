@@ -51,24 +51,6 @@ class DateInput {
             }
 
             /**
-             * Create event handler.
-             *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
-             *
-             * @see    Zikula_Form_AbstractPlugin
-             * @return void
-             */
-            public function create(Zikula_Form_View $view, &$params)
-            {
-                $params['maxLength'] = 11;
-                $params['width'] = '6em';
-
-                // let parent plugin do the work in detail
-                parent::create($view, $params);
-            }
-
-            /**
              * Helper method to determine css class.
              *
              * @see Zikula_Form_Plugin_TextInput
@@ -150,6 +132,11 @@ class DateInput {
                 );
         
                 $result = smarty_function_jquery_datepicker($params, $view);
+
+                $attributes = $this->renderAttributes($view);
+                if ($attributes != '') {
+                    $result = str_replace('id=\'' . $this->getId() . '\' name=\'' . $this->getId() . '\' ', 'id=\'' . $this->getId() . '\' name=\'' . $this->getId() . '\' ' . $attributes, $result);
+                }
 
                 return $result;
             }
