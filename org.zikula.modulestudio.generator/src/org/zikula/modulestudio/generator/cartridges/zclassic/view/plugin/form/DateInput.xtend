@@ -29,6 +29,7 @@ class DateInput {
 
             use Zikula_Form_Plugin_TextInput;
             use Zikula_Form_View;
+            use ZLanguage;
 
         «ENDIF»
         /**
@@ -112,15 +113,8 @@ class DateInput {
                 }
         
                 $defaultDate = new \DateTime($this->text);
-                $result = '';
-        
-                $dateFormat = 'Y-m-d';
-                $dateFormatJs = 'yy-mm-dd';
-                if (ZLanguage::getLanguageCode() == 'de') {
-                    $dateFormat = 'd.m.Y';
-                    $dateFormatJs = 'dd.mm.yy';
-                }
-        
+                list ($dateFormat, $dateFormatJs) = $this->getDateFormat();
+
                 include_once 'lib/viewplugins/function.jquery_datepicker.php';
         
                 $params = array(
@@ -139,6 +133,23 @@ class DateInput {
                 }
 
                 return $result;
+            }
+
+            /**
+             * Returns required date formats for PHP date and JavaScript.
+             *
+             * @return array List of date formats.
+             */
+            protected function getDateFormat()
+            {
+                $dateFormat = 'Y-m-d';
+                $dateFormatJs = 'yy-mm-dd';
+                if (ZLanguage::getLanguageCode() == 'de') {
+                    $dateFormat = 'd.m.Y';
+                    $dateFormatJs = 'dd.mm.yy';
+                }
+
+                return array($dateFormat, $dateFormatJs);
             }
         }
     '''

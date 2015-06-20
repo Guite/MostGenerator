@@ -119,7 +119,7 @@ class TimeInput {
                         ( function($) {
                             $(document).ready(function() {
                                 $('#" . $this->getId() . "').timepicker({
-                                    timeFormat: 'hh:mm',
+                                    timeFormat: '" . $this->getTimeFormat() . "',
                                     ampm: false
                                 });
                             });
@@ -133,6 +133,16 @@ class TimeInput {
                 }
 
                 return $result;
+            }
+
+            /**
+             * Returns required time format.
+             *
+             * @return string Time format.
+             */
+            protected function getTimeFormat()
+            {
+                return 'hh:mm';
             }
 
             /**
@@ -157,6 +167,37 @@ class TimeInput {
                         $this->setError(__('Error! Invalid time.'));
                     }
                 }
+            }
+
+            /**
+             * Parses a value.
+             *
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             * @param string           $text Text.
+             *
+             * @return string Parsed Text.
+             */
+            public function parseValue(Zikula_Form_View $view, $text)
+            {
+                if ($text === '') {
+                    return null;
+                }
+        
+                $textParts = explode(':', $text);
+                if (count($textParts) != 2) {
+                    return null;
+                }
+        
+                if (strlen($textParts[0]) == 1) {
+                    $textParts[0] = '0' . $textParts[0];
+                }
+                if (strlen($textParts[1]) == 1) {
+                    $textParts[1] = '0' . $textParts[1];
+                }
+        
+                $text = implode(':', $textParts);
+        
+                return $text;
             }
         }
     '''
