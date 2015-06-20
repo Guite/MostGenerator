@@ -1,6 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -181,6 +183,14 @@ class Styles {
             div.«name.formatForDB»-edit .«IF targets('1.3.x')»z-panel-content«ELSE»panel«ENDIF» legend {
                 display: none;
             }
+            «IF !targets('1.3.x')»
+                «IF !entities.filter[!fields.filter(DateField).empty].empty || !entities.filter[!fields.filter(TimeField).empty].empty»
+                    /* use z-index 2 instead of 1 to keep it above bootstrap input groups */
+                    .ui-datepicker {
+                        z-index: 2 !important;
+                    }
+                «ENDIF»
+            «ENDIF»
 
             «IF targets('1.3.x')»
                 «IF hasUserFields»
