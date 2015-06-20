@@ -127,10 +127,9 @@ class TimeInput {
                     /* ]]> */
                     </script>";
 
-                $attributes = $this->renderAttributes($view);
-                if ($attributes != '') {
-                    $result = str_replace('id=\'' . $this->getId() . '\' name=\'' . $this->getId() . '\' ', 'id=\'' . $this->getId() . '\' name=\'' . $this->getId() . '\' ' . $attributes, $result);
-                }
+                $attributes = $this->renderAttributes($view) . ' class="' . $this->getStyleClass() . '" ';
+                $idNamePattern = 'id=\'' . $this->getId() . '\' name=\'' . $this->getId() . '\' ';
+                $result = str_replace($idNamePattern, $idNamePattern . $attributes, $result);
 
                 return $result;
             }
