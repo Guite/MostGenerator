@@ -27,7 +27,8 @@ class DateInput {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin\Base;
 
-            use Zikula_Form_Plugin_TextInput;
+            use DateUtil;
+            use Zikula_Form_Plugin_DateInput;
             use Zikula_Form_View;
             use ZLanguage;
 
@@ -115,7 +116,7 @@ class DateInput {
                 $defaultDate = new \DateTime($this->text);
                 list ($dateFormat, $dateFormatJs) = $this->getDateFormat();
 
-                include_once 'lib/viewplugins/function.jquery_datepicker.php';
+                include_once 'lib/«IF !targets('1.3.x')»legacy/«ENDIF»viewplugins/function.jquery_datepicker.php';
         
                 $params = array(
                     'defaultdate' => $defaultDate,

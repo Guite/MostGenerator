@@ -71,7 +71,7 @@ class TimeInput {
                 if (isset($params['use24Hour'])) {
                     $this->use24Hour = (bool) $params['use24Hour'];
                 } else {
-                    $i18n = «IF !targets('1.3.5')»\«ENDIF»ZI18n::getInstance();
+                    $i18n = «IF !targets('1.3.x')»\«ENDIF»ZI18n::getInstance();
                     $this->use24Hour = ($i18n->locale->getTimeformat() == 24);
                 }
 
@@ -102,7 +102,7 @@ class TimeInput {
              */
             public function render(Zikula_Form_View $view)
             {
-                include_once 'lib/viewplugins/function.jquery_timepicker.php';
+                include_once 'lib/«IF !targets('1.3.x')»legacy/«ENDIF»viewplugins/function.jquery_timepicker.php';
         
                 $params = array(
                     'defaultdate' => $this->text,
