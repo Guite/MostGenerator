@@ -22,4 +22,4 @@ Export-Package: org.zikula.modulestudio.generator.application,
  org.zikula.modulestudio.generator.cartridges.zclassic,
  org.zikula.modulestudio.generator.exceptions
 Eclipse-BuddyPolicy: dependent
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

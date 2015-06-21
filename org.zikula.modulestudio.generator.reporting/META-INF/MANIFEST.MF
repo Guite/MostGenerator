@@ -36,4 +36,4 @@ Bundle-Activator: org.zikula.modulestudio.generator.cartridges.reporting.Activat
 Export-Package: org.zikula.modulestudio.generator.cartridges.reporting,
  org.zikula.modulestudio.generator.cartridges.reporting.reports,
  org.zikula.modulestudio.generator.cartridges.reporting.reports.i18n.generic
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
