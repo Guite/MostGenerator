@@ -126,8 +126,8 @@ class Validation {
         «ENDIF»
     '''
 
-    def fieldValidationCssClass(DerivedField it, Boolean addFormControl) ''' cssClass='«IF addFormControl && !isLegacyApp»form-control «ENDIF»«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && cssClass !== ''» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»' '''
-    def fieldValidationCssClassOptional(UploadField it, Boolean addFormControl)''' cssClass='«IF addFormControl && !isLegacyApp»form-control «ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && cssClass !== ''» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»' '''
+    def fieldValidationCssClass(DerivedField it, Boolean addFormControl) ''' cssClass='«IF addFormControl && !isLegacyApp»form-control «ENDIF»«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»' '''
+    def fieldValidationCssClassOptional(UploadField it, Boolean addFormControl)''' cssClass='«IF addFormControl && !isLegacyApp»form-control «ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»' '''
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
             AbstractIntegerField: ' validate-digits'
