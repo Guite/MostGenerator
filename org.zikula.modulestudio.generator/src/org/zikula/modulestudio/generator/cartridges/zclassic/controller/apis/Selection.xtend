@@ -53,13 +53,15 @@ class Selection {
             $objectType = $this->determineObjectType($args, 'getIdFields');
             «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
+
+                $meta = $this->entityManager->getClassMetadata($entityClass);
             «ELSE»
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
+
+                $em = $this->get('doctrine.entitymanager');
+                $meta = $em->getClassMetadata($entityClass);
             «ENDIF»
 
-            $em = $this->get('doctrine.entitymanager');
-
-            $meta = $em->getClassMetadata($entityClass);
             if ($this->hasCompositeKeys($objectType)) {
                 $idFields = $meta->getIdentifierFieldNames();
             } else {

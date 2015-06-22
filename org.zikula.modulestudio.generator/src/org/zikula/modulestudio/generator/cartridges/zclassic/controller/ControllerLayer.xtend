@@ -671,8 +671,8 @@ class ControllerLayer {
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 
-                $currentType = $request->query->filter('type', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
-                $currentLegacyType = $request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $currentType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('type', '«app.getLeadingEntity.name.formatForCode»', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+                $currentLegacyType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
                 $permLevel = in_array('admin', array($currentType, $currentLegacyType)) ? ACCESS_ADMIN : ACCESS_READ;
 
                 «IF it instanceof AdminController || it instanceof UserController»
