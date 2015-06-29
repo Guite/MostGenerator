@@ -4,7 +4,6 @@ import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
-import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
@@ -1443,13 +1442,6 @@ class FormHandler {
                         }
                     }
                 }
-            «ENDIF»
-            «val timeFields = getDerivedFields.filter(TimeField)»
-            «IF !timeFields.empty»
-
-                «FOR timeField : timeFields»
-                    $entityData['«timeField.name.formatForCode»'] = $entity['«timeField.name.formatForCode»']->format('H:i:s');
-                «ENDFOR»
             «ENDIF»
 
             // assign data to template as array (makes translatable support easier)
