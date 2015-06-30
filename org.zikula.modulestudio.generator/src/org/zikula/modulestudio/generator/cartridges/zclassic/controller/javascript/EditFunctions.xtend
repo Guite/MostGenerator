@@ -336,8 +336,8 @@ class EditFunctions {
 
             function «vendorAndName»GeoCodeReturn (location) {
                 «IF targets('1.3.x')»
-                    Form.Element.setValue('latitude', location.point.lat.toFixed(4));
-                    Form.Element.setValue('longitude', location.point.lng.toFixed(4));
+                    Form.Element.setValue('latitude', location.point.lat.toFixed(7));
+                    Form.Element.setValue('longitude', location.point.lng.toFixed(7));
                 «ELSE»
                     $('#latitude').val(location.point.lat.toFixed(7));
                     $('#longitude').val(location.point.lng.toFixed(7));
