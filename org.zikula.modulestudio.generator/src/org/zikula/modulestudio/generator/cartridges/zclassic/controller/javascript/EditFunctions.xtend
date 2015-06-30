@@ -317,7 +317,7 @@ class EditFunctions {
             «ENDIF»
 
             // Check whether the given callback is executable
-            if (typeof addressCallback !== 'function') {
+            if (typeof addressCallback === 'function') {
                 address = addressCallback();
             }
 
