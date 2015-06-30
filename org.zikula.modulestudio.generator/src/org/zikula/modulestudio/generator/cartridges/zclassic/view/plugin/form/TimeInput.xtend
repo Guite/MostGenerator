@@ -47,6 +47,13 @@ class TimeInput {
             public $use24Hour = true;
 
             /**
+             * Whether to include seconds or not.
+             *
+             * @var boolean
+             */
+            public $addSeconds = false;
+
+            /**
              * Get filename of this file.
              * The information is used to re-establish the plugins on postback.
              *
@@ -73,6 +80,10 @@ class TimeInput {
                 } else {
                     $i18n = «IF !targets('1.3.x')»\«ENDIF»ZI18n::getInstance();
                     $this->use24Hour = ($i18n->locale->getTimeformat() == 24);
+                }
+
+                if (isset($params['addSeconds'])) {
+                    $this->addSeconds = (bool) $params['addSeconds'];
                 }
 
                 // let parent plugin do the work in detail
@@ -141,7 +152,13 @@ class TimeInput {
              */
             protected function getTimeFormat()
             {
-                return 'hh:mm';
+                $format = 'hh:mm';
+
+                if ($this->addSeconds) {
+                    $format .= ':ss';
+                }
+
+                return $format;
             }
 
             /**
@@ -161,7 +178,7 @@ class TimeInput {
 
                 if ($this->text !== '') {
                     // from http://www.tim-carter.com/index.php?ItemId=82
-                    $pattern = "/^".($this->use24Hour ? "([1-2][0-3]|[01]?[1-9])" : "(1[0-2]|0?[1-9])").":([0-5]?[0-9])".($seconds ? ":([0-5]?[0-9])" : "")."$/";
+                    $pattern = "/^".($this->use24Hour ? "([1-2][0-3]|[01]?[1-9])" : "(1[0-2]|0?[1-9])").":([0-5]?[0-9])".($this->addSeconds ? ":([0-5]?[0-9])" : "")."$/";
                     if (!preg_match($pattern, $this->text)) {
                         $this->setError(__('Error! Invalid time.'));
                     }
@@ -181,21 +198,26 @@ class TimeInput {
                 if ($text === '') {
                     return null;
                 }
-        
+
+                $expectedPartAmount = $this->addslashes ? 3 : 2;
+
                 $textParts = explode(':', $text);
-                if (count($textParts) != 2) {
+                if (count($textParts) != $expectedPartAmount) {
                     return null;
                 }
-        
+
                 if (strlen($textParts[0]) == 1) {
                     $textParts[0] = '0' . $textParts[0];
                 }
                 if (strlen($textParts[1]) == 1) {
                     $textParts[1] = '0' . $textParts[1];
                 }
-        
+                if ($this->addSeconds && strlen($textParts[2]) == 1) {
+                    $textParts[2] = '0' . $textParts[2];
+                }
+
                 $text = implode(':', $textParts);
-        
+
                 return $text;
             }
         }
