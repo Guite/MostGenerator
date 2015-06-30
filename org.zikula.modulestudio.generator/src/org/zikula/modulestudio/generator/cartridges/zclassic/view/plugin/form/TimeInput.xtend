@@ -177,8 +177,8 @@ class TimeInput {
                 }
 
                 if ($this->text !== '') {
-                    // from http://www.tim-carter.com/index.php?ItemId=82
-                    $pattern = "/^".($this->use24Hour ? "([1-2][0-3]|[01]?[1-9])" : "(1[0-2]|0?[1-9])").":([0-5]?[0-9])".($this->addSeconds ? ":([0-5]?[0-9])" : "")."$/";
+                    $hourCheck = $this->use24Hour ? '([0-1]?[0-9]|[2][0-3])' : '(1[0-2]|0?[1-9])';
+                    $pattern = '/^' . $hourCheck . ':' . '([0-5]?[0-9])' . ($this->addSeconds ? ':([0-5]?[0-9])' : '') . '$/';
                     if (!preg_match($pattern, $this->text)) {
                         $this->setError(__('Error! Invalid time.'));
                     }
