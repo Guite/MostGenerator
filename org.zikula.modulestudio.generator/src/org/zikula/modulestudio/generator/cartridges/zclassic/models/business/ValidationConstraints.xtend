@@ -196,7 +196,7 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(ArrayField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\Type(type="array")
-        «IF min > 0 && max > 0»
+        «IF max > 0»
             «' '»* @Assert\Count(min="«min»", max="«max»")
         «ENDIF»
     '''

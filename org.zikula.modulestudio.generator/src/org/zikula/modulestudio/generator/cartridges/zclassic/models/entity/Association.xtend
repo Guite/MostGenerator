@@ -152,7 +152,7 @@ class Association {
                     «val aliasName = getRelationAliasName(false).toFirstLower»
                     «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
                 «ENDIF»
-                «IF minSource > 0 && maxSource > 0»
+                «IF maxSource > 0»
                     «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
                 «ENDIF»
             «ENDIF»
@@ -231,7 +231,7 @@ class Association {
                 «val aliasName = getRelationAliasName(true).toFirstLower»
                 «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
             «ENDIF»
-            «IF minTarget > 0 && maxTarget > 0»
+            «IF maxTarget > 0»
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»
@@ -257,7 +257,7 @@ class Association {
                 «val aliasName = getRelationAliasName(true).toFirstLower»
                 «' '»* @Assert\NotNull(message="Choosing at least one of the «aliasName.formatForDisplay» is required.")
             «ENDIF»
-            «IF minTarget > 0 && maxTarget > 0»
+            «IF maxTarget > 0»
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»

@@ -867,7 +867,7 @@ class ValidatorLegacy {
         «ENDIF»
     '''
     def private dispatch validationCalls(ArrayField it) '''
-        «IF min > 0 && max > 0»
+        «IF max > 0»
             $amountOfItems = count($this->entity['«name.formatForCode»']);
             «IF min == max»
                 if ($amountOfItems != «min») {
@@ -967,7 +967,7 @@ class ValidatorLegacy {
         «ENDIF»
         «FOR rel : getBidirectionalIncomingJoinRelations»
             «IF rel instanceof ManyToManyRelationship»
-                «IF rel.minSource > 0 && rel.maxSource > 0»
+                «IF rel.maxSource > 0»
                     «val aliasName = rel.getRelationAliasName(false).toFirstLower»
                     $amountOfItems = count($this->entity['«aliasName.formatForCode»']);
                     «IF rel.minSource == rel.maxSource»
@@ -990,7 +990,7 @@ class ValidatorLegacy {
         «ENDFOR»
         «FOR rel : outgoing»
             «IF rel instanceof OneToManyRelationship»
-                «IF rel.minTarget > 0 && rel.maxTarget > 0»
+                «IF rel.maxTarget > 0»
                     «val aliasName = rel.getRelationAliasName(true).toFirstLower»
                     $amountOfItems = count($this->entity['«aliasName.formatForCode»']);
                     «IF rel.minTarget == rel.maxTarget»
@@ -1011,7 +1011,7 @@ class ValidatorLegacy {
                 «ENDIF»
             «ENDIF»
             «IF rel instanceof ManyToManyRelationship»
-                «IF rel.minTarget > 0 && rel.maxTarget > 0»
+                «IF rel.maxTarget > 0»
                     «val aliasName = rel.getRelationAliasName(true).toFirstLower»
                     $amountOfItems = count($this->entity['«aliasName.formatForCode»']);
                     «IF rel.minTarget == rel.maxTarget»
