@@ -47,11 +47,6 @@
       <import plugin="de.guite.modulestudio.mostdsl" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.11.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe2.launch" version="2.7.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend.core" version="2.8.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend2.lib" version="2.8.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext" version="2.8.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.builder" version="2.8.3" match="greaterOrEqual"/>
       <import plugin="org.objectweb.asm" version="5.0.1" match="greaterOrEqual"/>
       <import plugin="org.zikula.modulestudio.generator.reporting" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.10.0" match="greaterOrEqual"/>
@@ -82,7 +77,12 @@
       <import plugin="org.eclipse.sirius.ext.swt" version="3.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.107.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.11.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore.xmi" version="2.10.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe2.launch" version="2.8.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.core" version="2.8.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend2.lib" version="2.8.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext" version="2.8.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.builder" version="2.8.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.xmi" version="2.11.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
