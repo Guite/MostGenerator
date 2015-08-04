@@ -82,7 +82,7 @@
       <import plugin="org.eclipse.xtend2.lib" version="2.8.4" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext" version="2.8.4" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.builder" version="2.8.4" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore.xmi" version="2.11.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.xmi" version="2.10.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin
