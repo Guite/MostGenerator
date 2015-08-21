@@ -177,7 +177,7 @@ class Validation {
                         data: params,
                         async: false
                     }).done(function(res) {
-                        if (res.data.isDuplicate === true) {
+                        if (res.data == null || res.data.isDuplicate === true) {
                             result = false;
                         }
                     })«/*.fail(function(jqXHR, textStatus) {
