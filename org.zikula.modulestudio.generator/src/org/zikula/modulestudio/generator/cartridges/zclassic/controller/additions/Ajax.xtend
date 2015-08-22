@@ -312,7 +312,7 @@ class Ajax {
          * @param string $fragment The fragment of the entered item name.
          * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
          *
-         * @return «IF application.targets('1.3.x')»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
+         * @return «IF application.targets('1.3.x')»Zikula_Response_Ajax_Plain«ELSE»JsonResponse«ENDIF»
          */
     '''
 
