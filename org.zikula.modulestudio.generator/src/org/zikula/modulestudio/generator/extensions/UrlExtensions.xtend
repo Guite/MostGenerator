@@ -118,8 +118,8 @@ class UrlExtensions {
      */
     def private appendSlug(Entity it, String objName, Boolean template) {
         if (hasSluggableFields) {
-            if (template) ' slug=$' + objName + '.slug'
-            else ", 'slug' => $" + objName + "['slug']"
+            if (template) '''«IF !(hasSluggableFields && slugUnique)» «ENDIF»slug=$«objName».slug'''
+            else '''«IF !(hasSluggableFields && slugUnique)», «ENDIF»'slug' => $«objName»['slug']'''
         } else ''
     }
 
