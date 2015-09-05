@@ -48,7 +48,7 @@ class ComposerFile {
             "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\": "" }
         },
         "require": {
-            "php": ">5.3.3"
+            "php": ">5.4.0"
         },
         "suggest": {
         },

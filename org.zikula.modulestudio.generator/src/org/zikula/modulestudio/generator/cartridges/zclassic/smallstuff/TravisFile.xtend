@@ -28,7 +28,6 @@ class TravisFile {
         before_script: composer install --dev --prefer-source
         
         php:
-          - 5.3
           - 5.4
           - 5.5
     '''
