@@ -159,9 +159,9 @@ class Docs {
         «ENDIF»
 
         «IF targets('1.3.x')»
-            This module is intended for being used with Zikula 1.3.5 to 1.3.9.
+            This module is intended for being used with Zikula 1.3.5 to 1.3.10.
         «ELSE»
-            This module is intended for being used with Zikula 1.4.0 and later.
+            This module is intended for being used with Zikula 1.4.1 and later.
         «ENDIF»
 
         For questions and other remarks visit our homepage «url».

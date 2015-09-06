@@ -100,7 +100,7 @@ class Utils {
             case ZK136:
                 !useSymfony
             case ZK20:
-                useSymfony
+                version == '2.x'
             case ZK14:
                 useSymfony
             case ZKPRE14:
