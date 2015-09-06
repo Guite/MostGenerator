@@ -51,7 +51,7 @@ class Search {
         use ZLanguage;
 
         use Zikula\Core\RouteUrl;
-        use Zikula\Module\SearchModule\AbstractSearchable;
+        use Zikula\SearchModule\AbstractSearchable;
 
         /**
          * Search helper base class.
