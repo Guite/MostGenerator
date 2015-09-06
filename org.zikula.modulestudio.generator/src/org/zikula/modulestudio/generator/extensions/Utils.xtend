@@ -99,6 +99,10 @@ class Utils {
                 !useSymfony
             case ZK136:
                 !useSymfony
+            case ZK20:
+                useSymfony
+            case ZK14:
+                useSymfony
             case ZKPRE14:
                 useSymfony
             default:
