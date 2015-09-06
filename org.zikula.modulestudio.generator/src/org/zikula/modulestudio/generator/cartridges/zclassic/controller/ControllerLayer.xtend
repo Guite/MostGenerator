@@ -744,8 +744,8 @@ class ControllerLayer {
                     «ELSE»
                         $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
                     «ENDIF»
-                                     'text' => $this->__('Configuration'),
-                                     'title' => $this->__('Manage settings for this application')«IF !app.targets('1.3.x')»,
+                                     'text' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Configuration'),
+                                     'title' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Manage settings for this application')«IF !app.targets('1.3.x')»,
                                      'icon' => 'wrench'«ENDIF»);
                 }
             «ENDIF»
@@ -760,8 +760,8 @@ class ControllerLayer {
             «ELSE»
                 $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', array('lct' => '«controller.formattedName»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ENDIF»
-                             'text' => $this->__('«nameMultiple.formatForDisplayCapital»'),
-                             'title' => $this->__('«name.formatForDisplayCapital» list'));
+                             'text' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«nameMultiple.formatForDisplayCapital»'),
+                             'title' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital» list'));
         }
     '''
 
@@ -775,8 +775,8 @@ class ControllerLayer {
                         «ELSE»
                             $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                                         'text' => $this->__('Frontend'),
-                                         'title' => $this->__('Switch to user area.'),
+                                         'text' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Frontend'),
+                                         'title' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Switch to user area.'),
                                          «IF application.targets('1.3.x')»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
                     }
                     '''
@@ -788,8 +788,8 @@ class ControllerLayer {
                         «ELSE»
                             $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                                         'text' => $this->__('Backend'),
-                                         'title' => $this->__('Switch to administration area.'),
+                                         'text' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Backend'),
+                                         'title' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Switch to administration area.'),
                                          «IF application.targets('1.3.x')»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
                     }
                     '''
