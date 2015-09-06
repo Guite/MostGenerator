@@ -167,7 +167,7 @@ class ViewUtil {
             «ENDIF»
             if ($lct == 'admin') {
                 // load Smarty plugins of Admin module
-                $view->addPluginDir('system/«IF targets('1.3.x')»Admin/templates«ELSE»Zikula/Module/AdminModule/Resources/views«ENDIF»/plugins');
+                $view->addPluginDir('system/«IF targets('1.3.x')»Admin/templates«ELSE»AdminModule/Resources/views«ENDIF»/plugins');
             }
 
             if ($raw == true) {
