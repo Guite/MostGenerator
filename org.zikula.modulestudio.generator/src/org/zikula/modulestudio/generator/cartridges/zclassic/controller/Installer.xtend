@@ -66,7 +66,7 @@ class Installer {
             use Zikula_AbstractInstaller;
             use Zikula_Workflow_Util;
             «IF hasCategorisableEntities»
-                use Zikula\Module\CategoriesModule\Entity\CategoryRegistryEntity;
+                use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
             «ENDIF»
 
         «ENDIF»
@@ -94,7 +94,7 @@ class Installer {
             use Zikula_Controller_AbstractInteractiveInstaller;
             use ZLanguage;
             «IF hasCategorisableEntities»
-                use Zikula\Module\CategoriesModule\Entity\CategoryRegistryEntity;
+                use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
             «ENDIF»
 
         «ENDIF»

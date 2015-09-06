@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -17,6 +18,7 @@ class VersionFile {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions 
     extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -88,6 +90,13 @@ class VersionFile {
                           «FOR capability : capabilities.replaceAll(', ', '').split(',')»
                               '«capability.formatForDisplay»' => array('version' => '1.0'),
                           «ENDFOR»
+                      «ENDIF»
+                      «IF !targets('1.3.x') && hasCategorisableEntities»
+                          'categorizable' => array(
+                              «FOR entity : getCategorisableEntities»
+                                  '«appNamespace»\Entity\«entity.name.formatForCode»Entity',
+                              «ENDFOR»
+                          ),
                       «ENDIF»
                       HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.x') && generateSearchApi»,
                       AbstractSearchable::SEARCHABLE => array('class' => '«appNamespace»\Helper\SearchHelper')
