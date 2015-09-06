@@ -31,14 +31,14 @@ class Category {
             use CategoryRegistryUtil;
             use ModUtil;
             use UserUtil;
-            use Zikula\Core\Api\AbstractApi;
+            use Zikula_AbstractBase;
 
         «ENDIF»
 
         /**
          * Category api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Category extends Zikula_AbstractApi«ELSE»CategoryApi extends AbstractApi«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Category extends Zikula_AbstractApi«ELSE»CategoryApi extends AbstractBase«ENDIF»
         {
             «categoryBaseImpl»
         }

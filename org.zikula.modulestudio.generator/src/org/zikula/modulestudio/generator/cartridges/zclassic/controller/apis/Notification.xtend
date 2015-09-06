@@ -33,14 +33,14 @@ class Notification {
             use System;
             use UserUtil;
 
-            use Zikula\Core\Api\AbstractApi;
+            use Zikula_AbstractBase;
             use Zikula_View;
 
         «ENDIF»
         /**
          * Notification api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Notification extends Zikula_AbstractApi«ELSE»NotificationApi extends AbstractApi«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Notification extends Zikula_AbstractApi«ELSE»NotificationApi extends AbstractBase«ENDIF»
         {
             «notificationApiBaseImpl»
         }

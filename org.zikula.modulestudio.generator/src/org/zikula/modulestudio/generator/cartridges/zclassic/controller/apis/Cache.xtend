@@ -34,7 +34,7 @@ class Cache {
 
             use ModUtil;
             use UserUtil;
-            use Zikula\Core\Api\AbstractApi;
+            use Zikula_AbstractBase;
             use Zikula_View;
             use Zikula_View_Theme;
 
@@ -42,7 +42,7 @@ class Cache {
         /**
          * Cache api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Cache extends Zikula_AbstractApi«ELSE»CacheApi extends AbstractApi«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Cache extends Zikula_AbstractApi«ELSE»CacheApi extends AbstractBase«ENDIF»
         {
             «cacheApiBaseImpl»
         }

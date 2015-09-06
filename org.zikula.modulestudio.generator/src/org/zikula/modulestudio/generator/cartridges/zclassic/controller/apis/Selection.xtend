@@ -28,13 +28,13 @@ class Selection {
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
-            use Zikula\Core\Api\AbstractApi;
+            use Zikula_AbstractBase;
 
         «ENDIF»
         /**
          * Selection api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Selection extends Zikula_AbstractApi«ELSE»SelectionApi extends AbstractApi«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Selection extends Zikula_AbstractApi«ELSE»SelectionApi extends AbstractBase«ENDIF»
         {
             «selectionBaseImpl»
         }

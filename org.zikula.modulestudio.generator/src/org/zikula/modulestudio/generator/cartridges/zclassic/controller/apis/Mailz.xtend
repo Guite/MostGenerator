@@ -30,14 +30,14 @@ class Mailz {
 
             use ModUtil;
             use ServiceUtil;
-            use Zikula\Core\Api\AbstractApi;
+            use Zikula_AbstractBase;
             use Zikula_View;
 
         «ENDIF»
         /**
          * Mailz api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Mailz extends Zikula_AbstractApi«ELSE»MailzApi extends AbstractApi«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Mailz extends Zikula_AbstractApi«ELSE»MailzApi extends AbstractBase«ENDIF»
         {
             «mailzBaseImpl»
         }

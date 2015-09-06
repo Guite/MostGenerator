@@ -32,13 +32,13 @@ class Account {
             use SecurityUtil;
             use ServiceUtil;
             use UserUtil;
-            use Zikula\Core\Api\AbstractApi;
+            use Zikula_AbstractBase;
 
         «ENDIF»
         /**
          * Account api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Account extends Zikula_AbstractApi«ELSE»AccountApi extends AbstractApi«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Account extends Zikula_AbstractApi«ELSE»AccountApi extends AbstractBase«ENDIF»
         {
             «accountApiBaseImpl»
         }

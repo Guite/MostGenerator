@@ -51,6 +51,14 @@ class ServiceDefinitions {
                 «servicesUploadHandler»
 
             «ENDIF»
+            «modPrefix».link_container:
+                class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\LinkContainer
+                arguments:
+                    translator: "@translator"
+                    router: "@router"
+                tags:
+                    - { name: zikula.link_container }
+
             «servicesEntityFactories»
 
             «servicesEventSubscriber»
