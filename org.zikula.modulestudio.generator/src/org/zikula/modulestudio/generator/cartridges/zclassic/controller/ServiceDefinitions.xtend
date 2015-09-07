@@ -52,7 +52,7 @@ class ServiceDefinitions {
 
             «ENDIF»
             «modPrefix».link_container:
-                class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\LinkContainer
+                class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\LinkContainer"
                 arguments:
                     translator: "@translator"
                     router: "@router"
