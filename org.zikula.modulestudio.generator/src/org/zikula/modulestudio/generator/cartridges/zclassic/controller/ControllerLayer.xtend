@@ -675,6 +675,7 @@ class ControllerLayer {
 
         use ModUtil;
         use SecurityUtil;
+        use ServiceUtil;
         use Symfony\Component\Routing\RouterInterface;
         use Zikula\Common\Translator\Translator;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
@@ -687,12 +688,12 @@ class ControllerLayer {
             /**
              * @var Translator
              */
-            private $translator;
+            protected $translator;
 
             /**
              * @var RouterInterface
              */
-            private $router;
+            protected $router;
 
             public function __construct($translator, RouterInterface $router)
             {
@@ -708,9 +709,10 @@ class ControllerLayer {
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
                 $links = array();
-                $request = $this->get('request');
+                $serviceManager = ServiceUtil::getManager();
+                $request = $serviceManager->get('request');
 
-                $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
+                $controllerHelper = $serviceManager->get('«app.appName.formatForDB».controller_helper');
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
         
@@ -743,7 +745,7 @@ class ControllerLayer {
                 «entity.menuLinkToViewAction(it)»
             «ENDFOR»
             «IF app.needsConfig && isConfigController»
-                if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                if (SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                     «IF app.targets('1.3.x')»
                         $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                     «ELSE»
@@ -759,7 +761,7 @@ class ControllerLayer {
 
     def private menuLinkToViewAction(Entity it, Controller controller) '''
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
-            && SecurityUtil::checkPermission($this->name . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
+            && SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
             «IF app.targets('1.3.x')»
                 $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
@@ -774,7 +776,7 @@ class ControllerLayer {
         switch it {
             AdminController case !application.getAllUserControllers.empty: '''
                     «val userController = application.getAllUserControllers.head»
-                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+                    if (SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_READ)) {
                         «IF app.targets('1.3.x')»
                             $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails13»),
                         «ELSE»
@@ -787,7 +789,7 @@ class ControllerLayer {
                     '''
             UserController case !application.getAllAdminControllers.empty: '''
                     «val adminController = application.getAllAdminControllers.head»
-                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                    if (SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                         «IF app.targets('1.3.x')»
                             $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails13»),
                         «ELSE»
