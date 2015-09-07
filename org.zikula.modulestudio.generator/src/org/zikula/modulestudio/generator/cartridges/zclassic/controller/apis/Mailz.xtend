@@ -37,7 +37,7 @@ class Mailz {
         /**
          * Mailz api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Mailz extends Zikula_AbstractApi«ELSE»MailzApi extends AbstractBase«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Mailz extends Zikula_AbstractApi«ELSE»MailzApi extends Zikula_AbstractBase«ENDIF»
         {
             «mailzBaseImpl»
         }

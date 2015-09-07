@@ -38,7 +38,7 @@ class Account {
         /**
          * Account api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Account extends Zikula_AbstractApi«ELSE»AccountApi extends AbstractBase«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Account extends Zikula_AbstractApi«ELSE»AccountApi extends Zikula_AbstractBase«ENDIF»
         {
             «accountApiBaseImpl»
         }

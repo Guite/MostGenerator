@@ -42,7 +42,7 @@ class Cache {
         /**
          * Cache api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Cache extends Zikula_AbstractApi«ELSE»CacheApi extends AbstractBase«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Cache extends Zikula_AbstractApi«ELSE»CacheApi extends Zikula_AbstractBase«ENDIF»
         {
             «cacheApiBaseImpl»
         }

@@ -34,7 +34,7 @@ class Selection {
         /**
          * Selection api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Selection extends Zikula_AbstractApi«ELSE»SelectionApi extends AbstractBase«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Selection extends Zikula_AbstractApi«ELSE»SelectionApi extends Zikula_AbstractBase«ENDIF»
         {
             «selectionBaseImpl»
         }

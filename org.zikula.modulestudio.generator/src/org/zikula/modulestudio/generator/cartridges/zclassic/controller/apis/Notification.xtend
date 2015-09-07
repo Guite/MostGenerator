@@ -40,7 +40,7 @@ class Notification {
         /**
          * Notification api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Notification extends Zikula_AbstractApi«ELSE»NotificationApi extends AbstractBase«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Notification extends Zikula_AbstractApi«ELSE»NotificationApi extends Zikula_AbstractBase«ENDIF»
         {
             «notificationApiBaseImpl»
         }

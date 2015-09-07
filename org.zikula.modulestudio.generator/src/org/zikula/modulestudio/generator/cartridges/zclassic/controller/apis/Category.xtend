@@ -38,7 +38,7 @@ class Category {
         /**
          * Category api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Category extends Zikula_AbstractApi«ELSE»CategoryApi extends AbstractBase«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Api_Base_Category extends Zikula_AbstractApi«ELSE»CategoryApi extends Zikula_AbstractBase«ENDIF»
         {
             «categoryBaseImpl»
         }
