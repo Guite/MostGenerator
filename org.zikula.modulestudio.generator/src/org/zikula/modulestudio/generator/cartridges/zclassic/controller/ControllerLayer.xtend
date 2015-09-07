@@ -727,6 +727,11 @@ class ControllerLayer {
 
                 return $links;
             }
+
+            public function getBundleName()
+            {
+                return '«app.appName»';
+            }
         }
     '''
 
