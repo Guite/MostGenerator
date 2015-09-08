@@ -54,7 +54,6 @@ class Installer {
                 use CategoryRegistryUtil;
                 use DBUtil;
             «ENDIF»
-            use DoctrineHelper;
             use EventUtil;
             «IF hasUploads»
                 use FileUtil;
@@ -142,7 +141,11 @@ class Installer {
             «processUploadFolders»
             // create all tables from according entity definitions
             try {
-                DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
+                «IF targets('1.3.x')»
+                    DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
+                «ELSE»
+                    $this->container->get('zikula.doctrine.schema_tool')->createSchema($this->entityManager, $this->listEntityClasses());
+                «ENDIF»
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
@@ -309,7 +312,11 @@ class Installer {
                     // ...
                     // update the database schema
                     try {
-                        DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
+                        «IF targets('1.3.x')»
+                            DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
+                        «ELSE»
+                            $this->container->get('zikula.doctrine.schema_tool')->updateSchema($this->entityManager, $this->listEntityClasses());
+                        «ENDIF»
                     } catch (\Exception $e) {
                         if (System::isDevelopmentMode()) {
                             «IF targets('1.3.x')»
@@ -379,7 +386,11 @@ class Installer {
             }
 
             try {
-                DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
+                «IF targets('1.3.x')»
+                    DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
+                «ELSE»
+                    $this->container->get('zikula.doctrine.schema_tool')->dropSchema($this->entityManager, $this->listEntityClasses());
+                «ENDIF»
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
