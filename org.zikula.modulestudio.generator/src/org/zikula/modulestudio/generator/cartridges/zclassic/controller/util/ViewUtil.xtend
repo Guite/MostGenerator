@@ -154,6 +154,7 @@ class ViewUtil {
                 $raw = true;
             }
 
+            «/* TODO drop that for 2.0, see https://github.com/zikula/core/issues/2578 */»
             // ensure the Admin module's plugins are loaded if we have lct=admin but another type value
             «IF targets('1.3.x')»
                 $lct = (isset($args['lct']) && !empty($args['lct'])) ? $args['lct'] : FormUtil::getPassedValue('lct', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
