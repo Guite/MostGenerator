@@ -161,8 +161,8 @@ class ViewUtil {
                     // load Smarty plugins of Admin module
                     $view->addPluginDir('system/Admin/templates/plugins');
                 }
-            «ENDIF»
 
+            «ENDIF»
             if ($raw == true) {
                 // standalone output
                 if ($templateExtension == 'pdf') {
