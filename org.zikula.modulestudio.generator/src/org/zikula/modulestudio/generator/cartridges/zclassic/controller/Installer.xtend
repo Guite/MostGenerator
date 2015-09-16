@@ -144,7 +144,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
                 «ELSE»
-                    $this->container->get('zikula.doctrine.schema_tool')->createSchema($this->entityManager, $this->listEntityClasses());
+                    $this->get('zikula.doctrine.schema_tool')->create($this->listEntityClasses());
                 «ENDIF»
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
@@ -315,7 +315,7 @@ class Installer {
                         «IF targets('1.3.x')»
                             DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                         «ELSE»
-                            $this->container->get('zikula.doctrine.schema_tool')->updateSchema($this->entityManager, $this->listEntityClasses());
+                            $this->get('zikula.doctrine.schema_tool')->update($this->listEntityClasses());
                         «ENDIF»
                     } catch (\Exception $e) {
                         if (System::isDevelopmentMode()) {
@@ -389,7 +389,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
                 «ELSE»
-                    $this->container->get('zikula.doctrine.schema_tool')->dropSchema($this->entityManager, $this->listEntityClasses());
+                    $this->get('zikula.doctrine.schema_tool')->drop($this->listEntityClasses());
                 «ENDIF»
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
