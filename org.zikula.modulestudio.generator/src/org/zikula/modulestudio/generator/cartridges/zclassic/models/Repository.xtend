@@ -1448,7 +1448,7 @@ class Repository {
          */
         public function archiveObjects()
         {
-            if (PageUtil::getVar('«app.appName»AutomaticArchiving', false) !== true && !SecurityUtil::checkPermission('«app.appName»', '.*', ACCESS_EDIT)) {
+            if (\PageUtil::getVar('«app.appName»AutomaticArchiving', false) !== true && !SecurityUtil::checkPermission('«app.appName»', '.*', ACCESS_EDIT)) {
                 // current user has no permission for executing the archive workflow action
                 return true;
             }
