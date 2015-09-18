@@ -124,31 +124,30 @@ class VersionFile {
              */
             protected function setupHookBundles()
             {
-        «val appName = appName.formatForDB»
+        «val areaPrefix = appName.formatForDB»
                 «FOR entity : getAllEntities»
-                    «/* we register one hook subscriber bundle foreach entity type */»
-                    «val areaName = entity.nameMultiple.formatForDB»
-                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', $this->__('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
+                    «/* we register one hook subscriber bundle for each entity type */»«val areaName = entity.nameMultiple.formatForDB»
+                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«areaPrefix».ui_hooks.«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
                     «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
                     // Display hook for view/display templates.
-                    $bundle->addEvent('display_view', '«appName».ui_hooks.«areaName».display_view');
+                    $bundle->addEvent('display_view', '«areaPrefix».ui_hooks.«areaName».display_view');
                     // Display hook for create/edit forms.
-                    $bundle->addEvent('form_edit', '«appName».ui_hooks.«areaName».form_edit');
+                    $bundle->addEvent('form_edit', '«areaPrefix».ui_hooks.«areaName».form_edit');
                     // Display hook for delete dialogues.
-                    $bundle->addEvent('form_delete', '«appName».ui_hooks.«areaName».form_delete');
+                    $bundle->addEvent('form_delete', '«areaPrefix».ui_hooks.«areaName».form_delete');
                     // Validate input from an ui create/edit form.
-                    $bundle->addEvent('validate_edit', '«appName».ui_hooks.«areaName».validate_edit');
+                    $bundle->addEvent('validate_edit', '«areaPrefix».ui_hooks.«areaName».validate_edit');
                     // Validate input from an ui create/edit form (generally not used).
-                    $bundle->addEvent('validate_delete', '«appName».ui_hooks.«areaName».validate_delete');
+                    $bundle->addEvent('validate_delete', '«areaPrefix».ui_hooks.«areaName».validate_delete');
                     // Perform the final update actions for a ui create/edit form.
-                    $bundle->addEvent('process_edit', '«appName».ui_hooks.«areaName».process_edit');
+                    $bundle->addEvent('process_edit', '«areaPrefix».ui_hooks.«areaName».process_edit');
                     // Perform the final delete actions for a ui form.
-                    $bundle->addEvent('process_delete', '«appName».ui_hooks.«areaName».process_delete');
+                    $bundle->addEvent('process_delete', '«areaPrefix».ui_hooks.«areaName».process_delete');
                     $this->registerHookSubscriberBundle($bundle);
 
-                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', $this->__('«appName» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
+                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«areaPrefix».filter_hooks.«areaName»', 'filter_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
                     // A filter applied to the given area.
-                    $bundle->addEvent('filter', '«appName».filter_hooks.«areaName».filter');
+                    $bundle->addEvent('filter', '«areaPrefix».filter_hooks.«areaName».filter');
                     $this->registerHookSubscriberBundle($bundle);
                 «ENDFOR»
 
@@ -201,7 +200,6 @@ class VersionFile {
             «ENDIF»
             «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
         );
-        // DEBUG: permission schema aspect ends
     '''
 
     def private appDependency(Application app, ReferredApplication it) '''
