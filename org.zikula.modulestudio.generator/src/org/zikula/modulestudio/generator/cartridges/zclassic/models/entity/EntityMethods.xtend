@@ -392,7 +392,7 @@ class EntityMethods {
          */
         public function getHookAreaPrefix()
         {
-            return '«application.name.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
+            return '«IF application.targets('1.3.x')»«application.name.formatForDB»«ELSE»«application.appName.formatForDB»«ENDIF».ui_hooks.«nameMultiple.formatForDB»';
         }
     '''
 
