@@ -351,7 +351,7 @@ class WorkflowUtil {
                 $this->normaliseWorkflowData($entity);
             «ENDIF»
 
-            $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, «IF targets('1.3.x')»$this->name«ELSE»«appName»«ENDIF», $idColumn);
+            $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, «IF targets('1.3.x')»$this->name«ELSE»'«appName»'«ENDIF», $idColumn);
 
             if ($result !== false && !$recursive) {
                 $entities = $entity->getRelatedObjectsToPersist();
