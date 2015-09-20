@@ -29,6 +29,9 @@ class MigrationHelper {
 
         // update module name in the hook tables
         $this->updateHookNamesFor140();
+
+        // update module name in the workflows table
+        $this->updateWorkflowsFor140();
     '''
 
     def generate(Application it) '''
@@ -45,6 +48,8 @@ class MigrationHelper {
         «dropEventHandlersFromDatabase»
 
         «updateHookNamesFor140»
+
+        «updateWorkflowsFor140»
 
         «getConnection»
 
@@ -205,6 +210,22 @@ class MigrationHelper {
             $conn->executeQuery("UPDATE $dbName.hook_subscriber
                                  SET eventname = CONCAT('«appName.formatForDB»', SUBSTRING(eventname, $componentLength))
                                  WHERE eventname LIKE '«name.formatForDB»%';
+            ");
+        }
+    '''
+
+    def private updateWorkflowsFor140(Application it) '''
+        /**
+         * Updates the module name in the workflows table.
+         */
+        protected function updateWorkflowsFor140()
+        {
+            $conn = $this->getConnection();
+            $dbName = $this->getDbName();
+
+            $conn->executeQuery("UPDATE $dbName.workflows
+                                 SET module = '«appName»'
+                                 WHERE module = '«name.formatForCodeCapital»';
             ");
         }
     '''
