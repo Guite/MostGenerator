@@ -62,7 +62,7 @@ class Config {
                         <ul class="nav nav-pills">
                         «FOR varContainer : getSortedVariableContainers»
                             {gt text='«varContainer.name.formatForDisplayCapital»' assign='tabTitle'}
-                            <li«IF varContainer == getSortedVariableContainers.head» class="active"«ENDIF» data-toggle="pill"><a href="#" title="{$tabTitle|replace:'"':''}">{$tabTitle}</a></li>
+                            <li«IF varContainer == getSortedVariableContainers.head» class="active"«ENDIF» data-toggle="pill"><a href="#tab«varContainer.sortOrder»" title="{$tabTitle|replace:'"':''}" role="tab" data-toggle="tab">{$tabTitle}</a></li>
                         «ENDFOR»
                         </ul>
 
@@ -73,7 +73,7 @@ class Config {
                                 «configSections»
                             {/formtabbedpanelset}
                         «ELSE»
-                            <div class="tab-content"»
+                            <div class="tab-content">
                                 «configSections»
                             </div>
                         «ENDIF»
@@ -127,7 +127,7 @@ class Config {
                 {/formtabbedpanel}
             «ELSE»
                 {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
-                <div class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»">
+                <div role="tabpanel" class="tab-pane fade«IF isPrimaryVarContainer» in active«ENDIF»" id="tab«sortOrder»">
                     «configSectionBody(app, isPrimaryVarContainer)»
                 </div>
             «ENDIF»
