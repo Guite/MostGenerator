@@ -129,7 +129,7 @@ class UserInput {
                             <div id="' . $this->getId() . 'SelectorChoices"></div>';
                 «ELSE»
                     $result = '<div id="' . $this->getId() . 'LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user hidden">
-                            <i class="fa fa-search" title="' . $searchTitle . '"><i>';
+                            <i class="fa fa-search" title="' . $searchTitle . '"></i>';
                 «ENDIF»
 
                 if ($this->mandatory && $this->mandatorysym) {
