@@ -141,7 +141,7 @@ class UserInput {
                     $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />' . "\n";
                 «ELSE»
                     $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />
-                            <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector" autocomplete="off"' . $selectorAttributes . ' . ' />
+                            <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector" autocomplete="off"' . $selectorAttributes . ' />
                             <i class="fa fa-refresh fa-spin hidden" id="' . $this->getId() . 'Indicator"></i>
                             <span id="' . $this->getId() . 'NoResultsHint" class="hidden">' . __('No results found!', $dom) . '</span>';
                 «ENDIF»
