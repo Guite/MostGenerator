@@ -83,10 +83,10 @@ class EditFunctions {
                     }
                     $(fieldName + 'LiveSearch').removeClassName('z-hide');
                 «ELSE»
-                    if ($('#' + fieldName + 'LiveSearch').length < 1) {
+                    if (jQuery('#' + fieldName + 'LiveSearch').length < 1) {
                         return;
                     }
-                    $('#' + fieldName + 'LiveSearch').removeClass('hidden');
+                    jQuery('#' + fieldName + 'LiveSearch').removeClass('hidden');
                 «ENDIF»
 
                 «IF targets('1.3.x')»
@@ -109,7 +109,7 @@ class EditFunctions {
                     users = [];
                     userMap = [];
 
-                    $('#' + fieldName + 'Selector').typeahead({
+                    jQuery('#' + fieldName + 'Selector').typeahead({
                         items: 25,
                         minLength: 2,
                         showHintOnFocus: true,
@@ -121,22 +121,22 @@ class EditFunctions {
                             userMap[fieldName] = {};
 
                             // Retrieve data from server using "query" parameter as it contains the search string entered by the user
-                            $('#' + fieldName + 'Indicator').removeClass('hidden');
-                            $.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
+                            jQuery('#' + fieldName + 'Indicator').removeClass('hidden');
+                            jQuery.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
 
                                 if (data.length > 0) {
-                                    $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
+                                    jQuery('#' + idPrefix + 'NoResultsHint').addClass('hidden');
 
                                     // map dropdown options to corresponding objects
-                                    $.each(data, function (key, user) {
+                                    jQuery.each(data, function (key, user) {
                                         userMap[fieldName][user.uname] = user;
                                         users[fieldName].push(user.uname);
                                     });
                                 } else {
-                                    $('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
+                                    jQuery('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
                                 }
 
-                                $('#' + fieldName + 'Indicator').addClass('hidden');
+                                jQuery('#' + fieldName + 'Indicator').addClass('hidden');
                             });
 
                             // call process() function with dropdown array
@@ -165,16 +165,16 @@ class EditFunctions {
 
                             userId = userMap[fieldName][item].uid;
 
-                            $('#' + fieldName).val(userId);
+                            jQuery('#' + fieldName).val(userId);
 
                             return item;
                         }
                     });
 
                     // Ensure that clearing out the selector is reflected into the hidden field properly
-                    $('#' + fieldName + 'Selector').blur(function() {
-                        if ($(this).val().length == 0 || $('#' + fieldName).val() != userMap[fieldName][$(this).val()]) {
-                            $('#' + fieldName).val('');
+                    jQuery('#' + fieldName + 'Selector').blur(function() {
+                        if (jQuery(this).val().length == 0 || jQuery('#' + fieldName).val() != userMap[fieldName][jQuery(this).val()]) {
+                            jQuery('#' + fieldName).val('');
                         }
                     });
                 «ENDIF»
@@ -195,9 +195,9 @@ class EditFunctions {
                     $(fieldName).setAttribute('type', 'file');
                 }
             «ELSE»
-                if ($('#' + fieldName).size() > 0) {
-                    $('#' + fieldName).attr('type', 'input');
-                    $('#' + fieldName).attr('type', 'file');
+                if (jQuery('#' + fieldName).size() > 0) {
+                    jQuery('#' + fieldName).attr('type', 'input');
+                    jQuery('#' + fieldName).attr('type', 'file');
                 }
             «ENDIF»
         }
@@ -220,8 +220,8 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
-                    $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
+                if (jQuery('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
+                    jQuery('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
                         «vendorAndName»ResetUploadField(fieldName);
                     }).removeClass('hidden');
@@ -244,11 +244,11 @@ class EditFunctions {
                     $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
                 }
             «ELSE»
-                if ($('#' + fieldName).size() > 0) {
-                    $('#' + fieldName).val('');
+                if (jQuery('#' + fieldName).size() > 0) {
+                    jQuery('#' + fieldName).val('');
                 }
-                if ($('#' + fieldName + 'cal').size() > 0) {
-                    $('#' + fieldName + 'cal').html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
+                if (jQuery('#' + fieldName + 'cal').size() > 0) {
+                    jQuery('#' + fieldName + 'cal').html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
                 }
             «ENDIF»
         }
@@ -271,8 +271,8 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                if ($('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
-                    $('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
+                if (jQuery('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
+                    jQuery('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
                         «vendorAndName»ResetDateField(fieldName);
                     }).removeClass('hidden');
@@ -295,7 +295,7 @@ class EditFunctions {
                     «vendorAndName»DoGeoCoding(addressCallback);
                 });
             «ELSE»
-                $('#linkGetCoordinates').click( function (evt) {
+                jQuery('#linkGetCoordinates').click( function (evt) {
                     «vendorAndName»DoGeoCoding(addressCallback);
                 });
             «ENDIF»
@@ -312,7 +312,7 @@ class EditFunctions {
                 };
             «ELSE»
                 var address = {
-                    address : $('#street').val() + ' ' + $('#houseNumber').val() + ' ' + $('#zipcode').val() + ' ' + $('#city').val() + ' ' + $('#country').val()
+                    address : jQuery('#street').val() + ' ' + jQuery('#houseNumber').val() + ' ' + jQuery('#zipcode').val() + ' ' + jQuery('#city').val() + ' ' + jQuery('#country').val()
                 };
             «ENDIF»
 
@@ -329,7 +329,7 @@ class EditFunctions {
                     «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
                     «ELSE»
-                        «vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geocoding', '«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
+                        «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Zikula.__('Error during geocoding', '«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
                     «ENDIF»
                 }
             }
@@ -339,8 +339,8 @@ class EditFunctions {
                     Form.Element.setValue('latitude', location.point.lat.toFixed(7));
                     Form.Element.setValue('longitude', location.point.lng.toFixed(7));
                 «ELSE»
-                    $('#latitude').val(location.point.lat.toFixed(7));
-                    $('#longitude').val(location.point.lng.toFixed(7));
+                    jQuery('#latitude').val(location.point.lat.toFixed(7));
+                    jQuery('#longitude').val(location.point.lng.toFixed(7));
                 «ENDIF»
                 newCoordinatesEventHandler();
             }
@@ -434,15 +434,15 @@ class EditFunctions {
                 $(idPrefix + 'AddFields').toggleClassName('z-hide');
             «ELSE»
                 // if we don't have a toggle link do nothing
-                if ($('#' + idPrefix + 'AddLink').size() < 1) {
+                if (jQuery('#' + idPrefix + 'AddLink').size() < 1) {
                     return;
                 }
 
                 // show/hide the toggle link
-                $('#' + idPrefix + 'AddLink').toggleClass('hidden');
+                jQuery('#' + idPrefix + 'AddLink').toggleClass('hidden');
 
                 // hide/show the fields
-                $('#' + idPrefix + 'AddFields').toggleClass('hidden');
+                jQuery('#' + idPrefix + 'AddFields').toggleClass('hidden');
             «ENDIF»
         }
     '''
@@ -460,7 +460,7 @@ class EditFunctions {
             «IF targets('1.3.x')»
                 $(idPrefix + 'Selector').value = '';
             «ELSE»
-                $('#' + idPrefix + 'Selector').val('');
+                jQuery('#' + idPrefix + 'Selector').val('');
             «ENDIF»
         }
     '''
@@ -494,8 +494,8 @@ class EditFunctions {
                 newWindow.openHandler();
             «ELSE»
                 newWindowId = containerElem.attr('id') + 'Dialog';
-                $('<div id="' + newWindowId + '"></div>')
-                    .append($('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
+                jQuery('<div id="' + newWindowId + '"></div>')
+                    .append(jQuery('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
                     .dialog({
                         autoOpen: false,
                         show: {
@@ -542,11 +542,11 @@ class EditFunctions {
                         «IF targets('1.3.x')»
                             relationHandler.windowInstance.destroy();
                         «ELSE»
-                            $(containerID + 'Dialog').dialog('destroy');
+                            jQuery(containerID + 'Dialog').dialog('destroy');
                         «ENDIF»
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.x')»'#' + «ENDIF»containerID), true);
+                    relationHandler.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance(«IF !targets('1.3.x')»$('#' + «ELSE»jQuery(«ENDIF»containerID), true);
                 }
             });
 
@@ -558,7 +558,7 @@ class EditFunctions {
                 newItem.alias = '«/*TODO*/»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
-                newItem.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance($(«IF !targets('1.3.x')»'#' + «ENDIF»containerID), true);
+                newItem.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance(«IF !targets('1.3.x')»$('#' + «ELSE»jQuery(«ENDIF»containerID), true);
 
                 // add it to the list of handlers
                 relationHandler.push(newItem);
@@ -577,14 +577,14 @@ class EditFunctions {
             «IF targets('1.3.x')»
                 itemIds = $F(idPrefix + 'ItemList');
             «ELSE»
-                itemIds = $('#' + idPrefix + 'ItemList').val();
+                itemIds = jQuery('#' + idPrefix + 'ItemList').val();
             «ENDIF»
             itemIdsArr = itemIds.split(',');
 
             «IF targets('1.3.x')»
                 itemIdsArr = itemIdsArr.without(removeId);
             «ELSE»
-                itemIdsArr = $.grep(itemIdsArr, function(value) {
+                itemIdsArr = jQuery.grep(itemIdsArr, function(value) {
                     return value != removeId;
                 });
             «ENDIF»
@@ -595,8 +595,8 @@ class EditFunctions {
                 $(idPrefix + 'ItemList').value = itemIds;
                 $(idPrefix + 'Reference_' + removeId).remove();
             «ELSE»
-                $('#' + idPrefix + 'ItemList').val(itemIds);
-                $('#' + idPrefix + 'Reference_' + removeId).remove();
+                jQuery('#' + idPrefix + 'ItemList').val(itemIds);
+                jQuery('#' + idPrefix + 'Reference_' + removeId).remove();
             «ENDIF»
         }
     '''
@@ -615,8 +615,8 @@ class EditFunctions {
                 includeEditing = !!(($F(idPrefix + 'Mode') == '1'));
             «ELSE»
                 newItemId = selectedListItem.id;
-                newTitle = $('#' + idPrefix + 'Selector').val();
-                includeEditing = !!(($('#' + idPrefix + 'Mode').val() == '1'));
+                newTitle = jQuery('#' + idPrefix + 'Selector').val();
+                includeEditing = !!((jQuery('#' + idPrefix + 'Mode').val() == '1'));
             «ENDIF»
             elemPrefix = idPrefix + 'Reference_' + newItemId;
             itemPreview = '';
@@ -648,21 +648,21 @@ class EditFunctions {
                 }
                 $(idPrefix + 'ReferenceList').appendChild(li);
             «ELSE»
-                var li = $('<li>', {id: elemPrefix, text: newTitle});
+                var li = jQuery('<li>', {id: elemPrefix, text: newTitle});
                 if (includeEditing === true) {
-                    var editHref = $('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
-                    editLink = $('<a>', {id: elemPrefix + 'Edit', href: editHref, text: 'edit'});
+                    var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
+                    editLink = jQuery('<a>', {id: elemPrefix + 'Edit', href: editHref, text: 'edit'});
                     li.append(editLink);
                 }
-                removeLink = $('<a>', {id: elemPrefix + 'Remove', href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove'});
+                removeLink = jQuery('<a>', {id: elemPrefix + 'Remove', href: 'javascript:«vendorAndName»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');', text: 'remove'});
                 li.append(removeLink);
                 if (itemPreview !== '') {
-                    fldPreview = $('<div>', {id: elemPrefix + 'preview', name: idPrefix + 'preview'});
+                    fldPreview = jQuery('<div>', {id: elemPrefix + 'preview', name: idPrefix + 'preview'});
                     fldPreview.html(itemPreview);
                     li.append(fldPreview);
                     itemPreview = '';
                 }
-                $('#' + idPrefix + 'ReferenceList').append(li);
+                jQuery('#' + idPrefix + 'ReferenceList').append(li);
             «ENDIF»
 
             if (includeEditing === true) {
@@ -678,7 +678,7 @@ class EditFunctions {
                         e.stop();
                     });
                 «ELSE»
-                    $('#' + elemPrefix + 'Edit').click( function (e) {
+                    jQuery('#' + elemPrefix + 'Edit').click( function (e) {
                         «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
                         e.stopPropagation();
                     });
@@ -708,9 +708,9 @@ class EditFunctions {
                 itemIds += newItemId;
                 $(idPrefix + 'ItemList').value = itemIds;
             «ELSE»
-                itemIds = $('#' + idPrefix + 'ItemList').val();
+                itemIds = jQuery('#' + idPrefix + 'ItemList').val();
                 if (itemIds !== '') {
-                    if ($('#' + idPrefix + 'Scope').val() === '0') {
+                    if (jQuery('#' + idPrefix + 'Scope').val() === '0') {
                         itemIdsArr = itemIds.split(',');
                         itemIdsArr.each(function (existingId) {
                             if (existingId) {
@@ -723,7 +723,7 @@ class EditFunctions {
                     }
                 }
                 itemIds += newItemId;
-                $('#' + idPrefix + 'ItemList').val(itemIds);
+                jQuery('#' + idPrefix + 'ItemList').val(itemIds);
             «ENDIF»
 
             «vendorAndName»ResetRelatedItemForm(idPrefix);
@@ -753,14 +753,14 @@ class EditFunctions {
                 }
             «ELSE»
                 // add handling for the toggle link if existing
-                if ($('#' + idPrefix + 'AddLink').size() > 0) {
-                    $('#' + idPrefix + 'AddLink').click( function (e) {
+                if (jQuery('#' + idPrefix + 'AddLink').size() > 0) {
+                    jQuery('#' + idPrefix + 'AddLink').click( function (e) {
                         «vendorAndName»ToggleRelatedItemForm(idPrefix);
                     });
                 }
                 // add handling for the cancel button
-                if ($('#' + idPrefix + 'SelectorDoCancel').size() > 0) {
-                    $('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
+                if (jQuery('#' + idPrefix + 'SelectorDoCancel').size() > 0) {
+                    jQuery('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
                         «vendorAndName»ResetRelatedItemForm(idPrefix);
                     });
                 }
@@ -820,22 +820,22 @@ class EditFunctions {
                         listItemMap[idPrefix] = {};
 
                         // Retrieve data from server using "query" parameter as it contains the search string entered by the user
-                        $('#' + idPrefix + 'Indicator').removeClass('hidden');
-                        $.getJSON( acUrl, { fragment: query }, function( data ) {
+                        jQuery('#' + idPrefix + 'Indicator').removeClass('hidden');
+                        jQuery.getJSON( acUrl, { fragment: query }, function( data ) {
 
                             if (data.length > 0) {
-                                $('#' + idPrefix + 'NoResultsHint').addClass('hidden');
+                                jQuery('#' + idPrefix + 'NoResultsHint').addClass('hidden');
 
                                 // map dropdown options to corresponding objects
-                                $.each(data, function (key, listItem) {
+                                jQuery.each(data, function (key, listItem) {
                                     listItemMap[idPrefix][listItem.title] = listItem;
                                     listItems[idPrefix].push(listItem.title);
                                 });
                             } else {
-                                $('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
+                                jQuery('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
                             }
 
-                            $('#' + idPrefix + 'Indicator').addClass('hidden');
+                            jQuery('#' + idPrefix + 'Indicator').addClass('hidden');
                         });
 
                         // call process() function with dropdown array
@@ -863,7 +863,7 @@ class EditFunctions {
                     updater: function (item) {
                         var inputField, listItem;
 
-                        inputField = $('#' + idPrefix);
+                        inputField = jQuery('#' + idPrefix);
                         listItem = listItemMap[idPrefix][item];
 
                         «vendorAndName»SelectRelatedItem(objectType, idPrefix, inputField, listItem);
@@ -879,16 +879,16 @@ class EditFunctions {
 
                         acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion');
                         acUrl += '&ot=' + objectType;
-                        if ($('#' + idPrefix + 'ItemList').size() > 0) {
-                            acUrl += '&exclude=' + $('#' + idPrefix + 'ItemList').val();
+                        if (jQuery('#' + idPrefix + 'ItemList').size() > 0) {
+                            acUrl += '&exclude=' + jQuery('#' + idPrefix + 'ItemList').val();
                         }
 
-                        $('#' + idPrefix + 'Selector').typeahead(acOptions);
+                        jQuery('#' + idPrefix + 'Selector').typeahead(acOptions);
 
                         // Ensure that clearing out the selector is reflected into the hidden field properly
-                        $('#' + idPrefix + 'Selector').blur(function() {
-                            if ($(this).val().length == 0 || $('#' + idPrefix).val() != listItemMap[idPrefix][$(this).val()]) {
-                                $('#' + idPrefix).val('');
+                        jQuery('#' + idPrefix + 'Selector').blur(function() {
+                            if (jQuery(this).val().length == 0 || jQuery('#' + idPrefix).val() != listItemMap[idPrefix][jQuery(this).val()]) {
+                                jQuery('#' + idPrefix).val('');
                             }
                         });
                     }
@@ -900,7 +900,7 @@ class EditFunctions {
                     return;
                 }
             «ELSE»
-                if (!includeEditing || $('#' + idPrefix + 'SelectorDoNew').size() < 1) {
+                if (!includeEditing || jQuery('#' + idPrefix + 'SelectorDoNew').size() < 1) {
                     return;
                 }
             «ENDIF»
@@ -913,8 +913,8 @@ class EditFunctions {
                     e.stop();
                 });
             «ELSE»
-                $('#' + idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
-                $('#' + idPrefix + 'SelectorDoNew').click( function(e) {
+                jQuery('#' + idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
+                jQuery('#' + idPrefix + 'SelectorDoNew').click( function(e) {
                     «vendorAndName»InitInlineRelationWindow(objectType, idPrefix + 'SelectorDoNew');
                     e.stopPropagation();
                 });
@@ -923,7 +923,7 @@ class EditFunctions {
             «IF targets('1.3.x')»
                 itemIds = $F(idPrefix + 'ItemList');
             «ELSE»
-                itemIds = $('#' + idPrefix + 'ItemList').val();
+                itemIds = jQuery('#' + idPrefix + 'ItemList').val();
             «ENDIF»
             itemIdsArr = itemIds.split(',');
             itemIdsArr.each(function (existingId) {
@@ -938,8 +938,8 @@ class EditFunctions {
                             e.stop();
                         });
                     «ELSE»
-                        $('#' + elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
-                        $('#' + elemPrefix).click( function (e) {
+                        jQuery('#' + elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
+                        jQuery('#' + elemPrefix).click( function (e) {
                             «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
                             e.stopPropagation();
                         });
@@ -972,7 +972,7 @@ class EditFunctions {
                             «IF targets('1.3.x')»
                                 relationHandler.acInstance.activate();
                             «ELSE»
-                                $('#' + idPrefix + 'Selector').lookup();
+                                jQuery('#' + idPrefix + 'Selector').lookup();
                             «ENDIF»
                             // show a message
                             «IF targets('1.3.x')»
@@ -980,7 +980,7 @@ class EditFunctions {
                                     autoClose: 3 // time in seconds
                                 });
                             «ELSE»
-                                «vendorAndName»SimpleAlert($('.«appName.toLowerCase»-form'), Zikula.__('Information', '«appName.formatForDB»_js'), Zikula.__('Action has been completed.', '«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
+                                «vendorAndName»SimpleAlert(jQuery('.«appName.toLowerCase»-form'), Zikula.__('Information', '«appName.formatForDB»_js'), Zikula.__('Action has been completed.', '«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
                             «ENDIF»
                         }
                     }
