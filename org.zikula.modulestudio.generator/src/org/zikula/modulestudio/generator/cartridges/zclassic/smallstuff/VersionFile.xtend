@@ -94,7 +94,7 @@ class VersionFile {
                       «IF !targets('1.3.x') && hasCategorisableEntities»
                           'categorizable' => array(
                               «FOR entity : getCategorisableEntities»
-                                  '«appNamespace»\Entity\«entity.name.formatForCode»Entity',
+                                  '«entity.name.formatForCode»' => '«appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity',
                               «ENDFOR»
                           ),
                       «ENDIF»
