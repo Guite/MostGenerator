@@ -1068,7 +1068,7 @@ class Ajax {
                 /**
                  *
                  * @Route("/get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users", options={"expose"=true})
-                 * @Method("POST")
+                 * @Method("GET")
                  */
                 public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»UsersAction(Request $request)
                 {
