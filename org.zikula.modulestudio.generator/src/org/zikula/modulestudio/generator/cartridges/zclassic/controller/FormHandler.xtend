@@ -1568,6 +1568,7 @@ class FormHandler {
                 «ENDIF»
             «ENDIF»
 
+            $success = false;
             try {
                 «IF hasOptimisticLock || hasPessimisticWriteLock»
                     if ($applyLock) {
