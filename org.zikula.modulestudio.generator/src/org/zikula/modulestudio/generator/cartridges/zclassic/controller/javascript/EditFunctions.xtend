@@ -125,7 +125,7 @@ class EditFunctions {
                             jQuery.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
 
                                 if (data.length > 0) {
-                                    jQuery('#' + idPrefix + 'NoResultsHint').addClass('hidden');
+                                    jQuery('#' + fieldName + 'NoResultsHint').addClass('hidden');
 
                                     // map dropdown options to corresponding objects
                                     jQuery.each(data, function (key, user) {
@@ -133,7 +133,7 @@ class EditFunctions {
                                         users[fieldName].push(user.uname);
                                     });
                                 } else {
-                                    jQuery('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
+                                    jQuery('#' + fieldName + 'NoResultsHint').removeClass('hidden');
                                 }
 
                                 jQuery('#' + fieldName + 'Indicator').addClass('hidden');
