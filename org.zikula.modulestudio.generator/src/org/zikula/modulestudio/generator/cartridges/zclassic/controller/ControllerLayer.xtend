@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.AdminController
 import de.guite.modulestudio.metamodel.AjaxController
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Controller
+import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.NamedObject
@@ -619,7 +620,12 @@ class ControllerLayer {
         {
             «IF !app.targets('1.3.x')»
                 «val actionHelper = new ControllerAction(app)»
-                «FOR action : actions»«actionHelper.generate(it, action, false)»«ENDFOR»
+                «IF hasSluggableFields»«/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
+                    «FOR action : actions»«IF !(action instanceof DisplayAction)»«actionHelper.generate(it, action, false)»«ENDIF»«ENDFOR»
+                    «FOR action : actions.filter(DisplayAction)»«actionHelper.generate(it, action, false)»«ENDFOR»
+                «ELSE»
+                    «FOR action : actions»«actionHelper.generate(it, action, false)»«ENDFOR»
+                «ENDIF»
                 «IF hasActions('view') && app.hasAdminController»
 
                     «handleSelectedObjects(false)»
