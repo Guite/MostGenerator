@@ -275,8 +275,8 @@ class AbstractObjectSelector {
          */
         public function renderAttributes(Zikula_Form_View $view)
         {
+            unset($this->attributes['linkingItem']);
             $attributes = parent::renderAttributes($view);
-            $attributes = str_replace(' linkingItem="Array"', '', $attributes);
 
             return $attributes;
         }
