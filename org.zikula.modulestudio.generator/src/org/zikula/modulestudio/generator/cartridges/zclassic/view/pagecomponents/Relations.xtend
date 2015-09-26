@@ -32,10 +32,8 @@ class Relations {
                 {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
                     {assign var='lct' value='admin'}
                 {/if}
-                {if $lct ne 'admin'}
-                    {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasAdminPermission'}
-                    {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasEditPermission'}
-                {/if}
+                {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasAdminPermission'}
+                {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasEditPermission'}
                 «IF hasActions('display')»
                     {if !isset($nolink)}
                         {assign var='nolink' value=false}
