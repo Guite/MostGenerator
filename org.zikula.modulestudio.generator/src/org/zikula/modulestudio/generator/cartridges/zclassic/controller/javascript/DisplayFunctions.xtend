@@ -336,8 +336,8 @@ class DisplayFunctions {
                 containerElem.removeClass('hidden');
             «ENDIF»
 
-            // define the new window instance
             «IF targets('1.3.x')»
+                // define the new window instance
                 newWindow = new Zikula.UI.Window(
                     containerElem,
                     {
@@ -351,25 +351,40 @@ class DisplayFunctions {
                     }
                 );
             «ELSE»
+                // define name of window
                 newWindowId = containerElem.attr('id') + 'Dialog';
-                jQuery('<div id="' + newWindowId + '"></div>')
-                    .append(jQuery('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
-                    .dialog({
-                        autoOpen: false,
-                        show: {
-                            effect: 'blind',
-                            duration: 1000
-                        },
-                        hide: {
-                            effect: 'explode',
-                            duration: 1000
-                        },
-                        title: title,
-                        width: 600,
-                        height: 400,
-                        modal: false
-                    })
-                    .dialog('open');
+
+                containerElem.unbind('click').click(function(e) {
+                    e.preventDefault();
+
+                    // check if window exists already
+                    if (jQuery('#' + newWindowId).length < 1) {
+                        // create new window instance
+                        jQuery('<div id="' + newWindowId + '"></div>')
+                            .append(
+                                jQuery('<iframe width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto" />')
+                                    .attr('src', containerElem.attr('href'))
+                            )
+                            .dialog({
+                                autoOpen: false,
+                                show: {
+                                    effect: 'blind',
+                                    duration: 1000
+                                },
+                                hide: {
+                                    effect: 'explode',
+                                    duration: 1000
+                                },
+                                title: title,
+                                width: 600,
+                                height: 400,
+                                modal: false
+                            });
+                    }
+
+                    // open the window
+                    jQuery('#' + newWindowId).dialog('open');
+                });
             «ENDIF»
 
             // return the «IF targets('1.3.x')»instance«ELSE»dialog selector id«ENDIF»;
