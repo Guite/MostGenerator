@@ -87,7 +87,7 @@ class TreeFunctions {
         var liRef, isRoot, contextMenu;
 
         // get reference to list item
-        liRef = $(this).parent();
+        liRef = jQuery(this).parent();
         isRoot = (liRef.attr('id') === 'tree' + rootId + 'node_' + rootId);
         currentNodeId = liRef.attr('id').replace('tree' + rootId + 'node_', '');
 
@@ -95,36 +95,36 @@ class TreeFunctions {
         contextMenu = liRef.attr('id') + 'DropDownMenu';
 
         contextMenu.append(
-            listItem = $('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Basic actions', '«appName.formatForDB»_js'))
+            listItem = jQuery('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Basic actions', '«appName.formatForDB»_js'))
         );
 
         if (hasDisplay === true) {
             contextMenu.append(
-                $('<li>', { role: 'presentation' }).append(
-                    $('<a>', { role: 'menuitem', tabindex: '-1', })
+                jQuery('<li>', { role: 'presentation' }).append(
+                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
                         .attr('href', Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=display&id=' + currentNodeId)
                         «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
-                        .append($('<i>', class: 'fa fa-eye' }))
+                        .append(jQuery('<i>', class: 'fa fa-eye' }))
                         .append(Zikula.__('Display', '«appName.formatForDB»_js'))
                 )
             );
         }
         if (hasEdit === true) {
             contextMenu.append(
-                $('<li>', { role: 'presentation' }).append(
-                    $('<a>', { role: 'menuitem', tabindex: '-1', })
+                jQuery('<li>', { role: 'presentation' }).append(
+                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
                         .attr('href', Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=edit&id=' + currentNodeId)
                         «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
-                        .append($('<i>', class: 'fa fa-pencil-square-o' }))
+                        .append(jQuery('<i>', class: 'fa fa-pencil-square-o' }))
                         .append(Zikula.__('Edit', '«appName.formatForDB»_js'))
                 )
             );
         }
         contextMenu.append(
-            $('<li>', { role: 'presentation' }).append(
-                $('<a>', { role: 'menuitem', tabindex: '-1', })
+            jQuery('<li>', { role: 'presentation' }).append(
+                jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
                     .attr('href', '#')
-                    .append($('<i>', class: 'fa fa-plus' }))
+                    .append(jQuery('<i>', class: 'fa fa-plus' }))
                     .append(Zikula.__('Add child node', '«appName.formatForDB»_js'))
                     .click(function (evt) {
                         evt.preventDefault();
@@ -133,10 +133,10 @@ class TreeFunctions {
             )
         );
         contextMenu.append({
-            $('<li>', { role: 'presentation' }).append(
-                $('<a>', { role: 'menuitem', tabindex: '-1', })
+            jQuery('<li>', { role: 'presentation' }).append(
+                jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
                     .attr('href', '#')
-                    .append($('<i>', class: 'fa fa-trash-o' }))
+                    .append(jQuery('<i>', class: 'fa fa-trash-o' }))
                     .append(Zikula.__('Delete node', '«appName.formatForDB»_js'))
                     .click(function (evt) {
                         var confirmQuestion;
@@ -154,18 +154,18 @@ class TreeFunctions {
         });
 
         contextMenu.append(
-            listItem = $('<li>', { role: 'presentation', class: 'divider' })
+            listItem = jQuery('<li>', { role: 'presentation', class: 'divider' })
         );
         contextMenu.append(
-            listItem = $('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Sorting', '«appName.formatForDB»_js'))
+            listItem = jQuery('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Sorting', '«appName.formatForDB»_js'))
         );
 
         if (!isRoot && !liRef.is(':first-child')) { // has previous sibling
             contextMenu.append(
-                $('<li>', { role: 'presentation' }).append(
-                    $('<a>', { role: 'menuitem', tabindex: '-1', })
+                jQuery('<li>', { role: 'presentation' }).append(
+                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
                         .attr('href', '#')
-                        .append($('<i>', class: 'fa fa-angle-up' }))
+                        .append(jQuery('<i>', class: 'fa fa-angle-up' }))
                         .append(Zikula.__('Move up', '«appName.formatForDB»_js'))
                         .click(function (evt) {
                             evt.preventDefault();
@@ -177,10 +177,10 @@ class TreeFunctions {
 
         if (!isRoot && !liRef.is(':last-child')) { // has next sibling
             contextMenu.append(
-                $('<li>', { role: 'presentation' }).append(
-                    $('<a>', { role: 'menuitem', tabindex: '-1', })
+                jQuery('<li>', { role: 'presentation' }).append(
+                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
                         .attr('href', '#')
-                        .append($('<i>', class: 'fa fa-angle-down' }))
+                        .append(jQuery('<i>', class: 'fa fa-angle-down' }))
                         .append(Zikula.__('Move down', '«appName.formatForDB»_js'))
                         .click(function (evt) {
                             evt.preventDefault();
@@ -308,7 +308,7 @@ class TreeFunctions {
                     «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                     «ELSE»
-                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Invalid node id', '«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
+                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Invalid node id', '«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
                     «ENDIF»
                 }
                 params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + currentNodeId;
@@ -340,9 +340,9 @@ class TreeFunctions {
                     }
                 );
             «ELSE»
-                $.ajax({
+                jQuery.ajax({
                     type: 'POST',
-                    url: Routing.generate('«appName.formatForDB»_ajax_handleTreeOperation'),
+                    url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
                     data: params
                 }).done(function(res) {
                     // get data returned by the ajax response
@@ -351,12 +351,12 @@ class TreeFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'treeAjaxDoneAlert', 'success');
+                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'treeAjaxDoneAlert', 'success');
                     }*/
 
                     window.location.reload();
                 }).fail(function(jqXHR, textStatus) {
-                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
                 });
             «ENDIF»
         }
@@ -435,15 +435,15 @@ class TreeFunctions {
 
                 return request.success();
             «ELSE»
-                $.ajax({
+                jQuery.ajax({
                     type: 'POST',
-                    url: Routing.generate('«appName.formatForDB»_ajax_handleTreeOperation'),
+                    url: Routing.generate('«appName.formatForDB»_ajax_handletreeoperation'),
                     data: requestParams
                 }).done(function(res) {
                     return true;
                 }).fail(function(jqXHR, textStatus) {
                     var treeName = 'itemTree' + rootId;
-                    «vendorAndName»SimpleAlert($('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
 
                     window.location.reload();
                     return false;

@@ -95,7 +95,7 @@ class DisplayFunctions {
             // process normal links
             «IF targets('1.3.x')»$$«ELSE»jQuery«ENDIF»('#' + containerId + ' a').each(function («IF targets('1.3.x')»elem«ELSE»index«ENDIF») {
                 «IF !targets('1.3.x')»
-                    var elem = $(this);
+                    var elem = jQuery(this);
                     // save css class before hiding (#428)
                     var elemClass = elem.attr('class');
                 «ENDIF»
@@ -149,7 +149,7 @@ class DisplayFunctions {
                     }
                 «ELSE»
                     if (elem.hasClass('fa')) {
-                        icon = $('<i>', { class: elemClass });
+                        icon = jQuery('<i>', { class: elemClass });
                     }
                 «ENDIF»
 
@@ -190,7 +190,7 @@ class DisplayFunctions {
          */
         function «vendorAndName»SubmitQuickNavForm(objectType)
         {
-            $('«IF !targets('1.3.x')»#«ENDIF»«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
+            «IF targets('1.3.x')»$('«ELSE»jQuery(#«ENDIF»«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
@@ -352,8 +352,8 @@ class DisplayFunctions {
                 );
             «ELSE»
                 newWindowId = containerElem.attr('id') + 'Dialog';
-                $('<div id="' + newWindowId + '"></div>')
-                    .append($('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
+                jQuery('<div id="' + newWindowId + '"></div>')
+                    .append(jQuery('<iframe«/* width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0" scrolling="auto"*/» />').attr('src', containerElem.attr('href')))
                     .dialog({
                         autoOpen: false,
                         show: {
@@ -496,7 +496,7 @@ class DisplayFunctions {
             beforeElem.before(alertBox);
 
             jQuery('#' + alertId).delay(200).addClass('in').fadeOut(4000, function () {
-                $(this).remove();
+                jQuery(this).remove();
             });
         }
     '''

@@ -106,20 +106,20 @@ class Finder {
                 $('«elemPrefix»Submit').addClassName('z-hide');
                 $('«elemPrefix»Cancel').observe('click', «objName».finder.handleCancel);
             «ELSE»
-                $('div.categoryselector select').change(«objName».finder.onParamChanged);
-                $('#«elemPrefix»Sort').change(«objName».finder.onParamChanged);
-                $('#«elemPrefix»SortDir').change(«objName».finder.onParamChanged);
-                $('#«elemPrefix»PageSize').change(«objName».finder.onParamChanged);
-                $('#«elemPrefix»SearchGo').click(«objName».finder.onParamChanged);
-                $('#«elemPrefix»SearchGo').keypress(«objName».finder.onParamChanged);
-                $('#«elemPrefix»Submit').addClass('hidden');
-                $('#«elemPrefix»Cancel').click(«objName».finder.handleCancel);
+                jQuery('div.categoryselector select').change(«objName».finder.onParamChanged);
+                jQuery('#«elemPrefix»Sort').change(«objName».finder.onParamChanged);
+                jQuery('#«elemPrefix»SortDir').change(«objName».finder.onParamChanged);
+                jQuery('#«elemPrefix»PageSize').change(«objName».finder.onParamChanged);
+                jQuery('#«elemPrefix»SearchGo').click(«objName».finder.onParamChanged);
+                jQuery('#«elemPrefix»SearchGo').keypress(«objName».finder.onParamChanged);
+                jQuery('#«elemPrefix»Submit').addClass('hidden');
+                jQuery('#«elemPrefix»Cancel').click(«objName».finder.handleCancel);
             «ENDIF»
         };
 
         «objName».finder.onParamChanged = function ()
         {
-            $('«IF !targets('1.3.x')»#«ENDIF»«elemPrefix»SelectorForm').submit();
+            «IF targets('1.3.x')»$('«ELSE»jQuery('#«ENDIF»«elemPrefix»SelectorForm').submit();
         };
 
         «objName».finder.handleCancel = function ()
@@ -129,7 +129,7 @@ class Finder {
             «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
-                editor = $('#editorName').val();
+                editor = jQuery('#editorName').val();
             «ENDIF»
             if (editor === 'xinha') {
                 w = parent.window;
@@ -156,10 +156,10 @@ class Finder {
                 itemDescription = $F('desc' + itemId).replace(quoteFinder, '');
                 pasteMode = $F('«elemPrefix»PasteAs');
             «ELSE»
-                itemUrl = $('#url' + itemId).val().replace(quoteFinder, '');
-                itemTitle = $('#title' + itemId).val().replace(quoteFinder, '');
-                itemDescription = $('#desc' + itemId).val().replace(quoteFinder, '');
-                pasteMode = $('#«elemPrefix»PasteAs').val();
+                itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
+                itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '');
+                itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '');
+                pasteMode = jQuery('#«elemPrefix»PasteAs').val();
             «ENDIF»
 
             if (pasteMode === '2' || pasteMode !== '1') {
@@ -185,7 +185,7 @@ class Finder {
             «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
-                editor = $('#editorName').val();
+                editor = jQuery('#editorName').val();
             «ENDIF»
             if (editor === 'xinha') {
                 if (window.opener.current«appName»Editor !== null) {
@@ -274,18 +274,18 @@ class Finder {
                 $('«elemPrefix»SearchGo').observe('click', «objName».itemSelector.onParamChanged);
                 $('«elemPrefix»SearchGo').observe('keypress', «objName».itemSelector.onParamChanged);
             «ELSE»
-                $('#«elemPrefix»ObjectType').change(«objName».itemSelector.onParamChanged);
+                jQuery('#«elemPrefix»ObjectType').change(«objName».itemSelector.onParamChanged);
 
-                if ($('#' + baseId + '_catidMain').size() > 0) {
-                    $('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
-                } else if ($('#' + baseId + '_catidsMain').size() > 0) {
-                    $('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
+                if (jQuery('#' + baseId + '_catidMain').size() > 0) {
+                    jQuery('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
+                } else if (jQuery('#' + baseId + '_catidsMain').size() > 0) {
+                    jQuery('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
                 }
-                $('#' + baseId + 'Id').change(«objName».itemSelector.onItemChanged);
-                $('#' + baseId + 'Sort').change(«objName».itemSelector.onParamChanged);
-                $('#' + baseId + 'SortDir').change(«objName».itemSelector.onParamChanged);
-                $('#«elemPrefix»SearchGo').click(«objName».itemSelector.onParamChanged);
-                $('#«elemPrefix»SearchGo').keypress(«objName».itemSelector.onParamChanged);
+                jQuery('#' + baseId + 'Id').change(«objName».itemSelector.onItemChanged);
+                jQuery('#' + baseId + 'Sort').change(«objName».itemSelector.onParamChanged);
+                jQuery('#' + baseId + 'SortDir').change(«objName».itemSelector.onParamChanged);
+                jQuery('#«elemPrefix»SearchGo').click(«objName».itemSelector.onParamChanged);
+                jQuery('#«elemPrefix»SearchGo').keypress(«objName».itemSelector.onParamChanged);
             «ENDIF»
 
             «objName».itemSelector.getItemList();
@@ -293,7 +293,7 @@ class Finder {
 
         «objName».itemSelector.onParamChanged = function ()
         {
-            $('ajax_indicator').removeClass«IF targets('1.3.x')»Name«ENDIF»('«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»');
+            «IF targets('1.3.x')»$('«ELSE»jQuery('#«ENDIF»ajax_indicator').removeClass«IF targets('1.3.x')»Name«ENDIF»('«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»');
 
             «objName».itemSelector.getItemList();
         };
@@ -314,14 +314,14 @@ class Finder {
                           'sortdir=' + $F(baseId + 'SortDir') + '&' +
                           'q=' + $F(baseId + 'SearchTerm');
             «ELSE»
-                if ($('#' + baseId + '_catidMain').size() > 0) {
-                    params += 'catidMain=' + $('#' + baseId + '_catidMain').val() + '&';
-                } else if ($('#' + baseId + '_catidsMain').size() > 0) {
-                    params += 'catidsMain=' + $('#' + baseId + '_catidsMain').val() + '&';
+                if (jQuery('#' + baseId + '_catidMain').size() > 0) {
+                    params += 'catidMain=' + jQuery('#' + baseId + '_catidMain').val() + '&';
+                } else if (jQuery('#' + baseId + '_catidsMain').size() > 0) {
+                    params += 'catidsMain=' + jQuery('#' + baseId + '_catidsMain').val() + '&';
                 }
-                params += 'sort=' + $('#' + baseId + 'Sort').val() + '&' +
-                          'sortdir=' + $('#' + baseId + 'SortDir').val() + '&' +
-                          'q=' + $('#' + baseId + 'SearchTerm').val();
+                params += 'sort=' + jQuery('#' + baseId + 'Sort').val() + '&' +
+                          'sortdir=' + jQuery('#' + baseId + 'SortDir').val() + '&' +
+                          'q=' + jQuery('#' + baseId + 'SearchTerm').val();
             «ENDIF»
 
             «IF targets('1.3.x')»
@@ -344,7 +344,7 @@ class Finder {
                     }
                 );
             «ELSE»
-                $.ajax({
+                jQuery.ajax({
                     type: 'POST',
                     url: Routing.generate('«appName.formatForDB»_ajax_getitemlistfinder'),
                     data: params
@@ -353,7 +353,7 @@ class Finder {
                     var baseId;
                     baseId = «objName».itemSelector.baseId;
                     «objName».itemSelector.items[baseId] = res.data;
-                    $('#ajax_indicator').addClass('hidden');
+                    jQuery('#ajax_indicator').addClass('hidden');
                     «objName».itemSelector.updateItemDropdownEntries();
                     «objName».itemSelector.updatePreview();
                 })«/*.fail(function(jqXHR, textStatus) {
@@ -367,7 +367,7 @@ class Finder {
             var baseId, itemSelector, items, i, item;
 
             baseId = «objName».itemSelector.baseId;
-            itemSelector = $(«IF !targets('1.3.x')»'#' + «ENDIF»baseId + 'Id');
+            itemSelector = «IF targets('1.3.x')»$(«ELSE»jQuery('#' + «ENDIF»baseId + 'Id');
             itemSelector.length = 0;
 
             items = «objName».itemSelector.items[baseId];
@@ -380,7 +380,7 @@ class Finder {
                 «IF targets('1.3.x')»
                     $(baseId + 'Id').value = «objName».itemSelector.selectedId;
                 «ELSE»
-                    $('#' + baseId + 'Id').val(«objName».itemSelector.selectedId);
+                    jQuery('#' + baseId + 'Id').val(«objName».itemSelector.selectedId);
                 «ENDIF»
             }
         };
@@ -395,7 +395,7 @@ class Finder {
             «IF targets('1.3.x')»
                 $(baseId + 'PreviewContainer').addClassName('z-hide');
             «ELSE»
-                $('#' + baseId + 'PreviewContainer').addClass('hidden');
+                jQuery('#' + baseId + 'PreviewContainer').addClass('hidden');
             «ENDIF»
 
             if (items.length === 0) {
@@ -418,7 +418,7 @@ class Finder {
                         .update(window.atob(selectedElement.previewInfo))
                         .removeClassName('z-hide');
                 «ELSE»
-                    $('#' + baseId + 'PreviewContainer')
+                    jQuery('#' + baseId + 'PreviewContainer')
                         .html(window.atob(selectedElement.previewInfo))
                         .removeClass('hidden');
                 «ENDIF»
@@ -430,11 +430,11 @@ class Finder {
             var baseId, itemSelector, preview;
 
             baseId = «objName».itemSelector.baseId;
-            itemSelector = $(«IF !targets('1.3.x')»'#' + «ENDIF»baseId + 'Id');
+            itemSelector = «IF targets('1.3.x')»$(«ELSE»jQuery('#' + «ENDIF»baseId + 'Id');
             preview = window.atob(«objName».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
 
-            $(baseId + 'PreviewContainer').«IF targets('1.3.x')»update«ELSE»html«ENDIF»(preview);
-            «objName».itemSelector.selectedId = «IF targets('1.3.x')»$F(baseId + 'Id')«ELSE»$('#' + baseId + 'Id').val()«ENDIF»;
+            «IF targets('1.3.x')»$(«ELSE»jQuery('#' + «ENDIF»baseId + 'PreviewContainer').«IF targets('1.3.x')»update«ELSE»html«ENDIF»(preview);
+            «objName».itemSelector.selectedId = «IF targets('1.3.x')»$F(baseId + 'Id')«ELSE»jQuery('#' + baseId + 'Id').val()«ENDIF»;
         };
     '''
 }
