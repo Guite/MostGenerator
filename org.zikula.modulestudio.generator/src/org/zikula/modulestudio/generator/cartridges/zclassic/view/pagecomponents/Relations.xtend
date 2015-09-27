@@ -33,7 +33,9 @@ class Relations {
                     {assign var='lct' value='admin'}
                 {/if}
                 {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasAdminPermission'}
-                {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasEditPermission'}
+                «IF ownerPermission»
+                    {checkpermission component='«app.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' assign='hasEditPermission'}
+                «ENDIF»
                 «IF hasActions('display')»
                     {if !isset($nolink)}
                         {assign var='nolink' value=false}
