@@ -446,7 +446,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
                 «ELSE»
-                    $this->request->getSession()-getFlashBag()->add('status', $this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
+                    $this->request->getSession()->getFlashBag()->add('status', $this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
                 «ENDIF»
             «ENDIF»
 
