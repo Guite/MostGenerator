@@ -251,7 +251,7 @@ class ControllerAction {
 
     def private actionRouteDefaultsForSingleEntity(Entity it, Action action) {
         var output = ''
-        if (hasSluggableFields && !(action instanceof EditAction)) {
+        if (hasSluggableFields && action instanceof DisplayAction) {
             output = '''"slug" = ""'''
             if (slugUnique) {
                 return output
