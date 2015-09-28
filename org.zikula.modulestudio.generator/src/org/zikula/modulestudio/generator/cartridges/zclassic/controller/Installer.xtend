@@ -206,7 +206,7 @@ class Installer {
                     include_once '«rootFolder»/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»
-                    $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi(new \«appNamespace»\«appName»());
+                    $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi($this->serviceManager, new \«appNamespace»\«appName»());
                 «ENDIF»
                 $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
                 «IF targets('1.3.x')»
