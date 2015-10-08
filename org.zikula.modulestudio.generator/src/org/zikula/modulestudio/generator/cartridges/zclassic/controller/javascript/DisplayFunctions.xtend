@@ -190,7 +190,7 @@ class DisplayFunctions {
          */
         function «vendorAndName»SubmitQuickNavForm(objectType)
         {
-            «IF targets('1.3.x')»$('«ELSE»jQuery(#«ENDIF»«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
+            «IF targets('1.3.x')»$('«ELSE»jQuery('#«ENDIF»«appName.toLowerCase»' + «vendorAndName»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
