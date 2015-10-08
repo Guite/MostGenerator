@@ -84,9 +84,9 @@ class Section {
         {* include display hooks *}
         {if $mode ne 'create'}
             {assign var='hookId' value=«IF !hasCompositeKeys»$«name.formatForDB».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForDB».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF»}
-            {notifydisplayhooks eventname='«app.name.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=$hookId assign='hooks'}
+            {notifydisplayhooks eventname='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=$hookId assign='hooks'}
         {else}
-            {notifydisplayhooks eventname='«app.name.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=null assign='hooks'}
+            {notifydisplayhooks eventname='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=null assign='hooks'}
         {/if}
         {if is_array($hooks) && count($hooks)}
             {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
