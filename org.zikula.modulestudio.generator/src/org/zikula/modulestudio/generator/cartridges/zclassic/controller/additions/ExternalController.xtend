@@ -339,7 +339,7 @@ class ExternalController {
         «IF targets('1.3.x')»
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
-            return new PlainResponse($view->display('External/' . ucfirst($objectType) . '/find.tpl'));
+            return new PlainResponse($view->fetch('External/' . ucfirst($objectType) . '/find.tpl'));
         «ENDIF»
     '''
 

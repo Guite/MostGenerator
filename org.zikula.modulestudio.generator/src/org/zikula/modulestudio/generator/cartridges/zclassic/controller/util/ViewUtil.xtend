@@ -172,7 +172,7 @@ class ViewUtil {
                     «IF targets('1.3.x')»
                         $view->display($template);
                     «ELSE»
-                        return new PlainResponse($view->display($template));
+                        return new PlainResponse($view->fetch($template));
                     «ENDIF»
                 }
                 «IF targets('1.3.x')»
