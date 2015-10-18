@@ -472,9 +472,9 @@ class ControllerLayer {
 
     def private handleInlineRedirectBaseImpl(NamedObject it) '''
         «IF app.targets('1.3.x') || it instanceof Controller»
-            $id = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
-            $idPrefix = $this->request->query->filter('idPrefix', '', FILTER_SANITIZE_STRING);
-            $commandName = $this->request->query->filter('commandName', '', FILTER_SANITIZE_STRING);
+            $id = (int) $this->request->query->filter('id', 0, «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
+            $idPrefix = $this->request->query->filter('idPrefix', '', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            $commandName = $this->request->query->filter('commandName', '', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
         «ENDIF»
         if (empty($idPrefix)) {
             return false;

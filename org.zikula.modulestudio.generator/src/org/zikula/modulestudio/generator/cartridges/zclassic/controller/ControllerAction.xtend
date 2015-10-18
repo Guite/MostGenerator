@@ -51,7 +51,7 @@ class ControllerAction {
         public function «action.methodName»«IF app.targets('1.3.x')»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
         {
             «IF isBase»
-                $legacyControllerType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+                $legacyControllerType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
                 System::queryStringSetVar('type', $legacyControllerType);
                 $«IF app.targets('1.3.x')»this->«ENDIF»request->query->set('type', $legacyControllerType);
 

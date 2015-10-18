@@ -99,7 +99,7 @@ class Redirect {
 
             «ENDIF»
             «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType.NONE»
-                $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+                $legacyControllerType = $this->request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
 
             «ENDIF»
             «IF hasActions('view')»
