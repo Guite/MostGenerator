@@ -546,7 +546,7 @@ class EditFunctions {
                         «ENDIF»
                     }
                     // create and assign the new window instance
-                    relationHandler.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance(«IF !targets('1.3.x')»$('#' + «ELSE»jQuery(«ENDIF»containerID), true);
+                    relationHandler.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance(«IF !targets('1.3.x')»jQuery('#' + «ELSE»$(«ENDIF»containerID), true);
                 }
             });
 
@@ -558,7 +558,7 @@ class EditFunctions {
                 newItem.alias = '«/*TODO*/»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
-                newItem.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance(«IF !targets('1.3.x')»$('#' + «ELSE»jQuery(«ENDIF»containerID), true);
+                newItem.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance(«IF !targets('1.3.x')»jQuery('#' + «ELSE»$(«ENDIF»containerID), true);
 
                 // add it to the list of handlers
                 relationHandler.push(newItem);
