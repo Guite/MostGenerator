@@ -191,7 +191,9 @@ class ValidationConstraints {
     '''
     def dispatch fieldAnnotations(ListField it) '''
         «fieldAnnotationsMandatory»
-        «' '»* @Assert\Choice(callback="get«name.formatForCodeCapital»AllowedValues", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
+        «IF !multiple»
+            «' '»* @Assert\Choice(callback="get«name.formatForCodeCapital»AllowedValues", multiple=«multiple.displayBool»«IF multiple»«IF min > 0», min=«min»«ENDIF»«IF max > 0», max=«max»«ENDIF»«ENDIF»)
+        «ENDIF»
     '''
     def dispatch fieldAnnotations(ArrayField it) '''
         «fieldAnnotationsMandatory»
@@ -221,27 +223,61 @@ class ValidationConstraints {
 
     def dispatch validationMethods(ListField it) '''
         «val app = entity.application»
-        /**
-         * Returns a list of possible choices for the «name.formatForCode» list field.
-         * This method is used for validation.
-         */
-        public static function get«name.formatForCodeCapital»AllowedValues()
-        {
-            $serviceManager = ServiceUtil::getManager();
-            «IF app.targets('1.3.x')»
-                $helper = new «app.appName»_Util_ListEntries($serviceManager);
-            «ELSE»
-                $helper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
-            «ENDIF»
-            $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+        «IF !multiple»
+            /**
+             * Returns a list of possible choices for the «name.formatForCode» list field.
+             * This method is used for validation.
+             */
+            public static function get«name.formatForCodeCapital»AllowedValues()
+            {
+                $serviceManager = ServiceUtil::getManager();
+                «IF app.targets('1.3.x')»
+                    $helper = new «app.appName»_Util_ListEntries($serviceManager);
+                «ELSE»
+                    $helper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+                «ENDIF»
+                $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
-            $allowedValues = array();
-            foreach ($listEntries as $entry) {
-                $allowedValues[] = $entry['value'];
+                $allowedValues = array();
+                foreach ($listEntries as $entry) {
+                    $allowedValues[] = $entry['value'];
+                }
+
+                return $allowedValues;
             }
+        «ELSE»
+            /**
+             * @Assert\Callback()
+             */
+            public function is«name.formatForCodeCapital»ValueAllowed(ExecutionContextInterface $context)
+            {
+                $serviceManager = ServiceUtil::getManager();
+                «IF app.targets('1.3.x')»
+                    $helper = new «app.appName»_Util_ListEntries($serviceManager);
+                «ELSE»
+                    $helper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+                «ENDIF»
+                $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                $dom = ZLanguage::getModuleDomain('«app.appName»');
 
-            return $allowedValues;
-        }
+                $allowedValues = array();
+                foreach ($listEntries as $entry) {
+                    $allowedValues[] = $entry['value'];
+                }
+
+                $selected = explode('###', $this->«name.formatForCode»);
+                foreach ($selected as $value) {
+                    if ($value == '') {
+                        continue;
+                    }
+                    if (!in_array($value, $allowedValues, true)) {
+                        $context->buildViolation(__('Invalid value provided', $dom))
+                            ->atPath('«name.formatForCode»')
+                            ->addViolation();
+                    }
+                }
+            }
+        «ENDIF»
     '''
 
     def dispatch validationMethods(UserField it) '''

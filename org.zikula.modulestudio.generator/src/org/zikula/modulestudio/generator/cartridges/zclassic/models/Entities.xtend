@@ -107,6 +107,9 @@ class Entities {
         use Gedmo\Mapping\Annotation as Gedmo;
         «IF !application.targets('1.3.x')»
             use Symfony\Component\Validator\Constraints as Assert;
+            «IF !getListFieldsEntity.filter[multiple].empty»
+                use Symfony\Component\Validator\Context\ExecutionContextInterface;
+            «ENDIF»
             «IF !getUniqueDerivedFields.filter[!primaryKey].empty || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             «ENDIF»
@@ -128,6 +131,9 @@ class Entities {
         «ENDIF»
         «IF !application.targets('1.3.x')»
             use Symfony\Component\Validator\Constraints as Assert;
+            «IF !getListFieldsEntity.filter[multiple].empty»
+                use Symfony\Component\Validator\Context\ExecutionContextInterface;
+            «ENDIF»
             «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             «ENDIF»
