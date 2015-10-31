@@ -26,20 +26,16 @@ class ControllerUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for controller layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Controller' + (if (targets('1.3.x')) '' else 'Util') + '.php',
+        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Controller' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, controllerFunctionsBaseImpl), fh.phpFileContent(it, controllerFunctionsImpl)
         )
     }
 
     def private controllerFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util\Base;
+            namespace «appNamespace»\Helper\Base;
 
-            «IF hasUploads»
-                use Symfony\Component\Filesystem\Filesystem;
-                use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
-            «ENDIF»
             use DataUtil;
             «IF hasUploads»
                 use FileUtil;
@@ -47,7 +43,13 @@ class ControllerUtil {
             «IF hasGeographical»
                 use UserUtil;
             «ENDIF»
-            use Zikula_AbstractBase;
+            use Monolog\Logger;
+            «IF hasUploads»
+                use Symfony\Component\Filesystem\Filesystem;
+                use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+            «ENDIF»
+            use Symfony\Component\HttpFoundation\Session\Session;
+            use Zikula\Common\Translator\Translator;
             use Zikula_Request_Http;
             «IF hasGeographical»
                 use ZLanguage;
@@ -57,8 +59,42 @@ class ControllerUtil {
         /**
          * Utility base class for controller helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Controller«ELSE»ControllerUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Controller extends Zikula_AbstractBase«ELSE»ControllerHelper«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                /**
+                 * @var Translator
+                 */
+                protected $translator;
+
+                /**
+                 * @var Session
+                 */
+                protected $session;
+
+                /**
+                 * @var Logger
+                 */
+                protected $logger;
+
+                /**
+                 * Constructor.
+                 * Initialises member vars.
+                 *
+                 * @param Translator $translator Translator service instance.
+                 * @param Session    $session    Session service instance.
+                 * @param Logger     $logger     Logger service instance.
+                 *
+                 * @return void
+                 */
+                public function __construct(Translator $translator, Session $session, Logger $logger)
+                {
+                    $this->translator = $translator;
+                    $this->session = $session;
+                    $this->logger = $logger;
+                }
+
+            «ENDIF»
             «getObjectTypes»
 
             «getDefaultObjectType»
@@ -367,23 +403,20 @@ class ControllerUtil {
                     }
                 }
             «ELSE»
-                $session = $this->serviceManager->get('session');
-                $logger = $this->serviceManager->get('logger');
-
                 $fs = new Filesystem();
 
                 try {
                     // Check if directory exist and try to create it if needed
                     if (!$fs->exists($uploadPath) && !$fs->mkdir($uploadPath, 0777)) {
-                        $session->getFlashBag()->add('error', $this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
-                        $logger->error('{app}: The upload directory {directory} does not exist and could not be created.', array('app' => '«appName»', 'directory' => $uploadPath));
+                        $this->session->getFlashBag()->add('error', $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+                        $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', array('app' => '«appName»', 'directory' => $uploadPath));
                         return false;
                     }
 
                     // Check if directory is writable and change permissions if needed
                     if (!is_writable($uploadPath) && !$fs->chmod($uploadPath, 0777)) {
-                        $session->getFlashBag()->add('warning', $this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
-                        $logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', array('app' => '«appName»', 'directory' => $uploadPath));
+                        $this->session->getFlashBag()->add('warning', $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                        $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', array('app' => '«appName»', 'directory' => $uploadPath));
                         return false;
                     }
 
@@ -396,8 +429,8 @@ class ControllerUtil {
                         $fs->dumpFile($htaccessFilePath, $htaccessContent);
                     }
                 } catch (IOExceptionInterface $e) {
-                    $session->getFlashBag()->add('error', $this->__f('An error occured during creation of the .htaccess file in directory "%s".', array($e->getPath())));
-                    $logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', array('app' => '«appName»', 'directory' => $uploadPath));
+                    $this->session->getFlashBag()->add('error', $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', array($e->getPath())));
+                    $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', array('app' => '«appName»', 'directory' => $uploadPath));
                 }
             «ENDIF»
 
@@ -461,8 +494,7 @@ class ControllerUtil {
                     $result['longitude'] = str_replace(',', '.', $location->lng);
                 } else {
                     «IF !targets('1.3.x')»
-                        $logger = $this->serviceManager->get('logger');
-                        $logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'address' => $address));
+                        $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'address' => $address));
                     «ENDIF»
                 }
             }
@@ -473,9 +505,9 @@ class ControllerUtil {
 
     def private controllerFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util;
+            namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Util\Base\ControllerUtil as BaseControllerUtil;
+            use «appNamespace»\Helper\Base\ControllerHelper as BaseControllerHelper;
 
         «ENDIF»
         /**
@@ -484,7 +516,7 @@ class ControllerUtil {
         «IF targets('1.3.x')»
         class «appName»_Util_Controller extends «appName»_Util_Base_Controller
         «ELSE»
-        class ControllerUtil extends BaseControllerUtil
+        class ControllerHelper extends BaseControllerHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

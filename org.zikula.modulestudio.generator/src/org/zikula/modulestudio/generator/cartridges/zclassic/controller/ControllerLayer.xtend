@@ -53,7 +53,6 @@ class ControllerLayer {
         controllers.forEach[generateControllerAndApi(fsa)]
         getAllEntities.forEach[generateController(fsa)]
 
-        new UtilMethods().generate(it, fsa)
         if (targets('1.3.x')) {
             if (hasUserController) {
                 new UrlRoutingLegacy().generate(it, fsa)
@@ -701,7 +700,14 @@ class ControllerLayer {
              */
             protected $router;
 
-            public function __construct($translator, RouterInterface $router)
+            /**
+             * Constructor.
+             * Initialises member vars.
+             *
+             * @param Translator      $translator Translator service instance.
+             * @param Routerinterface $router     The router service.
+             */
+            public function __construct(Translator $translator, RouterInterface $router)
             {
                 $this->translator = $translator;
                 $this->router = $router;

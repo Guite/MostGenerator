@@ -27,24 +27,43 @@ class ModelUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for model layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Model' + (if (targets('1.3.x')) '' else 'Util') + '.php',
+        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Model' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
         )
     }
 
     def private modelFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util\Base;
+            namespace «appNamespace»\Helper\Base;
 
             use ModUtil;
-            use Zikula_AbstractBase;
+            use Symfony\Component\DependencyInjection\ContainerBuilder;
 
         «ENDIF»
         /**
          * Utility base class for model helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Model«ELSE»ModelUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Model extends Zikula_AbstractBase«ELSE»ModelHelper«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                /**
+                 * @var ContainerBuilder
+                 */
+                private $container;
+
+                /**
+                 * Constructor.
+                 * Initialises member vars.
+                 *
+                 * @param Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 */
+                public function __construct(Zikula_ServiceManager $serviceManager)
+                {
+                    $this->container = $serviceManager;
+                }
+
+            «ENDIF»
             «canBeCreated»
 
             «hasExistingInstances»
@@ -73,7 +92,7 @@ class ModelUtil {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'canBeCreated')))) {
                 throw new \Exception('Error! Invalid object type received.');
@@ -136,7 +155,7 @@ class ModelUtil {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'hasExistingInstances')))) {
                 throw new \Exception('Error! Invalid object type received.');
@@ -146,7 +165,7 @@ class ModelUtil {
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->container->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             return ($repository->selectCount() > 0);
@@ -155,9 +174,9 @@ class ModelUtil {
 
     def private modelFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util;
+            namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Util\Base\ModelUtil as BaseModelUtil;
+            use «appNamespace»\Helper\Base\ModelHelper as BaseModelHelper;
 
         «ENDIF»
         /**
@@ -166,7 +185,7 @@ class ModelUtil {
         «IF targets('1.3.x')»
         class «appName»_Util_Model extends «appName»_Util_Base_Model
         «ELSE»
-        class ModelUtil extends BaseModelUtil
+        class ModelHelper extends BaseModelHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

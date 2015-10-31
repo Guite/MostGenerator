@@ -24,14 +24,15 @@ class ViewUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for view layer')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/View' + (if (targets('1.3.x')) '' else 'Util') + '.php',
+        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/View' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, viewFunctionsBaseImpl), fh.phpFileContent(it, viewFunctionsImpl)
         )
     }
 
     def private viewFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util\Base;
+            namespace «appNamespace»\Helper\Base;
 
             use DataUtil;
             use FormUtil;
@@ -39,18 +40,47 @@ class ViewUtil {
             use PageUtil;
             use SecurityUtil;
             use System;
+            use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\Response;
-            use Zikula_AbstractBase;
-            use Zikula_View;
+            use Zikula\Common\Translator\Translator;
             use Zikula\Core\Response\PlainResponse;
+            use Zikula_ServiceManager;
+            use Zikula_View;
 
         «ENDIF»
         /**
          * Utility base class for view helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_View«ELSE»ViewUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_View extends Zikula_AbstractBase«ELSE»ViewHelper«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                /**
+                 * @var ContainerBuilder
+                 */
+                private $container;
+
+                /**
+                 * @var Translator
+                 */
+                protected $translator;
+
+                /**
+                 * Constructor.
+                 * Initialises member vars.
+                 *
+                 * @param Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 * @param Translator            $translator     Translator service instance.
+                 *
+                 * @return void
+                 */
+                public function __construct(Zikula_ServiceManager $serviceManager, Translator $translator)
+                {
+                    $this->container = $serviceManager;
+                    $this->translator = $translator;
+                }
+
+            «ENDIF»
             «getViewTemplate»
 
             «processTemplate»
@@ -299,7 +329,7 @@ class ViewUtil {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             // create name of the pdf output file
             $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
@@ -339,18 +369,18 @@ class ViewUtil {
          */
         public function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
         {
-            $sizeDesc = $this->__('Bytes');
+            $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('Bytes');
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->__('KB');
+                $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('KB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->__('MB');
+                $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('MB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->__('GB');
+                $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('GB');
             }
             $sizeDesc = '&nbsp;' . $sizeDesc;
 
@@ -377,9 +407,9 @@ class ViewUtil {
 
     def private viewFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util;
+            namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Util\Base\ViewUtil as BaseViewUtil;
+            use «appNamespace»\Helper\Base\ViewHelper as BaseViewHelper;
 
         «ENDIF»
         /**
@@ -388,7 +418,7 @@ class ViewUtil {
         «IF targets('1.3.x')»
         class «appName»_Util_View extends «appName»_Util_Base_View
         «ELSE»
-        class ViewUtil extends BaseViewUtil
+        class ViewHelper extends BaseViewHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

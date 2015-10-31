@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installe
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceDefinitions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.UtilityServices
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
@@ -121,17 +122,20 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Controller: Controller classes')
         println('Generating controller classes')
         new ControllerLayer().generate(it, fsa)
+        pm?.subTask('Controller: Utility service classes')
+        println('Generating utility service classes')
+        new UtilityServices().generate(it, fsa)
         pm?.subTask('Controller: Action handler classes')
         println('Generating action handler classes')
         new FormHandler().generate(it, fsa)
-        pm?.subTask('Controller: Persistent event handlers')
-        println('Generating persistent event handlers')
+        pm?.subTask('Controller: Event listeners')
+        println('Generating Event listeners')
         new Listeners().generate(it, fsa)
         pm?.subTask('Controller: Service definitions')
         println('Generating service definitions')
         new ServiceDefinitions().generate(it, fsa)
-        pm?.subTask('Controller: Event definitions')
-        println('Generating event definitions')
+        pm?.subTask('Controller: Custom event definitions')
+        println('Generating custom event definitions')
         new Events().generate(it, fsa)
         pm?.subTask('Controller: Bootstrapping')
         println('Generating bootstrapping')

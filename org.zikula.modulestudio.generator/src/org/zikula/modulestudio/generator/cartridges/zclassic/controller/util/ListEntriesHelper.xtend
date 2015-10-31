@@ -23,22 +23,44 @@ class ListEntries {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for list entries')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/ListEntries' + (if (targets('1.3.x')) '' else 'Util') + '.php',
+        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/ListEntries' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, listFieldFunctionsBaseImpl), fh.phpFileContent(it, listFieldFunctionsImpl)
         )
     }
 
     def private listFieldFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util\Base;
+            namespace «appNamespace»\Helper\Base;
 
-            use Zikula_AbstractBase;
+            use Zikula\Common\Translator\Translator;
+
         «ENDIF»
         /**
          * Utility base class for list field entries related methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_ListEntries«ELSE»ListEntriesUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_ListEntries extends Zikula_AbstractBase«ELSE»ListEntriesHelper«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                /**
+                 * @var Translator
+                 */
+                protected $translator;
+
+                /**
+                 * Constructor.
+                 * Initialises member vars.
+                 *
+                 * @param Translator $translator Translator service instance.
+                 *
+                 * @return void
+                 */
+                public function __construct(Translator $translator)
+                {
+                    $this->translator = $translator;
+                }
+
+            «ENDIF»
             «resolve»
 
             «extractMultiList»
@@ -214,37 +236,37 @@ class ListEntries {
             $states = array();
             «IF name == 'workflowState'»
                 «val visibleStates = items.filter[value != 'initial' && value != 'deleted']»
-                «FOR item : visibleStates»«item.entryInfo»«ENDFOR»
-                «FOR item : visibleStates»«item.entryInfoNegative»«ENDFOR»
+                «FOR item : visibleStates»«item.entryInfo(entity.application)»«ENDFOR»
+                «FOR item : visibleStates»«item.entryInfoNegative(entity.application)»«ENDFOR»
             «ELSE»
-                «FOR item : items»«item.entryInfo»«ENDFOR»
+                «FOR item : items»«item.entryInfo(entity.application)»«ENDFOR»
             «ENDIF»
 
             return $states;
         }
     '''
 
-    def private entryInfo(ListFieldItem it) '''
+    def private entryInfo(ListFieldItem it, Application app) '''
         $states[] = array('value'   => '«value.replace("'", "")»',
-                          'text'    => $this->__('«name.formatForDisplayCapital.replace("'", "")»'),
-                          'title'   => «IF documentation !== null && documentation != ''»$this->__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+                          'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital.replace("'", "")»'),
+                          'title'   => «IF documentation !== null && documentation != ''»$this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
                           'image'   => '«IF image !== null && image != ''»«image».png«ENDIF»',
                           'default' => «^default.displayBool»);
     '''
 
-    def private entryInfoNegative(ListFieldItem it) '''
+    def private entryInfoNegative(ListFieldItem it, Application app) '''
         $states[] = array('value'   => '!«value.replace("'", "")»',
-                          'text'    => $this->__('All except «name.formatForDisplay.replace("'", "")»'),
-                          'title'   => $this->__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
+                          'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('All except «name.formatForDisplay.replace("'", "")»'),
+                          'title'   => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
                           'image'   => '',
                           'default' => false);
     '''
 
     def private listFieldFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util;
+            namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Util\Base\ListEntriesUtil as BaseListEntriesUtil;
+            use «appNamespace»\Helper\Base\ListEntriesHelper as BaseListEntriesHelper;
 
         «ENDIF»
         /**
@@ -253,7 +275,7 @@ class ListEntries {
         «IF targets('1.3.x')»
         class «appName»_Util_ListEntries extends «appName»_Util_Base_ListEntries
         «ELSE»
-        class ListEntriesUtil extends BaseListEntriesUtil
+        class ListEntriesHelper extends BaseListEntriesHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

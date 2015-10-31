@@ -33,26 +33,46 @@ class Translatable {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for translatable entities')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Translatable' + (if (targets('1.3.x')) '' else 'Util') + '.php',
+        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Translatable' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, translatableFunctionsBaseImpl), fh.phpFileContent(it, translatableFunctionsImpl)
         )
     }
 
     def private translatableFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util\Base;
+            namespace «appNamespace»\Helper\Base;
 
             use ServiceUtil;
             use System;
-            use Zikula_AbstractBase;
+            use Symfony\Component\DependencyInjection\ContainerBuilder;
+            use Zikula_ServiceManager;
             use ZLanguage;
 
         «ENDIF»
         /**
          * Utility base class for translatable helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Translatable«ELSE»TranslatableUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Translatable extends Zikula_AbstractBase«ELSE»TranslatableHelper«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                /**
+                 * @var ContainerBuilder
+                 */
+                private $container;
+
+                /**
+                 * Constructor.
+                 * Initialises member vars.
+                 *
+                 * @param Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 */
+                public function __construct(Zikula_ServiceManager $serviceManager)
+                {
+                    $this->container = $serviceManager;
+                }
+
+            «ENDIF»
             «getTranslatableFieldsImpl»
 
             «prepareEntityForEdit»
@@ -125,7 +145,7 @@ class Translatable {
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType) . 'Translation';
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->container->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
             $entityTranslations = $repository->findTranslations($entity);
 
@@ -214,7 +234,7 @@ class Translatable {
 
     def private translatableFieldDefinition(Entity it) '''
         «FOR field : getTranslatableFields SEPARATOR ','»«field.translatableFieldDefinition»«ENDFOR»
-«/*no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
+«/* TODO no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
 «IF hasTranslatableSlug»,
                     array('name' => 'slug',
                           'default' => '')
@@ -254,9 +274,9 @@ class Translatable {
 
     def private translatableFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util;
+            namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Util\Base\TranslatableUtil as BaseTranslatableUtil;
+            use «appNamespace»\Helper\Base\TranslatableHelper as BaseTranslatableHelper;
 
         «ENDIF»
         /**
@@ -265,7 +285,7 @@ class Translatable {
         «IF targets('1.3.x')»
         class «appName»_Util_Translatable extends «appName»_Util_Base_Translatable
         «ELSE»
-        class TranslatableUtil extends BaseTranslatableUtil
+        class TranslatableHelper extends BaseTranslatableHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

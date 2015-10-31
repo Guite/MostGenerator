@@ -17,24 +17,44 @@ class Image {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for image handling')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Image' + (if (targets('1.3.x')) '' else 'Util') + '.php',
+        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Image' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
         )
     }
 
     def private imageFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util\Base;
+            namespace «appNamespace»\Helper\Base;
 
             use SystemPlugin_Imagine_Preset;
-            use Zikula_AbstractBase;
 
         «ENDIF»
         /**
          * Utility base class for image helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Image«ELSE»ImageUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Image extends Zikula_AbstractBase«ELSE»ImageHelper«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                /**
+                 * Name of the application.
+                 *
+                 * @var string
+                 */
+                private $name;
+
+                /**
+                 * Constructor.
+                 * Initialises member vars.
+                 *
+                 * @return void
+                 */
+                public function __construct()
+                {
+                    $this->name = '«appName»';
+                }
+
+            «ENDIF»
             «getPreset»
 
             «getCustomPreset»
@@ -128,9 +148,9 @@ class Image {
 
     def private imageFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util;
+            namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Util\Base\ImageUtil as BaseImageUtil;
+            use «appNamespace»\Helper\Base\ImageHelper as BaseImageHelper;
 
         «ENDIF»
         /**
@@ -139,7 +159,7 @@ class Image {
         «IF targets('1.3.x')»
         class «appName»_Util_Image extends «appName»_Util_Base_Image
         «ELSE»
-        class ImageUtil extends BaseImageUtil
+        class ImageHelper extends BaseImageHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

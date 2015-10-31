@@ -99,14 +99,50 @@ class ServiceDefinitions {
     '''
 
     def private servicesHelper(Application it) '''
-        # Util classes
-        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Util\\\\'»
-        «FOR className : getHelperNames»
-            «modPrefix».«className.toLowerCase»_helper:
-                class: "«nsBase»«className»Util"
-                arguments: ["@service_container", "@=service('kernel').getBundle('«appName»')"]
+        # Utility classes
+        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Helper\\\\'»
+        «modPrefix».model_helper:
+            class: "«nsBase»ModelHelper"
+            arguments:
+                serviceManager: "@service_container"
 
-        «ENDFOR»
+        «modPrefix».controller_helper:
+            class: "«nsBase»ControllerHelper"
+            arguments:
+                translator: "@translator"
+                session: "@session"
+                logger: "@logger"
+
+        «modPrefix».view_helper:
+            class: "«nsBase»ViewHelper"
+            arguments:
+                serviceManager: "@service_container"
+                translator: "@translator"
+
+        «modPrefix».workflow_helper:
+            class: "«nsBase»WorkflowHelper"
+            arguments:
+                serviceManager: "@service_container"
+                translator: "@translator"
+        «IF hasUploads»
+
+            «modPrefix».image_helper:
+                class: "«nsBase»ImageHelper"
+        «ENDIF»
+        «IF hasListFields»
+
+            «modPrefix».listentries_helper:
+                class: "«nsBase»ListEntriesHelper"
+                arguments:
+                    translator: "@translator"
+        «ENDIF»
+        «IF hasTranslatable»
+
+            «modPrefix».translatable_helper:
+                class: "«nsBase»TranslatableHelper"
+                arguments:
+                    serviceManager: "@service_container"
+        «ENDIF»
     '''
 
     def private servicesLogger(Application it) '''
@@ -128,20 +164,5 @@ class ServiceDefinitions {
         }
 
         listeners
-    }
-
-    def private getHelperNames(Application it) {
-        var helpers = newArrayList('Model', 'Controller', 'View', 'Workflow')
-        if (hasUploads) {
-            helpers.add('Image')
-        }
-        if (hasListFields) {
-            helpers.add('ListEntries')
-        }
-        if (hasTranslatable) {
-            helpers.add('Translatable')
-        }
-
-        helpers
     }
 }

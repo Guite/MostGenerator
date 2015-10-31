@@ -13,9 +13,9 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 /**
- * Entry point for the Util class creation.
+ * Entry point for the utility service class creation.
  */
-class UtilMethods {
+class UtilityServices {
 
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions

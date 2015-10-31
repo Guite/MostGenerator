@@ -26,26 +26,64 @@ class WorkflowUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for workflows')
-        generateClassPair(fsa, getAppSourceLibPath + 'Util/Workflow' + (if (targets('1.3.x')) '' else 'Util') + '.php',
+        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Workflow' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, workflowFunctionsBaseImpl), fh.phpFileContent(it, workflowFunctionsImpl)
         )
     }
 
     def private workflowFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util\Base;
+            namespace «appNamespace»\Helper\Base;
 
             use ModUtil;
             use SecurityUtil;
-            use Zikula_AbstractBase;
+            use Symfony\Component\DependencyInjection\ContainerBuilder;
+            use Zikula\Common\Translator\Translator;
+            use Zikula_ServiceManager;
             use Zikula_Workflow_Util;
 
         «ENDIF»
         /**
          * Utility base class for workflow helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Workflow«ELSE»WorkflowUtil«ENDIF» extends Zikula_AbstractBase
+        class «IF targets('1.3.x')»«appName»_Util_Base_Workflow extends Zikula_AbstractBase«ELSE»WorkflowHelper«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                /**
+                 * Name of the application.
+                 *
+                 * @var string
+                 */
+                private $name;
+
+                /**
+                 * @var ContainerBuilder
+                 */
+                private $container;
+
+                /**
+                 * @var Translator
+                 */
+                protected $translator;
+
+                /**
+                 * Constructor.
+                 * Initialises member vars.
+                 *
+                 * @param Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 * @param Translator            $translator     Translator service instance.
+                 *
+                 * @return void
+                 */
+                public function __construct(Zikula_ServiceManager $serviceManager, Translator $translator)
+                {
+                    $this->name = '«appName»';
+                    $this->container = $serviceManager;
+                    $this->translator = $translator;
+                }
+
+            «ENDIF»
             «getObjectStates»
             «getStateInfo»
             «getWorkflowName»
@@ -81,7 +119,7 @@ class WorkflowUtil {
 
     def private stateInfo(Application it, ListFieldItem item) '''
         $states[] = array('value' => '«item.value»',
-                          'text' => $this->__('«item.name»'),
+                          'text' => $this->«IF !targets('1.3.x')»translator->«ENDIF»__('«item.name»'),
                           'ui' => '«uiFeedback(item)»');
     '''
 
@@ -224,7 +262,7 @@ class WorkflowUtil {
             «IF targets('1.3.x')»
                 $listHelper = new «appName»_Util_ListEntries($this->serviceManager);
             «ELSE»
-                $listHelper = $this->serviceManager->get('«appName.formatForDB».listentries_helper');
+                $listHelper = $this->container->get('«appName.formatForDB».listentries_helper');
             «ENDIF»
             $states = $listHelper->getEntries($objectType, 'workflowState');
             $allowedStates = array();
@@ -425,7 +463,7 @@ class WorkflowUtil {
                 // nothing required here as no entities use enhanced workflows including approval actions
             «ELSE»
                 «IF !targets('1.3.x')»
-                    $logger = $this->get('logger');
+                    $logger = $this->container->get('logger');
 
                 «ENDIF»
                 // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
@@ -458,11 +496,11 @@ class WorkflowUtil {
             if ($amount > 0) {
                 $amounts[] = array(
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
-                    'description' => $this->__('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
+                    'description' => $this->«IF !application.targets('1.3.x')»translator->«ENDIF»__('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
-                    'message' => $this->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
+                    'message' => $this->«IF !application.targets('1.3.x')»translator->«ENDIF»_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
                 );
                 «IF !application.targets('1.3.x')»
 
@@ -491,7 +529,7 @@ class WorkflowUtil {
                 $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->container->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             $where = 'tbl.workflowState = \'' . $state . '\'';
@@ -505,9 +543,9 @@ class WorkflowUtil {
 
     def private workflowFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»
-            namespace «appNamespace»\Util;
+            namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Util\Base\WorkflowUtil as BaseWorkflowUtil;
+            use «appNamespace»\Helper\Base\WorkflowHelper as BaseWorkflowHelper;
 
         «ENDIF»
         /**
@@ -516,7 +554,7 @@ class WorkflowUtil {
         «IF targets('1.3.x')»
         class «appName»_Util_Workflow extends «appName»_Util_Base_Workflow
         «ELSE»
-        class WorkflowUtil extends BaseWorkflowUtil
+        class WorkflowHelper extends BaseWorkflowHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here
