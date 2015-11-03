@@ -205,7 +205,7 @@ class Styles {
                 div.«cssPrefix»-autocomplete-withimage«ENDIF» {
                     position: relative !important;
                     top: 2px !important;
-                    width: 191px !important;
+                    width: 500px !important;
                     background-color: #fff;
                     border: 1px solid #888;
                     margin: 0;
@@ -227,6 +227,7 @@ class Styles {
                 div.«cssPrefix»-autocomplete-with-image ul«ENDIF» {
                     margin: 0;
                     padding: 0;
+                    width: 475px !important;
                 }
             «ENDIF»
 
