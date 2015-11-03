@@ -978,7 +978,6 @@ class Repository {
         {
             $qb = $this->genericBaseQuery('', $orderBy, $useJoins);
             if (count($exclude) > 0) {
-                $exclude = implode(', ', $exclude);
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
                    ->setParameter('excludeList', $exclude);
             }

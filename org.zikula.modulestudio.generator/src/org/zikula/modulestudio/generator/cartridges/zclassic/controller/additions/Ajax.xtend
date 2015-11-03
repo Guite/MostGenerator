@@ -358,7 +358,7 @@ class Ajax {
             $fragment = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->get('fragment', '');
             $exclude = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->get('exclude', '');
         }
-        $exclude = ((!empty($exclude)) ? array($exclude) : array());
+        $exclude = !empty($exclude) ? explode(',', $exclude) : array();
 
         // parameter for used sorting field
         $sort = $this->request->query->get('sort', '');
