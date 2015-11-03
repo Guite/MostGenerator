@@ -449,11 +449,14 @@ class Ajax {
         «IF app.hasImageFields»
             if (!empty($previewFieldName)) {
                 «IF app.targets('1.3.x')»
-                    $imageHelper = new «app.appName»_Util_Image($this->serviceManager);
+                    //$imageHelper = new «app.appName»_Util_Image($this->serviceManager);
+                    //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+                    $imagineManager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
                 «ELSE»
-                    $imageHelper = $this->serviceManager->get('«app.appName.formatForDB».image_helper');
+                    //$imageHelper = $this->serviceManager->get('«app.appName.formatForDB».image_helper');
+                    //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+                    $imagineManager = $this->serviceManager->get('systemplugin.imagine.manager');
                 «ENDIF»
-                $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
             }
         «ENDIF»
     '''
