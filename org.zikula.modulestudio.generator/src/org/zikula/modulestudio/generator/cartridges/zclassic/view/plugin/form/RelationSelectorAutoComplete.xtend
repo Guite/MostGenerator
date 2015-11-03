@@ -158,7 +158,7 @@ class RelationSelectorAutoComplete {
                 $result = '
                     <div class="«appName.toLowerCase»-relation-rightside">'
                         . $addLink . '
-                        <div id="' . $idPrefix . 'AddFields «appName.toLowerCase»-autocomplete' . (($this->withImage) ? '-with-image' : '') . '">
+                        <div id="' . $idPrefix . 'AddFields" class="«appName.toLowerCase»-autocomplete' . (($this->withImage) ? '-with-image' : '') . '">
                             <label for="' . $idPrefix . 'Selector">' . $selectLabelText . '</label>
                             <br />';
 
