@@ -69,12 +69,12 @@ class ViewUtil {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param Zikula_ServiceManager $serviceManager ServiceManager instance.
-                 * @param Translator            $translator     Translator service instance.
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 * @param Translator             $translator     Translator service instance.
                  *
                  * @return void
                  */
-                public function __construct(Zikula_ServiceManager $serviceManager, $translator)
+                public function __construct(\Zikula_ServiceManager $serviceManager, $translator)
                 {
                     $this->container = $serviceManager;
                     $this->translator = $translator;

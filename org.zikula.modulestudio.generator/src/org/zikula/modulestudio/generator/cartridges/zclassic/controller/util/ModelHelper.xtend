@@ -56,9 +56,9 @@ class ModelUtil {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
                  */
-                public function __construct(Zikula_ServiceManager $serviceManager)
+                public function __construct(\Zikula_ServiceManager $serviceManager)
                 {
                     $this->container = $serviceManager;
                 }
