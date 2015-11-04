@@ -74,7 +74,7 @@ class ViewUtil {
                  *
                  * @return void
                  */
-                public function __construct(Zikula_ServiceManager $serviceManager, Translator $translator)
+                public function __construct(Zikula_ServiceManager $serviceManager, $translator)
                 {
                     $this->container = $serviceManager;
                     $this->translator = $translator;
