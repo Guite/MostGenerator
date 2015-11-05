@@ -183,8 +183,11 @@ class ExternalView {
         «ENDIF»
         </head>
         <body>
+        «IF !app.targets('1.3.x')»
+        <div class="container">
+        «ENDIF»
             «findTemplateObjectTypeSwitcher(app)»
-            <form action="{$ourEntry|default:'index.php'}" id="«app.appName.toFirstLower»SelectorForm" method="get" class="«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»"«IF !app.targets('1.3.x')» role="form"«ENDIF»>
+            <form action="{$ourEntry|default:'index.php'}" id="«app.appName.toFirstLower»SelectorForm" method="get" class="«IF app.targets('1.3.x')»z-form«ELSE»form{*-horizontal*}«ENDIF»"«IF !app.targets('1.3.x')» role="form"«ENDIF»>
             <div>
                 <input type="hidden" name="module" value="«app.appName»" />
                 <input type="hidden" name="type" value="external" />
@@ -206,7 +209,7 @@ class ExternalView {
                     «findTemplatePageSize(app)»
 
                     «findTemplateSearch(app)»
-                    <div style="margin-left: 6em">
+                    <div«IF app.targets('1.3.x')» style="margin-left: 6em"«ENDIF»>
                         {pager display='page' rowcount=$pager.numitems limit=$pager.itemsperpage posvar='pos' template='pagercss.tpl' maxpages='10'«IF !app.targets('1.3.x')» route='«app.appName.formatForDB»_external_finder'«ENDIF»}
                     </div>
                     <input type="submit" id="«app.appName.toFirstLower»Submit" name="submitButton" value="{gt text='Change selection'}"«IF !app.targets('1.3.x')» class="btn btn-success"«ENDIF» />
@@ -215,6 +218,9 @@ class ExternalView {
                 </fieldset>
             </div>
             </form>
+        «IF !app.targets('1.3.x')»
+        </div>
+        «ENDIF»
 
             «findTemplateJs(app)»
 
@@ -326,7 +332,7 @@ class ExternalView {
             «IF !app.targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
-                <select id="«app.appName.toFirstLower»Sort" name="sort" style="width: 150px" class="«IF app.targets('1.3.x')»z-floatleft«ELSE»pull-left«ENDIF»" style="margin-right: 10px">
+                <select id="«app.appName.toFirstLower»Sort" name="sort" class="«IF app.targets('1.3.x')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="width: 1«IF app.targets('1.3.x')»0«ELSE»5«ENDIF»0px; margin-right: 10px">
                 «FOR field : getDerivedFields»
                     <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
                 «ENDFOR»
@@ -336,7 +342,7 @@ class ExternalView {
                     <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
                 «ENDIF»
                 </select>
-                <select id="«app.appName.toFirstLower»SortDir" name="sortdir" style="width: 100px"«IF !app.targets('1.3.x')» class="form-control"«ENDIF»>
+                <select id="«app.appName.toFirstLower»SortDir" name="sortdir" «IF app.targets('1.3.x')» style="width: 100px"«ELSE» class="form-control" style="width: 150px"«ENDIF»>
                     <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
                     <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
                 </select>
@@ -352,7 +358,7 @@ class ExternalView {
             «IF !app.targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
-                <select id="«app.appName.toFirstLower»PageSize" name="num" style="width: 50px; text-align: right"«IF !app.targets('1.3.x')» class="form-control"«ENDIF»>
+                <select id="«app.appName.toFirstLower»PageSize" name="num"«IF app.targets('1.3.x')» style="width: 50px; text-align: right"«ELSE» class="form-control text-right" style="width: 100px"«ENDIF»>
                     <option value="5"{if $pager.itemsperpage eq 5} selected="selected"{/if}>5</option>
                     <option value="10"{if $pager.itemsperpage eq 10} selected="selected"{/if}>10</option>
                     <option value="15"{if $pager.itemsperpage eq 15} selected="selected"{/if}>15</option>
@@ -374,7 +380,7 @@ class ExternalView {
             «IF !app.targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
-                    <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="q" style="width: 150px" class="«IF app.targets('1.3.x')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="margin-right: 10px" />
+                    <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="q" class="«IF app.targets('1.3.x')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="width: 150px; margin-right: 10px" />
                     <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" style="width: 80px"«IF !app.targets('1.3.x')» class="btn btn-default"«ENDIF» />
             «IF !app.targets('1.3.x')»
                 </div>
