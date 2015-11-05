@@ -856,12 +856,14 @@ class FormHandler {
                     $metaData = new $metaDataEntityClass($entity);
                 }
 
-                // convert form date values into DateTime objects
-                $formData['meta']['startdate'] = new \DateTime($formData['meta']['startdate']);
-                $formData['meta']['enddate'] = new \DateTime($formData['meta']['enddate']);
+                if (isset($formData['meta']) && is_array($formData['meta'])) {
+                    // convert form date values into DateTime objects
+                    $formData['meta']['startdate'] = new \DateTime($formData['meta']['startdate']);
+                    $formData['meta']['enddate'] = new \DateTime($formData['meta']['enddate']);
 
-                // now set meta data values
-                $metaData->merge($formData['meta']);
+                    // now set meta data values
+                    $metaData->merge($formData['meta']);
+                }
                 «/*
                 $metaData->setKeywords('a,b,c');
                 */»
