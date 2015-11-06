@@ -79,10 +79,10 @@
       <import plugin="org.eclipse.birt.report.engine.script.javascript" version="4.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.report.item.crosstab.core" version="4.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.10.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sirius.ext.swt" version="3.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.107.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.11.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sirius" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sirius" version="3.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.sirius.ext.swt" version="3.1.1" match="greaterOrEqual"/>
    </requires>
 
    <plugin
