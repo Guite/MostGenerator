@@ -25,6 +25,16 @@ class ServiceDefinitions {
 
     String modPrefix = ''
 
+    def private generateServiceFile(Application it, IFileSystemAccess fsa, String fileName, CharSequence content) {
+        var definitionFileName = getResourcesPath + 'config/' + fileName + '.yml'
+        if (!shouldBeSkipped(definitionFileName)) {
+            if (shouldBeMarked(definitionFileName)) {
+                definitionFileName = getResourcesPath + 'config/' + fileName + '.generated.yml'
+            }
+            definitionFileName
+        }
+    }
+
     /**
      * Entry point for service definitions.
      * This generates yaml files describing DI configuration.
@@ -34,23 +44,43 @@ class ServiceDefinitions {
             return
         }
         modPrefix = appName.formatForDB
-        var definitionFileName = getResourcesPath + 'config/services.yml'
-        if (!shouldBeSkipped(definitionFileName)) {
-            if (shouldBeMarked(definitionFileName)) {
-                definitionFileName = getResourcesPath + 'config/services.generated.yml'
-            }
-            fsa.generateFile(definitionFileName, ymlContent)
+
+        generateServiceFile(fsa, 'services', mainServiceFile)
+        if (hasUploads) {
+            generateServiceFile(fsa, 'uploadHandler', uploadHandler)
         }
+        generateServiceFile(fsa, 'linkContainer', linkContainer)
+        generateServiceFile(fsa, 'entityFactories', entityFactories)
+        generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
+        generateServiceFile(fsa, 'helpers', helpers)
+        generateServiceFile(fsa, 'logger', logger)
     }
 
-    def private ymlContent(Application it) '''
-        parameters:
+    def private mainServiceFile(Application it) '''
+        imports:
+        «IF hasUploads»
+            «'  '»- { resource: 'uploadHandler.yml' }
+        «ENDIF»
+          - { resource: 'linkContainer.yml' }
+          - { resource: 'entityFactories.yml' }
+          - { resource: 'eventSubscriber.yml' }
+          - { resource: 'helpers.yml' }
+          - { resource: 'logger.yml' }
+    '''
 
+    def private uploadHandler(Application it) '''
         services:
-            «IF hasUploads»
-                «servicesUploadHandler»
+            «servicesUploadHandler»
+    '''
 
-            «ENDIF»
+    def private servicesUploadHandler(Application it) '''
+        # Upload handler class
+        «modPrefix».upload_handler:
+            class: "«appNamespace.replace('\\', '\\\\')»\\UploadHandler"
+    '''
+
+    def private linkContainer(Application it) '''
+        services:
             «modPrefix».link_container:
                 class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\LinkContainer"
                 arguments:
@@ -58,20 +88,11 @@ class ServiceDefinitions {
                     router: "@router"
                 tags:
                     - { name: zikula.link_container }
-
-            «servicesEntityFactories»
-
-            «servicesEventSubscriber»
-
-            «servicesHelper»
-
-            «servicesLogger»
     '''
 
-    def private servicesUploadHandler(Application it) '''
-        # Upload handler class
-        «modPrefix».upload_handler:
-            class: "«appNamespace.replace('\\', '\\\\')»\\UploadHandler"
+    def private entityFactories(Application it) '''
+        services:
+            «servicesEntityFactories»
     '''
 
     def private servicesEntityFactories(Application it) '''
@@ -86,6 +107,11 @@ class ServiceDefinitions {
         «ENDFOR»
     '''
 
+    def private eventSubscriber(Application it) '''
+        services:
+            «servicesEventSubscriber»
+    '''
+
     def private servicesEventSubscriber(Application it) '''
         # Event subscriber and listener classes
         «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Listener\\\\'»
@@ -96,6 +122,24 @@ class ServiceDefinitions {
                     - { name: kernel.event_subscriber }
 
         «ENDFOR»
+    '''
+
+    def private getSubscriberNames(Application it) {
+        var listeners = newArrayList(
+            'Core', 'Kernel', 'Installer', 'ModuleDispatch', 'Mailer', 'Page', 'Theme', 'View',
+            'UserLogin', 'UserLogout', 'User', 'UserRegistration', 'Users', 'Group')
+
+        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
+        if (generatePendingContentSupport || generateListContentType || needsDetailContentType) {
+            listeners.add('ThirdParty')
+        }
+
+        listeners
+    }
+
+    def private helpers(Application it) '''
+        services:
+            «servicesHelper»
     '''
 
     def private servicesHelper(Application it) '''
@@ -145,6 +189,11 @@ class ServiceDefinitions {
         «ENDIF»
     '''
 
+    def private logger(Application it) '''
+        services:
+            «servicesLogger»
+    '''
+
     def private servicesLogger(Application it) '''
         # Log processor
         «modPrefix».log.processor:
@@ -152,17 +201,4 @@ class ServiceDefinitions {
             tags:
                 - { name: monolog.processor }
     '''
-
-    def private getSubscriberNames(Application it) {
-        var listeners = newArrayList(
-            'Core', 'Kernel', 'Installer', 'ModuleDispatch', 'Mailer', 'Page', 'Theme', 'View',
-            'UserLogin', 'UserLogout', 'User', 'UserRegistration', 'Users', 'Group')
-
-        val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')
-        if (generatePendingContentSupport || generateListContentType || needsDetailContentType) {
-            listeners.add('ThirdParty')
-        }
-
-        listeners
-    }
 }
