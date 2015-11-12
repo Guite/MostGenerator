@@ -37,7 +37,6 @@ class ExternalController {
 
         use ModUtil;
         use PageUtil;
-        use SecurityUtil;
         use ThemeUtil;
         use UserUtil;
         use Zikula_View;
@@ -128,7 +127,7 @@ class ExternalController {
         «ENDIF»
 
         $component = $this->name . ':' . ucfirst($objectType) . ':';
-        if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
+        if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $id . '::', ACCESS_READ)) {
             return '';
         }
 
@@ -171,10 +170,10 @@ class ExternalController {
         $this->view->setCaching(Zikula_View::CACHE_ENABLED);
         // set cache id
         $accessLevel = ACCESS_READ;
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+        if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
         }
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+        if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
         $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
@@ -257,7 +256,7 @@ class ExternalController {
         «IF targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
         «ELSE»
-            if (!SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
+            if (!$this->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»

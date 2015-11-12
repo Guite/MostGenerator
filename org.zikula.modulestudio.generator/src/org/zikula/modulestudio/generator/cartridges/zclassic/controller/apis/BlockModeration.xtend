@@ -30,7 +30,6 @@ class BlockModeration {
 
             use BlockUtil;
             use ModUtil;
-            use SecurityUtil;
             use UserUtil;
             use Zikula\Core\Controller\AbstractBlockController;
             use Zikula_View;
@@ -61,7 +60,7 @@ class BlockModeration {
          */
         public function init()
         {
-            SecurityUtil::registerPermissionSchema('«appName»:ModerationBlock:', 'Block title::');
+            //SecurityUtil::registerPermissionSchema('«appName»:ModerationBlock:', 'Block title::');
         }
     '''
 
@@ -102,7 +101,7 @@ class BlockModeration {
         public function display($blockinfo)
         {
             // only show block content if the user has the required permissions
-            if (!SecurityUtil::checkPermission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+            if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
                 return false;
             }
 

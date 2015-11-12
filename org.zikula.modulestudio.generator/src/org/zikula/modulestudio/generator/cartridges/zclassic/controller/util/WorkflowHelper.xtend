@@ -37,7 +37,6 @@ class WorkflowUtil {
             namespace «appNamespace»\Helper\Base;
 
             use ModUtil;
-            use SecurityUtil;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Zikula\Common\Translator\Translator;
             use Zikula_ServiceManager;
@@ -490,8 +489,11 @@ class WorkflowUtil {
 
     def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''
         $objectType = '«name.formatForCode»';
+        «IF !application.targets('1.3.x')»
+            $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
+        «ENDIF»
         «val permissionLevel = if (requiredAction == 'approval') 'ADD' else if (requiredAction == 'acceptance') 'EDIT' else 'MODERATE'»
-        if (SecurityUtil::checkPermission($modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
+        if («IF application.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if ($amount > 0) {
                 $amounts[] = array(

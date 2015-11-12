@@ -1459,7 +1459,11 @@ class Repository {
          */
         public function archiveObjects()
         {
-            if (\PageUtil::getVar('«app.appName»AutomaticArchiving', false) !== true && !SecurityUtil::checkPermission('«app.appName»', '.*', ACCESS_EDIT)) {
+            «IF !app.targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+            «ENDIF»
+            if (\PageUtil::getVar('«app.appName»AutomaticArchiving', false) !== true && !«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«app.appName»', '.*', ACCESS_EDIT)) {
                 // current user has no permission for executing the archive workflow action
                 return true;
             }
@@ -1522,7 +1526,6 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
-                        $serviceManager = ServiceUtil::getManager();
                         $session = $serviceManager->get('session');
                         $session->getFlashBag()->add('error', __f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ENDIF»

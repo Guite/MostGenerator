@@ -132,7 +132,7 @@ class Actions {
         «IF app.targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel), LogUtil::getErrorMsgPermission());
         «ELSE»
-            if (!SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel)) {
+            if (!$this->hasPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', $permLevel)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
@@ -286,10 +286,10 @@ class Actions {
         $accessLevel = ACCESS_READ;
         $component = '«app.appName»:' . ucfirst($objectType) . ':';
         $instance = '::';
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+        if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
         }
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+        if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
 
@@ -397,10 +397,10 @@ class Actions {
         $accessLevel = ACCESS_READ;
         $component = '«app.appName»:' . ucfirst($objectType) . ':';
         $instance = '::';
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+        if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
         }
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+        if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
 
@@ -685,10 +685,10 @@ class Actions {
         $component = $this->name . ':' . ucfirst($objectType) . ':';
         $instance = $instanceId . '::';
         $accessLevel = ACCESS_READ;
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+        if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
         }
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+        if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
         $this->view->setCacheId($objectType . '_display|' . $instanceId . '|a' . $accessLevel);

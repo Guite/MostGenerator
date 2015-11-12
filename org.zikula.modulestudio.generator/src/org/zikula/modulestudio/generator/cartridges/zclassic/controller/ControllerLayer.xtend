@@ -198,7 +198,6 @@ class ControllerLayer {
                 use JCSSUtil;
             «ENDIF»
             use ModUtil;
-            use SecurityUtil;
             «IF (hasActions('view') && isAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
@@ -240,7 +239,6 @@ class ControllerLayer {
                 use JCSSUtil;
             «ENDIF»
             use ModUtil;
-            use SecurityUtil;
             «IF (hasActions('view') && app.hasAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
@@ -533,7 +531,7 @@ class ControllerLayer {
         «IF app.targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
         «ELSE»
-            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+            if (!$this->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
@@ -679,7 +677,6 @@ class ControllerLayer {
         namespace «app.appNamespace»\Container\Base;
 
         use ModUtil;
-        use SecurityUtil;
         use ServiceUtil;
         use Symfony\Component\Routing\RouterInterface;
         use Zikula\Common\Translator\Translator;
@@ -731,6 +728,8 @@ class ControllerLayer {
                 $currentLegacyType = $request->query->filter('lct', 'user', false, FILTER_SANITIZE_STRING);
                 $permLevel = in_array('admin', array($type, $currentLegacyType)) ? ACCESS_ADMIN : ACCESS_READ;
 
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+
                 «/* TODO replace this by entity controllers later */»
                 «var linkControllers = application.controllers.filter(AdminController) + application.controllers.filter(UserController)»
                 «FOR linkController : linkControllers»
@@ -757,7 +756,7 @@ class ControllerLayer {
                 «entity.menuLinkToViewAction(it)»
             «ENDFOR»
             «IF app.needsConfig && isConfigController»
-                if (SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
+                if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                     «IF app.targets('1.3.x')»
                         $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                     «ELSE»
@@ -788,7 +787,7 @@ class ControllerLayer {
         switch it {
             AdminController case !application.getAllUserControllers.empty: '''
                     «val userController = application.getAllUserControllers.head»
-                    if (SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_READ)) {
+                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_READ)) {
                         «IF app.targets('1.3.x')»
                             $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails13»),
                         «ELSE»
@@ -801,7 +800,7 @@ class ControllerLayer {
                     '''
             UserController case !application.getAllAdminControllers.empty: '''
                     «val adminController = application.getAllAdminControllers.head»
-                    if (SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
+                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                         «IF app.targets('1.3.x')»
                             $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails13»),
                         «ELSE»

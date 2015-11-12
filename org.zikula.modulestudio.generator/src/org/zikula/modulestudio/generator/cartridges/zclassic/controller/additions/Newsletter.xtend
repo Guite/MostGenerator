@@ -41,7 +41,6 @@ class Newsletter {
             use FormUtil;
             use ModUtil;
             use Newsletter_AbstractPlugin;
-            use SecurityUtil;
             use ServiceUtil;
         «ENDIF»
 
@@ -182,10 +181,15 @@ class Newsletter {
             $objectTypes = $this->getPluginVar('ObjectTypes', array());
             $args = $this->getPluginVar('Args', array());
 
+            «IF !targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+
+            «ENDIF»
             $output = array();
 
             foreach ($objectTypes as $objectType) {
-                if (!SecurityUtil::checkPermission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
+                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
                     // the newsletter has no permission for these items
                     continue;
                 }

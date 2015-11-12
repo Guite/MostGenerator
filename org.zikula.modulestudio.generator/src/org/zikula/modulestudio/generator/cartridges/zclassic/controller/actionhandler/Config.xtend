@@ -39,7 +39,6 @@ class Config {
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
             use ModUtil;
-            use SecurityUtil;
             use ServiceUtil;
             use System;
             use UserUtil;
@@ -78,13 +77,16 @@ class Config {
             public function initialize(Zikula_Form_View $view)
             {
                 // permission check
-                if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    «IF targets('1.3.x')»
+                «IF targets('1.3.x')»
+                    if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         return $view->registerError(LogUtil::registerPermissionError());
-                    «ELSE»
+                    }
+                «ELSE»
+                    $serviceManager = ServiceUtil::getManager();
+                    if (!$serviceManager->get('zikula_permissions_module.api.permission')->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         throw new AccessDeniedException();
-                    «ENDIF»
-                }
+                    }
+                «ENDIF»
                 «IF !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty»
 
                     // prepare list of user groups for moderation group selectors

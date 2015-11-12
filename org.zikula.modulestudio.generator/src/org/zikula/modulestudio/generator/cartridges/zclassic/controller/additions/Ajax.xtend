@@ -95,7 +95,7 @@ class Ajax {
     '''
 
     def private getCommonUsersListBaseImpl(AjaxController it, Application app) '''
-        if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+        if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
 
@@ -200,7 +200,7 @@ class Ajax {
     '''
 
     def private getItemListFinderBaseImpl(AjaxController it, Application app) '''
-        if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+        if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
 
@@ -255,7 +255,7 @@ class Ajax {
             foreach ($idFields as $idField) {
                 $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
             }
-            if (!SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
+            if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $itemId . '::', ACCESS_READ)) {
                 continue;
             }
             $slimItems[] = $this->prepareSlimItem($objectType, $item, $itemId, $descriptionField);
@@ -321,7 +321,7 @@ class Ajax {
     '''
 
     def private getItemListAutoCompletionBaseImpl(AjaxController it, Application app) '''
-        if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+        if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
             return true;
         }
 
@@ -500,7 +500,7 @@ class Ajax {
         «IF app.targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
         «ELSE»
-            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
@@ -635,7 +635,7 @@ class Ajax {
         «IF app.targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
         «ELSE»
-            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»
@@ -724,7 +724,7 @@ class Ajax {
         «IF app.targets('1.3.x')»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
         «ELSE»
-            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            if (!$this->hasPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 throw new AccessDeniedException();
             }
         «ENDIF»

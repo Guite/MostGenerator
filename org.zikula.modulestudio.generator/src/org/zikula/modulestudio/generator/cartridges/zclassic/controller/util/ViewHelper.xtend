@@ -38,7 +38,6 @@ class ViewUtil {
             use FormUtil;
             use ModUtil;
             use PageUtil;
-            use SecurityUtil;
             use System;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Symfony\Component\HttpFoundation\Request;
@@ -277,7 +276,10 @@ class ViewUtil {
         public function availableExtensions($type, $func)
         {
             $extensions = array();
-            $hasAdminAccess = SecurityUtil::checkPermission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
+            «IF !targets('1.3.x')»
+                $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
+            «ENDIF»
+            $hasAdminAccess = «IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
             if ($func == 'view') {
                 if ($hasAdminAccess) {
                     $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»);

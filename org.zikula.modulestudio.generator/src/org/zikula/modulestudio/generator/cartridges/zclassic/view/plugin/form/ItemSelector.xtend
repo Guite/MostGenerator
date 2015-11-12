@@ -37,7 +37,6 @@ class ItemSelector {
             use FormUtil;
             «IF hasCategorisableEntities»use ModUtil;«ENDIF»
             use PageUtil;
-            use SecurityUtil;
             use ServiceUtil;
             use ThemeUtil;
             use Zikula_Form_Plugin_TextInput;
@@ -133,7 +132,12 @@ class ItemSelector {
                 }
                 $firstTime = false;
 
-                if (!SecurityUtil::checkPermission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
+                «IF !targets('1.3.x')»
+                    $serviceManager = ServiceUtil::getManager();
+                    $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+
+                «ENDIF»
+                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
                     return false;
                 }
                 «IF hasCategorisableEntities»

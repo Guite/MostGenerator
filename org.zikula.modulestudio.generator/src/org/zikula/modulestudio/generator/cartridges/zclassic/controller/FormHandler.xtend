@@ -95,7 +95,6 @@ class FormHandler {
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
             use ModUtil;
-            use SecurityUtil;
             use System;
             use UserUtil;
             use Zikula_Form_AbstractHandler;
@@ -411,8 +410,12 @@ class FormHandler {
             $entity = null;
             $this->mode = ($hasIdentifier) ? 'edit' : 'create';
 
+            «IF !app.targets('1.3.x')»
+                $permissionHelper = $this->view->getServiceManager()->get('zikula_permissions_module.api.permission');
+
+            «ENDIF»
             if ($this->mode == 'edit') {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
+                if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
                     «IF targets('1.3.x')»
                         return LogUtil::registerPermissionError();
                     «ELSE»
@@ -432,7 +435,7 @@ class FormHandler {
                                                    'returnUrl' => $this->getRedirectUrl(null)));
                 }
             } else {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
+                if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, '::', ACCESS_EDIT)) {
                     «IF targets('1.3.x')»
                         return LogUtil::registerPermissionError();
                     «ELSE»
@@ -1340,7 +1343,10 @@ class FormHandler {
 
             // only allow editing for the owner or people with higher permissions
             if (isset($entity['createdUserId']) && $entity['createdUserId'] != UserUtil::getVar('uid')) {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+                «IF !app.targets('1.3.x')»
+                    $permissionHelper = $this->view->getServiceManager()->get('zikula_permissions_module.api.permission');
+                «ENDIF»
+                if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
                     «IF app.targets('1.3.x')»
                         return LogUtil::registerPermissionError();
                     «ELSE»

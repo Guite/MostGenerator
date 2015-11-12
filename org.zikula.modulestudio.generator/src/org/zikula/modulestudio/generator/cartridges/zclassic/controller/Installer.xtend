@@ -106,7 +106,7 @@ class Installer {
             «IF needsConfig»
                 use ModUtil;
             «ENDIF»
-            use SecurityUtil;
+            use ServiceUtil;
             use System;
             use Zikula_Controller_AbstractInteractiveInstaller;
             use ZLanguage;

@@ -34,7 +34,6 @@ class BlockList {
             use BlockUtil;
             use DataUtil;
             use ModUtil;
-            use SecurityUtil;
             use Zikula\Core\Controller\AbstractBlockController;
             use Zikula_View;
 
@@ -79,7 +78,7 @@ class BlockList {
          */
         public function init()
         {
-            SecurityUtil::registerPermissionSchema('«appName»:ItemListBlock:', 'Block title::');
+            //SecurityUtil::registerPermissionSchema('«appName»:ItemListBlock:', 'Block title::');
             «IF hasCategorisableEntities»
 
                 $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
@@ -124,7 +123,7 @@ class BlockList {
         public function display($blockinfo)
         {
             // only show block content if the user has the required permissions
-            if (!SecurityUtil::checkPermission('«appName»:ItemListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+            if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission('«appName»:ItemListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
                 return false;
             }
 
@@ -203,10 +202,10 @@ class BlockList {
             $component = '«appName»:' . ucfirst($objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
                 $accessLevel = ACCESS_COMMENT;
             }
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                 $accessLevel = ACCESS_EDIT;
             }
             $this->view->setCacheId('view|ot_' . $objectType . '_sort_' . $vars['sorting'] . '_amount_' . $vars['amount'] . '_' . $accessLevel);

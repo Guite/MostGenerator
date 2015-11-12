@@ -29,7 +29,6 @@ class Account {
             namespace «appNamespace»\Api\Base;
 
             use ModUtil;
-            use SecurityUtil;
             use ServiceUtil;
             use UserUtil;
             use Zikula_AbstractBase;
@@ -73,7 +72,10 @@ class Account {
                 return $items;
             }
 
-            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
+            «IF !targets('1.3.x')»
+                $permissionHelper = $this->get('zikula_permissions_module.api.permission');
+            «ENDIF»
+            if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . '::', '::', ACCESS_OVERVIEW)) {
                 return $items;
             }
 
@@ -81,7 +83,7 @@ class Account {
             «IF !getAllUserControllers.empty && getMainUserController.hasActions('view')»
                 «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
                     $objectType = '«entity.name.formatForCode»';
-                    if (SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                    if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                         $items[] = array(
                             «IF targets('1.3.x')»
                                 'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
@@ -97,7 +99,7 @@ class Account {
                 «ENDFOR»
             «ENDIF»
             «IF !getAllAdminControllers.empty»
-                if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . '::', '::', ACCESS_ADMIN)) {
                     $items[] = array(
                         «IF targets('1.3.x')»
                             'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'),

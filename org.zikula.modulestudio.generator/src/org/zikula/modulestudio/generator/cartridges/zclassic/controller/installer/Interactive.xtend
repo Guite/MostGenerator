@@ -42,7 +42,9 @@ class Interactive {
             «IF targets('1.3.x')»
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
-                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                $serviceManager = ServiceUtil::getManager();
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                if (!$permissionHelper->hasPermission('::', '::', ACCESS_ADMIN)) {
                     throw new AccessDeniedException();
                 }
             «ENDIF»
@@ -71,7 +73,9 @@ class Interactive {
             «IF targets('1.3.x')»
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
-                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                $serviceManager = ServiceUtil::getManager();
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                if (!$permissionHelper->hasPermission('::', '::', ACCESS_ADMIN)) {
                     throw new AccessDeniedException();
                 }
             «ENDIF»
@@ -125,7 +129,9 @@ class Interactive {
             «IF targets('1.3.x')»
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
-                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                $serviceManager = ServiceUtil::getManager();
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                if (!$permissionHelper->hasPermission('::', '::', ACCESS_ADMIN)) {
                     throw new AccessDeniedException();
                 }
             «ENDIF»
@@ -159,7 +165,9 @@ class Interactive {
             «IF targets('1.3.x')»
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
-                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                $serviceManager = ServiceUtil::getManager();
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                if (!$permissionHelper->hasPermission('::', '::', ACCESS_ADMIN)) {
                     throw new AccessDeniedException();
                 }
             «ENDIF»
@@ -185,7 +193,9 @@ class Interactive {
             «IF targets('1.3.x')»
                 $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
             «ELSE»
-                if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+                $serviceManager = ServiceUtil::getManager();
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                if (!$permissionHelper->hasPermission('::', '::', ACCESS_ADMIN)) {
                     throw new AccessDeniedException();
                 }
             «ENDIF»

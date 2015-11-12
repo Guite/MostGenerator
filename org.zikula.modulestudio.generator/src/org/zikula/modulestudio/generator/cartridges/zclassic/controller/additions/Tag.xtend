@@ -27,7 +27,6 @@ class Tag {
             namespace «appNamespace»\TaggedObjectMeta\Base;
 
             use DateUtil;
-            use SecurityUtil;
             use ServiceUtil;
             use UserUtil;
             use Zikula\TagModule\AbstractTaggedObjectMeta;
@@ -66,8 +65,13 @@ class Tag {
             $urlArgs = $urlObject->getArgs();
             $objectType = isset($urlArgs['ot']) ? $urlArgs['ot'] : '«getLeadingEntity.name.formatForCode»';
 
+            $serviceManager = ServiceUtil::getManager();
+
+            «IF !targets('1.3.x')»
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+            «ENDIF»
             $component = $module . ':' . ucfirst($objectType) . ':';
-            $perm = SecurityUtil::checkPermission($component, $objectId . '::', ACCESS_READ);
+            $perm = «IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $objectId . '::', ACCESS_READ);
             if (!$perm) {
                 return;
             }
@@ -75,7 +79,6 @@ class Tag {
             «IF targets('1.3.x')»
                 $entityClass = $module . '_Entity_' . ucfirst($objectType);
             «ENDIF»
-            $serviceManager = ServiceUtil::getManager();
             «IF targets('1.3.x')»
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);

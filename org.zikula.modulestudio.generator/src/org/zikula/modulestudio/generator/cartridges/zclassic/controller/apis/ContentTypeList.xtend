@@ -38,7 +38,6 @@ class ContentTypeList {
                 use CategoryUtil;
             «ENDIF»
             use ModUtil;
-            use SecurityUtil;
             use ServiceUtil;
             use Zikula_View;
             use ZLanguage;
@@ -288,15 +287,19 @@ class ContentTypeList {
             // ensure that the view does not look for templates in the Content module (#218)
             $this->view->toplevelmodule = '«appName»';
 
+            «IF !targets('1.3.x')»
+                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+
+            «ENDIF»
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $component = '«appName»:' . ucfirst($this->objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
                 $accessLevel = ACCESS_COMMENT;
             }
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                 $accessLevel = ACCESS_EDIT;
             }
             $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);

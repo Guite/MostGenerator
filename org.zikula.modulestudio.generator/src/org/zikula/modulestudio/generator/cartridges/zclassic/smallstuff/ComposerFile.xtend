@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ComposerFile {
     extension ControllerExtensions = new ControllerExtensions
@@ -24,6 +25,7 @@ class ComposerFile {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
         if (targets('1.3.x')) {
@@ -109,6 +111,14 @@ class ComposerFile {
                     "hook_provider": {"enabled": false}«/* TODO: see #15 */»
                 },
                 "securityschema": {
+                    "«appName»::": "::",
+                    "«appName»::Ajax": "::",
+                    «IF generateListBlock»
+                        "«appName»:ItemListBlock:": "Block title::",
+                    «ENDIF»
+                    «IF needsApproval»
+                        "«appName»:ModerationBlock:": "Block title::",
+                    «ENDIF»
                     «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
                 }
             }

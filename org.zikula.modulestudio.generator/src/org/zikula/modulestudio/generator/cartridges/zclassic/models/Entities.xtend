@@ -153,7 +153,6 @@ class Entities {
             use DataUtil;
             use FormUtil;
             use ModUtil;
-            use SecurityUtil;
             use ServiceUtil;
             use System;
             use UserUtil;

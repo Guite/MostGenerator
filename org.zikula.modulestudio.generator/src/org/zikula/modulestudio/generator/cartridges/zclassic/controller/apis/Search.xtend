@@ -46,7 +46,6 @@ class Search {
         namespace «appNamespace»\Helper\Base;
 
         use ModUtil;
-        use SecurityUtil;
         use ServiceUtil;
         use ZLanguage;
 
@@ -127,7 +126,10 @@ class Search {
          */
         public function getOptions($active, $modVars = null)
         {
-            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+            $serviceManager = ServiceUtil::getManager();
+            $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+
+            if (!$permissionHelper->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
@@ -288,7 +290,10 @@ class Search {
          */
         public function getResults(array $words, $searchType = 'AND', $modVars = null)
         {
-            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+            $serviceManager = ServiceUtil::getManager();
+            $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+
+            if (!$permissionHelper->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return array();
             }
 
@@ -364,7 +369,7 @@ class Search {
 
                     $instanceId = $entity->createCompositeIdentifier();
                     // perform permission check
-                    if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                    if (!$permissionHelper->hasPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
 
