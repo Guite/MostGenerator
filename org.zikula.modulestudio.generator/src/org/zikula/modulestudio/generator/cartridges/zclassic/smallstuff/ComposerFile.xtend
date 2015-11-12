@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -42,7 +43,6 @@ class ComposerFile {
         }
     '''
 
-    /* TODO application dependencies are missing, see https://github.com/zikula/core/issues/2640 */
     def private composerContent(Application it) '''
         "name": "«vendor.formatForDB»/«name.formatForDB»-module",
         "version": "«version»",
@@ -61,9 +61,20 @@ class ComposerFile {
             "psr-4": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\": "" }
         },
         "require": {
-            "php": ">=5.4.1"
+            «var dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.REQUIREMENT]»
+            "php": ">=5.4.1"«IF !dependencies.empty»,
+                «FOR dependency : dependencies»
+                    "«dependency.name»": ">=«dependency.minVersion»,<=«dependency.maxVersion»"«IF dependency != dependencies.last»,«ENDIF»
+                «ENDFOR»
+            «ENDIF»
         },
         "suggest": {
+            «dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.RECOMMENDATION]»
+            «IF !dependencies.empty»
+                «FOR dependency : dependencies»
+                    "«dependency.name»": ">=«dependency.minVersion»,<=«dependency.maxVersion»"«IF dependency != dependencies.last»,«ENDIF»
+                «ENDFOR»
+            «ENDIF»
         },
         "extra": {
             "zikula": {
