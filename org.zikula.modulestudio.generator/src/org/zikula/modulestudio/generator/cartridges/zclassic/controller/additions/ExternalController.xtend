@@ -40,15 +40,15 @@ class ExternalController {
         use SecurityUtil;
         use ThemeUtil;
         use UserUtil;
-        use Zikula_AbstractController;
         use Zikula_View;
+        use Zikula\Core\Controller\AbstractController;
         use Zikula\Core\Response\PlainResponse;
 
     «ENDIF»
     /**
      * Controller for external calls base class.
      */
-    class «IF targets('1.3.x')»«appName»_Controller_Base_External«ELSE»ExternalController«ENDIF» extends Zikula_AbstractController
+    class «IF targets('1.3.x')»«appName»_Controller_Base_External extends Zikula_AbstractController«ELSE»ExternalController extends AbstractController«ENDIF»
     {
         «IF hasCategorisableEntities»
             /**

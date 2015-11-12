@@ -159,6 +159,7 @@ class Config {
             {
                 «IF !targets('1.3.x')»
                     $serviceManager = ServiceUtil::getManager();
+                    $flashBag = $serviceManager->get('request')->getSession()->getFlashBag();
 
                 «ENDIF»
                 if ($args['commandName'] == 'save') {
@@ -172,7 +173,11 @@ class Config {
 
                     // update all module vars
                     try {
-                        $this->setVars($data['config']);
+                        «IF targets('1.3.x')»
+                            $this->setVars($data['config']);
+                        «ELSE»
+                            $serviceManager->get('zikula_extensions_module.api.variable')->setAll('«appName»', $data['config']);
+                        «ENDIF»
                     } catch (\Exception $e) {
                         $msg = $this->__('Error! Failed to set configuration variables.');
                         if (System::isDevelopmentMode()) {
@@ -181,7 +186,7 @@ class Config {
                         «IF targets('1.3.x')»
                             return LogUtil::registerError($msg);
                         «ELSE»
-                            $this->request->getSession()->getFlashBag()->add('error', $msg);
+                            $flashBag->add('error', $msg);
                             return false;
                         «ENDIF»
                     }
@@ -189,7 +194,7 @@ class Config {
                     «IF targets('1.3.x')»
                         LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
                     «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Module configuration updated.'));
+                        $flashBag->add('status', $this->__('Done! Module configuration updated.'));
 
                         $logger = $serviceManager->get('logger');
                         $logger->notice('{app}: User {user} updated the configuration.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));

@@ -1457,17 +1457,20 @@ class FormHandler {
 
                 $uid = UserUtil::getVar('uid');
                 $isCreator = $entity['createdUserId'] == $uid;
+                «IF !application.targets('1.3.x')»
+                    $varHelper = $this->view->getServiceManager()->get('zikula_extensions_module.api.variable');
+                «ENDIF»
                 «IF workflow == EntityWorkflowType.ENTERPRISE»
-                    $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('moderationGroupFor' . $this->objectTypeCapital, 2));
+                    $groupArgs = array('uid' => $uid, 'gid' => «IF application.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«application.appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2));
                     $isModerator = ModUtil::apiFunc('«IF application.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
-                    $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('superModerationGroupFor' . $this->objectTypeCapital, 2));
+                    $groupArgs = array('uid' => $uid, 'gid' => «IF application.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«application.appName»', «ENDIF»'superModerationGroupFor' . $this->objectTypeCapital, 2));
                     $isSuperModerator = ModUtil::apiFunc('«IF application.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
 
                     $this->view->assign('isCreator', $isCreator)
                                ->assign('isModerator', $isModerator)
                                ->assign('isSuperModerator', $isSuperModerator);
                 «ELSEIF workflow == EntityWorkflowType.STANDARD»
-                    $groupArgs = array('uid' => $uid, 'gid' => $this->getVar('moderationGroupFor' . $this->objectTypeCapital, 2));
+                    $groupArgs = array('uid' => $uid, 'gid' => «IF application.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«application.appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2));
                     $isModerator = ModUtil::apiFunc('«IF application.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
 
                     $this->view->assign('isCreator', $isCreator)

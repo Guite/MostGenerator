@@ -123,7 +123,7 @@ class ControllerLayer {
         /**
          * «name» controller class.
          */
-        class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Controller«ENDIF» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
+        class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»«ELSE»«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
         {
             «IF isAjaxController»
 
@@ -153,7 +153,7 @@ class ControllerLayer {
         /**
          * «name.formatForDisplayCapital» controller base class.
          */
-        class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Controller«ENDIF» extends Zikula_AbstractController
+        class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_AbstractController«ELSE»«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
         {
             «new ControllerHelper().controllerPostInitialize(it, false, '')»
 
@@ -203,9 +203,9 @@ class ControllerLayer {
                 use System;
             «ENDIF»
             use UserUtil;
-            use Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»;
             use Zikula_View;
             use ZLanguage;
+            use Zikula\Core\Controller\AbstractController;
             «IF (hasActions('view') && isAdminController) || hasActions('delete')»
                 use Zikula\Core\Hook\ProcessHook;
                 use Zikula\Core\Hook\ValidationHook;
@@ -245,9 +245,9 @@ class ControllerLayer {
                 use System;
             «ENDIF»
             use UserUtil;
-            use Zikula_AbstractController;
             use Zikula_View;
             use ZLanguage;
+            use Zikula\Core\Controller\AbstractController;
             «IF (hasActions('view') && app.hasAdminController) || hasActions('delete')»
                 use Zikula\Core\Hook\ProcessHook;
                 use Zikula\Core\Hook\ValidationHook;

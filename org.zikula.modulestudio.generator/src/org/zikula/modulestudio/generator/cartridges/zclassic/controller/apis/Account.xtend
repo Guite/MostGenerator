@@ -60,7 +60,7 @@ class Account {
             «IF targets('1.3.x')»
                 $useAccountPage = $this->getVar('useAccountPage', true);
             «ELSE»
-                $useAccountPage = ModUtil::getVar('«vendorAndName.toFirstUpper»Module', 'useAccountPage', true);
+                $useAccountPage = $this->get('zikula_extensions_module.api.variable')->get('«appName»', 'useAccountPage', true);
             «ENDIF»
             if ($useAccountPage === false) {
                 return $items;

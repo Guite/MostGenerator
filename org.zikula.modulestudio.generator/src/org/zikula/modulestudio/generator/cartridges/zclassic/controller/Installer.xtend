@@ -158,7 +158,8 @@ class Installer {
         {
             «processUploadFolders»
             «IF !targets('1.3.x')»
-                $flashBag = $this->container->('request')->getSession()->getFlashBag();
+                $session = $this->container->('request')->getSession();
+                $flashBag = $session->getFlashBag();
                 $logger = $this->container->get('logger');
             «ENDIF»
             // create all tables from according entity definitions
@@ -197,22 +198,27 @@ class Installer {
             «IF !variables.empty»
 
                 // set up all our vars with initial values
+                «IF !targets('1.3.x')»
+                    $varHelper = $this->container->get('zikula_extensions_module.api.variable');
+                «ENDIF»
                 «val modvarHelper = new ModVars()»
                 «FOR modvar : getAllVariables»
                     «IF interactiveInstallation == true»
                         «IF targets('1.3.x')»
                             $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
-                        «ELSE»
-                            $sessionValue = $this->container->('request')->getSession()->get('«formatForCode(name + '_' + modvar.name)»');
-                        «ENDIF»
-                        $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
-                        «IF targets('1.3.x')»
+                            $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
                             SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
                         «ELSE»
-                            $this->container->('request')->getSession()->del(«formatForCode(name + '_' + modvar.name)»);
+                            $sessionValue = $session->get('«formatForCode(name + '_' + modvar.name)»');
+                            $varHelper->set('«appName»', '«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
+                            $session->del(«formatForCode(name + '_' + modvar.name)»);
                         «ENDIF»
                     «ELSE»
-                        $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
+                        «IF targets('1.3.x')»
+                            $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
+                        «ELSE»
+                            $varHelper->set('«appName»', '«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
+                        «ENDIF»
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»

@@ -483,7 +483,7 @@ class Repository {
                     $parameters['q'] = $this->request->query->get('q', '');
                 «ENDIF»
             «ENDIF»
-            «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«app.appName»', 'pageSize', 10);
+            «/* not needed as already handled in the controller
             $parameters['pageSize'] = (int) $this->request->query->get('pageSize', $pageSize);*/»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
@@ -917,7 +917,13 @@ class Repository {
                 // per default we show approved «nameMultiple.formatForDisplay» only
                 $onlineStates = array('approved');
                 «IF ownerPermission»
-                    $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                    «IF app.targets('1.3.x')»
+                        $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                    «ELSE»
+                        $serviceManager = ServiceUtil::getManager();
+                        $varHelper = $serviceManager->get('zikula_extensions_module.api.variable');
+                        $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                    «ENDIF»
                     if ($showOnlyOwnEntries == 1) {
                         // allow the owner to see his deferred «nameMultiple.formatForDisplay»
                         $onlineStates[] = 'deferred';
@@ -1301,7 +1307,13 @@ class Repository {
             }
             «IF standardFields»
 
-                $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                «IF app.targets('1.3.x')»
+                    $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                «ELSE»
+                    $serviceManager = ServiceUtil::getManager();
+                    $varHelper = $serviceManager->get('zikula_extensions_module.api.variable');
+                    $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                «ENDIF»
                 if ($showOnlyOwnEntries == 1) {
                     $uid = UserUtil::getVar('uid');
                     $qb->andWhere('tbl.createdUserId = :creator')

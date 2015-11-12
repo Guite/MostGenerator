@@ -136,9 +136,10 @@ class Notification {
                         $moderatorGroupId = $this->getVar('superModerationGroupFor' . $objectType, 2);
                     }
                 «ELSE»
-                    $moderatorGroupId = ModUtil::getVar('«vendorAndName»', 'moderationGroupFor' . $objectType, 2);
+                    $varHelper = $this->get('zikula_extensions_module.api.variable');
+                    $moderatorGroupId = $varHelper->get('«appName»', 'moderationGroupFor' . $objectType, 2);
                     if ($this->recipientType == 'superModerator') {
-                        $moderatorGroupId = ModUtil::getVar('«vendorAndName»', 'superModerationGroupFor' . $objectType, 2);
+                        $moderatorGroupId = $varHelper->get('«appName»', 'superModerationGroupFor' . $objectType, 2);
                     }
                 «ENDIF»
 
