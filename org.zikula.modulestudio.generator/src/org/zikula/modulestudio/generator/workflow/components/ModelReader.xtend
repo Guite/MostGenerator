@@ -20,6 +20,7 @@ class ModelReader extends WorkflowComponentWithSlot {
     /**
      * Whether we are inside a manual mwe workflow or OSGi.
      */
+    @Accessors(PUBLIC_SETTER)
     Boolean isStandalone = false
 
     /**
@@ -31,6 +32,7 @@ class ModelReader extends WorkflowComponentWithSlot {
     /**
      * The Guice injector instance.
      */
+    @Accessors(PUBLIC_SETTER)
     Injector injector = null
 
     /**
@@ -70,26 +72,6 @@ class ModelReader extends WorkflowComponentWithSlot {
         val resource = resourceSet.getResource(fileURI, true)
 
         resource
-    }
-
-    /**
-     * Sets the standalone flag.
-     * 
-     * @param newValue
-     *            The given flag value.
-     */
-    def setIsStandalone(Boolean newValue) {
-        isStandalone = newValue
-    }
-
-    /**
-     * Sets the injector.
-     * 
-     * @param injector
-     *            The given {@link Injector} instance.
-     */
-    def setInjector(Injector injector) {
-        this.injector = injector
     }
 
     /**

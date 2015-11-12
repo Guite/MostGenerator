@@ -14,21 +14,25 @@ class WorkflowSettings {
     /**
      * List of available cartridges.
      */
+    @Accessors(PUBLIC_GETTER)
     ArrayList<String> availableCartridges = new ArrayList<String>
 
     /**
      * List of selected cartridges.
      */
+    @Accessors(PUBLIC_GETTER)
     ArrayList<Object> selectedCartridges = new ArrayList<Object>
 
     /**
      * The output path.
      */
+    @Accessors(PUBLIC_GETTER)
     String outputPath = null
 
     /**
      * File handle for output directory.
      */
+    @Accessors(PUBLIC_GETTER)
     File outputDir = null
 
     /**
@@ -70,6 +74,7 @@ class WorkflowSettings {
     /**
      * List of available reports.
      */
+    @Accessors(PUBLIC_GETTER)
     ArrayList<String> availableReports = new ArrayList<String>
 
     /**
@@ -112,33 +117,6 @@ class WorkflowSettings {
     }
 
     /**
-     * Returns the list of available cartridges.
-     * 
-     * @return Cartridge list.
-     */
-    def getAvailableCartridges() {
-        availableCartridges
-    }
-
-    /**
-     * Returns the list of selected cartridges.
-     * 
-     * @return Cartridge list.
-     */
-    def getSelectedCartridges() {
-        selectedCartridges
-    }
-
-    /**
-     * Returns the list of available reports.
-     * 
-     * @return Report list.
-     */
-    def getAvailableReports() {
-        availableReports
-    }
-
-    /**
      * Sets the output path.
      * 
      * @param path
@@ -160,23 +138,5 @@ class WorkflowSettings {
         for (cartridge : objects) {
             selectedCartridges.add(cartridge)
         }
-    }
-
-    /**
-     * Returns the output directory.
-     * 
-     * @return the outputDir
-     */
-    def getOutputDir() {
-        outputDir
-    }
-
-    /**
-     * Returns the output path.
-     * 
-     * @return the outputPath
-     */
-    def getOutputPath() {
-        outputPath
     }
 }

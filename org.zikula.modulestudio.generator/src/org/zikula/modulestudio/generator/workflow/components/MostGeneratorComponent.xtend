@@ -60,7 +60,7 @@ class MostGeneratorComponent extends GeneratorComponent implements
      * be a Resource or an Iterable of Resources).
      */
     override addSlot(String slot) {
-        slotNames.add(slot)
+        slotNames += slot
     }
 
     /**
