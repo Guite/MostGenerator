@@ -60,19 +60,24 @@ class Display {
             {include file="`$lctUc`/header.tpl"}
         «ENDIF»
         «val refedElems = getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == it.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == it.application]»
-        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» with-rightbox«ENDIF»">
+        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF isLegacyApp && !refedElems.empty» with-rightbox«ENDIF»">
             «val objName = name.formatForCode»
             {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
             {assign var='templateTitle' value=$«objName»->getTitleFromDisplayPattern()|default:$templateTitle}
             {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
             «templateHeader(appName)»
-            «IF !refedElems.empty»
 
+            «IF !refedElems.empty»
                 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                    <div class="«appName.toLowerCase»-rightbox">
-                        «val relationHelper = new Relations»
-                        «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
-                    </div>
+                    «IF isLegacyApp»
+                        <div class="«appName.toLowerCase»-rightbox">
+                            «val relationHelper = new Relations»
+                            «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                        </div>
+                    «ELSE»
+                        <div class="row">
+                            <div class="col-sm-9">
+                    «ENDIF»
                 {/if}
             «ENDIF»
             «IF useGroupingPanels('display')»
@@ -117,7 +122,16 @@ class Display {
                     </div>«/* panels */»
                 «ENDIF»
                 «IF !refedElems.empty»
-                    <br style="clear: right" />
+                    «IF isLegacyApp»
+                        <br style="clear: right" />
+                    «ELSE»
+                            </div>
+                            <div class="col-sm-3">
+                                «val relationHelper = new Relations»
+                                «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                            </div>
+                        </div>
+                    «ENDIF»
                 «ENDIF»
             {/if}
         </div>

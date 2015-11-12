@@ -55,26 +55,28 @@ class Styles {
         }
 
         /* display pages */
-        .«cssPrefix»-display.with-rightbox div.«IF targets('1.3.x')»z-panel-content«ELSE»panel«ENDIF» {
-            float: left;
-            width: 79%;
-        }
-        .«cssPrefix»-display div.«cssPrefix»-rightbox {
-            float: right;
-            margin: 0 1em;
-            padding: .5em;
-            width: 20%;
-            /*border: 1px solid #666;*/
-        }
+        «IF targets('1.3.x')»
+            .«cssPrefix»-display.with-rightbox div.«IF targets('1.3.x')»z-panel-content«ELSE»panel«ENDIF» {
+                float: left;
+                width: 79%;
+            }
+            .«cssPrefix»-display div.«cssPrefix»-rightbox {
+                float: right;
+                margin: 0 1em;
+                padding: .5em;
+                width: 20%;
+                /*border: 1px solid #666;*/
+            }
+        «ENDIF»
 
-        .«cssPrefix»-display div.«cssPrefix»-rightbox h3 {
+        .«cssPrefix»-display div.«IF targets('1.3.x')»«cssPrefix»-rightbox«ELSE»col-sm-3«ENDIF» h3 {
             color: #333;
             font-weight: 400;
             border-bottom: 1px solid #ccc;
             padding-bottom: 8px;
         }
 
-        .«cssPrefix»-display div.«cssPrefix»-rightbox p.managelink {
+        .«cssPrefix»-display div.«IF targets('1.3.x')»«cssPrefix»-rightbox«ELSE»col-sm-3«ENDIF» p.managelink {
             margin-left: 18px;
         }
         «IF hasGeographical»
