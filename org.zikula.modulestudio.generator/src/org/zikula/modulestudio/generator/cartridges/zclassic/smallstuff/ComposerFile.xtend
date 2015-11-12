@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -63,16 +64,16 @@ class ComposerFile {
         "require": {
             «var dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.REQUIREMENT]»
             "php": ">=5.4.1"«IF !dependencies.empty»,
-                «FOR dependency : dependencies»
-                    "«dependency.name»": ">=«dependency.minVersion»,<=«dependency.maxVersion»"«IF dependency != dependencies.last»,«ENDIF»
+                «FOR referredApp : dependencies»
+                    «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
                 «ENDFOR»
             «ENDIF»
         },
         "suggest": {
             «dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.RECOMMENDATION]»
             «IF !dependencies.empty»
-                «FOR dependency : dependencies»
-                    "«dependency.name»": ">=«dependency.minVersion»,<=«dependency.maxVersion»"«IF dependency != dependencies.last»,«ENDIF»
+                «FOR referredApp : dependencies»
+                    «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
                 «ENDFOR»
             «ENDIF»
         },
@@ -112,6 +113,10 @@ class ComposerFile {
                 }
             }
         }
+    '''
+
+    def private dependency(Application it, ReferredApplication dependency) '''
+        "«dependency.name»:>=«dependency.minVersion»,<=«dependency.maxVersion»": "«IF dependency.documentation !== null && dependency.documentation != ''»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
     '''
 
     def private permissionSchema(Entity it, String appName) '''
