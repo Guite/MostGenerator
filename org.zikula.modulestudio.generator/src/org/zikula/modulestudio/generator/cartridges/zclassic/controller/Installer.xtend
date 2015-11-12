@@ -49,6 +49,7 @@ class Installer {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Base;
 
+            use «appNamespace»\Helper\HookHelper;
             «IF hasCategorisableEntities»
                 use CategoryUtil;
                 use CategoryRegistryUtil;
@@ -60,9 +61,12 @@ class Installer {
             «ENDIF»
             use HookUtil;
             use ModUtil;
+            use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+            use Symfony\Component\DependencyInjection\ContainerInterface;
             use System;
             use UserUtil;
-            use Zikula_AbstractInstaller;
+            use Zikula\Core\ExtensionInstallerInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
             use Zikula_Workflow_Util;
             «IF hasCategorisableEntities»
                 use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
@@ -72,8 +76,22 @@ class Installer {
         /**
          * Installer base class.
          */
-        class «IF targets('1.3.x')»«appName»_Base_«ELSE»«name.formatForCodeCapital»Module«ENDIF»Installer extends Zikula_AbstractInstaller
+        class «IF targets('1.3.x')»«appName»_Base_Installer extends Zikula_AbstractInstaller«ELSE»«name.formatForCodeCapital»ModuleInstaller implements ExtensionInstallerInterface, ContainerAwareInterface«ENDIF»
         {
+            «IF !targets('1.3.x')»
+                use TranslatorTrait;
+
+                /**
+                 * @var ContainerInterface
+                 */
+                private $container;
+
+                /**
+                 * @var AbstractBundle
+                 */
+                private $bundle;
+
+            «ENDIF»
             «installerBaseImpl»
         }
     '''
@@ -136,23 +154,26 @@ class Installer {
          * @throws RuntimeException Thrown if database tables can not be created or another error occurs
          «ENDIF»
          */
-        public function install«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.x')»Action«ENDIF*/»()
+        public function install()
         {
             «processUploadFolders»
+            «IF !targets('1.3.x')»
+                $flashBag = $this->container->('request')->getSession()->getFlashBag();
+                $logger = $this->container->get('logger');
+            «ENDIF»
             // create all tables from according entity definitions
             try {
                 «IF targets('1.3.x')»
                     DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
                 «ELSE»
-                    $this->get('zikula.doctrine.schema_tool')->create($this->listEntityClasses());
+                    $this->container->get('zikula.doctrine.schema_tool')->create($this->listEntityClasses());
                 «ENDIF»
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
-                        $logger = $this->serviceManager->get('logger');
+                        $flashBag->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
                         $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                         return false;
                     «ENDIF»
@@ -168,8 +189,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($returnMessage);
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('error', $returnMessage);
-                    $logger = $this->serviceManager->get('logger');
+                    $flashBag->add('error', $returnMessage);
                     $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                     return false;
                 «ENDIF»
@@ -183,13 +203,13 @@ class Installer {
                         «IF targets('1.3.x')»
                             $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
                         «ELSE»
-                            $sessionValue = $this->request->getSession()->get('«formatForCode(name + '_' + modvar.name)»');
+                            $sessionValue = $this->container->('request')->getSession()->get('«formatForCode(name + '_' + modvar.name)»');
                         «ENDIF»
                         $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
                         «IF targets('1.3.x')»
                             SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
                         «ELSE»
-                            $this->request->getSession()->del(«formatForCode(name + '_' + modvar.name)»);
+                            $this->container->('request')->getSession()->del(«formatForCode(name + '_' + modvar.name)»);
                         «ENDIF»
                     «ELSE»
                         $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
@@ -206,7 +226,7 @@ class Installer {
                     include_once '«rootFolder»/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»
-                    $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi($this->serviceManager, new \«appNamespace»\«appName»());
+                    $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi($this->container, new \«appNamespace»\«appName»());
                 «ENDIF»
                 $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
                 «IF targets('1.3.x')»
@@ -236,8 +256,7 @@ class Installer {
                             $this->entityManager->persist($registry);
                             $this->entityManager->flush();
                         } catch (\Exception $e) {
-                            $this->request->getSession()->getFlashBag()->add('error', $this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
-                            $logger = $this->serviceManager->get('logger');
+                            $flashBag->add('error', $this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
                             $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()));
                         }
                         $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
@@ -254,11 +273,20 @@ class Installer {
 
             «ENDIF»
             // register hook subscriber bundles
-            HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
-            «/*TODO see #15
-                // register hook provider bundles
-                HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
-            */»
+            «IF targets('1.3.x')»
+                HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
+                «/*TODO see #15
+                    // register hook provider bundles
+                    HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
+                */»
+            «ELSE»
+                $hookHelper = new HookHelper($this->getTranslator());
+                HookUtil::registerSubscriberBundles($hookHelper->getHookSubscriberBundles());
+                «/*TODO see #15
+                    // register hook provider bundles
+                    HookUtil::registerProviderBundles($hookHelper->getHookProviderBundles());
+                */»
+            «ENDIF»
 
             // initialisation successful
             return true;
@@ -272,15 +300,14 @@ class Installer {
                 «IF targets('1.3.x')»
                     $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
                 «ELSE»
-                    $controllerHelper = new \«appNamespace»\Util\ControllerUtil($this->serviceManager, null);
+                    $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper')
                 «ENDIF»
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('error', $e->getMessage());
-                    $logger = $this->serviceManager->get('logger');
+                    $flashBag->add('error', $e->getMessage());
                     $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                     return false;
                 «ENDIF»
@@ -302,9 +329,13 @@ class Installer {
          * @throws RuntimeException Thrown if database tables can not be updated
          «ENDIF»
          */
-        public function upgrade«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.x')»Action«ENDIF*/»($oldVersion)
+        public function upgrade($oldVersion)
         {
         /*
+            «IF !targets('1.3.x')»
+                $flashBag = $this->container->('request')->getSession()->getFlashBag();
+                $logger = $this->container->get('logger');
+            «ENDIF»
             // Upgrade dependent on old version number
             switch ($oldVersion) {
                 case '1.0.0':
@@ -315,15 +346,14 @@ class Installer {
                         «IF targets('1.3.x')»
                             DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                         «ELSE»
-                            $this->get('zikula.doctrine.schema_tool')->update($this->listEntityClasses());
+                            $this->container->get('zikula.doctrine.schema_tool')->update($this->listEntityClasses());
                         «ENDIF»
                     } catch (\Exception $e) {
                         if (System::isDevelopmentMode()) {
                             «IF targets('1.3.x')»
                                 return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                             «ELSE»
-                                $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
-                                $logger = $this->serviceManager->get('logger');
+                                $flashBag->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
                                 $logger->error('{app}: User {user} could not update the database tables during the upgrade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                                 return false;
                             «ENDIF»
@@ -331,8 +361,7 @@ class Installer {
                         «IF targets('1.3.x')»
                             return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                         «ELSE»
-                            $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
-                            $logger = $this->serviceManager->get('logger');
+                            $flashBag->add('error', $this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                             $logger->error('{app}: User {user} could not update the database tables during the ugprade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                             return false;
                         «ENDIF»
@@ -370,16 +399,19 @@ class Installer {
          * @throws RuntimeException Thrown if database tables or stored workflows can not be removed
          «ENDIF»
          */
-        public function uninstall«/* new base class not ready yet in the core, see MostGenerator#401 IF !targets('1.3.x')»Action«ENDIF*/»()
+        public function uninstall()
         {
+            «IF !targets('1.3.x')»
+                $flashBag = $this->container->('request')->getSession()->getFlashBag();
+                $logger = $this->container->get('logger');
+            «ENDIF»
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
-                    $logger = $this->serviceManager->get('logger');
+                    $flashBag->add('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                     $logger->error('{app}: User {user} could not remove stored object workflows during uninstallation.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
                     return false;
                 «ENDIF»
@@ -389,15 +421,14 @@ class Installer {
                 «IF targets('1.3.x')»
                     DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
                 «ELSE»
-                    $this->get('zikula.doctrine.schema_tool')->drop($this->listEntityClasses());
+                    $this->container->get('zikula.doctrine.schema_tool')->drop($this->listEntityClasses());
                 «ENDIF»
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
-                        $logger = $this->serviceManager->get('logger');
+                        $flashBag->add('error', $this->__('Doctrine Exception: ') . $e->getMessage());
                         $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                         return false;
                     «ENDIF»
@@ -405,8 +436,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('error', $this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
-                    $logger = $this->serviceManager->get('logger');
+                    $flashBag->add('error', $this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
                     $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                     return false;
                 «ENDIF»
@@ -418,11 +448,20 @@ class Installer {
 
             «ENDIF»
             // unregister hook subscriber bundles
-            HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
-            «/*TODO see #15
-                // unregister hook provider bundles
-                HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
-            */»
+            «IF targets('1.3.x')»
+                HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
+                «/*TODO see #15
+                    // unregister hook provider bundles
+                    HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
+                */»
+            «ELSE»
+                $hookHelper = new HookHelper($this->getTranslator());
+                HookUtil::unregisterSubscriberBundles($hookHelper->getHookSubscriberBundles());
+                «/*TODO see #15
+                    // unregister hook provider bundles
+                    HookUtil::unregisterProviderBundles($hookHelper->getHookProviderBundles());
+                */»
+            «ENDIF»
             «IF !getAllVariables.empty»
 
                 // remove all module vars
@@ -446,7 +485,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('status', $this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
+                    $flashBag->add('status', $this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
                 «ENDIF»
             «ENDIF»
 

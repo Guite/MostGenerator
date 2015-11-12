@@ -212,7 +212,7 @@ class ExampleData {
         «IF targets('1.3.x')»
             $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
         «ELSE»
-            $workflowHelper = $this->serviceManager->get('«appName.formatForDB».workflow_helper');
+            $workflowHelper = $this->container->get('«appName.formatForDB».workflow_helper');
         «ENDIF»
         try {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
@@ -220,7 +220,7 @@ class ExampleData {
             «IF targets('1.3.x')»
                 LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ELSE»
-                $this->request->getSession()->getFlashBag()->add('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+                $flashBag->add('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ENDIF»
         }
     '''

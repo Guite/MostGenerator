@@ -7,18 +7,16 @@ import de.guite.modulestudio.metamodel.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
-class VersionFile {
+class VersionFileLegacy {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions 
     extension ModelExtensions = new ModelExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -27,7 +25,10 @@ class VersionFile {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + (if (targets('1.3.x')) '' else name.formatForCodeCapital + 'Module') + 'Version.php', versionBaseFile, versionFile)
+        if (!targets('1.3.x')) {
+            return
+        }
+        generateClassPair(fsa, getAppSourceLibPath + 'Version.php', versionBaseFile, versionFile)
     }
 
     def private versionBaseFile(Application it) '''
@@ -41,23 +42,10 @@ class VersionFile {
     '''
 
     def private appInfoBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Base;
-
-            use HookUtil;
-            «IF !referredApplications.empty»
-                use ModUtil;
-            «ENDIF»
-            use Zikula_AbstractVersion;
-            use Zikula\Component\HookDispatcher\ProviderBundle;
-            use Zikula\Component\HookDispatcher\SubscriberBundle;
-            use Zikula\SearchModule\AbstractSearchable;
-
-        «ENDIF»
         /**
          * Version information base class.
          */
-        class «IF targets('1.3.x')»«appName»_Base_«ELSE»«name.formatForCodeCapital»Module«ENDIF»Version extends Zikula_AbstractVersion
+        class «appName»_Base_Version extends Zikula_AbstractVersion
         {
             /**
              * Retrieves meta data information for this application.
@@ -76,13 +64,8 @@ class VersionFile {
                 //! url version of name, should be in lowercase without space
                 $meta['url']                  = $this->__('«name.formatForDB»');
                 // core requirement
-                «IF targets('1.3.x')»
-                    $meta['core_min']             = '1.3.5'; // requires minimum 1.3.5
-                    $meta['core_max']             = '1.3.99'; // not ready for 1.4.0 yet
-                «ELSE»
-                    $meta['core_min']             = '1.4.1'; // requires minimum 1.4.1 or later
-                    $meta['core_max']             = '1.4.99'; // not ready for 1.5.0 yet
-                «ENDIF»
+                $meta['core_min']             = '1.3.5'; // requires minimum 1.3.5
+                $meta['core_max']             = '1.3.99'; // not ready for 1.4.0 yet
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
@@ -91,16 +74,7 @@ class VersionFile {
                               '«capability.formatForDisplay»' => array('version' => '1.0'),
                           «ENDFOR»
                       «ENDIF»
-                      «IF !targets('1.3.x') && hasCategorisableEntities»
-                          'categorizable' => array(
-                              «FOR entity : getCategorisableEntities»
-                                  '«entity.name.formatForCode»' => '«appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity',
-                              «ENDFOR»
-                          ),
-                      «ENDIF»
-                      HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)«IF !targets('1.3.x') && generateSearchApi»,
-                      AbstractSearchable::SEARCHABLE => array('class' => '«appNamespace»\Helper\SearchHelper')
-                      «ENDIF»
+                      HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
         /*,
                       HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
         */
@@ -124,62 +98,17 @@ class VersionFile {
              */
             protected function setupHookBundles()
             {
-        «val areaPrefix = appName.formatForDB»
-                «FOR entity : getAllEntities»
-                    «/* we register one hook subscriber bundle for each entity type */»«val areaName = entity.nameMultiple.formatForDB»
-                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«areaPrefix».ui_hooks.«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
-                    «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
-                    // Display hook for view/display templates.
-                    $bundle->addEvent('display_view', '«areaPrefix».ui_hooks.«areaName».display_view');
-                    // Display hook for create/edit forms.
-                    $bundle->addEvent('form_edit', '«areaPrefix».ui_hooks.«areaName».form_edit');
-                    // Display hook for delete dialogues.
-                    $bundle->addEvent('form_delete', '«areaPrefix».ui_hooks.«areaName».form_delete');
-                    // Validate input from an ui create/edit form.
-                    $bundle->addEvent('validate_edit', '«areaPrefix».ui_hooks.«areaName».validate_edit');
-                    // Validate input from an ui create/edit form (generally not used).
-                    $bundle->addEvent('validate_delete', '«areaPrefix».ui_hooks.«areaName».validate_delete');
-                    // Perform the final update actions for a ui create/edit form.
-                    $bundle->addEvent('process_edit', '«areaPrefix».ui_hooks.«areaName».process_edit');
-                    // Perform the final delete actions for a ui form.
-                    $bundle->addEvent('process_delete', '«areaPrefix».ui_hooks.«areaName».process_delete');
-                    $this->registerHookSubscriberBundle($bundle);
-
-                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«areaPrefix».filter_hooks.«areaName»', 'filter_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
-                    // A filter applied to the given area.
-                    $bundle->addEvent('filter', '«areaPrefix».filter_hooks.«areaName».filter');
-                    $this->registerHookSubscriberBundle($bundle);
-                «ENDFOR»
-
-                «/* TODO see #15
-                    Example for name of provider area: provider_area.comments.general
-
-                    $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»ProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Providers'));
-                    $bundle->addServiceHandler('display_view', 'Ratings_Hooks', 'uiView', 'ratings.service');
-                    // add other hooks as needed
-                    $this->registerHookProviderBundle($bundle);
-
-                    //... repeat as many times as necessary
-                */»
+                «val hookHelper = new HookBundles()»
+                «hookHelper.setup(it)»
             }
         }
     '''
 
     def private appInfoImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»;
-
-            use «appNamespace»\Base\«name.formatForCodeCapital»ModuleVersion as Base«name.formatForCodeCapital»ModuleVersion;
-
-        «ENDIF»
         /**
          * Version information implementation class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Version extends «appName»_Base_Version
-        «ELSE»
-        class «name.formatForCodeCapital»ModuleVersion extends Base«name.formatForCodeCapital»ModuleVersion
-        «ENDIF»
         {
             // custom enhancements can go here
         }
