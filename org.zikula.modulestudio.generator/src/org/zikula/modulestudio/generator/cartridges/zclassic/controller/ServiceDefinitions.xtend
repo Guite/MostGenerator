@@ -153,6 +153,7 @@ class ServiceDefinitions {
         «modPrefix».controller_helper:
             class: "«nsBase»ControllerHelper"
             arguments:
+                serviceManager: "@service_container"
                 translator: "@translator"
                 session: "@session"
                 logger: "@logger"

@@ -482,12 +482,12 @@ class Installer {
             «IF hasUploads»
 
                 // remove all thumbnails
-                $manager = $this->getServiceManager()->get«IF targets('1.3.x')»Service«ENDIF»('systemplugin.imagine.manager');
+                $manager = «IF targets('1.3.x')»$this->getServiceManager()->getService«ELSE»$this->container->get«ENDIF»('systemplugin.imagine.manager');
                 $manager->setModule($this->name);
                 $manager->cleanupModuleThumbs();
 
                 // remind user about upload folders not being deleted
-                $uploadPath = FileUtil::getDataDirectory() . '/' . $this->name . '/';
+                $uploadPath = «IF targets('1.3.x')»FileUtil::getDataDirectory()«ELSE»$this->container->getParameter('datadir')«ENDIF» . '/' . $this->name . '/';
                 «IF targets('1.3.x')»
                     LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
                 «ELSE»

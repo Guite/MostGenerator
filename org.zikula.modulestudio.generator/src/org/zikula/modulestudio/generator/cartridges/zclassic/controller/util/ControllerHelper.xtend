@@ -44,6 +44,7 @@ class ControllerUtil {
                 use UserUtil;
             «ENDIF»
             use Monolog\Logger;
+            use Symfony\Component\DependencyInjection\ContainerBuilder;
             «IF hasUploads»
                 use Symfony\Component\Filesystem\Filesystem;
                 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -63,6 +64,11 @@ class ControllerUtil {
         {
             «IF !targets('1.3.x')»
                 /**
+                 * @var ContainerBuilder
+                 */
+                private $container;
+
+                /**
                  * @var Translator
                  */
                 protected $translator;
@@ -81,14 +87,16 @@ class ControllerUtil {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param Translator $translator Translator service instance.
-                 * @param Session    $session    Session service instance.
-                 * @param Logger     $logger     Logger service instance.
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 * @param Translator             $translator     Translator service instance.
+                 * @param Session                $session        Session service instance.
+                 * @param Logger                 $logger         Logger service instance.
                  *
                  * @return void
                  */
-                public function __construct($translator, Session $session, Logger $logger)
+                public function __construct(\Zikula_ServiceManager $serviceManager, $translator, Session $session, Logger $logger)
                 {
+                    $this->container = $serviceManager;
                     $this->translator = $translator;
                     $this->session = $session;
                     $this->logger = $logger;
@@ -308,7 +316,7 @@ class ControllerUtil {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $basePath = FileUtil::getDataDirectory() . '/«appName»/';
+            $basePath = «IF targets('1.3.x')»FileUtil::getDataDirectory()«ELSE»$this->container->getParameter('datadir')«ENDIF» . '/«appName»/';
 
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»
@@ -422,7 +430,7 @@ class ControllerUtil {
 
                     // Write a htaccess file into the upload directory
                     $htaccessFilePath = $uploadPath . '/.htaccess';
-                    $htaccessFileTemplate = '«rootFolder»/«getAppDocPath»htaccessTemplate';
+                    $htaccessFileTemplate = '«rootFolder»/«IF !targets('1.3.x')»«appName»/«ENDIF»«getAppDocPath»htaccessTemplate';
                     if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
                         $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                         $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents(DataUtil::formatForOS($htaccessFileTemplate, false)));
