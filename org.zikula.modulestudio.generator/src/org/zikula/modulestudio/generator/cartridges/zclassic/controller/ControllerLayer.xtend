@@ -245,6 +245,10 @@ class ControllerLayer {
             use UserUtil;
             use Zikula_View;
             use ZLanguage;
+            «IF hasActions('view')»
+                use Zikula\Component\SortableColumns\Column;
+                use Zikula\Component\SortableColumns\SortableColumns;
+            «ENDIF»
             use Zikula\Core\Controller\AbstractController;
             «IF (hasActions('view') && app.hasAdminController) || hasActions('delete')»
                 use Zikula\Core\Hook\ProcessHook;

@@ -435,7 +435,11 @@ class View {
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=«IF entity.application.targets('1.3.x')»$lct«ELSE»'«entity.name.formatForCode»'«ENDIF» func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)»«IF entity.application.targets('1.3.x')» ot='«entity.name.formatForCode»'«ELSE» lct=$lct«ENDIF»}
+        «IF entity.application.targets('1.3.x')»
+            {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=$lct func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)» ot='«entity.name.formatForCode»'}
+        «ELSE»
+            <a href="{$sort.«fieldName».url}" title="{gt text='Sort by %s' tag1='«label.formatForDisplay»'}" class="{$sort.«fieldName».class}">{gt text='«label.formatForDisplayCapital»'}</a>
+        «ENDIF»
     '''
 
     def private headerSortingLinkParameters(DataObject it) ''' sortdir=$sdir all=$all own=$own«IF it instanceof Entity && (it as Entity).categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«sortParamsForLocaleFields»«IF hasAbstractStringFieldsEntity» q=$q«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''

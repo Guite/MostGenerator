@@ -13,6 +13,8 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.NamedObject
+import de.guite.modulestudio.metamodel.OneToManyRelationship
+import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
@@ -20,6 +22,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Actions {
@@ -28,6 +31,7 @@ class Actions {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     Application app
@@ -362,6 +366,14 @@ class Actions {
             }
         «ENDIF»
 
+        // convenience vars to make code clearer
+        $currentUrlArgs = array();
+        $where = '';
+
+        «prepareViewUrlArgs(true)»
+
+        $additionalParameters = $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs);
+
         // parameter for used sorting field
         «IF app.targets('1.3.x')»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
@@ -378,20 +390,15 @@ class Actions {
         «ELSE»
             // parameter for used sort order
             $sortdir = strtolower($sortdir);
+
+            «sortableColumns»
         «ENDIF»
-
-        // convenience vars to make code clearer
-        $currentUrlArgs = array();
-
-        $where = '';
 
         $selectionArgs = array(
             'ot' => $objectType,
             'where' => $where,
             'orderBy' => $sort . ' ' . $sortdir
         );
-
-        «prepareViewUrlArgs(true)»
 
         // prepare access level for cache id
         $accessLevel = ACCESS_READ;
@@ -460,6 +467,46 @@ class Actions {
         «prepareViewItemsEntity»
     '''
 
+    def private sortableColumns(Entity it) '''
+        $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_view', 'sort', 'sortdir');
+        «val listItemsFields = getDisplayFieldsForView»
+        «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
+        «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
+        «FOR field : listItemsFields»
+            «addSortColumn(field.name)»
+        «ENDFOR»
+        «FOR relation : listItemsIn»
+            «addSortColumn(relation.getRelationAliasName(false))»
+        «ENDFOR»
+        «FOR relation : listItemsOut»
+            «addSortColumn(relation.getRelationAliasName(true))»
+        «ENDFOR»
+        «IF geographical»
+            «addSortColumn('latitude')»
+            «addSortColumn('longitude')»
+        «ENDIF»
+        «IF standardFields»
+            «addSortColumn('createdUserId')»
+            «addSortColumn('createdDate')»
+            «addSortColumn('updatedUserId')»
+            «addSortColumn('updatedDate')»
+        «ENDIF»
+        $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
+
+        $additionalUrlParameters = array(
+            'all' => $showAllEntries,
+            'own' => $showOwnEntries,
+            'pageSize' => $resultsPerPage,
+            'lct' => $request->query->filter('lct', 'user', false, FILTER_SANITIZE_STRING)
+        );
+        $additionalUrlParameters = array_merge($additionalUrlParameters, $additionalParameters);
+        $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
+    '''
+
+    def private addSortColumn(Entity it, String columnName) '''
+        $sortableColumns->addColumn(new Column('«columnName.formatForCode»'));
+    '''
+
     def private prepareViewUrlArgs(NamedObject it, Boolean hasView) '''
         «IF app.targets('1.3.x')»
             $showOwnEntries = (int) $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
@@ -499,11 +546,15 @@ class Actions {
 
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $entities)
+                   «IF app.targets('1.3.x')»
                    ->assign('sort', $sort)
                    ->assign('sdir', $sortdir)
+                   «ELSE»
+                   ->assign('sort', $sortableColumns->generateSortableColumns())
+                   «ENDIF»
                    ->assign('pageSize', $resultsPerPage)
                    ->assign('currentUrlObject', $currentUrlObject)
-                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+                   ->assign($additionalParameters);
 
         «IF app.targets('1.3.x')»
             $modelHelper = new «app.appName»_Util_Model($this->serviceManager);
