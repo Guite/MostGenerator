@@ -352,7 +352,7 @@ class Validation {
         /**
          * «IF targets('1.3.x')»Adds«ELSE»Runs«ENDIF» special validation rules.
          */
-        function «vendorAndName»«IF targets('1.3.x')»AddCommonValidationRules«ELSE»PerformCustomValidationRules«ENDIF»(objectType, id)
+        function «vendorAndName»«IF targets('1.3.x')»AddCommonValidationRules«ELSE»PerformCustomValidationRules«ENDIF»(objectType, currentEntityId)
         {
             «IF targets('1.3.x')»
                 Validation.addAllThese([
@@ -416,7 +416,7 @@ class Validation {
                     «ENDFOR»
                     «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                         ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'), function(val, elem) {
-                            return «vendorAndName»UniqueCheck('«name.formatForCode»', val, elem, id);
+                            return «vendorAndName»UniqueCheck($(elem).readAttribute('id'), val, elem, currentEntityId);
                         }]
                     «ENDIF»
                 ]);
@@ -521,7 +521,7 @@ class Validation {
                 «ENDFOR»
                 «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                     jQuery('.validate-unique').each( function() {
-                        if («vendorAndName»UniqueCheck('«name.formatForCode»', jQuery(this).val(), jQuery(this), id)) {
+                        if («vendorAndName»UniqueCheck(jQuery(this).attr('id'), jQuery(this).val(), jQuery(this), currentEntityId)) {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('This value is already assigned, but must be unique. Please change it.', '«appName.formatForDB»_js'));
                         } else {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
