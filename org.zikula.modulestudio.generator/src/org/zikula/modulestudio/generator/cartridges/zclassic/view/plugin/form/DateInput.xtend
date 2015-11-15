@@ -115,7 +115,7 @@ class DateInput {
                         $date = strtotime($this->initDate);
                     }
         
-                    if ($date != null) {                
+                    if ($date != null) {
                         $this->text = DateUtil::getDatetime($date, $this->ifFormat, false);
                     } else {
                         $this->text = __('Unknown date');
