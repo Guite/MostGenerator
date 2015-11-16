@@ -58,7 +58,7 @@ class Custom {
             {pagesetvar name='title' value=$templateTitle}
             «controller.templateHeader(name)»
 
-            <p>Please override this template by moving it from <em>/«app.rootFolder»/«app.appName»/«IF app.targets('1.3.x')»templates/«controller.formattedName»«ELSE»«app.getViewPath»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+            <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (!app.targets('1.3.x') && app.systemModule) app.name.formatForCode else app.appName»/«IF app.targets('1.3.x')»templates/«controller.formattedName»«ELSE»«app.getViewPath»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
         </div>
         {include file='«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
@@ -80,7 +80,7 @@ class Custom {
             {pagesetvar name='title' value=$templateTitle}
             «entity.templateHeader(name)»
 
-            <p>Please override this template by moving it from <em>/«app.rootFolder»/«app.appName»/«IF app.targets('1.3.x')»templates/«entity.name.formatForDisplay»«ELSE»«app.getViewPath»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.x')»«entity.name.formatForDisplay»«ELSE»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.x')»«entity.name.formatForDisplay»«ELSE»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+            <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (!app.targets('1.3.x') && app.systemModule) app.name.formatForCode else app.appName»/«IF app.targets('1.3.x')»templates/«entity.name.formatForDisplay»«ELSE»«app.getViewPath»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.x')»«entity.name.formatForDisplay»«ELSE»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.x')»«entity.name.formatForDisplay»«ELSE»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
         </div>
         «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}

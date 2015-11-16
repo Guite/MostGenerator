@@ -59,7 +59,7 @@ class OverrideTemplates {
         «IF targets('1.3.x')»
             «{sourcePath = sourcePath.replace('src/', '');''}»
         «ELSE»
-            «{sourcePath = rootFolder + '/' + vendorAndName + '/' + sourcePath;''}»
+            «{sourcePath = rootFolder + '/' + (if (systemModule) name.formatForCodeCapital else vendorAndName) + '/' + sourcePath;''}»
         «ENDIF»
         «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (targets('1.3.x')) 'templates' else 'Resources/views') + '/modules/' + appName + '/'»
         «var templateFolder = ''»

@@ -157,8 +157,8 @@ class ExternalView {
         <head>
             <title>{gt text='Search and select «name.formatForDisplay»'}</title>
             <link type="text/css" rel="stylesheet" href="{$baseurl}style/core.css" />
-            <link type="text/css" rel="stylesheet" href="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.x')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»style.css" />
-            <link type="text/css" rel="stylesheet" href="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.x')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»finder.css" />
+            <link type="text/css" rel="stylesheet" href="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.x')»«app.appName»/style/«ELSE»«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getAppCssPath»«ENDIF»style.css" />
+            <link type="text/css" rel="stylesheet" href="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.x')»«app.appName»/style/«ELSE»«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getAppCssPath»«ENDIF»finder.css" />
             {assign var='ourEntry' value=$modvars.ZConfig.entrypoint}
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
@@ -175,7 +175,7 @@ class ExternalView {
                     <script type="text/javascript" src="web/jquery/jquery.min.js"></script>
                     <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
                 «ENDIF»
-            <script type="text/javascript" src="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.x')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js"></script>
+            <script type="text/javascript" src="{$baseurl}«app.rootFolder»/«IF app.targets('1.3.x')»«app.appName»/javascript/«ELSE»«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getAppJsPath»«ENDIF»«app.appName»«IF app.targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js"></script>
         «IF app.targets('1.3.x')»
             {if $editorName eq 'tinymce'}
                 <script type="text/javascript" src="{$baseurl}modules/Scribite/includes/tinymce/tiny_mce_popup.js"></script>

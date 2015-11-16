@@ -199,7 +199,7 @@ class ThirdParty {
         $helpers->add(
             array('module' => '«appName»',
                   'type'   => 'javascript',
-                  'path'   => '«rootFolder»/«IF targets('1.3.x')»«appName»/javascript/«ELSE»«appName»/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js')
+                  'path'   => '«rootFolder»/«IF targets('1.3.x')»«appName»/javascript/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js')
         );
     '''
 
@@ -229,7 +229,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«appName»/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/plugins/«appName.formatForDB»/editor_plugin.js'
+                  'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/plugins/«appName.formatForDB»/editor_plugin.js'
             )
         );
     '''
@@ -260,7 +260,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«appName»/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                  'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
                   'file' => 'plugin.js',
                   'img'  => 'ed_«appName.formatForDB».gif'
             )

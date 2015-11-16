@@ -193,7 +193,7 @@ class ContentTypeSingle {
             «IF targets('1.3.x')»
                 array_push($this->view->plugins_dir, '«rootFolder»/«appName»/templates/plugins');
             «ELSE»
-                array_push($this->view->plugins_dir, '«rootFolder»/«getViewPath»/plugins');
+                array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getViewPath»/plugins');
             «ENDIF»
 
             // required as parameter for the item selector plugin

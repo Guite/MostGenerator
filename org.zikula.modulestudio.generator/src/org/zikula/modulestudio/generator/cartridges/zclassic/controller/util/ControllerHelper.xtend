@@ -430,7 +430,7 @@ class ControllerUtil {
 
                     // Write a htaccess file into the upload directory
                     $htaccessFilePath = $uploadPath . '/.htaccess';
-                    $htaccessFileTemplate = '«rootFolder»/«IF !targets('1.3.x')»«appName»/«ENDIF»«getAppDocPath»htaccessTemplate';
+                    $htaccessFileTemplate = '«rootFolder»/«IF !targets('1.3.x')»«if (systemModule) name.formatForCode else appName»/«ENDIF»«getAppDocPath»htaccessTemplate';
                     if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
                         $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                         $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents(DataUtil::formatForOS($htaccessFileTemplate, false)));
@@ -467,7 +467,7 @@ class ControllerUtil {
             $json = '';
 
             // we can either use Snoopy if available
-            //require_once('«rootFolder»/«IF targets('1.3.x')»«appName»/lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
+            //require_once('«rootFolder»/«IF targets('1.3.x')»«appName»/lib«ELSE»«if (systemModule) name.formatForCode else appName»«ENDIF»/vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$json = $snoopy->results;

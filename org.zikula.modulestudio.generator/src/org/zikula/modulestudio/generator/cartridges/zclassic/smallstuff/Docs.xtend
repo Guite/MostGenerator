@@ -126,15 +126,17 @@ class Docs {
 
         1) Copy «appName» to your modules folder.
         2) Initialize and activate «appName» in the modules administration.
-        «IF !targets('1.3.x')»
-            3) Move or copy the directory `Resources/userdata/«appName»/` to `/userdata/«appName»/`.
-               Note this step is optional as the install process can create these folders, too.
-            «IF hasUploads»
-                4) Make the directory `/userdata/«appName»/` writable including all sub folders.
-            «ENDIF»
-        «ELSE»
-            «IF hasUploads»
-                3) Make the directory `/userdata/«appName»/` writable including all sub folders.
+        «IF hasUploads»
+            «IF !targets('1.3.x')»
+                3) Move or copy the directory `Resources/userdata/«appName»/` to `/userdata/«appName»/`.
+                   Note this step is optional as the install process can create these folders, too.
+                «IF hasUploads»
+                    4) Make the directory `/userdata/«appName»/` writable including all sub folders.
+                «ENDIF»
+            «ELSE»
+                «IF hasUploads»
+                    3) Make the directory `/userdata/«appName»/` writable including all sub folders.
+                «ENDIF»
             «ENDIF»
         «ENDIF»
 

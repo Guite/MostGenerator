@@ -641,7 +641,7 @@ class Forms {
                     <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
                     <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
                 «ENDIF»
-                <script type="text/javascript" src="{$baseurl}«rootFolder»/«appName»/«IF targets('1.3.x')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_e«ELSE».E«ENDIF»ditFunctions.js"></script>
+                <script type="text/javascript" src="{$baseurl}«rootFolder»/«if (!targets('1.3.x') && systemModule) name.formatForCode else appName»/«IF targets('1.3.x')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_e«ELSE».E«ENDIF»ditFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">
