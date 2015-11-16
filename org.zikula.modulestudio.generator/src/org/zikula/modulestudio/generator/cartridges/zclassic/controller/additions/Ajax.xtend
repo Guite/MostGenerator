@@ -213,7 +213,7 @@ class Ajax {
         «IF app.targets('1.3.x')»
             $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
         «ENDIF»
         $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListFinder');
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
@@ -225,7 +225,7 @@ class Ajax {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
         «ENDIF»
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
@@ -334,7 +334,7 @@ class Ajax {
         «IF app.targets('1.3.x')»
             $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
         «ENDIF»
         $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
@@ -345,7 +345,7 @@ class Ajax {
             $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
-            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
         «ENDIF»
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
@@ -453,9 +453,9 @@ class Ajax {
                     //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
                     $imagineManager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
                 «ELSE»
-                    //$imageHelper = $this->serviceManager->get('«app.appName.formatForDB».image_helper');
+                    //$imageHelper = $this->get('«app.appName.formatForDB».image_helper');
                     //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
-                    $imagineManager = $this->serviceManager->get('systemplugin.imagine.manager');
+                    $imagineManager = $this->get('systemplugin.imagine.manager');
                 «ENDIF»
             }
         «ENDIF»
@@ -514,7 +514,7 @@ class Ajax {
         «ELSE»
             /* can probably be removed
              * $createMethod = 'create' . ucfirst($objectType);
-             * $object = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+             * $object = $this->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
              */
         «ENDIF»
 
@@ -527,7 +527,7 @@ class Ajax {
                     «IF app.targets('1.3.x')»
                         $repository = $this->entityManager->getRepository($entityClass);
                     «ELSE»
-                        $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                        $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
                     «ENDIF»
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
@@ -560,7 +560,7 @@ class Ajax {
         «IF app.targets('1.3.x')»
             $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
         «ENDIF»
         $utilArgs = array('controller' => '«formattedName»', 'action' => 'checkForDuplicate');
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
@@ -673,7 +673,7 @@ class Ajax {
                         'state' => $entity[$field]);
         «IF !app.targets('1.3.x')»
 
-            $logger = $this->serviceManager->get('logger');
+            $logger = $this->get('logger');
             $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id));
         «ENDIF»
 
@@ -751,7 +751,7 @@ class Ajax {
             $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
             $createMethod = 'create' . ucfirst($objectType);
-            $repository = $this->serviceManager->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
         «ENDIF»
 
         $rootId = 1;
@@ -832,7 +832,7 @@ class Ajax {
 
     def private treeOperationSwitch(AjaxController it, Application app) '''
         «IF !app.targets('1.3.x')»
-            $logger = $this->serviceManager->get('logger');
+            $logger = $this->get('logger');
 
         «ENDIF»
         switch ($op) {
@@ -883,7 +883,7 @@ class Ajax {
             «IF app.targets('1.3.x')»
                 $entity = new $entityClass();
             «ELSE»
-                $entity = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+                $entity = $this->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
             «ENDIF»
             $entityData = array();
             if (!empty($titleFieldName)) {
@@ -904,7 +904,7 @@ class Ajax {
                 «IF app.targets('1.3.x')»
                     $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
                 «ELSE»
-                    $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
+                    $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
                 «ENDIF»
                 $success = $workflowHelper->executeAction($entity, $action);
             } catch(\Exception $e) {
@@ -923,7 +923,7 @@ class Ajax {
             «IF app.targets('1.3.x')»
                 $childEntity = new $entityClass();
             «ELSE»
-                $childEntity = $this->serviceManager->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+                $childEntity = $this->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
             «ENDIF»
             $entityData = array();
             $entityData[$titleFieldName] = $this->__('New child node');
@@ -939,7 +939,7 @@ class Ajax {
                 «IF app.targets('1.3.x')»
                     $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
                 «ELSE»
-                    $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
+                    $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
                 «ENDIF»
                 $success = $workflowHelper->executeAction($childEntity, $action);
             } catch(\Exception $e) {
@@ -972,7 +972,7 @@ class Ajax {
                 «IF app.targets('1.3.x')»
                     $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
                 «ELSE»
-                    $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
+                    $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
                 «ENDIF»
             $success = $workflowHelper->executeAction($entity, $action);
         } catch(\Exception $e) {

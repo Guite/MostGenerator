@@ -72,7 +72,7 @@ class ComposerFile {
             «ENDIF»
         },
         "suggest": {
-            «dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.RECOMMENDATION]»
+            «{ dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.RECOMMENDATION]; '' }»
             «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»

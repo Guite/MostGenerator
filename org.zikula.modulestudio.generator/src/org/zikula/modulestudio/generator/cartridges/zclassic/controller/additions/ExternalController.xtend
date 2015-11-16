@@ -58,8 +58,10 @@ class ExternalController {
             protected $categorisableObjectTypes;
 
         «ENDIF»
-        «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
-        «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands.toString)»
+        «IF targets('1.3.x')»
+            «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
+            «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands.toString)»
+        «ENDIF»
 
         «externalBaseImpl»
     }
@@ -113,7 +115,7 @@ class ExternalController {
             $getData = $this->request->query;
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
         «ENDIF»
 
         $objectType = «IF targets('1.3.x')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
@@ -146,8 +148,8 @@ class ExternalController {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($this->request);
+            $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($this->get('request'));
         «ENDIF»
         $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
         $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
@@ -167,7 +169,10 @@ class ExternalController {
 
         $instance = $entity->createCompositeIdentifier() . '::';
 
-        $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+        «IF !targets('1.3.x')»
+            $view = Zikula_View::getInstance('«appName»', false);
+        «ENDIF»
+        $«IF targets('1.3.x')»this->«ENDIF»view->setCaching(Zikula_View::CACHE_ENABLED);
         // set cache id
         $accessLevel = ACCESS_READ;
         if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
@@ -176,17 +181,17 @@ class ExternalController {
         if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
-        $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
+        $«IF targets('1.3.x')»this->«ENDIF»view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
 
-        $this->view->assign('objectType', $objectType)
-                  ->assign('source', $source)
-                  ->assign($objectType, $entity)
-                  ->assign('displayMode', $displayMode);
+        $«IF targets('1.3.x')»this->«ENDIF»view->assign('objectType', $objectType)
+        «IF targets('1.3.x')»      «ENDIF»     ->assign('source', $source)
+        «IF targets('1.3.x')»      «ENDIF»     ->assign($objectType, $entity)
+        «IF targets('1.3.x')»      «ENDIF»     ->assign('displayMode', $displayMode);
 
         «IF targets('1.3.x')»
             return $this->view->fetch('external/' . $objectType . '/display.tpl');
         «ELSE»
-            return $this->response($this->view->fetch('External/' . ucfirst($objectType) . '/display.tpl'));
+            return $this->response($view->fetch('External/' . ucfirst($objectType) . '/display.tpl'));
         «ENDIF»
     '''
 
@@ -242,7 +247,7 @@ class ExternalController {
         «IF targets('1.3.x')»
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
         «ENDIF»
 
         «IF targets('1.3.x')»
@@ -266,8 +271,8 @@ class ExternalController {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($this->request);
+            $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository->setRequest($this->get('request'));
         «ENDIF»
 
         «IF targets('1.3.x')»
@@ -327,6 +332,9 @@ class ExternalController {
         «IF hasCategorisableEntities»
 
             // assign category properties
+            «IF !targets('1.3.x')»
+                «categoryInitialisation»
+            «ENDIF»
             $properties = null;
             if (in_array($objectType, $this->categorisableObjectTypes)) {
                 $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));

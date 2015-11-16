@@ -127,7 +127,7 @@ class ControllerLayer {
         {
             «IF isAjaxController»
 
-            «ELSE»
+            «ELSEIF app.targets('1.3.x')»
                 «val isUserController = (it instanceof UserController)»
                 «new ControllerHelper().controllerPostInitialize(it, isUserController, '')»
             «ENDIF»
@@ -155,8 +155,10 @@ class ControllerLayer {
          */
         class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_AbstractController«ELSE»«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
         {
-            «new ControllerHelper().controllerPostInitialize(it, false, '')»
+            «IF app.targets('1.3.x')»
+                «new ControllerHelper().controllerPostInitialize(it, false, '')»
 
+            «ENDIF»
             «val actionHelper = new ControllerAction(app)»
             «FOR action : actions»«actionHelper.generate(it, action, true)»«ENDFOR»
             «IF hasActions('view') && app.hasAdminController»
@@ -319,7 +321,7 @@ class ControllerLayer {
         «IF app.targets('1.3.x')»
             $redirectUrl = ModUtil::url($this->name, 'admin', 'main', array('ot' => '«name.formatForCode»'));
         «ELSE»
-            $redirectUrl = $this->serviceManager->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_index', array('lct' => 'admin'));
+            $redirectUrl = $this->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_index', array('lct' => 'admin'));
         «ENDIF»
 
         $objectType = '«name.formatForCode»';
@@ -333,7 +335,7 @@ class ControllerLayer {
         «IF app.targets('1.3.x')»
             $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
         «ELSE»
-            $workflowHelper = $this->serviceManager->get('«app.appName.formatForDB».workflow_helper');
+            $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
         «ENDIF»
 
         // process each item
@@ -378,7 +380,7 @@ class ControllerLayer {
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
-                    $logger = $this->serviceManager->get('logger');
+                    $logger = $this->get('logger');
                     $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()));
                 «ENDIF»
             }
@@ -392,7 +394,7 @@ class ControllerLayer {
                     LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item deleted.'));
-                    $logger = $this->serviceManager->get('logger');
+                    $logger = $this->get('logger');
                     $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
                 «ENDIF»
             } else {
@@ -400,7 +402,7 @@ class ControllerLayer {
                     LogUtil::registerStatus($this->__('Done! Item updated.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add('status', $this->__('Done! Item updated.'));
-                    $logger = $this->serviceManager->get('logger');
+                    $logger = $this->get('logger');
                     $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
                 «ENDIF»
             }
@@ -430,7 +432,10 @@ class ControllerLayer {
         }
 
         // clear view cache to reflect our changes
-        $this->view->clear_cache();
+        «IF !app.targets('1.3.x')»
+            $view = Zikula_View::getInstance('«app.appName»', false);
+        «ENDIF»
+        $«IF app.targets('1.3.x')»this->«ENDIF»view->clear_cache();
 
         «IF app.targets('1.3.x')»
             return $this->redirect($redirectUrl);
@@ -481,10 +486,13 @@ class ControllerLayer {
             return false;
         }
 
-        $this->view->assign('itemId', $id)
-                   ->assign('idPrefix', $idPrefix)
-                   ->assign('commandName', $commandName)
-                   ->assign('jcssConfig', JCSSUtil::getJSConfig());
+        «IF !app.targets('1.3.x')»
+            $view = Zikula_View::getInstance('«app.appName»', false);
+        «ENDIF»
+        $«IF app.targets('1.3.x')»this->«ENDIF»view->assign('itemId', $id)
+        «IF app.targets('1.3.x')»      «ENDIF»     ->assign('idPrefix', $idPrefix)
+        «IF app.targets('1.3.x')»      «ENDIF»     ->assign('commandName', $commandName)
+        «IF app.targets('1.3.x')»      «ENDIF»     ->assign('jcssConfig', JCSSUtil::getJSConfig());
 
         «var typeName = ''»
         «IF it instanceof Controller»
@@ -497,7 +505,7 @@ class ControllerLayer {
 
             return true;
         «ELSE»
-            return new PlainResponse($this->view->fetch('«typeName.toFirstUpper»/inlineRedirectHandler.tpl'));
+            return new PlainResponse($view->fetch('«typeName.toFirstUpper»/inlineRedirectHandler.tpl'));
         «ENDIF»
     '''
 
@@ -776,7 +784,7 @@ class ControllerLayer {
 
     def private menuLinkToViewAction(Entity it, Controller controller) '''
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
-            && SecurityUtil::checkPermission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
+            && «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF app.targets('1.3.x')»$this->name«ELSE»$this->getBundleName()«ENDIF» . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
             «IF app.targets('1.3.x')»
                 $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
