@@ -45,6 +45,7 @@ class Search {
     def private searchHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        use FormUtil;
         use ModUtil;
         use ServiceUtil;
         use ZLanguage;
@@ -119,8 +120,8 @@ class Search {
         /**
          * Display the search form.
          *
-         * @param boolean    $active
-         * @param array|null $modVars
+         * @param boolean    $active  if the module should be checked as active
+         * @param array|null $modVars module form vars as previously set
          *
          * @return string Template output
          */
@@ -297,8 +298,6 @@ class Search {
                 return array();
             }
 
-            $serviceManager = ServiceUtil::getManager();
-
             // save session id as it is used when inserting search results below
             $session = $serviceManager->get('session');
             $sessionId = $session->getId();
@@ -310,7 +309,7 @@ class Search {
             $records = array();
 
             // retrieve list of activated object types
-            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : array();
+            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : (array) FormUtil::getPassedValue('«appName.toFirstLower»SearchTypes', array(), 'GETPOST');
 
             $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
             $utilArgs = array('helper' => 'search', 'action' => 'getResults');
