@@ -75,10 +75,12 @@ class ExampleData {
         «val app = application»
         «IF app.targets('1.3.x')»
             $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
+            $this->entityManager->getRepository($entityClass)->truncateTable();
         «ELSE»
             $entityClass = '«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity';
+            $entityManager = $this->container->get('doctrine.entitymanager');
+            $entityManager->getRepository($entityClass)->truncateTable();
         «ENDIF»
-        $this->entityManager->getRepository($entityClass)->truncateTable();
     '''
 
     def private createExampleRows(Application it) '''
@@ -138,7 +140,7 @@ class ExampleData {
         «val entityName = name.formatForCode»
         «IF categorisable»
             $categoryId = 41; // Business and work
-            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.x')»_Doctrine2_Entity_Category«ELSE»CategoriesModule:CategoryEntity«ENDIF»', $categoryId);
+            $category = $«IF app.targets('1.3.x')»this->«ENDIF»entityManager->find('Zikula«IF app.targets('1.3.x')»_Doctrine2_Entity_Category«ELSE»CategoriesModule:CategoryEntity«ENDIF»', $categoryId);
         «ENDIF»
         «FOR number : 1..app.amountOfExampleRows»
             «IF isInheriting»

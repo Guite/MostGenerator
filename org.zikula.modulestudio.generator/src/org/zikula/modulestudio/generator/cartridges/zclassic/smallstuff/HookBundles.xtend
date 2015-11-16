@@ -14,7 +14,7 @@ class HookBundles {
         «val areaPrefix = appName.formatForDB»
         «FOR entity : getAllEntities»
             «/* we register one hook subscriber bundle for each entity type */»«val areaName = entity.nameMultiple.formatForDB»
-            $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«areaPrefix».ui_hooks.«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
+            $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle('«appName»', 'subscriber.«areaPrefix».ui_hooks.«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
             «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
             // Display hook for view/display templates.
             $bundle->addEvent('display_view', '«areaPrefix».ui_hooks.«areaName».display_view');
@@ -32,7 +32,7 @@ class HookBundles {
             $bundle->addEvent('process_delete', '«areaPrefix».ui_hooks.«areaName».process_delete');
             $this->registerHookSubscriberBundle($bundle);
 
-            $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«areaPrefix».filter_hooks.«areaName»', 'filter_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
+            $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle('«appName»', 'subscriber.«areaPrefix».filter_hooks.«areaName»', 'filter_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
             // A filter applied to the given area.
             $bundle->addEvent('filter', '«areaPrefix».filter_hooks.«areaName».filter');
             $this->registerHookSubscriberBundle($bundle);
@@ -41,7 +41,7 @@ class HookBundles {
         «/* TODO see #15
             Example for name of provider area: provider_area.comments.general
 
-            $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»ProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Providers'));
+            $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»ProviderBundle('«appName»', 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Providers'));
             $bundle->addServiceHandler('display_view', 'Ratings_Hooks', 'uiView', 'ratings.service');
             // add other hooks as needed
             $this->registerHookProviderBundle($bundle);

@@ -65,6 +65,7 @@ class Installer {
             use Symfony\Component\DependencyInjection\ContainerInterface;
             use System;
             use UserUtil;
+            use Zikula\Core\AbstractBundle;
             use Zikula\Core\ExtensionInstallerInterface;
             use Zikula\Common\Translator\TranslatorTrait;
             use Zikula_Workflow_Util;
@@ -93,6 +94,45 @@ class Installer {
 
             «ENDIF»
             «installerBaseImpl»
+            «IF !targets('1.3.x')»
+
+                /**
+                 * Sets the bundle.
+                 *
+                 * @param AbstractBundle $bundle The application bundle.
+                 *
+                 * @api
+                 */
+                public function setBundle(AbstractBundle $bundle)
+                {
+                    $this->bundle = $bundle;
+                }
+
+                /**
+                 * Sets the Container.
+                 *
+                 * @param ContainerInterface|null $container A ContainerInterface instance or null
+                 *
+                 * @api
+                 */
+                public function setContainer(ContainerInterface $container = null)
+                {
+                    $this->container = $container;
+                    $this->setTranslator($container->get('translator'));
+                }
+
+                /**
+                 * Sets the translator.
+                 *
+                 * @param TranslatorTrait $translator The translator.
+                 *
+                 * @api
+                 */
+                public function setTranslator($translator)
+                {
+                    $this->translator = $translator;
+                }
+            «ENDIF»
         }
     '''
 
@@ -158,7 +198,7 @@ class Installer {
         {
             «processUploadFolders»
             «IF !targets('1.3.x')»
-                $session = $this->container->('request')->getSession();
+                $session = $this->container->get('request')->getSession();
                 $flashBag = $session->getFlashBag();
                 $logger = $this->container->get('logger');
             «ENDIF»
@@ -259,8 +299,9 @@ class Installer {
                         $registry->setCategory_Id($categoryGlobal['id']);
 
                         try {
-                            $this->entityManager->persist($registry);
-                            $this->entityManager->flush();
+                            $entityManager = $this->container->get('doctrine.entitymanager');
+                            $entityManager->persist($registry);
+                            $entityManager->flush();
                         } catch (\Exception $e) {
                             $flashBag->add('error', $this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
                             $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()));
@@ -339,7 +380,7 @@ class Installer {
         {
         /*
             «IF !targets('1.3.x')»
-                $flashBag = $this->container->('request')->getSession()->getFlashBag();
+                $flashBag = $this->container->get('request')->getSession()->getFlashBag();
                 $logger = $this->container->get('logger');
             «ENDIF»
             // Upgrade dependent on old version number
@@ -408,7 +449,7 @@ class Installer {
         public function uninstall()
         {
             «IF !targets('1.3.x')»
-                $flashBag = $this->container->('request')->getSession()->getFlashBag();
+                $flashBag = $this->container->get('request')->getSession()->getFlashBag();
                 $logger = $this->container->get('logger');
             «ENDIF»
             // delete stored object workflows

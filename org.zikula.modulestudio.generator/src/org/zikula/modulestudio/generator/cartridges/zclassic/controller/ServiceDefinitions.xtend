@@ -26,12 +26,12 @@ class ServiceDefinitions {
     String modPrefix = ''
 
     def private generateServiceFile(Application it, IFileSystemAccess fsa, String fileName, CharSequence content) {
-        var definitionFileName = getResourcesPath + 'config/' + fileName + '.yml'
-        if (!shouldBeSkipped(definitionFileName)) {
-            if (shouldBeMarked(definitionFileName)) {
-                definitionFileName = getResourcesPath + 'config/' + fileName + '.generated.yml'
+        var definitionFilePath = getResourcesPath + 'config/' + fileName + '.yml'
+        if (!shouldBeSkipped(definitionFilePath)) {
+            if (shouldBeMarked(definitionFilePath)) {
+                definitionFilePath = getResourcesPath + 'config/' + fileName + '.generated.yml'
             }
-            definitionFileName
+            fsa.generateFile(definitionFilePath, content)
         }
     }
 

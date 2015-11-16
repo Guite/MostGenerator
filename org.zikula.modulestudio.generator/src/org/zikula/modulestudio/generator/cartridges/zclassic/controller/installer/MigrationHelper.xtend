@@ -238,10 +238,10 @@ class MigrationHelper {
          */
         protected function getConnection()
         {
-            $em = $this->entityManager;
-            $conn = $em->getConnection();
+            $entityManager = $this->container->get('doctrine.entitymanager');
+            $connection = $entityManager->getConnection();
 
-            return $conn;
+            return $connection;
         }
     '''
 
