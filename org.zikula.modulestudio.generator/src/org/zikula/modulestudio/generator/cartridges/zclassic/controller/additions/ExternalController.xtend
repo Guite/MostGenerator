@@ -6,7 +6,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Controll
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -14,7 +13,6 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExternalController {
     extension FormattingExtensions = new FormattingExtensions
-    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -242,7 +240,7 @@ class ExternalController {
         «IF targets('1.3.x')»
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
         «ELSE»
-            PageUtil::addVar('stylesheet', '@«if (systemModule) name.formatForCode else appName»/Resources/public/css/style.css');
+            PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
         «ENDIF»
 
         $getData = $this->request->query;
