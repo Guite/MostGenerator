@@ -112,7 +112,6 @@ class ComposerFile {
                 },
                 "securityschema": {
                     "«appName»::": "::",
-                    "«appName»::Ajax": "::",
                     «IF generateListBlock»
                         "«appName»:ItemListBlock:": "Block title::",
                     «ENDIF»
@@ -120,6 +119,7 @@ class ComposerFile {
                         "«appName»:ModerationBlock:": "Block title::",
                     «ENDIF»
                     «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
+                    "«appName»::Ajax": "::"
                 }
             }
         }
