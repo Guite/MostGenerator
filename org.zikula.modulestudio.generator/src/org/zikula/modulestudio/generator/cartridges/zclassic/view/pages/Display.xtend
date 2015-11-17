@@ -59,7 +59,8 @@ class Display {
             {assign var='lctUc' value=$lct|ucfirst}
             {include file="`$lctUc`/header.tpl"}
         «ENDIF»
-        «val refedElems = getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == it.application] + incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == it.application]»
+        «val refedElems = getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == it.application]
+                        + incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == it.application]»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF isLegacyApp && !refedElems.empty» with-rightbox«ENDIF»">
             «val objName = name.formatForCode»
             {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}

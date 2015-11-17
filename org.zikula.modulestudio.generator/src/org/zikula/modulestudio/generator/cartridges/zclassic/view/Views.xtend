@@ -145,7 +145,9 @@ class Views {
             customHelper.generate(action, it, entity, fsa)
         }
 
-        val refedElems = entity.getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == entity.application] + entity.incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == entity.application]
+        // reverse logic like in the display template because we are treating the included template here
+        val refedElems = entity.outgoing.filter(ManyToManyRelationship).filter[e|e.target instanceof Entity && e.target.application == entity.application]
+                       + entity.getIncomingJoinRelations.filter[e|e.source instanceof Entity && e.source.application == entity.application]
         if (!refedElems.empty) {
             relationHelper.displayItemList(entity, it, false, fsa)
             relationHelper.displayItemList(entity, it, true, fsa)
