@@ -98,7 +98,7 @@ class ComposerFile {
                     «IF hasCategorisableEntities»
                         "categorizable": {
                             «FOR entity : getCategorisableEntities»
-                                "«entity.name.formatForCode»": {"«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"}«IF entity != getCategorisableEntities.last»,«ENDIF»
+                                "«entity.name.formatForCode»": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                             «ENDFOR»
                         },
                     «ENDIF»
