@@ -1502,21 +1502,23 @@ class Repository {
             foreach ($affectedEntities as $entity) {
                 $entity->initWorkflow();
 
-                $hookAreaPrefix = $entity->getHookAreaPrefix();
+                «IF !skipHookSubscribers»
+                    $hookAreaPrefix = $entity->getHookAreaPrefix();
 
-                // Let any hooks perform additional validation actions
-                $hookType = 'validate_edit';
-                «IF app.targets('1.3.x')»
-                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                    $validators = $serviceManager->getService('zikula.hookmanager')->notify($hook)->getValidators();
-                «ELSE»
-                    $hook = new ValidationHook(new ValidationProviders());
-                    $validators = $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                    // Let any hooks perform additional validation actions
+                    $hookType = 'validate_edit';
+                    «IF app.targets('1.3.x')»
+                        $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                        $validators = $serviceManager->getService('zikula.hookmanager')->notify($hook)->getValidators();
+                    «ELSE»
+                        $hook = new ValidationHook(new ValidationProviders());
+                        $validators = $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                    «ENDIF»
+                    if ($validators->hasErrors()) {
+                        continue;
+                    }
+
                 «ENDIF»
-                if ($validators->hasErrors()) {
-                    continue;
-                }
-
                 $success = false;
                 try {
                     // execute the workflow action
@@ -1535,19 +1537,21 @@ class Repository {
                     continue;
                 }
 
-                // Let any hooks know that we have updated an item
-                $hookType = 'process_edit';
-                $urlArgs = $entity->createUrlArgs();
-                «IF app.targets('1.3.x')»
-                    $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                    $serviceManager->getService('zikula.hookmanager')->notify($hook);
-                «ELSE»
-                    $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
-                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                    $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
-                «ENDIF»
+                «IF !skipHookSubscribers»
+                    // Let any hooks know that we have updated an item
+                    $hookType = 'process_edit';
+                    $urlArgs = $entity->createUrlArgs();
+                    «IF app.targets('1.3.x')»
+                        $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                        $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                        $serviceManager->getService('zikula.hookmanager')->notify($hook);
+                    «ELSE»
+                        $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
+                        $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
+                        $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
+                    «ENDIF»
 
+                «ENDIF»
                 // An item was updated, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $entity['_objectType'], 'item' => $entity);
                 ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);

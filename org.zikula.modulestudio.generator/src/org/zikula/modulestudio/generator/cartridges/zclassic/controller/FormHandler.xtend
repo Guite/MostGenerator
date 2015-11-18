@@ -751,20 +751,22 @@ class FormHandler {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
-            $hookAreaPrefix = $entity->getHookAreaPrefix();
-            if ($action != 'cancel') {
-                $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-
-                // Let any hooks perform additional validation actions
-                «IF targets('1.3.x')»
-                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                    $validators = $this->notifyHooks($hook)->getValidators();
-                «ELSE»
-                    $hook = new ValidationHook(new ValidationProviders());
-                    $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-                «ENDIF»
-                if ($validators->hasErrors()) {
-                    return false;
+            if ($entity->supportsHookSubscribers()) {
+                $hookAreaPrefix = $entity->getHookAreaPrefix();
+                if ($action != 'cancel') {
+                    $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+    
+                    // Let any hooks perform additional validation actions
+                    «IF targets('1.3.x')»
+                        $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                        $validators = $this->notifyHooks($hook)->getValidators();
+                    «ELSE»
+                        $hook = new ValidationHook(new ValidationProviders());
+                        $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                    «ENDIF»
+                    if ($validators->hasErrors()) {
+                        return false;
+                    }
                 }
             }
             «IF hasTranslatable»
@@ -781,24 +783,26 @@ class FormHandler {
                     return false;
                 }
 
-                // Let any hooks know that we have created, updated or deleted an item
-                $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
-                $url = null;
-                if ($action != 'delete') {
-                    $urlArgs = $entity->createUrlArgs();
+                if ($entity->supportsHookSubscribers()) {
+                    // Let any hooks know that we have created, updated or deleted an item
+                    $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                    $url = null;
+                    if ($action != 'delete') {
+                        $urlArgs = $entity->createUrlArgs();
+                        «IF targets('1.3.x')»
+                            $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                        «ELSE»
+                            $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
+                        «ENDIF»
+                    }
                     «IF targets('1.3.x')»
-                        $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                        $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                        $this->notifyHooks($hook);
                     «ELSE»
-                        $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
+                        $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
+                        $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                     «ENDIF»
                 }
-                «IF targets('1.3.x')»
-                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                    $this->notifyHooks($hook);
-                «ELSE»
-                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-                «ENDIF»
 
                 // An item was created, updated or deleted, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);

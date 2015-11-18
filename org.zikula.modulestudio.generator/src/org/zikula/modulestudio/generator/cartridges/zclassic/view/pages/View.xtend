@@ -86,8 +86,10 @@ class View {
             {include file='«IF application.targets('1.3.x')»«name.formatForCode»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_quickNav.tpl' all=$all own=$own«IF !hasVisibleWorkflow» workflowStateFilter=false«ENDIF»}{* see template file for available options *}
 
             «viewForm(appName)»
+            «IF !skipHookSubscribers»
 
-            «callDisplayHooks(appName)»
+                «callDisplayHooks(appName)»
+            «ENDIF»
         </div>
         «IF application.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}

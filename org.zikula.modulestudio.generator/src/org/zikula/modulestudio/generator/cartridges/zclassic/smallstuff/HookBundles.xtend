@@ -12,7 +12,7 @@ class HookBundles {
 
     def setup(Application it) '''
         «val areaPrefix = appName.formatForDB»
-        «FOR entity : getAllEntities»
+        «FOR entity : getAllEntities.filter[e|!e.skipHookSubscribers]»
             «/* we register one hook subscriber bundle for each entity type */»«val areaName = entity.nameMultiple.formatForDB»
             $bundle = new «IF targets('1.3.x')»Zikula_HookManager_«ENDIF»SubscriberBundle('«appName»', 'subscriber.«areaPrefix».ui_hooks.«areaName»', 'ui_hooks', $this->__('«areaPrefix» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
             «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
@@ -36,6 +36,7 @@ class HookBundles {
             // A filter applied to the given area.
             $bundle->addEvent('filter', '«areaPrefix».filter_hooks.«areaName».filter');
             $this->registerHookSubscriberBundle($bundle);
+
         «ENDFOR»
 
         «/* TODO see #15

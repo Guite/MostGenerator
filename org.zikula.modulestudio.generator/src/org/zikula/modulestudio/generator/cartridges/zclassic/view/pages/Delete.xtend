@@ -66,8 +66,10 @@ class Delete {
                         «ENDIF»
                         </div>
                     </fieldset>
+                    «IF !skipHookSubscribers»
 
-                    «callDisplayHooks(appName)»
+                        «callDisplayHooks(appName)»
+                    «ENDIF»
                 </div>
             </form>
         </div>

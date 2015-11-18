@@ -115,7 +115,9 @@ class Display {
             «displayExtensions(objName)»
 
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                «callDisplayHooks(appName)»
+                «IF !skipHookSubscribers»
+                    «callDisplayHooks(appName)»
+                «ENDIF»
                 «IF isLegacyApp»
                     «new ItemActionsView().generateDisplay(it)»
                 «ENDIF»
@@ -224,7 +226,7 @@ class Display {
         {/if}
     '''
 
-    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»'''
+    def private templateHeading(Entity it, String appName) '''{$templateTitle«IF !skipHookSubscribers»|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'«ENDIF»}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»'''
 
     def private displayEntry(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»

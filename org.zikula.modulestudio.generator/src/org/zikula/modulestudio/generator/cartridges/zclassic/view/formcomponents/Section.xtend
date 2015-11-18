@@ -25,8 +25,10 @@ class Section {
 
         «extensionsAndRelations(app, fsa)»
 
-        «displayHooks(app)»
+        «IF !skipHookSubscribers»
+            «displayHooks(app)»
 
+        «ENDIF»
         «additionalRemark»
 
         «returnControl»

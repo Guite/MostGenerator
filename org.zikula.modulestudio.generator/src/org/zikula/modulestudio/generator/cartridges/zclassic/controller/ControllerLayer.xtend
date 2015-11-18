@@ -355,21 +355,23 @@ class ControllerLayer {
                 // action not allowed, skip this object
                 continue;
             }
+            «IF !skipHookSubscribers»
 
-            $hookAreaPrefix = $entity->getHookAreaPrefix();
+                $hookAreaPrefix = $entity->getHookAreaPrefix();
 
-            // Let any hooks perform additional validation actions
-            $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-            «IF app.targets('1.3.x')»
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
-            «ELSE»
-                $hook = new ValidationHook(new ValidationProviders());
-                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                // Let any hooks perform additional validation actions
+                $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                «IF app.targets('1.3.x')»
+                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                    $validators = $this->notifyHooks($hook)->getValidators();
+                «ELSE»
+                    $hook = new ValidationHook(new ValidationProviders());
+                    $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                «ENDIF»
+                if ($validators->hasErrors()) {
+                    continue;
+                }
             «ENDIF»
-            if ($validators->hasErrors()) {
-                continue;
-            }
 
             $success = false;
             try {
@@ -406,24 +408,26 @@ class ControllerLayer {
                     $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
                 «ENDIF»
             }
+            «IF !skipHookSubscribers»
 
-            // Let any hooks know that we have updated or deleted an item
-            $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
-            $url = null;
-            if ($action != 'delete') {
-                $urlArgs = $entity->createUrlArgs();
+                // Let any hooks know that we have updated or deleted an item
+                $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                $url = null;
+                if ($action != 'delete') {
+                    $urlArgs = $entity->createUrlArgs();
+                    «IF app.targets('1.3.x')»
+                        $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    «ELSE»
+                        $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
+                    «ENDIF»
+                }
                 «IF app.targets('1.3.x')»
-                    $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                    $this->notifyHooks($hook);
                 «ELSE»
-                    $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
+                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
+                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
-            }
-            «IF app.targets('1.3.x')»
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                $this->notifyHooks($hook);
-            «ELSE»
-                $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
             «ENDIF»
 
             // An item was updated or deleted, so we clear all cached pages for this item.

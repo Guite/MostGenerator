@@ -547,9 +547,11 @@ class Actions {
     '''
 
     def private prepareViewItemsEntity(Entity it) '''
+        «IF !skipHookSubscribers»
 
-        // build ModUrl instance for display hooks
-        $currentUrlObject = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+            // build ModUrl instance for display hooks
+            $currentUrlObject = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        «ENDIF»
 
         // assign the object data, sorting information and details for creating the pager
         $«IF app.targets('1.3.x')»this->«ENDIF»view->assign('items', $entities)
@@ -724,11 +726,15 @@ class Actions {
     '''
 
     def private prepareDisplayPermissionCheck(Entity it) '''
-        // build ModUrl instance for display hooks; also create identifier for permission check
-        $currentUrlArgs = $entity->createUrlArgs();
+        // «IF !skipHookSubscribers»build ModUrl instance for display hooks; also «ENDIF»create identifier for permission check
+        «IF !skipHookSubscribers»
+            $currentUrlArgs = $entity->createUrlArgs();
+        «ENDIF»
         $instanceId = $entity->createCompositeIdentifier();
-        $currentUrlArgs['id'] = $instanceId; // TODO remove this
-        $currentUrlObject = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        «IF !skipHookSubscribers»
+            $currentUrlArgs['id'] = $instanceId; // TODO remove this
+            $currentUrlObject = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        «ENDIF»
     '''
 
     def private processDisplayOutput(Entity it) '''
@@ -802,17 +808,22 @@ class Actions {
             $objectType => $entity->toArray()
         );
 
-        $hookAreaPrefix = $entity->getHookAreaPrefix();
-        $hookType = 'validate_edit';
-        // Let any hooks perform additional validation actions
-        «IF app.targets('1.3.x')»
-            $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-            $validators = $this->notifyHooks($hook)->getValidators();
-        «ELSE»
-            $hook = new ValidationHook(new ValidationProviders());
-            $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-        «ENDIF»
-        if (!$validators->hasErrors()) {
+        $hasErrors = false;
+        if ($entity->supportsHookSubscribers()) {
+            $hookAreaPrefix = $entity->getHookAreaPrefix();
+            $hookType = 'validate_edit';
+            // Let any hooks perform additional validation actions
+            «IF app.targets('1.3.x')»
+                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                $validators = $this->notifyHooks($hook)->getValidators();
+            «ELSE»
+                $hook = new ValidationHook(new ValidationProviders());
+                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+            «ENDIF»
+            $hasErrors = $validators->hasErrors();
+        }
+
+        if (!$hasErrors) {
             foreach ($idFields as $idField) {
                 unset($data[$idField]);
             }
@@ -822,19 +833,23 @@ class Actions {
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
 
-            $hookType = 'process_edit';
-            $url = null;
-            if ($action != 'delete') {
-                $urlArgs = $entity->createUrlArgs();
-                $url = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, «IF app.targets('1.3.x')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
-            }
+            if ($entity->supportsHookSubscribers()) {
+                $hookType = 'process_edit';
+                $url = null;
+                if ($action != 'delete') {
+                    $urlArgs = $entity->createUrlArgs();
+                    $url = new «IF app.targets('1.3.x')»Zikula_«ENDIF»ModUrl($this->name, «IF app.targets('1.3.x')»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                }
 
-            «IF app.targets('1.3.x')»
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                $this->notifyHooks($hook);
-            «ELSE»
-                $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                «IF app.targets('1.3.x')»
+                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                    $this->notifyHooks($hook);
+                «ELSE»
+                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
+                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                «ENDIF»
+            }
+            «IF !app.targets('1.3.x')»
 
                 $logger = $this->get('logger');
                 $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId));
@@ -950,17 +965,22 @@ class Actions {
         if ($confirmation && $deleteAllowed) {
             $this->checkCsrfToken();
 
-            $hookAreaPrefix = $entity->getHookAreaPrefix();
-            $hookType = 'validate_delete';
-            // Let any hooks perform additional validation actions
-            «IF app.targets('1.3.x')»
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
-            «ELSE»
-                $hook = new ValidationHook(new ValidationProviders());
-                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-            «ENDIF»
-            if (!$validators->hasErrors()) {
+            $hasErrors = false;
+            if ($entity->supportsHookSubscribers()) {
+                $hookAreaPrefix = $entity->getHookAreaPrefix();
+                $hookType = 'validate_delete';
+                // Let any hooks perform additional validation actions
+                «IF app.targets('1.3.x')»
+                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                    $validators = $this->notifyHooks($hook)->getValidators();
+                «ELSE»
+                    $hook = new ValidationHook(new ValidationProviders());
+                    $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                «ENDIF»
+                $hasErrors = $validators->hasErrors();
+            }
+
+            if (!$hasErrors) {
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $deleteActionId);
                 if ($success) {
@@ -973,15 +993,17 @@ class Actions {
                     «ENDIF»
                 }
 
-                // Let any hooks know that we have created, updated or deleted the «name.formatForDisplay»
-                $hookType = 'process_delete';
-                «IF app.targets('1.3.x')»
-                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
-                    $this->notifyHooks($hook);
-                «ELSE»
-                    $hook = new ProcessHook($entity->createCompositeIdentifier());
-                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-                «ENDIF»
+                if ($entity->supportsHookSubscribers()) {
+                    // Let any hooks know that we have created, updated or deleted the «name.formatForDisplay»
+                    $hookType = 'process_delete';
+                    «IF app.targets('1.3.x')»
+                        $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
+                        $this->notifyHooks($hook);
+                    «ELSE»
+                        $hook = new ProcessHook($entity->createCompositeIdentifier());
+                        $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                    «ENDIF»
+                }
 
                 // The «name.formatForDisplay» was deleted, so we clear all cached pages this item.
                 $cacheArgs = array('ot' => $objectType, 'item' => $entity);

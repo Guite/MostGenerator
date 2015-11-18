@@ -69,8 +69,12 @@ class EntityMethods {
 
         «createCompositeIdentifier»
 
-        «getHookAreaPrefix»
+        «supportsHookSubscribers»
 
+        «IF !skipHookSubscribers»
+            «getHookAreaPrefix»
+
+        «ENDIF»
         «relatedObjectsImpl(app)»
 
         «toStringImpl(app)»
@@ -381,6 +385,18 @@ class EntityMethods {
             «ENDIF»
 
             return $itemId;
+        }
+    '''
+
+    def private supportsHookSubscribers(Entity it) '''
+        /**
+         * Determines whether this entity supports hook subscribers or not.
+         *
+         * @return boolean
+         */
+        public function supportsHookSubscribers()
+        {
+            return «IF !skipHookSubscribers»true«ELSE»false«ENDIF»;
         }
     '''
 
