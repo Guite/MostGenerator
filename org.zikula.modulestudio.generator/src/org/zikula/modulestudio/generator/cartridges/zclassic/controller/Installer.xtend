@@ -219,7 +219,7 @@ class Installer {
                         return false;
                     «ENDIF»
                 }
-                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
+                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array(«IF targets('1.3.x')»$this->getName()«ELSE»'«appName»'«ENDIF»));
                 if (!System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
                         $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
@@ -408,7 +408,7 @@ class Installer {
                         «IF targets('1.3.x')»
                             return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                         «ELSE»
-                            $flashBag->add('error', $this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
+                            $flashBag->add('error', $this->__f('An error was encountered while updating tables for the %s extension.', array('«appName»')));
                             $logger->error('{app}: User {user} could not update the database tables during the ugprade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                             return false;
                         «ENDIF»
@@ -453,12 +453,12 @@ class Installer {
                 $logger = $this->container->get('logger');
             «ENDIF»
             // delete stored object workflows
-            $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
+            $result = Zikula_Workflow_Util::deleteWorkflowsForModule(«IF targets('1.3.x')»$this->getName()«ELSE»'«appName»'«ENDIF»);
             if ($result === false) {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                 «ELSE»
-                    $flashBag->add('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                    $flashBag->add('error', $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array('«appName»')));
                     $logger->error('{app}: User {user} could not remove stored object workflows during uninstallation.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
                     return false;
                 «ENDIF»
@@ -481,9 +481,9 @@ class Installer {
                     «ENDIF»
                 }
                 «IF targets('1.3.x')»
-                    return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
+                    return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->getName())));
                 «ELSE»
-                    $flashBag->add('error', $this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
+                    $flashBag->add('error', $this->__f('An error was encountered while dropping tables for the %s extension.', array('«appName»')));
                     $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
                     return false;
                 «ENDIF»
@@ -518,17 +518,17 @@ class Installer {
 
                 // remove category registry entries
                 ModUtil::dbInfoLoad('Categories');
-                DBUtil::deleteWhere('categories_registry', 'modname = \'' . $this->name . '\'');
+                DBUtil::deleteWhere('categories_registry', 'modname = \'«IF targets('1.3.x')»' . $this->getName() . '«ELSE»«appName»«ENDIF»\'');
             «ENDIF»
             «IF hasUploads»
 
                 // remove all thumbnails
                 $manager = «IF targets('1.3.x')»$this->getServiceManager()->getService«ELSE»$this->container->get«ENDIF»('systemplugin.imagine.manager');
-                $manager->setModule($this->name);
+                $manager->setModule(«IF targets('1.3.x')»$this->getName()«ELSE»'«appName»'«ENDIF»);
                 $manager->cleanupModuleThumbs();
 
                 // remind user about upload folders not being deleted
-                $uploadPath = «IF targets('1.3.x')»FileUtil::getDataDirectory()«ELSE»$this->container->getParameter('datadir')«ENDIF» . '/' . $this->name . '/';
+                $uploadPath = «IF targets('1.3.x')»FileUtil::getDataDirectory()«ELSE»$this->container->getParameter('datadir')«ENDIF» . '/«IF targets('1.3.x')»' . $this->getName() . '«ELSE»«appName»«ENDIF»/';
                 «IF targets('1.3.x')»
                     LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
                 «ELSE»
