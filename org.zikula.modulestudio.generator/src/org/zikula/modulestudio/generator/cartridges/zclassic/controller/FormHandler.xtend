@@ -1570,6 +1570,10 @@ class FormHandler {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
+            if (!$entity->validate()) {
+                return false;
+            }
+
             $action = $args['commandName'];
             «IF hasOptimisticLock || hasPessimisticWriteLock»
 

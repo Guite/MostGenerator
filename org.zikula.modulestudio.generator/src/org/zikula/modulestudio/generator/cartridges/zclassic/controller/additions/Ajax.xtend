@@ -900,13 +900,15 @@ class Ajax {
             // save new object to set the root id
             $action = 'submit';
             try {
-                // execute the workflow action
-                «IF app.targets('1.3.x')»
-                    $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
-                «ELSE»
-                    $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
-                «ENDIF»
-                $success = $workflowHelper->executeAction($entity, $action);
+                if ($entity->validate()) {
+                    // execute the workflow action
+                    «IF app.targets('1.3.x')»
+                        $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+                    «ELSE»
+                        $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+                    «ENDIF»
+                    $success = $workflowHelper->executeAction($entity, $action);
+                }
             } catch(\Exception $e) {
                 «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
             }
@@ -935,13 +937,15 @@ class Ajax {
             // save new object
             $action = 'submit';
             try {
-                // execute the workflow action
-                «IF app.targets('1.3.x')»
-                    $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
-                «ELSE»
-                    $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
-                «ENDIF»
-                $success = $workflowHelper->executeAction($childEntity, $action);
+                if ($childEntity->validate()) {
+                    // execute the workflow action
+                    «IF app.targets('1.3.x')»
+                        $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+                    «ELSE»
+                        $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+                    «ENDIF»
+                    $success = $workflowHelper->executeAction($childEntity, $action);
+                }
             } catch(\Exception $e) {
                 «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
             }
@@ -968,13 +972,15 @@ class Ajax {
         // delete the object
         $action = 'delete';
         try {
-            // execute the workflow action
+            if ($entity->validate()) {
+                // execute the workflow action
                 «IF app.targets('1.3.x')»
                     $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
                 «ELSE»
                     $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
                 «ENDIF»
-            $success = $workflowHelper->executeAction($entity, $action);
+                $success = $workflowHelper->executeAction($entity, $action);
+            }
         } catch(\Exception $e) {
             «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
         }

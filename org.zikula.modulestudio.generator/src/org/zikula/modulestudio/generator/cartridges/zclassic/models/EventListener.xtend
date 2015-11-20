@@ -400,13 +400,7 @@ class EventListener {
          */
         protected function performPreSaveCallback()
         {
-            «IF application.targets('1.3.x')»
-                $this->validate();
-            «ELSE»
-                if (!$this->validate()) {
-                    return false;
-                }
-
+            «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $dispatcher = $serviceManager->get('event_dispatcher');
 

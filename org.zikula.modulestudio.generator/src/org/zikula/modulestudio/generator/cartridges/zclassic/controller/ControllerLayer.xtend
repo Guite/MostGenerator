@@ -375,6 +375,9 @@ class ControllerLayer {
 
             $success = false;
             try {
+                if (!$entity->validate()) {
+                    continue;
+                }
                 // execute the workflow action
                 $success = $workflowHelper->executeAction($entity, $action);
             } catch(\Exception $e) {
