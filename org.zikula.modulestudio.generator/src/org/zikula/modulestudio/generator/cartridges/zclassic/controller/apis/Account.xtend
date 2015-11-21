@@ -88,7 +88,7 @@ class Account {
                             «IF targets('1.3.x')»
                                 'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
                             «ELSE»
-                                'url' => $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', array('lct' => 'user', 'own' => 1)),
+                                'url' => $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', array('own' => 1)),
                             «ENDIF»
                             'title'   => $this->__('My «entity.nameMultiple.formatForDisplay»'),
                             'icon'    => 'windowlist.png',

@@ -65,7 +65,8 @@ class ComposerFile {
         },
         "require": {
             «var dependencies = referredApplications.filter[e|e.dependencyType == ApplicationDependencyType.REQUIREMENT]»
-            "php": ">=5.4.1"«IF !dependencies.empty»,
+            "php": ">=5.4.1"«IF !dependencies.empty»,«ENDIF»
+            «IF !dependencies.empty»
                 «FOR referredApp : dependencies»
                     «dependency(referredApp)»«IF referredApp != dependencies.last»,«ENDIF»
                 «ENDFOR»
@@ -86,29 +87,7 @@ class ComposerFile {
                 "displayname": "«name.formatForDisplayCapital»",
                 "url": "«name.formatForDB»",
                 "capabilities": {
-                    «IF hasUserController»
-                        "user": {"route": "«appName.formatForDB»_user_index"},
-                    «ENDIF»
-                    «IF hasAdminController»
-                        "admin": {"route": "«appName.formatForDB»_admin_index"},
-                    «ENDIF»
-                    «IF generateSearchApi»
-                        "searchable": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\SearchHelper"},
-                    «ENDIF»
-                    «IF hasCategorisableEntities»
-                        "categorizable": {
-                            «FOR entity : getCategorisableEntities»
-                                "«entity.name.formatForCode»": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
-                            «ENDFOR»
-                        },
-                    «ENDIF»
-                    «IF capabilities !== null && capabilities != ''»
-                        «FOR capability : capabilities.replaceAll(', ', '').split(',')»
-                            "«capability.formatForDisplay»": {"version": "1.0"},
-                        «ENDFOR»
-                    «ENDIF»
-                    "hook_subscriber": {"enabled": true},
-                    "hook_provider": {"enabled": false}«/* TODO: see #15 */»
+                    «generateCapabilities»
                 },
                 "securityschema": {
                     "«appName»::": "::",
@@ -128,6 +107,46 @@ class ComposerFile {
     def private dependency(Application it, ReferredApplication dependency) '''
         "«dependency.name»:>=«dependency.minVersion»,<=«dependency.maxVersion»": "«IF dependency.documentation !== null && dependency.documentation != ''»«dependency.documentation.formatForDisplay»«ELSE»«dependency.name» application«ENDIF»"
     '''
+
+    def private generateCapabilities(Application it) '''
+        «IF hasUserController»
+            "user": {"route": "«appName.formatForDB»_user_index"},
+        «ELSE»
+            "user": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"},
+        «ENDIF»
+        «IF hasAdminController»
+            "admin": {"route": "«appName.formatForDB»_admin_index"},
+        «ELSE»
+            "admin": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"},
+        «ENDIF»
+        «IF generateSearchApi»
+            "searchable": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\SearchHelper"},
+        «ENDIF»
+        «IF hasCategorisableEntities»
+            "categorizable": {
+                «FOR entity : getCategorisableEntities»
+                    "«entity.name.formatForCode»": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
+                «ENDFOR»
+            },
+        «ENDIF»
+        «IF capabilities !== null && capabilities != ''»
+            «FOR capability : capabilities.replaceAll(', ', '').split(',')»
+                "«capability.formatForDisplay»": {"version": "1.0"},
+            «ENDFOR»
+        «ENDIF»
+        "hook_subscriber": {"enabled": true},
+        "hook_provider": {"enabled": false}«/* TODO: see #15 */»
+    '''
+
+    def private getPrimaryAction(Entity it) {
+        if (hasActions('index')) {
+            return 'index'
+        }
+        if (hasActions('view')) {
+            return 'view'
+        }
+        return actions.head.name.formatForDB
+    }
 
     def private permissionSchema(Entity it, String appName) '''
         "«appName»:«name.formatForCodeCapital»:": "«name.formatForCodeCapital» ID::",

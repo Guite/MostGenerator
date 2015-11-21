@@ -28,10 +28,12 @@ class Rss {
 
     def private rssView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» rss feed *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
+        «IF application.targets('1.3.x')»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
+        «ENDIF»
         «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='application/rss+xml'}«ENDIF»<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
         <rss version="2.0"
             xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -68,8 +70,8 @@ class Rss {
                     <link>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</link>
                     <guid>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</guid>
                 «ELSE»
-                    <link>{route name='«appName.formatForDB»_«name.formatForDB»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</link>
-                    <guid>{route name='«appName.formatForDB»_«name.formatForDB»_«defaultAction»'«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» lct=$lct absolute=true}</guid>
+                    <link>{route name="«appName.formatForDB»_«name.formatForDB»_`$routeArea`«defaultAction»"«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» absolute=true}</link>
+                    <guid>{route name="«appName.formatForDB»_«name.formatForDB»_`$routeArea`«defaultAction»"«IF hasActions('display')» «routeParams(objName, true)»«ENDIF» absolute=true}</guid>
                 «ENDIF»
                 «IF !standardFields»
                     «IF metaData»

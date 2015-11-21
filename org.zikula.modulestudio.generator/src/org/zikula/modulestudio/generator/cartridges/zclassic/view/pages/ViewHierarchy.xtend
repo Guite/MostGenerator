@@ -32,15 +32,18 @@ class ViewHierarchy {
     def private hierarchyView(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree view *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
         «IF isLegacyApp»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='lctUc' value=$lct|ucfirst}
-            {include file="`$lctUc`/header.tpl"}
+            {assign var='area' value='User'}
+            {if $routeArea eq 'admin'}
+                {assign var='area' value='Admin'}
+            {/if}
+            {include file="`$area`/header.tpl"}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
             {gt text='«name.formatForDisplayCapital» hierarchy' assign='templateTitle'}
@@ -85,14 +88,14 @@ class ViewHierarchy {
                 «IF isLegacyApp»
                     <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">{$switchTitle}</a>
                 «ELSE»
-                    <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct}" title="{$switchTitle}" class="fa fa-table">{$switchTitle}</a>
+                    <a href="{route name="«appName.formatForDB»_«objName.toLowerCase»_`$routeArea`view"}" title="{$switchTitle}" class="fa fa-table">{$switchTitle}</a>
                 «ENDIF»
             </p>
 
             {foreach key='rootId' item='treeNodes' from=$trees}
                 {include file='«IF isLegacyApp»«objName»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' lct=$lct rootId=$rootId items=$treeNodes}
             {foreachelse}
-                {include file='«IF isLegacyApp»«objName»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' lct=$lct rootId=1 items=null}
+                {include file='«IF isLegacyApp»«objName»«ELSE»«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' rootId=1 items=null}
             {/foreach}
 
             <br style="clear: left" />
@@ -100,12 +103,12 @@ class ViewHierarchy {
         «IF isLegacyApp»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$lctUc`/footer.tpl"}
+            {include file="`$area`/footer.tpl"}
         «ENDIF»
     '''
 
     def private templateHeader(Entity it) '''
-        {if $lct eq 'admin'}
+        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
             «IF isLegacyApp»
                 <div class="z-admin-content-pagetitle">
                     {icon type='view' size='small' alt=$templateTitle}
@@ -146,7 +149,7 @@ class ViewHierarchy {
             «ELSE»
                 {if $hasNodes}
                     <ul id="itemTree{$rootId}">
-                        {«appName.formatForDB»TreeData objectType='«name.formatForCode»' tree=$items controller=$lct root=$rootId}
+                        {«appName.formatForDB»TreeData objectType='«name.formatForCode»' tree=$items controller=$area root=$rootId}
                     </ul>
                 {/if}
             «ENDIF»

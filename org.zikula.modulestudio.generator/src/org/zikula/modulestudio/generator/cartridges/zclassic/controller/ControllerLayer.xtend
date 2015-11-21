@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
+import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.AdminController
 import de.guite.modulestudio.metamodel.AjaxController
 import de.guite.modulestudio.metamodel.Application
@@ -22,6 +23,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascri
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.CollectionUtils
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -32,6 +34,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerLayer {
 
+    extension CollectionUtils = new CollectionUtils
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -42,12 +45,14 @@ class ControllerLayer {
 
     FileHelper fh = new FileHelper
     Application app
+    ControllerAction actionHelper
 
     /**
      * Entry point for the controller creation.
      */
     def void generate(Application it, IFileSystemAccess fsa) {
         this.app = it
+        this.actionHelper = new ControllerAction(app)
 
         // controllers and apis
         controllers.forEach[generateControllerAndApi(fsa)]
@@ -132,8 +137,10 @@ class ControllerLayer {
                 «new ControllerHelper().controllerPostInitialize(it, isUserController, '')»
             «ENDIF»
 
-            «val actionHelper = new ControllerAction(app)»
-            «FOR action : actions»«actionHelper.generate(action, true)»«ENDFOR»
+            «FOR action : actions»
+                «actionHelper.generate(action, true)»
+
+            «ENDFOR»
             «IF hasActions('edit')»
 
                 «handleInlineRedirect(true)»
@@ -159,9 +166,10 @@ class ControllerLayer {
                 «new ControllerHelper().controllerPostInitialize(it, false, '')»
 
             «ENDIF»
-            «val actionHelper = new ControllerAction(app)»
-            «FOR action : actions»«actionHelper.generate(it, action, true)»«ENDFOR»
-            «IF hasActions('view') && app.hasAdminController»
+            «FOR action : actions»
+                «adminAndUserImpl(action, true)»
+            «ENDFOR»
+            «IF hasActions('view')»
 
                 «handleSelectedObjects(true)»
             «ENDIF»
@@ -260,6 +268,7 @@ class ControllerLayer {
             use Zikula\Core\ModUrl;
             use Zikula\Core\RouteUrl;
             «entityControllerBaseImportsResponse»
+            use Zikula\Core\Theme\Annotation\Theme;
 
         «ENDIF»
     '''
@@ -321,7 +330,7 @@ class ControllerLayer {
         «IF app.targets('1.3.x')»
             $redirectUrl = ModUtil::url($this->name, 'admin', 'main', array('ot' => '«name.formatForCode»'));
         «ELSE»
-            $redirectUrl = $this->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_index', array('lct' => 'admin'));
+            $redirectUrl = $this->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_adminindex');
         «ENDIF»
 
         $objectType = '«name.formatForCode»';
@@ -591,8 +600,10 @@ class ControllerLayer {
         «ENDIF»
         {
             «IF !app.targets('1.3.x')»
-                «val actionHelper = new ControllerAction(app)»
-                «FOR action : actions»«actionHelper.generate(action, false)»«ENDFOR»
+                «FOR action : actions»
+                    «actionHelper.generate(action, false)»
+
+                «ENDFOR»
                 «IF hasActions('edit')»
 
                     «handleInlineRedirect(false)»
@@ -635,12 +646,17 @@ class ControllerLayer {
         «ENDIF»
         {
             «IF !app.targets('1.3.x')»
-                «val actionHelper = new ControllerAction(app)»
                 «IF hasSluggableFields»«/* put display method at the end to avoid conflict between delete/edit and display for slugs */»
-                    «FOR action : actions»«IF !(action instanceof DisplayAction)»«actionHelper.generate(it, action, false)»«ENDIF»«ENDFOR»
-                    «FOR action : actions.filter(DisplayAction)»«actionHelper.generate(it, action, false)»«ENDFOR»
+                    «FOR action : actions.exclude(DisplayAction)»
+                        «adminAndUserImpl(action as Action, false)»
+                    «ENDFOR»
+                    «FOR action : actions.filter(DisplayAction)»
+                        «adminAndUserImpl(action, false)»
+                    «ENDFOR»
                 «ELSE»
-                    «FOR action : actions»«actionHelper.generate(it, action, false)»«ENDFOR»
+                    «FOR action : actions»
+                        «adminAndUserImpl(action, false)»
+                    «ENDFOR»
                 «ENDIF»
                 «IF hasActions('view') && app.hasAdminController»
 
@@ -654,6 +670,14 @@ class ControllerLayer {
             «ENDIF»
             // feel free to add your own controller methods here
         }
+    '''
+
+    def private adminAndUserImpl(Entity it, Action action, Boolean isBase) '''
+        «IF !app.targets('1.3.x')»
+            «actionHelper.generate(it, action, isBase, true)»
+
+        «ENDIF»
+        «actionHelper.generate(it, action, isBase, false)»
     '''
 
     // 1.3.x only
@@ -744,15 +768,14 @@ class ControllerLayer {
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
         
-                $currentLegacyType = $request->query->filter('lct', 'user', false, FILTER_SANITIZE_STRING);
-                $permLevel = in_array('admin', array($type, $currentLegacyType)) ? ACCESS_ADMIN : ACCESS_READ;
+                $permLevel = LinkContainerInterface::TYPE_ADMIN == $type ? ACCESS_ADMIN : ACCESS_READ;
 
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
 
-                «/* TODO replace this by entity controllers later */»
+                «/* legacy, see #715 */»
                 «var linkControllers = application.controllers.filter(AdminController) + application.controllers.filter(UserController)»
                 «FOR linkController : linkControllers»
-                    if (in_array('«linkController.name.formatForCode»', array($type, $currentLegacyType))) {
+                    if ('«linkController.name.formatForCode»' == $type) {
                         «getLinksBody(linkController)»
                     }
                 «ENDFOR»
@@ -795,7 +818,7 @@ class ControllerLayer {
             «IF app.targets('1.3.x')»
                 $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
-                $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_view', array('lct' => '«controller.formattedName»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
+                $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
             «ENDIF»
                              'text' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«nameMultiple.formatForDisplayCapital»'),
                              'title' => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital» list'));

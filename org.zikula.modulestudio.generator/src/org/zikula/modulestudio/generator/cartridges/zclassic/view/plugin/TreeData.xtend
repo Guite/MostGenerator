@@ -147,8 +147,12 @@ class TreeData {
                 $liContent = $item->getTitleFromDisplayPattern();
                 if ($controllerHasEditAction) {
                     $urlArgs = $item->createUrlArgs();
-                    $urlArgs['lct'] = $params['lct'];
-                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($params['objectType']) . '_edit', $urlArgs);
+                    «IF targets('1.3.x')»
+                        $urlArgs['lct'] = $params['lct'];
+                    «ELSE»
+                        $routeArea = $params['lct'] == 'admin' ? 'admin' : '';
+                    «ENDIF»
+                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($params['objectType']) . '_«IF !targets('1.3.x')»' . $routeArea . '«ENDIF»edit', $urlArgs);
 
                     $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
 

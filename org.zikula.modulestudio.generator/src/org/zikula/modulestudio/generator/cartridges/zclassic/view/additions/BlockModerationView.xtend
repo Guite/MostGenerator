@@ -32,7 +32,7 @@ class BlockModerationView {
                     <li><a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a></li>
                 «ELSE»
                     {assign var='itemObjectType' value=$modItem.objectType|lower}
-                    <li><a href="{route name="«appName.formatForDB»_`$itemObjectType`_view" lct='admin' workflowState=$modItem.state}" class="bold">{$modItem.message}</a></li>
+                    <li><a href="{route name="«appName.formatForDB»_`$itemObjectType`_adminview" workflowState=$modItem.state}" class="bold">{$modItem.message}</a></li>
                 «ENDIF»
             {/foreach}
             </ul>

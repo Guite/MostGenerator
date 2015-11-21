@@ -908,7 +908,11 @@ class Repository {
         protected function applyDefaultFilters(QueryBuilder $qb, $parameters = array())
         {
             $currentModule = ModUtil::getName();//FormUtil::getPassedValue('module', '', 'GETPOST');
-            $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
+            «IF app.targets('1.3.x')»
+                $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
+            «ELSE»
+                $currentLegacyControllerType = $this->request->get('lct', 'user');
+            «ENDIF»
             if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
                 return $qb;
             }
@@ -1491,7 +1495,6 @@ class Repository {
 
             $serviceManager = ServiceUtil::getManager();
 
-            $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             $action = 'archive';
             «IF app.targets('1.3.x')»
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);

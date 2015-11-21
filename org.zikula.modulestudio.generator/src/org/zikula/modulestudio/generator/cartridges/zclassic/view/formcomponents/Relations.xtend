@@ -162,7 +162,7 @@ class Relations {
                     «IF app.targets('1.3.x')»
                         {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
                     «ELSE»
-                        {route name='«app.appName.formatForDB»_«ownEntity.name.formatForDB»_edit' lct=$lct assign='createLink'}
+                        {route name="«app.appName.formatForDB»_«ownEntity.name.formatForDB»_`$routeArea`edit" assign='createLink'}
                     «ENDIF»
                 {/if}
                 {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
@@ -231,7 +231,7 @@ class Relations {
                 «IF app.targets('1.3.x')»
                     <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type=$lct func='edit' ot='«targetEntity.name.formatForCode»' «targetEntity.routeParamsLegacy('item', true, false)» forcelongurl=true}">{$editImage}</a>
                 «ELSE»
-                    <a id="{$idPrefixItem}Edit" href="{route name='«app.appName.formatForDB»_«targetEntity.name.formatForDB»_edit' «targetEntity.routeParams('item', true)» lct=$lct}">{$editImage}</a>
+                    <a id="{$idPrefixItem}Edit" href="{route name="«app.appName.formatForDB»_«targetEntity.name.formatForDB»_`$routeArea`edit" «targetEntity.routeParams('item', true)»}">{$editImage}</a>
                 «ENDIF»
             «ENDIF»
              <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>

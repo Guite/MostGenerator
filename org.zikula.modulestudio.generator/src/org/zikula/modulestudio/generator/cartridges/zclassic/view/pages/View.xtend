@@ -62,15 +62,18 @@ class View {
 
     def private viewView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» list view *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
         «IF application.targets('1.3.x')»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='lctUc' value=$lct|ucfirst}
-            {include file="`$lctUc`/header.tpl"}
+            {assign var='area' value='User'}
+            {if $routeArea eq 'admin'}
+                {assign var='area' value='Admin'}
+            {/if}
+            {include file="`$area`/header.tpl"}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
             {gt text='«name.formatForDisplayCapital» list' assign='templateTitle'}
@@ -94,7 +97,7 @@ class View {
         «IF application.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$lctUc`/footer.tpl"}
+            {include file="`$area`/footer.tpl"}
         «ENDIF»
         «ajaxToggle»
     '''
@@ -108,7 +111,7 @@ class View {
                     «IF application.targets('1.3.x')»
                         <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
                     «ELSE»
-                        <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_edit' lct=$lct}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
+                        <a href="{route name="«appName.formatForDB»_«objName.toLowerCase»_`$routeArea`edit"}" title="{$createTitle}" class="fa fa-plus">{$createTitle}</a>
                     «ENDIF»
                 {/checkpermissionblock}
             {/if}
@@ -123,7 +126,7 @@ class View {
             «IF application.targets('1.3.x')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»'}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
-                <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
+                <a href="{route name="«appName.formatForDB»_«objName.toLowerCase»_`$routeArea`view"}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
             «ENDIF»
             {assign var='all' value=1}
         {else}
@@ -131,7 +134,7 @@ class View {
             «IF application.targets('1.3.x')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»' all=1}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
-                <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct all=1}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
+                <a href="{route name="«appName.formatForDB»_«objName.toLowerCase»_`$routeArea`view" all=1}" title="{$linkTitle}" class="fa fa-table">{$linkTitle}</a>
             «ENDIF»
         {/if}
         «IF tree != EntityTreeType.NONE»
@@ -139,15 +142,15 @@ class View {
             «IF application.targets('1.3.x')»
                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«objName»' tpl='tree'}" title="{$linkTitle}" class="z-icon-es-view">{$linkTitle}</a>
             «ELSE»
-                <a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_view' lct=$lct tpl='tree'}" title="{$linkTitle}" class="fa fa-code-fork">{$linkTitle}</a>
+                <a href="{route name="«appName.formatForDB»_«objName.toLowerCase»_`$routeArea`view" tpl='tree'}" title="{$linkTitle}" class="fa fa-code-fork">{$linkTitle}</a>
             «ENDIF»
         «ENDIF»
     '''
 
     def private viewForm(Entity it, String appName) '''
         «IF listType == 3»
-            {if $lct eq 'admin'}
-            <form action="«IF application.targets('1.3.x')»{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_handleselectedentries' lct=$lct}«ENDIF»" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF application.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»"«IF !application.targets('1.3.x')» role="form"«ENDIF»>
+            {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
+            <form action="«IF application.targets('1.3.x')»{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}«ELSE»{route name="«appName.formatForDB»_«name.formatForDB»_`$routeArea`handleselectedentries"}«ENDIF»" method="post" id="«nameMultiple.formatForCode»ViewForm" class="«IF application.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»"«IF !application.targets('1.3.x')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
             {/if}
@@ -155,7 +158,7 @@ class View {
             «viewItemList(appName)»
             «pagerCall(appName)»
         «IF listType == 3»
-            {if $lct eq 'admin'}
+            {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
                     «massActionFields(appName)»
                 </div>
             </form>
@@ -181,9 +184,9 @@ class View {
             «IF !application.targets('1.3.x')»
                 <div class="table-responsive">
             «ENDIF»
-            <table class="«IF application.targets('1.3.x')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $lct eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
+            <table class="«IF application.targets('1.3.x')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{if $routeArea eq 'admin'} table-condensed{/if}«ENDIF»«ENDIF»">
                 <colgroup>
-                    {if $lct eq 'admin'}
+                    {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
                         <col id="cSelect" />
                     {/if}
                     «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
@@ -196,7 +199,7 @@ class View {
                     «IF categorisable»
                         {assign var='catIdListMainString' value=','|implode:$catIdList.Main}
                     «ENDIF»
-                    {if $lct eq 'admin'}
+                    {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
                         <th id="hSelect" scope="col" align="center" valign="middle">
                             <input type="checkbox" id="toggle«nameMultiple.formatForCodeCapital»" />
                         </th>
@@ -219,7 +222,7 @@ class View {
                 <dt>
             «ELSEIF listType == 3»
                 <tr«IF application.targets('1.3.x')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
-                    {if $lct eq 'admin'}
+                    {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
                         <td headers="hselect" align="center" valign="top">
                             <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
                         </td>
@@ -242,8 +245,8 @@ class View {
             «ELSEIF listType == 2»
                 <dt>
             «ELSEIF listType == 3»
-                <tr class="z-{if $lct eq 'admin'}admin{else}data{/if}tableempty">
-                  <td class="«IF application.targets('1.3.x')»z«ELSE»text«ENDIF»-left" colspan="{if $lct eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
+                <tr class="z-{if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}admin{else}data{/if}tableempty">
+                  <td class="«IF application.targets('1.3.x')»z«ELSE»text«ENDIF»-left" colspan="{if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
             «ENDIF»
             {gt text='No «nameMultiple.formatForDisplay» found.'}
             «IF listType < 2»
@@ -275,7 +278,7 @@ class View {
             «IF application.targets('1.3.x')»
                 {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}
             «ELSE»
-                {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' lct=$lct route='«appName.formatForDB»_«name.formatForDB»_view'}
+                {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' route="«appName.formatForDB»_«name.formatForDB»_`$routeArea`view"}
             «ENDIF»
         {/if}
     '''
@@ -327,7 +330,7 @@ class View {
     def private callDisplayHooks(Entity it, String appName) '''
 
         {* here you can activate calling display hooks for the view page if you need it *}
-        {*if $lct ne 'admin'}
+        {*if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» ne 'admin'}
             {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' urlobject=$currentUrlObject assign='hooks'}
             {foreach key='providerArea' item='hook' from=$hooks}
                 {$hook}
@@ -376,7 +379,7 @@ class View {
     '''
 
     def private initMassToggle(Entity it) '''
-        {{if $lct eq 'admin'}}
+        {{if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}}
             {{* init the "toggle all" functionality *}}
             «IF application.targets('1.3.x')»
                 if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
@@ -397,7 +400,7 @@ class View {
     '''
 
     def private templateHeader(Entity it) '''
-        {if $lct eq 'admin'}
+        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
             «IF application.targets('1.3.x')»
                 <div class="z-admin-content-pagetitle">
                     {icon type='view' size='small' alt=$templateTitle}
@@ -487,7 +490,7 @@ class View {
                 «IF entity.application.targets('1.3.x')»
                     <a href="{modurl modname='«entity.application.appName»' type=$lct func='display' ot='«entity.name.formatForCode»' «(entity as Entity).routeParamsLegacy(entity.name.formatForCode, true, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ELSE»
-                    <a href="{route name='«entity.application.appName.formatForDB»_«entity.name.formatForDB»_display' «(entity as Entity).routeParams(entity.name.formatForCode, true)» lct=$lct}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
+                    <a href="{route name="«entity.application.appName.formatForDB»_«entity.name.formatForDB»_`$routeArea`display" «(entity as Entity).routeParams(entity.name.formatForCode, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ENDIF»
             «ELSE»
                 «displayLeadingEntry»
@@ -511,7 +514,7 @@ class View {
                 «IF application.targets('1.3.x')»
                     <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
                 «ELSE»
-                    <a href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
+                    <a href="{route name="«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_`$routeArea`display" «linkEntity.routeParams(relObjName, true)»}">{strip}
                 «ENDIF»
             «ENDIF»
               {$«relObjName»->getTitleFromDisplayPattern()|default:""}
@@ -520,7 +523,7 @@ class View {
                 «IF application.targets('1.3.x')»
                     <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 «ELSE»
-                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name="«application.appName.formatForDB»_«linkEntity.name.formatForDB»_`$routeArea`display" «linkEntity.routeParams(relObjName, true)» theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
                 «ENDIF»
                 <script type="text/javascript">
                 /* <![CDATA[ */

@@ -65,15 +65,18 @@ class Custom {
 
     def private dispatch customView(CustomAction it, Application app, Entity controller) '''
         {* purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
         «IF app.targets('1.3.x')»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='lctUc' value=$lct|ucfirst}
-            {include file="`$lctUc`/header.tpl"}
+            {assign var='area' value='User'}
+            {if $routeArea eq 'admin'}
+                {assign var='area' value='Admin'}
+            {/if}
+            {include file="`$area`/header.tpl"}
         «ENDIF»
         <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
             {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
@@ -85,7 +88,7 @@ class Custom {
         «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$lctUc`/footer.tpl"}
+            {include file="`$area`/footer.tpl"}
         «ENDIF»
     '''
 
@@ -111,7 +114,7 @@ class Custom {
     }
 
     def private dispatch templateHeader(Entity it, String actionName) '''
-        {if $lct eq 'admin'}
+        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
             «IF application.targets('1.3.x')»
                 <div class="z-admin-content-pagetitle">
                     {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}

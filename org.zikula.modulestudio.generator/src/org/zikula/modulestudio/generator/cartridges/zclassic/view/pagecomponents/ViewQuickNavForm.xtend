@@ -36,7 +36,7 @@ class ViewQuickNavForm {
         {* purpose of this template: «nameMultiple.formatForDisplay» view filter form *}
         {checkpermissionblock component='«application.appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
         {assign var='objectType' value='«name.formatForCode»'}
-        <form action="{«IF application.targets('1.3.x')»$modvars.ZConfig.entrypoint|default:'index.php'«ELSE»route name='«application.appName.formatForDB»_«objName.toLowerCase»_view'«ENDIF»}" method="get" id="«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm" class="«application.appName.toLowerCase»-quicknav«IF application.targets('1.3.x')»"«ELSE» {*form-inline*}navbar-form" role="navigation"«ENDIF»>
+        <form action="{«IF application.targets('1.3.x')»$modvars.ZConfig.entrypoint|default:'index.php'«ELSE»route name="«application.appName.formatForDB»_«objName.toLowerCase»_`$routeArea`view"«ENDIF»}" method="get" id="«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm" class="«application.appName.toLowerCase»-quicknav«IF application.targets('1.3.x')»"«ELSE» {*form-inline*}navbar-form" role="navigation"«ENDIF»>
             <fieldset>
                 <h3>{gt text='Quick navigation'}</h3>
                 «IF application.targets('1.3.x')»
@@ -44,8 +44,6 @@ class ViewQuickNavForm {
                     <input type="hidden" name="type" value="{$lct}" />
                     <input type="hidden" name="func" value="view" />
                     <input type="hidden" name="ot" value="«objName»" />
-                «ELSE»
-                    <input type="hidden" name="lct" value="{$lct}" />
                 «ENDIF»
                 <input type="hidden" name="all" value="{$all|default:0}" />
                 <input type="hidden" name="own" value="{$own|default:0}" />

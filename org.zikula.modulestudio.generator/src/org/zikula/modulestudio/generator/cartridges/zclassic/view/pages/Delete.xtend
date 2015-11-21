@@ -27,15 +27,18 @@ class Delete {
     def private deleteView(Entity it, String appName) '''
         «val app = application»
         {* purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
         «IF app.targets('1.3.x')»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='lctUc' value=$lct|ucfirst}
-            {include file="`$lctUc`/header.tpl"}
+            {assign var='area' value='User'}
+            {if $routeArea eq 'admin'}
+                {assign var='area' value='Admin'}
+            {/if}
+            {include file="`$area`/header.tpl"}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
             {gt text='Delete «name.formatForDisplay»' assign='templateTitle'}
@@ -44,7 +47,7 @@ class Delete {
 
             <p class="«IF app.targets('1.3.x')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
 
-            <form class="«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»" action="«IF app.targets('1.3.x')»{modurl modname='«appName»' type=$lct func='delete' ot='«name.formatForCode»' «routeParamsLegacy(name, true, false)»}«ELSE»{route name='«appName.formatForDB»_«name.formatForDB»_delete' «routeParams(name, true)» lct=$lct}«ENDIF»" method="post"«IF !app.targets('1.3.x')» role="form"«ENDIF»>
+            <form class="«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»" action="«IF app.targets('1.3.x')»{modurl modname='«appName»' type=$lct func='delete' ot='«name.formatForCode»' «routeParamsLegacy(name, true, false)»}«ELSE»{route name="«appName.formatForDB»_«name.formatForDB»_`$routeArea`delete" «routeParams(name, true)»}«ENDIF»" method="post"«IF !app.targets('1.3.x')» role="form"«ENDIF»>
                 <div>
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
                     <input type="hidden" id="confirmation" name="confirmation" value="1" />
@@ -59,7 +62,7 @@ class Delete {
                             «IF app.targets('1.3.x')»
                                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
                             «ELSE»
-                                <a href="{route name='«appName.formatForDB»_«name.formatForDB»_view' lct=$lct}" class="btn btn-default" role="button"><span class="fa fa-times"></span> {gt text='Cancel'}</a>
+                                <a href="{route name="«appName.formatForDB»_«name.formatForDB»_`$routeArea`view"}" class="btn btn-default" role="button"><span class="fa fa-times"></span> {gt text='Cancel'}</a>
                             «ENDIF»
                         «IF !app.targets('1.3.x')»
                             </div>
@@ -76,12 +79,12 @@ class Delete {
         «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$lctUc`/footer.tpl"}
+            {include file="`$area`/footer.tpl"}
         «ENDIF»
     '''
 
     def private templateHeader(Entity it) '''
-        {if $lct eq 'admin'}
+        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
             «IF application.targets('1.3.x')»
                 <div class="z-admin-content-pagetitle">
                     {icon type='delete' size='small' __alt='Delete'}

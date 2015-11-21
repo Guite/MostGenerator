@@ -35,21 +35,24 @@ class Index {
 
     def private indexView(Entity it, String pageName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» «pageName» view *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
-        «IF application.targets('1.3.x')»
+        «IF app.targets('1.3.x')»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='lctUc' value=$lct|ucfirst}
-            {include file="`$lctUc`/header.tpl"}
+            {assign var='area' value='User'}
+            {if $routeArea eq 'admin'}
+                {assign var='area' value='Admin'}
+            {/if}
+            {include file="`$area`/header.tpl"}
         «ENDIF»
         <p>{gt text='Welcome to the «name.formatForDisplay» section of the «app.name.formatForDisplayCapital» application.'}</p>
-        «IF application.targets('1.3.x')»
+        «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$lctUc`/footer.tpl"}
+            {include file="`$area`/footer.tpl"}
         «ENDIF»
     '''
 }

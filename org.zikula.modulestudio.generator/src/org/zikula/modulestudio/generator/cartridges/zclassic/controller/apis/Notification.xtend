@@ -266,14 +266,14 @@ class Notification {
                     || hasUserController && getMainUserController.hasActions('display')
                     || hasAdminController && getAllAdminControllers.head.hasActions('edit')
                     || hasUserController && getMainUserController.hasActions('edit'))»
-                    $urlArgs['lct'] = '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»';
+                    $routeArea = '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ENDIF»';
                 «ENDIF»
                 «IF hasAdminController && getAllAdminControllers.head.hasActions('display')
                     || hasUserController && getMainUserController.hasActions('display')»
                     «IF targets('1.3.x')»
                         $displayUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'display', $urlArgs, null, null, true); // absolute
                     «ELSE»
-                        $displayUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
+                        $displayUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'display', $urlArgs, true);
                     «ENDIF»
                 «ENDIF»
                 «IF hasAdminController && getAllAdminControllers.head.hasActions('edit')
@@ -281,14 +281,11 @@ class Notification {
                     «IF targets('1.3.x')»
                         $editUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'edit', $urlArgs, null, null, true); // absolute
                     «ELSE»
-                        $editUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
+                        $editUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs, true);
                     «ENDIF»
                 «ENDIF»
             } elseif ($this->recipientType == 'creator') {
                 «IF hasUserController»
-                    «IF !targets('1.3.x') && (getMainUserController.hasActions('display') || getMainUserController.hasActions('edit'))»
-                        $urlArgs['lct'] = 'user';
-                    «ENDIF»
                     «IF getMainUserController.hasActions('display')»
                         «IF targets('1.3.x')»
                             $displayUrl = ModUtil::url($this->name, 'user', 'display', $urlArgs, null, null, true); // absolute

@@ -80,15 +80,18 @@ class Forms {
 
     def private formTemplateHeader(Entity it, Application app, String actionName) '''
         {* purpose of this template: build the Form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
         «IF app.targets('1.3.x')»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='lctUc' value=$lct|ucfirst}
-            {include file="`$lctUc`/header.tpl"}
+            {assign var='area' value='User'}
+            {if $routeArea eq 'admin'}
+                {assign var='area' value='Admin'}
+            {/if}
+            {include file="`$area`/header.tpl"}
         «ENDIF»
         «IF app.targets('1.3.x')»
             {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_editFunctions.js'}
@@ -117,13 +120,13 @@ class Forms {
     '''
 
     def private pageIcon(Entity it, String iconName) '''
-        {if $lct eq 'admin'}
+        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
             {assign var='adminPageIcon' value='«iconName»'}
         {/if}
     '''
 
     def private templateHeader(Entity it) '''
-        {if $lct eq 'admin'}
+        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
             «IF application.targets('1.3.x')»
                 <div class="z-admin-content-pagetitle">
                     {icon type=$adminPageIcon size='small' alt=$templateTitle}
@@ -186,7 +189,7 @@ class Forms {
         «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$lctUc`/footer.tpl"}
+            {include file="`$area`/footer.tpl"}
         «ENDIF»
 
         «formTemplateJS(app, actionName)»

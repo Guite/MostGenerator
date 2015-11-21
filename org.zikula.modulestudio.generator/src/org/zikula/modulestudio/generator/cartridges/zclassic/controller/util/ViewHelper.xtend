@@ -24,14 +24,14 @@ class ViewUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for view layer')
-        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
-        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/View' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
+        val helperFolder = if (isLegacy) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/View' + (if (isLegacy) '' else 'Helper') + '.php',
             fh.phpFileContent(it, viewFunctionsBaseImpl), fh.phpFileContent(it, viewFunctionsImpl)
         )
     }
 
     def private viewFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             namespace «appNamespace»\Helper\Base;
 
             use DataUtil;
@@ -51,9 +51,9 @@ class ViewUtil {
         /**
          * Utility base class for view helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_View extends Zikula_AbstractBase«ELSE»ViewHelper«ENDIF»
+        class «IF isLegacy»«appName»_Util_Base_View extends Zikula_AbstractBase«ELSE»ViewHelper«ENDIF»
         {
-            «IF !targets('1.3.x')»
+            «IF !isLegacy»
                 /**
                  * @var ContainerBuilder
                  */
@@ -102,8 +102,8 @@ class ViewUtil {
          *
          * @param Zikula_View $view    Reference to view object.
          * @param string      $type    Current controller (name of currently treated entity).
-         * @param string      $func    Current function («IF targets('1.3.x')»main«ELSE»index«ENDIF», view, ...).
-         «IF targets('1.3.x')»
+         * @param string      $func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+         «IF isLegacy»
          * @param array       $args    Additional arguments.
          «ELSE»
          * @param Request     $request Current request.
@@ -111,16 +111,16 @@ class ViewUtil {
          *
          * @return string name of template file.
          */
-        public function getViewTemplate(Zikula_View $view, $type, $func, «IF targets('1.3.x')»$args = array()«ELSE»Request $request«ENDIF»)
+        public function getViewTemplate(Zikula_View $view, $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
             // create the base template name
-            $template = DataUtil::formatForOS(«IF targets('1.3.x')»$type«ELSE»ucfirst($type)«ENDIF» . '/' . $func);
+            $template = DataUtil::formatForOS(«IF isLegacy»$type«ELSE»ucfirst($type)«ENDIF» . '/' . $func);
 
             // check for template extension
-            $templateExtension = $this->determineExtension($view, $type, $func, «IF targets('1.3.x')»$args«ELSE»$request«ENDIF»);
+            $templateExtension = $this->determineExtension($view, $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
 
             // check whether a special template is used
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
             «ELSE»
                 $tpl = '';
@@ -151,9 +151,9 @@ class ViewUtil {
          *
          * @param Zikula_View $view     Reference to view object.
          * @param string      $type     Current controller (name of currently treated entity).
-         * @param string      $func     Current function («IF targets('1.3.x')»main«ELSE»index«ENDIF», view, ...).
+         * @param string      $func     Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
          * @param string      $template Optional assignment of precalculated template file.
-         «IF targets('1.3.x')»
+         «IF isLegacy»
          * @param array       $args     Additional arguments.
          «ELSE»
          * @param Request     $request  Current request.
@@ -161,15 +161,15 @@ class ViewUtil {
          *
          * @return mixed Output.
          */
-        public function processTemplate(Zikula_View $view, $type, $func, «IF targets('1.3.x')»$args = array()«ELSE»Request $request«ENDIF», $template = '')
+        public function processTemplate(Zikula_View $view, $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF», $template = '')
         {
-            $templateExtension = $this->determineExtension($view, $type, $func, «IF targets('1.3.x')»$args«ELSE»$request«ENDIF»);
+            $templateExtension = $this->determineExtension($view, $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
             if (empty($template)) {
-                $template = $this->getViewTemplate($view, $type, $func, «IF targets('1.3.x')»$args«ELSE»$request«ENDIF»);
+                $template = $this->getViewTemplate($view, $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
             }
 
             // look whether we need output with or without the theme
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $raw = (bool) (isset($args['raw']) && !empty($args['raw'])) ? $args['raw'] : FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
             «ELSE»
                 $raw = false;
@@ -183,7 +183,7 @@ class ViewUtil {
                 $raw = true;
             }
 
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 // ensure the Admin module's plugins are loaded if we have lct=admin but another type value
                 $lct = (isset($args['lct']) && !empty($args['lct'])) ? $args['lct'] : FormUtil::getPassedValue('lct', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
                 if ($lct == 'admin') {
@@ -196,21 +196,21 @@ class ViewUtil {
                 // standalone output
                 if ($templateExtension == 'pdf') {
                     $template = str_replace('.pdf', '', $template);
-                    return $this->processPdf($view«IF !targets('1.3.x')», $request«ENDIF», $template);
+                    return $this->processPdf($view«IF !isLegacy», $request«ENDIF», $template);
                 } else {
-                    «IF targets('1.3.x')»
+                    «IF isLegacy»
                         $view->display($template);
                     «ELSE»
                         return new PlainResponse($view->fetch($template));
                     «ENDIF»
                 }
-                «IF targets('1.3.x')»
+                «IF isLegacy»
                     System::shutDown();
                 «ENDIF»
             }
 
             // normal output
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 return $view->fetch($template);
             «ELSE»
                 return new Response($view->fetch($template));
@@ -224,8 +224,8 @@ class ViewUtil {
          *
          * @param Zikula_View $view    Reference to view object.
          * @param string      $type    Current controller (name of currently treated entity).
-         * @param string      $func    Current function («IF targets('1.3.x')»main«ELSE»index«ENDIF», view, ...).
-         «IF targets('1.3.x')»
+         * @param string      $func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+         «IF isLegacy»
          * @param array       $args    Additional arguments.
          «ELSE»
          * @param Request     $request Current request.
@@ -233,7 +233,7 @@ class ViewUtil {
          *
          * @return array List of allowed template extensions.
          */
-        protected function determineExtension(Zikula_View $view, $type, $func, «IF targets('1.3.x')»$args = array()«ELSE»Request $request«ENDIF»)
+        protected function determineExtension(Zikula_View $view, $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
             $templateExtension = 'tpl';
             if (!in_array($func, array('view', 'display'))) {
@@ -241,7 +241,7 @@ class ViewUtil {
             }
 
             $extensions = $this->availableExtensions($type, $func);
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 foreach ($extensions as $extension) {
                     $extensionVar = 'use' . $extension . 'ext';
                     $extensionCheck = (isset($args[$extensionVar]) && !empty($extensionVar)) ? $extensionVar : 0;
@@ -269,17 +269,17 @@ class ViewUtil {
          * Get list of available template extensions.
          *
          * @param string $type Current controller (name of currently treated entity).
-         * @param string $func Current function («IF targets('1.3.x')»main«ELSE»index«ENDIF», view, ...).
+         * @param string $func Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
          *
          * @return array List of allowed template extensions.
          */
         public function availableExtensions($type, $func)
         {
             $extensions = array();
-            «IF !targets('1.3.x')»
+            «IF !isLegacy»
                 $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
             «ENDIF»
-            $hasAdminAccess = «IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
+            $hasAdminAccess = «IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
             if ($func == 'view') {
                 if ($hasAdminAccess) {
                     $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»);
@@ -303,20 +303,20 @@ class ViewUtil {
          * Processes a template file using dompdf (LGPL).
          *
          * @param Zikula_View $view     Reference to view object.
-         «IF !targets('1.3.x')»
+         «IF !isLegacy»
          * @param Request     $request  Current request.
          «ENDIF»
          * @param string      $template Name of template to use.
          *
          * @return mixed Output.
          */
-        protected function processPdf(Zikula_View $view«IF !targets('1.3.x')», Request $request«ENDIF», $template)
+        protected function processPdf(Zikula_View $view«IF !isLegacy», Request $request«ENDIF», $template)
         {
             // first the content, to set page vars
             $output = $view->fetch($template);
 
             // make local images absolute
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $output = str_replace('img src="/', 'img src="' . System::serverGetVar('DOCUMENT_ROOT') . '/', $output);
             «ELSE»
                 $output = str_replace('img src="/', 'img src="' . $request->server->get('DOCUMENT_ROOT') . '/', $output);
@@ -328,7 +328,7 @@ class ViewUtil {
             // then the surrounding
             $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
                 $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
@@ -371,18 +371,18 @@ class ViewUtil {
          */
         public function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
         {
-            $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('Bytes');
+            $sizeDesc = $this->«IF !isLegacy»translator->«ENDIF»__('Bytes');
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('KB');
+                $sizeDesc = $this->«IF !isLegacy»translator->«ENDIF»__('KB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('MB');
+                $sizeDesc = $this->«IF !isLegacy»translator->«ENDIF»__('MB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = $this->«IF !targets('1.3.x')»translator->«ENDIF»__('GB');
+                $sizeDesc = $this->«IF !isLegacy»translator->«ENDIF»__('GB');
             }
             $sizeDesc = '&nbsp;' . $sizeDesc;
 
@@ -408,7 +408,7 @@ class ViewUtil {
     '''
 
     def private viewFunctionsImpl(Application it) '''
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             namespace «appNamespace»\Helper;
 
             use «appNamespace»\Helper\Base\ViewHelper as BaseViewHelper;
@@ -417,7 +417,7 @@ class ViewUtil {
         /**
          * Utility implementation class for view helper methods.
          */
-        «IF targets('1.3.x')»
+        «IF isLegacy»
         class «appName»_Util_View extends «appName»_Util_Base_View
         «ELSE»
         class ViewHelper extends BaseViewHelper
@@ -426,4 +426,8 @@ class ViewUtil {
             // feel free to add your own convenience methods here
         }
     '''
+
+    def private isLegacy(Application it) {
+        targets('1.3.x')
+    }
 }

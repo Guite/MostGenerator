@@ -10,20 +10,15 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Actions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.action.Annotations
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ControllerAction {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
-    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
-    extension ViewExtensions = new ViewExtensions
 
     Application app
     Actions actionsImpl
@@ -34,75 +29,67 @@ class ControllerAction {
     }
 
     def generate(Action it, Boolean isBase) '''
-        «actionDoc(null, isBase)»
-        public function «methodName»«IF app.targets('1.3.x')»()«ELSE»Action(«methodArgs»)«ENDIF»
+        «actionDoc(null, isBase, false)»
+        public function «methodName(false)»«IF isLegacy»()«ELSE»Action(«methodArgs»)«ENDIF»
         {
             «IF isBase»
                 «actionsImpl.actionImpl(it)»
             «ELSE»
-                return parent::«methodName»Action(«IF !app.targets('1.3.x')»$request«ENDIF»);
+                return parent::«methodName(false)»Action(«IF !isLegacy»$request«ENDIF»);
             «ENDIF»
         }
-        «/* this line is on purpose */»
     '''
 
-    def generate(Entity it, Action action, Boolean isBase) '''
-        «action.actionDoc(it, isBase)»
-        public function «action.methodName»«IF app.targets('1.3.x')»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
+    def generate(Entity it, Action action, Boolean isBase, Boolean isAdmin) '''
+        «action.actionDoc(it, isBase, isAdmin)»
+        public function «action.methodName(isAdmin)»«IF isLegacy»()«ELSE»Action(«methodArgs(it, action)»)«ENDIF»
         {
             «IF isBase»
-                $legacyControllerType = $«IF app.targets('1.3.x')»this->«ENDIF»request->query->filter('lct', 'user', «IF !app.targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
-                System::queryStringSetVar('type', $legacyControllerType);
-                $«IF app.targets('1.3.x')»this->«ENDIF»request->query->set('type', $legacyControllerType);
-
-                «IF softDeleteable && !app.targets('1.3.x')»
-                    if ($legacyControllerType == 'admin') {
-                        //$this->entityManager->getFilters()->disable('softdeleteable');
-                    } else {
-                        $this->entityManager->getFilters()->enable('softdeleteable');
-                    }
+                «IF isLegacy»
+                    $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+                    System::queryStringSetVar('type', $legacyControllerType);
+                    $this->request->query->set('type', $legacyControllerType);
 
                 «ENDIF»
-                «actionsImpl.actionImpl(it, action)»
+                «IF softDeleteable && !isLegacy»
+                    «IF isAdmin»
+                        //$this->entityManager->getFilters()->disable('softdeleteable');
+                    «ELSE»
+                        $this->entityManager->getFilters()->enable('softdeleteable');
+                    «ENDIF»
+
+                «ENDIF»
+                «IF isLegacy»
+                    «actionsImpl.actionImpl(it, action)»
+                «ELSE»
+                    return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «IF isAdmin»true«ELSE»false«ENDIF»)
+                «ENDIF»
             «ELSE»
-                return parent::«action.methodName»Action(«methodArgsCall(it, action)»);
+                return parent::«action.methodName(isAdmin)»Action(«methodArgsCall(it, action)»);
             «ENDIF»
         }
-        «/* this line is on purpose */»
+        «IF isLegacy && !isAdmin»
+
+            /**
+             * This method includes the common implementation code for «action.methodName(true)»() and «action.methodName(false)»().
+             */
+            protected function «action.methodName(false)»Internal(«methodArgs(it, action)», $isAdmin = false)
+            {
+                «actionsImpl.actionImpl(it, action)»
+            }
+        «ENDIF»
     '''
 
-    def private actionDoc(Action it, Entity entity, Boolean isBase) '''
+    def private actionDoc(Action it, Entity entity, Boolean isBase, Boolean isAdmin) '''
         /**
-         * «actionDocMethodDescription»
+         * «actionDocMethodDescription(isAdmin)»
         «actionDocMethodDocumentation»
-        «IF !app.targets('1.3.x')»
-            «IF !isBase»
-                «actionRoute(entity)»
-            «ELSE»
-                «IF entity !== null»
-                    «IF it instanceof DisplayAction || it instanceof DeleteAction»
-                        «paramConverter(entity)»
-                    «ENDIF»
-                    «IF it instanceof MainAction»
-                        «' '»* @Cache(expires="+7 days", public=true)
-                    «ELSEIF it instanceof ViewAction»
-                        «' '»* @Cache(expires="+2 hours", public=false)
-                    «ELSEIF !(it instanceof CustomAction)»
-                        «IF entity.standardFields»
-                            «' '»* @Cache(lastModified="«entity.name.formatForCode».getUpdatedDate()", ETag="'«entity.name.formatForCodeCapital»' ~ «entity.getPrimaryKeyFields.map[entity.name.formatForCode + '.get' + name.formatForCode + '()'].join(' ~ ')» ~ «entity.name.formatForCode».getUpdatedDate().format('U')")
-                        «ELSE»
-                            «IF it instanceof EditAction»
-                                «' '»* @Cache(expires="+30 minutes", public=false)
-                            «ELSE»
-                                «' '»* @Cache(expires="+12 hours", public=false)
-                            «ENDIF»
-                        «ENDIF»
-                    «ENDIF»
-                «ENDIF»
-            «ENDIF»
+        «IF !isLegacy»
+            «val annotationHelper = new Annotations(app)»
+            «annotationHelper.generate(it, entity, isBase, isAdmin)»
         «ENDIF»
          *
-         «IF !app.targets('1.3.x')»
+         «IF !isLegacy»
          * @param Request  $request      Current request instance
          «ENDIF»
         «IF entity !== null»
@@ -112,7 +99,7 @@ class ControllerAction {
         «ENDIF»
          *
          * @return mixed Output.
-         «IF !app.targets('1.3.x')»
+         «IF !isLegacy»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions.
          «IF it instanceof DisplayAction»
@@ -128,14 +115,14 @@ class ControllerAction {
          */
     '''
 
-    def private actionDocMethodDescription(Action it) {
+    def private actionDocMethodDescription(Action it, Boolean isAdmin) {
         switch it {
-            MainAction: 'This method is the default function handling the ' + controllerName + ' area called without defining arguments.'
-            ViewAction: 'This method provides a item list overview.'
-            DisplayAction: 'This method provides a item detail view.'
-            EditAction: 'This method provides a handling of edit requests.'
-            DeleteAction: 'This method provides a handling of simple delete requests.'
-            CustomAction: 'This is a custom method.'
+            MainAction: 'This is the default action handling the ' + controllerName + (if (isAdmin) ' admin') + ' area called without defining arguments.'
+            ViewAction: 'This action provides an item list overview' + (if (isAdmin) ' in the admin area') + '.'
+            DisplayAction: 'This action provides a item detail view' + (if (isAdmin) ' in the admin area') + '.'
+            EditAction: 'This action provides a handling of edit requests' + (if (isAdmin) ' in the admin area') + '.'
+            DeleteAction: 'This action provides a handling of simple delete requests' + (if (isAdmin) ' in the admin area') + '.'
+            CustomAction: 'This is a custom action' + (if (isAdmin) ' in the admin area') + '.'
             default: ''
         }
     }
@@ -185,82 +172,14 @@ class ControllerAction {
         }
     }
 
-    def private dispatch methodName(Action it) '''«name.formatForCode.toFirstLower»'''
+    def private dispatch methodName(Action it, Boolean isAdmin) '''«IF isLegacy || !isAdmin»«name.formatForCode.toFirstLower»«ELSE»admin«name.formatForCodeCapital»«ENDIF»'''
 
-    def private dispatch methodName(MainAction it) '''«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»'''
+    def private dispatch methodName(MainAction it, Boolean isAdmin) '''«IF isLegacy»main«ELSE»«IF isAdmin»adminIndex«ELSE»index«ENDIF»«ENDIF»'''
 
     def private methodArgs(Action action) '''Request $request''' 
 
     def private dispatch methodArgs(Entity it, Action action) '''Request $request''' 
     def private dispatch methodArgsCall(Entity it, Action action) '''$request''' 
-
-    def private dispatch actionRoute(Action it, Entity entity) '''
-    '''
-
-    def private dispatch actionRoute(MainAction it, Entity entity) '''
-         «' '»*
-         «' '»* @Route("/«IF entity !== null»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»",
-         «' '»*        methods = {"GET"}
-         «' '»* )
-    '''
-
-    def private dispatch actionRoute(ViewAction it, Entity entity) '''
-         «' '»*
-         «' '»* @Route("/«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{pos}/{num}.{_format}",
-         «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«FOR format : app.getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
-         «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0, "_format" = "html"},
-         «' '»*        methods = {"GET"}
-         «' '»* )
-    '''
-
-    def private actionRouteForSingleEntity(Entity it, Action action) '''
-         «' '»*
-         «' '»* @Route("/«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
-         «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«FOR format : app.getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
-         «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»"_format" = "html"},
-         «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}
-         «' '»* )
-    '''
-
-    def private actionRouteParamsForSingleEntity(Entity it, Action action) {
-        var output = ''
-        if (hasSluggableFields && !(action instanceof EditAction)) {
-            output = '{slug}'
-            if (slugUnique) {
-                return output
-            }
-            output = output + '.'
-        }
-        output = output + getPrimaryKeyFields.map['{' + name.formatForCode + '}'].join('_')
-
-        output
-    }
-
-    def private actionRouteRequirementsForSingleEntity(Entity it, Action action) {
-        var output = ''
-        if (hasSluggableFields && !(action instanceof EditAction)) {
-            output = '''"slug" = "[^/.]+"'''
-            if (slugUnique) {
-                return output
-            }
-        }
-        output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "\d+"'''].join(', ')
-
-        output
-    }
-
-    def private actionRouteDefaultsForSingleEntity(Entity it, Action action) {
-        var output = ''
-        if (hasSluggableFields && action instanceof DisplayAction) {
-            output = '''"slug" = ""'''
-            if (slugUnique) {
-                return output
-            }
-        }
-        output = output + getPrimaryKeyFields.map['''"«name.formatForCode»" = "0"'''].join(', ')
-
-        output
-    }
 
     def private dispatch methodArgs(Entity it, ViewAction action) '''Request $request, $sort, $sortdir, $pos, $num''' 
     def private dispatch methodArgsCall(Entity it, ViewAction action) '''$request, $sort, $sortdir, $pos, $num''' 
@@ -268,62 +187,13 @@ class ControllerAction {
     def private dispatch methodArgs(Entity it, DisplayAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
     def private dispatch methodArgsCall(Entity it, DisplayAction action) '''$request, $«name.formatForCode»''' 
 
-    def private dispatch actionRoute(DisplayAction it, Entity entity) '''
-        «actionRouteForSingleEntity(entity, it)»
-    '''
-
     def private dispatch methodArgs(Entity it, EditAction action) '''Request $request«/* TODO migrate to Symfony forms #416 */»''' 
     def private dispatch methodArgsCall(Entity it, EditAction action) '''$request«/* TODO migrate to Symfony forms #416 */»''' 
-
-    def private dispatch actionRoute(EditAction it, Entity entity) '''
-        «actionRouteForSingleEntity(entity, it)»
-    '''
 
     def private dispatch methodArgs(Entity it, DeleteAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
     def private dispatch methodArgsCall(Entity it, DeleteAction action) '''$request, $«name.formatForCode»''' 
 
-    def private dispatch actionRoute(DeleteAction it, Entity entity) '''
-        «actionRouteForSingleEntity(entity, it)»
-    '''
-
-    def private dispatch actionRoute(CustomAction it, Entity entity) '''
-         «' '»*
-         «' '»* @Route("/«IF entity !== null»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»/«name.formatForCode»",
-         «' '»*        methods = {"GET", "POST"}
-         «' '»* )
-    '''
-
-    // currently called for DisplayAction and DeleteAction
-    def private paramConverter(Entity it) '''
-         «' '»* @ParamConverter("«name.formatForCode»", class="«app.appName»:«name.formatForCodeCapital»Entity", options={«paramConverterOptions»})
-    '''
-
-    def private paramConverterOptions(Entity it) {
-        var output = ''
-        if (hasSluggableFields && slugUnique) {
-            output = '"id" = "slug", "repository_method" = "selectBySlug"'
-            // since we use the id property selectBySlug receives the slug value directly instead array('slug' => 'my-title')
-            return output
-        }
-        val needsMapping = hasSluggableFields || hasCompositeKeys
-        if (!needsMapping) {
-            output = '"id" = "' + getFirstPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
-            // since we use the id property selectById receives the slug value directly instead array('id' => 123)
-            return output
-        }
-
-        // we have no single primary key or unique slug so we need to define a mapping hash option
-        if (hasSluggableFields) {
-            output = output + '"slug": "slug"'
-        }
-
-        output = output + getPrimaryKeyFields.map['"' + name.formatForCode + '": "' + name.formatForCode + '"'].join(', ')
-        output = output + ', "repository_method" = "selectByIdList"'
-        // selectByIdList receives an array like array('fooid' => 123, 'otherfield' => 456)
-
-        // add mapping hash
-        output = '"mapping": {' + output + '}'
-
-        output
+    def private isLegacy() {
+        app.targets('1.3.x')
     }
 }

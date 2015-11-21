@@ -49,15 +49,18 @@ class Display {
 
     def private displayView(Entity it, String appName) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» display view *}
-        {assign var='lct' value='user'}
-        {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
-            {assign var='lct' value='admin'}
-        {/if}
-        «IF isLegacyApp»
+        «IF application.targets('1.3.x')»
+            {assign var='lct' value='user'}
+            {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
+                {assign var='lct' value='admin'}
+            {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='lctUc' value=$lct|ucfirst}
-            {include file="`$lctUc`/header.tpl"}
+            {assign var='area' value='User'}
+            {if $routeArea eq 'admin'}
+                {assign var='area' value='Admin'}
+            {/if}
+            {include file="`$area`/header.tpl"}
         «ENDIF»
         «val refedElems = getOutgoingJoinRelations.filter[e|e.target instanceof Entity && e.target.application == it.application]
                         + incoming.filter(ManyToManyRelationship).filter[e|e.source instanceof Entity && e.source.application == it.application]»
@@ -141,7 +144,7 @@ class Display {
         «IF isLegacyApp»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$lctUc`/footer.tpl"}
+            {include file="`$area`/footer.tpl"}
         «ENDIF»
         «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && isLegacyApp)»
 
@@ -201,7 +204,7 @@ class Display {
     '''
 
     def private templateHeader(Entity it, String appName) '''
-        {if $lct eq 'admin'}
+        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
             «IF isLegacyApp»
                 <div class="z-admin-content-pagetitle">
                     {icon type='display' size='small' __alt='Details'}
@@ -251,7 +254,7 @@ class Display {
               «IF linkEntity.isLegacyApp»
                   <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
               «ELSE»
-                  <a href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct}">{strip}
+                  <a href="{route name="«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_`$routeArea`display" «linkEntity.routeParams(relObjName, true)»}">{strip}
               «ENDIF»
           «ENDIF»
             {$«relObjName»->getTitleFromDisplayPattern()|default:""}
@@ -260,7 +263,7 @@ class Display {
             «IF linkEntity.isLegacyApp»
                 <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             «ELSE»
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name='«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_display' «linkEntity.routeParams(relObjName, true)» lct=$lct theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{route name="«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_`$routeArea`display" «linkEntity.routeParams(relObjName, true)» theme='Printer'}" title="{gt text='Open quick view window'}" class="fa fa-search-plus hidden"></a>
             «ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
@@ -456,7 +459,7 @@ class Display {
                         «IF isLegacyApp»
                             <li><a href="{modurl modname='«appName»' type=$lct func='display' ot='«objName»' «routeParamsLegacy('directParent', true, true)»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
                         «ELSE»
-                            <li><a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_display' «routeParams('directParent', true)» lct=$lct}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
+                            <li><a href="{route name="«appName.formatForDB»_«objName.toLowerCase»_`$routeArea`display" «routeParams('directParent', true)»}" title="{$directParent->getTitleFromDisplayPattern()|replace:'"':''}">{$directParent->getTitleFromDisplayPattern()}</a></li>
                         «ENDIF»
                     </ul>
                 {/if}
@@ -508,7 +511,7 @@ class Display {
             «IF isLegacyApp»
                 <li><a href="{modurl modname='«appName»' type=$lct func='display' ot='«objName»' «routeParamsLegacy('node', true, true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
             «ELSE»
-                <li><a href="{route name='«appName.formatForDB»_«objName.toLowerCase»_display' «routeParams('node', true)» lct=$lct}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
+                <li><a href="{route name="«appName.formatForDB»_«objName.toLowerCase»_`$routeArea`display" «routeParams('node', true)»}" title="{$node->getTitleFromDisplayPattern()|replace:'"':''}">{$node->getTitleFromDisplayPattern()}</a></li>
             «ENDIF»
         {/foreach}
         </ul>
