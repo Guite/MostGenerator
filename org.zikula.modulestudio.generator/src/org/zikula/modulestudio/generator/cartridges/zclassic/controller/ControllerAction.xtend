@@ -68,7 +68,7 @@ class ControllerAction {
                 return parent::«action.methodName(isAdmin)»Action(«methodArgsCall(it, action)»);
             «ENDIF»
         }
-        «IF !isLegacy && !isAdmin»
+        «IF !isLegacy && isBase && !isAdmin»
 
             /**
              * This method includes the common implementation code for «action.methodName(true)»() and «action.methodName(false)»().
