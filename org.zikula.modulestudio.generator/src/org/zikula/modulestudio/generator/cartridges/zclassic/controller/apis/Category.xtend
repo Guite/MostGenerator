@@ -290,7 +290,7 @@ class Category {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = new \«appNamespace»\Util\ControllerUtil($this->serviceManager, null);
+                $controllerHelper = $this->serviceManager->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             $utilArgs = array('api' => 'category', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
