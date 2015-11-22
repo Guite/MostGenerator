@@ -394,6 +394,19 @@ class Actions {
 
         $additionalParameters = $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs);
 
+        $resultsPerPage = 0;
+        if ($showAllEntries != 1) {
+            // the number of items displayed on a page for pagination
+            «IF isLegacy»
+                $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
+            «ELSE»
+                $resultsPerPage = $num;
+            «ENDIF»
+            if ($resultsPerPage == 0) {
+                $resultsPerPage = $this->getVar('pageSize', 10);
+            }
+        }
+
         // parameter for used sorting field
         «IF isLegacy»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
@@ -433,7 +446,6 @@ class Actions {
 
         $templateFile = $viewHelper->getViewTemplate($«IF isLegacy»this->«ENDIF»view, $objectType, 'view', «IF isLegacy»array()«ELSE»$request«ENDIF»);
         $cacheId = $objectType . '_view|_sort_' . $sort . '_' . $sortdir;
-        $resultsPerPage = 0;
         if ($showAllEntries == 1) {
             // set cache id
             $«IF isLegacy»this->«ENDIF»view->setCacheId($cacheId . '_all_1_own_' . $showOwnEntries . '_' . $accessLevel);
@@ -452,16 +464,6 @@ class Actions {
             «ELSE»
                 $currentPage = $pos;
             «ENDIF»
-
-            // the number of items displayed on a page for pagination
-            «IF isLegacy»
-                $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
-            «ELSE»
-                $resultsPerPage = $num;
-            «ENDIF»
-            if ($resultsPerPage == 0) {
-                $resultsPerPage = $this->getVar('pageSize', 10);
-            }
 
             // set cache id
             $«IF isLegacy»this->«ENDIF»view->setCacheId($cacheId . '_amount_' . $resultsPerPage . '_page_' . $currentPage . '_own_' . $showOwnEntries . '_' . $accessLevel);
