@@ -62,13 +62,13 @@ class ControllerAction {
                 «IF isLegacy»
                     «actionsImpl.actionImpl(it, action)»
                 «ELSE»
-                    return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «IF isAdmin»true«ELSE»false«ENDIF»)
+                    return $this->«action.methodName(false)»Internal(«methodArgsCall(it, action)», «IF isAdmin»true«ELSE»false«ENDIF»);
                 «ENDIF»
             «ELSE»
                 return parent::«action.methodName(isAdmin)»Action(«methodArgsCall(it, action)»);
             «ENDIF»
         }
-        «IF isLegacy && !isAdmin»
+        «IF !isLegacy && !isAdmin»
 
             /**
              * This method includes the common implementation code for «action.methodName(true)»() and «action.methodName(false)»().
