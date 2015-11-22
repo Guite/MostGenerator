@@ -289,8 +289,8 @@ class Category {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->serviceManager, null);
+            «ELSE»«/* we can not use the container here, because it is not available yet during installation */»
+                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->serviceManager, $this->serviceManager->get('translator'), $this->serviceManager->get('session'), $this->serviceManager->get('logger'));
             «ENDIF»
             $utilArgs = array('api' => 'category', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
