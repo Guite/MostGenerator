@@ -91,7 +91,7 @@ class WorkflowPostProcess {
     /**
      * Exports the BIRT reports for reporting cartridge.
      */
-    def private exportBirtReports() {
+    def private void exportBirtReports() {
         try {
             val reportingBundle = Platform.getBundle(org.zikula.modulestudio.generator.cartridges.reporting.Activator.PLUGIN_ID)
             var resources = FileLocator.findEntries(reportingBundle, new Path(settings.getReportPath))
