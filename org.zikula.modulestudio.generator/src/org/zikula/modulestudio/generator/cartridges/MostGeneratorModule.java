@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.IGenerator2;
 import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.resource.generic.AbstractGenericResourceRuntimeModule;
 import org.eclipse.xtext.service.DispatchingProvider;
@@ -44,18 +44,16 @@ public class MostGeneratorModule extends AbstractGenericResourceRuntimeModule {
      *            The given {@link Binder} instance.
      */
     public void configureRuntimeEncodingProvider(Binder binder) {
-        binder.bind(IEncodingProvider.class)
-                .annotatedWith(DispatchingProvider.Runtime.class)
+        binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Runtime.class)
                 .to(MostDslEncodingProvider.class);
     }
 
     /**
-     * Binds the
-     * {@link org.zikula.modulestudio.generator.cartridges.MostGenerator}.
+     * Binds the {@link org.zikula.modulestudio.generator.cartridges.MostGenerator}.
      *
      * @return The {@link org.eclipse.xtext.generator.IGenerator} instance.
      */
-    public Class<? extends IGenerator> bindIGenerator() {
+    public Class<? extends IGenerator2> bindIGenerator2() {
         return MostGenerator.class;
     }
 

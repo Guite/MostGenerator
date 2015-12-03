@@ -134,7 +134,7 @@ class ControllerLayer {
 
             «ELSEIF app.targets('1.3.x')»
                 «val isUserController = (it instanceof UserController)»
-                «new ControllerHelper().controllerPostInitialize(it, isUserController, '')»
+                «new ControllerHelperFunctions().controllerPostInitialize(it, isUserController, '')»
             «ENDIF»
 
             «FOR action : actions»
@@ -163,7 +163,7 @@ class ControllerLayer {
         class «IF app.targets('1.3.x')»«app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_AbstractController«ELSE»«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
         {
             «IF app.targets('1.3.x')»
-                «new ControllerHelper().controllerPostInitialize(it, false, '')»
+                «new ControllerHelperFunctions().controllerPostInitialize(it, false, '')»
 
             «ENDIF»
             «FOR action : actions»

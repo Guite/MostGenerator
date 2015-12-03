@@ -2,7 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -60,7 +60,7 @@ class ExternalController {
         «ENDIF»
         «IF targets('1.3.x')»
             «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
-            «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands.toString)»
+            «new ControllerHelperFunctions().controllerPostInitialize(it, false, additionalCommands.toString)»
         «ENDIF»
 
         «externalBaseImpl»

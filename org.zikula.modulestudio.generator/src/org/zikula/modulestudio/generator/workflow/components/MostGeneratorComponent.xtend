@@ -10,8 +10,8 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ISetup
 import org.eclipse.xtext.generator.GeneratorComponent
-import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
+import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.MostGenerator
 
@@ -131,15 +131,14 @@ class MostGeneratorComponent extends GeneratorComponent implements
         }
     }
 
-    override protected IGenerator getCompiler() {
-        // return injector.getInstance(IGenerator)
-        val generator = injector.getInstance(IGenerator) as MostGenerator
+    override protected getCompiler() {
+        val generator = injector.getInstance(IGenerator2) as MostGenerator
         generator.cartridge = cartridge
 
         generator
     }
 
-    override protected IFileSystemAccess getConfiguredFileSystemAccess() {
+    override protected getConfiguredFileSystemAccess() {
         val configuredFileSystemAccess = injector.getInstance(JavaIoFileSystemAccess)
         for (outlet : outlets.entrySet) {
             configuredFileSystemAccess.setOutputPath(outlet.key, outlet.value)

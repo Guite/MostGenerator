@@ -6,7 +6,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class Image {
+class ImageHelper {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 

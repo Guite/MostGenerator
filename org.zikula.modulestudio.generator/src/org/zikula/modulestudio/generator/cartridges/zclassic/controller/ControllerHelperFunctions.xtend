@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ControllerHelper {
+class ControllerHelperFunctions {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 

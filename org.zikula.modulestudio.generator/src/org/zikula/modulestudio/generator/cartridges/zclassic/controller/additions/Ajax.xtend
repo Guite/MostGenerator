@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -362,7 +362,7 @@ class Ajax {
 
         // parameter for used sorting field
         $sort = $this->request->query->get('sort', '');
-        «new ControllerHelper().defaultSorting(it, app)»
+        «new ControllerHelperFunctions().defaultSorting(it, app)»
         $sortParam = $sort . ' asc';
 
         $currentPage = 1;

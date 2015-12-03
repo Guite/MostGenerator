@@ -1,9 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
 
 /**
  * Entry point for interactive installer implementation.
@@ -13,7 +13,7 @@ class Interactive {
     extension Utils = new Utils
 
     def generate(Application it) '''
-        «new ControllerHelper().controllerPostInitialize(it, false, '')»
+        «new ControllerHelperFunctions().controllerPostInitialize(it, false, '')»
 
         «funcInteractiveInit»
 

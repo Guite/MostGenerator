@@ -16,7 +16,7 @@ import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -267,7 +267,7 @@ class Actions {
         «ELSE»
             $sort = $request->query->filter('sort', '', false, FILTER_SANITIZE_STRING);
         «ENDIF»
-        «new ControllerHelper().defaultSorting(it, app)»
+        «new ControllerHelperFunctions().defaultSorting(it, app)»
 
         // parameter for used sort order
         «IF isLegacy»
@@ -411,7 +411,7 @@ class Actions {
         «IF isLegacy»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
         «ENDIF»
-        «new ControllerHelper().defaultSorting(it, app)»
+        «new ControllerHelperFunctions().defaultSorting(it, app)»
 
         «IF isLegacy»
             // parameter for used sort order
