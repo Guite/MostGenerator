@@ -106,6 +106,9 @@ class EventListener {
                     }
                 }
 
+                // workaround for ampersand problem (#692)
+                $string = str_replace('&amp;', '&', $string);
+
                 $this[$fieldName] = $string;
             }
 
