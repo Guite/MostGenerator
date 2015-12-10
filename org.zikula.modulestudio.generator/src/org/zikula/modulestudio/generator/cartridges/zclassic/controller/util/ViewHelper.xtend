@@ -125,9 +125,9 @@ class ViewHelper {
             «ELSE»
                 $tpl = '';
                 if ($request->isMethod('POST')) {
-                    $tpl = $request->request->filter('tpl', '', false, FILTER_SANITIZE_STRING);
+                    $tpl = $request->request->getAlnum('tpl', '');
                 } elseif ($request->isMethod('GET')) {
-                    $tpl = $request->query->filter('tpl', '', false, FILTER_SANITIZE_STRING);
+                    $tpl = $request->query->getAlnum('tpl', '');
                 }
             «ENDIF»
 
@@ -174,9 +174,9 @@ class ViewHelper {
             «ELSE»
                 $raw = false;
                 if ($request->isMethod('POST')) {
-                    $raw = (bool) $request->request->filter('raw', false, false, FILTER_VALIDATE_BOOLEAN);
+                    $raw = $request->request->getBoolean('raw', false);
                 } elseif ($request->isMethod('GET')) {
-                    $raw = (bool) $request->query->filter('raw', false, false, FILTER_VALIDATE_BOOLEAN);
+                    $raw = $request->query->getBoolean('raw', false);
                 }
             «ENDIF»
             if (!$raw && $templateExtension != 'tpl') {

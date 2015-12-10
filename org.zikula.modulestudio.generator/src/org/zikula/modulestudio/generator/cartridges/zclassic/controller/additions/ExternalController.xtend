@@ -22,14 +22,14 @@ class ExternalController {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating external controller')
-        generateClassPair(fsa, getAppSourceLibPath + 'Controller/External' + (if (targets('1.3.x')) '' else 'Controller') + '.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Controller/External' + (if (isLegacy) '' else 'Controller') + '.php',
             fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
         )
         new ExternalView().generate(it, fsa)
     }
 
     def private externalBaseClass(Application it) '''
-    «IF !targets('1.3.x')»
+    «IF !isLegacy»
         namespace «appNamespace»\Controller\Base;
 
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -47,7 +47,7 @@ class ExternalController {
     /**
      * Controller for external calls base class.
      */
-    class «IF targets('1.3.x')»«appName»_Controller_Base_External extends Zikula_AbstractController«ELSE»ExternalController extends AbstractController«ENDIF»
+    class «IF isLegacy»«appName»_Controller_Base_External extends Zikula_AbstractController«ELSE»ExternalController extends AbstractController«ENDIF»
     {
         «IF hasCategorisableEntities»
             /**
@@ -58,7 +58,7 @@ class ExternalController {
             protected $categorisableObjectTypes;
 
         «ENDIF»
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
             «new ControllerHelperFunctions().controllerPostInitialize(it, false, additionalCommands.toString)»
         «ENDIF»
@@ -88,7 +88,7 @@ class ExternalController {
     def private displayDocBlock(Application it, Boolean isBase) '''
         /**
          * Displays one item of a certain object type using a separate template for external usages.
-         «IF !targets('1.3.x') && !isBase»
+         «IF !isLegacy && !isBase»
          *
          * @Route("/display/{ot}/{id}/{source}/{displayMode}",
          *        requirements = {"id" = "\d+", "source" = "contentType|scribite", "displayMode" = "link|embed"},
@@ -107,33 +107,33 @@ class ExternalController {
     '''
 
     def private displaySignature(Application it) '''
-        public function display«IF targets('1.3.x')»(array $args = array())«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
+        public function display«IF isLegacy»(array $args = array())«ELSE»Action($ot, $id, $source, $displayMode)«ENDIF»
     '''
 
     def private displayBaseImpl(Application it) '''
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $getData = $this->request->query;
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
             $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
         «ENDIF»
 
-        $objectType = «IF targets('1.3.x')»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
+        $objectType = «IF isLegacy»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
         $utilArgs = array('controller' => 'external', 'action' => 'display');
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
         }
-        «IF targets('1.3.x')»
+        «IF isLegacy»
 
             $id = isset($args['id']) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
         «ENDIF»
 
         $component = $this->name . ':' . ucfirst($objectType) . ':';
-        if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $id . '::', ACCESS_READ)) {
+        if (!«IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $id . '::', ACCESS_READ)) {
             return '';
         }
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $source = isset($args['source']) ? $args['source'] : $getData->filter('source', '', FILTER_SANITIZE_STRING);
             if (!in_array($source, array('contentType', 'scribite'))) {
                 $source = 'contentType';
@@ -169,26 +169,26 @@ class ExternalController {
 
         $instance = $entity->createCompositeIdentifier() . '::';
 
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             $view = Zikula_View::getInstance('«appName»', false);
         «ENDIF»
-        $«IF targets('1.3.x')»this->«ENDIF»view->setCaching(Zikula_View::CACHE_ENABLED);
+        $«IF isLegacy»this->«ENDIF»view->setCaching(Zikula_View::CACHE_ENABLED);
         // set cache id
         $accessLevel = ACCESS_READ;
-        if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
+        if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
         }
-        if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+        if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
-        $«IF targets('1.3.x')»this->«ENDIF»view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
+        $«IF isLegacy»this->«ENDIF»view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
 
-        $«IF targets('1.3.x')»this->«ENDIF»view->assign('objectType', $objectType)
-        «IF targets('1.3.x')»      «ENDIF»     ->assign('source', $source)
-        «IF targets('1.3.x')»      «ENDIF»     ->assign($objectType, $entity)
-        «IF targets('1.3.x')»      «ENDIF»     ->assign('displayMode', $displayMode);
+        $«IF isLegacy»this->«ENDIF»view->assign('objectType', $objectType)
+        «IF isLegacy»      «ENDIF»     ->assign('source', $source)
+        «IF isLegacy»      «ENDIF»     ->assign($objectType, $entity)
+        «IF isLegacy»      «ENDIF»     ->assign('displayMode', $displayMode);
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             return $this->view->fetch('external/' . $objectType . '/display.tpl');
         «ELSE»
             return $this->response($view->fetch('External/' . ucfirst($objectType) . '/display.tpl'));
@@ -207,7 +207,7 @@ class ExternalController {
         /**
          * Popup selector for Scribite plugins.
          * Finds items of a certain object type.
-         «IF !targets('1.3.x') && !isBase»
+         «IF !isLegacy && !isBase»
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
          *        requirements = {"editor" = "xinha|tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
@@ -225,7 +225,7 @@ class ExternalController {
          * @param int    $num        Amount of entries to display.
          *
          * @return output The external item finder page
-         «IF !targets('1.3.x')»
+         «IF !isLegacy»
          *
          * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «ENDIF»
@@ -233,24 +233,24 @@ class ExternalController {
     '''
 
     def private finderSignature(Application it) '''
-        public function finder«IF targets('1.3.x')»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
+        public function finder«IF isLegacy»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
     '''
 
     def private finderBaseImpl(Application it) '''
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
         «ELSE»
             PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
         «ENDIF»
 
         $getData = $this->request->query;
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
             $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
         «ENDIF»
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $objectType = $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
         «ENDIF»
         $utilArgs = array('controller' => 'external', 'action' => 'finder');
@@ -258,7 +258,7 @@ class ExternalController {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
         }
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
         «ELSE»
             if (!$this->hasPermission('«appName»:' . ucfirst($objectType) . ':', '::', ACCESS_COMMENT)) {
@@ -266,7 +266,7 @@ class ExternalController {
             }
         «ENDIF»
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
@@ -275,7 +275,7 @@ class ExternalController {
             $repository->setRequest($this->get('request'));
         «ENDIF»
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
         «ENDIF»
         if (empty($editor) || !in_array($editor, array('xinha', 'tinymce', 'ckeditor'))) {
@@ -287,14 +287,14 @@ class ExternalController {
             // the actual filtering is done inside the repository class
             $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
         «ENDIF»
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);
         «ENDIF»
         if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();
         }
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             $sortdir = $getData->filter('sortdir', '', FILTER_SANITIZE_STRING);
         «ENDIF»
         $sdir = strtolower($sortdir);
@@ -305,10 +305,10 @@ class ExternalController {
         $sortParam = $sort . ' ' . $sdir;
 
         // the current offset which is used to calculate the pagination
-        $currentPage = (int) «IF targets('1.3.x')»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
+        $currentPage = (int) «IF isLegacy»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
 
         // the number of items displayed on a page for pagination
-        $resultsPerPage = (int) «IF targets('1.3.x')»$getData->filter('num', 0, FILTER_VALIDATE_INT)«ELSE»$num«ENDIF»;
+        $resultsPerPage = (int) «IF isLegacy»$getData->filter('num', 0, FILTER_VALIDATE_INT)«ELSE»$num«ENDIF»;
         if ($resultsPerPage == 0) {
             $resultsPerPage = $this->getVar('pageSize', 20);
         }
@@ -332,7 +332,7 @@ class ExternalController {
         «IF hasCategorisableEntities»
 
             // assign category properties
-            «IF !targets('1.3.x')»
+            «IF !isLegacy»
                 «categoryInitialisation»
             «ENDIF»
             $properties = null;
@@ -343,7 +343,7 @@ class ExternalController {
                  ->assign('catIds', $categoryIds);
         «ENDIF»
 
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
             return new PlainResponse($view->fetch('External/' . ucfirst($objectType) . '/find.tpl'));
@@ -351,7 +351,7 @@ class ExternalController {
     '''
 
     def private externalImpl(Application it) '''
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             namespace «appNamespace»\Controller;
 
             use «appNamespace»\Controller\Base\ExternalController as BaseExternalController;
@@ -361,18 +361,18 @@ class ExternalController {
         «ENDIF»
         /**
          * Controller for external calls implementation class.
-         «IF !targets('1.3.x')»
+         «IF !isLegacy»
          *
          * @Route("/external")
          «ENDIF»
          */
-        «IF targets('1.3.x')»
+        «IF isLegacy»
         class «appName»_Controller_External extends «appName»_Controller_Base_External
         «ELSE»
         class ExternalController extends BaseExternalController
         «ENDIF»
         {
-            «IF !targets('1.3.x')»
+            «IF !isLegacy»
                 «displayImpl»
 
                 «finderImpl»
@@ -397,4 +397,8 @@ class ExternalController {
             return parent::finderAction($objectType, $editor, $sort, $sortdir, $pos, $num);
         }
     '''
+
+    def private isLegacy(Application it) {
+        targets('1.3.x')
+    }
 }

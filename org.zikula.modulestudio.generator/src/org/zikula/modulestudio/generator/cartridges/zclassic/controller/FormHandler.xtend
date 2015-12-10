@@ -381,10 +381,18 @@ class FormHandler {
         public function initialize(Zikula_Form_View $view)
         {
             $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
-            $this->idPrefix = $this->request->query->filter('idp', '', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF targets('1.3.x')»
+                $this->idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
+            «ELSE»
+                $this->idPrefix = $this->request->query->getAlnum('idp', '');
+            «ENDIF»
 
             // initialise redirect goal
-            $this->returnTo = $this->request->query->filter('returnTo', null, «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF targets('1.3.x')»
+                $this->returnTo = $this->request->query->filter('returnTo', null, FILTER_SANITIZE_STRING);
+            «ELSE»
+                $this->returnTo = $this->request->query->getAlnum('returnTo', null);
+            «ENDIF»
             // store current uri for repeated creations
             $this->repeatReturnUrl = System::getCurrentURI();
 
@@ -1011,7 +1019,11 @@ class FormHandler {
                     «IF hasUserFields»
                         if (count($this->userFields) > 0) {
                             foreach ($this->userFields as $userField => $isMandatory) {
-                                $entityData[$userField] = (int) $this->request->request->filter($userField, 0, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
+                                «IF targets('1.3.x')»
+                                    $entityData[$userField] = (int) $this->request->request->filter($userField, 0, FILTER_VALIDATE_INT);
+                                «ELSE»
+                                    $entityData[$userField] = $this->request->request->getInt($userField, 0);
+                                «ENDIF»
                                 unset($entityData[$userField . 'Selector']);
                             }
                         }

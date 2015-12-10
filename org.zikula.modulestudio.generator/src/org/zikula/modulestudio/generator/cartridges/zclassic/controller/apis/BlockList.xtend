@@ -420,12 +420,21 @@ class BlockList {
                 $request = $this->get('request');
             «ENDIF»
 
-            $vars['objectType'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $vars['sorting'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->filter('sorting', 'default', «IF !targets('1.3.x')»false, «ENDIF»FILTER_SANITIZE_STRING);
-            $vars['amount'] = (int) $«IF targets('1.3.x')»this->«ENDIF»request->request->filter('amount', 5, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
-            $vars['template'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->get('template', '');
-            $vars['customTemplate'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->get('customtemplate', '');
-            $vars['filter'] = $«IF targets('1.3.x')»this->«ENDIF»request->request->get('filter', '');
+            «IF targets('1.3.x')»
+                $vars['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+                $vars['sorting'] = $this->request->request->filter('sorting', 'default', FILTER_SANITIZE_STRING);
+                $vars['amount'] = (int) $this->request->request->filter('amount', 5, FILTER_VALIDATE_INT);
+                $vars['template'] = $this->request->request->get('template', '');
+                $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
+                $vars['filter'] = $this->request->request->get('filter', '');
+            «ELSE»
+                $vars['objectType'] = $request->request->getAlnum('objecttype', '«getLeadingEntity.name.formatForCode»');
+                $vars['sorting'] = $request->request->getAlpha('sorting', 'default');
+                $vars['amount'] = $request->request->getInt('amount', 5);
+                $vars['template'] = $request->request->getAlnum('template', '');
+                $vars['customTemplate'] = $request->request->getAlnum('customtemplate', '');
+                $vars['filter'] = $request->request->get('filter', '');
+            «ENDIF»
 
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);

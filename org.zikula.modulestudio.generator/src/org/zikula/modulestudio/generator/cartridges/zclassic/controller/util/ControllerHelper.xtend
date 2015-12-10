@@ -220,7 +220,11 @@ class ControllerHelper {
                     if (array_key_exists($idField, $routeParams)) {
                         $id = !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
                     } else«ENDIF»if ($request->query->has($idField)) {
-                        $id = $request->query->filter($idField, $defaultValue«IF !targets('1.3.x')», false«ENDIF»);
+                        «IF targets('1.3.x')»
+                            $id = $request->query->get($idField, $defaultValue);
+                        «ELSE»
+                            $id = $request->query->getAlnum($idField, $defaultValue);
+                        «ENDIF»
                     } else {
                         $id = $defaultValue;
                     }
@@ -230,7 +234,11 @@ class ControllerHelper {
                     if (array_key_exists($idField, $routeParams)) {
                         $id = (int) !empty($routeParams[$idField]) ? $routeParams[$idField] : $defaultValue;
                     } else«ENDIF»if ($request->query->has($idField)) {
-                        $id = (int) $request->query->filter($idField, $defaultValue, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
+                        «IF targets('1.3.x')»
+                            $id = (int) $request->query->filter($idField, $defaultValue, FILTER_VALIDATE_INT);
+                        «ELSE»
+                            $id = $request->query->getInt($idField, $defaultValue);
+                        «ENDIF»
                     } else {
                         $id = $defaultValue;
                     }
@@ -243,7 +251,11 @@ class ControllerHelper {
                     if (array_key_exists('id', $routeParams)) {
                         $id = (int) !empty($routeParams['id']) ? $routeParams['id'] : $defaultValue;
                     } else«ENDIF»if ($request->query->has('id')) {
-                        $id = (int) $request->query->filter('id', $defaultValue, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
+                        «IF targets('1.3.x')»
+                            $id = (int) $request->query->filter('id', $defaultValue, FILTER_VALIDATE_INT);
+                        «ELSE»
+                            $id = (int) $request->query->getInt('id', $defaultValue);
+                        «ENDIF»
                     } else {
                         $id = $defaultValue;
                     }

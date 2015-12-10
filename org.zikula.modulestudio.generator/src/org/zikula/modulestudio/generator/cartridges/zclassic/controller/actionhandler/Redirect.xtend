@@ -100,8 +100,10 @@ class Redirect {
 
             «ENDIF»
             «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType.NONE»
-                $legacyControllerType = $this->request->query->filter('lct', 'user', «IF !app.isLegacy»false, «ENDIF»FILTER_SANITIZE_STRING);
-                «IF !app.isLegacy»
+                «IF app.isLegacy»
+                    $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
+                «ELSE»
+                    $legacyControllerType = $this->request->query->getAlpha('lct', 'user');
                     $routeArea = ($legacyControllerType == 'admin' ? 'admin' : '');
                 «ENDIF»
 

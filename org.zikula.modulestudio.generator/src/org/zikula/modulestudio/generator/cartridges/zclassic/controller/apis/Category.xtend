@@ -141,7 +141,11 @@ class Category {
                     }
                 } else {
                     $argName = 'catid' . $propertyName;
-                    $inputVal = (int) $dataSource->filter($argName, 0, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_INT);
+                    «IF targets('1.3.x')»
+                        $inputVal = (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);
+                    «ELSE»
+                        $inputVal = $dataSource->getInt($argName, 0);
+                    «ENDIF»
                     $inputValue = array();
                     if ($inputVal > 0) {
                         $inputValue[] = $inputVal;

@@ -103,7 +103,11 @@ class Interactive {
 
             «ENDFOR»
 
-            $activate = (bool) $this->request->request->filter('activate', false, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
+            «IF targets('1.3.x')»
+                $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
+            «ELSE»
+                $activate = $this->request->request->getBoolean('activate', false);
+            «ENDIF»
             $activate = !empty($activate) ? true : false;
 
             «IF targets('1.3.x')»
@@ -136,7 +140,11 @@ class Interactive {
                 }
             «ENDIF»
 
-            $activate = (bool) $this->request->request->filter('activate', false, «IF !targets('1.3.x')»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
+            «IF targets('1.3.x')»
+                $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
+            «ELSE»
+                $activate = $this->request->request->getBoolean('activate', false);
+            «ENDIF»
 
             // assign activation flag
             $this->view->assign('activate', $activate);

@@ -43,7 +43,11 @@ class Actions {
     def actionImpl(Action it) '''
         «IF it instanceof MainAction»
             // parameter specifying which type of objects we are treating
-            $objectType = $«IF isLegacy»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !isLegacy»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF isLegacy»
+                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+            «ELSE»
+                $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+            «ENDIF»
 
             $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
             «permissionCheck('', '')»
@@ -55,7 +59,11 @@ class Actions {
             «ENDIF»
 
             // parameter specifying which type of objects we are treating
-            $objectType = $«IF isLegacy»this->«ENDIF»request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', «IF !isLegacy»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF isLegacy»
+                $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+            «ELSE»
+                $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
+            «ENDIF»
             $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -265,7 +273,7 @@ class Actions {
         «IF isLegacy»
             $sort = $this->request->query->filter('sort', '', FILTER_SANITIZE_STRING);
         «ELSE»
-            $sort = $request->query->filter('sort', '', false, FILTER_SANITIZE_STRING);
+            $sort = $request->query->getAlnum('sort', '');
         «ENDIF»
         «new ControllerHelperFunctions().defaultSorting(it, app)»
 
@@ -273,7 +281,7 @@ class Actions {
         «IF isLegacy»
             $sortdir = $this->request->query->filter('sortdir', '', FILTER_SANITIZE_STRING);
         «ELSE»
-            $sortdir = $request->query->filter('sortdir', '', false, FILTER_SANITIZE_STRING);
+            $sortdir = $request->query->getAlpha('sortdir', '');
         «ENDIF»
         $sortdir = strtolower($sortdir);
         if ($sortdir != 'asc' && $sortdir != 'desc') {
@@ -284,9 +292,9 @@ class Actions {
         $currentUrlArgs = array('ot' => $objectType);
 
         «IF isLegacy»
-            $where = $this->request->query->filter('where', '');
+            $where = $this->request->query->get('where', '');
         «ELSE»
-            $where = $request->query->filter('where', '', false);
+            $where = $request->query->get('where', '');
         «ENDIF»
         $where = str_replace('"', '', $where);
 
@@ -319,14 +327,14 @@ class Actions {
             «IF isLegacy»
                 $currentPage = (int) $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
             «ELSE»
-                $currentPage = (int) $request->query->filter('pos', 1, false, FILTER_VALIDATE_INT);
+                $currentPage = $request->query->getInt('pos', 1);
             «ENDIF»
 
             // the number of items displayed on a page for pagination
             «IF isLegacy»
                 $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
             «ELSE»
-                $resultsPerPage = (int) $request->query->filter('num', 0, false, FILTER_VALIDATE_INT);
+                $resultsPerPage = $request->query->getInt('num', 0);
             «ENDIF»
             if ($resultsPerPage == 0) {
                 $resultsPerPage = $this->getVar('pageSize', 10);
@@ -376,7 +384,11 @@ class Actions {
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
 
-            $tpl = $«IF isLegacy»this->«ENDIF»request->query->filter('tpl', '', «IF !isLegacy»false, «ENDIF»FILTER_SANITIZE_STRING);
+            «IF isLegacy»
+                $tpl = $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
+            «ELSE»
+                $tpl = $request->query->getAlpha('tpl', '');
+            «ENDIF»
             if ($tpl == 'tree') {
                 $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
                 $«IF isLegacy»this->«ENDIF»view->assign('trees', $trees)
@@ -533,8 +545,8 @@ class Actions {
             $showOwnEntries = (int) $this->request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), FILTER_VALIDATE_INT);
             $showAllEntries = (int) $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
         «ELSE»
-            $showOwnEntries = (int) $request->query->filter('own', $this->getVar('showOnlyOwnEntries', 0), false, FILTER_VALIDATE_INT);
-            $showAllEntries = (int) $request->query->filter('all', 0, false, FILTER_VALIDATE_INT);
+            $showOwnEntries = $request->query->getInt('own', $this->getVar('showOnlyOwnEntries', 0));
+            $showAllEntries = $request->query->getInt('all', 0);
         «ENDIF»
 
         if (!$showAllEntries) {
@@ -796,7 +808,11 @@ class Actions {
         $this->checkAjaxToken();
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
-        $data = $this->request->query->filter('data', null«IF !isLegacy», false«ENDIF»);
+        «IF isLegacy»
+            $data = $this->request->query->get('data', null);
+        «ELSE»
+            $data = $request->query->get('data', null);
+        «ENDIF»
         $data = json_decode($data, true);
 
         $idValues = array();
@@ -990,7 +1006,11 @@ class Actions {
             «ENDIF»
         }
 
-        $confirmation = (bool) $«IF isLegacy»this->«ENDIF»request->request->filter('confirmation', false, «IF !isLegacy»false, «ENDIF»FILTER_VALIDATE_BOOLEAN);
+        «IF isLegacy»
+            $confirmation = (bool) $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
+        «ELSE»
+            $confirmation = $request->request->getBoolean('confirmation', false);
+        «ENDIF»
         if ($confirmation && $deleteAllowed) {
             $this->checkCsrfToken();
 
