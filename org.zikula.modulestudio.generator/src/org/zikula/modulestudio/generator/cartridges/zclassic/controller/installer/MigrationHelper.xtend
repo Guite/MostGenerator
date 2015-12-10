@@ -253,7 +253,7 @@ class MigrationHelper {
          */
         protected function getDbName()
         {
-            return $this->getContainer()->getParameter('database_name');
+            return $this->container->getParameter('database_name');
         }
     '''
 }

@@ -222,7 +222,7 @@ class ExampleData {
             «IF targets('1.3.x')»
                 LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ELSE»
-                $flashBag->add('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+                $this->addFlash(\Zikula_Session::MESSAGE_WARNING, $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ENDIF»
         }
     '''
