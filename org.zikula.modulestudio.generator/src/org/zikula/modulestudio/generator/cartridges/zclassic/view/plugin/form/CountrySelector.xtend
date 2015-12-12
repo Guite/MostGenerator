@@ -80,7 +80,11 @@ class CountrySelector {
                     $this->addItem('---', null);
                 }
 
-                $allCountries = ZLanguage::countrymap();
+                «IF targets('1.3.x')»
+                    $allCountries = ZLanguage::countrymap();
+                «ELSE»
+                    $allCountries = \Symfony\Component\Intl\Intl::getRegionBundle()->getCountryNames();
+                «ENDIF»
                 foreach ($allCountries as $countryCode => $countryName) {
                     if (!$isFiltered || in_array($countryCode, $this->validCountryList)) {
                         $this->addItem($countryName, $countryCode);
