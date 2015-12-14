@@ -213,7 +213,7 @@ class Ajax {
             }
         «ELSE»
             if ($request->isMethod('POST') && $request->request->has('ot')) {
-                $objectType = $request->request->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»);
+                $objectType = $request->request->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
             } elseif ($request->isMethod('GET') && $request->query->has('ot')) {
                 $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
             }
@@ -350,7 +350,7 @@ class Ajax {
             }
         «ELSE»
             if ($request->isMethod('POST') && $request->request->has('ot')) {
-                $objectType = $request->request->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»);
+                $objectType = $request->request->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
             } elseif ($request->isMethod('GET') && $request->query->has('ot')) {
                 $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
             }
