@@ -59,6 +59,11 @@ class Repository {
 
         val linkTable = new LinkTable
         for (relation : getJoinRelations.filter(ManyToManyRelationship)) linkTable.generate(relation, it, fsa)
+
+        if (targets('1.3.x')) {
+            val paginatorSwitch = new LegacyPaginatorSwitch
+            paginatorSwitch.generate(it, fsa)
+        }
     }
 
     /**
@@ -737,16 +742,24 @@ class Repository {
             $offset = ($currentPage-1) * $resultsPerPage;
 
             «IF app.targets('1.3.x')»
-                // count the total number of affected items
-                $count = Paginate::getTotalQueryResults($query);
+                $isLegacy = version_compare(\Zikula_Core::VERSION_NUM, '1.4.0') >= 0 ? false : true;
+                $paginatorClass = '«app.appName»_Paginator_' . (!$isLegacy ? 'Paginator' : 'LegacyPaginator');
 
-                «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
-                    // prefetch unique relationship ids for given pagination frame
-                    $query = Paginate::getPaginateQuery($query, $offset, $resultsPerPage);
-                «ELSE»
+                if ($isLegacy) {
+                    $hasRelationships = «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»true«ELSE»false«ENDIF»;
+                    $paginator = new $paginatorClass($query, $hasRelationships);
+                    list($query, $count) = $paginator->getResults($offset, $resultsPerPage);
+                    if (!$hasRelationships) {
+                        $query->setFirstResult($offset)
+                              ->setMaxResults($resultsPerPage);
+                    }
+                } else {
                     $query->setFirstResult($offset)
                           ->setMaxResults($resultsPerPage);
-                «ENDIF»
+                    $count = 0;
+                }
+
+                return array($query, $count);
             «ELSE»
                 $query->setFirstResult($offset)
                       ->setMaxResults($resultsPerPage);
@@ -1057,7 +1070,19 @@ class Repository {
         public function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
         {
             «IF app.targets('1.3.x')»
-                $result = $query->getResult();
+                $isLegacy = version_compare(\Zikula_Core::VERSION_NUM, '1.4.0') >= 0 ? false : true;
+                if ($isLegacy) {
+                    $result = $query->getResult();
+                } else {
+                    if (!$isPaginated) {
+                        $result = $query->getResult();
+                    } else {
+                        $paginatorClass = '«app.appName»_Paginator_Paginator';
+                        $hasRelationships = «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»true«ELSE»false«ENDIF»;
+                        $paginator = new $paginatorClass($query, $hasRelationships);
+                        list($result, $count) = $paginator->getResults();
+                    }
+                }
             «ELSE»
                 if (!$isPaginated) {
                     $result = $query->getResult();
