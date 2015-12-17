@@ -28,11 +28,9 @@ class BlockModeration {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            use BlockUtil;
             use ModUtil;
             use UserUtil;
             use Zikula\Core\Controller\AbstractBlockController;
-            use Zikula_View;
 
         «ENDIF»
         /**
@@ -45,15 +43,18 @@ class BlockModeration {
     '''
 
     def private moderationBlockBaseImpl(Application it) '''
-        «init»
+        «IF targets('1.3.x')»
+            «init»
 
-        «info»
+            «info»
 
+        «ENDIF»
         «display»
 
         «getDisplayTemplate»
     '''
 
+    // 1.3.x only
     def private init(Application it) '''
         /**
          * Initialise the block.
@@ -64,6 +65,7 @@ class BlockModeration {
         }
     '''
 
+    // 1.3.x only
     def private info(Application it) '''
         /**
          * Get information on the block.
@@ -92,18 +94,30 @@ class BlockModeration {
 
     def private display(Application it) '''
         /**
-         * Display the block.
+         * Display the block content.
          *
-         * @param array $blockinfo the blockinfo structure
-         *
-         * @return string output of the rendered block
+        «IF targets('1.3.x')»
+            «' '»* @param array $blockinfo the blockinfo structure
+            «' '»*
+            «' '»* @return string output of the rendered block
+        «ELSE»
+            «' '»* @param array|string $content
+
+            «' '»* @return array|string
+        «ENDIF»
          */
-        public function display($blockinfo)
+        public function display(«IF targets('1.3.x')»$blockinfo«ELSE»$content«ENDIF»)
         {
             // only show block content if the user has the required permissions
-            if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
-                return false;
-            }
+            «IF targets('1.3.x')»
+                if (!SecurityUtil::checkPermission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+                    return false;
+                }
+            «ELSE»
+                if (!$this->hasPermission('«appName»:ModerationBlock:', "«/* TODO access block title $blockinfo[title]*/»::", ACCESS_OVERVIEW)) {
+                    return false;
+                }
+            «ENDIF»
 
             // check if the module is available at all
             if (!ModUtil::available('«appName»')) {
@@ -114,30 +128,36 @@ class BlockModeration {
                 return false;
             }
 
-            ModUtil::initOOModule('«appName»');
-
-            $this->view->setCaching(Zikula_View::CACHE_DISABLED);
-            $template = $this->getDisplayTemplate($vars);
-
             «IF targets('1.3.x')»
+                ModUtil::initOOModule('«appName»');
+
+                $this->view->setCaching(Zikula_View::CACHE_DISABLED);
+                $template = $this->getDisplayTemplate();
+
                 $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
             «ELSE»
+                $template = $this->getDisplayTemplate();
+
                 $workflowHelper = $this->get('«appName.formatForDB».workflow_helper');
             «ENDIF»
             $amounts = $workflowHelper->collectAmountOfModerationItems();
 
-            // assign block vars and fetched data
-            $this->view->assign('moderationObjects', $amounts);
+            «IF targets('1.3.x')»
+                // assign block vars and fetched data
+                $this->view->assign('moderationObjects', $amounts);
 
-            // set a block title
-            if (empty($blockinfo['title'])) {
-                $blockinfo['title'] = $this->__('Moderation');
-            }
+                // set a block title
+                if (empty($blockinfo['title'])) {
+                    $blockinfo['title'] = $this->__('Moderation');
+                }
 
-            $blockinfo['content'] = $this->view->fetch($template);
+                $blockinfo['content'] = $this->view->fetch($template);
 
-            // return the block to the theme
-            return BlockUtil::themeBlock($blockinfo);
+                // return the block to the theme
+                return BlockUtil::themeBlock($blockinfo);
+            «ELSE»
+                return $this->renderView($template, [«/*'content' => $content, */»'moderationObjects' => $amounts]);
+            «ENDIF»
         }
     '''
 
@@ -145,13 +165,15 @@ class BlockModeration {
         /**
          * Returns the template used for output.
          *
-         * @param array $vars List of block variables.
-         *
          * @return string the template path.
          */
-        protected function getDisplayTemplate($vars)
+        protected function getDisplayTemplate()
         {
-            $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/moderation.tpl';
+            «IF targets('1.3.x')»
+                $template = 'block/moderation.tpl';
+            «ELSE»
+                $template = '«appName»:Block:moderation.html.twig';
+            «ENDIF»
 
             return $template;
         }
