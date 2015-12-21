@@ -134,8 +134,8 @@ class ComposerFile {
                 "«capability.formatForDisplay»": {"version": "1.0"},
             «ENDFOR»
         «ENDIF»
-        "hook_subscriber": {"enabled": true},
-        "hook_provider": {"enabled": false}«/* TODO: see #15 */»
+        "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}«/* TODO: see #15 ,
+        "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
     '''
 
     def private getPrimaryAction(Entity it) {

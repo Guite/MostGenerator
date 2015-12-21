@@ -68,6 +68,7 @@ class Installer {
             «IF hasCategorisableEntities»
                 use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
             «ENDIF»
+            use Zikula\ExtensionsModule\Api\HookApi;
 
         «ENDIF»
         /**
@@ -262,11 +263,12 @@ class Installer {
                     HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
                 */»
             «ELSE»
-                $hookHelper = new HookHelper($this->getTranslator());
-                HookUtil::registerSubscriberBundles($hookHelper->getHookSubscriberBundles());
+                $subsriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
+                HookUtil::registerSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
                 «/*TODO see #15
                     // register hook provider bundles
-                    HookUtil::registerProviderBundles($hookHelper->getHookProviderBundles());
+                    $providerHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::PROVIDER_TYPE);
+                    HookUtil::registerProviderBundles($providerHookContainer->getHookProviderBundles());
                 */»
             «ENDIF»
 
@@ -435,11 +437,12 @@ class Installer {
                     HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
                 */»
             «ELSE»
-                $hookHelper = new HookHelper($this->getTranslator());
-                HookUtil::unregisterSubscriberBundles($hookHelper->getHookSubscriberBundles());
+                $subscriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
+                HookUtil::unregisterSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
                 «/*TODO see #15
                     // unregister hook provider bundles
-                    HookUtil::unregisterProviderBundles($hookHelper->getHookProviderBundles());
+                    $providerHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::PROVIDER_TYPE);
+                    HookUtil::unregisterProviderBundles($providerHookContainer->getHookProviderBundles());
                 */»
             «ENDIF»
             «IF !getAllVariables.empty»

@@ -22,21 +22,21 @@ class HookHelper {
             return
         }
         println('Generating utility class for hook bundles')
-        generateClassPair(fsa, getAppSourceLibPath + 'Helper/HookHelper.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Container/HookContainer.php',
             fh.phpFileContent(it, hookFunctionsBaseImpl), fh.phpFileContent(it, hookFunctionsImpl)
         )
     }
 
     def private hookFunctionsBaseImpl(Application it) '''
-        namespace «appNamespace»\Helper\Base;
+        namespace «appNamespace»\Container\Base;
 
-        use Zikula\Component\HookDispatcher\AbstractContainer as HookContainer;
+        use Zikula\Component\HookDispatcher\AbstractContainer;
         use Zikula\Component\HookDispatcher\SubscriberBundle;
 
         /**
-         * Utility base class for model helper methods.
+         * Base class for hook container methods.
          */
-        class HookHelper extends HookContainer
+        class HookContainer extends AbstractContainer
         {
             «setup»
         }
@@ -56,14 +56,14 @@ class HookHelper {
     '''
 
     def private hookFunctionsImpl(Application it) '''
-        namespace «appNamespace»\Helper;
+        namespace «appNamespace»\Container;
 
-        use «appNamespace»\Helper\Base\HookHelper as BaseHookHelper;
+        use «appNamespace»\Container\Base\HookContainer as BaseHookContainer;
 
         /**
-         * Utility implementation class for hook helper methods.
+         * Implementation class for hook container methods.
          */
-        class HookHelper extends BaseHookHelper
+        class HookHelper extends BaseHookContainer
         {
             // feel free to add your own convenience methods here
         }
