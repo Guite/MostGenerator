@@ -211,14 +211,23 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(DatetimeField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\DateTime()
+        «IF validatorAddition !== null && validatorAddition != ''»
+            «' '»* @Assert\«validatorAddition»
+        «ENDIF»
     '''
     def dispatch fieldAnnotations(DateField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\Date()
+        «IF validatorAddition !== null && validatorAddition != ''»
+            «' '»* @Assert\«validatorAddition»
+        «ENDIF»
     '''
     def dispatch fieldAnnotations(TimeField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\Time()
+        «IF validatorAddition !== null && validatorAddition != ''»
+            «' '»* @Assert\«validatorAddition»
+        «ENDIF»
     '''
 
     def dispatch validationMethods(ListField it) '''
