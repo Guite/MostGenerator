@@ -322,9 +322,9 @@ class EntityMethods {
                     }
                     return false;
                 }
-
-                return true;
             «ENDIF»
+
+            return true;
         }
     '''
 
