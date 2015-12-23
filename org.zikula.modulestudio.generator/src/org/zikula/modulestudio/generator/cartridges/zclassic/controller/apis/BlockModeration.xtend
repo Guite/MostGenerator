@@ -28,7 +28,6 @@ class BlockModeration {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            use ModUtil;
             use UserUtil;
             use Zikula\Core\Controller\AbstractBlockController;
 
@@ -119,16 +118,16 @@ class BlockModeration {
                 }
             «ENDIF»
 
-            // check if the module is available at all
-            if (!ModUtil::available('«appName»')) {
-                return false;
-            }
-
             if (!UserUtil::isLoggedIn()) {
                 return false;
             }
-
             «IF targets('1.3.x')»
+
+                // check if the module is available at all
+                if (!ModUtil::available('«appName»')) {
+                    return false;
+                }
+
                 ModUtil::initOOModule('«appName»');
 
                 $this->view->setCaching(Zikula_View::CACHE_DISABLED);

@@ -202,18 +202,18 @@ class BlockList {
                     return false;
                 }
             «ENDIF»
-
-            // check if the module is available at all
-            if (!ModUtil::available('«appName»')) {
-                return false;
-            }
-
             «IF targets('1.3.x')»
+
+                // check if the module is available at all
+                if (!ModUtil::available('«appName»')) {
+                    return false;
+                }
+
                 // get current block content
                 $content = BlockUtil::varsFromContent($blockinfo['content']);
                 $content['bid'] = $blockinfo['bid'];
-
             «ENDIF»
+
             // set default values for all params which are not properly set
             $defaults = $this->getDefaults();
             $content = array_merge($defaults, $content);
