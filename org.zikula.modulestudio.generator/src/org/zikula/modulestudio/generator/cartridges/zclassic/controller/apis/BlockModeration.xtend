@@ -101,7 +101,7 @@ class BlockModeration {
             «' '»*
             «' '»* @return string output of the rendered block
         «ELSE»
-            «' '»* @param array|string $content
+            «' '»* @param array $content The block content array.
 
             «' '»* @return array|string
         «ENDIF»
@@ -114,7 +114,7 @@ class BlockModeration {
                     return false;
                 }
             «ELSE»
-                if (!$this->hasPermission('«appName»:ModerationBlock:', "«/* TODO access block title $blockinfo[title]*/»::", ACCESS_OVERVIEW)) {
+                if (!$this->hasPermission('«appName»:ModerationBlock:', "$content[title]::", ACCESS_OVERVIEW)) {
                     return false;
                 }
             «ENDIF»

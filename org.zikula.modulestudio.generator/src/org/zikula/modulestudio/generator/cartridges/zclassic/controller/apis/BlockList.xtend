@@ -185,7 +185,7 @@ class BlockList {
             «' '»*
             «' '»* @return string output of the rendered block
         «ELSE»
-            «' '»* @param array|string $content
+            «' '»* @param array $content The block content array.
 
             «' '»* @return array|string
         «ENDIF»
@@ -198,7 +198,7 @@ class BlockList {
                     return false;
                 }
             «ELSE»
-                if (!$this->hasPermission('«appName»:ItemListBlock:', "«/* TODO access block title $blockinfo[title]*/»::", ACCESS_OVERVIEW)) {
+                if (!$this->hasPermission('«appName»:ItemListBlock:', "$content[title]::", ACCESS_OVERVIEW)) {
                     return false;
                 }
             «ENDIF»
