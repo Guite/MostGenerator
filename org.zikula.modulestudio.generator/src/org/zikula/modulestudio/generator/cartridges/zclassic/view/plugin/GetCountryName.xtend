@@ -13,21 +13,27 @@ class GetCountryName {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginFilePath = viewPluginFilePath('modifier', 'GetCountryName')
-        if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, getCountryNameImpl))
+        if (targets('1.3.x')) {
+            val pluginFilePath = viewPluginFilePath('modifier', 'GetCountryName')
+            if (!shouldBeSkipped(pluginFilePath)) {
+                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, getCountryNameImpl))
+            }
+        } else {
+            getCountryNameImpl
         }
     }
 
     def private getCountryNameImpl(Application it) '''
         /**
-         * The «appName.formatForDB»GetCountryName modifier displays the country name for a given country code.
+         * The «appName.formatForDB»«IF targets('1.3.x')»GetCountryName modifier«ELSE»_countryName filter«ENDIF» displays the country name for a given country code.
+         * Example:
+         *     «IF targets('1.3.x')»{'de'|«appName.formatForDB»GetCountryName}«ELSE»{{ 'de'|«appName.formatForDB»_countryName }}«ENDIF»
          *
          * @param string $countryCode The country code to process.
          *
          * @return string Country name.
          */
-        function smarty_modifier_«appName.formatForDB»GetCountryName($countryCode)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»G«ELSE»g«ENDIF»etCountryName($countryCode)
         {
             $result = «IF targets('1.3.x')»ZLanguage::getCountryName«ELSE»\Symfony\Component\Intl\Intl::getRegionBundle()->getCountryName«ENDIF»($countryCode);
             if ($result === false) {

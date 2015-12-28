@@ -26,11 +26,12 @@ class Custom {
 
     def dispatch generate(CustomAction it, Application app, Controller controller, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.x')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
-        var fileName = name.formatForCode.toFirstLower + '.tpl'
+        val templateExtension = if (app.targets('1.3.x')) '.tpl' else '.html.twig'
+        var fileName = name.formatForCode.toFirstLower + templateExtension
         if (!app.shouldBeSkipped(templatePath + fileName)) {
             println('Generating ' + controller.formattedName + ' templates for custom action "' + name.formatForDisplay + '"')
             if (app.shouldBeMarked(templatePath + fileName)) {
-                fileName = name.formatForCode.toFirstLower + '.generated.tpl'
+                fileName = name.formatForCode.toFirstLower + '.generated' + templateExtension
             }
             fsa.generateFile(templatePath + fileName, customView(it, app, controller))
         }
@@ -39,11 +40,12 @@ class Custom {
 
     def dispatch generate(CustomAction it, Application app, Entity entity, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.x')) entity.name.formatForDisplay else entity.name.formatForDisplayCapital) + '/'
-        var fileName = name.formatForCode.toFirstLower + '.tpl'
+        val templateExtension = if (app.targets('1.3.x')) '.tpl' else '.html.twig'
+        var fileName = name.formatForCode.toFirstLower + templateExtension
         if (!app.shouldBeSkipped(templatePath + fileName)) {
             println('Generating ' + entity.name.formatForDisplay + ' templates for custom action "' + name.formatForDisplay + '"')
             if (app.shouldBeMarked(templatePath + fileName)) {
-                fileName = name.formatForCode.toFirstLower + '.generated.tpl'
+                fileName = name.formatForCode.toFirstLower + '.generated' + templateExtension
             }
             fsa.generateFile(templatePath + fileName, customView(it, app, entity))
         }
@@ -51,61 +53,73 @@ class Custom {
     }
 
     def private dispatch customView(CustomAction it, Application app, Controller controller) '''
-        {* purpose of this template: show output of «name.formatForDisplay» action in «controller.formattedName» area *}
-        {include file='«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
-        <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-            {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
-            {pagesetvar name='title' value=$templateTitle}
-            «controller.templateHeader(name)»
+        «IF app.targets('1.3.x')»
+            {* purpose of this template: show output of «name.formatForDisplay» action in «controller.formattedName» area *}
+            {include file='«controller.formattedName»/header.tpl'}
+            <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
+                {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
+                {pagesetvar name='title' value=$templateTitle}
+                «controller.templateHeader(name)»
 
-            <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (!app.targets('1.3.x') && app.systemModule) app.name.formatForCode else app.appName»/«IF app.targets('1.3.x')»templates/«controller.formattedName»«ELSE»«app.getViewPath»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
-        </div>
-        {include file='«IF app.targets('1.3.x')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
+                <p>Please override this template by moving it from <em>/«app.rootFolder»/«app.appName»/templates/«controller.formattedName»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«controller.formattedName»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«controller.formattedName»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+            </div>
+            {include file='«controller.formattedName»/footer.tpl'}
+        «ELSE»
+            {# purpose of this template: show output of «name.formatForDisplay» action in «controller.formattedName» area #}
+            {% extends '«app.appName»::«IF controller instanceof AdminController»adminBase«ELSE»base«ENDIF».html.twig' %}
+            {% block title %}
+                {{ __('«name.formatForDisplayCapital»') }}
+            {% endblock %}
+            «IF controller instanceof AdminController»
+                {% block adminPageIcon %}square{% endblock %}
+            «ENDIF»
+            {% block content %}
+                <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
+                    <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getViewPath»«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/Resources/views/modules/«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+                </div>
+            {% endblock %}
+        «ENDIF»
     '''
 
     def private dispatch customView(CustomAction it, Application app, Entity controller) '''
-        {* purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area *}
         «IF app.targets('1.3.x')»
+            {* purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area *}
             {assign var='lct' value='user'}
             {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
                 {assign var='lct' value='admin'}
             {/if}
             {include file="`$lct`/header.tpl"}
-        «ELSE»
-            {assign var='area' value='User'}
-            {if $routeArea eq 'admin'}
-                {assign var='area' value='Admin'}
-            {/if}
-            {include file="`$area`/header.tpl"}
-        «ENDIF»
-        <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-            {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
-            {pagesetvar name='title' value=$templateTitle}
-            «entity.templateHeader(name)»
+            <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
+                {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
+                {pagesetvar name='title' value=$templateTitle}
+                «entity.templateHeader(name)»
 
-            <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (!app.targets('1.3.x') && app.systemModule) app.name.formatForCode else app.appName»/«IF app.targets('1.3.x')»templates/«entity.name.formatForDisplay»«ELSE»«app.getViewPath»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.x')»«entity.name.formatForDisplay»«ELSE»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.x')»«entity.name.formatForDisplay»«ELSE»«entity.name.formatForDisplayCapital»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
-        </div>
-        «IF app.targets('1.3.x')»
+                <p>Please override this template by moving it from <em>/«app.rootFolder»/«app.appName»/templates/«entity.name.formatForDisplay»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+            </div>
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$area`/footer.tpl"}
+            {# purpose of this template: show output of «name.formatForDisplay» action in «entity.name.formatForDisplay» area #}
+            {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+            {% block title %}
+                {{ __('«name.formatForDisplayCapital»') }}
+            {% endblock %}
+            {% block adminPageIcon %}square{% endblock %}
+            {% block content %}
+                <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
+                    <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getViewPath»«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/Resources/views/modules/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+                </div>
+            {% endblock %}
         «ENDIF»
     '''
 
+    // 1.3.x only
     def private dispatch templateHeader(Controller it, String actionName) {
         switch it {
             AdminController: '''
-                «IF application.targets('1.3.x')»
-                    <div class="z-admin-content-pagetitle">
-                        {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
-                        <h3>{$templateTitle}</h3>
-                    </div>
-                «ELSE»
-                    <h3>
-                        <span class="fa fa-square"></span>
-                        {$templateTitle}
-                    </h3>
-                «ENDIF»
+                <div class="z-admin-content-pagetitle">
+                    {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
+                    <h3>{$templateTitle}</h3>
+                </div>
             '''
             default: '''
                 <h2>{$templateTitle}</h2>
@@ -113,19 +127,13 @@ class Custom {
         }
     }
 
+    // 1.3.x only
     def private dispatch templateHeader(Entity it, String actionName) '''
-        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
-            «IF application.targets('1.3.x')»
-                <div class="z-admin-content-pagetitle">
-                    {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
-                    <h3>{$templateTitle}</h3>
-                </div>
-            «ELSE»
-                <h3>
-                    <span class="fa fa-square"></span>
-                    {$templateTitle}
-                </h3>
-            «ENDIF»
+        {if $lct eq 'admin'}
+            <div class="z-admin-content-pagetitle">
+                {icon type='options' size='small' __alt='«actionName.formatForDisplayCapital»'}
+                <h3>{$templateTitle}</h3>
+            </div>
         {else}
             <h2>{$templateTitle}</h2>
         {/if}

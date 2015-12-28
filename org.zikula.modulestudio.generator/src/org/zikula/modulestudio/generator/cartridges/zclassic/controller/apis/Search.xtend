@@ -117,6 +117,7 @@ class Search {
     '''
 
     def private getOptions(Application it) '''
+        «val entitiesWithStrings = entities.filter[hasAbstractStringFieldsEntity]»
         /**
          * Display the search form.
          *
@@ -134,12 +135,14 @@ class Search {
                 return '';
             }
 
-            «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
+            $templateParameters = [
+            «FOR entity : entitiesWithStrings»
                 «val fieldName = 'active_' + entity.name.formatForCode»
-                $this->view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
+                '«fieldName»' => (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»']))«IF entity != entitiesWithStrings.last»,«ENDIF»
             «ENDFOR»
+            ];
 
-            return $this->view->fetch('Search/options.tpl');
+            return $this->getContainer()->get('templating')->render('@«appName»/Search/options.html.twig', $templateParameters);
         }
     '''
 

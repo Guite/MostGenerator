@@ -25,27 +25,28 @@ class Emails {
         }
 
         val templatePath = getViewPath + if (targets('1.3.x')) 'email' else 'Email' + '/'
+        val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
 
         for (entity : entitiesWithWorkflow) {
-            var fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.tpl'
+            var fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.generated.tpl'
+                    fileName = 'notify' + entity.name.formatForCodeCapital + 'Creator.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, entity.notifyCreatorTemplate)
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.notifyCreatorTemplateLegacy else entity.notifyCreatorTemplate)
             }
 
-            fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator.tpl'
+            fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator.generated.tpl'
+                    fileName = 'notify' + entity.name.formatForCodeCapital + 'Moderator.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, entity.notifyModeratorTemplate)
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.notifyModeratorTemplateLegacy else entity.notifyModeratorTemplate)
             }
         }
     }
 
-    def private notifyCreatorTemplate(Entity it) '''
+    def private notifyCreatorTemplateLegacy(Entity it) '''
         <p>{gt text='Hello %s' tag=$recipient.name},</p>
 
         <p>{gt text='Your «name.formatForDisplay» "%s" has been changed.' tag=$mailData.name}</p>
@@ -69,7 +70,31 @@ class Emails {
         <p>{gt text='This mail has been sent automatically by %s.' tag=$modvars.ZConfig.sitename}</p>
     '''
 
-    def private notifyModeratorTemplate(Entity it) '''
+    def private notifyCreatorTemplate(Entity it) '''
+        <p>{{ __f('Hello %s', recipient.name) }},</p>
+
+        <p>{{ __f('Your «name.formatForDisplay» "%s" has been changed., mailData.name) }}</p>
+
+        <p>{{ __f('It\'s new state is: %s', mailData.newState) }}</p>
+
+        {% if mailData.remarks is not empty %}
+            <p>{{ __('Additional remarks:') }} {{ mailData.remarks }}</p>
+        {% endif %}
+
+        «IF application.hasUserController»
+
+            «IF application.getMainUserController.hasActions('display')»
+                <p>{{ __('Link to the «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+            «ENDIF»
+            «IF application.getMainUserController.hasActions('edit')»
+                <p>{{ __('Edit your «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
+            «ENDIF»
+        «ENDIF»
+
+        <p>{{ __f('This mail has been sent automatically by %s.', getModVar('ZConfig', 'sitename')) }}</p>
+    '''
+
+    def private notifyModeratorTemplateLegacy(Entity it) '''
         <p>{gt text='Hello %s' tag=$recipient.name},</p>
 
         <p>{gt text='A user changed his «name.formatForDisplay» "%s".' tag=$mailData.name}</p>
@@ -90,5 +115,28 @@ class Emails {
         «ENDIF»
 
         <p>{gt text='This mail has been sent automatically by %s.' tag=$modvars.ZConfig.sitename}</p>
+    '''
+
+    def private notifyModeratorTemplate(Entity it) '''
+        <p>{{ __f('Hello %s', recipient.name) }},</p>
+
+        <p>{{ __f('A user changed his «name.formatForDisplay» "%s".', mailData.name) }}</p>
+
+        <p>{{ __f('It\'s new state is: %s', mailData.newState) }}</p>
+
+        {% if mailData.remarks is not empty %}
+            <p>{{ __('Additional remarks:') }} {{ mailData.remarks }}</p>
+        {% endif %}
+
+        «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
+            || application.hasUserController && application.getMainUserController.hasActions('display')»
+            <p>{{ __('Link to the «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+        «ENDIF»
+        «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('edit')
+            || application.hasUserController && application.getMainUserController.hasActions('edit')»
+            <p>{{ __('Edit the «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
+        «ENDIF»
+
+        <p>{{ __f('This mail has been sent automatically by %s.', getModVar('ZConfig', 'sitename')) }}</p>
     '''
 }

@@ -102,7 +102,7 @@ class Docs {
         The reason for that is that these objects contain too many references which will
         result in a very huge output.
 
-        Instead use the Doctrine\Common\Util\Debug::dump($data) method which reduces
+        Instead use the Doctrine\Common\Util\Debug::dump($entity) method which reduces
         the output to reasonable information.«IF !targets('1.3.x')» Since Zikula 1.4.0 there is also
         a shortcut method available in System::dump($var, $maxDepth = 2, $stripTags = true).«ENDIF»
         

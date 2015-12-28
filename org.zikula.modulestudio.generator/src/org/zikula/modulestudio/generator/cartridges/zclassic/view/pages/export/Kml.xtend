@@ -22,28 +22,29 @@ class Kml {
         if (hasActions('view')) {
             templateFilePath = templateFileWithExtension('view', 'kml')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, kmlView(appName))
+                fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) kmlViewLegacy(appName) else kmlView(appName))
             }
         }
         if (hasActions('display')) {
             templateFilePath = templateFileWithExtension('display', 'kml')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, kmlDisplay(appName))
+                fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) kmlDisplayLegacy(appName) else kmlDisplay(appName))
             }
         }
     }
 
-    def private kmlView(Entity it, String appName) '''
+    def private kmlViewLegacy(Entity it, String appName) '''
+        «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» view kml view *}
-        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}«ENDIF»<?xml version="1.0" encoding="UTF-8"?>
+        {«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}<?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
-        {foreach item='item' from=$items}
+        {foreach item='«objName»' from=$items}
             <Placemark>
                 «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
-                <name>«IF !stringFields.empty»{$item->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
+                <name>«IF !stringFields.empty»{$«objName»->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 <Point>
-                    <coordinates>{$item->getLongitude()}, {$item->getLatitude()}, 0</coordinates>
+                    <coordinates>{$«objName»->getLongitude()}, {$«objName»->getLatitude()}, 0</coordinates>
                 </Point>
             </Placemark>
         {/foreach}
@@ -51,10 +52,29 @@ class Kml {
         </kml>
     '''
 
-    def private kmlDisplay(Entity it, String appName) '''
+    def private kmlView(Entity it, String appName) '''
+        «val objName = name.formatForCode»
+        {# purpose of this template: «nameMultiple.formatForDisplay» view kml view #}
+        {{ «appName.formatForDB»_templateHeaders(contentType='application/vnd.google-earth.kml+xml') }}<?xml version="1.0" encoding="UTF-8"?>
+        <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+        <Document>
+        {% for «objName» in items %}
+            <Placemark>
+                «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
+                <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»</name>
+                <Point>
+                    <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>
+                </Point>
+            </Placemark>
+        {% endfor %}
+        </Document>
+        </kml>
+    '''
+
+    def private kmlDisplayLegacy(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display kml view *}
-        «IF application.targets('1.3.x')»{«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}«ENDIF»<?xml version="1.0" encoding="UTF-8"?>
+        {«appName.formatForDB»TemplateHeaders contentType='application/vnd.google-earth.kml+xml'}<?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
             <Placemark>
@@ -62,6 +82,23 @@ class Kml {
                 <name>«IF !stringFields.empty»{$«objName»->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 <Point>
                     <coordinates>{$«objName»->getLongitude()}, {$«objName»->getLatitude()}, 0</coordinates>
+                </Point>
+            </Placemark>
+        </Document>
+        </kml>
+    '''
+
+    def private kmlDisplay(Entity it, String appName) '''
+        «val objName = name.formatForCode»
+        {* purpose of this template: «nameMultiple.formatForDisplay» display kml view *}
+        {{ «appName.formatForDB»_templateHeaders(contentType='application/vnd.google-earth.kml+xml') }}<?xml version="1.0" encoding="UTF-8"?>
+        <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+        <Document>
+            <Placemark>
+                «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
+                <name>«IF !stringFields.empty»{{ «objName»->get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»</name>
+                <Point>
+                    <coordinates>{{ «objName»->getLongitude() }}, {{ «objName»->getLatitude() }}, 0</coordinates>
                 </Point>
             </Placemark>
         </Document>

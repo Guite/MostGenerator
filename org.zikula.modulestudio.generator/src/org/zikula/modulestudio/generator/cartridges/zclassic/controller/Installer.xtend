@@ -5,11 +5,9 @@ import de.guite.modulestudio.metamodel.EntityTreeType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.EventListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ExampleData
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.Interactive
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.MigrationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.InstallerView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -36,13 +34,6 @@ class Installer {
         generateClassPair(fsa, getAppSourceLibPath + installerPrefix + 'Installer.php',
             fh.phpFileContent(it, installerBaseClass), fh.phpFileContent(it, installerImpl)
         )
-
-        if (interactiveInstallation == true) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Controller/InteractiveInstaller' + (if (targets('1.3.x')) '' else 'Controller') + '.php',
-                fh.phpFileContent(it, interactiveBaseClass), fh.phpFileContent(it, interactiveImpl)
-            )
-            new InstallerView().generate(it, fsa)
-        }
     }
 
     def private installerBaseClass(Application it) '''
@@ -77,38 +68,6 @@ class Installer {
         class «IF targets('1.3.x')»«appName»_Base_Installer extends Zikula_AbstractInstaller«ELSE»«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller«ENDIF»
         {
             «installerBaseImpl»
-        }
-    '''
-
-    def private interactiveBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Controller\Base;
-
-            use Symfony\Component\HttpFoundation\RedirectResponse;
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
-            «IF needsConfig»
-                use ModUtil;
-            «ENDIF»
-            use ServiceUtil;
-            use System;
-            use Zikula_Controller_AbstractInteractiveInstaller;
-            use ZLanguage;
-            «IF hasCategorisableEntities»
-                use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
-            «ENDIF»
-
-        «ENDIF»
-        /**
-         * Interactive installer base class.
-         */
-        «IF targets('1.3.x')»
-        class «appName»_Controller_Base_InteractiveInstaller extends Zikula_Controller_AbstractInteractiveInstaller
-        «ELSE»
-        class InteractiveInstallerController extends Zikula_Controller_AbstractInteractiveInstaller
-        «ENDIF»
-        {
-            «new Interactive().generate(it)»
         }
     '''
 
@@ -159,6 +118,7 @@ class Installer {
                     «ELSE»
                         $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
                         $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+
                         return false;
                     «ENDIF»
                 }
@@ -175,6 +135,7 @@ class Installer {
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $returnMessage);
                     $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+
                     return false;
                 «ENDIF»
             }
@@ -183,19 +144,7 @@ class Installer {
                 // set up all our vars with initial values
                 «val modvarHelper = new ModVars()»
                 «FOR modvar : getAllVariables»
-                    «IF interactiveInstallation == true»
-                        «IF targets('1.3.x')»
-                            $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
-                            $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
-                            SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
-                        «ELSE»
-                            $sessionValue = $session->get('«formatForCode(name + '_' + modvar.name)»');
-                            $this->setVar('«modvar.name.formatForCode»', (($sessionValue != false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
-                            $session->del(«formatForCode(name + '_' + modvar.name)»);
-                        «ENDIF»
-                    «ELSE»
-                        $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
-                    «ENDIF»
+                    $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
                 «ENDFOR»
             «ENDIF»
 
@@ -293,6 +242,7 @@ class Installer {
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $e->getMessage());
                     $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+
                     return false;
                 «ENDIF»
             }
@@ -338,6 +288,7 @@ class Installer {
                             «ELSE»
                                 $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
                                 $logger->error('{app}: User {user} could not update the database tables during the upgrade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+
                                 return false;
                             «ENDIF»
                         }
@@ -346,6 +297,7 @@ class Installer {
                         «ELSE»
                             $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while updating tables for the %s extension.', array('«appName»')));
                             $logger->error('{app}: User {user} could not update the database tables during the ugprade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+
                             return false;
                         «ENDIF»
                     }
@@ -395,6 +347,7 @@ class Installer {
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array('«appName»')));
                     $logger->error('{app}: User {user} could not remove stored object workflows during uninstallation.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+
                     return false;
                 «ENDIF»
             }
@@ -412,6 +365,7 @@ class Installer {
                     «ELSE»
                         $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
                         $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+
                         return false;
                     «ENDIF»
                 }
@@ -420,6 +374,7 @@ class Installer {
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while dropping tables for the %s extension.', array('«appName»')));
                     $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+
                     return false;
                 «ENDIF»
             }
@@ -526,26 +481,6 @@ class Installer {
         class «appName»_Installer extends «appName»_Base_Installer
         «ELSE»
         class «name.formatForCodeCapital»ModuleInstaller extends Base«name.formatForCodeCapital»ModuleInstaller
-        «ENDIF»
-        {
-            // feel free to extend the installer here
-        }
-    '''
-
-    def private interactiveImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Controller;
-
-            use «appNamespace»\Controller\Base\InteractiveInstaller as BaseInteractiveInstaller;
-
-        «ENDIF»
-        /**
-         * Interactive installer implementation class.
-         */
-        «IF targets('1.3.x')»
-        class «appName»_Controller_InteractiveInstaller extends «appName»_Controller_Base_InteractiveInstaller
-        «ELSE»
-        class InteractiveInstaller extends BaseInteractiveInstaller
         «ENDIF»
         {
             // feel free to extend the installer here

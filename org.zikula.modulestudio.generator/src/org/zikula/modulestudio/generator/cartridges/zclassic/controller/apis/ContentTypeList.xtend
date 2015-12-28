@@ -39,7 +39,6 @@ class ContentTypeList {
             «ENDIF»
             use ModUtil;
             use ServiceUtil;
-            use Zikula_View;
             use ZLanguage;
 
         «ENDIF»
@@ -271,9 +270,9 @@ class ContentTypeList {
         public function display()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
-            ModUtil::initOOModule('«appName»');
 
             «IF targets('1.3.x')»
+                ModUtil::initOOModule('«appName»');
                 $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
@@ -284,33 +283,37 @@ class ContentTypeList {
                 $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
             «ENDIF»
 
-            // ensure that the view does not look for templates in the Content module (#218)
-            $this->view->toplevelmodule = '«appName»';
+            «IF targets('1.3.x')»
+                // ensure that the view does not look for templates in the Content module (#218)
+                $this->view->toplevelmodule = '«appName»';
 
+            «ENDIF»
             «IF !targets('1.3.x')»
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
-            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
-            // set cache id
-            $component = '«appName»:' . ucfirst($this->objectType) . ':';
-            $instance = '::';
-            $accessLevel = ACCESS_READ;
-            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
-                $accessLevel = ACCESS_COMMENT;
-            }
-            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
-                $accessLevel = ACCESS_EDIT;
-            }
-            $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
+            «IF targets('1.3.x')»
+                $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+                // set cache id
+                $component = '«appName»:' . ucfirst($this->objectType) . ':';
+                $instance = '::';
+                $accessLevel = ACCESS_READ;
+                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
+                    $accessLevel = ACCESS_COMMENT;
+                }
+                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                    $accessLevel = ACCESS_EDIT;
+                }
+                $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
 
-            $template = $this->getDisplayTemplate();
+                $template = $this->getDisplayTemplate();
 
-            // if page is cached return cached content
-            if ($this->view->is_cached($template)) {
-                return $this->view->fetch($template);
-            }
+                // if page is cached return cached content
+                if ($this->view->is_cached($template)) {
+                    return $this->view->fetch($template);
+                }
 
+            «ENDIF»
             // create query
             $where = $this->filter;
             $orderBy = $this->getSortParam($repository);
@@ -339,19 +342,34 @@ class ContentTypeList {
                           'customTemplate' => $this->customTemplate,
                           'filter' => $this->filter);
 
-            // assign block vars and fetched data
-            $this->view->assign('vars', $data)
-                       ->assign('objectType', $this->objectType)
-                       ->assign('items', $entities)
-                       ->assign($repository->getAdditionalTemplateParameters('contentType'));
-            «IF hasCategorisableEntities»
+            «IF targets('1.3.x')»
+                // assign vars and fetched data
+                $this->view->assign('vars', $data)
+                           ->assign('objectType', $this->objectType)
+                           ->assign('items', $entities)
+                           ->assign($repository->getAdditionalTemplateParameters('contentType'));
+                «IF hasCategorisableEntities»
 
-                // assign category data
-                $this->view->assign('registries', $this->catRegistries);
-                $this->view->assign('properties', $this->catProperties);
+                    // assign category data
+                    $this->view->assign('registries', $this->catRegistries);
+                    $this->view->assign('properties', $this->catProperties);
+                «ENDIF»
+
+                $output = $this->view->fetch($template);
+            «ELSE»
+                $templateParameters = [
+                    'vars' => $data,
+                    'objectType' => $this->objectType,
+                    'items' => $entities«IF hasCategorisableEntities»,
+                    'registries' => $this->catRegistries,
+                    'properties' => $this->catProperties«ENDIF»
+                ];
+                $templateParameters = array_merge($templateData, $repository->getAdditionalTemplateParameters('contentType'));
+
+                $template = $this->getDisplayTemplate();
+
+                $output = $serviceManager->get('templating')->render('@«appName»/' . $template, $templateParameters);
             «ENDIF»
-
-            $output = $this->view->fetch($template);
 
             return $output;
         }

@@ -56,175 +56,189 @@ class OverrideTemplates {
     def overrides(Application it, String mapType) '''
         «val isLegacy = if (targets('1.3.x')) true else false»
         «var sourcePath = getViewPath»
-        «IF targets('1.3.x')»
+        «IF isLegacy»
             «{sourcePath = sourcePath.replace('src/', '');''}»
         «ELSE»
             «{sourcePath = rootFolder + '/' + (if (systemModule) name.formatForCodeCapital else vendorAndName) + '/' + sourcePath;''}»
         «ENDIF»
-        «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (targets('1.3.x')) 'templates' else 'Resources/views') + '/modules/' + appName + '/'»
+        «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (isLegacy) 'templates' else 'Resources/views') + '/modules/' + appName + '/'»
         «var templateFolder = ''»
+        «IF !isLegacy»
+            «sourcePath»«templateFolder»base«templateExtension('html')»: «destinationPath»«templateFolder»base«templateExtension('html')»
+            «sourcePath»«templateFolder»adminBase«templateExtension('html')»: «destinationPath»«templateFolder»adminBase«templateExtension('html')»
+        «ENDIF»
         «FOR entity : getAllEntities»
             «{templateFolder = (if (isLegacy) entity.name.formatForCode else entity.name.formatForCodeCapital) + '/';''}»
             «IF entity.hasActions('index')»
                 «val pageName = (if (isLegacy) 'main' else 'index')»
-                «sourcePath»«templateFolder»«pageName».tpl: «destinationPath»«templateFolder»«pageName».tpl
+                «sourcePath»«templateFolder»«pageName»«templateExtension('html')»: «destinationPath»«templateFolder»«pageName»«templateExtension('html')»
             «ENDIF»
             «IF entity.hasActions('view')»
-                «sourcePath»«templateFolder»view.tpl: «destinationPath»«templateFolder»view.tpl
-                «sourcePath»«templateFolder»view_quickNav.tpl: «destinationPath»«templateFolder»view_quickNav.tpl
+                «sourcePath»«templateFolder»view«templateExtension('html')»: «destinationPath»«templateFolder»view«templateExtension('html')»
+                «sourcePath»«templateFolder»viewQuickNav«templateExtension('html')»: «destinationPath»«templateFolder»viewQuickNav«templateExtension('html')»
                 «IF entity.tree != EntityTreeType.NONE»
-                    «sourcePath»«templateFolder»view_tree.tpl: «destinationPath»«templateFolder»view_tree.tpl
-                    «sourcePath»«templateFolder»view_tree_items.tpl: «destinationPath»«templateFolder»view_tree_items.tpl
+                    «sourcePath»«templateFolder»viewTree«templateExtension('html')»: «destinationPath»«templateFolder»viewTree«templateExtension('html')»
+                    «sourcePath»«templateFolder»viewTreeItems«templateExtension('html')»: «destinationPath»«templateFolder»viewTreeItems«templateExtension('html')»
                 «ENDIF»
                 «IF generateCsvTemplates»
-                    «sourcePath»«templateFolder»view.csv.tpl: «destinationPath»«templateFolder»view.csv.tpl
+                    «sourcePath»«templateFolder»view«templateExtension('csv')»: «destinationPath»«templateFolder»view«templateExtension('csv')»
                 «ENDIF»
                 «IF generateRssTemplates»
-                    «sourcePath»«templateFolder»view.rss.tpl: «destinationPath»«templateFolder»view.rss.tpl
+                    «sourcePath»«templateFolder»view«templateExtension('rss')»: «destinationPath»«templateFolder»view«templateExtension('rss')»
                 «ENDIF»
                 «IF generateAtomTemplates»
-                    «sourcePath»«templateFolder»view.atom.tpl: «destinationPath»«templateFolder»view.atom.tpl
+                    «sourcePath»«templateFolder»view«templateExtension('atom')»: «destinationPath»«templateFolder»view«templateExtension('atom')»
                 «ENDIF»
             «ENDIF»
             «IF entity.hasActions('view') || entity.hasActions('display')»
                 «IF generateXmlTemplates»
                     «IF entity.hasActions('view')»
-                        «sourcePath»«templateFolder»view.xml.tpl: «destinationPath»«templateFolder»view.xml.tpl
+                        «sourcePath»«templateFolder»view«templateExtension('xml')»: «destinationPath»«templateFolder»view«templateExtension('xml')»
                     «ENDIF»
                     «IF entity.hasActions('display')»
-                        «sourcePath»«templateFolder»display.xml.tpl: «destinationPath»«templateFolder»display.xml.tpl
+                        «sourcePath»«templateFolder»display«templateExtension('xml')»: «destinationPath»«templateFolder»display«templateExtension('xml')»
                     «ENDIF»
-                    «sourcePath»«templateFolder»include.xml.tpl: «destinationPath»«templateFolder»include.xml.tpl
+                    «sourcePath»«templateFolder»include«templateExtension('xml')»: «destinationPath»«templateFolder»include«templateExtension('xml')»
                 «ENDIF»
                 «IF generateJsonTemplates»
                     «IF entity.hasActions('view')»
-                        «sourcePath»«templateFolder»view.json.tpl: «destinationPath»«templateFolder»view.json.tpl
+                        «sourcePath»«templateFolder»view«templateExtension('json')»: «destinationPath»«templateFolder»view«templateExtension('json')»
                     «ENDIF»
                     «IF entity.hasActions('display')»
-                        «sourcePath»«templateFolder»display.json.tpl: «destinationPath»«templateFolder»display.json.tpl
+                        «sourcePath»«templateFolder»display«templateExtension('json')»: «destinationPath»«templateFolder»display«templateExtension('json')»
                     «ENDIF»
                 «ENDIF»
                 «IF generateKmlTemplates && entity.geographical»
                     «IF entity.hasActions('view')»
-                        «sourcePath»«templateFolder»view.kml.tpl: «destinationPath»«templateFolder»view.kml.tpl
+                        «sourcePath»«templateFolder»view«templateExtension('kml')»: «destinationPath»«templateFolder»view«templateExtension('kml')»
                     «ENDIF»
                     «IF entity.hasActions('display')»
-                        «sourcePath»«templateFolder»display.kml.tpl: «destinationPath»«templateFolder»display.kml.tpl
+                        «sourcePath»«templateFolder»display«templateExtension('kml')»: «destinationPath»«templateFolder»display«templateExtension('kml')»
                     «ENDIF»
                 «ENDIF»
             «ENDIF»
             «IF entity.hasActions('display')»
                 «IF generateIcsTemplates && entity.getStartDateField !== null && entity.getEndDateField !== null»
-                    «sourcePath»«templateFolder»display.ics.tpl: «destinationPath»«templateFolder»display.ics.tpl
+                    «sourcePath»«templateFolder»display«templateExtension('ics')»: «destinationPath»«templateFolder»display«templateExtension('ics')»
                 «ENDIF»
             «ENDIF»
             «IF entity.hasActions('display')»
-                «sourcePath»«templateFolder»display.tpl: «destinationPath»«templateFolder»display.tpl
+                «sourcePath»«templateFolder»display«templateExtension('html')»: «destinationPath»«templateFolder»display«templateExtension('html')»
                 «IF entity.tree != EntityTreeType.NONE»
-                    «sourcePath»«templateFolder»display_treeRelatives.tpl: «destinationPath»«templateFolder»display_treeRelatives.tpl
+                    «sourcePath»«templateFolder»displayTreeRelatives«templateExtension('html')»: «destinationPath»«templateFolder»displayTreeRelatives«templateExtension('html')»
                 «ENDIF»
             «ENDIF»
             «IF entity.hasActions('delete')»
-                «sourcePath»«templateFolder»delete.tpl: «destinationPath»«templateFolder»delete.tpl
+                «sourcePath»«templateFolder»delete«templateExtension('html')»: «destinationPath»«templateFolder»delete«templateExtension('html')»
             «ENDIF»
             «FOR action : entity.getCustomActions»
-                «sourcePath»«templateFolder»«action.name.formatForCode.toFirstLower».tpl: «destinationPath»«templateFolder»«action.name.formatForCode.toFirstLower».tpl
+                «sourcePath»«templateFolder»«action.name.formatForCode.toFirstLower»«templateExtension('html')»: «destinationPath»«templateFolder»«action.name.formatForCode.toFirstLower»«templateExtension('html')»
             «ENDFOR»
             «val refedElems = entity.getIncomingJoinRelations.filter[e|e.source instanceof Entity && e.source.application == entity.application] + entity.outgoing.filter(ManyToManyRelationship).filter[e|e.target instanceof Entity && e.target.application == entity.application]»
             «IF !refedElems.empty»
-                «sourcePath»«templateFolder»include_displayItemListOne.tpl: «destinationPath»«templateFolder»include_displayItemListOne.tpl
-                «sourcePath»«templateFolder»include_displayItemListMany.tpl: «destinationPath»«templateFolder»include_displayItemListMany.tpl
+                «sourcePath»«templateFolder»includeDisplayItemListOne«templateExtension('html')»: «destinationPath»«templateFolder»includeDisplayItemListOne«templateExtension('html')»
+                «sourcePath»«templateFolder»includeDisplayItemListMany«templateExtension('html')»: «destinationPath»«templateFolder»includeDisplayItemListMany«templateExtension('html')»
             «ENDIF»
         «ENDFOR»
         «FOR controller : adminAndUserControllers»
             «{templateFolder = (if (isLegacy) controller.formattedName else controller.formattedName.toFirstUpper) + '/';''}»
-            «sourcePath»«templateFolder»header.tpl: «destinationPath»«templateFolder»header.tpl
-            «sourcePath»«templateFolder»footer.tpl: «destinationPath»«templateFolder»footer.tpl
+            «IF isLegacy»
+                «sourcePath»«templateFolder»header«templateExtension('html')»: «destinationPath»«templateFolder»header«templateExtension('html')»
+                «sourcePath»«templateFolder»footer«templateExtension('html')»: «destinationPath»«templateFolder»footer«templateExtension('html')»
+            «ENDIF»
             «FOR action : controller.getCustomActions»
-                «sourcePath»«templateFolder»«action.name.formatForCode.toFirstLower».tpl: «destinationPath»«templateFolder»«action.name.formatForCode.toFirstLower».tpl
+                «sourcePath»«templateFolder»«action.name.formatForCode.toFirstLower»«templateExtension('html')»: «destinationPath»«templateFolder»«action.name.formatForCode.toFirstLower»«templateExtension('html')»
             «ENDFOR»
         «ENDFOR»
         «FOR controller : controllers»
             «IF !(controller instanceof AjaxController)»
                 «FOR action : controller.actions.filter(EditAction)»
                     «{templateFolder = (if (isLegacy) controller.formattedName else controller.formattedName.toFirstUpper) + '/';''}»
-                    «sourcePath»«templateFolder»inlineRedirectHandler.tpl: «destinationPath»«templateFolder»inlineRedirectHandler.tpl
+                    «sourcePath»«templateFolder»inlineRedirectHandler«templateExtension('html')»: «destinationPath»«templateFolder»inlineRedirectHandler«templateExtension('html')»
                 «ENDFOR»
             «ENDIF»
         «ENDFOR»
         «FOR entity : getAllEntities.filter[hasActions('edit')]»
             «{templateFolder = (if (isLegacy) entity.name.formatForCode else entity.name.formatForCodeCapital) + '/';''}»
-            «sourcePath»«templateFolder»edit.tpl: «destinationPath»«templateFolder»edit.tpl
-            «sourcePath»«templateFolder»inlineRedirectHandler.tpl: «destinationPath»«templateFolder»inlineRedirectHandler.tpl
+            «sourcePath»«templateFolder»edit«templateExtension('html')»: «destinationPath»«templateFolder»edit«templateExtension('html')»
+            «sourcePath»«templateFolder»inlineRedirectHandler«templateExtension('html')»: «destinationPath»«templateFolder»inlineRedirectHandler«templateExtension('html')»
             «FOR relation : entity.getBidirectionalIncomingJoinRelations.filter[source.application == it && getEditStageCode(true) > 0]»
                 «val useTarget = false»
                 «IF (useTarget || relation instanceof ManyToManyRelationship)»
                     «val editSnippet = if (relation.getEditStageCode(true) > 1) 'Edit' else ''»
-                    «var templateName = 'include_select' + editSnippet + relation.getTargetMultiplicity(useTarget)»
-                    «var templateNameItemList = 'include_select' + editSnippet + 'ItemList' + relation.getTargetMultiplicity(useTarget)»
-                    «sourcePath»«templateFolder»«templateName».tpl: «destinationPath»«templateFolder»«templateName».tpl
-                    «sourcePath»«templateFolder»«templateNameItemList».tpl: «destinationPath»«templateFolder»«templateNameItemList».tpl
+                    «var templateName = 'includeSelect' + editSnippet + relation.getTargetMultiplicity(useTarget)»
+                    «var templateNameItemList = 'includeSelect' + editSnippet + 'ItemList' + relation.getTargetMultiplicity(useTarget)»
+                    «sourcePath»«templateFolder»«templateName»«templateExtension('html')»: «destinationPath»«templateFolder»«templateName»«templateExtension('html')»
+                    «sourcePath»«templateFolder»«templateNameItemList»«templateExtension('html')»: «destinationPath»«templateFolder»«templateNameItemList»«templateExtension('html')»
                 «ENDIF»
             «ENDFOR»
             «FOR relation : entity.getOutgoingJoinRelations.filter[target.application == it && getEditStageCode(false) > 0]»
                 «val useTarget = true»
                 «IF (useTarget || relation instanceof ManyToManyRelationship)»
                     «val editSnippet = if (relation.getEditStageCode(false) > 1) 'Edit' else ''»
-                    «var templateName = 'include_select' + editSnippet + relation.getTargetMultiplicity(useTarget)»
-                    «var templateNameItemList = 'include_select' + editSnippet + 'ItemList' + relation.getTargetMultiplicity(useTarget)»
-                    «sourcePath»«templateFolder»«templateName».tpl: «destinationPath»«templateFolder»«templateName».tpl
-                    «sourcePath»«templateFolder»«templateNameItemList».tpl: «destinationPath»«templateFolder»«templateNameItemList».tpl
+                    «var templateName = 'includeSelect' + editSnippet + relation.getTargetMultiplicity(useTarget)»
+                    «var templateNameItemList = 'includeSelect' + editSnippet + 'ItemList' + relation.getTargetMultiplicity(useTarget)»
+                    «sourcePath»«templateFolder»«templateName»«templateExtension('html')»: «destinationPath»«templateFolder»«templateName»«templateExtension('html')»
+                    «sourcePath»«templateFolder»«templateNameItemList»«templateExtension('html')»: «destinationPath»«templateFolder»«templateNameItemList»«templateExtension('html')»
                 «ENDIF»
             «ENDFOR»
         «ENDFOR»
         «{templateFolder = (if (isLegacy) 'helper' else 'Helper') + '/';''}»
         «IF hasAttributableEntities»
             «IF hasViewActions || hasDisplayActions»
-                «sourcePath»«templateFolder»include_attributes_display.tpl: «destinationPath»«templateFolder»include_attributes_display.tpl
+                «sourcePath»«templateFolder»includeAttributesDisplay«templateExtension('html')»: «destinationPath»«templateFolder»includeAttributesDisplay«templateExtension('html')»
             «ENDIF»
             «IF hasEditActions»
-                «sourcePath»«templateFolder»include_attributes_edit.tpl: «destinationPath»«templateFolder»include_attributes_edit.tpl
+                «sourcePath»«templateFolder»includeAttributesEdit«templateExtension('html')»: «destinationPath»«templateFolder»includeAttributesEdit«templateExtension('html')»
             «ENDIF»
         «ENDIF»
         «IF hasCategorisableEntities»
             «IF hasViewActions || hasDisplayActions»
-                «sourcePath»«templateFolder»include_categories_display.tpl: «destinationPath»«templateFolder»include_categories_display.tpl
+                «sourcePath»«templateFolder»includeCategoriesDisplay«templateExtension('html')»: «destinationPath»«templateFolder»includeCategoriesDisplay«templateExtension('html')»
             «ENDIF»
             «IF hasEditActions»
-                «sourcePath»«templateFolder»include_categories_edit.tpl: «destinationPath»«templateFolder»include_categories_edit.tpl
+                «sourcePath»«templateFolder»includeCategoriesEdit«templateExtension('html')»: «destinationPath»«templateFolder»includeCategoriesEdit«templateExtension('html')»
             «ENDIF»
         «ENDIF»
         «IF hasStandardFieldEntities»
             «IF hasViewActions || hasDisplayActions»
-                «sourcePath»«templateFolder»include_standardfields_display.tpl: «destinationPath»«templateFolder»include_standardfields_display.tpl
+                «sourcePath»«templateFolder»includeStandardFieldsDisplay«templateExtension('html')»: «destinationPath»«templateFolder»includeStandardFieldsDisplay«templateExtension('html')»
             «ENDIF»
             «IF hasEditActions»
-                «sourcePath»«templateFolder»include_standardfields_edit.tpl: «destinationPath»«templateFolder»include_standardfields_edit.tpl
+                «sourcePath»«templateFolder»includeStandardFieldsEdit«templateExtension('html')»: «destinationPath»«templateFolder»includeStandardFieldsEdit«templateExtension('html')»
             «ENDIF»
         «ENDIF»
         «IF hasMetaDataEntities»
             «IF hasViewActions || hasDisplayActions»
-                «sourcePath»«templateFolder»include_metadata_display.tpl: «destinationPath»«templateFolder»include_metadata_display.tpl
+                «sourcePath»«templateFolder»includeMetaDataDisplay«templateExtension('html')»: «destinationPath»«templateFolder»includeMetaDataDisplay«templateExtension('html')»
             «ENDIF»
             «IF hasEditActions»
-                «sourcePath»«templateFolder»include_metadata_edit.tpl: «destinationPath»«templateFolder»include_metadata_edit.tpl
+                «sourcePath»«templateFolder»includeMetaDataEdit«templateExtension('html')»: «destinationPath»«templateFolder»includeMetaDataEdit«templateExtension('html')»
             «ENDIF»
         «ENDIF»
         «IF !isLegacy»
-            «sourcePath»include_filterSyntaxDialog.tpl: «destinationPath»include_filterSyntaxDialog.tpl
+            «sourcePath»includeFilterSyntaxDialog«templateExtension('html')»: «destinationPath»includeFilterSyntaxDialog«templateExtension('html')»
         «ENDIF»
         «IF needsConfig»
             «{templateFolder = (if (isLegacy) configController.formatForDB else configController.formatForDB.toFirstUpper) + '/';''}»
-            «sourcePath»«templateFolder»config.tpl: «destinationPath»«templateFolder»config.tpl
+            «sourcePath»«templateFolder»config«templateExtension('html')»: «destinationPath»«templateFolder»config«templateExtension('html')»
         «ENDIF»
         «IF needsApproval»
             «{templateFolder = (if (isLegacy) 'email' else 'Email') + '/';''}»
             «val entitiesWithWorkflow = getAllEntities.filter[workflow != EntityWorkflowType.NONE]»
             «FOR entity : entitiesWithWorkflow»
-                «sourcePath»«templateFolder»notify«entity.name.formatForCode»Creator.tpl: «destinationPath»«templateFolder»notify«entity.name.formatForCode»Creator.tpl
-                «sourcePath»«templateFolder»notify«entity.name.formatForCode»Moderator.tpl: «destinationPath»«templateFolder»notify«entity.name.formatForCode»Moderator.tpl
+                «sourcePath»«templateFolder»notify«entity.name.formatForCodeCapital»Creator«templateExtension('html')»: «destinationPath»«templateFolder»notify«entity.name.formatForCodeCapital»Creator«templateExtension('html')»
+                «sourcePath»«templateFolder»notify«entity.name.formatForCodeCapital»Moderator«templateExtension('html')»: «destinationPath»«templateFolder»notify«entity.name.formatForCodeCapital»Moderator«templateExtension('html')»
             «ENDFOR»
         «ENDIF»
-        «sourcePath»include_pdfheader.tpl: «destinationPath»include_pdfheader.tpl
+        «sourcePath»includePdfHeader«templateExtension('html')»: «destinationPath»includePdfHeader«templateExtension('html')»
     '''
+
+    def private templateExtension(Application it, String format) {
+        var ^extension = if (targets('1.3.x')) '.tpl' else '.twig'
+        if (!targets('1.3.x') || format != 'html') {
+            ^extension = '.' + format + ^extension
+        }
+        ^extension
+    }
 }

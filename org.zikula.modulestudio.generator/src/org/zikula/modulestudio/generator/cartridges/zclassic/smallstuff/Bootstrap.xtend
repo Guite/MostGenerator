@@ -35,7 +35,7 @@ class Bootstrap {
     def private bootstrapBaseImpl(Application it) '''
         «bootstrapDocs»
         «initExtensions»
-        «IF !referredApplications.empty»
+        «IF targets('1.3.x') && !referredApplications.empty»
 
             «FOR referredApp : referredApplications»
                 if (ModUtil::available('«referredApp.name.formatForCodeCapital»')) {

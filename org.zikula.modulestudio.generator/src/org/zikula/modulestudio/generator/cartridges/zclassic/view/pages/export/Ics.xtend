@@ -21,24 +21,14 @@ class Ics {
         println('Generating ics view templates for entity "' + name.formatForDisplay + '"')
         val templateFilePath = templateFileWithExtension('display', 'ics')
         if (!application.shouldBeSkipped(templateFilePath)) {
-            fsa.generateFile(templateFilePath, icsDisplay(appName))
+            fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) icsDisplayLegacy(appName) else icsDisplay(appName))
         }
     }
 
-    def private icsDisplay(Entity it, String appName) '''
+    def private icsDisplayLegacy(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display ics view *}
-        «IF application.targets('1.3.x')»
-            {«appName.formatForDB»TemplateHeaders contentType='text/calendar; charset=iso-8859-15'}{*charset=utf-8'*}
-        «ENDIF»
-        {php}
-            $«objName» = $this->get_template_vars('«objName»');
-            «IF hasSluggableFields»
-                header('Content-Disposition: attachment; filename="«name.formatForCode»_' . $«objName»['slug'] . '.ics"');
-            «ELSE»
-                header('Content-Disposition: attachment; filename="«name.formatForCode»_' . $«objName»->getTitleFromDisplayPattern() . '.ics"');
-            «ENDIF»
-        {/php}
+        {«appName.formatForDB»TemplateHeaders contentType='text/calendar; charset=iso-8859-15«/*charset=utf-8*/»' asAttachment=true fileName="«name.formatForCode»_`«IF hasSluggableFields»$«objName».slug«ELSE»$«objName»->getTitleFromDisplayPattern()«ENDIF»`.ics"}
         BEGIN:VCALENDAR
         VERSION:2.0
         PRODID:{$baseurl}
@@ -46,7 +36,7 @@ class Ics {
         BEGIN:VEVENT
         DTSTART:{php}$«objName» = $this->get_template_vars('«objName»'); echo gmdate('Ymd\THi00\Z', $«objName»['«getStartDateField.name.formatForCode»']) . "\r\n";{/php}
         DTEND:{php}$«objName» = $this->get_template_vars('«objName»'); echo gmdate('Ymd\THi00\Z', $«objName»['«getEndDateField.name.formatForCode»']) . "\r\n";{/php}
-        {*if $«objName».zipcode ne '' && $«objName».city ne ''}{assign var='location' value="`$«objName».zipcode` `$«objName».city`"}LOCATION{$location|«appName.formatForDB»FormatIcalText}{/if}
+        {if $«objName».zipcode ne '' && $«objName».city ne ''}{assign var='location' value="`$«objName».zipcode` `$«objName».city`"}LOCATION{$location|«appName.formatForDB»FormatIcalText}{/if}
         «IF geographical»
             {if $«objName».latitude && $«objName».longitude}GEO:{$«objName».longitude};{$«objName».latitude}
             {/if}
@@ -59,7 +49,7 @@ class Ics {
             ORGANIZER;CN="{usergetvar name='uname' uid=$«objName».createdUserId}":MAILTO:{usergetvar name='email' uid=$«objName».createdUserId}
         «ENDIF»
         «IF categorisable»
-            CATEGORIES:{foreach name='categoryLoop' key='propName' item='catMapping' from=$obj.categories}{if !$smarty.foreach.categoryLoop.first},{/if}{$catMapping.category.name|safetext|upper}{/foreach}
+            CATEGORIES:{foreach name='categoryLoop' key='propName' item='catMapping' from=$«objName».categories}{if !$smarty.foreach.categoryLoop.first},{/if}{$catMapping.category.name|safetext|upper}{/foreach}
         «ENDIF»
         SUMMARY{$«objName»->getTitleFromDisplayPattern()|«appName.formatForDB»FormatIcalText}
         «IF hasTextFieldsEntity»
@@ -77,6 +67,56 @@ class Ics {
             «FOR field : fields.filter(UrlField)»
                 {if $«objName».«field.name.formatForCode»}ATTACH;VALUE=URL:{$«objName».«field.name.formatForCode»}
                 {/if}
+            «ENDFOR»
+        «ENDIF»
+        CLASS:PUBLIC
+        STATUS:CONFIRMED
+        END:VEVENT
+        END:VCALENDAR
+    '''
+
+    def private icsDisplay(Entity it, String appName) '''
+        «val objName = name.formatForCode»
+        {# purpose of this template: «nameMultiple.formatForDisplay» display ics view #}
+        {{ «appName.formatForDB»_templateHeaders(contentType='text/calendar; charset=iso-8859-15«/*charset=utf-8*/»', asAttachment=true, fileName='«name.formatForCode»_' ~ «IF hasSluggableFields»«objName».slug«ELSE»«objName».getTitleFromDisplayPattern()«ENDIF» ~ '.ics') }}
+        BEGIN:VCALENDAR
+        VERSION:2.0
+        PRODID:{{ pageGetVar('homepath') }}
+        METHOD:PUBLISH
+        BEGIN:VEVENT
+        DTSTART:{{ «objName»|date('Ymd\THi00\Z') }}
+        DTEND:{{ «objName»|date('Ymd\THi00\Z') }}
+        {% if «objName».zipcode != '' and «objName».city is not empty %}{% set location = «objName».zipcode ~ ' ' ~ «objName».city %}LOCATION{{ location|«appName.formatForDB»_icalText }}{% endif %}
+        «IF geographical»
+            {% if «objName».latitude and «objName».longitude %}GEO:{{ «objName».longitude }};{{ «objName».latitude }}
+            {% endif %}
+        «ENDIF»
+        TRANSP:OPAQUE
+        SEQUENCE:0
+        UID:{{ 'ICAL' ~ «objName».«getStartDateField.name.formatForCode» ~ random(5000) ~ «objName».«getEndDateField.name.formatForCode» }}
+        DTSTAMP:{{ 'now'|date('Ymd\THi00\Z') }}
+        «IF standardFields»
+            ORGANIZER;CN="{{ «appName.toLowerCase»_userVar('uname', «objName».createdUserId) }}":MAILTO:{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }}
+        «ENDIF»
+        «IF categorisable»
+            CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if loop.first != true %},{% endif %}{{ catMapping.category.display_name[lang]|upper %}{% endfor %}
+        «ENDIF»
+        SUMMARY{{ «objName».getTitleFromDisplayPattern()|«appName.formatForDB»_icalText }}
+        «IF hasTextFieldsEntity»
+            «val field = getTextFieldsEntity.head»
+            {% if «objName».«field.name.formatForCode» is not empty %}DESCRIPTION{{ «objName».«field.name.formatForCode»|«appName.formatForDB»_icalText }}{% endif %}
+        «ENDIF»
+        PRIORITY:5
+        «IF hasUploadFieldsEntity»
+            «FOR field : getUploadFieldsEntity»
+                {% if «objName».«field.name.formatForCode» %}ATTACH;VALUE=URL:{{ «objName».«field.name.formatForCode»FullPathURL }}
+                {% endif %}
+            «ENDFOR»
+        «ENDIF»
+        «IF !fields.filter(UrlField).empty»
+            «FOR field : fields.filter(UrlField)»
+                {% if «objName».«field.name.formatForCode» %}ATTACH;VALUE=URL:{{ «objName».«field.name.formatForCode» }}
+                {% endif %}
             «ENDFOR»
         «ENDIF»
         CLASS:PUBLIC

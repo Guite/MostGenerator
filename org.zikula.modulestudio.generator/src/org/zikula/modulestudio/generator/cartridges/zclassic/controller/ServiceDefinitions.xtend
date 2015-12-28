@@ -11,7 +11,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
- * Service definitions in yaml format.
+ * Service definitions in YAML format.
  */
 class ServiceDefinitions {
 
@@ -53,6 +53,7 @@ class ServiceDefinitions {
         generateServiceFile(fsa, 'entityFactories', entityFactories)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
         generateServiceFile(fsa, 'helpers', helpers)
+        generateServiceFile(fsa, 'twig', twig)
         generateServiceFile(fsa, 'logger', logger)
     }
 
@@ -65,6 +66,7 @@ class ServiceDefinitions {
           - { resource: 'entityFactories.yml' }
           - { resource: 'eventSubscriber.yml' }
           - { resource: 'helpers.yml' }
+          - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
     '''
 
@@ -188,6 +190,21 @@ class ServiceDefinitions {
                 arguments:
                     serviceManager: "@service_container"
         «ENDIF»
+    '''
+
+    def private twig(Application it) '''
+        services:
+            «servicesTwig»
+    '''
+
+    def private servicesTwig(Application it) '''
+        # Twig extension
+        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Twig\\\\'»
+        «modPrefix».twig_extension:
+            class: "«nsBase»TwigExtension"
+            public: false
+            tags:
+                - { name: twig.extension }
     '''
 
     def private logger(Application it) '''

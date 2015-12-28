@@ -103,6 +103,7 @@ class Redirect {
                 «IF app.isLegacy»
                     $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);
                 «ELSE»
+                    «/* TODO refactor lct away */»
                     $legacyControllerType = $this->request->query->getAlpha('lct', 'user');
                     $routeArea = ($legacyControllerType == 'admin' ? 'admin' : '');
                 «ENDIF»

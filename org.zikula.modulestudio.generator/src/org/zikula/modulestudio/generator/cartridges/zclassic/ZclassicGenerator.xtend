@@ -52,6 +52,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ZclassicGenerator implements IGenerator {
@@ -60,6 +61,7 @@ class ZclassicGenerator implements IGenerator {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension Utils = new Utils
     extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
@@ -210,9 +212,11 @@ class ZclassicGenerator implements IGenerator {
             new Account().generate(it, fsa)
         }
 
-        pm?.subTask('Integration: Cache api')
-        println('Generating cache api')
-        new Cache().generate(it, fsa)
+        if (targets('1.3.x')) {
+            pm?.subTask('Integration: Cache api')
+            println('Generating cache api')
+            new Cache().generate(it, fsa)
+        }
 
         pm?.subTask('Integration: Selection api')
         println('Generating selection api')

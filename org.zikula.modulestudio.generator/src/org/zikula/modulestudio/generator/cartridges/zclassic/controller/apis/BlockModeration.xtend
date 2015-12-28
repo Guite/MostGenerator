@@ -29,13 +29,13 @@ class BlockModeration {
             namespace «appNamespace»\Block\Base;
 
             use UserUtil;
-            use Zikula\Core\Controller\AbstractBlockController;
+            use Zikula\Core\AbstractBlockHandler;
 
         «ENDIF»
         /**
          * Moderation block base class.
          */
-        class «IF targets('1.3.x')»«appName»_Block_Base_Moderation extends Zikula_Controller_AbstractBlock«ELSE»ModerationBlock extends AbstractBlockController«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Block_Base_Moderation extends Zikula_Controller_AbstractBlock«ELSE»ModerationBlock extends AbstractBlockHandler«ENDIF»
         {
             «moderationBlockBaseImpl»
         }

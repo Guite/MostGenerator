@@ -234,7 +234,7 @@ class TranslatableHelper {
 
     def private translatableFieldDefinition(Entity it) '''
         «FOR field : getTranslatableFields SEPARATOR ','»«field.translatableFieldDefinition»«ENDFOR»
-«/* TODO no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
+«/* TODO no slug input element yet, see https://github.com/Atlantic18/DoctrineExtensions/issues/140
 «IF hasTranslatableSlug»,
                     array('name' => 'slug',
                           'default' => '')

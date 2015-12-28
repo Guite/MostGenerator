@@ -14,6 +14,7 @@ class ValidationError {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
         if (!targets('1.3.x')) {
             return

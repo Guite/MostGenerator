@@ -402,12 +402,14 @@ class ControllerHelper {
                 // Check if directory exist and try to create it if needed
                 if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
                     LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+
                     return false;
                 }
 
                 // Check if directory is writable and change permissions if needed
                 if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
                     LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+
                     return false;
                 }
 
@@ -419,6 +421,7 @@ class ControllerHelper {
                     $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
                     if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
                         LogUtil::registerStatus($this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+
                         return false;
                     }
                 }
@@ -430,6 +433,7 @@ class ControllerHelper {
                     if (!$fs->exists($uploadPath) && !$fs->mkdir($uploadPath, 0777)) {
                         $this->session->getFlashBag()->add('error', $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
                         $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', array('app' => '«appName»', 'directory' => $uploadPath));
+
                         return false;
                     }
 
@@ -437,6 +441,7 @@ class ControllerHelper {
                     if (!is_writable($uploadPath) && !$fs->chmod($uploadPath, 0777)) {
                         $this->session->getFlashBag()->add('warning', $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
                         $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', array('app' => '«appName»', 'directory' => $uploadPath));
+
                         return false;
                     }
 

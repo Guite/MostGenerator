@@ -84,7 +84,7 @@ class PermissionCheck {
         {
             «IF !app.getAllEntities.filter[hasArchive && getEndDateField !== null].empty»
                 // every user is allowed to perform automatic archiving 
-                if (PageUtil::getVar('«app.appName»AutomaticArchiving', false) === true) {
+                if («IF !app.targets('1.3.x')»\«ENDIF»PageUtil::getVar('«app.appName»AutomaticArchiving', false) === true) {
                     return true;
                 }
             «ENDIF»
@@ -94,15 +94,7 @@ class PermissionCheck {
             $component = '«app.appName»:' . ucfirst($objectType) . ':';
 
             // calculate the permission instance
-            $idFields = ModUtil::apiFunc('«app.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
-            $instanceId = '';
-            foreach ($idFields as $idField) {
-                if (!empty($instanceId)) {
-                    $instanceId .= '_';
-                }
-                $instanceId .= $obj[$idField];
-            }
-            $instance = $instanceId . '::';
+            $instance = $obj->createCompositeIdentifier() . '::';
 
             // now perform the permission check
             $result = SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);

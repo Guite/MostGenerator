@@ -115,8 +115,8 @@ class Ajax {
             $where = 'WHERE ' . $usersColumn['uname'] . ' REGEXP \'(' . DataUtil::formatForStore($fragment) . ')\'';
             $results = DBUtil::selectObjectArray('users', $where);
         «ELSE»
-            ModUtil::initOOModule('ZikulaUsersModule');
-
+            «/* ModUtil::initOOModule('ZikulaUsersModule');
+            */»
             $dql = 'SELECT u FROM Zikula\Module\UsersModule\Entity\UserEntity u WHERE u.uname LIKE :fragment';
             $query = $this->entityManager->createQuery($dql);
             $query->setParameter('fragment', '%' . $fragment . '%');
@@ -472,6 +472,7 @@ class Ajax {
         $previewFieldName = $repository->getPreviewFieldName();
         «IF app.hasImageFields»
             if (!empty($previewFieldName)) {
+                «/* TODO use custom image helper instead of pure imagine plugin */»
                 «IF app.isLegacy»
                     //$imageHelper = new «app.appName»_Util_Image($this->serviceManager);
                     //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);

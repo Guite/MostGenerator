@@ -13,59 +13,67 @@ class TreeSelection {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginFilePath = viewPluginFilePath('function', 'TreeSelection')
-        if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, treeSelectionImpl))
+        if (targets('1.3.x')) {
+            val pluginFilePath = viewPluginFilePath('function', 'TreeSelection')
+            if (!shouldBeSkipped(pluginFilePath)) {
+                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, treeSelectionImpl))
+            }
+        } else {
+            treeSelectionImpl
         }
     }
 
     def private treeSelectionImpl(Application it) '''
         /**
-         * The «appName.formatForDB»TreeSelection plugin retrieves tree entities based on a given one.
+         * The «appName.formatForDB»«IF targets('1.3.x')»TreeSelection plugin«ELSE»_treeSelection function«ENDIF» retrieves tree entities based on a given one.
          *
          * Available parameters:
          *   - objectType:   Name of treated object type.
          *   - node:         Given entity as tree entry point.
          *   - target:       One of 'allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors'
          *   - skipRootNode: Whether root nodes are skipped or not (defaults to true). Useful for when working with many trees at once.
-         *   - assign:       Variable where the results are assigned to.
-         *
-         * @param  array       $params All attributes passed to this function from the template.
-         * @param  Zikula_View $view   Reference to the view object.
+        «IF targets('1.3.x')»
+            «' '»*   - assign:       Variable where the results are assigned to.
+            «' '»*
+            «' '»* @param  array       $params All attributes passed to this function from the template.
+            «' '»* @param  Zikula_View $view   Reference to the view object.
+        «ENDIF»
          */
-        function smarty_function_«appName.formatForDB»TreeSelection($params, $view)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TreeSelection(«IF targets('1.3.x')»$params, $view«ELSE»$objectType, $node, $target, $skipRootNode = true«ENDIF»)
         {
-            if (!isset($params['objectType']) || empty($params['objectType'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'objectType')));
+            «IF targets('1.3.x')»
+                if (!isset($params['objectType']) || empty($params['objectType'])) {
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'objectType')));
 
-                return false;
-            }
+                    return false;
+                }
 
-            if (!isset($params['node']) || !is_object($params['node'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'node')));
+                if (!isset($params['node']) || !is_object($params['node'])) {
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'node')));
 
-                return false;
-            }
+                    return false;
+                }
 
-            $allowedTargets = array('allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors');
-            if (!isset($params['target']) || empty($params['target']) || !in_array($params['target'], $allowedTargets)) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'target')));
+                $allowedTargets = array('allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors');
+                if (!isset($params['target']) || empty($params['target']) || !in_array($params['target'], $allowedTargets)) {
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'target')));
 
-                return false;
-            }
+                    return false;
+                }
 
-            $skipRootNode = (isset($params['skipRootNode']) ? (bool) $params['skipRootNode'] : true);
+                $skipRootNode = (isset($params['skipRootNode']) ? (bool) $params['skipRootNode'] : true);
 
-            if (!isset($params['assign']) || empty($params['assign'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'assign')));
+                if (!isset($params['assign']) || empty($params['assign'])) {
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'assign')));
 
-                return false;
-            }
+                    return false;
+                }
+            «ENDIF»
 
             «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($params['objectType']);
             «ENDIF»
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
             «IF targets('1.3.x')»
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
@@ -74,10 +82,12 @@ class TreeSelection {
             «ENDIF»
             $titleFieldName = $repository->getTitleFieldName();
 
-            $node = $params['node'];
+            «IF targets('1.3.x')»
+                $node = $params['node'];
+            «ENDIF»
             $result = null;
 
-            switch ($params['target']) {
+            switch ($«IF targets('1.3.x')»params['«ENDIF»target«IF targets('1.3.x')»']«ENDIF») {
                 case 'allParents':
                 case 'directParent':
                     $path = $repository->getPath($node);
@@ -89,15 +99,15 @@ class TreeSelection {
                         // remove root level
                         array_shift($path);
                     }
-                    if ($params['target'] == 'allParents') {
+                    if ($«IF targets('1.3.x')»params['«ENDIF»target«IF targets('1.3.x')»']«ENDIF» == 'allParents') {
                         $result = $path;
-                    } elseif ($params['target'] == 'directParent' && count($path) > 0) {
+                    } elseif ($«IF targets('1.3.x')»params['«ENDIF»target«IF targets('1.3.x')»']«ENDIF» == 'directParent' && count($path) > 0) {
                         $result = $path[count($path)-1];
                     }
                     break;
                 case 'allChildren':
                 case 'directChildren':
-                    $direct = ($params['target'] == 'directChildren');
+                    $direct = ($«IF targets('1.3.x')»params['«ENDIF»target«IF targets('1.3.x')»']«ENDIF» == 'directChildren');
                     $sortByField = ($titleFieldName != '') ? $titleFieldName : null;
                     $sortDirection = 'ASC';
                     $result = $repository->children($node, $direct, $sortByField, $sortDirection);
@@ -116,7 +126,11 @@ class TreeSelection {
                     break;
             }
 
-            $view->assign($params['assign'], $result);
+            «IF targets('1.3.x')»
+                $view->assign($params['assign'], $result);
+            «ELSE»
+                return $result;
+            «ENDIF»
         }
     '''
 }

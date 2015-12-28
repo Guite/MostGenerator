@@ -516,14 +516,14 @@ class Listeners {
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Symfony\Component\HttpKernel\HttpKernelInterface;
-                «IF needsApproval»
+                «IF needsApproval && generatePendingContentSupport»
                     use ServiceUtil;
                     use Zikula\Collection\Container;
                 «ENDIF»
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
             «IF isBase»
-                «IF needsApproval»
+                «IF needsApproval && generatePendingContentSupport»
                     use Zikula\Provider\AggregateItem;
                 «ENDIF»
             «ENDIF»

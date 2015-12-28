@@ -25,6 +25,8 @@ class Relations {
     extension ViewExtensions = new ViewExtensions
     extension Utils = new Utils
 
+    /* TODO migrate to Symfony forms #416 */
+
     /**
      * This method creates the templates to be included into the edit forms.
      */
@@ -35,7 +37,7 @@ class Relations {
 
     /**
      * Entry point for form sections treating related objects.
-     * This method creates the Smarty include statement.
+     * This method creates the include statement contained in the including template.
      */
     def generateIncludeStatement(Entity it, Application app, IFileSystemAccess fsa) '''
         «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.application == app && source instanceof Entity]»«relation.generate(app, true, true, fsa)»«ENDFOR»
@@ -73,7 +75,7 @@ class Relations {
 
         // onlyInclude is false here, lets create the templates
         println('Generating edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"')
-        var templateNameItemList = 'include_select' + editSnippet + 'ItemList' + getTargetMultiplicity(useTarget)
+        var templateNameItemList = 'includeSelect' + editSnippet + 'ItemList' + getTargetMultiplicity(useTarget)
         val templateFileName = templateFile(ownEntity, templateName)
         val templateFileNameItemList = templateFile(ownEntity, templateNameItemList)
         if (!app.shouldBeSkipped(templateFileName)) {
@@ -87,9 +89,9 @@ class Relations {
     def private getTemplateName(JoinRelationship it, Boolean useTarget, String editSnippet) {
         var templateName = ''
         if (useTarget && !isManyToMany) {
-            //templateName = 'include_createChildItem'
+            //templateName = 'includeCreateChildItem'
         } else {
-            templateName = 'include_select' + editSnippet
+            templateName = 'includeSelect' + editSnippet
         }
         templateName = templateName + getTargetMultiplicity(useTarget)
 
@@ -97,78 +99,115 @@ class Relations {
     }
 
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
-        {include file='«IF application.targets('1.3.x')»«ownEntity.name.formatForCode»«ELSE»«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
+        «IF application.targets('1.3.x')»
+            {include file='«ownEntity.name.formatForCode»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
+        «ELSE»
+            {{ include(
+                '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
+                { 'group': '«linkingEntity.name.formatForDB»', 'alias': '«relationAliasName.toFirstLower»', 'aliasReverse': '«relationAliasReverse.toFirstLower»', 'mandatory': «(!nullable).displayBool», 'idPrefix': '«uniqueNameForJs»', 'linkingItem': «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», 'panel': true«ENDIF», 'displayMode': '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»', 'allowEditing': «hasEdit.displayBool»}
+            ) }}
+        «ENDIF»
     '''
 
     def private includedEditTemplate(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» *}
-        {if !isset($displayMode)}
-            {assign var='displayMode' value='dropdown'}
-        {/if}
-        {if !isset($allowEditing)}
-            {assign var='allowEditing' value=false}
-        {/if}
-        {if isset($panel) && $panel eq true}
-            «IF app.targets('1.3.x')»
-                <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
+        «IF app.targets('1.3.x')»
+            {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» *}
+            {if !isset($displayMode)}
+                {assign var='displayMode' value='dropdown'}
+            {/if}
+            {if !isset($allowEditing)}
+                {assign var='allowEditing' value=false}
+            {/if}
+            {if isset($panel) && $panel eq true}
+                <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
                 <fieldset class="«ownEntityName.formatForDB» z-panel-content" style="display: none">
-            «ELSE»
+            {else}
+                <fieldset class="«ownEntityName.formatForDB»">
+            {/if}
+                <legend>{gt text='«ownEntityName.formatForDisplayCapital»'}</legend>
+                «includedEditTemplateBodyLegacy(app, ownEntity, linkingEntity, incoming, hasEdit, many)»
+            {if isset($panel) && $panel eq true}
+                </fieldset>
+            {else}
+                </fieldset>
+            {/if}
+        «ELSE»
+            {# purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» #}
+            {% displayMode is not defined or displayMode is empty %}
+                {% set displayMode = 'dropdown' %}
+            {% endif %}
+            {% if allowEditing is not defined or allowEditing is empty %}
+                {% set allowEditing = false %}
+            {% endif %}
+            {% if panel|default(false) == true %}
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse«ownEntityName.formatForCodeCapital»">{gt text='«ownEntityName.formatForDisplayCapital»'}</a></h3>
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse«ownEntityName.formatForCodeCapital»">{{ __('«ownEntityName.formatForDisplayCapital»') }}</a></h3>
                     </div>
                     <div id="collapse«ownEntityName.formatForCodeCapital»" class="panel-collapse collapse in">
                         <div class="panel-body">
-            «ENDIF»
-        {else}
-            <fieldset class="«ownEntityName.formatForDB»">
-        {/if}
-            <legend>{gt text='«ownEntityName.formatForDisplayCapital»'}</legend>
-            «includedEditTemplateBody(app, ownEntity, linkingEntity, incoming, hasEdit, many)»
-        {if isset($panel) && $panel eq true}
-            «IF app.targets('1.3.x')»
-                </fieldset>
-            «ELSE»
+            {% else %}
+                <fieldset class="«ownEntityName.formatForDB»">
+            {% endif %}
+                <legend>{{ __('«ownEntityName.formatForDisplayCapital»') }}</legend>
+                «includedEditTemplateBody(app, ownEntity, linkingEntity, incoming, hasEdit, many)»
+            {% if panel|default(false) == true %}
                         </div>
                     </div>
                 </div>
-            «ENDIF»
-        {else}
-            </fieldset>
-        {/if}
+            {% else %}
+                </fieldset>
+            {% endif %}
+        «ENDIF»
     '''
 
-    def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
+    def private includedEditTemplateBodyLegacy(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        <div class="«IF application.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
+        <div class="z-formrow">
         «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
         «val appnameLower = application.appName.formatForDB»
         {if $displayMode eq 'dropdown'}
-            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»«IF !app.targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
-            «IF !app.targets('1.3.x')»
-                <div class="col-sm-9">
-            «ENDIF»
-                {«appnameLower»RelationSelectorList «pluginAttributes»«IF !application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
-            «IF !app.targets('1.3.x')»
-                </div>
-            «ENDIF»
+            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»}
+            {«appnameLower»RelationSelectorList «pluginAttributes»«IF !application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
         {elseif $displayMode eq 'autocomplete'}
             «IF !isManyToMany && !incoming»
                 «component_ParentEditing(ownEntity, many)»
             «ELSE»
                 {assign var='createLink' value=''}
                 {if $allowEditing eq true}
-                    «IF app.targets('1.3.x')»
-                        {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
-                    «ELSE»
-                        {route name="«app.appName.formatForDB»_«ownEntity.name.formatForDB»_`$routeArea`edit" assign='createLink'}
-                    «ENDIF»
+                    {modurl modname='«app.appName»' type=$lct func='edit' ot='«ownEntity.name.formatForCode»' forcelongurl=true assign='createLink'}
                 {/if}
-                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»«IF !application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool»}
                 «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
             «ENDIF»
         {/if}
+        </div>
+    '''
+
+    def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
+        «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
+        «/* TODO migrate to Symfony forms #416 */»
+        <div class="form-group">
+        «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
+        «val appnameLower = application.appName.formatForDB»
+        {% if displayMode == 'dropdown' %}
+            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF» cssClass='col-sm-3 control-label'}
+            <div class="col-sm-9">
+                {«appnameLower»RelationSelectorList «pluginAttributes» cssClass='form-control'}
+            </div>
+        {% elseif displayMode == 'autocomplete' %}
+            «IF !isManyToMany && !incoming»
+                «component_ParentEditing(ownEntity, many)»
+            «ELSE»
+                {% set createLink = '' %}
+                {% if allowEditing == true %}
+                    {% set createLink = path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') %}
+                {% endif %}
+                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool» cssClass='form-control'}
+                «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
+            «ENDIF»
+        {% endif %}
         </div>
     '''
 
@@ -187,67 +226,107 @@ class Relations {
     def private component_AutoComplete(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         <div class="«app.appName.toLowerCase»-relation-leftside">
             «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, incoming, includeEditing)»
-            {if isset($linkingItem.$alias)}
-                {«includeStatement» item«IF many»s«ENDIF»=$linkingItem.$alias}
-            {else}
-                {«includeStatement»}
-            {/if}
+            «IF app.targets('1.3.x')»
+                {if isset($linkingItem.$alias)}
+                    {include «includeStatement» item«IF many»s«ENDIF»=$linkingItem.$alias}
+                {else}
+                    {include «includeStatement»}
+                {/if}
+            «ELSE»
+                {% if attribute(linkingItem, alias) is defined %}
+                    {{ include(
+                        «includeStatement»,
+                        { 'item«IF many»s«ENDIF»': attribute(linkingItem, alias) }
+                    ) }}
+                {% else %}
+                    {{ include(«includeStatement») }}
+                {% endif %}
+            «ENDIF»
         </div>
         <br «IF app.targets('1.3.x')»class="z-clearer"«ELSE»style="clear: both"«ENDIF» />
     '''
 
-    def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        include file='«IF application.targets('1.3.x')»«targetEntity.name.formatForCode»«ELSE»«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
+    def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) {
+        if (application.targets('1.3.x')) '''
+            file='«targetEntity.name.formatForCode»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
+        else '''
+            '«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig' '''
+    }
 
     def private component_ItemList(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» *}
-        «IF includeEditing»
-            «IF app.targets('1.3.x')»
+        «IF app.targets('1.3.x')»
+            {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» *}
+            «IF includeEditing»
                 {icon type='edit' size='extrasmall' assign='editImageArray'}
                 {assign var='editImage' value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
-            «ELSE»
-                {assign var='editImage' value='<span class="fa fa-pencil-square-o"></span>'}
             «ENDIF»
-        «ENDIF»
-        «IF app.targets('1.3.x')»
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
             {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
-        «ELSE»
-            {assign var='removeImage' value='<span class="fa fa-trash-o"></span>'}
-        «ENDIF»
 
-        <input type="hidden" id="{$idPrefix}ItemList" name="{$idPrefix}ItemList" value="{if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
-        <input type="hidden" id="{$idPrefix}Mode" name="{$idPrefix}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
+            <input type="hidden" id="{$idPrefix}ItemList" name="{$idPrefix}ItemList" value="{if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
+            <input type="hidden" id="{$idPrefix}Mode" name="{$idPrefix}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
-        <ul id="{$idPrefix}ReferenceList">
-        {if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}
-        «IF many»
-            {foreach name='relLoop' item='item' from=$items}
-        «ENDIF»
-        {assign var='idPrefixItem' value="`$idPrefix`Reference_«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»`$item.«pkField.name.formatForCode»`«ENDFOR»"}
-        <li id="{$idPrefixItem}">
-            {$item->getTitleFromDisplayPattern()}
-            «IF includeEditing»
-                «IF app.targets('1.3.x')»
+            <ul id="{$idPrefix}ReferenceList">
+            {if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}
+            «IF many»
+                {foreach name='relLoop' item='item' from=$items}
+            «ENDIF»
+            {assign var='idPrefixItem' value="`$idPrefix`Reference_«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»`$item.«pkField.name.formatForCode»`«ENDFOR»"}
+            <li id="{$idPrefixItem}">
+                {$item->getTitleFromDisplayPattern()}
+                «IF includeEditing»
                     <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type=$lct func='edit' ot='«targetEntity.name.formatForCode»' «targetEntity.routeParamsLegacy('item', true, false)» forcelongurl=true}">{$editImage}</a>
-                «ELSE»
-                    <a id="{$idPrefixItem}Edit" href="{route name="«app.appName.formatForDB»_«targetEntity.name.formatForDB»_`$routeArea`edit" «targetEntity.routeParams('item', true)»}">{$editImage}</a>
                 «ENDIF»
+                 <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>
+                «IF targetEntity.hasImageFieldsEntity»
+                    <br />
+                    «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
+                    {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
+                        {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()}
+                    {/if}
+                «ENDIF»
+            </li>
+            «IF many»
+                {/foreach}
             «ENDIF»
-             <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>
-            «IF targetEntity.hasImageFieldsEntity»
-                <br />
-                «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
-                {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true img_alt=$item->getTitleFromDisplayPattern()«IF !application.targets('1.3.x')» img_class='img-rounded'«ENDIF»}
-                {/if}
+            {/if}
+            </ul>
+        «ELSE»
+            {# purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» #}
+            «IF includeEditing»
+                {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
             «ENDIF»
-        </li>
-        «IF many»
-            {/foreach}
+            {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
+
+            <input type="hidden" id="{{ idPrefix }}ItemList" name="{{ idPrefix }}ItemList" value="{% if item«IF many»s«ENDIF» is defined and item«IF many»s«ENDIF» is iterable«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}«IF many»{% for item in items %}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»«IF many»{% if loop.last != true %},{% endif %}{% endfor %}«ENDIF»{% endif %}" />
+            <input type="hidden" id="{{ idPrefix }}Mode" name="{{ idPrefix }}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
+
+            <ul id="{{ idPrefix }}ReferenceList">
+            {% if item«IF many»s«ENDIF» is defined and item«IF many»s«ENDIF» is iterable«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}
+            «IF many»
+                {% for item in items %}
+            «ENDIF»
+            {% set idPrefixItem = idPrefix ~ 'Reference_'«FOR pkField : targetEntity.getPrimaryKeyFields» ~ item.«pkField.name.formatForCode»«ENDFOR» %}
+            <li id="{{ idPrefixItem }}">
+                {{ item.getTitleFromDisplayPattern() }}
+                «IF includeEditing»
+                    <a id="{{ idPrefixItem }}Edit" href="{{ path('«app.appName.formatForDB»_«targetEntity.name.formatForDB»_' ~ routeArea ~ 'edit'«targetEntity.routeParams('item', true)») }}">{{ editImage }}</a>
+                «ENDIF»
+                 <a id="{{ idPrefixItem }}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{{ idPrefix }}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»');">{{ removeImage }}</a>
+                «IF targetEntity.hasImageFieldsEntity»
+                    <br />
+                    «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
+                    {% if item.«imageFieldName» != '' and item.«imageFieldName»FullPath is defined and item.«imageFieldName»Meta.isImage %}
+                        {{ «app.appName.formatForDB»_thumb({ image: item.«imageFieldName»FullPath, objectid: '«targetEntity.name.formatForCode»«FOR pkField : targetEntity.getPrimaryKeyFields»-' ~ item.«pkField.name.formatForCode» ~ '«ENDFOR»', preset: relationThumbPreset, tag: true, img_alt: item.getTitleFromDisplayPattern(), img_class: 'img-rounded'}) }}
+                    {% endif %}
+                «ENDIF»
+            </li>
+            «IF many»
+                {% endfor %}
+            «ENDIF»
+            {% endif %}
+            </ul>
         «ENDIF»
-        {/if}
-        </ul>
     '''
 
     def initJs(Entity it, Application app, Boolean insideLoader) '''
@@ -259,8 +338,8 @@ class Relations {
                     var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
                     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
                 «ELSE»
-                    var editImage = '{{$editImage}}';
-                    var removeImage = '{{$removeImage}}';
+                    var editImage = '{{ editImage }}';
+                    var removeImage = '{{ removeImage }}';
                 «ENDIF»
                 var relationHandler = new Array();
             «ENDIF»

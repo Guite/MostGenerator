@@ -22,40 +22,41 @@ class ContentTypeListView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.x')) 'contenttype' else 'ContentType') + '/'
+        val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
         var fileName = ''
         for (entity : getAllEntities) {
-            fileName = 'itemlist_' + entity.name.formatForCode + '_display_description.tpl'
+            fileName = 'itemlist_' + entity.name.formatForCode + '_display_description' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'itemlist_' + entity.name.formatForCode + '_display_description.generated.tpl'
+                    fileName = 'itemlist_' + entity.name.formatForCode + '_display_description.generated' + templateExtension 
                 }
-                fsa.generateFile(templatePath + fileName, entity.displayDescTemplate(it))
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.displayDescTemplateLegacy(it) else entity.displayDescTemplate(it))
             }
-            fileName = 'itemlist_' + entity.name.formatForCode + '_display.tpl'
+            fileName = 'itemlist_' + entity.name.formatForCode + '_display' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'itemlist_' + entity.name.formatForCode + '_display.generated.tpl'
+                    fileName = 'itemlist_' + entity.name.formatForCode + '_display.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, entity.displayTemplate(it))
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.displayTemplateLegacy(it) else entity.displayTemplate(it))
             }
         }
-        fileName = 'itemlist_display.tpl'
+        fileName = 'itemlist_display' + templateExtension
         if (!shouldBeSkipped(templatePath + fileName)) {
             if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'itemlist_display.generated.tpl'
+                fileName = 'itemlist_display.generated' + templateExtension
             }
             fsa.generateFile(templatePath + fileName, fallbackDisplayTemplate)
         }
-        fileName = 'itemlist_edit.tpl'
+        fileName = 'itemlist_edit' + templateExtension
         if (!shouldBeSkipped(templatePath + fileName)) {
             if (shouldBeMarked(templatePath + fileName)) {
-                fileName = 'itemlist_edit.generated.tpl'
+                fileName = 'itemlist_edit.generated' + templateExtension
             }
             fsa.generateFile(templatePath + fileName, editTemplate)
         }
     }
 
-    def private displayDescTemplate(Entity it, Application app) '''
+    def private displayDescTemplateLegacy(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         <dl>
             {foreach item='«name.formatForCode»' from=$items}
@@ -80,7 +81,32 @@ class ContentTypeListView {
         </dl>
     '''
 
-    def private displayTemplate(Entity it, Application app) '''
+    def private displayDescTemplate(Entity it, Application app) '''
+        {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        <dl>
+            {% for «name.formatForCode» in items %}
+                <dt>{{ «name.formatForCode».getTitleFromDisplayPattern() }}</dt>
+                «val textFields = fields.filter(TextField)»
+                «IF !textFields.empty»
+                    {% if «name.formatForCode».«textFields.head.name.formatForCode» %}
+                        <dd>{{ «name.formatForCode».«textFields.head.name.formatForCode»|striptags|truncate(200, true, '&hellip;') }}</dd>
+                    {% endif %}
+                «ELSE»
+                    «val stringFields = fields.filter(StringField).filter[!password]»
+                    «IF !stringFields.empty»
+                        {% if «name.formatForCode».«stringFields.head.name.formatForCode» %}
+                            <dd>{{ «name.formatForCode».«stringFields.head.name.formatForCode»|striptags|truncate(200, true, '&hellip;') }}</dd>
+                        {% endif %}
+                    «ENDIF»
+                «ENDIF»
+                <dd>«detailLink(app.appName)»</dd>
+            {% else %}
+                <dt>{{ __('No entries found.') }}</dt>
+            {% endfor %}
+        </dl>
+    '''
+
+    def private displayTemplateLegacy(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         {foreach item='«name.formatForCode»' from=$items}
             <h3>{$«name.formatForCode»->getTitleFromDisplayPattern()}</h3>
@@ -90,12 +116,31 @@ class ContentTypeListView {
         {/foreach}
     '''
 
+    def private displayTemplate(Entity it, Application app) '''
+        {# Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context #}
+        {% for «name.formatForCode» in items %}
+            <h3>{{ «name.formatForCode».getTitleFromDisplayPattern() }}</h3>
+            «IF app.hasUserController && app.getMainUserController.hasActions('display')»
+                <p>«detailLink(app.appName)»</p>
+            «ENDIF»
+        {% endfor %}
+    '''
+
     def private fallbackDisplayTemplate(Application it) '''
-        {* Purpose of this template: Display objects within an external context *}
+        «IF targets('1.3.x')»
+            {* Purpose of this template: Display objects within an external context *}
+        «ELSE»
+            {# Purpose of this template: Display objects within an external context #}
+        «ENDIF»
     '''
 
     def private editTemplate(Application it) '''
-        {* Purpose of this template: edit view of generic item list content type *}
+        «IF targets('1.3.x')»
+            {* Purpose of this template: edit view of generic item list content type *}
+        «ELSE»
+            {# Purpose of this template: edit view of generic item list content type #}
+        «ENDIF»
+        «/* TODO migrate to Symfony forms #416 */»
         «editTemplateObjectType»
 
         «editTemplateCategories»
@@ -113,14 +158,22 @@ class ContentTypeListView {
 
     def private editTemplateObjectType(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Object type' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='objectTypeSelectorLabel'}
+            «IF targets('1.3.x')»
+                {gt text='Object type' domain='module_«appName.formatForDB»' assign='objectTypeSelectorLabel'}
+            «ELSE»
+                {% set objectTypeSelectorLabel = __('Object type', '«appName.formatForDB»') %}
+            «ENDIF»
             {formlabel for='«appName.toFirstLower»ObjectType' text=$objectTypeSelectorLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
+            «IF targets('1.3.x')»
                 {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
+            «ELSE»
+                {% set allObjectTypes = «appName.formatForDB»_objectTypeSelector() %}
+            «ENDIF»
                 {formdropdownlist id='«appName.toFirstLower»OjectType' dataField='objectType' group='data' mandatory=true items=$allObjectTypes«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
-                <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='If you change this please save the element once to reload the parameters below.' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»'}</span>
+                <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">«IF targets('1.3.x')»{gt text='If you change this please save the element once to reload the parameters below.' domain='module_«appName.formatForDB»'}«ELSE»{{ __('If you change this please save the element once to reload the parameters below.', '«appName.formatForDB»') }}«ENDIF»</span>
             «IF !targets('1.3.x')»
                 </div>
             «ENDIF»
@@ -128,53 +181,90 @@ class ContentTypeListView {
     '''
 
     def private editTemplateCategories(Application it) '''
-        {formvolatile}
-        {if $properties ne null && is_array($properties)}
-            {nocache}
-            {foreach key='registryId' item='registryCid' from=$registries}
-                {assign var='propName' value=''}
-                {foreach key='propertyName' item='propertyId' from=$properties}
-                    {if $propertyId eq $registryId}
-                        {assign var='propName' value=$propertyName}
-                    {/if}
-                {/foreach}
-                <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-                    {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
-                    {gt text='Category' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='categorySelectorLabel'}
-                    {assign var='selectionMode' value='single'}
-                    {if $hasMultiSelection eq true}
-                        {gt text='Categories' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='categorySelectorLabel'}
-                        {assign var='selectionMode' value='multiple'}
-                    {/if}
-                    {formlabel for="«appName.toFirstLower»CatIds`$propertyName`" text=$categorySelectorLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
-                    «IF !targets('1.3.x')»
-                        <div class="col-sm-9">
-                    «ENDIF»
+        «IF targets('1.3.x')»
+            {formvolatile}
+            {if $properties ne null && is_array($properties)}
+                {nocache}
+                {foreach key='registryId' item='registryCid' from=$registries}
+                    {assign var='propName' value=''}
+                    {foreach key='propertyName' item='propertyId' from=$properties}
+                        {if $propertyId eq $registryId}
+                            {assign var='propName' value=$propertyName}
+                        {/if}
+                    {/foreach}
+                    <div class="z-formrow">
+                        {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                        {gt text='Category' domain='module_«appName.formatForDB»' assign='categorySelectorLabel'}
+                        {assign var='selectionMode' value='single'}
+                        {if $hasMultiSelection eq true}
+                            {gt text='Categories' domain='module_«appName.formatForDB»' assign='categorySelectorLabel'}
+                            {assign var='selectionMode' value='multiple'}
+                        {/if}
+                        {formlabel for="«appName.toFirstLower»CatIds`$propertyName`" text=$categorySelectorLabel}
                         {formdropdownlist id="«appName.toFirstLower»CatIds`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
-                        <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='This is an optional filter.' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»'}</span>
-                    «IF !targets('1.3.x')»
+                        <span class="z-sub z-formnote">{gt text='This is an optional filter.' domain='module_«appName.formatForDB»'}</span>
+                    </div>
+                {/foreach}
+                {/nocache}
+            {/if}
+            {/formvolatile}
+        «ELSE»
+            {% if properties is not null and properties is iterable %}
+                {% for registryId, registryCid in registries %}
+                    {% set propName = '' %}
+                    {% for propertyName, propertyId in properties %}
+                        {% if propertyId == registryId %}
+                            {% set propName = propertyName %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="form-group">
+                        {% set hasMultiSelection = «appName.formatForDB»_isCategoryMultiValued(objectType, propertyName) %}
+                        {% set categorySelectorLabel = __('Category', '«appName.formatForDB»') %}
+                        {% set selectionMode = 'single' %}
+                        {% if hasMultiSelection == true %}
+                            {% set categorySelectorLabel = __('Categories', '«appName.formatForDB»') %}
+                            {% set selectionMode = 'multiple' %}
+                        {% endif %}
+                        {formlabel for="«appName.toFirstLower»CatIds`$propertyName`" text=$categorySelectorLabel cssClass='col-sm-3 control-label'}
+                        <div class="col-sm-9">
+                            {formdropdownlist id="«appName.toFirstLower»CatIds`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
+                            <span class="help-block">{{ __('This is an optional filter.', '«appName.formatForDB»') }}</span>
                         </div>
-                    «ENDIF»
-                </div>
-            {/foreach}
-            {/nocache}
-        {/if}
-        {/formvolatile}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        «ENDIF»
     '''
 
     def private editTemplateSorting(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Sorting' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingLabel'}
+            «IF targets('1.3.x')»
+                {gt text='Sorting' domain='module_«appName.formatForDB»' assign='sortingLabel'}
+            «ELSE»
+                {% set sortingLabel = __('Sorting', '«appName.formatForDB»') %}
+            «ENDIF»
             {formlabel text=$sortingLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             <div«IF !targets('1.3.x')» class="col-sm-9"«ENDIF»>
                 {formradiobutton id='«appName.toFirstLower»SortRandom' value='random' dataField='sorting' group='data' mandatory=true}
-                {gt text='Random' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingRandomLabel'}
+                «IF targets('1.3.x')»
+                    {gt text='Random' domain='module_«appName.formatForDB»' assign='sortingRandomLabel'}
+                «ELSE»
+                    {% set sortingRandomLabel = __('Random', '«appName.formatForDB»') %}
+                «ENDIF»
                 {formlabel for='«appName.toFirstLower»SortRandom' text=$sortingRandomLabel}
                 {formradiobutton id='«appName.toFirstLower»SortNewest' value='newest' dataField='sorting' group='data' mandatory=true}
-                {gt text='Newest' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingNewestLabel'}
+                «IF targets('1.3.x')»
+                    {gt text='Newest' domain='module_«appName.formatForDB»' assign='sortingNewestLabel'}
+                «ELSE»
+                    {% set sortingNewestLabel = __('Newest', '«appName.formatForDB»') %}
+                «ENDIF»
                 {formlabel for='«appName.toFirstLower»SortNewest' text=$sortingNewestLabel}
                 {formradiobutton id='«appName.toFirstLower»SortDefault' value='default' dataField='sorting' group='data' mandatory=true}
-                {gt text='Default' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='sortingDefaultLabel'}
+                «IF targets('1.3.x')»
+                    {gt text='Default' domain='module_«appName.formatForDB»' assign='sortingDefaultLabel'}
+                «ELSE»
+                    {% set sortingDefaultLabel = __('Default', '«appName.formatForDB»') %}
+                «ENDIF»
                 {formlabel for='«appName.toFirstLower»SortDefault' text=$sortingDefaultLabel}
             </div>
         </div>
@@ -182,7 +272,11 @@ class ContentTypeListView {
 
     def private editTemplateAmount(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Amount' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='amountLabel'}
+            «IF targets('1.3.x')»
+                {gt text='Amount' domain='module_«appName.formatForDB»' assign='amountLabel'}
+            «ELSE»
+                {% set amountLabel = __('Amount', '«appName.formatForDB»') %}
+            «ENDIF»
             {formlabel for='«appName.toFirstLower»Amount' text=$amountLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
@@ -196,12 +290,20 @@ class ContentTypeListView {
 
     def private editTemplateTemplate(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            {gt text='Template' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='templateLabel'}
+            «IF targets('1.3.x')»
+                {gt text='Template' domain='module_«appName.formatForDB»' assign='templateLabel'}
+            «ELSE»
+                {% set templateLabel = __('Template', '«appName.formatForDB»') %}
+            «ENDIF»
             {formlabel for='«appName.toFirstLower»Template' text=$templateLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
-                {«appName.formatForDB»TemplateSelector assign='allTemplates'}
+                «IF targets('1.3.x')»
+                    {«appName.formatForDB»TemplateSelector assign='allTemplates'}
+                «ELSE»
+                    {% set allTemplates = «appName.formatForDB»_templateSelector() %}
+                «ENDIF»
                 {formdropdownlist id='«appName.toFirstLower»Template' dataField='template' group='data' mandatory=true items=$allTemplates«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
             «IF !targets('1.3.x')»
                 </div>
@@ -209,13 +311,21 @@ class ContentTypeListView {
         </div>
 
         <div id="customTemplateArea" class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»"«IF !targets('1.3.x')» data-switch="«appName.toFirstLower»Template" data-switch-value="custom"«ENDIF»>
-            {gt text='Custom template' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='customTemplateLabel'}
+            «IF targets('1.3.x')»
+                {gt text='Custom template' domain='module_«appName.formatForDB»' assign='customTemplateLabel'}
+            «ELSE»
+                {% set customTemplateLabel = __('Custom template', '«appName.formatForDB»') %}
+            «ENDIF»
             {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
             «ENDIF»
                 {formtextinput id='«appName.toFirstLower»CustomTemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80«IF !targets('1.3.x')» cssClass='form-control'«ENDIF»}
-                <span class="«IF targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='Example' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»'}: <em>itemlist_[objectType]_display.tpl</em></span>
+                «IF targets('1.3.x')»
+                    <span class="z-sub z-formnote">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objectType]_display.tpl</em></span>
+                «ELSE»
+                    <span class="help-block">{{ __('Example', '«appName.formatForDB»') }}: <em>itemlist_[objectType]_display.html.twig</em></span>
+                «ENDIF»
             «IF !targets('1.3.x')»
                 </div>
             «ENDIF»
@@ -224,7 +334,11 @@ class ContentTypeListView {
 
     def private editTemplateFilter(Application it) '''
         <div class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group«ENDIF»">
-            {gt text='Filter (expert option)' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='filterLabel'}
+            «IF targets('1.3.x')»
+                {gt text='Filter (expert option)' domain='module_«appName.formatForDB»' assign='filterLabel'}
+            «ELSE»
+                {% set filterLabel = __('Filter (expert option)', '«appName.formatForDB»') %}
+            «ENDIF»
             {formlabel for='«appName.toFirstLower»Filter' text=$filterLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
@@ -236,7 +350,7 @@ class ContentTypeListView {
                     </span>
                 «ELSE»
                     <span class="help-block">
-                        <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{gt text='Show syntax examples' domain='«appName.formatForDB»'}</a>
+                        <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{{ __('Show syntax examples', '«appName.formatForDB»') }}</a>
                     </span>
                 «ENDIF»
             «IF !targets('1.3.x')»
@@ -245,7 +359,7 @@ class ContentTypeListView {
         </div>
         «IF !targets('1.3.x')»
 
-            {include file='include_filterSyntaxDialog.tpl'}
+            {{ include('@«appName»/includeFilterSyntaxDialog.html.twig') }}
         «ENDIF»
     '''
 
@@ -253,10 +367,10 @@ class ContentTypeListView {
         «IF targets('1.3.x')»
             {pageaddvar name='javascript' value='prototype'}
         «ELSE»
-            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap.min.css'}
-            {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap-theme.min.css'}
-            {pageaddvar name='javascript' value='jquery'}
-            {pageaddvar name='javascript' value='web/bootstrap/js/bootstrap.min.js'}
+            {{ pageAddAsset('stylesheet', 'web/bootstrap/css/bootstrap.min.css') }}
+            {{ pageAddAsset('stylesheet', 'web/bootstrap/css/bootstrap-theme.min.css') }}
+            {{ pageAddAsset('javascript', 'jquery') }}
+            {{ pageAddAsset('javascript', 'web/bootstrap/js/bootstrap.min.js') }}
         «ENDIF»
         «IF targets('1.3.x')»
             <script type="text/javascript">
@@ -284,7 +398,7 @@ class ContentTypeListView {
         «IF application.targets('1.3.x')»
             <a href="{modurl modname='«appName»' type='user' ot='«name.formatForCode»' func='display' «routeParamsLegacy(name.formatForCode, true, true)»}">{gt text='Read more'}</a>
         «ELSE»
-            <a href="{route name='«appName.formatForDB»_«name.formatForDB»_display' «routeParams(name.formatForCode, true)»}">{gt text='Read more'}</a>
+            <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}">{{ __('Read more') }}</a>
         «ENDIF»
     '''
 }

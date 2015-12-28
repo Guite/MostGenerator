@@ -136,13 +136,13 @@ class ControllerAction {
     }
 
     def private actionDocMethodParams(Action it) {
-        if (!controller.application.targets('1.3.x') && it instanceof MainAction) {
+        if (!isLegacy && it instanceof MainAction) {
             ' * @param string  $ot           Treated object type.\n'
         } else if (!(it instanceof MainAction || it instanceof CustomAction)) {
             ' * @param string  $ot           Treated object type.\n'
             + '''«actionDocAdditionalParams(null)»'''
             + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
-            + (if (controller.application.targets('1.3.x')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
 
@@ -150,7 +150,7 @@ class ControllerAction {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
             + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
-            + (if (application.targets('1.3.x')) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
 
@@ -162,10 +162,10 @@ class ControllerAction {
                + ' * @param int     $pos          Current pager position.\n'
                + ' * @param int     $num          Amount of entries to display.\n'
             DisplayAction:
-                (if (refEntity !== null && !refEntity.application.targets('1.3.x')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
+                (if (refEntity !== null && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
             DeleteAction:
-                (if (refEntity !== null && !refEntity.application.targets('1.3.x')) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
+                (if (refEntity !== null && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
                + ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n'
             default: ''

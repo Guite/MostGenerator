@@ -20,36 +20,50 @@ class Json {
         if (hasActions('view')) {
             templateFilePath = templateFileWithExtension('view', 'json')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, jsonView(appName))
+                fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) jsonViewLegacy(appName) else jsonView(appName))
             }
         }
         if (hasActions('display')) {
             templateFilePath = templateFileWithExtension('display', 'json')
             if (!application.shouldBeSkipped(templateFilePath)) {
-                fsa.generateFile(templateFilePath, jsonDisplay(appName))
+                fsa.generateFile(templateFilePath, if (application.targets('1.3.x')) jsonDisplayLegacy(appName) else jsonDisplay(appName))
             }
         }
     }
 
-    def private jsonView(Entity it, String appName) '''
+    def private jsonViewLegacy(Entity it, String appName) '''
+        «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» view json view *}
-        «IF application.targets('1.3.x')»
-            {«appName.formatForDB»TemplateHeaders contentType='application/json'}
-        «ENDIF»
-        [
-        {foreach item='item' from=$items name='«nameMultiple.formatForCode»'}
+        {«appName.formatForDB»TemplateHeaders contentType='application/json'}[
+        {foreach item='«objName»' from=$items name='«nameMultiple.formatForCode»'}
             {if not $smarty.foreach.«nameMultiple.formatForCode».first},{/if}
-            {$item->toJson()}
+            {$«objName»->toJson()}
         {/foreach}
         ]
     '''
 
-    def private jsonDisplay(Entity it, String appName) '''
+    def private jsonView(Entity it, String appName) '''
+        «val objName = name.formatForCode»
+        {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
+        {{ «appName.formatForDB»_templateHeaders(contentType='application/json') }}[
+        {% for «objName» in items %}
+            {% if loop.first != true %},{% endif %}
+            {{ «objName».toJson() }}
+        {/foreach}
+        ]
+    '''
+
+    def private jsonDisplayLegacy(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» display json view *}
-        «IF application.targets('1.3.x')»
-            {«appName.formatForDB»TemplateHeaders contentType='application/json'}
-        «ENDIF»
+        {«appName.formatForDB»TemplateHeaders contentType='application/json'}
         {$«objName»->toJson()}
+    '''
+
+    def private jsonDisplay(Entity it, String appName) '''
+        «val objName = name.formatForCode»
+        {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
+        {#{ «appName.formatForDB»_templateHeaders(contentType='application/json') }#}
+        {{ «objName».toJson() }}
     '''
 }

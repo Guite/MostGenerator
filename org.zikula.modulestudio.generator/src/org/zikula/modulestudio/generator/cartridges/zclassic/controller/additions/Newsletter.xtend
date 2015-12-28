@@ -151,7 +151,9 @@ class Newsletter {
             if (!$this->pluginAvailable()) {
                 return array();
             }
-            ModUtil::initOOModule($this->modname);
+            «IF targets('1.3.x')»
+                ModUtil::initOOModule($this->modname);
+            «ENDIF»
 
             // collect data for each activated object type
             $itemsGrouped = $this->getItemsPerObjectType($filtAfterDate);

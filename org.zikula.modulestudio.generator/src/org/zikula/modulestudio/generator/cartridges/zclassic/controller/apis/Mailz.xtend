@@ -31,7 +31,6 @@ class Mailz {
             use ModUtil;
             use ServiceUtil;
             use Zikula_AbstractBase;
-            use Zikula_View;
 
         «ENDIF»
         /**
@@ -85,7 +84,9 @@ class Mailz {
          */
         public function getContent(array $args = array())
         {
-            ModUtil::initOOModule('«appName»');
+            «IF targets('1.3.x')»
+                ModUtil::initOOModule('«appName»');
+            «ENDIF»
             // $args is something like:
             // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
             «val leadingEntity = getLeadingEntity»
@@ -131,21 +132,34 @@ class Mailz {
             );
             list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
-            $view = Zikula_View::getInstance('«appName»', true);
+            $templateType = $args['contenttype'] == 't' ? 'text' : 'html';
 
-            //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
-            //$view->assign('vars', $data);
+            «IF targets('1.3.x')»
+                $view = Zikula_View::getInstance('«appName»', true);
 
-            $view->assign('objectType', $objectType)
-                 ->assign('items', $entities)
-                 ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
+                //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
+                //$view->assign('vars', $data);
 
-            if ($args['contenttype'] == 't') { /* text */
-                return $view->fetch('«IF targets('1.3.x')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_text.tpl');
-            }
+                $view->assign('objectType', $objectType)
+                     ->assign('items', $entities)
+                     ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
 
-            //return $view->fetch('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.html');
-            return $view->fetch('«IF targets('1.3.x')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
+                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCode»_' . $templateType . '.tpl');
+            «ELSE»
+                $templating = $this->get('templating');
+
+                //$templateParameters = ['sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template];
+                $templateParameters = [
+                    'objectType' => $objectType,
+                    'items' => $entities
+                ];
+                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
+
+                return $templating->render(
+                    '@«appName»/Mailz/itemlist_«leadingEntity.name.formatForCode».' . $templateType . '.twig',
+                    $templateParameters
+                );
+            «ENDIF»
         }
     '''
 

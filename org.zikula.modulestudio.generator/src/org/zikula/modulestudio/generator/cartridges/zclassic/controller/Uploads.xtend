@@ -200,6 +200,8 @@ class Uploads {
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
                 $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+                $flashBag = $serviceManager->get('session')->getFlashBag();
+                $logger = $serviceManager->get('logger');
             «ENDIF»
 
             // retrieve the final file name
@@ -209,10 +211,9 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
-                    $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add('error', $e->getMessage());
-                    $logger = $serviceManager->get('logger');
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $e->getMessage());
                     $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName));
+
                     return false;
                 «ENDIF»
             }
@@ -222,10 +223,9 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
                 «ELSE»
-                    $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add('error', __('Error! Could not move your file to the destination folder.', $dom));
-                    $logger = $serviceManager->get('logger');
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! Could not move your file to the destination folder.', $dom));
                     $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName));
+
                     return false;
                 «ENDIF»
             }
@@ -257,6 +257,10 @@ class Uploads {
             $dom = ZLanguage::getModuleDomain('«appName»');
 
             $serviceManager = ServiceUtil::getManager();
+            «IF !targets('1.3.x')»
+                $flashBag = $serviceManager->get('session')->getFlashBag();
+                $logger = $serviceManager->get('logger');
+            «ENDIF»
 
             // check if a file has been uploaded properly without errors
             if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
@@ -266,10 +270,9 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! No file found.', $dom));
                 «ELSE»
-                    $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add('error', __('Error! No file found.', $dom));
-                    $logger = $serviceManager->get('logger');
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! No file found.', $dom));
                     $logger->error('{app}: User {user} tried to upload a file which could not be found.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+
                     return false;
                 «ENDIF»
             }
@@ -286,10 +289,9 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
                 «ELSE»
-                    $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add('error', __('Error! This file type is not allowed. Please choose another file format.', $dom));
-                    $logger = $serviceManager->get('logger');
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! This file type is not allowed. Please choose another file format.', $dom));
                     $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'extension' => $extension));
+
                     return false;
                 «ENDIF»
             }
@@ -305,9 +307,7 @@ class Uploads {
                         «IF targets('1.3.x')»
                             return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
                         «ELSE»
-                            $session = $serviceManager->get('session');
-                            $session->getFlashBag()->add('error', __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
-                            $logger = $serviceManager->get('logger');
+                            $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
                             $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeKB));
                             return false;
                         «ENDIF»
@@ -317,10 +317,9 @@ class Uploads {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                     «ELSE»
-                        $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add('error', __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
-                        $logger = $serviceManager->get('logger');
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                         $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeMB));
+
                         return false;
                     «ENDIF»
                 }
@@ -334,10 +333,9 @@ class Uploads {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
                     «ELSE»
-                        $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add('error', __('Error! This file type seems not to be a valid image.', $dom));
-                        $logger = $serviceManager->get('logger');
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! This file type seems not to be a valid image.', $dom));
                         $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+
                         return false;
                     «ENDIF»
                 }
@@ -573,9 +571,10 @@ class Uploads {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 $session = $serviceManager->get('session');
-                $session->getFlashBag()->add('error', __('Error with upload: ', $dom) . $errorMessage);
+                $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, __('Error with upload: ', $dom) . $errorMessage);
                 $logger = $serviceManager->get('logger');
                 $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $errorMessage));
+
                 return false;
             «ENDIF»
         }

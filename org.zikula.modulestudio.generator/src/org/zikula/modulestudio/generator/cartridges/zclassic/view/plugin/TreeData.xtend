@@ -15,15 +15,19 @@ class TreeData {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginFilePath = viewPluginFilePath('function', 'TreeData')
-        if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, treeDataImpl))
+        if (targets('1.3.x')) {
+            val pluginFilePath = viewPluginFilePath('function', 'TreeData')
+            if (!shouldBeSkipped(pluginFilePath)) {
+                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, treeDataImpl))
+            }
+        } else {
+            treeDataImpl
         }
     }
 
     def private treeDataImpl(Application it) '''
         /**
-         * The «appName.formatForDB»TreeData plugin delivers the html output for a JS tree
+         * The «appName.formatForDB»«IF targets('1.3.x')»TreeData plugin«ELSE»_treeData function«ENDIF» delivers the html output for a JS tree
          * based on given tree entities.
          *
          * Available parameters:
@@ -33,51 +37,48 @@ class TreeData {
          *   - root:       Optional id of root node, defaults to 1.
         «IF targets('1.3.x')»
             «' '»*   - sortable:   Whether tree nodes should be sortable or not, defaults to true.
+            «' '»*   - assign:     If set, the results are assigned to the corresponding variable instead of printed out.
+            «' '»*
+            «' '»* @param  array       $params All attributes passed to this function from the template.
+            «' '»* @param  Zikula_View $view   Reference to the view object.
         «ENDIF»
-         *   - assign:     If set, the results are assigned to the corresponding variable instead of printed out.
-         *
-         * @param  array       $params  All attributes passed to this function from the template.
-         * @param  Zikula_View $view    Reference to the view object.
          *
          * @return string The output of the plugin.
          */
-        function smarty_function_«appName.formatForDB»TreeData($params, $view)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TreeData(«IF targets('1.3.x')»$params, $view«ELSE»$objectType, $tree, $controller = 'user', $root = 1«ENDIF»)
         {
-            if (!isset($params['objectType']) || empty($params['objectType'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeJS', 'objectType')));
+            «IF targets('1.3.x')»
+                if (!isset($params['objectType']) || empty($params['objectType'])) {
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeJS', 'objectType')));
 
-                return false;
-            }
+                    return false;
+                }
 
-            if (!isset($params['tree']) || empty($params['tree'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeJS', 'tree')));
+                if (!isset($params['tree']) || empty($params['tree'])) {
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeJS', 'tree')));
 
-                return false;
-            }
+                    return false;
+                }
 
-            if (!isset($params['controller']) || empty($params['controller'])) {
-                $params['controller'] = 'user';
-            }
-            «IF !targets('1.3.x')»
+                if (!isset($params['controller']) || empty($params['controller'])) {
+                    $params['controller'] = 'user';
+                }
 
-                $params['lct'] = $params['controller'];
-                $params['controller'] = $params['objectType'];
+                if (!isset($params['root']) || empty($params['root'])) {
+                    $params['root'] = 1;
+                }
+
             «ENDIF»
-
-            if (!isset($params['root']) || empty($params['root'])) {
-                $params['root'] = 1;
-            }
-
             // check whether an edit action is available
             $controllerHasEditAction = false;
-            switch ($params['controller']) {
+            switch ($«IF targets('1.3.x')»params['«ENDIF»controller«IF targets('1.3.x')»']«ENDIF») {
                 «controllerEditActionFlags»
             }
 
             «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($params['objectType']);
             «ENDIF»
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
             «IF targets('1.3.x')»
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
@@ -123,21 +124,23 @@ class TreeData {
                 $result = $tree->getHTML();
             «ELSE»
                 foreach ($params['tree'] as $item) {
-                    $result .= processTreeItemWithChildren($item, $rootId, $descriptionFieldName, $controllerHasEditAction);
+                    $result .= processTreeItemWithChildren($objectType, $controller, $item, $rootId, $descriptionFieldName, $controllerHasEditAction);
                 }
             «ENDIF»
 
-            if (array_key_exists('assign', $params)) {
-                $view->assign($params['assign'], $result);
+            «IF targets('1.3.x')»
+                if (array_key_exists('assign', $params)) {
+                    $view->assign($params['assign'], $result);
 
-                return;
-            }
+                    return;
+                }
 
+            «ENDIF»
             return $result;
         }
         «IF !targets('1.3.x')»
 
-            function processTreeItemWithChildren($node, $rootId, $descriptionFieldName, $controllerHasEditAction)
+            function processTreeItemWithChildren($objectType, $controller, $node, $rootId, $descriptionFieldName, $controllerHasEditAction)
             {
                 $output = '';
                 $idPrefix = 'tree' . $rootId . 'node_' . $item->createCompositeIdentifier();
@@ -147,12 +150,8 @@ class TreeData {
                 $liContent = $item->getTitleFromDisplayPattern();
                 if ($controllerHasEditAction) {
                     $urlArgs = $item->createUrlArgs();
-                    «IF targets('1.3.x')»
-                        $urlArgs['lct'] = $params['lct'];
-                    «ELSE»
-                        $routeArea = $params['lct'] == 'admin' ? 'admin' : '';
-                    «ENDIF»
-                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($params['objectType']) . '_«IF !targets('1.3.x')»' . $routeArea . '«ENDIF»edit', $urlArgs);
+                    $routeArea = $controller == 'admin' ? 'admin' : '';
+                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs);
 
                     $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
 
@@ -171,7 +170,7 @@ class TreeData {
                 if (count($item->getChildren()) > 0) {
                     $treeItem .= '<ul>';
                     foreach ($item->getChildren() as $childNode) {
-                        $treeItem .= processTreeItemWithChildren($childNode, $rootId, $descriptionFieldName, $controllerHasEditAction);
+                        $treeItem .= processTreeItemWithChildren($objectType, $controller, $childNode, $rootId, $descriptionFieldName, $controllerHasEditAction);
                     }
                     $treeItem .= '</ul>';
                 }

@@ -100,24 +100,28 @@ class ViewHelper {
         /**
          * Determines the view template for a certain method with given parameters.
          *
-         * @param Zikula_View $view    Reference to view object.
-         * @param string      $type    Current controller (name of currently treated entity).
-         * @param string      $func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+        «IF isLegacy»
+            «' '»* @param Zikula_View $view     Reference to view object.
+        «ELSE»
+            «' '»* @param Twig_Environment $twig     Reference to view object.
+        «ENDIF»
+         * @param string      «IF !isLegacy»     «ENDIF»$type    Current controller (name of currently treated entity).
+         * @param string      «IF !isLegacy»     «ENDIF»$func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
          «IF isLegacy»
          * @param array       $args    Additional arguments.
          «ELSE»
-         * @param Request     $request Current request.
+         * @param Request          $request Current request.
          «ENDIF»
          *
          * @return string name of template file.
          */
-        public function getViewTemplate(Zikula_View $view, $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
+        public function getViewTemplate(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
             // create the base template name
-            $template = DataUtil::formatForOS(«IF isLegacy»$type«ELSE»ucfirst($type)«ENDIF» . '/' . $func);
+            $template = DataUtil::formatForOS(«IF isLegacy»$type«ELSE»'@«appName»/' . ucfirst($type)«ENDIF» . '/' . $func);
 
             // check for template extension
-            $templateExtension = $this->determineExtension($view, $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
+            $templateExtension = $this->determineExtension(«IF isLegacy»$view«ELSE»$twig«ENDIF», $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
 
             // check whether a special template is used
             «IF isLegacy»
@@ -132,13 +136,19 @@ class ViewHelper {
             «ENDIF»
 
             $templateExtension = '.' . $templateExtension;
-            if ($templateExtension != '.tpl') {
-                $templateExtension .= '.tpl';
-            }
+            «IF isLegacy»
+                if ($templateExtension != '.tpl') {
+                    $templateExtension .= '.tpl';
+                }
 
-            if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . $templateExtension)) {
-                $template .= '_' . DataUtil::formatForOS($tpl);
-            }
+                if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . $templateExtension)) {
+                    $template .= '_' . DataUtil::formatForOS($tpl);
+                }
+            «ELSE»
+                if (!empty($tpl)) {
+                    $template .= '_' . DataUtil::formatForOS($tpl);
+                }
+            «ENDIF»
             $template .= $templateExtension;
 
             return $template;
@@ -149,23 +159,28 @@ class ViewHelper {
         /**
          * Utility method for managing view templates.
          *
-         * @param Zikula_View $view     Reference to view object.
-         * @param string      $type     Current controller (name of currently treated entity).
-         * @param string      $func     Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
-         * @param string      $template Optional assignment of precalculated template file.
+        «IF isLegacy»
+            «' '»* @param Zikula_View $view     Reference to view object.
+        «ELSE»
+            «' '»* @param Twig_Environment $twig     Reference to view object.
+        «ENDIF»
+         * @param string      «IF !isLegacy»     «ENDIF»$type     Current controller (name of currently treated entity).
+         * @param string      «IF !isLegacy»     «ENDIF»$func     Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
          «IF isLegacy»
          * @param array       $args     Additional arguments.
          «ELSE»
-         * @param Request     $request  Current request.
+         * @param Request          $request            Current request.
+         * @param array            $templateParameters Template data.
          «ENDIF»
+         * @param string      «IF !isLegacy»     «ENDIF»$template Optional assignment of precalculated template file.
          *
          * @return mixed Output.
          */
-        public function processTemplate(Zikula_View $view, $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF», $template = '')
+        public function processTemplate(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request, $templateParameters = array()«ENDIF», $template = '')
         {
-            $templateExtension = $this->determineExtension($view, $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
+            $templateExtension = $this->determineExtension(«IF isLegacy»$view«ELSE»$twig«ENDIF», $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
             if (empty($template)) {
-                $template = $this->getViewTemplate($view, $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
+                $template = $this->getViewTemplate(«IF isLegacy»$view«ELSE»$twig«ENDIF», $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
             }
 
             // look whether we need output with or without the theme
@@ -179,7 +194,7 @@ class ViewHelper {
                     $raw = $request->query->getBoolean('raw', false);
                 }
             «ENDIF»
-            if (!$raw && $templateExtension != 'tpl') {
+            if (!$raw && $templateExtension != '«IF isLegacy»tpl«ELSE»html.twig«ENDIF»') {
                 $raw = true;
             }
 
@@ -194,14 +209,15 @@ class ViewHelper {
             «ENDIF»
             if ($raw == true) {
                 // standalone output
-                if ($templateExtension == 'pdf') {
-                    $template = str_replace('.pdf', '', $template);
-                    return $this->processPdf($view«IF !isLegacy», $request«ENDIF», $template);
+                if ($templateExtension == 'pdf«IF !isLegacy».twig«ENDIF»') {
+                    $template = str_replace('.pdf', '«IF !isLegacy».html«ENDIF»', $template);
+
+                    return $this->processPdf(«IF isLegacy»$view«ELSE»$twig, $request, $templateParameters«ENDIF», $template);
                 } else {
                     «IF isLegacy»
                         $view->display($template);
                     «ELSE»
-                        return new PlainResponse($view->fetch($template));
+                        return new PlainResponse($twig->render($template, $templateParameters));
                     «ENDIF»
                 }
                 «IF isLegacy»
@@ -213,7 +229,7 @@ class ViewHelper {
             «IF isLegacy»
                 return $view->fetch($template);
             «ELSE»
-                return new Response($view->fetch($template));
+                return new Response($twig->render($template, $templateParameters));
             «ENDIF»
         }
     '''
@@ -222,20 +238,24 @@ class ViewHelper {
         /**
          * Get extension of the currently treated template.
          *
-         * @param Zikula_View $view    Reference to view object.
-         * @param string      $type    Current controller (name of currently treated entity).
-         * @param string      $func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+        «IF isLegacy»
+            «' '»* @param Zikula_View $view     Reference to view object.
+        «ELSE»
+            «' '»* @param Twig_Environment $twig     Reference to view object.
+        «ENDIF»
+         * @param string      «IF !isLegacy»     «ENDIF»$type    Current controller (name of currently treated entity).
+         * @param string      «IF !isLegacy»     «ENDIF»$func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
          «IF isLegacy»
          * @param array       $args    Additional arguments.
          «ELSE»
-         * @param Request     $request Current request.
+         * @param Request          $request Current request.
          «ENDIF»
          *
          * @return array List of allowed template extensions.
          */
-        protected function determineExtension(Zikula_View $view, $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
+        protected function determineExtension(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
-            $templateExtension = 'tpl';
+            $templateExtension = '«IF isLegacy»tpl«ELSE»html.twig«ENDIF»';
             if (!in_array($func, array('view', 'display'))) {
                 return $templateExtension;
             }
@@ -256,7 +276,7 @@ class ViewHelper {
             «ELSE»
                 $format = $request->getRequestFormat();
                 if ($format != 'html' && in_array($format, $extensions)) {
-                    $templateExtension = $format;
+                    $templateExtension = $format . '.twig';
                 }
             «ENDIF»
 
@@ -302,18 +322,27 @@ class ViewHelper {
         /**
          * Processes a template file using dompdf (LGPL).
          *
-         * @param Zikula_View $view     Reference to view object.
+        «IF isLegacy»
+            «' '»* @param Zikula_View $view     Reference to view object.
+        «ELSE»
+            «' '»* @param Twig_Environment $twig     Reference to view object.
+        «ENDIF»
          «IF !isLegacy»
-         * @param Request     $request  Current request.
+         * @param Request          $request            Current request.
+         * @param array            $templateParameters Template data.
          «ENDIF»
-         * @param string      $template Name of template to use.
+         * @param string      «IF !isLegacy»     «ENDIF»$template Name of template to use.
          *
          * @return mixed Output.
          */
-        protected function processPdf(Zikula_View $view«IF !isLegacy», Request $request«ENDIF», $template)
+        protected function processPdf(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig, Request $request, $templateParameters = array()«ENDIF», $template)
         {
             // first the content, to set page vars
-            $output = $view->fetch($template);
+            «IF isLegacy»
+                $output = $view->fetch($template);
+            «ELSE»
+                $output = $twig->render($template, $templateParameters);
+            «ENDIF»
 
             // make local images absolute
             «IF isLegacy»
@@ -326,7 +355,11 @@ class ViewHelper {
             //$output = utf8_decode($output);
 
             // then the surrounding
-            $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
+            «IF isLegacy»
+                $output = $view->fetch('includePdfHeader.tpl') . $output . '</body></html>';
+            «ELSE»
+                $output = $twig->render('includePdfHeader.html.twig') . $output . '</body></html>';
+            «ENDIF»
 
             «IF isLegacy»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);

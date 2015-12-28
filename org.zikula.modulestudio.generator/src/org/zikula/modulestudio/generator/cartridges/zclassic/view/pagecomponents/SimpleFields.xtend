@@ -23,12 +23,12 @@ class SimpleFields {
     extension Utils = new Utils
 
     def dispatch displayField(EntityField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»}'''
+        «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»}«ELSE»{{ «objName».«name.formatForCode» }}«ENDIF»'''
 
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
-            {assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey.name.formatForCode»}
             «IF entity.application.targets('1.3.x')»
+                {assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey.name.formatForCode»}
                 <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="z-hide">
                 {if $«objName».«name.formatForCode»}
                     {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.'}
@@ -39,104 +39,132 @@ class SimpleFields {
                 {/if}
                 </a>
             «ELSE»
-                <a id="toggle«name.formatForCodeCapital»{$itemid}" href="javascript:void(0);" class="hidden">
-                {if $«objName».«name.formatForCode»}
-                    <span class="cursor-pointer fa fa-check" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
-                    <span class="cursor-pointer fa fa-times hidden" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
-                {else}
-                    <span class="cursor-pointer fa fa-check hidden" id="yes«name.formatForDB»_{$itemid}" title="{gt text='This setting is enabled. Click here to disable it.'}"></span>
-                    <span class="cursor-pointer fa fa-times" id="no«name.formatForDB»_{$itemid}" title="{gt text='This setting is disabled. Click here to enable it.'}"></span>
-                {/if}
+                {% set itemid = «objName».«entity.getFirstPrimaryKey.name.formatForCode» %}
+                <a id="toggle«name.formatForCodeCapital»{{ itemid }}" href="javascript:void(0);" class="hidden">
+                {% if «objName».«name.formatForCode» %}
+                    <span class="cursor-pointer fa fa-check" id="yes«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></span>
+                    <span class="cursor-pointer fa fa-times hidden" id="no«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></span>
+                {% else %}
+                    <span class="cursor-pointer fa fa-check hidden" id="yes«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></span>
+                    <span class="cursor-pointer fa fa-times" id="no«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></span>
+                {% endif %}
                 </a>
             «ENDIF»
-            <noscript><div id="noscript«name.formatForCodeCapital»{$itemid}">
-                {$«objName».«name.formatForCode»|yesno:true}
+            <noscript><div id="noscript«name.formatForCodeCapital»«IF entity.application.targets('1.3.x')»{$itemid}«ELSE»{{ itemid }}«ENDIF»">
+                «IF entity.application.targets('1.3.x')»
+                    {$«objName».«name.formatForCode»|yesno:true}
+                «ELSE»
+                    {{ «objName».«name.formatForCode»|yesno(true) }}
+                «ENDIF»
             </div></noscript>
         '''
         else '''
-            {$«objName».«name.formatForCode»|yesno:true}'''
+            «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»|yesno:true}«ELSE»{{ «objName».«name.formatForCode»|yesno(true) }}«ENDIF»'''
     }
     def dispatch displayField(DecimalField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|format«IF currency»currency«ELSE»number«ENDIF»}'''
+        «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»|format«IF currency»currency«ELSE»number«ENDIF»}«ELSE»{{ «objName».«name.formatForCode»|localized«IF currency»currency«ELSE»number«ENDIF» }}«ENDIF»'''
     def dispatch displayField(FloatField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|format«IF currency»currency«ELSE»number«ENDIF»}'''
+        «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»|format«IF currency»currency«ELSE»number«ENDIF»}«ELSE»{{ «objName».«name.formatForCode»|localized«IF currency»currency«ELSE»number«ENDIF» }}«ENDIF»'''
 
     def dispatch displayField(UserField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml') '''{usergetvar name='uname' uid=$«realName»}'''
+        if (page == 'viewcsv' || page == 'viewxml') '''«IF entity.application.targets('1.3.x')»{usergetvar name='uname' uid=$«realName»}«ELSE»{{ «entity.application.appName.formatForDB»_userVar('uname', «realName») }}«ENDIF»'''
         else '''
             «IF !mandatory»
-                {if $«realName» gt 0}
+                «IF entity.application.targets('1.3.x')»{if $«realName» gt 0}«ELSE»{% if «realName» > 0 %}«ENDIF»
             «ENDIF»
             «IF page == 'display'»
-                  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+                  «IF entity.application.targets('1.3.x')»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
             «ENDIF»
-                {$«realName»|profilelinkbyuid}
+                «IF entity.application.targets('1.3.x')»
+                    {$«realName»|profilelinkbyuid}
                     <span class="avatar">{useravatar uid=$«realName» rating='g'}</span>
+                «ELSE»
+                    {{ «realName»|«entity.application.appName.formatForDB»_profileLink }}
+                    <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(uid=«realName», rating='g') }}</span>
+                «ENDIF»
             «IF page == 'display'»
-                  {else}
-                    {usergetvar name='uname' uid=$«realName»}
-                  {/if}
+                  «IF entity.application.targets('1.3.x')»
+                      {else}
+                        {usergetvar name='uname' uid=$«realName»}
+                      {/if}
+                  «ELSE»
+                      {% else %}
+                        {{ «entity.application.appName.formatForDB»_userVar('uname', «realName») }}
+                      {% endif %}
+                  «ENDIF»
             «ENDIF»
             «IF !mandatory»
-                {else}&nbsp;{/if}
+                «IF entity.application.targets('1.3.x')»{else}&nbsp;{/if}«ELSE»{% else %}&nbsp;{% endif %}«ENDIF»
             «ENDIF»
         '''
     }
 
     def dispatch displayField(StringField it, String objName, String page) {
         if (!password) '''
-            {$«objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language || locale»|getlanguagename|safetext«ENDIF»}'''
+            «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language || locale»|getlanguagename|safetext«ENDIF»}«ELSE»{{ «objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»_countryName«ELSEIF language || locale»|languageName«ENDIF» }}«ENDIF»'''
     }
 
     def dispatch displayField(EmailField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml') '''{$«realName»}'''
+        if (page == 'viewcsv' || page == 'viewxml') '''«IF entity.application.targets('1.3.x')»{$«realName»}«ELSE»{{ «realName» }}«ENDIF»'''
         else '''
             «IF !mandatory»
-                {if $«realName» ne ''}
+                «IF entity.application.targets('1.3.x')»{if $«realName» ne ''}«ELSE»{% if «realName» is not empty %}«ENDIF»
             «ENDIF»
             «IF page == 'display'»
-                  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+                  «IF entity.application.targets('1.3.x')»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
             «ENDIF»
             «IF entity.application.targets('1.3.x')»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
             «ELSE»
-                <a href="mailto:{$«realName»}" title="{gt text='Send an email'}" class="fa fa-envelope"></a>
+                <a href="mailto:{{ «realName» }}" title="{{ __('Send an email') }}" class="fa fa-envelope"></a>
             «ENDIF»
             «IF page == 'display'»
+                «IF entity.application.targets('1.3.x')»
                   {else}
                     {$«realName»}
                   {/if}
+                «ELSE»
+                  {% else %}
+                    {{ «realName» }}
+                  {% endif %}
+                «ENDIF»
             «ENDIF»
             «IF !mandatory»
-                {else}&nbsp;{/if}
+                «IF entity.application.targets('1.3.x')»{else}&nbsp;{/if}«ELSE»{% else %}&nbsp;{% endif %}«ENDIF»
             «ENDIF»
         '''
     }
 
     def dispatch displayField(UrlField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv' || page == 'viewxml') '''{$«realName»}'''
+        if (page == 'viewcsv' || page == 'viewxml') '''«IF entity.application.targets('1.3.x')»{$«realName»}«ELSE»{{ «realName» }}«ENDIF»'''
         else '''
             «IF !mandatory»
-                {if $«realName» ne ''}
+                «IF entity.application.targets('1.3.x')»{if $«realName» ne ''}«ELSE»{% if «realName» is not empty %}«ENDIF»
             «ENDIF»
             «IF page == 'display'»
-                  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+                  «IF entity.application.targets('1.3.x')»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
             «ENDIF»
             «IF entity.application.targets('1.3.x')»
                 <a href="{$«realName»}" title="{gt text='Visit this page'}">{icon type='url' size='extrasmall' __alt='Homepage'}</a>
             «ELSE»
-                <a href="{$«realName»}" title="{gt text='Visit this page'}" class="fa fa-external-link-square"></a>
+                <a href="{{ «realName» }}" title="{{ __('Visit this page') }}" class="fa fa-external-link-square"></a>
             «ENDIF»
             «IF page == 'display'»
+                «IF entity.application.targets('1.3.x')»
                   {else}
                     {$«realName»}
                   {/if}
+                «ELSE»
+                  {% else %}
+                    {{ «realName» }}
+                  {% endif %}
+                «ENDIF»
             «ENDIF»
             «IF !mandatory»
-                {else}&nbsp;{/if}
+                «IF entity.application.targets('1.3.x')»{else}&nbsp;{/if}«ELSE»{% else %}&nbsp;{% endif %}«ENDIF»
             «ENDIF»
         '''
     }
@@ -144,35 +172,45 @@ class SimpleFields {
     def dispatch displayField(UploadField it, String objName, String page) {
         val appNameSmall = entity.application.appName.formatForDB
         val realName = objName + '.' + name.formatForCode
-        if (page == 'viewcsv') '''{$«realName»}'''
+        if (page == 'viewcsv') '''«IF entity.application.targets('1.3.x')»{$«realName»}«ELSE»{{ «realName» }}«ENDIF»'''
         else if (page == 'viewxml') '''
-            {if $«realName» ne ''} extension="{$«realName»Meta.extension}" size="{$«realName»Meta.size}" isImage="{if $«realName»Meta.isImage}true{else}false{/if}"{if $«realName»Meta.isImage} width="{$«realName»Meta.width}" height="{$«realName»Meta.height}" format="{$«realName»Meta.format}"{/if}{/if}>{$«realName»}'''
+            «IF entity.application.targets('1.3.x')»{if $«realName» ne ''} extension="{$«realName»Meta.extension}" size="{$«realName»Meta.size}" isImage="{if $«realName»Meta.isImage}true{else}false{/if}"{if $«realName»Meta.isImage} width="{$«realName»Meta.width}" height="{$«realName»Meta.height}" format="{$«realName»Meta.format}"{/if}{/if}>{$«realName»}«ELSE»{% if «realName» is not empty %} extension="{{ «realName»Meta.extension }}" size="{{ «realName»Meta.size }}" isImage="{% if «realName»Meta.isImage %}true{% else %}false{% endif %}"{% if «realName»Meta.isImage %} width="{{ «realName»Meta.width }}" height="{{ «realName»Meta.height }}" format="{{ «realName»Meta.format }}"{% endif %}{% endif %}>{{ «realName» }}«ENDIF»'''
         else '''
             «IF !mandatory»
-                {if $«realName» ne ''}
+                «IF entity.application.targets('1.3.x')»{if $«realName» ne ''}«ELSE»{% if «realName» is not empty %}«ENDIF»
             «ENDIF»
-              <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} «IF entity.application.targets('1.3.x')»rel="imageviewer[«entity.name.formatForDB»]"«ELSE»class="lightbox"«ENDIF»{/if}>
-              {if $«realName»Meta.isImage}
-                  {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName»->getTitleFromDisplayPattern()«IF !entity.application.targets('1.3.x')» img_class='img-thumbnail'«ENDIF»}
-              {else}
-                  {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
-              {/if}
-              </a>
+            «IF entity.application.targets('1.3.x')»
+                <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
+                {if $«realName»Meta.isImage}
+                    {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName»->getTitleFromDisplayPattern()}
+                {else}
+                    {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
+                {/if}
+                </a>
+            «ELSE»
+                <a href="{{ «realName»FullPathURL }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="lightbox"{% endif %}>
+                {% if «realName»Meta.isImage %}
+                    {{ «entity.application.appName.formatForDB»_thumb({ image: «realName»FullPath, objectid: '«entity.name.formatForCode»«FOR pkField : entity.getPrimaryKeyFields»-' ~ «objName».«pkField.name.formatForCode» ~ '«ENDFOR»', preset: «entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital», tag: true, img_alt: «objName».getTitleFromDisplayPattern(), img_class: 'img-thumbnail' }) }}
+                {% else %}
+                    {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName»FullPath, false, false) }})
+                {% endif %}
+                </a>
+            «ENDIF»
             «IF !mandatory»
-                {else}&nbsp;{/if}
+                «IF entity.application.targets('1.3.x')»{else}&nbsp;{/if}«ELSE»{% else %}&nbsp;{% endif %}«ENDIF»
             «ENDIF»
         '''
     }
 
     def dispatch displayField(ListField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|«entity.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext}'''
+        «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»|«entity.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext}«ELSE»{{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_listEntry('«entity.name.formatForCode»':'«name.formatForCode»') }}«ENDIF»'''
 
     def dispatch displayField(DateField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|dateformat:'datebrief'}'''
+        «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»|dateformat:'datebrief'}«ELSE»{{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}«ENDIF»'''
 
     def dispatch displayField(DatetimeField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|dateformat:'datetimebrief'}'''
+        «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»|dateformat:'datetimebrief'}«ELSE»{{ «objName».«name.formatForCode»|localizeddate('medium', 'short') }}«ENDIF»'''
 
     def dispatch displayField(TimeField it, String objName, String page) '''
-        {$«objName».«name.formatForCode»|dateformat:'timebrief'}'''
+        «IF entity.application.targets('1.3.x')»{$«objName».«name.formatForCode»|dateformat:'timebrief'}«ELSE»{{ «objName».«name.formatForCode»|localizeddate('none', 'short') }}«ENDIF»'''
 }

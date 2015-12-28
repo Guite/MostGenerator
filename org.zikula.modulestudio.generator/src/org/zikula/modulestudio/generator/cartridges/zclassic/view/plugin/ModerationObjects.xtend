@@ -16,38 +16,52 @@ class ModerationObjects {
     extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginFilePath = viewPluginFilePath('function', 'ModerationObjects')
-        if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, moderationObjectsImpl))
+        if (targets('1.3.x')) {
+            val pluginFilePath = viewPluginFilePath('function', 'ModerationObjects')
+            if (!shouldBeSkipped(pluginFilePath)) {
+                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, moderationObjectsImpl))
+            }
+        } else {
+            moderationObjectsImpl
         }
     }
 
     def private moderationObjectsImpl(Application it) '''
         /**
-         * The «appName.formatForDB»ModerationObjects plugin determines the amount of «IF hasWorkflow(EntityWorkflowType::ENTERPRISE)»unaccepted and «ENDIF»unapproved objects.
+         * The «appName.formatForDB»«IF targets('1.3.x')»ModerationObjects plugin«ELSE»_moderationObjects function«ENDIF» determines the amount of «IF hasWorkflow(EntityWorkflowType::ENTERPRISE)»unaccepted and «ENDIF»unapproved objects.
          * It uses the same logic as the moderation block and the pending content listener.
-         *
-         * @param  array       $params All attributes passed to this function from the template.
-         * @param  Zikula_View $view   Reference to the view object.
+        «IF targets('1.3.x')»
+            «' '»*
+            «' '»* Available parameters:
+            «' '»*   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
+            «' '»*
+            «' '»* @param  array       $params All attributes passed to this function from the template.
+            «' '»* @param  Zikula_View $view   Reference to the view object.
+        «ENDIF»
          */
-        function smarty_function_«appName.formatForDB»ModerationObjects($params, $view)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ModerationObjects(«IF targets('1.3.x')»$params, $view«ENDIF»)
         {
-            if (!isset($params['assign']) || empty($params['assign'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»ModerationObjects', 'assign')));
-
-                return false;
-            }
-
-            $serviceManager = $view->getServiceManager();
             «IF targets('1.3.x')»
+                if (!isset($params['assign']) || empty($params['assign'])) {
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»ModerationObjects', 'assign')));
+
+                    return false;
+                }
+
+                $serviceManager = $view->getServiceManager();
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
             «ELSE»
+                $serviceManager = \ServiceUtil::getManager();
                 $workflowHelper = $serviceManager->get('«appName.formatForDB».workflow_helper');
             «ENDIF»
 
             $result = $workflowHelper->collectAmountOfModerationItems();
 
-            $view->assign($params['assign'], $result);
+            «IF targets('1.3.x')»
+                $view->assign($params['assign'], $result);
+            «ELSE»
+                return $result;
+            «ENDIF»
         }
     '''
 }

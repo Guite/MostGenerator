@@ -116,8 +116,10 @@ class User {
                 «commonExample.generalEventProperties(it)»
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
-                    ModUtil::initOOModule('«appName»');
+                    «IF targets('1.3.x')»
+                        ModUtil::initOOModule('«appName»');
 
+                    «ENDIF»
                     $userRecord = $event->getSubject();
                     $uid = $userRecord['uid'];
                     $serviceManager = ServiceUtil::getManager();

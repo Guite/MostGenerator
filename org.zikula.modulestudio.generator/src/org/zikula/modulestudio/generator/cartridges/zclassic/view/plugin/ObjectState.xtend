@@ -13,27 +13,31 @@ class ObjectState {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginFilePath = viewPluginFilePath('modifier', 'ObjectState')
-        if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, objectStateImpl))
+        if (targets('1.3.x')) {
+            val pluginFilePath = viewPluginFilePath('modifier', 'ObjectState')
+            if (!shouldBeSkipped(pluginFilePath)) {
+                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, objectStateImpl))
+            }
+        } else {
+            objectStateImpl
         }
     }
 
     def private objectStateImpl(Application it) '''
         /**
-         * The «appName.formatForDB»ObjectState modifier displays the name of a given object's workflow state.
+         * The «appName.formatForDB»«IF targets('1.3.x')»ObjectState modifier«ELSE»_objectState filter«ENDIF» displays the name of a given object's workflow state.
          * Examples:
-         *    {$item.workflowState|«appName.formatForDB»ObjectState}       {* with visual feedback *}
-         *    {$item.workflowState|«appName.formatForDB»ObjectState:false} {* no ui feedback *}
+         *    «IF targets('1.3.x')»{$item.workflowState|«appName.formatForDB»ObjectState}       {* with visual feedback *}«ELSE»{{ item.workflowState|«appName.formatForDB»_objectState }}        {# with visual feedback #}«ENDIF»
+         *    «IF targets('1.3.x')»{$item.workflowState|«appName.formatForDB»ObjectState:false} {* no ui feedback *}«ELSE»{{ item.workflowState|«appName.formatForDB»_objectState(false) }} {# no ui feedback #}«ENDIF»
          *
          * @param string  $state      Name of given workflow state.
          * @param boolean $uiFeedback Whether the output should include some visual feedback about the state.
          *
          * @return string Enriched and translated workflow state ready for display.
          */
-        function smarty_modifier_«appName.formatForDB»ObjectState($state = 'initial', $uiFeedback = true)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»«ELSE»get«ENDIF»ObjectState($state = 'initial', $uiFeedback = true)
         {
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
             «IF targets('1.3.x')»
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
             «ELSE»
@@ -44,7 +48,7 @@ class ObjectState {
 
             $result = $stateInfo['text'];
             if ($uiFeedback === true) {
-                «IF targets('1.3.x')»«/* led images (legacy) */»
+                «IF targets('1.3.x')»«/* LED images (legacy) */»
                     $result = '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/' . $stateInfo['ui'] . 'led.png" width="16" height="16" alt="' . $result . '" />&nbsp;&nbsp;' . $result;
                 «ELSE»«/* use Bootstrap labels instead of images */»
                     $result = '<span class="label label-' . $stateInfo['ui'] . '">' . $result . '</span>';

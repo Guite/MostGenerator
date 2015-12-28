@@ -78,66 +78,76 @@ class Forms {
         relationHelper.generateInclusionTemplate(it, app, fsa)
     }
 
+    /* TODO migrate to Symfony forms #416 */
+
     def private formTemplateHeader(Entity it, Application app, String actionName) '''
-        {* purpose of this template: build the Form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» *}
         «IF app.targets('1.3.x')»
+            {* purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» *}
             {assign var='lct' value='user'}
             {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
                 {assign var='lct' value='admin'}
             {/if}
             {include file="`$lct`/header.tpl"}
         «ELSE»
-            {assign var='area' value='User'}
-            {if $routeArea eq 'admin'}
-                {assign var='area' value='Admin'}
-            {/if}
-            {include file="`$area`/header.tpl"}
+            {# purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» #}
+            {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
         «ENDIF»
         «IF app.targets('1.3.x')»
             {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_editFunctions.js'}
             {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_validation.js'}
         «ELSE»
-            {pageaddvar name='javascript' value='@«app.appName»/Resources/public/js/«app.appName».EditFunctions.js'}
-            {pageaddvar name='javascript' value='@«app.appName»/Resources/public/js/«app.appName».Validation.js'}
-        «ENDIF»
-        «IF !app.targets('1.3.x') && (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
-            {pageaddvar name='javascript' value='web/bootstrap-3-typeahead/bootstrap3-typeahead.min.js'}
+            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js')) }}
+            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js')) }}
+            «IF (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
+                {{ pageAddAsset('javascript', 'web/bootstrap-3-typeahead/bootstrap3-typeahead.min.js') }}
+            «ENDIF»
         «ENDIF»
 
-        {if $mode eq 'edit'}
-            {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «pageIcon(if (app.targets('1.3.x')) 'edit' else 'pencil-square-o')»
-        {elseif $mode eq 'create'}
-            {gt text='Create «name.formatForDisplay»' assign='templateTitle'}
-            «pageIcon(if (app.targets('1.3.x')) 'new' else 'plus')»
-        {else}
-            {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
-            «pageIcon(if (app.targets('1.3.x')) 'edit' else 'pencil-square-o')»
-        {/if}
-        <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
-            {pagesetvar name='title' value=$templateTitle}
-            «templateHeader»
+        «IF app.targets('1.3.x')»
+            {if $mode ne 'create'}
+                {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
+                «pageIcon('edit')»
+            {elseif $mode eq 'create'}
+                {gt text='Create «name.formatForDisplay»' assign='templateTitle'}
+                «pageIcon('new')»
+            {/if}
+        «ELSE»
+            {% if mode != 'create' %}
+                {% block title %}
+                    {{ __('Edit «name.formatForDisplay»') }}
+                {% endblock %}
+                {% block adminPageIcon %}pencil-square-o{% endblock %}
+            {% elseif mode == 'create' %}
+                {% block title %}
+                    {{ __('Create «name.formatForDisplay»') }}
+                {% endblock %}
+                {% block adminPageIcon %}plus{% endblock %}
+            {% endif %}
+        «ENDIF»
+        «IF app.targets('1.3.x')»
+            <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
+                {pagesetvar name='title' value=$templateTitle}
+                «templateHeader»
+        «ELSE»
+            {% block content %}
+                <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">
+        «ENDIF»
     '''
 
+    // 1.3.x only
     def private pageIcon(Entity it, String iconName) '''
-        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
+        {if $lct eq 'admin'}
             {assign var='adminPageIcon' value='«iconName»'}
         {/if}
     '''
 
+    // 1.3.x only
     def private templateHeader(Entity it) '''
-        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
-            «IF application.targets('1.3.x')»
-                <div class="z-admin-content-pagetitle">
-                    {icon type=$adminPageIcon size='small' alt=$templateTitle}
-                    <h3>{$templateTitle}</h3>
-                </div>
-            «ELSE»
-                <h3>
-                    <span class="fa fa-{$adminPageIcon}"></span>
-                    {$templateTitle}
-                </h3>
-            «ENDIF»
+        {if $lct eq 'admin'}
+            <div class="z-admin-content-pagetitle">
+                {icon type=$adminPageIcon size='small' alt=$templateTitle}
+                <h3>{$templateTitle}</h3>
+            </div>
         {else}
             <h2>{$templateTitle}</h2>
         {/if}
@@ -145,7 +155,11 @@ class Forms {
 
     def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
         {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.x')» role='form'«ENDIF»}
-            {* add validation summary and a <div> element for styling the form *}
+            «IF app.targets('1.3.x')»
+                {* add validation summary and a <div> element for styling the form *}
+            «ELSE»
+                {# add validation summary and a <div> element for styling the form #}
+            «ENDIF»
             {«app.appName.formatForDB»FormFrame}
             «IF !getEditableFields.empty»
                 «IF (getEditableFields.head) instanceof ListField && !(getEditableFields.head as ListField).useChecks»
@@ -158,7 +172,7 @@ class Forms {
             «IF useGroupingPanels('edit')»
                 «IF app.targets('1.3.x')»
                     <div id="«app.appName.toFirstLower»Panel" class="z-panels">
-                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Fields'}</h3>
+                        <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator z-pointer">{gt text='Fields'}</h3>
                         <div class="z-panel-content z-panel-active" style="overflow: visible">
                             «fieldDetails(app)»
                         </div>
@@ -168,7 +182,7 @@ class Forms {
                     <div class="panel-group" id="accordion">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{gt text='Fields'}</a></h3>
+                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{{ __('Fields') }}</a></h3>
                             </div>
                             <div id="collapseFields" class="panel-collapse collapse in">
                                 <div class="panel-body">
@@ -188,11 +202,16 @@ class Forms {
         </div>
         «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
-        «ELSE»
-            {include file="`$area`/footer.tpl"}
-        «ENDIF»
 
-        «formTemplateJS(app, actionName)»
+            «formTemplateJS(app, actionName)»
+        «ELSE»
+            {% endblock %}
+            {% block footer %}
+                {{ parent() }}
+
+                «formTemplateJS(app, actionName)»
+            {% endblock %}
+        «ENDIF»
     '''
 
     def private fieldDetails(Entity it, Application app) '''
@@ -206,37 +225,61 @@ class Forms {
 
     def private translatableFieldDetails(Entity it) '''
         «IF hasTranslatableFields»
-            {formvolatile}
-                {assign var='useOnlyCurrentLocale' value=true}
-                {if $modvars.ZConfig.multilingual}
-                    {if $supportedLocales ne '' && is_array($supportedLocales) && count($supportedLocales) > 1}
-                        {assign var='useOnlyCurrentLocale' value=false}
-                        {nocache}
-                        {lang assign='currentLanguage'}
-                        {foreach item='locale' from=$supportedLocales}
-                            {if $locale eq $currentLanguage}
-                                «translatableFieldSet('', '')»
-                            {/if}
-                        {/foreach}
-                        {foreach item='locale' from=$supportedLocales}
-                            {if $locale ne $currentLanguage}
-                                «translatableFieldSet('$locale', '$locale')»
-                            {/if}
-                        {/foreach}
-                        {/nocache}
+            «IF application.targets('1.3.x')»
+                {formvolatile}
+                    {assign var='useOnlyCurrentLocale' value=true}
+                    {if $modvars.ZConfig.multilingual}
+                        {if $supportedLocales ne '' && is_array($supportedLocales) && count($supportedLocales) gt 1}
+                            {assign var='useOnlyCurrentLocale' value=false}
+                            {nocache}
+                            {lang assign='currentLanguage'}
+                            {foreach item='locale' from=$supportedLocales}
+                                {if $locale eq $currentLanguage}
+                                    «translatableFieldSet('', '')»
+                                {/if}
+                            {/foreach}
+                            {foreach item='locale' from=$supportedLocales}
+                                {if $locale ne $currentLanguage}
+                                    «translatableFieldSet('$locale', '$locale')»
+                                {/if}
+                            {/foreach}
+                            {/nocache}
+                        {/if}
                     {/if}
-                {/if}
-                {if $useOnlyCurrentLocale eq true}
-                    {lang assign='locale'}
+                    {if $useOnlyCurrentLocale eq true}
+                        {lang assign='locale'}
+                        «translatableFieldSet('', '')»
+                    {/if}
+                {/formvolatile}
+            «ELSE»
+                {% set useOnlyCurrentLocale = true %}
+                {% if getModVar('ZConfig', 'multilingual') %}
+                    {% if supportedLocales != '' and supportedLocales is iterable and supportedLocales|length > 1 %}
+                        {% set useOnlyCurrentLocale = false %}
+                        {% set currentLanguage = lang() %}
+                        {% for locale in supportedLocales %}
+                            {% if locale == currentLanguage %}
+                                «translatableFieldSet('', '')»
+                            {% endif %}
+                        {% endfor %}
+                        {% for locale in supportedLocales %}
+                            {% if locale != currentLanguage %}
+                                «translatableFieldSet('$locale', '$locale')»
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+                {% if useOnlyCurrentLocale == true %}
+                    {% set locale = lang() %}
                     «translatableFieldSet('', '')»
-                {/if}
-            {/formvolatile}
+                {% endif %}
+            «ENDIF»
         «ENDIF»
     '''
 
     def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
         <fieldset>
-            <legend>{$locale|getlanguagename|safehtml}</legend>
+            <legend>«IF application.targets('1.3.x')»{$locale|getlanguagename|safehtml}«ELSE»{{ locale|languageName|safeHtml }}«ENDIF»</legend>
             «FOR field : getEditableTranslatableFields»«field.fieldWrapper(groupSuffix, idSuffix)»«ENDFOR»
             «IF hasTranslatableSlug»
                 «slugField(groupSuffix, idSuffix)»
@@ -300,29 +343,44 @@ class Forms {
             {icon type='edit' size='extrasmall' assign='editImageArray'}
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
         «ELSE»
-            {assign var='editImage' value='<span class="fa fa-pencil-square-o"></span>'}
-            {assign var='deleteImage' value='<span class="fa fa-trash-o"></span>'}
+            % set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
+            % set deleteImage = '<span class="fa fa-trash-o"></span>' %}
         «ENDIF»
 
         «IF geographical»
-            {pageaddvarblock name='header'}
-                <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-                <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
-                {*<script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
-                <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>*}
-                <script type="text/javascript">
-                /* <![CDATA[ */
+            «IF app.targets('1.3.x')»
+                {pageaddvarblock name='header'}
+                    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
+                    <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
+                    {*<script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
+                    <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>*}
+                    <script type="text/javascript">
+                    /* <![CDATA[ */
 
-                    var mapstraction;
-                    var marker;
+                        var mapstraction;
+                        var marker;
 
-                    «IF app.targets('1.3.x')»
                         «newCoordinatesEventHandler»
 
                         Event.observe(window, 'load', function() {
                             «initGeographical(app)»
                         });
-                    «ELSE»
+                    /* ]]> */
+                    </script>
+                {/pageaddvarblock}
+            «ELSE»
+                {% set homePath = pageGetVar('homepath') %}
+                {% set geoScripts %}
+                    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
+                    <script type="text/javascript" src="{{ homePath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
+                    {*<script type="text/javascript" src="{{ homePath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
+                    <script type="text/javascript" src="{{ homePath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>*}
+                    <script type="text/javascript">
+                    /* <![CDATA[ */
+
+                        var mapstraction;
+                        var marker;
+
                         ( function($) {
                             $(document).ready(function() {
                                 «newCoordinatesEventHandler»
@@ -330,10 +388,11 @@ class Forms {
                                 «initGeographical(app)»
                             });
                         })(jQuery);
-                    «ENDIF»
-                /* ]]> */
-                </script>
-            {/pageaddvarblock}
+                    /* ]]> */
+                    </script>
+                {% endset %}
+                {{ pageAddAsset('header', geoScripts) }}
+            «ENDIF»
         «ENDIF»
 
         <script type="text/javascript">
@@ -409,22 +468,22 @@ class Forms {
 
             function executeCustomValidationConstraints()
             {
-                «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                «application.vendorAndName»PerformCustomValidationRules('«name.formatForCode»', '{% if mode != 'create' %}{{ «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» }}{% endif %}');
             }
 
             function triggerFormValidation()
             {
                 executeCustomValidationConstraints();
-                if (!document.getElementById('{{$__formid}}').checkValidity()) {
+                if (!document.getElementById('{{ __formid }}').checkValidity()) {
                     // This does not really submit the form,
                     // but causes the browser to display the error message
-                    jQuery('#{{$__formid}}').find(':submit').not(jQuery('#btnDelete')).click();
+                    jQuery('#{{ __formid }}').find(':submit').not(jQuery('#btnDelete')).click();
                 }
             }
 
             function handleFormSubmit (event) {
                 triggerFormValidation();
-                if (!document.getElementById('{{$__formid}}').checkValidity()) {
+                if (!document.getElementById('{{ __formid }}').checkValidity()) {
                     event.preventDefault();
                     return false;
                 }
@@ -449,17 +508,17 @@ class Forms {
                     «ENDIF»
                     «relationHelper.initJs(it, app, true)»
     
-                    var allFormFields = $('#{{$__formid}} input, #{{$__formid}} select, #{{$__formid}} textarea');
+                    var allFormFields = $('#{{ __formid }} input, #{{ __formid }} select, #{{ __formid }} textarea');
                     allFormFields.change(executeCustomValidationConstraints);
 
-                    formButtons = $('#{{$__formid}} .form-buttons input');
-                    $('#{{$__formid}}').submit(handleFormSubmit);
+                    formButtons = $('#{{ __formid }} .form-buttons input');
+                    $('#{{ __formid }}').submit(handleFormSubmit);
 
-                    {{if $mode ne 'create'}}
+                    {% if mode != 'create' %}
                         triggerFormValidation();
-                    {{/if}}
+                    {% endif %}
 
-                    $('#{{$__formid}} label').tooltip();
+                    $('#{{ __formid }} label').tooltip();
                     «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
                 });
             })(jQuery);
@@ -489,7 +548,7 @@ class Forms {
             map_type: true
         });
 
-        var latlon = new mxn.LatLonPoint({{$«name.formatForDB».latitude|«app.appName.formatForDB»FormatGeoData}}, {{$«name.formatForDB».longitude|«app.appName.formatForDB»FormatGeoData}});
+        var latlon = new mxn.LatLonPoint(«IF app.targets('1.3.x')»{{$«name.formatForDB».latitude|«app.appName.formatForDB»FormatGeoData}}, {{$«name.formatForDB».longitude|«app.appName.formatForDB»FormatGeoData}}«ELSE»{{ «name.formatForDB».latitude|«app.appName.formatForDB»_geoData }}, {{ «name.formatForDB».longitude|«app.appName.formatForDB»_geoData }}«ENDIF»);
 
         mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
         mapstraction.setCenterAndZoom(latlon, 16);
@@ -500,14 +559,12 @@ class Forms {
         mapstraction.addMarker(marker, true);
 
         // init event handler
-        «IF application.targets('1.3.x')»
+        «IF app.targets('1.3.x')»
             $('latitude').observe('change', newCoordinatesEventHandler);
             $('longitude').observe('change', newCoordinatesEventHandler);
         «ELSE»
             $('#latitude').change(newCoordinatesEventHandler);
             $('#longitude').change(newCoordinatesEventHandler);
-        «ENDIF»
-        «IF !application.targets('1.3.x')»
 
             $('#collapseMap').on('hidden.bs.collapse', function () {
                 // redraw the map after it's panel has been opened (see also #340)
@@ -517,7 +574,7 @@ class Forms {
 
         mapstraction.click.addHandler(function(event_name, event_source, event_args) {
             var coords = event_args.location;
-            «IF application.targets('1.3.x')»
+            «IF app.targets('1.3.x')»
                 Form.Element.setValue('latitude', coords.lat.toFixed(7));
                 Form.Element.setValue('longitude', coords.lng.toFixed(7));
             «ELSE»
@@ -527,12 +584,12 @@ class Forms {
             newCoordinatesEventHandler();
         });
 
-        {{if $mode eq 'create'}}
+        «IF app.targets('1.3.x')»{{if $mode eq 'create'}}«ELSE»{% if mode == 'create' %}«ENDIF»
             // derive default coordinates from users position with html5 geolocation feature
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(setDefaultCoordinates, handlePositionError);
             }
-        {{/if}}
+        «IF app.targets('1.3.x')»{{/if}}«ELSE»{% endif %}«ENDIF»
 
         function setDefaultCoordinates(position) {
             «IF app.targets('1.3.x')»
@@ -605,10 +662,11 @@ class Forms {
 
     def private entityInlineRedirectHandlerFile(Entity it, Application app, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.x')) name.formatForCode else name.formatForCodeCapital) + '/'
-        var fileName = 'inlineRedirectHandler.tpl'
+        val templateExtension = if (app.targets('1.3.x')) '.tpl' else '.html.twig'
+        var fileName = 'inlineRedirectHandler' + templateExtension
         if (!app.shouldBeSkipped(templatePath + fileName)) {
             if (app.shouldBeMarked(templatePath + fileName)) {
-                fileName = 'inlineRedirectHandler.generated.tpl'
+                fileName = 'inlineRedirectHandler.generated' + templateExtension
             }
             fsa.generateFile(templatePath + fileName, app.inlineRedirectHandlerImpl)
         }
@@ -616,35 +674,42 @@ class Forms {
 
     def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
         val templatePath = app.getViewPath + (if (app.targets('1.3.x')) formattedName else formattedName.toFirstUpper) + '/'
-        var fileName = 'inlineRedirectHandler.tpl'
+        val templateExtension = if (app.targets('1.3.x')) '.tpl' else '.html.twig'
+        var fileName = 'inlineRedirectHandler' + templateExtension
         if (!app.shouldBeSkipped(templatePath + fileName)) {
             if (app.shouldBeMarked(templatePath + fileName)) {
-                fileName = 'inlineRedirectHandler.generated.tpl'
+                fileName = 'inlineRedirectHandler.generated' + templateExtension
             }
             fsa.generateFile(templatePath + fileName, app.inlineRedirectHandlerImpl)
         }
     }
 
     def private inlineRedirectHandlerImpl(Application it) '''
-        {* purpose of this template: close an iframe from within this iframe *}
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml">
+        «IF targets('1.3.x')»
+            {* purpose of this template: close an iframe from within this iframe *}
+        «ELSE»
+            {# purpose of this template: close an iframe from within this iframe #}
+        «ENDIF»
+        <!DOCTYPE html>
+        <html xml:lang="«IF targets('1.3.x')»{lang}«ELSE»{{ lang() }}«ENDIF»" lang="«IF targets('1.3.x')»{lang}«ELSE»{{ lang() }}«ENDIF»" dir="«IF targets('1.3.x')»{langdirection}«ELSE»{{ langdirection() }}«ENDIF»">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                {$jcssConfig}
                 «IF targets('1.3.x')»
+                    {$jcssConfig}
                     <script type="text/javascript" src="{$baseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
                     <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
                     <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
                     <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
+                    <script type="text/javascript" src="{$baseurl}«rootFolder»/«appName»/javascript/«appName»_editFunctions.js"></script>
                 «ELSE»
+                    {{ jcssConfig }}
                     <link rel="stylesheet" href="web/bootstrap/css/bootstrap.min.css" type="text/css" />
                     <link rel="stylesheet" href="web/bootstrap/css/bootstrap-theme.css" type="text/css" />
                     <script type="text/javascript" src="web/jquery/jquery.min.js"></script>
                     <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
-                    <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
+                    <script type="text/javascript" src="{{ pageGetVar('homepath') }}/javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
+                    <script type="text/javascript" src="{{ pageGetVar('homepath') }}/«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«appName».EditFunctions.js"></script>
                 «ENDIF»
-                <script type="text/javascript" src="{$baseurl}«rootFolder»/«if (!targets('1.3.x') && systemModule) name.formatForCode else appName»/«IF targets('1.3.x')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_e«ELSE».E«ENDIF»ditFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">
@@ -657,7 +722,7 @@ class Forms {
                     «ELSE»
                         ( function($) {
                             $(document).ready(function() {
-                                «vendorAndName»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«/*value > 0 causes the auto completion being activated*/»
+                                «vendorAndName»CloseWindowFromInside('{{ idPrefix|e('js') }}', {% if commandName == 'create' %}{{ itemId }}{% else %}0{% endif %});«/*value > 0 causes the auto completion being activated*/»
                             });
                         })(jQuery);
                     «ENDIF»

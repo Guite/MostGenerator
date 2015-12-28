@@ -28,7 +28,7 @@ class ThirdParty {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(«IF generatePendingContentSupport»
+                    return array(«IF needsApproval && generatePendingContentSupport»
                         'get.pending_content'                   => array('pendingContentListener', 5),«ENDIF»«IF generateListContentType || needsDetailContentType»
                         'module.content.gettypes'               => array('contentGetTypes', 5),«ENDIF»«IF generateScribitePlugins»
                         'module.scribite.editorhelpers'         => array('getEditorHelpers', 5),
@@ -41,7 +41,7 @@ class ThirdParty {
             }
 
         «ENDIF»
-        «IF generatePendingContentSupport»
+        «IF needsApproval && generatePendingContentSupport»
             «pendingContentListener(isBase)»
         «ENDIF»
         «IF generateListContentType || needsDetailContentType»

@@ -1581,11 +1581,13 @@ class Repository {
                         $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
                         $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
                     «ENDIF»
-
                 «ENDIF»
-                // An item was updated, so we clear all cached pages for this item.
-                $cacheArgs = array('ot' => $entity['_objectType'], 'item' => $entity);
-                ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);
+                «IF app.targets('1.3.x')»
+
+                    // An item was updated, so we clear all cached pages for this item.
+                    $cacheArgs = array('ot' => $entity['_objectType'], 'item' => $entity);
+                    ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);
+                «ENDIF»
             }
 
             return true;

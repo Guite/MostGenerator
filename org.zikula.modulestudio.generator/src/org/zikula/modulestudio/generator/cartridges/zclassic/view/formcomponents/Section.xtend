@@ -18,6 +18,8 @@ class Section {
 
     Relations relationHelper = new Relations
 
+    /* TODO migrate to Symfony forms #416 */
+
     /**
      * Entry point for edit sections beside the actual fields.
      */
@@ -39,13 +41,13 @@ class Section {
     def private extensionsAndRelations(Entity it, Application app, IFileSystemAccess fsa) '''
         «IF geographical»
             «IF useGroupingPanels('edit')»
-                «IF app.targets('1.3.x')»
-                    <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Map'}</h3>
+                «IF isLegacyApp»
+                    <h3 class="«app.appName.toLowerCase»-map z-panel-header z-panel-indicator z-pointer">{gt text='Map'}</h3>
                     <fieldset class="«app.appName.toLowerCase»-map z-panel-content" style="display: none">
                 «ELSE»
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMap">{gt text='Map'}</a></h3>
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMap">{{ __('Map') }}</a></h3>
                         </div>
                         <div id="collapseMap" class="panel-collapse collapse in">
                             <div class="panel-body">
@@ -53,10 +55,10 @@ class Section {
             «ELSE»
                 <fieldset class="«app.appName.toLowerCase»-map">
             «ENDIF»
-                <legend>{gt text='Map'}</legend>
+                <legend>«IF isLegacyApp»{gt text='Map'}«ELSE»{{ __('Map') }}«ENDIF»</legend>
                 <div id="mapContainer" class="«app.appName.toLowerCase»-mapcontainer">
                 </div>
-            «IF app.targets('1.3.x')»
+            «IF isLegacyApp»
                 </fieldset>
             «ELSE»
                         </div>
@@ -65,129 +67,210 @@ class Section {
             «ENDIF»
 
         «ENDIF»
-        «IF attributable»
-            {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_attributes_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
-        «ENDIF»
-        «IF categorisable»
-            {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
-        «ENDIF»
-        «relationHelper.generateIncludeStatement(it, app, fsa)»
-        «IF metaData»
-            {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
-        «ENDIF»
-        «IF standardFields»
-            {if $mode ne 'create'}
-                {include file='«IF app.targets('1.3.x')»helper«ELSE»Helper«ENDIF»/include_standardfields_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
-            {/if}
+        «IF isLegacyApp»
+            «IF attributable»
+                {include file='helper/includeAttributesEdit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            «ENDIF»
+            «IF categorisable»
+                {include file='helper/includeCategoriesEdit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            «ENDIF»
+            «relationHelper.generateIncludeStatement(it, app, fsa)»
+            «IF metaData»
+                {include file='helper/includeMetaDataEdit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+            «ENDIF»
+            «IF standardFields»
+                {if $mode ne 'create'}
+                    {include file='helper/includeStandardFieldsEdit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+                {/if}
+            «ENDIF»
+        «ELSE»
+            «IF attributable»
+                {{ include('Helper/includeAttributesEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+            «ENDIF»
+            «IF categorisable»
+                {{ include('Helper/includeCategoriesEdit.html.twig', { 'obj': «name.formatForDB», 'groupName': '«name.formatForDB»Obj'«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+            «ENDIF»
+            «relationHelper.generateIncludeStatement(it, app, fsa)»
+            «IF metaData»
+                {{ include('Helper/includeMetaDataEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+            «ENDIF»
+            «IF standardFields»
+                {% if mode != 'create' %}
+                    {{ include('Helper/includeStandardFieldsEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+                {% endif %}
+            «ENDIF»
         «ENDIF»
     '''
 
     def private displayHooks(Entity it, Application app) '''
-        {* include display hooks *}
-        {if $mode ne 'create'}
-            {assign var='hookId' value=«IF !hasCompositeKeys»$«name.formatForDB».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForDB».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF»}
-            {notifydisplayhooks eventname='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=$hookId assign='hooks'}
-        {else}
-            {notifydisplayhooks eventname='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=null assign='hooks'}
-        {/if}
-        {if is_array($hooks) && count($hooks)}
-            {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
-                {if $providerArea ne 'provider.scribite.ui_hooks.editor'}{* fix for #664 *}
-                    «IF useGroupingPanels('edit')»
-                        «IF app.targets('1.3.x')»
-                            <h3 class="hook z-panel-header z-panel-indicator «IF app.targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{$providerArea}</h3>
+        «IF isLegacyApp»
+            {* include display hooks *}
+            {if $mode ne 'create'}
+                {assign var='hookId' value=«IF !hasCompositeKeys»$«name.formatForDB».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForDB».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF»}
+                {notifydisplayhooks eventname='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=$hookId assign='hooks'}
+            {else}
+                {notifydisplayhooks eventname='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=null assign='hooks'}
+            {/if}
+            {if is_array($hooks) && count($hooks)}
+                {foreach name='hookLoop' key='providerArea' item='hook' from=$hooks}
+                    {if $providerArea ne 'provider.scribite.ui_hooks.editor'}{* fix for #664 *}
+                        «IF useGroupingPanels('edit')»
+                            <h3 class="hook z-panel-header z-panel-indicator z-pointer">{$providerArea}</h3>
                             <fieldset class="hook z-panel-content" style="display: none">
                                 {$hook}
                             </fieldset>
                         «ELSE»
+                            <fieldset>
+                                {$hook}
+                            </fieldset>
+                        «ENDIF»
+                    {/if}
+                {/foreach}
+            {/if}
+        «ELSE»
+            {# include display hooks #}
+            {% if mode != 'create' %}
+                {% set hookId = «FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForDB».«pkField.name.formatForCode»«ENDFOR» %}
+                {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=hookId) %}
+            {% else %}
+                {% set hooks = notifyDisplayHooks(eventName='«app.appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit', id=null) %}
+            {% endif %}
+            {% if hooks is iterable and hooks|length > 0 %}
+                {% for providerArea, hook in hooks %}
+                    {% if providerArea != 'provider.scribite.ui_hooks.editor' %}{# fix for #664 #}
+                        «IF useGroupingPanels('edit')»
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{$smarty.foreach.hookLoop.iteration}">{$providerArea}</a></h3>
+                                    <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseHook{{ loop.index }}">{{ providerArea }}</a></h3>
                                 </div>
-                                <div id="collapseHook{$smarty.foreach.hookLoop.iteration}" class="panel-collapse collapse in">
+                                <div id="collapseHook{{ loop.index }}" class="panel-collapse collapse in">
                                     <div class="panel-body">
-                                        {$hook}
+                                        {{ hook }}
                                     </div>
                                 </div>
                             </div>
+                        «ELSE»
+                            <fieldset>
+                                {{ hook }}
+                            </fieldset>
                         «ENDIF»
-                    «ELSE»
-                        <fieldset>
-                            {$hook}
-                        </fieldset>
-                    «ENDIF»
-                {/if}
-            {/foreach}
-        {/if}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        «ENDIF»
     '''
 
     def private additionalRemark(Entity it) '''
         «IF workflow != EntityWorkflowType.NONE»
-            <fieldset>
-                <legend>{gt text='Communication'}</legend>
-                <div class="«IF isLegacyApp»z-formrow«ELSE»form-group«ENDIF»">
-                    {usergetvar name='uid' assign='uid'}
-                    {formlabel for='additionalNotificationRemarks' __text='Additional remarks'«IF !isLegacyApp» cssClass='col-sm-3 control-label'«ENDIF»}
-                    {gt text='Enter any additions about your changes' assign='fieldTitle'}
-                    {if $mode eq 'create'}
-                        {gt text='Enter any additions about your content' assign='fieldTitle'}
-                    {/if}
-                    {formtextinput group='«name.formatForDB»' id='additionalNotificationRemarks' mandatory=false title=$fieldTitle textMode='multiline' rows='6«/*8*/»'«IF isLegacyApp» cols='50'«ENDIF»}
-                    {if $isModerator || $isSuperModerator}
-                        <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.'}</span>
-                    {elseif $isCreator}
-                        <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.'}</span>
-                    {/if}
-                </div>
-            </fieldset>
+            «IF isLegacyApp»
+                <fieldset>
+                    <legend>{gt text='Communication'}</legend>
+                    <div class="z-formrow">
+                        {formlabel for='additionalNotificationRemarks' __text='Additional remarks'}
+                        {gt text='Enter any additions about your changes' assign='fieldTitle'}
+                        {if $mode eq 'create'}
+                            {gt text='Enter any additions about your content' assign='fieldTitle'}
+                        {/if}
+                        {formtextinput group='«name.formatForDB»' id='additionalNotificationRemarks' mandatory=false title=$fieldTitle textMode='multiline' rows='6«/*8*/»' cols='50'}
+                        {if $isModerator || $isSuperModerator}
+                            <span class="z-formnote">{gt text='These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.'}</span>
+                        {elseif $isCreator}
+                            <span class="z-formnote">{gt text='These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.'}</span>
+                        {/if}
+                    </div>
+                </fieldset>
+            «ELSE»
+                <fieldset>
+                    <legend>{{ __('Communication') }}</legend>
+                    <div class="form-group">
+                        {formlabel for='additionalNotificationRemarks' __text='Additional remarks' cssClass='col-sm-3 control-label'}
+                        {% set fieldTitle = __('Enter any additions about your changes') %}
+                        {% if mode == 'create' %}
+                            {% set fieldTitle = __('Enter any additions about your content') %}
+                        {% if %}
+                        {formtextinput group='«name.formatForDB»' id='additionalNotificationRemarks' mandatory=false title=$fieldTitle textMode='multiline' rows='6«/*8*/»'}
+                        {% if isModerator or isSuperModerator %}
+                            <span class="help-block">{{ __('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.') }}</span>
+                        {% elseif isCreator %}
+                            <span class="help-block">{{ __('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.') }}</span>
+                        {% endif %}
+                    </div>
+                </fieldset>
+            «ENDIF»
         «ENDIF»
     '''
 
     def private returnControl(Entity it) '''
-        {* include return control *}
-        {if $mode eq 'create'}
-            <fieldset>
-                <legend>{gt text='Return control'}</legend>
-                <div class="«IF isLegacyApp»z-formrow«ELSE»form-group«ENDIF»">
-                    {formlabel for='repeatCreation' __text='Create another item after save'«IF !isLegacyApp» cssClass='col-sm-3 control-label'«ENDIF»}
-                «IF !isLegacyApp»
-                    <div class="col-sm-9">
-                «ENDIF»
+        «IF isLegacyApp»
+            {* include return control *}
+            {if $mode eq 'create'}
+                <fieldset>
+                    <legend>{gt text='Return control'}</legend>
+                    <div class="z-formrow">
+                        {formlabel for='repeatCreation' __text='Create another item after save'}
                         {formcheckbox group='«name.formatForDB»' id='repeatCreation' readOnly=false}
-                «IF !isLegacyApp»
                     </div>
-                «ENDIF»
-                </div>
-            </fieldset>
-        {/if}
+                </fieldset>
+            {/if}
+        «ELSE»
+            {# include return control #}
+            {% if mode == 'create' %}
+                <fieldset>
+                    <legend>{{ __('Return control') }}</legend>
+                    <div class="form-group">
+                        {formlabel for='repeatCreation' __text='Create another item after save' cssClass='col-sm-3 control-label'}
+                        <div class="col-sm-9">
+                            {formcheckbox group='«name.formatForDB»' id='repeatCreation' readOnly=false}
+                        </div>
+                    </div>
+                </fieldset>
+            {/if}
+        «ENDIF»
     '''
 
     def private submitActions(Entity it) '''
-        {* include possible submit actions *}
-        <div class="«IF isLegacyApp»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
-        «IF !isLegacyApp»
-            <div class="col-sm-offset-3 col-sm-9">
+        «IF isLegacyApp»
+            {* include possible submit actions *}
+            <div class="z-buttons z-formbuttons">
                 «submitActionsImpl»
-            </div>
         «ELSE»
-            «submitActionsImpl»
+            {# include possible submit actions #}
+            <div class="form-group form-buttons">
+                <div class="col-sm-offset-3 col-sm-9">
+                    «submitActionsImpl»
+                </div>
         «ENDIF»
         </div>
     '''
 
     def private submitActionsImpl(Entity it) '''
-        {foreach item='action' from=$actions}
-            {assign var='actionIdCapital' value=$action.id|@ucfirst}
-            {gt text=$action.title assign='actionTitle'}
-            {*gt text=$action.description assign='actionDescription'*}{* TODO: formbutton could support title attributes *}
-            {if $action.id eq 'delete'}
-                {gt text='Really delete this «name.formatForDisplay»?' assign='deleteConfirmMsg'}
-                {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass confirmMessage=$deleteConfirmMsg}
-            {else}
-                {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
-            {/if}
-        {/foreach}
-        {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»' formnovalidate='formnovalidate'}
+        «IF isLegacyApp»
+            {foreach item='action' from=$actions}
+                {assign var='actionIdCapital' value=$action.id|@ucfirst}
+                {gt text=$action.title assign='actionTitle'}
+                {*gt text=$action.description assign='actionDescription'*}{* TODO: formbutton could support title attributes *}
+                {if $action.id eq 'delete'}
+                    {gt text='Really delete this «name.formatForDisplay»?' assign='deleteConfirmMsg'}
+                    {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass confirmMessage=$deleteConfirmMsg}
+                {else}
+                    {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
+                {/if}
+            {/foreach}
+            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»' formnovalidate='formnovalidate'}
+        «ELSE»
+            {% for action in actions %}
+                {% set actionIdCapital = action.id|capitalize %}
+                {% set actionTitle = __(action.title) %}
+                {# % set actionDescription = __(action.description) % #}{# TODO: formbutton could support title attributes #}
+                {% if action.id == 'delete' %}
+                    {% set deleteConfirmMsg = __('Really delete this «name.formatForDisplay»?') %}
+                    {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass confirmMessage=$deleteConfirmMsg}
+                {% else %}
+                    {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
+                {% endif %}
+            {/foreach}
+            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»' formnovalidate='formnovalidate'}
+        «ENDIF»
     '''
 
     def private isLegacyApp(Entity it) {

@@ -39,7 +39,6 @@ class ExternalController {
         use PageUtil;
         use ThemeUtil;
         use UserUtil;
-        use Zikula_View;
         use Zikula\Core\Controller\AbstractController;
         use Zikula\Core\Response\PlainResponse;
 
@@ -169,29 +168,34 @@ class ExternalController {
 
         $instance = $entity->createCompositeIdentifier() . '::';
 
-        «IF !isLegacy»
-            $view = Zikula_View::getInstance('«appName»', false);
-        «ENDIF»
-        $«IF isLegacy»this->«ENDIF»view->setCaching(Zikula_View::CACHE_ENABLED);
-        // set cache id
-        $accessLevel = ACCESS_READ;
-        if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
-            $accessLevel = ACCESS_COMMENT;
-        }
-        if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
-            $accessLevel = ACCESS_EDIT;
-        }
-        $«IF isLegacy»this->«ENDIF»view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
-
-        $«IF isLegacy»this->«ENDIF»view->assign('objectType', $objectType)
-        «IF isLegacy»      «ENDIF»     ->assign('source', $source)
-        «IF isLegacy»      «ENDIF»     ->assign($objectType, $entity)
-        «IF isLegacy»      «ENDIF»     ->assign('displayMode', $displayMode);
-
         «IF isLegacy»
+            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+
+            // set cache id
+            $accessLevel = ACCESS_READ;
+            if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
+                $accessLevel = ACCESS_COMMENT;
+            }
+            if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                $accessLevel = ACCESS_EDIT;
+            }
+            $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
+
+            $this->view->assign('objectType', $objectType)
+                       ->assign('source', $source)
+                       ->assign($objectType, $entity)
+                       ->assign('displayMode', $displayMode);
+
             return $this->view->fetch('external/' . $objectType . '/display.tpl');
         «ELSE»
-            return $this->response($view->fetch('External/' . ucfirst($objectType) . '/display.tpl'));
+            $templateParameters = [
+                'objectType' => $objectType,
+                'source' => $source,
+                $objectType => $entity,
+                'displayMode' => $displayMode
+            ];
+
+            return $this->render('@«appName»/External/' . ucfirst($objectType) . '/display.html.twig', $templateParameters);
         «ENDIF»
     '''
 
@@ -319,34 +323,53 @@ class ExternalController {
             $entity->initWorkflow();
         }
 
-        $view = Zikula_View::getInstance('«appName»', false);
-
-        $view->assign('editorName', $editor)
-             ->assign('objectType', $objectType)
-             ->assign('items', $entities)
-             ->assign('sort', $sort)
-             ->assign('sortdir', $sdir)
-             ->assign('currentPage', $currentPage)
-             ->assign('pager', array('numitems'     => $objectCount,
-                                     'itemsperpage' => $resultsPerPage));
-        «IF hasCategorisableEntities»
-
-            // assign category properties
-            «IF !isLegacy»
-                «categoryInitialisation»
-            «ENDIF»
-            $properties = null;
-            if (in_array($objectType, $this->categorisableObjectTypes)) {
-                $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
-            }
-            $view->assign('properties', $properties)
-                 ->assign('catIds', $categoryIds);
-        «ENDIF»
-
         «IF isLegacy»
+            $view = Zikula_View::getInstance('«appName»', false);
+
+            $view->assign('editorName', $editor)
+                 ->assign('objectType', $objectType)
+                 ->assign('items', $entities)
+                 ->assign('sort', $sort)
+                 ->assign('sortdir', $sdir)
+                 ->assign('currentPage', $currentPage)
+                 ->assign('pager', array('numitems'     => $objectCount,
+                                         'itemsperpage' => $resultsPerPage));
+            «IF hasCategorisableEntities»
+
+                // assign category properties
+                $properties = null;
+                if (in_array($objectType, $this->categorisableObjectTypes)) {
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                }
+                $view->assign('properties', $properties)
+                     ->assign('catIds', $categoryIds);
+            «ENDIF»
+
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
-            return new PlainResponse($view->fetch('External/' . ucfirst($objectType) . '/find.tpl'));
+            «IF hasCategorisableEntities»
+                «categoryInitialisation»
+
+                // collect category properties
+                $properties = null;
+                if (in_array($objectType, $this->categorisableObjectTypes)) {
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                }
+
+            «ENDIF»
+            $templateParameters = [
+                'editorName' => $editor,
+                'objectType' => $objectType,
+                'items' => $entities,
+                'sort' => $sort,
+                'sortdir' => $sdir,
+                'currentPage' => $currentPage,
+                'pager', ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]«IF hasCategorisableEntities»,
+                'properties' => $properties,
+                'catIds' => $categoryIds«ENDIF»
+            ];
+
+            return $this->render('@«appName»/External/' . ucfirst($objectType) . '/find.html.twig', $templateParameters);
         «ENDIF»
     '''
 

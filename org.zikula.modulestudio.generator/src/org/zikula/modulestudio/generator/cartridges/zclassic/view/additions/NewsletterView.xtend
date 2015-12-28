@@ -40,12 +40,12 @@ class NewsletterView {
             </div>
             {assign var='j' value=$j+1}
         {foreachelse}
-            <div class="«IF targets('1.3.x')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='No object types found.'}</div>
+            <div class="«IF targets('1.3.x')»z-warningmsg«ELSE»alert alert-warning«ENDIF»">{gt text='No object types found.'}</div>
         {/foreach}
 «/*
         «IF !targets('1.3.x')»
 
-            {include file='include_filterSyntaxDialog.tpl'}
+            {include file='includeFilterSyntaxDialog.tpl'}
         «ENDIF»
 
         «editTemplateJs»

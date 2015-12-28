@@ -34,7 +34,6 @@ class Notification {
             use UserUtil;
 
             use Zikula_AbstractBase;
-            use Zikula_View;
 
         «ENDIF»
         /**
@@ -185,9 +184,14 @@ class Notification {
             $objectType = $this->entity['_objectType'];
             $siteName = System::getVar('sitename');
 
-            $view = Zikula_View::getInstance('«appName»');
+            «IF targets('1.3.x')»
+                $view = Zikula_View::getInstance('«appName»');
+            «ENDIF»
             $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
-            $template = '«IF targets('1.3.x')»email«ELSE»Email«ENDIF»/notify' . ucfirst($objectType) . $templateType .  '.tpl';
+            $template = '«IF targets('1.3.x')»email«ELSE»Email«ENDIF»/notify' . ucfirst($objectType) . $templateType .  '.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
+            «IF !targets('1.3.x')»
+                $templating = $this->get('templating');
+            «ENDIF»
 
             $mailData = $this->prepareEmailData();
 
@@ -201,15 +205,22 @@ class Notification {
                     continue;
                 }
 
-                $view->assign('recipient', $recipient)
-                     ->assign('mailData', $mailData);
+                «IF targets('1.3.x')»
+                    $view->assign('recipient', $recipient)
+                         ->assign('mailData', $mailData);
+                «ELSE»
+                    $templateParameters = [
+                        'recipient' => $recipient,
+                        'mailData' => $mailData
+                    ];
+                «ENDIF»
 
                 $mailArgs = array(
                     'fromname' => $siteName,
                     'toname' => $recipient['name'],
                     'toaddress' => $recipient['email'],
                     'subject' => $this->getMailSubject(),
-                    'body' => $view->fetch($template),
+                    'body' => «IF targets('1.3.x')»$view->fetch($template)«ELSE»$templating->render('@«appName»/' . $template, $templateParameters)«ENDIF»,
                     'html' => true
                 );
 

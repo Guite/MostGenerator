@@ -76,7 +76,7 @@ class Operations {
          */
         function «app.appName»_operation_«opName»(&$entity, $params)
         {
-            $dom = ZLanguage::getModuleDomain('«app.appName»');
+            $dom = «IF !app.targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«app.appName»');
 «/*
             // handling of additional parameters
             // $params['foobar'] = isset($params['foobar']) ? (bool)$params['foobar'] : false;
@@ -114,7 +114,7 @@ class Operations {
         }
 
         // get entity manager
-        $serviceManager = ServiceUtil::getManager();
+        $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
         $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
 
         // save entity data
@@ -127,21 +127,21 @@ class Operations {
             «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->notice('{app}: User {user} updated an entity.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+                $logger->notice('{app}: User {user} updated an entity.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
             «ENDIF»
         } catch (\Exception $e) {
             «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
             «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->error('{app}: User {user} tried to update an entity, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+                $logger->error('{app}: User {user} tried to update an entity, but failed.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
             «ENDIF»
         }
     '''
 
     def private deleteImpl() '''
         // get entity manager
-        $serviceManager = ServiceUtil::getManager();
+        $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
         $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
 
         // delete entity
@@ -152,14 +152,14 @@ class Operations {
             «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->notice('{app}: User {user} deleted an entity.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+                $logger->notice('{app}: User {user} deleted an entity.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
             «ENDIF»
         } catch (\Exception $e) {
             «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
             «IF !app.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->error('{app}: User {user} tried to delete an entity, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname')));
+                $logger->error('{app}: User {user} tried to delete an entity, but failed.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
             «ENDIF»
         }
     '''

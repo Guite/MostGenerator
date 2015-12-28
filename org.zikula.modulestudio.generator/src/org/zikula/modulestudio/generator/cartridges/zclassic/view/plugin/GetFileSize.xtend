@@ -13,15 +13,21 @@ class GetFileSize {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val pluginFilePath = viewPluginFilePath('modifier', 'GetFileSize')
-        if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, getFileSizeImpl))
+        if (targets('1.3.x')) {
+            val pluginFilePath = viewPluginFilePath('modifier', 'GetFileSize')
+            if (!shouldBeSkipped(pluginFilePath)) {
+                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, getFileSizeImpl))
+            }
+        } else {
+            getFileSizeImpl
         }
     }
 
     def private getFileSizeImpl(Application it) '''
         /**
-         * The «appName.formatForDB»GetFileSize modifier displays the size of a given file in a readable way.
+         * The «appName.formatForDB»«IF targets('1.3.x')»GetFileSize modifier«ELSE»_fileSize filter«ENDIF» displays the size of a given file in a readable way.
+         * Example:
+         *     «IF targets('1.3.x')»{12345|«appName.formatForDB»GetFileSize}«ELSE»{{ 12345|«appName.formatForDB»_fileSize }}«ENDIF»
          *
          * @param integer $size     File size in bytes.
          * @param string  $filepath The input file path including file name (if file size is not known).
@@ -30,7 +36,7 @@ class GetFileSize {
          *
          * @return string File size in a readable form.
          */
-        function smarty_modifier_«appName.formatForDB»GetFileSize($size = 0, $filepath = '', $nodesc = false, $onlydesc = false)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»G«ELSE»g«ENDIF»etFileSize($size = 0, $filepath = '', $nodesc = false, $onlydesc = false)
         {
             if (!is_numeric($size)) {
                 $size = (int) $size;
@@ -45,7 +51,7 @@ class GetFileSize {
                 return '';
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
             «IF targets('1.3.x')»
                 $viewHelper = new «appName»_Util_View($serviceManager);
             «ELSE»

@@ -46,7 +46,7 @@ class Page {
 
                 // Simply test with something like
                 /*
-                    if (($key = array_search('system/Users/«IF targets('1.3.x')»javascript/«ELSE»«getAppJsPath»«ENDIF»somescript.js', $event->data)) !== false) {
+                    if (($key = array_search('system/«IF targets('1.3.x')»Users/javascript/«ELSE»UsersModule/«getAppJsPath»«ENDIF»somescript.js', $event->data)) !== false) {
                         $event->data[$key] = 'config/javascript/myoverride.js';
                     }
                 */

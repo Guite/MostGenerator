@@ -13,44 +13,55 @@ class TemplateHeaders {
     extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!targets('1.3.x')) {
-            return
-        }
-        val pluginFilePath = viewPluginFilePath('function', 'TemplateHeaders')
-        if (!shouldBeSkipped(pluginFilePath)) {
-            fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, templateHeadersImpl))
+        if (targets('1.3.x')) {
+            val pluginFilePath = viewPluginFilePath('function', 'TemplateHeaders')
+            if (!shouldBeSkipped(pluginFilePath)) {
+                fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, templateHeadersImpl))
+            }
+        } else {
+            templateHeadersImpl
         }
     }
 
     def private templateHeadersImpl(Application it) '''
         /**
-         * The «appName.formatForDB»TemplateHeaders plugin performs header() operations
+         * The «appName.formatForDB»«IF targets('1.3.x')»TemplateHeaders plugin«ELSE»_templateHeaders function«ENDIF» performs header() operations
          * to change the content type provided to the user agent.
          *
          * Available parameters:
          *   - contentType:  Content type for corresponding http header.
          *   - asAttachment: If set to true the file will be offered for downloading.
-         *   - filename:     Name of download file.
-         *
-         * @param  array       $params All attributes passed to this function from the template.
-         * @param  Zikula_View $view   Reference to the view object.
+         *   - fileName:     Name of download file.
+        «IF targets('1.3.x')»
+            «' '»*
+            «' '»* @param  array       $params All attributes passed to this function from the template.
+            «' '»* @param  Zikula_View $view   Reference to the view object.
+        «ENDIF»
          *
          * @return boolean false.
          */
-        function smarty_function_«appName.formatForDB»TemplateHeaders($params, $view)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»T«ELSE»t«ENDIF»emplateHeaders(«IF targets('1.3.x')»$params, $view«ELSE»$contentType, $asAttachment = false, $fileName = ''«ENDIF»)
         {
-            if (!isset($params['contentType'])) {
-                $view->trigger_error($view->__f('%1$s: missing parameter \'%2$s\'', array('«appName.formatForDB»TemplateHeaders', 'contentType')));
-            }
+            «IF targets('1.3.x')»
+                if (!isset($params['contentType'])) {
+                    $view->trigger_error($view->__f('%1$s: missing parameter \'%2$s\'', array('«appName.formatForDB»TemplateHeaders', 'contentType')));
+                }
 
+            «ENDIF»
             // apply header
-            header('Content-Type: ' . $params['contentType']);
+            header('Content-Type: ' . $«IF targets('1.3.x')»params['«ENDIF»contentType«IF targets('1.3.x')»']«ENDIF»);
 
             // if desired let the browser offer the given file as a download
-            if (isset($params['asAttachment']) && $params['asAttachment']
-             && isset($params['filename']) && !empty($params['filename'])) {
-                header('Content-Disposition: attachment; filename=' . $params['filename']);
-            }
+            «IF targets('1.3.x')»
+                if (isset($params['asAttachment']) && $params['asAttachment']
+                 && isset($params['fileName']) && !empty($params['fileName'])) {
+                    header('Content-Disposition: attachment; filename=' . $params['fileName']);
+                }
+            «ELSE»
+                if ($asAttachment && !empty($fileName)) {
+                    header('Content-Disposition: attachment; filename=' . $fileName);
+                }
+            «ENDIF»
 
             return;
         }

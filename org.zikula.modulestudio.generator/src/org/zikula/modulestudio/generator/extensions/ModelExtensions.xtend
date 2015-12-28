@@ -33,7 +33,6 @@ import java.util.List
 
 /**
  * This class contains model related extension methods.
- * TODO document class and methods.
  */
 class ModelExtensions {
     extension CollectionUtils = new CollectionUtils
@@ -246,7 +245,7 @@ class ModelExtensions {
      * Concatenates all id strings using underscore as delimiter.
      * Used for generating some view templates. 
      */
-    def idFieldsAsParameterTemplate(DataObject it) '''«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»'''
+    def idFieldsAsParameterTemplate(DataObject it) '''«IF application.targets('1.3.x')»«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»«ELSE»«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ \'_\' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR»«ENDIF»'''
 
     /**
      * Returns a list of all fields which should be displayed.
@@ -503,7 +502,7 @@ class ModelExtensions {
     }
 
     /**
-     * Returns the subfolder path segment for this upload field,
+     * Returns the sub folder path segment for this upload field,
      * that is either the subFolderName attribute (if set) or the name otherwise.
      */
     def subFolderPathSegment(UploadField it) {
@@ -527,24 +526,42 @@ class ModelExtensions {
         }
     }
 
+    /**
+     * Checks whether this entity has enabled the notify tracking policy.
+     */
     def hasNotifyPolicy(Entity it) {
         (changeTrackingPolicy == EntityChangeTrackingPolicy.NOTIFY)
     }
 
+    /**
+     * Checks whether this entity has enabled optimistic locking.
+     */
     def hasOptimisticLock(Entity it) {
         (lockType == EntityLockType.OPTIMISTIC || lockType == EntityLockType.PAGELOCK_OPTIMISTIC)
     }
+    /**
+     * Checks whether this entity has enabled pessimistic read locking.
+     */
     def hasPessimisticReadLock(Entity it) {
         (lockType == EntityLockType.PESSIMISTIC_READ || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_READ)
     }
+    /**
+     * Checks whether this entity has enabled pessimistic write locking.
+     */
     def hasPessimisticWriteLock(Entity it) {
         (lockType == EntityLockType.PESSIMISTIC_WRITE || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_WRITE)
     }
+    /**
+     * Checks whether this entity has enabled support for the PageLock module.
+     */
     def hasPageLockSupport(Entity it) {
         (lockType == EntityLockType.PAGELOCK || lockType == EntityLockType.PAGELOCK_OPTIMISTIC
          || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_READ || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_WRITE)
     }
 
+    /**
+     * Determines the version field of a data object if there is one.
+     */
     def getVersionField(DataObject it) {
         val intVersions = fields.filter(IntegerField).filter[version]
         if (!intVersions.empty)
@@ -556,19 +573,30 @@ class ModelExtensions {
         }
     }
 
-
+    /**
+     * Checks whether the given field is a default (= no custom) identifier field.
+     */
     def isDefaultIdField(DerivedField it) {
         isDefaultIdFieldName(entity, name.formatForDB)
     }
 
+    /**
+     * Checks whether the given string is the name of the default (= no custom) identifier field.
+     */
     def isDefaultIdFieldName(DataObject it, String s) {
         newArrayList('id', name.formatForDB + 'id', name.formatForDB + '_id').contains(s)
     }
 
+    /**
+     * Checks whether the given list contains the name of a default (= no custom) identifier field.
+     */
     def boolean containsDefaultIdField(Iterable<String> l, DataObject dataObject) {
         isDefaultIdFieldName(dataObject, l.head) || (l.size > 1 && containsDefaultIdField(l.tail, dataObject))
     }
 
+    /**
+     * Determines the start date field of a data object if there is one.
+     */
     def getStartDateField(DataObject it) {
         val datetimeFields = fields.filter(DatetimeField).filter[startDate]
         if (!datetimeFields.empty)
@@ -580,6 +608,9 @@ class ModelExtensions {
         }
     }
 
+    /**
+     * Determines the end date field of a data object if there is one.
+     */
     def getEndDateField(DataObject it) {
         val datetimeFields = fields.filter(DatetimeField).filter[endDate]
         if (!datetimeFields.empty)
@@ -612,8 +643,6 @@ class ModelExtensions {
             default: ''
         }
     }
-
-
 
     /**
      * Prints an output string describing the type of the given derived field.

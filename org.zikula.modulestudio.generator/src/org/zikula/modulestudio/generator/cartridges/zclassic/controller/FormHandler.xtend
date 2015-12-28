@@ -60,7 +60,7 @@ class FormHandler {
         «ENDIF»
 
         // Execute form using supplied template and page event handler
-        return $view->execute('«controller.formattedName.toFirstUpper»/«actionName.formatForCode.toFirstLower».tpl', new $handlerClass());
+        return $view->execute('«controller.formattedName.toFirstUpper»/«actionName.formatForCode.toFirstLower».«IF controller.application.targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»', new $handlerClass());
     '''
 
     /**
@@ -811,13 +811,15 @@ class FormHandler {
                         $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                     «ENDIF»
                 }
+                «IF targets('1.3.x')»
 
-                // An item was created, updated or deleted, so we clear all cached pages for this item.
-                $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
-                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                    // An item was created, updated or deleted, so we clear all cached pages for this item.
+                    $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
+                    ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
-                // clear view cache to reflect our changes
-                $this->view->clear_cache();
+                    // clear view cache to reflect our changes
+                    $this->view->clear_cache();
+                «ENDIF»
             }
 
             if ($this->hasPageLockSupport === true && $this->mode == 'edit' && ModUtil::available('PageLock')) {

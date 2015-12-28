@@ -13,60 +13,68 @@ class StandardFields {
 
     def generate (Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.x')) 'helper' else 'Helper') + '/'
+        val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
-            fileName = 'include_standardfields_display.tpl'
+            fileName = 'includeStandardFieldsDisplay' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'include_standardfields_display.generated.tpl'
+                    fileName = 'includeStandardFieldsDisplay.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, standardFieldsViewImpl)
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) standardFieldsViewImplLegacy else standardFieldsViewImpl)
             }
         }
         if (hasEditActions) {
-            fileName = 'include_standardfields_edit.tpl'
+            fileName = 'includeStandardFieldsEdit' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'include_standardfields_edit.generated.tpl'
+                    fileName = 'includeStandardFieldsEdit.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, standardFieldsEditImpl)
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) standardFieldsEditImplLegacy else standardFieldsEditImpl)
             }
         }
     }
 
-    def private standardFieldsViewImpl(Application it) '''
+    def private standardFieldsViewImplLegacy(Application it) '''
         {* purpose of this template: reusable display of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.x')»
-                    <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
-                    <div class="standardfields z-panel-content" style="display: none">
-                «ELSE»
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStandardFields">{gt text='Creation and update'}</a></h3>
-                        </div>
-                        <div id="collapseStandardFields" class="panel-collapse collapse in">
-                            <div class="panel-body">
-                «ENDIF»
+                <h3 class="standard-fields z-panel-header z-panel-indicator z-pointer">{gt text='Creation and update'}</h3>
+                <div class="standard-fields z-panel-content" style="display: none">
             {else}
-                <h3 class="standardfields">{gt text='Creation and update'}</h3>
+                <h3 class="standard-fields">{gt text='Creation and update'}</h3>
             {/if}
-            «viewBody»
+            «viewBodyLegacy»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.x')»
-                    </div>
-                «ELSE»
-                            </div>
-                        </div>
-                    </div>
-                «ENDIF»
+                </div>
             {/if}
         {/if}
     '''
 
-    def private viewBody(Application it) '''
+    def private standardFieldsViewImpl(Application it) '''
+        {# purpose of this template: reusable display of standard fields #}
+        {% if (obj.createdUserId is defined and obj.createdUserId) or (obj.updatedUserId is defined and obj.updatedUserId) %}
+            {% if panel|default(false) == true %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStandardFields">{{ __('Creation and update') }}</a></h3>
+                    </div>
+                    <div id="collapseStandardFields" class="panel-collapse collapse in">
+                        <div class="panel-body">
+            {% else %}
+                <h3 class="standard-fields">{{ __('Creation and update') }}</h3>
+            {% endif %}
+            «viewBody»
+            {% if panel|default(false) == true %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    '''
+
+    def private viewBodyLegacy(Application it) '''
         <dl class="propertylist">
         {if isset($obj.createdUserId) && $obj.createdUserId}
             <dt>{gt text='Creation'}</dt>
@@ -101,41 +109,70 @@ class StandardFields {
         </dl>
     '''
 
-    def private standardFieldsEditImpl(Application it) '''
+    def private viewBody(Application it) '''
+        <dl class="propertylist">
+        {% if obj.createdUserId|default %}
+            <dt>{{ __('Creation') }}</dt>
+            {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
+            {% set profileLink = obj.createdUserId|«appName.toLowerCase»_profileLink %}
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId, rating='g') }}</dd>
+            <dd>{{ __f('Created by %1$s on %2$s', array(profileLink, obj.createdDate|localizeddate('medium', 'short'))) }}</dd>
+        {% endif %}
+        {% if obj.updatedUserId|default %}
+            <dt>{{ __('Last update') }}</dt>
+            {% set lu_uname = «appName.toLowerCase»_userVar('uname', obj.updatedUserId) %}
+            {% set profileLink = obj.updatedUserId|«appName.toLowerCase»_profileLink %}
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId, rating='g') }}</dd>
+            <dd>{{ __f('Updated by %1$s on %2$s', array(profileLink, obj.updatedDate|localizeddate('medium', 'short'))) }}</dd>
+        {% endif %}
+        </dl>
+    '''
+
+    def private standardFieldsEditImplLegacy(Application it) '''
         {* purpose of this template: reusable editing of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.x')»
-                    <h3 class="standardfields z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Creation and update'}</h3>
-                    <fieldset class="standardfields z-panel-content" style="display: none">
-                «ELSE»
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStandardFields">{gt text='Creation and update'}</a></h3>
-                        </div>
-                        <div id="collapseStandardFields" class="panel-collapse collapse in">
-                            <div class="panel-body">
-                «ENDIF»
+                <h3 class="standardfields z-panel-header z-panel-indicator z-pointer">{gt text='Creation and update'}</h3>
+                <fieldset class="standardfields z-panel-content" style="display: none">
             {else}
                 <fieldset class="standardfields">
             {/if}
                 <legend>{gt text='Creation and update'}</legend>
-                «editBody»
+                «editBodyLegacy»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.x')»
-                    </fieldset>
-                «ELSE»
-                            </div>
-                        </div>
-                    </div>
-                «ENDIF»
+                </fieldset>
             {else}
                 </fieldset>
             {/if}
         {/if}
     '''
 
-    def private editBody(Application it) '''
+    def private standardFieldsEditImpl(Application it) '''
+        {# purpose of this template: reusable editing of standard fields #}
+        {% if (obj.createdUserId is defined and obj.createdUserId) or (obj.updatedUserId is defined and obj.updatedUserId) %}
+            {% if panel|default(false) == true %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStandardFields">{{ __('Creation and update') }}</a></h3>
+                    </div>
+                    <div id="collapseStandardFields" class="panel-collapse collapse in">
+                        <div class="panel-body">
+            {% else %}
+                <fieldset class="standardfields">
+            {% endif %}
+                <legend>{{ __('Creation and update') }}</legend>
+                «editBody»
+            {% if panel|default(false) == true %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                </fieldset>
+            {% endif %}
+        {% endif %}
+    '''
+
+    def private editBodyLegacy(Application it) '''
         <ul>
         {if isset($obj.createdUserId) && $obj.createdUserId}
             {usergetvar name='uname' uid=$obj.createdUserId assign='username'}
@@ -147,6 +184,21 @@ class StandardFields {
             <li>{gt text='Updated by %s' tag1=$username}</li>
             <li>{gt text='Updated on %s' tag1=$obj.updatedDate|dateformat}</li>
         {/if}
+        </ul>
+    '''
+
+    def private editBody(Application it) '''
+        <ul>
+        {% if obj.createdUserId|default %}
+            {% set username = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
+            <li>{{ __f('Created by %s', username) }}</li>
+            <li>{{ __f('Created on %s', obj.createdDate|localizeddate('medium', 'short')) }}</li>
+        {% endif %}
+        {% if obj.updatedUserId|default %}
+            {% set username = «appName.toLowerCase»_userVar('uname', obj.updatedUserId) %}
+            <li>{{ __f('Updated by %s', username) }}</li>
+            <li>{{ __f('Updated on %s', obj.updatedDate|localizeddate('medium', 'short')) }}</li>
+        {% endif %}
         </ul>
     '''
 }

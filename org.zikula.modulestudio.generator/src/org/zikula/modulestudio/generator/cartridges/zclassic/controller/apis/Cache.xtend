@@ -22,6 +22,9 @@ class Cache {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) { // only generated for 1.3.x, because 1.4.x is migrated to Twig
+            return
+        }
         println('Generating cache api')
         generateClassPair(fsa, getAppSourceLibPath + 'Api/Cache' + (if (targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(it, cacheApiBaseClass), fh.phpFileContent(it, cacheApiImpl)

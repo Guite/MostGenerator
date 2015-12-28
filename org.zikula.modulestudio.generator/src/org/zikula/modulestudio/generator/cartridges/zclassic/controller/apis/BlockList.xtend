@@ -34,14 +34,13 @@ class BlockList {
             use BlockUtil;
             use DataUtil;
             use ModUtil;
-            use Zikula\Core\Controller\AbstractBlockController;
-            use Zikula_View;
+            use Zikula\Core\AbstractBlockHandler;
 
         «ENDIF»
         /**
          * Generic item list block base class.
          */
-        class «IF targets('1.3.x')»«appName»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock«ELSE»ItemListBlock extends AbstractBlockController«ENDIF»
+        class «IF targets('1.3.x')»«appName»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock«ELSE»ItemListBlock extends AbstractBlockHandler«ENDIF»
         {
             «listBlockBaseImpl»
         }
@@ -247,26 +246,29 @@ class BlockList {
                 $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
-            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
-            // set cache id
-            $component = '«appName»:' . ucfirst($objectType) . ':';
-            $instance = '::';
-            $accessLevel = ACCESS_READ;
-            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
-                $accessLevel = ACCESS_COMMENT;
-            }
-            if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
-                $accessLevel = ACCESS_EDIT;
-            }
-            $this->view->setCacheId('view|ot_' . $objectType . '_sort_' . $content['sorting'] . '_amount_' . $content['amount'] . '_' . $accessLevel);
+            «IF targets('1.3.x')»
+                $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+                // set cache id
+                $component = '«appName»:' . ucfirst($objectType) . ':';
+                $instance = '::';
+                $accessLevel = ACCESS_READ;
+                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
+                    $accessLevel = ACCESS_COMMENT;
+                }
+                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                    $accessLevel = ACCESS_EDIT;
+                }
+                $this->view->setCacheId('view|ot_' . $objectType . '_sort_' . $content['sorting'] . '_amount_' . $content['amount'] . '_' . $accessLevel);
 
-            $template = $this->getDisplayTemplate($content);
+                $template = $this->getDisplayTemplate($content);
 
-            // if page is cached return cached content
-            if ($this->view->is_cached($template)) {
-                $blockinfo['content'] = $this->view->fetch($template);
-                return BlockUtil::themeBlock($blockinfo);
-            }
+                // if page is cached return cached content
+                if ($this->view->is_cached($template)) {
+                    $blockinfo['content'] = $this->view->fetch($template);
+
+                    return BlockUtil::themeBlock($blockinfo);
+                }
+            «ENDIF»
 
             // create query
             $where = $content['filter'];
@@ -293,26 +295,40 @@ class BlockList {
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
             $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
 
-            // assign block vars and fetched data
-            $this->view->assign('vars', $content)
-                       ->assign('objectType', $objectType)
-                       ->assign('items', $entities)
-                       ->assign($repository->getAdditionalTemplateParameters('block'));
-            «IF hasCategorisableEntities»
+            «IF targets('1.3.x')»
+                // assign block vars and fetched data
+                $this->view->assign('vars', $content)
+                           ->assign('objectType', $objectType)
+                           ->assign('items', $entities)
+                           ->assign($repository->getAdditionalTemplateParameters('block'));
+                «IF hasCategorisableEntities»
 
-                // assign category properties
-                $this->view->assign('properties', $properties);
+                    // assign category properties
+                    $this->view->assign('properties', $properties);
+                «ENDIF»
+
+                // set a block title
+                if (empty($blockinfo['title'])) {
+                    $blockinfo['title'] = $this->__('«appName» items');
+                }
+
+                $blockinfo['content'] = $this->view->fetch($template);
+
+                // return the block to the theme
+                return BlockUtil::themeBlock($blockinfo);
+            «ELSE»
+                $template = $this->getDisplayTemplate($content);
+
+                $templateParameters = [
+                    'vars' => $content,
+                    'objectType' => $objectType,
+                    'items' => $entities«IF hasCategorisableEntities»,
+                    'properties' => $properties«ENDIF»
+                ];
+                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('block'));
+
+                return $this->renderView($template, $templateParameters);
             «ENDIF»
-
-            // set a block title
-            if (empty($blockinfo['title'])) {
-                $blockinfo['title'] = $this->__('«appName» items');
-            }
-
-            $blockinfo['content'] = $this->view->fetch($template);;
-
-            // return the block to the theme
-            return BlockUtil::themeBlock($blockinfo);
         }
     '''
 
@@ -343,7 +359,7 @@ class BlockList {
             } elseif ($this->view->template_exists('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
                 $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile;
             } else {
-                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist.tpl';
+                $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
             }
 
             return $template;
@@ -402,6 +418,7 @@ class BlockList {
             «' '»*
             «' '»* @return string
         «ENDIF»
+        «val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'»
          */
         public function modify(«IF targets('1.3.x')»$blockinfo«ELSE»Request $request, $content«ENDIF»)
         {
@@ -414,26 +431,30 @@ class BlockList {
             $defaults = $this->getDefaults();
             $content = array_merge($defaults, $content);
             if (!isset($content['template'])) {
-                $content['template'] = 'itemlist_' . DataUtil::formatForOS($content['objectType']) . '_display.tpl';
+                $content['template'] = 'itemlist_' . DataUtil::formatForOS($content['objectType']) . '_display«templateExtension»';
             }
             «IF hasCategorisableEntities»
 
                 $content = $this->resolveCategoryIds($content);
             «ENDIF»
 
-            $this->view->setCaching(Zikula_View::CACHE_DISABLED);
+            «IF targets('1.3.x')»
+                $this->view->setCaching(Zikula_View::CACHE_DISABLED);
 
-            // assign the appropriate values
-            $this->view->assign($content);
+                // assign the appropriate values
+                $this->view->assign($content);
 
-            // clear the block cache
-            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($content['objectType']) . '_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
-            $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($content['objectType']) . '_display_description.tpl');
+                // clear the block cache
+                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display«templateExtension»');
+                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($content['objectType']) . '_display«templateExtension»');
+                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display_description«templateExtension»');
+                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($content['objectType']) . '_display_description«templateExtension»');
 
-            // Return the output that has been generated by this function
-            return $this->view->fetch('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_modify.tpl');
+                // Return the output that has been generated by this function
+                return $this->view->fetch('block/itemlist_modify«templateExtension»');
+            «ELSE»
+                return $this->renderView('Block/itemlist_modify«templateExtension», $content);
+            «ENDIF»
         }
     '''
 

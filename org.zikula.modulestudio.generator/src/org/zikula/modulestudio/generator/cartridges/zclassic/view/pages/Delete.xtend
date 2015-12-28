@@ -26,88 +26,105 @@ class Delete {
 
     def private deleteView(Entity it, String appName) '''
         «val app = application»
-        {* purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view *}
         «IF app.targets('1.3.x')»
+            {* purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view *}
             {assign var='lct' value='user'}
             {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
                 {assign var='lct' value='admin'}
             {/if}
             {include file="`$lct`/header.tpl"}
-        «ELSE»
-            {assign var='area' value='User'}
-            {if $routeArea eq 'admin'}
-                {assign var='area' value='Admin'}
-            {/if}
-            {include file="`$area`/header.tpl"}
-        «ENDIF»
-        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
-            {gt text='Delete «name.formatForDisplay»' assign='templateTitle'}
-            {pagesetvar name='title' value=$templateTitle}
-            «templateHeader»
+            <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
+                {gt text='Delete «name.formatForDisplay»' assign='templateTitle'}
+                {pagesetvar name='title' value=$templateTitle}
+                «templateHeader»
 
-            <p class="«IF app.targets('1.3.x')»z-warningmsg«ELSE»alert alert-warningmsg«ENDIF»">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
+                <p class="z-warningmsg">{gt text='Do you really want to delete this «name.formatForDisplay» ?'}</p>
 
-            <form class="«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»" action="«IF app.targets('1.3.x')»{modurl modname='«appName»' type=$lct func='delete' ot='«name.formatForCode»' «routeParamsLegacy(name, true, false)»}«ELSE»{route name="«appName.formatForDB»_«name.formatForDB»_`$routeArea`delete" «routeParams(name, true)»}«ENDIF»" method="post"«IF !app.targets('1.3.x')» role="form"«ENDIF»>
-                <div>
-                    <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
-                    <input type="hidden" id="confirmation" name="confirmation" value="1" />
-                    <fieldset>
-                        <legend>{gt text='Confirmation prompt'}</legend>
-                        <div class="«IF app.targets('1.3.x')»z-buttons z-formbuttons«ELSE»form-group form-buttons«ENDIF»">
-                        «IF !app.targets('1.3.x')»
-                            <div class="col-sm-offset-3 col-sm-9">
-                        «ENDIF»
-                            {gt text='Delete' assign='deleteTitle'}
-                            {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='«IF app.targets('1.3.x')»z-btred«ELSE»btn btn-danger«ENDIF»'}
-                            «IF app.targets('1.3.x')»
+                <form class="z-form" action="{modurl modname='«appName»' type=$lct func='delete' ot='«name.formatForCode»' «routeParamsLegacy(name, true, false)»}" method="post">
+                    <div>
+                        <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
+                        <input type="hidden" id="confirmation" name="confirmation" value="1" />
+                        <fieldset>
+                            <legend>{gt text='Confirmation prompt'}</legend>
+                            <div class="z-buttons z-formbuttons">
+                                {gt text='Delete' assign='deleteTitle'}
+                                {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='z-btred'}
                                 <a href="{modurl modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
-                            «ELSE»
-                                <a href="{route name="«appName.formatForDB»_«name.formatForDB»_`$routeArea`view"}" class="btn btn-default" role="button"><span class="fa fa-times"></span> {gt text='Cancel'}</a>
-                            «ENDIF»
-                        «IF !app.targets('1.3.x')»
                             </div>
-                        «ENDIF»
-                        </div>
-                    </fieldset>
-                    «IF !skipHookSubscribers»
+                        </fieldset>
+                        «IF !skipHookSubscribers»
 
-                        «callDisplayHooks(appName)»
-                    «ENDIF»
-                </div>
-            </form>
-        </div>
-        «IF app.targets('1.3.x')»
+                            «callDisplayHooks(appName)»
+                        «ENDIF»
+                    </div>
+                </form>
+            </div>
             {include file="`$lct`/footer.tpl"}
         «ELSE»
-            {include file="`$area`/footer.tpl"}
+            {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
+            {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
+            {% block title %}
+                {{ __('Delete «name.formatForDisplay»') }}
+            {% endblock %}
+            {% block adminPageIcon %}trash-o{% endblock %}
+            {% block content %}
+                <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
+                    <p class="alert alert-warning">{{ __('Do you really want to delete this «name.formatForDisplay» ?') }}</p>
+
+                    <form class="form-horizontal" action="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'delete'«routeParams(name, true)») }}" method="post" role="form">
+                        <div>
+                            <input type="hidden" id="confirmation" name="confirmation" value="1" />
+                            <fieldset>
+                                <legend>{{ __('Confirmation prompt') }}</legend>
+                                <div class="form-group form-buttons">
+                                    <div class="col-sm-offset-3 col-sm-9">
+                                        <button type="submit" class="btn btn-danger"><span class="fa fa-remove"></span> {{ __('Delete') }}</button>
+                                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" class="btn btn-default" role="button"><span class="fa fa-times"></span> {{ __('Cancel') }}</a>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            «IF !skipHookSubscribers»
+
+                                «callDisplayHooks(appName)»
+                            «ENDIF»
+                        </div>
+                    </form>
+                </div>
+            {% endblock %}
         «ENDIF»
     '''
 
+    // 1.3.x only
     def private templateHeader(Entity it) '''
-        {if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}
-            «IF application.targets('1.3.x')»
-                <div class="z-admin-content-pagetitle">
-                    {icon type='delete' size='small' __alt='Delete'}
-                    <h3>{$templateTitle}</h3>
-                </div>
-            «ELSE»
-                <h3>
-                    <span class="fa fa-trash-o"></span>
-                    {$templateTitle}
-                </h3>
-            «ENDIF»
+        {if $lct eq 'admin'}
+            <div class="z-admin-content-pagetitle">
+                {icon type='delete' size='small' __alt='Delete'}
+                <h3>{$templateTitle}</h3>
+            </div>
         {else}
             <h2>{$templateTitle}</h2>
         {/if}
     '''
 
     def private callDisplayHooks(Entity it, String appName) '''
-        {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete' id="«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»" assign='hooks'}
-        {foreach key='providerArea' item='hook' from=$hooks}
-        <fieldset>
-            <legend>{$hookName}</legend>
-            {$hook}
-        </fieldset>
-        {/foreach}
+        «IF application.targets('1.3.x')»
+            {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete' id="«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»" assign='hooks'}
+            {foreach key='providerArea' item='hook' from=$hooks}
+                <fieldset>
+                    {*<legend>{$hookName}</legend>*}
+                    {$hook}
+                </fieldset>
+            {/foreach}
+        «ELSE»
+            {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_delete', id=«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR») %}
+            {% if hooks is iterable and hooks|length > 0 %}
+                {% for providerArea, hook in hooks %}
+                    <fieldset>
+                        {# <legend>{{ hookName }}</legend> #}
+                        {{ hook }}
+                    </fieldset>
+                {% endfor %}
+            {% endif %}
+        «ENDIF»
     '''
 }

@@ -104,15 +104,6 @@ class Styles {
         «autoCompletion»
         «viewAdditions»
         «viewFilterForm»
-        «IF interactiveInstallation»
-
-            dl#«appName.toFirstLower»FeatureList {
-                margin-left: 50px;
-            }
-            dl#«appName.toFirstLower»FeatureList dt {
-                font-weight: 700;
-            }
-        «ENDIF»
     '''
 
     def private validationStyles(Application it) '''

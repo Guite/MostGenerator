@@ -18,57 +18,65 @@ class MetaData {
     def generate (Application it, IFileSystemAccess fsa) {
         this.app = it
         val templatePath = getViewPath + (if (targets('1.3.x')) 'helper' else 'Helper') + '/'
+        val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
 
         var fileName = ''
         if (hasViewActions || hasDisplayActions) {
-            fileName = 'include_metadata_display.tpl'
+            fileName = 'includeMetaDataDisplay' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'include_metadata_display.generated.tpl'
+                    fileName = 'includeMetaDataDisplay.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, metaDataViewImpl)
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) metaDataViewImplLegacy else metaDataViewImpl)
             }
         }
         if (hasEditActions) {
-            fileName = 'include_metadata_edit.tpl'
+            fileName = 'includeMetaDataEdit' + templateExtension
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'include_metadata_edit.generated.tpl'
+                    fileName = 'includeMetaDataEdit.generated' + templateExtension
                 }
-                fsa.generateFile(templatePath + fileName, metaDataEditImpl)
+                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) metaDataEditImplLegacy else metaDataEditImpl)
             }
         }
     }
 
-    def private metaDataViewImpl(Application it) '''
+    def private metaDataViewImplLegacy(Application it) '''
         {* purpose of this template: reusable display of meta data fields *}
         {if isset($obj.metadata)}
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.x')»
-                    <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
-                    <div class="metadata z-panel-content" style="display: none">
-                «ELSE»
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata">{gt text='Metadata'}</a></h3>
-                        </div>
-                        <div id="collapseMetadata" class="panel-collapse collapse in">
-                            <div class="panel-body">
-                «ENDIF»
+                <h3 class="metadata z-panel-header z-panel-indicator z-pointer">{gt text='Metadata'}</h3>
+                <div class="metadata z-panel-content" style="display: none">
             {else}
                 <h3 class="metadata">{gt text='Metadata'}</h3>
             {/if}
             «viewBody»
             {if isset($panel) && $panel eq true}
-                «IF targets('1.3.x')»
-                    </div>
-                «ELSE»
-                            </div>
-                        </div>
-                    </div>
-                «ENDIF»
+                </div>
             {/if}
         {/if}
+    '''
+
+    def private metaDataViewImpl(Application it) '''
+        {# purpose of this template: reusable display of meta data fields #}
+        {% if obj.metadata is defined %}
+            {% if panel|default(false) == true %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata">{{ __('Metadata') }}</a></h3>
+                    </div>
+                    <div id="collapseMetadata" class="panel-collapse collapse in">
+                        <div class="panel-body">
+            {% else %}
+                <h3 class="metadata">{{ __('Metadata') }}</h3>
+            {% endif %}
+            «viewBody»
+            {% if panel|default(false) == true %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
     '''
 
     def private viewBody(Application it) '''
@@ -80,14 +88,25 @@ class MetaData {
         «displayRow('description')»
         «displayRow('publisher')»
         «displayRow('contributor')»
-        {if $obj.metadata.startdate ne ''}
-            <dt>{gt text='Start date'}</dt>
-            <dd>{$obj.metadata.startdate|dateformat}</dd>
-        {/if}
-        {if $obj.metadata.enddate ne ''}
-            <dt>{gt text='End date'}</dt>
-            <dd>{$obj.metadata.enddate|dateformat}</dd>
-        {/if}
+        «IF targets('1.3.x')»
+            {if $obj.metadata.startdate ne ''}
+                <dt>{gt text='Start date'}</dt>
+                <dd>{$obj.metadata.startdate|dateformat}</dd>
+            {/if}
+            {if $obj.metadata.enddate ne ''}
+                <dt>{gt text='End date'}</dt>
+                <dd>{$obj.metadata.enddate|dateformat}</dd>
+            {/if}
+        «ELSE»
+            {% if obj.metadata.startdate is not empty %}
+                <dt>{{ __('Start date') }}</dt>
+                <dd>{{ obj.metadata.startdate|localizeddate('medium', 'short') }}</dd>
+            {% endif %}
+            {% if obj.metadata.enddate is not empty %}
+                <dt>{{ __('End date') }}</dt>
+                <dd>{{ obj.metadata.enddate|localizeddate('medium', 'short') }}</dd>
+            {% endif %}
+        «ENDIF»
         «displayRow('type')»
         «displayRow('format')»
         «displayRow('uri')»
@@ -101,93 +120,131 @@ class MetaData {
     '''
 
     def private displayRow(String fieldName) '''
-        {if $obj.metadata.«fieldName» ne ''}
-            <dt>{gt text='«fieldName.formatForDisplayCapital»'}</dt>
-            «IF 'language'.equals(fieldName)»
-            <dd>{$obj.metadata.«fieldName»|getlanguagename|safehtml}</dd>
-            «ELSE»
-            <dd>{$obj.metadata.«fieldName»|default:'-'|safetext}</dd>
-            «ENDIF»
-        {/if}
+        «IF app.targets('1.3.x')»
+            {if $obj.metadata.«fieldName» ne ''}
+                <dt>{gt text='«fieldName.formatForDisplayCapital»'}</dt>
+                «IF 'language'.equals(fieldName)»
+                <dd>{$obj.metadata.«fieldName»|getlanguagename|safehtml}</dd>
+                «ELSE»
+                <dd>{$obj.metadata.«fieldName»|default:'-'|safetext}</dd>
+                «ENDIF»
+            {/if}
+        «ELSE»
+            {% if obj.metadata.«fieldName» is not empty %}
+                <dt>{{ __('«fieldName.formatForDisplayCapital»') }}</dt>
+                «IF 'language'.equals(fieldName)»
+                <dd>{{ obj.metadata.«fieldName»|languageName|safeHtml }}</dd>
+                «ELSE»
+                <dd>{{ obj.metadata.«fieldName» }}</dd>
+                «ENDIF»
+            {% endif %}
+        «ENDIF»
     '''
 
-    def private metaDataEditImpl(Application it) '''
+    def private metaDataEditImplLegacy(Application it) '''
         {* purpose of this template: reusable editing of meta data fields *}
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.x')»
-                <h3 class="metadata z-panel-header z-panel-indicator «IF targets('1.3.x')»z«ELSE»cursor«ENDIF»-pointer">{gt text='Metadata'}</h3>
-                <fieldset class="metadata z-panel-content" style="display: none">
-            «ELSE»
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata">{gt text='Metadata'}</a></h3>
-                    </div>
-                    <div id="collapseMetadata" class="panel-collapse collapse in">
-                        <div class="panel-body">
-            «ENDIF»
+            <h3 class="metadata z-panel-header z-panel-indicator z-pointer">{gt text='Metadata'}</h3>
+            <fieldset class="metadata z-panel-content" style="display: none">
         {else}
             <fieldset class="metadata">
         {/if}
             <legend>{gt text='Metadata'}</legend>
             «editBody»
         {if isset($panel) && $panel eq true}
-            «IF targets('1.3.x')»
-                </fieldset>
-            «ELSE»
-                        </div>
-                    </div>
-                </div>
-            «ENDIF»
+            </fieldset>
         {else}
             </fieldset>
         {/if}
     '''
 
+    def private metaDataEditImpl(Application it) '''
+        {# purpose of this template: reusable editing of meta data fields #}
+        {% if panel|default(false) == true %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata">{{ __('Metadata') }}</a></h3>
+                </div>
+                <div id="collapseMetadata" class="panel-collapse collapse in">
+                    <div class="panel-body">
+        {% else %}
+            <fieldset class="metadata">
+        {% endif %}
+            <legend>{{ __('Metadata') }}</legend>
+            «editBody»
+        {% if panel|default(false) == true %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            </fieldset>
+        {% endif %}
+    '''
+
     def private editBody(Application it) '''
 
-        «formRow('title', 80)»
-        «formRow('author', 80)»
-        «formRow('subject', 255)»
-        «formRow('keywords', 128)»
-        «formRow('description', 255)»
-        «formRow('publisher', 128)»
-        «formRow('contributor', 80)»
-        «formRow('startdate', 0)»
-        «formRow('enddate', 0)»
-        «formRow('type', 128)»
-        «formRow('format', 128)»
-        «formRow('uri', 255)»
-        «formRow('source', 128)»
-        «formRow('language', 0)»
-        «formRow('relation', 255)»
-        «formRow('coverage', 64)»
-        «formRow('comment', 255)»
-        «formRow('extra', 255)»
+        «formRowWrapper('title', 80)»
+        «formRowWrapper('author', 80)»
+        «formRowWrapper('subject', 255)»
+        «formRowWrapper('keywords', 128)»
+        «formRowWrapper('description', 255)»
+        «formRowWrapper('publisher', 128)»
+        «formRowWrapper('contributor', 80)»
+        «formRowWrapper('startdate', 0)»
+        «formRowWrapper('enddate', 0)»
+        «formRowWrapper('type', 128)»
+        «formRowWrapper('format', 128)»
+        «formRowWrapper('uri', 255)»
+        «formRowWrapper('source', 128)»
+        «formRowWrapper('language', 0)»
+        «formRowWrapper('relation', 255)»
+        «formRowWrapper('coverage', 64)»
+        «formRowWrapper('comment', 255)»
+        «formRowWrapper('extra', 255)»
+    '''
+
+    def private formRowWrapper(String fieldName, Integer length) '''
+        «IF app.targets('1.3.x')»«formRowLegacy(fieldName, length)»«ELSE»«formRow(fieldName, length)»«ENDIF»
+    '''
+
+    def private formRowLegacy(String fieldName, Integer length) '''
+        «val label = fieldName.formatForDisplayCapital»
+
+        <div class="z-formrow">
+            {formlabel for='metadata«label»' __text='«label»'}
+            «IF 'startdate'.equals(fieldName) || 'enddate'.equals(fieldName)»
+                {if $mode ne 'create'}
+                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true}
+                {else}
+                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true defaultValue='now'}
+                {/if}
+            «ELSEIF 'language'.equals(fieldName)»
+                {formlanguageselector group='meta' id='metadata«label»' mandatory=false __title='Choose a language' dataField='«fieldName»'}
+            «ELSE»
+                {formtextinput group='meta' id='metadata«label»' dataField='«fieldName»' maxLength=«length»}
+            «ENDIF»
+        </div>
     '''
 
     def private formRow(String fieldName, Integer length) '''
-        «val useBootstrap = !app.targets('1.3.x')»
+        «/* TODO migrate to Symfony forms #416 */»
         «val label = fieldName.formatForDisplayCapital»
 
-        <div class="«IF useBootstrap»form-group«ELSE»z-formrow«ENDIF»">
-            {formlabel for='metadata«label»' __text='«label»'«IF useBootstrap» cssClass='col-sm-3 control-label'«ENDIF»}
-            «IF useBootstrap»
-                <div class="col-sm-9">
-            «ENDIF»
+        <div class="form-group">
+            {formlabel for='metadata«label»' __text='«label»' cssClass='col-sm-3 control-label'}
+            <div class="col-sm-9">
                 «IF 'startdate'.equals(fieldName) || 'enddate'.equals(fieldName)»
                 {if $mode ne 'create'}
-                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true«IF useBootstrap» cssClass='form-control'«ENDIF»}
+                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true cssClass='form-control'}
                 {else}
-                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true defaultValue='now'«IF useBootstrap» cssClass='form-control'«ENDIF»}
+                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true defaultValue='now' cssClass='form-control'}
                 {/if}
                 «ELSEIF 'language'.equals(fieldName)»
-                {formlanguageselector group='meta' id='metadata«label»' mandatory=false __title='Choose a language' dataField='«fieldName»'«IF useBootstrap» cssClass='form-control'«ENDIF»}
+                {formlanguageselector group='meta' id='metadata«label»' mandatory=false __title='Choose a language' dataField='«fieldName»' cssClass='form-control'}
                 «ELSE»
-                {formtextinput group='meta' id='metadata«label»' dataField='«fieldName»' maxLength=«length»«IF useBootstrap» cssClass='form-control'«ENDIF»}
+                {formtextinput group='meta' id='metadata«label»' dataField='«fieldName»' maxLength=«length» cssClass='form-control'}
                 «ENDIF»
-            «IF useBootstrap»
-                </div>
-            «ENDIF»
+            </div>
         </div>
     '''
 }

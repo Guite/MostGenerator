@@ -36,8 +36,12 @@ class NamingExtensions {
     /**
      * Returns the common suffix for template file names.
      */
-    def templateSuffix() {
-        '.tpl'
+    def templateSuffix(Application it, String format) {
+        if (targets('1.3.x')) {
+            if (format != 'html') '.' + format + '.tpl' else '.tpl'
+        } else {
+            '.' + format + '.twig'
+        }
     }
 
     /**
@@ -54,9 +58,9 @@ class NamingExtensions {
      * Returns the full template file path for given controller action and entity.
      */
     def templateFile(Entity it, String actionName) {
-        var filePath = templateFileBase(actionName) + templateSuffix
+        var filePath = templateFileBase(actionName) + application.templateSuffix('html')
         if (application.shouldBeMarked(filePath)) {
-            filePath = templateFileBase(actionName) + '.generated' + templateSuffix
+            filePath = templateFileBase(actionName) + '.generated' + application.templateSuffix('html')
         }
         filePath
     }
@@ -66,9 +70,9 @@ class NamingExtensions {
      * using a custom template extension (like xml instead of tpl).
      */
     def templateFileWithExtension(Entity it, String actionName, String templateExtension) {
-        var filePath = templateFileBase(actionName) + '.' + templateExtension + templateSuffix
+        var filePath = templateFileBase(actionName) + application.templateSuffix(templateExtension)
         if (application.shouldBeMarked(filePath)) {
-            filePath = templateFileBase(actionName) + '.' + templateExtension + '.generated' + templateSuffix
+            filePath = templateFileBase(actionName) +'.generated' + application.templateSuffix(templateExtension)
         }
         filePath
     }

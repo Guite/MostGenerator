@@ -13,22 +13,35 @@ class ItemActionsView {
 
     def generateView(Entity it, String subject) '''
         «IF subject == 'markup'»
-            {if count($«name.formatForCode»._actions) gt 0}
-                «markup('view')»
-                «IF application.targets('1.3.x')»
-                    «javaScript('view')»
-                «ENDIF»
-            {/if}
+            «IF application.targets('1.3.x')»
+                {if count($«name.formatForCode»._actions) gt 0}
+                    «markup('view')»
+                    «IF application.targets('1.3.x')»
+                        «javaScript('view')»
+                    «ENDIF»
+                {/if}
+            «ELSE»
+                {% if «name.formatForCode»._actions|length > 0 %}
+                    «markup('view')»
+                {% endif %}
+            «ENDIF»
         «ELSEIF subject == 'javascript'»
             «javaScript('view')»
         «ENDIF»
     '''
 
     def generateDisplay(Entity it) '''
-        {if count($«name.formatForCode»._actions) gt 0}
-            «markup('display')»
-            «javaScript('display')»
-        {/if}
+        «IF application.targets('1.3.x')»
+            {if count($«name.formatForCode»._actions) gt 0}
+                «markup('display')»
+                «javaScript('display')»
+            {/if}
+        «ELSE»
+            {% if «name.formatForCode»._actions|length > 0 %}
+                «markup('display')»
+                «javaScript('display')»
+            {% endif %}
+        «ENDIF»
     '''
 
     def private markup(Entity it, String context) '''
@@ -52,20 +65,26 @@ class ItemActionsView {
     '''
 
     def private linkList(Entity it, String context) '''
-        {foreach item='option' from=$«name.formatForCode»._actions}
-            «linkEntry(context)»
-        {/foreach}
+        «IF application.targets('1.3.x')»
+            {foreach item='option' from=$«name.formatForCode»._actions}
+                «linkEntry(context)»
+            {/foreach}
+        «ELSE»
+            {% for option in «name.formatForCode»._actions %}
+                «linkEntry(context)»
+            {% endfor %}
+        «ENDIF»
     '''
 
     def private linkEntry(Entity it, String context) '''
         «IF application.targets('1.3.x')»
             «IF context == 'display'»
-                <a «linkEntryCommonAttributes» class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
+                <a «linkEntryCommonAttributesLegacy» class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
             «ELSEIF context == 'view'»
-                <a «linkEntryCommonAttributes»{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
+                <a «linkEntryCommonAttributesLegacy»{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
             «ENDIF»
         «ELSE»
-            <li role="presentation"><a «linkEntryCommonAttributes» role="menuitem" tabindex="-1" class="fa fa-{$option.icon}">{$option.linkText|safetext}</a></li>
+            <li role="presentation"><a «linkEntryCommonAttributes» role="menuitem" tabindex="-1" class="fa fa-{{ option.icon }}">{{ option.linkText }}</a></li>
 «/*
     <li role="presentation" class="dropdown-header">Dropdown group heading</li>
     <li role="presentation" class="disabled"><a role="menuitem" tabindex="-1" href="#">Disabled link</a></li>
@@ -74,7 +93,9 @@ class ItemActionsView {
         «ENDIF»
     '''
 
-    def private linkEntryCommonAttributes(Entity it) '''href="{$option.url.type|«application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
+    def private linkEntryCommonAttributesLegacy(Entity it) '''href="{$option.url.type|«application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
+
+    def private linkEntryCommonAttributes(Entity it) '''href="{{ option.url.type|«application.appName.formatForDB»_actionUrl(option.url.func, option.url.arguments) }}" title="{{ option.linkTitle|e('html_attr') }}"'''
 
     def private javaScript(Entity it, String context) '''
         «IF !application.targets('1.3.x') && context == 'view'»
@@ -104,17 +125,19 @@ class ItemActionsView {
         «IF application.targets('1.3.x')»
             {icon id="«itemActionContainerViewIdForSmarty»Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
         «ELSE»
-            <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {gt text='Actions'}«ENDIF» <span class="caret"></span></a>
-«/*            <button id="«itemActionContainerViewId»DropDownToggle" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-tasks"></i>«IF context == 'display'» {gt text='Actions'}«ENDIF» <span class="caret"></span></button>*/»
+            <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
+«/*            <button id="«itemActionContainerViewId»DropDownToggle" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></button>*/»
         «ENDIF»
     '''
 
     def itemActionContainerViewId(Entity it) '''
-        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$«name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»'''
+        itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»«IF application.targets('1.3.x')»{$«name.formatForCode».«pkField.name.formatForCode»}«ELSE»{{ «name.formatForCode».«pkField.name.formatForCode» }}«ENDIF»«ENDFOR»'''
 
+    // 1.3.x only
     def private itemActionContainerViewIdForJs(Entity it) '''
         itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»'''
 
+    // 1.3.x only
     def private itemActionContainerViewIdForSmarty(Entity it) '''
         itemActions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»'''
 }

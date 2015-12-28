@@ -29,6 +29,8 @@ class SimpleFields {
 
     Validation validationHelper = new Validation
 
+    /* TODO migrate to Symfony forms #416 */
+
     def formRow(DerivedField it, String groupSuffix, String idSuffix) '''
         «formLabel(groupSuffix, idSuffix)»
         «IF !isLegacyApp»
@@ -50,17 +52,28 @@ class SimpleFields {
     def private dispatch formLabel(UploadField it, String groupSuffix, String idSuffix) '''
         «initDocumentationToolTip»
         «IF mandatory»
-            {assign var='mandatorySym' value='1'}
-            {if $mode ne 'create'}
-                {assign var='mandatorySym' value='0'}
-            {/if}
+            «IF isLegacyApp»
+                {assign var='mandatorySym' value='1'}
+                {if $mode ne 'create'}
+                    {assign var='mandatorySym' value='0'}
+                {/if}
+            «ELSE»
+                {% set mandatorySym = 1 %}
+                {% if mode != 'create' %}
+                    {% set mandatorySym = 0 %}
+                {% endif %}
+            «ENDIF»
         «ENDIF»
         {formlabel for=«templateIdWithSuffix(name.formatForCode, idSuffix)» __text='«formLabelText»'«IF mandatory» mandatorysym=$mandatorySym«ENDIF»«formLabelAdditions»}<br />{* break required for Google Chrome *}
     '''
 
     def private initDocumentationToolTip(DerivedField it) '''
         «IF documentation !== null && documentation != ''»
-            {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
+            «IF isLegacyApp»
+                {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
+            «ELSE»
+                {% set toolTip = __('«documentation.replace("'", '"')»') %}
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -140,17 +153,33 @@ class SimpleFields {
         «ENDIF»
         «val hasMin = minValue > 0»
         «val hasMax = maxValue > 0»
-        «IF hasMin || hasMax»
-            «IF hasMin && hasMax»
-                «IF minValue == maxValue»
-                    <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must exactly be %s.' tag1='«minValue»'}</span>
-                «ELSE»
-                    <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be between %1$s and %2$s.' tag1='«minValue»' tag2='«maxValue»'}</span>
+        «IF isLegacyApp»
+            «IF hasMin || hasMax»
+                «IF hasMin && hasMax»
+                    «IF minValue == maxValue»
+                        <span class="z-formnote">{gt text='Note: this value must exactly be %s.' tag1='«minValue»'}</span>
+                    «ELSE»
+                        <span class="z-formnote">{gt text='Note: this value must be between %1$s and %2$s.' tag1='«minValue»' tag2='«maxValue»'}</span>
+                    «ENDIF»
+                «ELSEIF hasMin»
+                    <span class="z-formnote">{gt text='Note: this value must be greater than %s.' tag1='«minValue»'}</span>
+                «ELSEIF hasMax»
+                    <span class="z-formnote">{gt text='Note: this value must be less than %s.' tag1='«maxValue»'}</span>
                 «ENDIF»
-            «ELSEIF hasMin»
-                <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be greater than %s.' tag1='«minValue»'}</span>
-            «ELSEIF hasMax»
-                <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be less than %s.' tag1='«maxValue»'}</span>
+            «ENDIF»
+        «ELSE»
+            «IF hasMin || hasMax»
+                «IF hasMin && hasMax»
+                    «IF minValue == maxValue»
+                        <span class="help-block">{{ __f('Note: this value must exactly be %s.', '«minValue»') }}</span>
+                    «ELSE»
+                        <span class="help-block">{{ __f('Note: this value must be between %1$s and %2$s.', array('«minValue»', '«maxValue»') }}</span>
+                    «ENDIF»
+                «ELSEIF hasMin»
+                    <span class="help-block">{{ __f('Note: this value must be greater than %s.', '«minValue»') }}</span>
+                «ELSEIF hasMax»
+                    <span class="help-block">{{ __f('Note: this value must be less than %s.', '«maxValue»') }}</span>
+                «ENDIF»
             «ENDIF»
         «ENDIF»
     '''
@@ -205,41 +234,72 @@ class SimpleFields {
             <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»" «IF isLegacyApp»style="clear:left;"«ENDIF»>{gt text='Reset to empty value'}</a></span>
         «ENDIF»
 
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file extensions:'} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
+            «IF isLegacyApp»
+                <span class="z-formnote">{gt text='Allowed file extensions:'} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
+            «ELSE»
+                <span class="help-block">{{ __('Allowed file extensions:') }} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
+            «ENDIF»
         «IF allowedFileSize > 0»
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.application.appName.formatForDB»GetFileSize:'':false:false}</span>
+            «IF isLegacyApp»
+                <span class="z-formnote">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.application.appName.formatForDB»GetFileSize:'':false:false}</span>
+            «ELSE»
+                <span class="help-block">{{ __('Allowed file size:') }} {{ '«allowedFileSize»'|«entity.application.appName.formatForDB»_fileSize('', false, false) }}</span>
+            «ENDIF»
         «ENDIF»
         «decideWhetherToShowCurrentFile»
     '''
 
     def private decideWhetherToShowCurrentFile(UploadField it) '''
         «val fieldName = entity.name.formatForDB + '.' + name.formatForCode»
-        {if $mode ne 'create'}
-            {if $«fieldName» ne ''}
+        «IF isLegacyApp»
+            {if $mode ne 'create' && $«fieldName» ne ''}
                 «showCurrentFile»
             {/if}
-        {/if}
+        «ELSE»
+            {% if mode != 'create' and «fieldName» is not empty %}
+                «showCurrentFile»
+            {% endif %}
+        «ENDIF»
     '''
 
     def private showCurrentFile(UploadField it) '''
         «val appNameSmall = entity.application.appName.formatForDB»
         «val objName = entity.name.formatForDB»
         «val realName = objName + '.' + name.formatForCode»
-        <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">
-            {gt text='Current file'}:
-            <a href="{$«realName»FullPathUrl}" title="{$formattedEntityTitle|replace:"\"":""}"{if $«realName»Meta.isImage} «IF isLegacyApp»rel="imageviewer[«entity.name.formatForDB»]"«ELSE»class="lightbox"«ENDIF»{/if}>
-            {if $«realName»Meta.isImage}
-                {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$formattedEntityTitle«IF !isLegacyApp» img_class='img-thumbnail'«ENDIF»}
-            {else}
-                {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
-            {/if}
-            </a>
-        </span>
-        «IF !mandatory»
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">
-                {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}
-                {formlabel for='«name.formatForCode»DeleteFile' __text='Delete existing file'}
+        «IF isLegacyApp»
+            <span class="z-formnote">
+                {gt text='Current file'}:
+                <a href="{$«realName»FullPathUrl}" title="{$formattedEntityTitle|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
+                {if $«realName»Meta.isImage}
+                    {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$formattedEntityTitle}
+                {else}
+                    {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
+                {/if}
+                </a>
             </span>
+            «IF !mandatory»
+                <span class="z-formnote">
+                    {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}
+                    {formlabel for='«name.formatForCode»DeleteFile' __text='Delete existing file'}
+                </span>
+            «ENDIF»
+        «ELSE»
+            <span class="help-block">
+                {{ __('Current file') }}:
+                <a href="{{ «realName»FullPathUrl }}" title="{{ formattedEntityTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="lightbox"{% endif %}>
+                {% if «realName»Meta.isImage %}
+                    {{ «entity.application.appName.formatForDB»_thumb({ image: «realName»FullPath, objectid: '«entity.name.formatForCode»«FOR pkField : entity.getPrimaryKeyFields»-' ~ «objName».«pkField.name.formatForCode» ~ '«ENDFOR»', preset: «entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital», tag: true, img_alt: formattedEntityTitle, img_class: 'img-thumbnail' }) }}
+                {% else %}
+                    {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName»FullPath, false, false) }})
+                {% endif %}
+                </a>
+            </span>
+            «IF !mandatory»
+                <span class="help-block">
+                    {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}
+                    {formlabel for='«name.formatForCode»DeleteFile' __text='Delete existing file'}
+                </span>
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -250,32 +310,59 @@ class SimpleFields {
             {formdropdownlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' selectionMode='«IF multiple»multiple«ELSE»single«ENDIF»'«IF !isLegacyApp» cssClass='form-control'«ENDIF»}
         «ENDIF»
         «IF multiple && min > 0 && max > 0»
-            «IF min == max»
-                <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: you must select exactly %s choices.' tag1='«min»'}</span>
+            «IF isLegacyApp»
+                «IF min == max»
+                    <span class="z-formnote">{gt text='Note: you must select exactly %s choices.' tag1='«min»'}</span>
+                «ELSE»
+                    <span class="z-formnote">{gt text='Note: you must select between %1$s and %2$s choices.' tag1='«min»' tag2='«max»'}</span>
+                «ENDIF»
             «ELSE»
-                <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: you must select between %1$s and %2$s choices.' tag1='«min»' tag2='«max»'}</span>
+                «IF min == max»
+                    <span class="help-block">{{ __f('Note: you must select exactly %s choices.', '«min»') }}</span>
+                «ELSE»
+                    <span class="help-block">{{ __f('Note: you must select between %1$s and %2$s choices.', array('«min»', '«max»') }}</span>
+                «ENDIF»
             «ENDIF»
         «ENDIF»
     '''
 
     def private dispatch formField(UserField it, String groupSuffix, String idSuffix) '''
         {«entity.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' cssClass='«IF mandatory»required«ENDIF»«IF !isLegacyApp»«IF mandatory» «ENDIF»form-control«ENDIF»'}
-        {if $mode ne 'create' && $«entity.name.formatForDB».«name.formatForDB» && !$inlineUsage}
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF» avatar">
-                {useravatar uid=$«entity.name.formatForDB».«name.formatForDB» rating='g'}
-            </span>
-            {checkpermissionblock component='Users::' instance='::' level='ACCESS_ADMIN'}
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»"><a href="{modurl modname='«IF isLegacyApp»Users«ELSE»ZikulaUsersModule«ENDIF»' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to users administration'}">{gt text='Manage user'}</a></span>
-            {/checkpermissionblock}
-        {/if}
+        «IF isLegacyApp»
+            {if $mode ne 'create' && $«entity.name.formatForDB».«name.formatForDB» && !$inlineUsage}
+                <span class="z-formnote avatar">
+                    {useravatar uid=$«entity.name.formatForDB».«name.formatForDB» rating='g'}
+                </span>
+                {checkpermissionblock component='Users::' instance='::' level='ACCESS_ADMIN'}
+                <span class="z-formnote"><a href="{modurl modname='Users' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to users administration'}">{gt text='Manage user'}</a></span>
+                {/checkpermissionblock}
+            {/if}
+        «ELSE»
+            {% if mode != 'create' and «entity.name.formatForDB».«name.formatForDB» and inlineUsage != true %}
+                <span class="help-block avatar">
+                    {{ «entity.application.appName.formatForDB»_userAvatar(uid=«entity.name.formatForDB».«name.formatForDB», rating='g') }}
+                </span>
+                {% if hasPermission('Users::', '::', 'ACCESS_ADMIN') %}
+                <span class="help-block"><a href="{{ path('zikulausersmodule_admin_modify', { 'userid': «entity.name.formatForDB».«name.formatForDB» }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
+                {% endif %}
+            {% endif %}
+        «ENDIF»
     '''
 
     def private dispatch formField(AbstractDateField it, String groupSuffix, String idSuffix) '''
         «formFieldDetails(groupSuffix, idSuffix)»
-        «IF past»
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be in the past.'}</span>
-        «ELSEIF future»
-            <span class="«IF isLegacyApp»z-formnote«ELSE»help-block«ENDIF»">{gt text='Note: this value must be in the future.'}</span>
+        «IF isLegacyApp»
+            «IF past»
+                <span class="z-formnote">{gt text='Note: this value must be in the past.'}</span>
+            «ELSEIF future»
+                <span class="z-formnote">{gt text='Note: this value must be in the future.'}</span>
+            «ENDIF»
+        «ELSE»
+            «IF past»
+                <span class="help-block">{{ __('Note: this value must be in the past.') }}</span>
+            «ELSEIF future»
+                <span class="help-block">{{ __('Note: this value must be in the future.') }}</span>
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -288,7 +375,11 @@ class SimpleFields {
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         {/if}
         «IF !mandatory && nullable»
-            <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
+            «IF isLegacyApp»
+                <span class="z-formnote z-sub"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></span>
+            «ELSE»
+                <span class="help-block"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -299,7 +390,11 @@ class SimpleFields {
             {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
         {/if}
         «IF !mandatory && nullable»
-            <span class="«IF isLegacyApp»z-formnote z-sub«ELSE»help-block«ENDIF»"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="«IF isLegacyApp»z-hide«ELSE»hidden«ENDIF»">{gt text='Reset to empty value'}</a></span>
+            «IF isLegacyApp»
+                <span class="z-formnote z-sub"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></span>
+            «ELSE»
+                <span class="help-block"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+            «ENDIF»
         «ENDIF»
     '''
 
