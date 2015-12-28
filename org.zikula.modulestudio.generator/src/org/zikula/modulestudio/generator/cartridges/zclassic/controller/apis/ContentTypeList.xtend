@@ -368,7 +368,7 @@ class ContentTypeList {
 
                 $template = $this->getDisplayTemplate();
 
-                $output = $serviceManager->get('templating')->render('@«appName»/' . $template, $templateParameters);
+                $output = $serviceManager->get('twig')->render('@«appName»/' . $template, $templateParameters);
             «ENDIF»
 
             return $output;

@@ -514,7 +514,7 @@ class ControllerLayer {
 
             return true;
         «ELSE»
-            return new PlainResponse($this->get('templating')->render('@«app.appName»/«typeName.toFirstUpper»/inlineRedirectHandler.html.twig', $templateParameters));
+            return new PlainResponse($this->get('twig')->render('@«app.appName»/«typeName.toFirstUpper»/inlineRedirectHandler.html.twig', $templateParameters));
         «ENDIF»
     '''
 

@@ -142,7 +142,7 @@ class Search {
             «ENDFOR»
             ];
 
-            return $this->getContainer()->get('templating')->render('@«appName»/Search/options.html.twig', $templateParameters);
+            return $this->getContainer()->get('twig')->render('@«appName»/Search/options.html.twig', $templateParameters);
         }
     '''
 

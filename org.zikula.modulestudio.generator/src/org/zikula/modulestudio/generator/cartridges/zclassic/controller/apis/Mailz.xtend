@@ -146,7 +146,7 @@ class Mailz {
 
                 return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCode»_' . $templateType . '.tpl');
             «ELSE»
-                $templating = $this->get('templating');
+                $templating = $this->get('twig');
 
                 //$templateParameters = ['sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template];
                 $templateParameters = [

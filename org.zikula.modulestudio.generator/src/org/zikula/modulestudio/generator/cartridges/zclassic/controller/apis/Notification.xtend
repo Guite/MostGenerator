@@ -190,7 +190,7 @@ class Notification {
             $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
             $template = '«IF targets('1.3.x')»email«ELSE»Email«ENDIF»/notify' . ucfirst($objectType) . $templateType .  '.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
             «IF !targets('1.3.x')»
-                $templating = $this->get('templating');
+                $templating = $this->get('twig');
             «ENDIF»
 
             $mailData = $this->prepareEmailData();

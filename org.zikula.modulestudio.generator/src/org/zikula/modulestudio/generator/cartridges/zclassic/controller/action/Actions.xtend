@@ -404,7 +404,7 @@ class Actions {
                 «IF isLegacy»
                     return $viewHelper->processTemplate($this->view, $objectType, 'view', array());
                 «ELSE»
-                    return $viewHelper->processTemplate($this->get('templating'), $objectType, 'view', $request, $templateParameters);
+                    return $viewHelper->processTemplate($this->get('twig'), $objectType, 'view', $request, $templateParameters);
                 «ENDIF»
             }
         «ENDIF»
@@ -635,7 +635,7 @@ class Actions {
         «IF isLegacy»
             return $viewHelper->processTemplate($this->view, $objectType, 'view', array(), $templateFile);
         «ELSE»
-            return $viewHelper->processTemplate($this->get('templating'), $objectType, 'view', $request, $templateParameters);
+            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'view', $request, $templateParameters);
         «ENDIF»
     '''
 
@@ -846,7 +846,7 @@ class Actions {
         «IF isLegacy»
             return $viewHelper->processTemplate($this->view, $objectType, 'display', array(), $templateFile);
         «ELSE»
-            return $viewHelper->processTemplate($this->get('templating'), $objectType, 'display', $request, $templateParameters);
+            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'display', $request, $templateParameters);
         «ENDIF»
     '''
 
@@ -1160,7 +1160,7 @@ class Actions {
         «IF isLegacy»
             return $viewHelper->processTemplate($this->view, $objectType, 'delete', array());
         «ELSE»
-            return $viewHelper->processTemplate($this->get('templating'), $objectType, 'delete', $request, $templateParameters);
+            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'delete', $request, $templateParameters);
         «ENDIF»
     '''
 
