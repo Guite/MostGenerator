@@ -183,7 +183,7 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(UrlField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
-        «' '»* @Assert\Url(«/* protocols={"http", "https"} */»)
+        «' '»* @Assert\Url(checkDNS=«checkDNS.displayBool»«IF checkDNS», dnsMessage = "The host '{{ value }}' could not be resolved."«ENDIF»«/* , protocols={"http", "https"} */»)
     '''
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
