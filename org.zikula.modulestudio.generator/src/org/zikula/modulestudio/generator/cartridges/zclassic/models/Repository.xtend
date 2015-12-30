@@ -100,9 +100,13 @@ class Repository {
         «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        class «name.formatForCodeCapital» extends «IF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
+            «IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
+                use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
+
+            «ENDIF»
             «val stringFields = fields.filter(StringField).filter[!password]»
             /**
              * @var string The default sorting field/expression.
@@ -119,6 +123,42 @@ class Repository {
                  * @var Request The request object given by the calling controller.
                  */
                 protected $request;
+            «ENDIF»
+            «IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
+
+                /**
+                 * Constructor.
+                 *
+                 * @param EntityManager $em
+                 * @param ClassMetadata $class
+                 */
+                public function __construct(EntityManager $em, ClassMetadata $class)
+                {
+                    parent::__construct($em, $class);
+
+                    $this->initializeTreeRepository($em, $class);
+                }
+                «IF tree == EntityTreeType.NESTED»
+
+                    /**
+                     * Call interceptor.
+                     *
+                     * @param string $method
+                     * @param array  $args
+                     *
+                     * @return mixed $result
+                     */
+                    public function __call($method, $args)
+                    {
+                        $result = $this->callTreeUtilMethods($method, $args);
+
+                        if (null !== $result) {
+                            return $result;
+                        }
+
+                        return parent::__call($method, $args);
+                    }
+                «ENDIF»
             «ENDIF»
 
             /**
@@ -193,7 +233,12 @@ class Repository {
 
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
-            use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
+            «IF app.targets('1.3.x')»
+                use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
+            «ELSE»
+                use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
+            «ENDIF»
+            use Doctrine\ORM\EntityManager;
         «ELSEIF hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;
         «ELSE»
