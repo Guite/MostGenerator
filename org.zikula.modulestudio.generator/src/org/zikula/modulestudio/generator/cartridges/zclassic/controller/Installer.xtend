@@ -101,7 +101,6 @@ class Installer {
         {
             «processUploadFolders»
             «IF !targets('1.3.x')»
-                $session = $this->container->get('request')->getSession();
                 $logger = $this->container->get('logger');
             «ENDIF»
             // create all tables from according entity definitions

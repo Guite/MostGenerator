@@ -113,8 +113,7 @@ class Notification {
             «IF targets('1.3.x')»
                 SessionUtil::delVar($this->name . 'AdditionalNotificationRemarks');
             «ELSE»
-                $request = $this->get('request');
-                $request->getSession()->del($this->name . 'AdditionalNotificationRemarks');
+                $this->get('session')->del($this->name . 'AdditionalNotificationRemarks');
             «ENDIF»
 
             return $result;
@@ -262,8 +261,7 @@ class Notification {
             «IF targets('1.3.x')»
                 $remarks = SessionUtil::getVar($this->name . 'AdditionalNotificationRemarks', '');
             «ELSE»
-                $request = $this->get('request');
-                $remarks = $request->getSession()->get($this->name . 'AdditionalNotificationRemarks', '');
+                $remarks = $this->get('session')->get($this->name . 'AdditionalNotificationRemarks', '');
 
                 $router = $this->get('router');
             «ENDIF»

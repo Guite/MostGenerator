@@ -120,7 +120,7 @@ class Category {
                     $dataSource = $this->request->query;
                 }
             «ELSE»
-                $request = $this->get('request');
+                $request = $this->get('request_stack')->getCurrentRequest();
                 $dataSource = $request->request;
                 if (isset($args['source']) && $args['source'] == 'GET') {
                     $dataSource = $request->query;

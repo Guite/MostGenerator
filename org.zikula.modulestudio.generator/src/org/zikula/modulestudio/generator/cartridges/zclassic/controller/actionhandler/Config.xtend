@@ -161,7 +161,7 @@ class Config {
             {
                 «IF !targets('1.3.x')»
                     $serviceManager = ServiceUtil::getManager();
-                    $flashBag = $serviceManager->get('request')->getSession()->getFlashBag();
+                    $flashBag = $serviceManager->get('session')->getFlashBag();
 
                 «ENDIF»
                 if ($args['commandName'] == 'save') {

@@ -471,7 +471,7 @@ class BlockList {
             // Get current content
             $content = BlockUtil::varsFromContent($blockinfo['content']);
             «IF !targets('1.3.x')»
-                $request = $this->get('request');
+                $request = $this->get('request_stack')->getCurrentRequest();
             «ENDIF»
 
             «IF targets('1.3.x')»

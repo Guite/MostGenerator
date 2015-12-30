@@ -755,7 +755,7 @@ class ControllerLayer {
             {
                 $links = array();
                 $serviceManager = ServiceUtil::getManager();
-                $request = $serviceManager->get('request');
+                $request = $serviceManager->get('request_stack')->getCurrentRequest();
 
                 $controllerHelper = $serviceManager->get('«app.appName.formatForDB».controller_helper');
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');

@@ -148,7 +148,7 @@ class ExternalController {
             $repository->setControllerArguments(array());
         «ELSE»
             $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($this->get('request'));
+            $repository->setRequest($this->get('request_stack')->getCurrentRequest());
         «ENDIF»
         $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
         $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
@@ -276,7 +276,7 @@ class ExternalController {
             $repository->setControllerArguments(array());
         «ELSE»
             $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($this->get('request'));
+            $repository->setRequest($this->get('request_stack')->getCurrentRequest());
         «ENDIF»
 
         «IF isLegacy»
