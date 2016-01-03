@@ -62,7 +62,7 @@ class Association {
          * Bidirectional - «incomingMappingDescription(it, sourceName, targetName)».
          *
         «incomingMappingDetails»
-         * @ORM\«incomingMappingType»(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
+         * @ORM\«incomingMappingType»(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
         «joinDetails(false)»
         «IF !application.targets('1.3.x')»
             «IF !nullable»
@@ -74,11 +74,11 @@ class Association {
                 «ENDIF»
             «ENDIF»
             «IF !isManySide(false)»
-                «' '»* @Assert\Type(type="\«entityClass»")
+                «' '»* @Assert\Type(type="«/*\*/»«entityClass»")
                 «' '»* @Assert\Valid()
             «ENDIF»
         «ENDIF»
-         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
+         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -120,17 +120,17 @@ class Association {
          «IF primaryKey»
              * @ORM\Id
          «ENDIF»
-         * @ORM\OneToOne(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»")
+         * @ORM\OneToOne(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»")
         «joinDetails(false)»
         «IF !application.targets('1.3.x')»
             «IF !nullable»
                 «val aliasName = getRelationAliasName(false).toFirstLower»
                 «' '»* @Assert\NotNull(message="Choosing a «aliasName.formatForDisplay» is required.")
             «ENDIF»
-            «' '»* @Assert\Type(type="\«entityClass»")
+            «' '»* @Assert\Type(type="«/*\*/»«entityClass»")
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass» $«sourceName».
+         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -143,7 +143,7 @@ class Association {
             /**
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
-             * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
+             * @ORM\ManyToMany(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
              «IF orderByReverse !== null && orderByReverse != ''»
               * @ORM\OrderBy({"«orderByReverse»" = "ASC"})
              «ENDIF»
@@ -156,7 +156,7 @@ class Association {
                     «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
                 «ENDIF»
             «ENDIF»
-             * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«sourceName».
+             * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»[] $«sourceName».
              */
             protected $«sourceName» = null;
         «ENDIF»
@@ -171,7 +171,7 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\«outgoingMappingType»(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»)
+         * @ORM\«outgoingMappingType»(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«cascadeOptions(false)»«fetchTypeTag»«outgoingMappingAdditions»)
         «joinDetails(true)»
         «IF !application.targets('1.3.x')»
             «IF !nullable»
@@ -183,11 +183,11 @@ class Association {
                 «ENDIF»
             «ENDIF»
             «IF !isManySide(true)»
-                «' '»* @Assert\Type(type="\«entityClass»")
+                «' '»* @Assert\Type(type="«/*\*/»«entityClass»")
                 «' '»* @Assert\Valid()
             «ENDIF»
         «ENDIF»
-         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass» $«targetName».
+         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass» $«targetName».
          */
         protected $«targetName»;
         «/* this last line is on purpose */»
@@ -218,9 +218,9 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          «IF !bidirectional»
-          * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»"«additionalOptions(false)»)
+          * @ORM\ManyToMany(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»"«additionalOptions(false)»)
          «ELSE»
-          * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
+          * @ORM\OneToMany(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
          «ENDIF»
         «joinDetails(true)»
          «IF orderBy !== null && orderBy != ''»
@@ -235,7 +235,7 @@ class Association {
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»
-         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«targetName».
+         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
         «/* this last line is on purpose */»
@@ -247,7 +247,7 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\ManyToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
+         * @ORM\ManyToMany(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
          «IF orderBy !== null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
@@ -261,7 +261,7 @@ class Association {
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»
-         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClass»[] $«targetName».
+         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
     '''
