@@ -96,16 +96,16 @@ class BlockModeration {
          * Display the block content.
          *
         «IF targets('1.3.x')»
-            «' '»* @param array $blockinfo the blockinfo structure
+            «' '»* @param array $blockinfo the blockinfo structure.
             «' '»*
             «' '»* @return string output of the rendered block
         «ELSE»
-            «' '»* @param array $content The block content array.
+            «' '»* @param array $properties The block properties array.
 
             «' '»* @return array|string
         «ENDIF»
          */
-        public function display(«IF targets('1.3.x')»$blockinfo«ELSE»$content«ENDIF»)
+        public function display(«IF targets('1.3.x')»$blockinfo«ELSE»array $properties«ENDIF»)
         {
             // only show block content if the user has the required permissions
             «IF targets('1.3.x')»
@@ -113,7 +113,7 @@ class BlockModeration {
                     return false;
                 }
             «ELSE»
-                if (!$this->hasPermission('«appName»:ModerationBlock:', "$content[title]::", ACCESS_OVERVIEW)) {
+                if (!$this->hasPermission('«appName»:ModerationBlock:', "$properties[title]::", ACCESS_OVERVIEW)) {
                     return false;
                 }
             «ENDIF»
@@ -155,7 +155,7 @@ class BlockModeration {
                 // return the block to the theme
                 return BlockUtil::themeBlock($blockinfo);
             «ELSE»
-                return $this->renderView($template, [«/*'content' => $content, */»'moderationObjects' => $amounts]);
+                return $this->renderView($template, [«/*'properties' => $properties, */»'moderationObjects' => $amounts]);
             «ENDIF»
         }
     '''
