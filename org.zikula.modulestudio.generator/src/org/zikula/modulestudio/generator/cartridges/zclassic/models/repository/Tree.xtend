@@ -4,9 +4,11 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Tree {
     extension FormattingExtensions = new FormattingExtensions
+    extension Utils = new Utils
 
     def generate(Entity it, Application app) '''
         «IF tree != EntityTreeType.NONE»
@@ -43,7 +45,7 @@ class Tree {
 
             // alternatively we could probably select all nodes with root = $rootId
 
-            return array_merge(array($rootNode), $children);
+            return array_merge(«IF application.targets('1.3.x')»array($rootNode)«ELSE»[$rootNode]«ENDIF», $children);
         }
     '''
 
@@ -57,7 +59,7 @@ class Tree {
          */
         public function selectAllTrees($useJoins = true)
         {
-            $trees = array();
+            $trees = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             $slimMode = false;
 
@@ -69,7 +71,7 @@ class Tree {
             foreach ($rootNodes as $rootNode) {
                 // fetch children
                 $children = $this->children($rootNode);
-                $trees[$rootNode->getId()] = array_merge(array($rootNode), $children);
+                $trees[$rootNode->getId()] = array_merge(«IF application.targets('1.3.x')»array($rootNode)«ELSE»[$rootNode]«ENDIF», $children);
             }
 
             return $trees;

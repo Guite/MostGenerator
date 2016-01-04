@@ -350,7 +350,7 @@ class ViewQuickNavForm {
                         {{ app.request.query.remove('q') }}
                     {% endif %}
                     «/* TODO replace modapifunc -> migrate to Symfony forms #416 */»
-                    {% set listEntries = array() %}
+                    {% set listEntries = [] %}
                     {# modapifunc modname='«source.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»'«IF !(source as Entity).categorisable» useJoins=false«ENDIF» assign='listEntries' #}
                     <select id="«sourceAliasName»" name="«sourceAliasName»" class="form-control input-sm">
                         <option value="">{{ lblDefault }}</option>

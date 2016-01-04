@@ -16,15 +16,15 @@ class ModuleInstaller {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        CoreEvents::MODULE_INSTALL             => array('moduleInstalled', 5),
-                        CoreEvents::MODULE_POSTINSTALL         => array('modulePostInstalled', 5),
-                        CoreEvents::MODULE_UPGRADE             => array('moduleUpgraded', 5),
-                        CoreEvents::MODULE_ENABLE              => array('moduleEnabled', 5),
-                        CoreEvents::MODULE_DISABLE             => array('moduleDisabled', 5),
-                        CoreEvents::MODULE_REMOVE              => array('moduleRemoved', 5),
-                        'installer.subscriberarea.uninstalled' => array('subscriberAreaUninstalled', 5)
-                    );
+                    return [
+                        CoreEvents::MODULE_INSTALL             => ['moduleInstalled', 5],
+                        CoreEvents::MODULE_POSTINSTALL         => ['modulePostInstalled', 5],
+                        CoreEvents::MODULE_UPGRADE             => ['moduleUpgraded', 5],
+                        CoreEvents::MODULE_ENABLE              => ['moduleEnabled', 5],
+                        CoreEvents::MODULE_DISABLE             => ['moduleDisabled', 5],
+                        CoreEvents::MODULE_REMOVE              => ['moduleRemoved', 5],
+                        'installer.subscriberarea.uninstalled' => ['subscriberAreaUninstalled', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»

@@ -86,8 +86,10 @@ class Search {
          */
         public function info()
         {
-            return array('title'     => $this->name,
-                         'functions' => array($this->name => 'search'));
+            return array(
+                'title'     => $this->name,
+                'functions' => array($this->name => 'search')
+            );
         }
     '''
 
@@ -298,7 +300,7 @@ class Search {
             $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
 
             if (!$permissionHelper->hasPermission($this->name . '::', '::', ACCESS_READ)) {
-                return array();
+                return [];
             }
 
             // save session id as it is used when inserting search results below
@@ -309,13 +311,13 @@ class Search {
             $languageCode = ZLanguage::getLanguageCode();
 
             // initialise array for results
-            $records = array();
+            $records = [];
 
             // retrieve list of activated object types
-            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : (array) FormUtil::getPassedValue('«appName.toFirstLower»SearchTypes', array(), 'GETPOST');
+            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : (array) FormUtil::getPassedValue('«appName.toFirstLower»SearchTypes', [], 'GETPOST');
 
             $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
-            $utilArgs = array('helper' => 'search', 'action' => 'getResults');
+            $utilArgs = ['helper' => 'search', 'action' => 'getResults'];
             $allowedTypes = $controllerHelper->getObjectTypes('helper', $utilArgs);
 
             foreach ($searchTypes as $objectType) {
@@ -323,7 +325,7 @@ class Search {
                     continue;
                 }
 
-                $whereArray = array();
+                $whereArray = [];
                 $languageField = null;
                 switch ($objectType) {
                     «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
@@ -360,10 +362,10 @@ class Search {
                     continue;
                 }
 
-                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', ['ot' => $objectType]);
                 $descriptionField = $repository->getDescriptionFieldName();
 
-                $entitiesWithDisplayAction = array(«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+                $entitiesWithDisplayAction = [«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
 
                 foreach ($entities as $entity) {
                     $urlArgs = $entity->createUrlArgs();
@@ -385,14 +387,14 @@ class Search {
 
                     $displayUrl = $hasDisplayAction ? new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs) : '';
 
-                    $records[] = array(
+                    $records[] = [
                         'title' => $entity->getTitleFromDisplayPattern(),
                         'text' => $description,
                         'module' => $this->name,
                         'sesid' => $sessionId,
                         'created' => $created,
                         'url' => $displayUrl
-                    );
+                    ];
                 }
             }
 

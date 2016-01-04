@@ -42,7 +42,7 @@ class ObjectTypeSelector {
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ObjectTypeSelector(«IF targets('1.3.x')»$params, $view«ENDIF»)
         {
             $dom = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
-            $result = array();
+            $result = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             «entityEntries»
 
@@ -60,7 +60,7 @@ class ObjectTypeSelector {
 
     def private entityEntries(Application it) '''
         «FOR entity : getAllEntities»
-            $result[] = array('text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»');
+            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         «ENDFOR»
     '''
 }

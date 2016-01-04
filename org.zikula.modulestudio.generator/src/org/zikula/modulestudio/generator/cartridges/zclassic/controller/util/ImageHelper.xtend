@@ -72,9 +72,9 @@ class ImageHelper {
          *
          * @return SystemPlugin_Imagine_Preset The selected preset.
          */
-        public function getPreset($objectType = '', $fieldName = '', $context = '', $args = array())
+        public function getPreset($objectType = '', $fieldName = '', $context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
+            if (!in_array($context, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
             }
 
@@ -115,14 +115,14 @@ class ImageHelper {
          *
          * @return SystemPlugin_Imagine_Preset The selected preset.
          */
-        public function getCustomPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
+        public function getCustomPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            $presetData = array(
+            $presetData = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'width'     => 100,      // thumbnail width in pixels
                 'height'    => 100,      // thumbnail height in pixels
                 'mode'      => 'inset',  // inset or outbound
                 'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             if ($presetName == $this->name . '_ajax_autocomplete') {
                 $presetData['width'] = 100;

@@ -196,10 +196,10 @@ class ListEntriesHelper {
         public function getEntries($objectType, $fieldName)
         {
             if (empty($objectType) || empty($fieldName)) {
-                return array();
+                return «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             }
 
-            $entries = array();
+            $entries = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             switch ($objectType) {
                 «FOR entity : entities.filter[hasListFieldsEntity]»
                     case '«entity.name.formatForCode»':
@@ -233,7 +233,7 @@ class ListEntriesHelper {
          */
         public function get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»()
         {
-            $states = array();
+            $states = «IF entity.application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF name == 'workflowState'»
                 «val visibleStates = items.filter[value != 'initial' && value != 'deleted']»
                 «FOR item : visibleStates»«item.entryInfo(entity.application)»«ENDFOR»
@@ -247,19 +247,23 @@ class ListEntriesHelper {
     '''
 
     def private entryInfo(ListFieldItem it, Application app) '''
-        $states[] = array('value'   => '«value.replace("'", "")»',
-                          'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital.replace("'", "")»'),
-                          'title'   => «IF documentation !== null && documentation != ''»$this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
-                          'image'   => '«IF image !== null && image != ''»«image».png«ENDIF»',
-                          'default' => «^default.displayBool»);
+        $states[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+            'value'   => '«value.replace("'", "")»',
+            'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital.replace("'", "")»'),
+            'title'   => «IF documentation !== null && documentation != ''»$this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+            'image'   => '«IF image !== null && image != ''»«image».png«ENDIF»',
+            'default' => «^default.displayBool»
+        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
     '''
 
     def private entryInfoNegative(ListFieldItem it, Application app) '''
-        $states[] = array('value'   => '!«value.replace("'", "")»',
-                          'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('All except «name.formatForDisplay.replace("'", "")»'),
-                          'title'   => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
-                          'image'   => '',
-                          'default' => false);
+        $states[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+            'value'   => '!«value.replace("'", "")»',
+            'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('All except «name.formatForDisplay.replace("'", "")»'),
+            'title'   => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
+            'image'   => '',
+            'default' => false
+        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
     '''
 
     def private listFieldFunctionsImpl(Application it) '''

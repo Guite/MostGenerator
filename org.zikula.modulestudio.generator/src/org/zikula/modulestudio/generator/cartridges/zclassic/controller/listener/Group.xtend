@@ -16,13 +16,13 @@ class Group {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'group.create'     => array('create', 5),
-                        'group.update'     => array('update', 5),
-                        'group.delete'     => array('delete', 5),
-                        'group.adduser'    => array('addUser', 5),
-                        'group.removeuser' => array('removeUser', 5)
-                    );
+                    return [
+                        'group.create'     => ['create', 5],
+                        'group.update'     => ['update', 5],
+                        'group.delete'     => ['delete', 5],
+                        'group.adduser'    => ['addUser', 5],
+                        'group.removeuser' => ['removeUser', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»

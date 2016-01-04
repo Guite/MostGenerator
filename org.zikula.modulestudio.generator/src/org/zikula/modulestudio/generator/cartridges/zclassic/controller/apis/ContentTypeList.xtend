@@ -186,7 +186,7 @@ class ContentTypeList {
                 $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
             «ENDIF»
 
-            $utilArgs = array('name' => 'list');
+            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'list'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
                 $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $utilArgs);
             }
@@ -200,7 +200,7 @@ class ContentTypeList {
                 $data['amount'] = 1;
             }
             if (!isset($data['template'])) {
-                $data['template'] = 'itemlist_' . $this->objectType . '_display.tpl';
+                $data['template'] = 'itemlist_' . $this->objectType . '_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
             }
             if (!isset($data['customTemplate'])) {
                 $data['customTemplate'] = '';
@@ -215,20 +215,20 @@ class ContentTypeList {
             $this->customTemplate = $data['customTemplate'];
             $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
-                $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+                $this->categorisableObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
                 // fetch category properties
-                $this->catRegistries = array();
-                $this->catProperties = array();
+                $this->catRegistries = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $this->catProperties = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
-                    $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $idFields[0]));
-                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'arraykey' => $idFields[0]«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 }
 
                 if (!isset($data['catIds'])) {
-                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $this->objectType));
-                    $data['catIds'] = array($primaryRegistry => array());
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $data['catIds'] = «IF targets('1.3.x')»array($primaryRegistry => array())«ELSE»[$primaryRegistry => []]«ENDIF»;
                     // backwards compatibility
                     if (isset($data['catId'])) {
                         $data['catIds'][$primaryRegistry][] = $data['catId'];
@@ -251,9 +251,9 @@ class ContentTypeList {
                     }
                     if (!is_array($data['catIds'][$propName])) {
                         if ($data['catIds'][$propName]) {
-                            $data['catIds'][$propName] = array($data['catIds'][$propName]);
+                            $data['catIds'][$propName] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$data['catIds'][$propName]«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                         } else {
-                            $data['catIds'][$propName] = array();
+                            $data['catIds'][$propName] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                         }
                     }
                 }
@@ -323,7 +323,7 @@ class ContentTypeList {
                 // apply category filters
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                     if (is_array($this->catIds) && count($this->catIds) > 0) {
-                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $this->objectType, 'catids' => $this->catIds));
+                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => $this->objectType, 'catids' => $this->catIds«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                     }
                 }
             «ENDIF»
@@ -334,13 +334,15 @@ class ContentTypeList {
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
             $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
 
-            $data = array('objectType' => $this->objectType,
-                          'catids' => $this->catIds,
-                          'sorting' => $this->sorting,
-                          'amount' => $this->amount,
-                          'template' => $this->template,
-                          'customTemplate' => $this->customTemplate,
-                          'filter' => $this->filter);
+            $data = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'objectType' => $this->objectType,
+                'catids' => $this->catIds,
+                'sorting' => $this->sorting,
+                'amount' => $this->amount,
+                'template' => $this->template,
+                'customTemplate' => $this->customTemplate,
+                'filter' => $this->filter
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             «IF targets('1.3.x')»
                 // assign vars and fetched data
@@ -394,7 +396,7 @@ class ContentTypeList {
             } elseif ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
                 $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
             } else {
-                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.tpl';
+                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
             }
 
             return $template;
@@ -415,7 +417,7 @@ class ContentTypeList {
 
             $sortParam = '';
             if ($this->sorting == 'newest') {
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {
@@ -448,12 +450,14 @@ class ContentTypeList {
          */
         public function getDefaultData()
         {
-            return array('objectType' => '«getLeadingEntity.name.formatForCode»',
-                         'sorting' => 'default',
-                         'amount' => 1,
-                         'template' => 'itemlist_display.tpl',
-                         'customTemplate' => '',
-                         'filter' => '');
+            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'objectType' => '«getLeadingEntity.name.formatForCode»',
+                'sorting' => 'default',
+                'amount' => 1,
+                'template' => 'itemlist_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»',
+                'customTemplate' => '',
+                'filter' => ''
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         }
 
         /**
@@ -479,7 +483,7 @@ class ContentTypeList {
                 // assign categories lists for simulating category selectors
                 $dom = ZLanguage::getModuleDomain('«appName»');
                 $locale = ZLanguage::getLanguageCode();
-                $categories = array();
+                $categories = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($this->catRegistries as $registryId => $registryCid) {
                     $propName = '';
                     foreach ($this->catProperties as $propertyName => $propertyId) {
@@ -491,12 +495,12 @@ class ContentTypeList {
 
                     //$mainCategory = CategoryUtil::getCategoryByID($registryCid);
                     $cats = CategoryUtil::getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
-                    $catsForDropdown = array(
-                        array('value' => '', 'text' => __('All', $dom))
-                    );
+                    $catsForDropdown = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => '', 'text' => __('All', $dom)«IF targets('1.3.x')»)«ELSE»]«ENDIF»
+                    «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                     foreach ($cats as $cat) {
                         $catName = isset($cat['display_name'][$locale]) ? $cat['display_name'][$locale] : $cat['name'];
-                        $catsForDropdown[] = array('value' => $cat['id'], 'text' => $catName);
+                        $catsForDropdown[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => $cat['id'], 'text' => $catName«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                     }
                     $categories[$propName] = $catsForDropdown;
                 }

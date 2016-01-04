@@ -199,7 +199,7 @@ class EventListener {
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} created the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} created the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -308,7 +308,7 @@ class EventListener {
                     $uploadManager = $serviceManager->get('«application.appName.formatForDB».upload_handler');
                 «ENDIF»
 
-                $uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»);
+                $uploadFields = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 foreach ($uploadFields as $uploadField) {
                     if (empty($this->$uploadField)) {
                         continue;
@@ -321,7 +321,7 @@ class EventListener {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} removed the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} removed the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -381,7 +381,7 @@ class EventListener {
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} updated the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -432,7 +432,7 @@ class EventListener {
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} saved the {entity} with id {id}.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId));
+                $logger->debug('{app}: User {user} saved the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 

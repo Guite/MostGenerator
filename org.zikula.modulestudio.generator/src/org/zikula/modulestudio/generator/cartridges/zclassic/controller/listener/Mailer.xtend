@@ -16,9 +16,9 @@ class Mailer {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'module.mailer.api.sendmessage' => array('sendMessage', 5)
-                    );
+                    return [
+                        'module.mailer.api.sendmessage' => ['sendMessage', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»

@@ -8,12 +8,14 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class RelationPresets {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
+    extension Utils = new Utils
 
     def memberFields(Application it) '''
 
@@ -22,7 +24,7 @@ class RelationPresets {
          *
          * @var mixed
          */
-        protected $relationPresets = array();
+        protected $relationPresets = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
     '''
 
     def initPresets(Entity it) '''
@@ -108,7 +110,7 @@ class RelationPresets {
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherObjectType = (if (useTarget) target else source).name.formatForCode»
         if (!empty($this->relationPresets['«alias»'])) {
-            $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']));
+            $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»);
             if ($relObj != null) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);

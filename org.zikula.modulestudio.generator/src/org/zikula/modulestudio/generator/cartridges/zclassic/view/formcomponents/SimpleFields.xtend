@@ -173,7 +173,7 @@ class SimpleFields {
                     «IF minValue == maxValue»
                         <span class="help-block">{{ __f('Note: this value must exactly be %s.', '«minValue»') }}</span>
                     «ELSE»
-                        <span class="help-block">{{ __f('Note: this value must be between %1$s and %2$s.', array('«minValue»', '«maxValue»') }}</span>
+                        <span class="help-block">{{ __f('Note: this value must be between %1$s and %2$s.', ['«minValue»', '«maxValue»'] }}</span>
                     «ENDIF»
                 «ELSEIF hasMin»
                     <span class="help-block">{{ __f('Note: this value must be greater than %s.', '«minValue»') }}</span>
@@ -320,7 +320,7 @@ class SimpleFields {
                 «IF min == max»
                     <span class="help-block">{{ __f('Note: you must select exactly %s choices.', '«min»') }}</span>
                 «ELSE»
-                    <span class="help-block">{{ __f('Note: you must select between %1$s and %2$s choices.', array('«min»', '«max»') }}</span>
+                    <span class="help-block">{{ __f('Note: you must select between %1$s and %2$s choices.', ['«min»', '«max»'] }}</span>
                 «ENDIF»
             «ENDIF»
         «ENDIF»

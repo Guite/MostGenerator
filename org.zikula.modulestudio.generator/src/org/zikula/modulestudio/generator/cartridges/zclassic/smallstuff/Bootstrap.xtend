@@ -166,7 +166,7 @@ class Bootstrap {
 
                     // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
                     «IF !targets('1.3.x')»
-                        $logger->notice('{app}: Automatic archiving for the {entity} entity started.', array('app' => '«appName»', 'entity' => '«entity.name.formatForCode»'));
+                        $logger->notice('{app}: Automatic archiving for the {entity} entity started.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
                     «ENDIF»
                     «IF targets('1.3.x')»
                         $entityClass = '«appName»_Entity_«entity.name.formatForCodeCapital»';
@@ -176,7 +176,7 @@ class Bootstrap {
                     «ENDIF»
                     $repository->archiveObjects();
                     «IF !targets('1.3.x')»
-                        $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', array('app' => '«appName»', 'entity' => '«entity.name.formatForCode»'));
+                        $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
                     «ENDIF»
                 «ENDFOR»
                 PageUtil::setVar('«appName»AutomaticArchiving', false);

@@ -113,7 +113,7 @@ class ContentTypeSingle {
                 $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
             «ENDIF»
 
-            $utilArgs = array('name' => 'detail');
+            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'detail'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
                 $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $utilArgs);
             }
@@ -165,11 +165,12 @@ class ContentTypeSingle {
          */
         protected function getDisplayArguments()
         {
-            return array('objectType' => $this->objectType,
-                         'source' => 'contentType',
-                         'displayMode' => $this->displayMode,
-                         'id' => $this->id
-            );
+            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'objectType' => $this->objectType,
+                 'source' => 'contentType',
+                 'displayMode' => $this->displayMode,
+                 'id' => $this->id
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         }
 
         /**
@@ -179,9 +180,11 @@ class ContentTypeSingle {
          */
         public function getDefaultData()
         {
-            return array('objectType' => '«getLeadingEntity.name.formatForCode»',
-                         'id' => null,
-                         'displayMode' => 'embed');
+            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'objectType' => '«getLeadingEntity.name.formatForCode»',
+                 'id' => null,
+                 'displayMode' => 'embed'
+             «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         }
 
         /**

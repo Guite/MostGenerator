@@ -50,22 +50,22 @@ class Mailz {
          *
          * @return array List of provided plugin functions.
          */
-        public function getPlugins(array $args = array())
+        public function getPlugins(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
-            $plugins = array();
-            $plugins[] = array(
+            $plugins = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $plugins[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'pluginid'      => 1,
                 'module'        => '«appName»',
                 'title'         => $this->__('3 newest «itemDesc»'),
                 'description'   => $this->__('A list of the three newest «itemDesc».')
-            );
-            $plugins[] = array(
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            $plugins[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'pluginid'      => 2,
                 'module'        => '«appName»',
                 'title'         => $this->__('3 random «itemDesc»'),
                 'description'   => $this->__('A list of three random «itemDesc».')
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             return $plugins;
         }
@@ -82,7 +82,7 @@ class Mailz {
          *
          * @return string output of plugin template.
          */
-        public function getContent(array $args = array())
+        public function getContent(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             «IF targets('1.3.x')»
                 ModUtil::initOOModule('«appName»');
@@ -101,7 +101,7 @@ class Mailz {
                 $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
-            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
 
             $sortParam = '';
             if ($args['pluginid'] == 2) {
@@ -123,13 +123,13 @@ class Mailz {
             $resultsPerPage = 3;
 
             // get objects from database
-            $selectionArgs = array(
+            $selectionArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'ot' => $objectType,
                 'where' => $where,
                 'orderBy' => $sortParam,
                 'currentPage' => 1,
                 'resultsPerPage' => $resultsPerPage
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             $templateType = $args['contenttype'] == 't' ? 'text' : 'html';
@@ -153,7 +153,7 @@ class Mailz {
                     'objectType' => $objectType,
                     'items' => $entities
                 ];
-                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
+                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('api', ['name' => 'mailz']));
 
                 return $templating->render(
                     '@«appName»/Mailz/itemlist_«leadingEntity.name.formatForCode».' . $templateType . '.twig',

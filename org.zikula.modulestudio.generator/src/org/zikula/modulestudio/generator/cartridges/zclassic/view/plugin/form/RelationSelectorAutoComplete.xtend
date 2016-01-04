@@ -140,16 +140,16 @@ class RelationSelectorAutoComplete {
                     «ENDFOR»
                 }
 
-                $addLinkText = $many ? __f('Add %s', array($entityNameTranslated), $dom) : __f('Select %s', array($entityNameTranslated), $dom);
-                $selectLabelText = __f('Find %s', array($entityNameTranslated), $dom);
-                $searchIconText = __f('Search %s', array($entityNameTranslated), $dom);
+                $addLinkText = $many ? __f('Add %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom) : __f('Select %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom);
+                $selectLabelText = __f('Find %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom);
+                $searchIconText = __f('Search %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom);
 
                 $idPrefix = $this->idPrefix;
 
                 $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
                 }
 
                 $alias = $this->id;

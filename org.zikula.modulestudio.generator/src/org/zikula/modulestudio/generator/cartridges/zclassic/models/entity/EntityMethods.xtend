@@ -266,13 +266,14 @@ class EntityMethods {
             «ENDIF»
 
             $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
-            $this['__WORKFLOW__'] = array(
+            $this['__WORKFLOW__'] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'module' => '«app.appName»',
                 'state' => $this['workflowState'],
                 'obj_table' => $this['_objectType'],
                 'obj_idcolumn' => '«primaryKeyFields.head.name.formatForCode»',
                 'obj_id' => 0,
-                'schemaname' => $schemaName);
+                'schemaname' => $schemaName
+            «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
         }
     '''
 
@@ -349,7 +350,7 @@ class EntityMethods {
          */
         public function createUrlArgs()
         {
-            $args = array(«IF application.targets('1.3.x')»'ot' => $this['_objectType']«ENDIF»);
+            $args = «IF application.targets('1.3.x')»array('ot' => $this['_objectType'])«ELSE»[]«ENDIF»;
 
             «IF hasCompositeKeys»
                 «FOR pkField : getPrimaryKeyFields»
@@ -424,16 +425,17 @@ class EntityMethods {
         «ENDIF»
 
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
-        $this['__WORKFLOW__'] = array(
+        $this['__WORKFLOW__'] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
             'module' => '«application.appName»',
             'state' => $this['workflowState'],
             'obj_table' => $this['_objectType'],
             'obj_idcolumn' => $idColumn,
             'obj_id' => $this[$idColumn],
-            'schemaname' => $schemaName);
+            'schemaname' => $schemaName
+        «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
 
         // load the real workflow only when required (e. g. when func is edit or delete)
-        if ((!in_array($currentFunc, array('«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display')) && empty($isReuse)) || $forceLoading) {
+        if ((!in_array($currentFunc, «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display'«IF application.targets('1.3.x')»)«ELSE»]«ENDIF») && empty($isReuse)) || $forceLoading) {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«application.appName»');
             if (!$result) {
                 $dom = ZLanguage::getModuleDomain('«application.appName»');
@@ -481,11 +483,11 @@ class EntityMethods {
         /**
          * Returns an array of all related objects that need to be persisted after clone.
          * 
-         * @param array $objects The objects are added to this array. Default: array()
+         * @param array $objects The objects are added to this array. Default: «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»
          * 
          * @return array of entity objects.
          */
-        public function getRelatedObjectsToPersist(&$objects = array()) 
+        public function getRelatedObjectsToPersist(&$objects = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF») 
         {
             «val joinsIn = incomingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
             «val joinsOut = outgoingJoinRelationsForCloning.filter[!(it instanceof ManyToManyRelationship)]»
@@ -504,7 +506,7 @@ class EntityMethods {
 
                 return $objects;
             «ELSE»
-                return array();
+                return «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «ENDIF»
         }
     '''
@@ -548,7 +550,7 @@ class EntityMethods {
                     // reset upload fields
                     «FOR field : getUploadFieldsEntity»
                         $this->set«field.name.formatForCodeCapital»('');
-                        $this->set«field.name.formatForCodeCapital»Meta(array());
+                        $this->set«field.name.formatForCodeCapital»Meta(«IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»);
                     «ENDFOR»
                 «ENDIF»
                 «IF it instanceof Entity && (it as Entity).standardFields»

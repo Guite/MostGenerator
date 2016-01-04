@@ -16,13 +16,13 @@ class ModuleDispatch {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'module_dispatch.postloadgeneric'  => array('postLoadGeneric', 5),
-                        'module_dispatch.preexecute'       => array('preExecute', 5),
-                        'module_dispatch.postexecute'      => array('postExecute', 5),
-                        'module_dispatch.custom_classname' => array('customClassname', 5),
-                        'module_dispatch.service_links'    => array('serviceLinks', 5)
-                    );
+                    return [
+                        'module_dispatch.postloadgeneric'  => ['postLoadGeneric', 5],
+                        'module_dispatch.preexecute'       => ['preExecute', 5],
+                        'module_dispatch.postexecute'      => ['postExecute', 5],
+                        'module_dispatch.custom_classname' => ['customClassname', 5],
+                        'module_dispatch.service_links'    => ['serviceLinks', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»
@@ -33,7 +33,7 @@ class ModuleDispatch {
          * Listener for the `module_dispatch.postloadgeneric` event.
          *
          * Called after a module api or controller has been loaded.
-         * Receives the args `array('modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api)`.
+         * Receives the args `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api«IF targets('1.3.x')»)«ELSE»]«ENDIF»`.
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
@@ -50,12 +50,14 @@ class ModuleDispatch {
          * Listener for the `module_dispatch.preexecute` event.
          *
          * Occurs in `ModUtil::exec()` before function call with the following args:
-         *     `array('modname' => $modname,
-         *            'modfunc' => $modfunc,
-         *            'args' => $args,
-         *            'modinfo' => $modinfo,
-         *            'type' => $type,
-         *            'api' => $api)`
+         *     `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+         *          'modname' => $modname,
+         *          'modfunc' => $modfunc,
+         *          'args' => $args,
+         *          'modinfo' => $modinfo,
+         *          'type' => $type,
+         *          'api' => $api
+         *      «IF targets('1.3.x')»)«ELSE»]«ENDIF»`
          * .
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
@@ -73,12 +75,14 @@ class ModuleDispatch {
          * Listener for the `module_dispatch.postexecute` event.
          *
          * Occurs in `ModUtil::exec()` after function call with the following args:
-         *     `array('modname' => $modname,
-         *            'modfunc' => $modfunc,
-         *            'args' => $args,
-         *            'modinfo' => $modinfo,
-         *            'type' => $type,
-         *            'api' => $api)`
+         *     `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+         *          'modname' => $modname,
+         *          'modfunc' => $modfunc,
+         *          'args' => $args,
+         *          'modinfo' => $modinfo,
+         *          'type' => $type,
+         *          'api' => $api
+         *      «IF targets('1.3.x')»)«ELSE»]«ENDIF»`
          * .
          * Receives the modules output with `$event->getData();`.
          * Can modify this output with `$event->setData($data);`.
@@ -100,7 +104,7 @@ class ModuleDispatch {
          * In order to override the classname calculated in `ModUtil::exec()`.
          * In order to override a pre-existing controller/api method, use this event type to override the class name that is loaded.
          * This allows to override the methods using inheritance.
-         * Receives no subject, args of `array('modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`
+         * Receives no subject, args of `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api«IF targets('1.3.x')»)«ELSE»]«ENDIF»`
          * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stop«IF !targets('1.3.x')»Propagation«ENDIF»()`.
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
@@ -129,7 +133,7 @@ class ModuleDispatch {
                 parent::customClassName($event);
 
                 // Format data like so:
-                // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'), 'text' => __('Link Text'));
+                // $event->data[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'url' => ModUtil::url('«appName»', 'user', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'), 'text' => __('Link Text')«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
                 «commonExample.generalEventProperties(it)»
             «ENDIF»

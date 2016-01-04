@@ -66,7 +66,7 @@ class CountrySelector {
              */
             public function load(Zikula_Form_View $view, &$params)
             {
-                $this->validCountryList = array();
+                $this->validCountryList = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $isFiltered = false;
                 if (array_key_exists('validCountryList', $params)) {
                     if (is_array($params['validCountryList']) && count($params['validCountryList']) > 0) {

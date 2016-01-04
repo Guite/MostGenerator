@@ -91,12 +91,12 @@ class Config {
 
                     // prepare list of user groups for moderation group selectors
                     $userGroups = ModUtil::apiFunc('«IF targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'getall');
-                    $userGroupItems = array();
+                    $userGroupItems = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                     foreach ($userGroups as $userGroup) {
-                        $userGroupItems[] = array(
+                        $userGroupItems[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                             'value' => $userGroup['gid'],
                             'text' => $userGroup['name']
-                        );
+                        «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                     }
                 «ENDIF»
 
@@ -188,7 +188,7 @@ class Config {
                         «IF targets('1.3.x')»
                             return LogUtil::registerError($msg);
                         «ELSE»
-                            $flashBag->add('error', $msg);
+                            $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $msg);
                             return false;
                         «ENDIF»
                     }
@@ -196,10 +196,10 @@ class Config {
                     «IF targets('1.3.x')»
                         LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
                     «ELSE»
-                        $flashBag->add('status', $this->__('Done! Module configuration updated.'));
+                        $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Module configuration updated.'));
 
                         $logger = $serviceManager->get('logger');
-                        $logger->notice('{app}: User {user} updated the configuration.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+                        $logger->notice('{app}: User {user} updated the configuration.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
                     «ENDIF»
                 } else if ($args['commandName'] == 'cancel') {
                     // nothing to do there
@@ -229,12 +229,12 @@ class Config {
     def private dispatch init(ListVar it) '''
         // initialise list entries for the '«name.formatForDisplay»' setting
         «/*        $listEntries = $modVars['«name.formatForCode)»'];*/»
-        $modVars['«name.formatForCode»Items'] = array(«FOR item : items SEPARATOR ','»«item.itemDefinition»«ENDFOR»
-        );
+        $modVars['«name.formatForCode»Items'] = «IF container.application.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR item : items SEPARATOR ','»«item.itemDefinition»«ENDFOR»
+        «IF container.application.targets('1.3.x')»)«ELSE»]«ENDIF»;
     '''
 
     def private itemDefinition(ListVarItem it) '''
-            array('value' => '«name.formatForCode»', 'text' => '«name.formatForDisplayCapital»')
+            «IF (eContainer as ListVar).container.application.targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => '«name.formatForCode»', 'text' => '«name.formatForDisplayCapital»'«IF (eContainer as ListVar).container.application.targets('1.3.x')»)«ELSE»]«ENDIF»
     '''
 
     def private configHandlerImpl(Application it) '''

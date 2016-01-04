@@ -104,7 +104,7 @@ class PermissionCheck {
                 // check whether the current user is the owner
                 if (!$result && isset($obj['createdUserId']) && $obj['createdUserId'] == $currentUser) {
                     // allow author update operations for all states which occur before 'approved' in the object's life cycle.
-                    $result = in_array($actionId, array('initial'«IF app.hasWorkflowState(wfType, 'deferred')», 'deferred'«ENDIF»«IF wfType != EntityWorkflowType.NONE», 'waiting'«ENDIF», 'accepted'));
+                    $result = in_array($actionId, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'initial'«IF app.hasWorkflowState(wfType, 'deferred')», 'deferred'«ENDIF»«IF wfType != EntityWorkflowType.NONE», 'waiting'«ENDIF», 'accepted'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
                 }
             «ENDIF»
 
@@ -119,7 +119,7 @@ class PermissionCheck {
         function «app.appName»_workflow_«wfType.textualName»_gettextstrings()
         {
             «val wfDefinition = new Definition»
-            return array(
+            return «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'title' => no__('«wfType.textualName.formatForDisplayCapital» workflow («wfType.approvalType.formatForDisplay» approval)'),
                 'description' => no__('«wfDefinition.workflowDescription(wfType)»'),
 
@@ -127,17 +127,17 @@ class PermissionCheck {
                 «gettextStates(lastState)»
 
                 «gettextActionsPerState(lastState)»
-            );
+            «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
         }
     '''
 
     def private gettextStates(ListFieldItem lastState) '''
         // state titles
-        'states' => array(
+        'states' => «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
             «FOR state : states»
                 «gettextState(state)»«IF state != lastState»,«ENDIF»
             «ENDFOR»
-        ),
+        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»,
     '''
 
     def private gettextState(ListFieldItem it) '''
@@ -145,18 +145,18 @@ class PermissionCheck {
 
     def private gettextActionsPerState(ListFieldItem lastState) '''
         // action titles and descriptions for each state
-        'actions' => array(
+        'actions' => «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
             «FOR state : states»
                 «gettextActionsForState(state)»«IF state != lastState»,«ENDIF»
             «ENDFOR»
-        )
+        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»
     '''
 
     def private gettextActionsForState(ListFieldItem it) '''
-        '«value»' => array(
+        '«value»' => «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
             «actionsForStateImpl»
             «actionsForDestructionImpl»
-        )
+        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»
     '''
 
     def private actionsForStateImpl(ListFieldItem it) {

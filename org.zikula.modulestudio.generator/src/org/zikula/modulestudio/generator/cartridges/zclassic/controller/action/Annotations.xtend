@@ -157,13 +157,13 @@ class Annotations {
         var output = ''
         if (hasSluggableFields && slugUnique) {
             output = '"id" = "slug", "repository_method" = "selectBySlug"'
-            // since we use the id property selectBySlug receives the slug value directly instead array('slug' => 'my-title')
+            // since we use the id property selectBySlug receives the slug value directly instead ['slug' => 'my-title']
             return output
         }
         val needsMapping = hasSluggableFields || hasCompositeKeys
         if (!needsMapping) {
             output = '"id" = "' + getFirstPrimaryKey.name.formatForCode + '", "repository_method" = "selectById"'
-            // since we use the id property selectById receives the slug value directly instead array('id' => 123)
+            // since we use the id property selectById receives the slug value directly instead ['id' => 123]
             return output
         }
 
@@ -174,7 +174,7 @@ class Annotations {
 
         output = output + getPrimaryKeyFields.map['"' + name.formatForCode + '": "' + name.formatForCode + '"'].join(', ')
         output = output + ', "repository_method" = "selectByIdList"'
-        // selectByIdList receives an array like array('fooid' => 123, 'otherfield' => 456)
+        // selectByIdList receives an array like ['fooid' => 123, 'otherfield' => 456]
 
         // add mapping hash
         output = '"mapping": {' + output + '}'

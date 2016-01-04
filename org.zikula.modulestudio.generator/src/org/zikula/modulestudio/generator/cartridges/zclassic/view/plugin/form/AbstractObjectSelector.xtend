@@ -107,7 +107,7 @@ class AbstractObjectSelector {
          *
          * @var array
          */
-        public $idFields = array();
+        public $idFields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         /**
          * Where clause.
@@ -150,14 +150,14 @@ class AbstractObjectSelector {
          *
          * @var boolean
          */
-        public $preselectedItems = array();
+        public $preselectedItems = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         /**
          * List of selected items.
          *
          * @var boolean
          */
-        public $selectedItems = array();
+        public $selectedItems = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
     '''
 
     def private createPlugin(Application it) '''
@@ -173,13 +173,13 @@ class AbstractObjectSelector {
         public function create(Zikula_Form_View $view, &$params)
         {
             if (!isset($params['objectType']) || empty($params['objectType'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»RelationSelectorList', 'objectType')));
+                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'«appName.formatForDB»RelationSelectorList', 'objectType'«IF targets('1.3.x')»)«ELSE»]«ENDIF»));
             }
             $this->objectType = $params['objectType'];
             unset($params['objectType']);
 
             if (!isset($params['aliasReverse']) || empty($params['aliasReverse'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('relationtesterRelationSelectorList', 'aliasReverse')));
+                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'relationtesterRelationSelectorList', 'aliasReverse'«IF targets('1.3.x')»)«ELSE»]«ENDIF»));
             }
             $this->aliasReverse = $params['aliasReverse'];
             unset($params['aliasReverse']);
@@ -214,7 +214,7 @@ class AbstractObjectSelector {
 
             parent::create($view, $params);
 
-            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
+            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
             $this->cssClass .= ' ' . $this->getStyleClass() . ' ' . strtolower($this->objectType);
         }
 
@@ -292,12 +292,12 @@ class AbstractObjectSelector {
          */
         protected function loadItems(&$params)
         {
-            $selectionArgs = array(
+            $selectionArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'ot' => $this->objectType,
                 'where' => $this->where,
                 'orderBy' => $this->orderBy,
                 'useJoins' => false
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             if ($this->resultsPerPage < 1) {
                 // no pagination
@@ -346,19 +346,19 @@ class AbstractObjectSelector {
                 if ($value instanceof Zikula_EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
                     $newValue = $value->createCompositeIdentifier();
                 } elseif (is_array($value)) {
-                    $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $value['_objectType']));
+                    $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $value['_objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                     $newValue = $value[$idFields[0]];
                 } else {
                     $newValue[] = $value;
                 }
             } else {
-                $newValue = array();
+                $newValue = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 if (is_array($value) || $value instanceof Collection) {
                     foreach ($value as $entity) {
                         if ($entity instanceof Zikula_EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
                             $newValue[] = $entity->createCompositeIdentifier();
                         } elseif (is_array($entity)) {
-                            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $entity['_objectType']));
+                            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $entity['_objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                             $newValue[] = $entity[$idFields[0]];
                         } else {
                             $newValue[] = $entity;
@@ -385,7 +385,7 @@ class AbstractObjectSelector {
             $entityData = isset($params['linkingItem']) ? $params['linkingItem'] : $view->get_template_vars('linkingItem');
 
             $alias = $this->id;
-            $itemIds = array();
+            $itemIds = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             $many = ($this->selectionMode == 'multiple');
 
             if (isset($entityData[$alias])) {
@@ -404,9 +404,9 @@ class AbstractObjectSelector {
 
             if (count($itemIds) > 0) {
                 if ($this->selectionMode != 'multiple') {
-                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $alias, 'id' => $itemIds[0]));
+                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $alias, 'id' => $itemIds[0]«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 } else {
-                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => $alias, 'idList' => $itemIds));
+                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntities', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $alias, 'idList' => $itemIds«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 }
             }
 
@@ -441,7 +441,7 @@ class AbstractObjectSelector {
 
             $inputValue = FormUtil::getPassedValue($this->inputName, $this->getSelectedValue(), $source);
             if (empty($inputValue)) {
-                return $many ? array() : null;
+                return $many ? «IF targets('1.3.x')»array()«ELSE»[]«ENDIF» : null;
             }
 
             if (!is_array($inputValue)) {
@@ -449,12 +449,12 @@ class AbstractObjectSelector {
             }
 
             if (!is_array($inputValue) || !count($inputValue)) {
-                return $many ? array() : null;
+                return $many ? «IF targets('1.3.x')»array()«ELSE»[]«ENDIF» : null;
             }
 
             // fix for #446
             if (count($inputValue) == 1 && empty($inputValue[0])) {
-                return $many ? array() : null;
+                return $many ? «IF targets('1.3.x')»array()«ELSE»[]«ENDIF» : null;
             }
 
             $this->selectedItems = $this->fetchRelatedItems($view, $inputValue);
@@ -660,9 +660,9 @@ class AbstractObjectSelector {
          */
         protected function decodeCompositeIdentifier($itemIds)
         {
-            $idValues = array();
+            $idValues = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             foreach ($this->idFields as $idField) {
-                $idValues[$idField] = array();
+                $idValues[$idField] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             }
             foreach ($itemIds as $itemId) {
                 $itemIdParts = explode('_', $itemId);

@@ -51,10 +51,10 @@ class Account {
          *
          * @return array List of collected account items
          */
-        public function getall(array $args = array())
+        public function getall(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             // collect items in an array
-            $items = array();
+            $items = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             «IF targets('1.3.x')»
                 $useAccountPage = $this->getVar('useAccountPage', true);
@@ -84,23 +84,23 @@ class Account {
                 «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
                     $objectType = '«entity.name.formatForCode»';
                     if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
-                        $items[] = array(
+                        $items[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                             «IF targets('1.3.x')»
                                 'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
                             «ELSE»
-                                'url' => $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', array('own' => 1)),
+                                'url' => $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
                             «ENDIF»
                             'title'   => $this->__('My «entity.nameMultiple.formatForDisplay»'),
                             'icon'    => 'windowlist.png',
                             'module'  => 'core',
                             'set'     => 'icons/large'
-                        );
+                        «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                     }
                 «ENDFOR»
             «ENDIF»
             «IF !getAllAdminControllers.empty»
                 if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    $items[] = array(
+                    $items[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                         «IF targets('1.3.x')»
                             'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'),
                         «ELSE»
@@ -110,7 +110,7 @@ class Account {
                         'icon'   => 'configure.png',
                         'module' => 'core',
                         'set'    => 'icons/large'
-                    );
+                    «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 }
             «ENDIF»
 

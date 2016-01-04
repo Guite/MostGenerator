@@ -103,24 +103,27 @@ class Newsletter {
          */
         public function getParameters()
         {
-            $objectTypes = array();
+            $objectTypes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             if (ModUtil::available($this->modname) && ModUtil::loadApi($this->modname)) {
                 «FOR entity : getAllEntities»
-                    $objectTypes['«entity.name.formatForCode»'] = array('name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'));
+                    $objectTypes['«entity.name.formatForCode»'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 «ENDFOR»
             }
         
-            $active = $this->getPluginVar('ObjectTypes', array());
+            $active = $this->getPluginVar('ObjectTypes', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
             foreach ($objectTypes as $k => $v) {
                 $objectTypes[$k]['nwactive'] = in_array($k, $active);
             }
 
-            $args = $this->getPluginVar('Args', array());
+            $args = $this->getPluginVar('Args', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
         
-            return array('number' => 1,
-                         'param'  => array(
-                               'ObjectTypes'=> $objectTypes,
-                               'Args' => $args));
+            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'number' => 1,
+                'param'  => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    'ObjectTypes'=> $objectTypes,
+                    'Args' => $args
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         }
 
         /**
@@ -129,12 +132,12 @@ class Newsletter {
         public function setParameters()
         {
             // Object types to be used in the newsletter
-            $objectTypes = FormUtil::getPassedValue($this->modname . 'ObjectTypes', array(), 'POST');
+            $objectTypes = FormUtil::getPassedValue($this->modname . 'ObjectTypes', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», 'POST');
 
             $this->setPluginVar('ObjectTypes', array_keys($objectTypes));
 
             // Additional arguments
-            $args = FormUtil::getPassedValue($this->modname . 'Args', array(), 'POST');
+            $args = FormUtil::getPassedValue($this->modname . 'Args', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», 'POST');
 
             $this->setPluginVar('Args', $args);
         }
@@ -149,7 +152,7 @@ class Newsletter {
         public function getPluginData($filtAfterDate = null)
         {
             if (!$this->pluginAvailable()) {
-                return array();
+                return «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             }
             «IF targets('1.3.x')»
                 ModUtil::initOOModule($this->modname);
@@ -159,7 +162,7 @@ class Newsletter {
             $itemsGrouped = $this->getItemsPerObjectType($filtAfterDate);
 
             // now flatten for presentation
-            $items = array();
+            $items = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             if ($itemsGrouped) {
                 foreach ($itemsGrouped as $objectTypes => $itemList) {
                     foreach ($itemList as $item) {
@@ -180,15 +183,15 @@ class Newsletter {
          */
         protected function getItemsPerObjectType($filtAfterDate = null)
         {
-            $objectTypes = $this->getPluginVar('ObjectTypes', array());
-            $args = $this->getPluginVar('Args', array());
+            $objectTypes = $this->getPluginVar('ObjectTypes', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
+            $args = $this->getPluginVar('Args', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
 
             «IF !targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
-            $output = array();
+            $output = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             foreach ($objectTypes as $objectType) {
                 if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
@@ -196,7 +199,7 @@ class Newsletter {
                     continue;
                 }
 
-                $otArgs = isset($args[$objectType]) ? $args[$objectType] : array();
+                $otArgs = isset($args[$objectType]) ? $args[$objectType] : «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $otArgs['objectType'] = $objectType;
 
                 // perform the data selection
@@ -253,9 +256,9 @@ class Newsletter {
                 $previewFieldName = $repository->getPreviewFieldName();
             «ENDIF»
 
-            $items = array();
+            $items = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             foreach ($entities as $k => $item) {
-                $items[$k] = array();
+                $items[$k] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
                 // Set title of this item.
                 $items[$k]['nl_title'] = $item->getTitleFromDisplayPattern();
@@ -306,7 +309,7 @@ class Newsletter {
 
             $sortParam = '';
             if ($args['sorting'] == 'newest') {
-                $idFields = ModUtil::apiFunc($this->modname, 'selection', 'getIdFields', array('ot' => $args['objectType']));
+                $idFields = ModUtil::apiFunc($this->modname, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $args['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {

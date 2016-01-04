@@ -27,12 +27,12 @@ class User {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'user.gettheme'       => array('getTheme', 5),
-                        'user.account.create' => array('create', 5),
-                        'user.account.update' => array('update', 5),
-                        'user.account.delete' => array('delete', 5)
-                    );
+                    return [
+                        'user.gettheme'       => ['getTheme', 5],
+                        'user.account.create' => ['create', 5],
+                        'user.account.update' => ['update', 5],
+                        'user.account.delete' => ['delete', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»
@@ -159,7 +159,7 @@ class User {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»'));
+                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»']);
             «ENDIF»
         «ENDIF»
     '''

@@ -58,7 +58,7 @@ class Cache {
          * @param $args['ot']   the treated object type
          * @param $args['item'] the actual object
          */
-        public function clearItemCache(array $args = array())
+        public function clearItemCache(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             if (!isset($args['ot']) || !isset($args['item'])) {
                 return;
@@ -72,13 +72,13 @@ class Cache {
             «ELSE»
                 $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
-            $utilArgs = array('api' => 'cache', 'action' => 'clearItemCache');
+            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'api' => 'cache', 'action' => 'clearItemCache'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 return;
             }
 
             if ($item && !is_array($item) && !is_object($item)) {
-                $item = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $item, 'useJoins' => false, 'slimMode' => true));
+                $item = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $item, 'useJoins' => false, 'slimMode' => true«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
             }
 
             if (!$item) {
@@ -89,11 +89,11 @@ class Cache {
             «IF !targets('1.3.x')»
 
                 $logger = $this->get('logger');
-                $logger->info('{app}: User {user} caused clearing the cache for entity {entity} with id {id}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId));
+                $logger->info('{app}: User {user} caused clearing the cache for entity {entity} with id {id}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId]);
             «ENDIF»
 
             // Clear View_cache
-            $cacheIds = array();
+            $cacheIds = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF hasUserController»
                 «IF getMainUserController.hasActions('index')»
                     $cacheIds[] = 'user_«IF targets('1.3.x')»main«ELSE»index«ENDIF»';
@@ -117,7 +117,7 @@ class Cache {
 
 
             // Clear Theme_cache
-            $cacheIds = array();
+            $cacheIds = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             $cacheIds[] = 'homepage'; // for homepage (can be assigned in the Settings module)
             «IF hasUserController»
                 «IF getMainUserController.hasActions('index')»

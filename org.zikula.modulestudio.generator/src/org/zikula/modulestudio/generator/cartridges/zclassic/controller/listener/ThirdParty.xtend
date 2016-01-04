@@ -28,13 +28,13 @@ class ThirdParty {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(«IF needsApproval && generatePendingContentSupport»
-                        'get.pending_content'                   => array('pendingContentListener', 5),«ENDIF»«IF generateListContentType || needsDetailContentType»
-                        'module.content.gettypes'               => array('contentGetTypes', 5),«ENDIF»«IF generateScribitePlugins»
-                        'module.scribite.editorhelpers'         => array('getEditorHelpers', 5),
-                        'moduleplugin.tinymce.externalplugins'  => array('getTinyMcePlugins', 5),
-                        'moduleplugin.ckeditor.externalplugins' => array('getCKEditorPlugins', 5)«ENDIF»
-                    );
+                    return [«IF needsApproval && generatePendingContentSupport»
+                        'get.pending_content'                   => ['pendingContentListener', 5],«ENDIF»«IF generateListContentType || needsDetailContentType»
+                        'module.content.gettypes'               => ['contentGetTypes', 5],«ENDIF»«IF generateScribitePlugins»
+                        'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
+                        'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
+                        'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]«ENDIF»
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»
@@ -119,8 +119,10 @@ class ThirdParty {
                     $aggregateType = $amountInfo['aggregateType'];
                     $description = $amountInfo['description'];
                     $amount = $amountInfo['amount'];
-                    $viewArgs = array('ot' => $amountInfo['objectType'],
-                                      'workflowState' => $amountInfo['state']);
+                    $viewArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'ot' => $amountInfo['objectType'],
+                        'workflowState' => $amountInfo['state']
+                    «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                     $aggregateItem = new «IF targets('1.3.x')»Zikula_Provider_«ENDIF»AggregateItem($aggregateType, $description, $amount, 'admin', 'view', $viewArgs);
                     $collection->add($aggregateItem);
                 }
@@ -197,9 +199,11 @@ class ThirdParty {
         $helpers = $event->getSubject();
 
         $helpers->add(
-            array('module' => '«appName»',
-                  'type'   => 'javascript',
-                  'path'   => '«rootFolder»/«IF targets('1.3.x')»«appName»/javascript/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js')
+            «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'module' => '«appName»',
+                'type'   => 'javascript',
+                'path'   => '«rootFolder»/«IF targets('1.3.x')»«appName»/javascript/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js'
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»
         );
     '''
 
@@ -228,9 +232,10 @@ class ThirdParty {
         $plugins = $event->getSubject();
 
         $plugins->add(
-            array('name' => '«appName.formatForDB»',
-                  'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/plugins/«appName.formatForDB»/editor_plugin.js'
-            )
+            «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'name' => '«appName.formatForDB»',
+                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/plugins/«appName.formatForDB»/editor_plugin.js'
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»
         );
     '''
 
@@ -259,11 +264,12 @@ class ThirdParty {
         $plugins = $event->getSubject();
 
         $plugins->add(
-            array('name' => '«appName.formatForDB»',
-                  'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
-                  'file' => 'plugin.js',
-                  'img'  => 'ed_«appName.formatForDB».gif'
-            )
+            «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'name' => '«appName.formatForDB»',
+                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                'file' => 'plugin.js',
+                'img'  => 'ed_«appName.formatForDB».gif'
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»
         );
     '''
 }

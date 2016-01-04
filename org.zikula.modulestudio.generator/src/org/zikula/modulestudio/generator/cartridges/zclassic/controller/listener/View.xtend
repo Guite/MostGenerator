@@ -16,10 +16,10 @@ class View {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'view.init'      => array('init', 5),
-                        'view.postfetch' => array('postFetch', 5)
-                    );
+                    return [
+                        'view.init'      => ['init', 5],
+                        'view.postfetch' => ['postFetch', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»
@@ -48,7 +48,7 @@ class View {
          *
          * Filter of result of a fetch.
          * Receives `Zikula_View` instance as subject,
-         * args are `array('template' => $template)`,
+         * args are `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'template' => $template«IF targets('1.3.x')»)«ELSE»]«ENDIF»`,
          * $data was the result of the fetch to be filtered.
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.

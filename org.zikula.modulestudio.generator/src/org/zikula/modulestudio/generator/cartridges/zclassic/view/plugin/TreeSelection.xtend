@@ -68,9 +68,7 @@ class TreeSelection {
 
                     return false;
                 }
-            «ENDIF»
 
-            «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($params['objectType']);
             «ENDIF»
             $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();

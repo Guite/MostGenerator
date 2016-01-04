@@ -247,7 +247,7 @@ class ValidationConstraints {
                 «ENDIF»
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
-                $allowedValues = array();
+                $allowedValues = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($listEntries as $entry) {
                     $allowedValues[] = $entry['value'];
                 }
@@ -269,7 +269,7 @@ class ValidationConstraints {
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
                 $dom = ZLanguage::getModuleDomain('«app.appName»');
 
-                $allowedValues = array();
+                $allowedValues = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($listEntries as $entry) {
                     $allowedValues[] = $entry['value'];
                 }

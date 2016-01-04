@@ -67,7 +67,7 @@ class ExternalController {
     '''
 
     def private categoryInitialisation(Application it) '''
-        $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+        $this->categorisableObjectTypes = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
     '''
 
     def private externalBaseImpl(Application it) '''
@@ -118,7 +118,7 @@ class ExternalController {
         «ENDIF»
 
         $objectType = «IF isLegacy»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
-        $utilArgs = array('controller' => 'external', 'action' => 'display');
+        $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'controller' => 'external', 'action' => 'display'«IF isLegacy»)«ELSE»]«ENDIF»;
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
         }
@@ -150,8 +150,8 @@ class ExternalController {
             $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->get('request_stack')->getCurrentRequest());
         «ENDIF»
-        $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
-        $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
+        $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
+        $idValues = «IF isLegacy»array(«ELSE»[«ENDIF»'id' => $id«IF isLegacy»)«ELSE»]«ENDIF»;«/** TODO consider composite keys properly */»
 
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         if (!$hasIdentifier) {
@@ -257,7 +257,7 @@ class ExternalController {
         «IF isLegacy»
             $objectType = $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
         «ENDIF»
-        $utilArgs = array('controller' => 'external', 'action' => 'finder');
+        $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'controller' => 'external', 'action' => 'finder'«IF isLegacy»)«ELSE»]«ENDIF»;
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
             $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
         }
@@ -282,14 +282,14 @@ class ExternalController {
         «IF isLegacy»
             $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
         «ENDIF»
-        if (empty($editor) || !in_array($editor, array('xinha', 'tinymce', 'ckeditor'))) {
+        if (empty($editor) || !in_array($editor, «IF isLegacy»array(«ELSE»[«ENDIF»'xinha', 'tinymce', 'ckeditor'«IF isLegacy»)«ELSE»]«ENDIF»)) {
             return $this->__('Error: Invalid editor context given for external controller action.');
         }
         «IF hasCategorisableEntities»
 
             // fetch selected categories to reselect them in the output
             // the actual filtering is done inside the repository class
-            $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
+            $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'source' => 'GET'«IF isLegacy»)«ELSE»]«ENDIF»);
         «ENDIF»
         «IF isLegacy»
             $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);
@@ -353,7 +353,7 @@ class ExternalController {
                 // collect category properties
                 $properties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', ['ot' => $objectType]);
                 }
 
             «ENDIF»

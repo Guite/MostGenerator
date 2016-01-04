@@ -136,13 +136,13 @@ class DateInput {
 
                 include_once 'lib/«IF !targets('1.3.x')»legacy/«ENDIF»viewplugins/function.jquery_datepicker.php';
         
-                $params = array(
+                $params = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                     'defaultdate' => $defaultDate,
                     'displayelement' => $this->getId(),
                     'readonly' => $this->readOnly,
                     'displayformat_datetime' => $dateFormat,
                     'displayformat_javascript' => $dateFormatJs
-                );
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         
                 $result = smarty_function_jquery_datepicker($params, $view);
 
@@ -167,7 +167,7 @@ class DateInput {
                     $dateFormatJs = 'dd.mm.yy';
                 }
 
-                return array($dateFormat, $dateFormatJs);
+                return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$dateFormat, $dateFormatJs«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             }
         }
     '''

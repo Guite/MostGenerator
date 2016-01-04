@@ -116,12 +116,12 @@ class Installer {
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
                         $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
-                        $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+                        $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                         return false;
                     «ENDIF»
                 }
-                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array(«IF targets('1.3.x')»$this->getName()«ELSE»'«appName»'«ENDIF»));
+                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', «IF targets('1.3.x')»array($this->getName())«ELSE»['«appName»']«ENDIF»);
                 if (!System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
                         $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
@@ -133,7 +133,7 @@ class Installer {
                     return LogUtil::registerError($returnMessage);
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $returnMessage);
-                    $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+                    $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                     return false;
                 «ENDIF»
@@ -147,7 +147,7 @@ class Installer {
                 «ENDFOR»
             «ENDIF»
 
-            $categoryRegistryIdsPerEntity = array();
+            $categoryRegistryIdsPerEntity = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF hasCategorisableEntities»
 
                 // add default entry for category registry (property named Main)
@@ -179,7 +179,7 @@ class Installer {
                         $registry = new CategoryRegistryEntity();
                         $registry->setModname('«appName»');
                         $registry->setEntityname('«entity.name.formatForCodeCapital»');
-                        $registry->setProperty($categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»')));
+                        $registry->setProperty($categoryApi->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»')]);
                         $registry->setCategory_Id($categoryGlobal['id']);
 
                         try {
@@ -187,8 +187,8 @@ class Installer {
                             $entityManager->persist($registry);
                             $entityManager->flush();
                         } catch (\Exception $e) {
-                            $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
-                            $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()));
+                            $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('Error! Could not create a category registry for the %s entity.', ['«entity.name.formatForDisplay»']));
+                            $logger->error('{app}: User {user} could not create a category registry for {entities} during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«entity.nameMultiple.formatForDisplay»', 'errorMessage' => $e->getMessage()]);
                         }
                         $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registry->getId();
                     «ENDFOR»
@@ -240,7 +240,7 @@ class Installer {
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $e->getMessage());
-                    $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+                    $logger->error('{app}: User {user} could not create upload folders during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                     return false;
                 «ENDIF»
@@ -286,7 +286,7 @@ class Installer {
                                 return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                             «ELSE»
                                 $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
-                                $logger->error('{app}: User {user} could not update the database tables during the upgrade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+                                $logger->error('{app}: User {user} could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                                 return false;
                             «ENDIF»
@@ -294,8 +294,8 @@ class Installer {
                         «IF targets('1.3.x')»
                             return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                         «ELSE»
-                            $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while updating tables for the %s extension.', array('«appName»')));
-                            $logger->error('{app}: User {user} could not update the database tables during the ugprade. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+                            $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while updating tables for the %s extension.', ['«appName»']));
+                            $logger->error('{app}: User {user} could not update the database tables during the ugprade. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                             return false;
                         «ENDIF»
@@ -344,8 +344,8 @@ class Installer {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                 «ELSE»
-                    $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while removing stored object workflows for the %s extension.', array('«appName»')));
-                    $logger->error('{app}: User {user} could not remove stored object workflows during uninstallation.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+                    $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while removing stored object workflows for the %s extension.', ['«appName»']));
+                    $logger->error('{app}: User {user} could not remove stored object workflows during uninstallation.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
 
                     return false;
                 «ENDIF»
@@ -363,7 +363,7 @@ class Installer {
                         return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     «ELSE»
                         $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
-                        $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+                        $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                         return false;
                     «ENDIF»
@@ -371,8 +371,8 @@ class Installer {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->getName())));
                 «ELSE»
-                    $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while dropping tables for the %s extension.', array('«appName»')));
-                    $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()));
+                    $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while dropping tables for the %s extension.', ['«appName»']));
+                    $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                     return false;
                 «ENDIF»
@@ -439,7 +439,7 @@ class Installer {
          */
         protected function listEntityClasses()
         {
-            $classNames = array();
+            $classNames = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «FOR entity : getAllEntities»
                 $classNames[] = '«entity.entityClassName('', false)»';
                 «IF entity.loggable»

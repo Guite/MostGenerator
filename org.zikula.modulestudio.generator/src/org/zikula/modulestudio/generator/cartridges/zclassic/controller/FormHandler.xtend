@@ -173,14 +173,14 @@ class FormHandler {
              *
              * @var array
              */
-            protected $idFields = array();
+            protected $idFields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             /**
              * List of identifiers of treated entity.
              *
              * @var array
              */
-            protected $idValues = array();
+            protected $idValues = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «relationPresetsHelper.memberFields(it)»
 
             /**
@@ -290,7 +290,7 @@ class FormHandler {
                  *
                  * @var array
                  */
-                protected $uploadFields = array();
+                protected $uploadFields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «ENDIF»
             «IF hasUserFields»
 
@@ -299,7 +299,7 @@ class FormHandler {
                  *
                  * @var array
                  */
-                protected $userFields = array();
+                protected $userFields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «ENDIF»
             «IF hasListFields»
 
@@ -308,7 +308,7 @@ class FormHandler {
                  *
                  * @var array
                  */
-                protected $listFields = array();
+                protected $listFields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «ENDIF»
 
 
@@ -345,9 +345,11 @@ class FormHandler {
                 «ELSE»
                     $repository = $this->view->getServiceManager()->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
                 «ENDIF»
-                $utilArgs = array('controller' => \FormUtil::getPassedValue('type', 'user', 'GETPOST'),
-                                  'action' => '«actionName.formatForCode.toFirstLower»',
-                                  'mode' => $this->mode);
+                $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    'controller' => \FormUtil::getPassedValue('type', 'user', 'GETPOST'),
+                    'action' => '«actionName.formatForCode.toFirstLower»',
+                    'mode' => $this->mode
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
             }
 
@@ -403,7 +405,7 @@ class FormHandler {
             «ELSE»
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($this->objectType) . 'Entity';
             «ENDIF»
-            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
+            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
 
             // retrieve identifier of the object we wish to view
             «IF app.targets('1.3.x')»
@@ -412,7 +414,7 @@ class FormHandler {
                 $controllerHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».controller_helper');
             «ENDIF»
 
-            $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
+            $this->idValues = $controllerHelper->retrieveIdentifier($this->request, «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
             $entity = null;
@@ -436,11 +438,12 @@ class FormHandler {
                     return false;
                 }
 
-                if ($this->hasPageLockSupport === true && ModUtil::available('PageLock')) {
+                if ($this->hasPageLockSupport === true && ModUtil::available('«IF targets('1.3.x')»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
                     // try to guarantee that only one person at a time can be editing this entity
-                    ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                             array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
-                                                   'returnUrl' => $this->getRedirectUrl(null)));
+                    ModUtil::apiFunc('«IF targets('1.3.x')»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'pageLock', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                                         'lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
+                                         'returnUrl' => $this->getRedirectUrl(null)
+                    «IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 }
             } else {
                 if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, '::', ACCESS_EDIT)) {
@@ -472,9 +475,9 @@ class FormHandler {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('error', $this->__('Error! Could not determine workflow actions.'));
+                    $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not determine workflow actions.'));
                     $logger = $this->view->getServiceManager()->get('logger');
-                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()));
+                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()]);
                     throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
                 «ENDIF»
             }
@@ -555,7 +558,7 @@ class FormHandler {
          */
         protected function initEntityForEdit()
         {
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'id' => $this->idValues«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
             if ($entity == null) {
                 «IF targets('1.3.x')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
             }
@@ -586,14 +589,14 @@ class FormHandler {
             }
 
             if ($this->hasTemplateId === true) {
-                $templateIdValues = array();
+                $templateIdValues = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $i = 0;
                 foreach ($this->idFields as $idField) {
                     $templateIdValues[$idField] = $templateIdValueParts[$i];
                     $i++;
                 }
                 // reuse existing entity
-                $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
+                $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'id' => $templateIdValues«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 if ($entityT == null) {
                     «IF targets('1.3.x')»return LogUtil::registerError«ELSE»throw new NotFoundHttpException«ENDIF»($this->__('No such item.'));
                 }
@@ -652,10 +655,10 @@ class FormHandler {
             {
                 $entity = $this->entityRef;
 
-                $entityData = array();«/*$entity->toArray(); not required probably*/»
+                $entityData = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;«/*$entity->toArray(); not required probably*/»
 
                 // overwrite attributes array entry with a form compatible format
-                $attributes = array();
+                $attributes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($this->getAttributeFieldNames() as $fieldName) {
                     $attributes[$fieldName] = $entity->getAttributes()->get($fieldName) ? $entity->getAttributes()->get($fieldName)->getValue() : '';
                 }
@@ -671,7 +674,9 @@ class FormHandler {
              */
             protected function getAttributeFieldNames()
             {
-                return array('field1', 'field2', 'field3');
+                return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    'field1', 'field2', 'field3'
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             }
         «ENDIF»
     '''
@@ -690,12 +695,12 @@ class FormHandler {
                 $this->view->assign($this->objectTypeLower . 'Obj', $entity);
 
                 // load and assign registered categories
-                $registries = ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $this->idFields[0]));
+                $registries = ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'arraykey' => $this->idFields[0]«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
 
                 // check if multiple selection is allowed for this object type
-                $multiSelectionPerRegistry = array();
+                $multiSelectionPerRegistry = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($registries as $registryId => $registryCid) {
-                    $multiSelectionPerRegistry[$registryId] = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
+                    $multiSelectionPerRegistry[$registryId] = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'registry' => $registryId«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 }
                 $this->view->assign('registries', $registries)
                            ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
@@ -713,7 +718,7 @@ class FormHandler {
             {
                 $entity = $this->entityRef;
 
-                $metaData = $entity->getMetadata() != null ? $entity->getMetadata()->toArray() : array();
+                $metaData = $entity->getMetadata() != null ? $entity->getMetadata()->toArray() : «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $this->view->assign('meta', $metaData);
             }
         «ENDIF»
@@ -740,7 +745,7 @@ class FormHandler {
         public function handleCommand(Zikula_Form_View $view, &$args)
         {
             $action = $args['commandName'];
-            $isRegularAction = !in_array($action, array('delete', 'cancel'));
+            $isRegularAction = !in_array($action, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'delete', 'cancel'«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
 
             if ($isRegularAction) {
                 // do forms validation including checking all validators on the page to validate their input
@@ -763,7 +768,7 @@ class FormHandler {
                 $hookAreaPrefix = $entity->getHookAreaPrefix();
                 if ($action != 'cancel') {
                     $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-    
+
                     // Let any hooks perform additional validation actions
                     «IF targets('1.3.x')»
                         $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
@@ -822,9 +827,10 @@ class FormHandler {
                 «ENDIF»
             }
 
-            if ($this->hasPageLockSupport === true && $this->mode == 'edit' && ModUtil::available('PageLock')) {
-                ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                                 array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()));
+            if ($this->hasPageLockSupport === true && $this->mode == 'edit' && ModUtil::available('«IF targets('1.3.x')»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
+                ModUtil::apiFunc('«IF targets('1.3.x')»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'releaseLock', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                                     'lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»);
             }
 
             return $this->view->redirect($this->getRedirectUrl($args));
@@ -982,13 +988,14 @@ class FormHandler {
                         LogUtil::registerError($message);
                     }
                 «ELSE»
-                    $flashType = ($success === true) ? 'status' : 'error';
+                    $flashType = ($success === true) ? \Zikula_Session::MESSAGE_STATUS : \Zikula_Session::MESSAGE_ERROR;
                     $this->request->getSession()->getFlashBag()->add($flashType, $message);
                     $logger = $this->view->getServiceManager()->get('logger');
+                    $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
                     if ($success === true) {
-                        $logger->notice('{app}: User {user} updated the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()));
+                        $logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
                     } else {
-                        $logger->error('{app}: User {user} tried to update the {entity} with id {id}, but failed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()));
+                        $logger->error('{app}: User {user} tried to update the {entity} with id {id}, but failed.', $logArgs);
                     }
                 «ENDIF»
             }
@@ -1195,7 +1202,7 @@ class FormHandler {
          *
          * @return bool Whether everything worked well or not.
          */
-        public function applyAction(array $args = array())
+        public function applyAction(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             // stub for subclasses
             return false;
@@ -1324,15 +1331,15 @@ class FormHandler {
             «ENDIF»
             «IF hasUploadFieldsEntity»
                 // array with upload fields and mandatory flags
-                $this->uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»);
+                $this->uploadFields = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
             «ENDIF»
             «IF hasUserFieldsEntity»
                 // array with user fields and mandatory flags
-                $this->userFields = array(«FOR userField : getUserFieldsEntity SEPARATOR ', '»'«userField.name.formatForCode»' => «userField.mandatory.displayBool»«ENDFOR»);
+                $this->userFields = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR userField : getUserFieldsEntity SEPARATOR ', '»'«userField.name.formatForCode»' => «userField.mandatory.displayBool»«ENDFOR»«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
             «ENDIF»
             «IF hasListFieldsEntity»
                 // array with list fields and multiple flags
-                $this->listFields = array(«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»);
+                $this->listFields = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
             «ENDIF»
         }
     '''
@@ -1428,7 +1435,7 @@ class FormHandler {
                         LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
                     «ELSE»
                         $logger = $this->view->getServiceManager()->get('logger');
-                        $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType));
+                        $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType]);
                     «ENDIF»
 
                     return $this->view->redirect($this->getRedirectUrl(null));
@@ -1481,21 +1488,21 @@ class FormHandler {
 
                 $uid = UserUtil::getVar('uid');
                 $isCreator = $entity['createdUserId'] == $uid;
-                «IF !application.targets('1.3.x')»
+                «IF !app.targets('1.3.x')»
                     $varHelper = $this->view->getServiceManager()->get('zikula_extensions_module.api.variable');
                 «ENDIF»
                 «IF workflow == EntityWorkflowType.ENTERPRISE»
-                    $groupArgs = array('uid' => $uid, 'gid' => «IF application.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«application.appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2));
-                    $isModerator = ModUtil::apiFunc('«IF application.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
-                    $groupArgs = array('uid' => $uid, 'gid' => «IF application.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«application.appName»', «ENDIF»'superModerationGroupFor' . $this->objectTypeCapital, 2));
-                    $isSuperModerator = ModUtil::apiFunc('«IF application.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                    $groupArgs = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF app.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«app.appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2)«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                    $isModerator = ModUtil::apiFunc('«IF app.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                    $groupArgs = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF app.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«app.appName»', «ENDIF»'superModerationGroupFor' . $this->objectTypeCapital, 2)«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                    $isSuperModerator = ModUtil::apiFunc('«IF app.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
 
                     $this->view->assign('isCreator', $isCreator)
                                ->assign('isModerator', $isModerator)
                                ->assign('isSuperModerator', $isSuperModerator);
                 «ELSEIF workflow == EntityWorkflowType.STANDARD»
-                    $groupArgs = array('uid' => $uid, 'gid' => «IF application.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«application.appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2));
-                    $isModerator = ModUtil::apiFunc('«IF application.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
+                    $groupArgs = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF app.targets('1.3.x')»$this->getVar(«ELSE»$varHelper->get('«app.appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2)«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                    $isModerator = ModUtil::apiFunc('«IF app.targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
 
                     $this->view->assign('isCreator', $isCreator)
                                ->assign('isModerator', $isModerator)
@@ -1579,7 +1586,7 @@ class FormHandler {
          * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs
          «ENDIF»
          */
-        public function applyAction(array $args = array())
+        public function applyAction(array $args = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
@@ -1626,18 +1633,18 @@ class FormHandler {
                     «IF app.targets('1.3.x')»
                         LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                     «ELSE»
-                        $this->request->getSession()->getFlashBag()->add('error', $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                        $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                         $logger = $this->view->getServiceManager()->get('logger');
-                        $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
+                        $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()]);
                     «ENDIF»
             «ENDIF»
             } catch(\Exception $e) {
                 «IF app.targets('1.3.x')»
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
                     $logger = $this->view->getServiceManager()->get('logger');
-                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()));
+                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }
 

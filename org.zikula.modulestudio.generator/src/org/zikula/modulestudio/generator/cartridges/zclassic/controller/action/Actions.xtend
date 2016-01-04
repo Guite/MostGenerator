@@ -64,7 +64,7 @@ class Actions {
             «ELSE»
                 $objectType = $request->query->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
             «ENDIF»
-            $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
+            $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»'«IF isLegacy»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
@@ -109,7 +109,7 @@ class Actions {
             return ModUtil::func($this->name, $objectType, '«name.formatForCode»', array('lct' => '«controller.formattedName»'));
         «ELSE»
             $logger = $this->get('logger');
-            $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', array('app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»'));
+            $logger->warning('{app}: The {controller} controller\'s {action} action is deprecated. Please use entity-related controllers instead.', ['app' => '«app.appName»', 'controller' => '«controller.name.formatForDisplay»', 'action' => '«name.formatForDisplay»']);
 
             return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . '«name.formatForDB»', $redirectArgs);
         «ENDIF»
@@ -127,7 +127,7 @@ class Actions {
 
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
-            $utilArgs = array('controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»');
+            $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»'«IF isLegacy»)«ELSE»]«ENDIF»;
             «IF isLegacy»
                 $permLevel = $legacyControllerType == 'admin' ? ACCESS_ADMIN : «action.getPermissionAccessLevel»;
             «ELSE»
@@ -290,7 +290,7 @@ class Actions {
         }
 
         // convenience vars to make code clearer
-        $currentUrlArgs = array('ot' => $objectType);
+        $currentUrlArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»;
 
         «IF isLegacy»
             $where = $this->request->query->get('where', '');
@@ -299,11 +299,11 @@ class Actions {
         «ENDIF»
         $where = str_replace('"', '', $where);
 
-        $selectionArgs = array(
+        $selectionArgs = «IF isLegacy»array(«ELSE»[«ENDIF»
             'ot' => $objectType,
             'where' => $where,
             'orderBy' => $sort . ' ' . $sortdir
-        );
+        «IF isLegacy»)«ELSE»]«ENDIF»;
 
         «prepareViewUrlArgs(false)»
 
@@ -392,7 +392,7 @@ class Actions {
                 $tpl = $request->query->getAlpha('tpl', '');
             «ENDIF»
             if ($tpl == 'tree') {
-                $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
+                $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
                 «IF isLegacy»
                     $this->view->assign('trees', $trees)
                                ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
@@ -410,7 +410,7 @@ class Actions {
         «ENDIF»
 
         // convenience vars to make code clearer
-        $currentUrlArgs = array();
+        $currentUrlArgs = «IF isLegacy»array()«ELSE»[]«ENDIF»;
         $where = '';
 
         «prepareViewUrlArgs(true)»
@@ -450,11 +450,11 @@ class Actions {
             «sortableColumns»
         «ENDIF»
 
-        $selectionArgs = array(
+        $selectionArgs = «IF isLegacy»array(«ELSE»[«ENDIF»
             'ot' => $objectType,
             'where' => $where,
             'orderBy' => $sort . ' ' . $sortdir
-        );
+        «IF isLegacy»)«ELSE»]«ENDIF»;
         «IF isLegacy»
 
             // prepare access level for cache id
@@ -549,11 +549,11 @@ class Actions {
         «ENDIF»
         $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
 
-        $additionalUrlParameters = array(
+        $additionalUrlParameters = [
             'all' => $showAllEntries,
             'own' => $showOwnEntries,
             'pageSize' => $resultsPerPage
-        );
+        ];
         $additionalUrlParameters = array_merge($additionalUrlParameters, $additionalParameters);
         $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
     '''
@@ -640,7 +640,7 @@ class Actions {
     '''
 
     def private prepareViewItemsAjax(Controller it) '''
-        $items = array();
+        $items = «IF isLegacy»array()«ELSE»[]«ENDIF»;
         «IF app.hasListFields»
             «IF isLegacy»
                 $listHelper = new «app.appName»_Util_ListEntries($this->serviceManager);
@@ -648,7 +648,7 @@ class Actions {
                 $listHelper = $this->get('«app.appName.formatForDB».listentries_helper');
             «ENDIF»
 
-            $listObjectTypes = array(«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+            $listObjectTypes = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
             $hasListFields = (in_array($objectType, $listObjectTypes));
 
             foreach ($entities as $item) {
@@ -673,8 +673,10 @@ class Actions {
             }
         «ENDIF»
 
-        $result = array('objectCount' => $objectCount,
-                        'items' => $items);
+        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
+            'objectCount' => $objectCount,
+            'items' => $items
+        «IF isLegacy»)«ELSE»]«ENDIF»;
 
         return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
     '''
@@ -697,10 +699,10 @@ class Actions {
             $repository->setRequest($request);
         «ENDIF»
 
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
 
         // retrieve identifier of the object we wish to view
-        $idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $objectType, $idFields);
+        $idValues = $controllerHelper->retrieveIdentifier($this->request, «IF isLegacy»array()«ELSE»[]«ENDIF», $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
         «IF isLegacy»
@@ -711,7 +713,7 @@ class Actions {
             }
         «ENDIF»
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $idValues«IF isLegacy»)«ELSE»]«ENDIF»);
         «IF isLegacy»
             $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         «ELSE»
@@ -727,10 +729,10 @@ class Actions {
 
         «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
-        $result = array(
+        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
             'result' => true,
             $objectType => $entity->toArray()
-        );
+        «IF isLegacy»)«ELSE»]«ENDIF»;
 
         return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
     '''
@@ -854,7 +856,7 @@ class Actions {
         switch controller {
             AjaxController: '''
         $this->checkAjaxToken();
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
 
         «IF isLegacy»
             $data = $this->request->query->get('data', null);
@@ -863,7 +865,7 @@ class Actions {
         «ENDIF»
         $data = json_decode($data, true);
 
-        $idValues = array();
+        $idValues = «IF isLegacy»array()«ELSE»[]«ENDIF»;
         foreach ($idFields as $idField) {
             $idValues[$idField] = isset($data[$idField]) ? $data[$idField] : '';
         }
@@ -876,7 +878,7 @@ class Actions {
             }
         «ENDIF»
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $idValues«IF isLegacy»)«ELSE»]«ENDIF»);
         «IF isLegacy»
             $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         «ELSE»
@@ -890,10 +892,10 @@ class Actions {
 
         «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
 
-        $result = array(
+        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
             'result' => false,
             $objectType => $entity->toArray()
-        );
+        «IF isLegacy»)«ELSE»]«ENDIF»;
 
         $hasErrors = false;
         if ($entity->supportsHookSubscribers()) {
@@ -939,14 +941,14 @@ class Actions {
             «IF !isLegacy»
 
                 $logger = $this->get('logger');
-                $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId));
+                $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId]);
             «ENDIF»
         }
 
-        $result = array(
+        $result = «IF isLegacy»array(«ELSE»[«ENDIF»
             'result' => true,
             $objectType => $entity->toArray()
-        );
+        «IF isLegacy»)«ELSE»]«ENDIF»;
 
         return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
                     '''
@@ -1025,6 +1027,7 @@ class Actions {
             $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
             $flashBag = $this->request->getSession()->getFlashBag();
             $logger = $this->get('logger');
+            $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
         «ENDIF»
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {
@@ -1032,7 +1035,7 @@ class Actions {
                 return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
             «ELSE»
                 $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not determine workflow actions.'));
-                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
+                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
                 throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
             «ENDIF»
         }
@@ -1052,7 +1055,7 @@ class Actions {
                 return LogUtil::registerError($this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
             «ELSE»
                 $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
-                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
+                $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
             «ENDIF»
         }
 
@@ -1087,7 +1090,7 @@ class Actions {
                         $this->registerStatus($this->__('Done! Item deleted.'));
                     «ELSE»
                         $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item deleted.'));
-                        $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()));
+                        $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
                     «ENDIF»
                 }
 
@@ -1183,7 +1186,7 @@ class Actions {
         «ENDIF»
 
         «IF controller instanceof AjaxController»
-            return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true));
+            return new «IF isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(«IF isLegacy»array(«ELSE»[«ENDIF»'result' => true«IF isLegacy»)«ELSE»]«ENDIF»);
         «ELSE»
             // return template
             «IF isLegacy»

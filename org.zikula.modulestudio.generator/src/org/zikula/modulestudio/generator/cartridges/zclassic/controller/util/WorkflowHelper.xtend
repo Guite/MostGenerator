@@ -105,7 +105,7 @@ class WorkflowHelper {
          */
         public function getObjectStates()
         {
-            $states = array();
+            $states = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «val states = getRequiredStateList»
             «FOR state : states»
                 «stateInfo(state)»
@@ -117,9 +117,11 @@ class WorkflowHelper {
     '''
 
     def private stateInfo(Application it, ListFieldItem item) '''
-        $states[] = array('value' => '«item.value»',
-                          'text' => $this->«IF !targets('1.3.x')»translator->«ENDIF»__('«item.name»'),
-                          'ui' => '«uiFeedback(item)»');
+        $states[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            'value' => '«item.value»',
+            'text' => $this->«IF !targets('1.3.x')»translator->«ENDIF»__('«item.name»'),
+            'ui' => '«uiFeedback(item)»'
+        «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
     '''
 
     def private uiFeedback(Application it, ListFieldItem item) {
@@ -264,12 +266,12 @@ class WorkflowHelper {
                 $listHelper = $this->container->get('«appName.formatForDB».listentries_helper');
             «ENDIF»
             $states = $listHelper->getEntries($objectType, 'workflowState');
-            $allowedStates = array();
+            $allowedStates = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             foreach ($states as $state) {
                 $allowedStates[] = $state['value'];
             }
 
-            $actions = array();
+            $actions = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             foreach ($wfActions as $actionId => $action) {
                 $nextState = (isset($action['nextState']) ? $action['nextState'] : '');
                 if ($nextState != '' && !in_array($nextState, $allowedStates)) {
@@ -429,7 +431,7 @@ class WorkflowHelper {
                 return true;
             }
 
-            $entity['__WORKFLOW__'] = array(
+            $entity['__WORKFLOW__'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'module'        => '«appName»',
                 'id'            => $workflow->getId(),
                 'state'         => $workflow->getState(),
@@ -437,7 +439,7 @@ class WorkflowHelper {
                 'obj_idcolumn'  => $workflow->getObjIdcolumn(),
                 'obj_id'        => $workflow->getObjId(),
                 'schemaname'    => $workflow->getSchemaname()
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             return true;
         }
@@ -452,7 +454,7 @@ class WorkflowHelper {
          */
         public function collectAmountOfModerationItems()
         {
-            $amounts = array();
+            $amounts = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             $modname = '«appName»';
 
             «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
@@ -496,18 +498,18 @@ class WorkflowHelper {
         if («IF application.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if ($amount > 0) {
-                $amounts[] = array(
+                $amounts[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
                     'description' => $this->«IF !application.targets('1.3.x')»translator->«ENDIF»__('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
                     'message' => $this->«IF !application.targets('1.3.x')»translator->«ENDIF»_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
-                );
+                «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «IF !application.targets('1.3.x')»
 
                     if ($amounts > 0) {
-                        $logger->info('{app}: There are {amount} {entities} waiting for approval.', array('app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»'));
+                        $logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']);
                     }
                 «ENDIF»
             }
@@ -535,7 +537,7 @@ class WorkflowHelper {
             «ENDIF»
 
             $where = 'tbl.workflowState = \'' . $state . '\'';
-            $parameters = array('workflowState' => $state);
+            $parameters = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'workflowState' => $state«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             $useJoins = false;
             $amount = $repository->selectCount($where, $useJoins, $parameters);
 

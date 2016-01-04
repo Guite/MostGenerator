@@ -54,7 +54,7 @@ class Category {
          *
          * @return mixed Category array on success, false on failure.
          */
-        public function getMainCat(array $args = array())
+        public function getMainCat(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             if (isset($args['registry'])) {
                 $args['registry'] = $this->getPrimaryProperty($args);
@@ -63,8 +63,7 @@ class Category {
             $objectType = $this->determineObjectType($args, 'getMainCat');
             «IF !targets('1.3.x')»
 
-                $logger = $this->get('logger');
-                $logger->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+                $this->get('logger')->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
             «ENDIF»
 
             return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucfirst($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
@@ -80,7 +79,7 @@ class Category {
          *
          * @return boolean true if multiple selection is allowed, else false.
          */
-        public function hasMultipleSelection(array $args = array())
+        public function hasMultipleSelection(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             if (isset($args['registry'])) {
                 // default to the primary registry
@@ -112,7 +111,7 @@ class Category {
          *
          * @return array The fetched data indexed by the registry id.
          */
-        public function retrieveCategoriesFromRequest(array $args = array())
+        public function retrieveCategoriesFromRequest(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             «IF targets('1.3.x')»
                 $dataSource = $this->request->request;
@@ -127,15 +126,15 @@ class Category {
                 }
             «ENDIF»
 
-            $catIdsPerRegistry = array();
+            $catIdsPerRegistry = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             $objectType = $this->determineObjectType($args, 'retrieveCategoriesFromRequest');
             $properties = $this->getAllProperties($args);
             foreach ($properties as $propertyName => $propertyId) {
-                $hasMultiSelection = $this->hasMultipleSelection(array('ot' => $objectType, 'registry' => $propertyName));
+                $hasMultiSelection = $this->hasMultipleSelection(«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType, 'registry' => $propertyName«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 if ($hasMultiSelection === true) {
                     $argName = 'catids' . $propertyName;
-                    $inputValue = $dataSource->get($argName, array());
+                    $inputValue = $dataSource->get($argName, «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
                     if (!is_array($inputValue)) {
                         $inputValue = explode(',', $inputValue);
                     }
@@ -146,7 +145,7 @@ class Category {
                     «ELSE»
                         $inputVal = $dataSource->getInt($argName, 0);
                     «ENDIF»
-                    $inputValue = array();
+                    $inputValue = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                     if ($inputVal > 0) {
                         $inputValue[] = $inputVal;
                     }
@@ -174,15 +173,19 @@ class Category {
          *
          * @return Doctrine\ORM\QueryBuilder The enriched query builder instance.
          */
-        public function buildFilterClauses(array $args = array())
+        public function buildFilterClauses(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $qb = $args['qb'];
 
             $properties = $this->getAllProperties($args);
             $catIds = $args['catids'];
 
-            $filtersPerRegistry = array();
-            $filterParameters = array('values' => array(), 'registries' => array());
+            $filtersPerRegistry = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            «IF targets('1.3.x')»
+                $filterParameters = array('values' => array(), 'registries' => array());
+            «ELSE»
+                $filterParameters = ['values' => [], 'registries' => []];
+            «ENDIF»
 
             foreach ($properties as $propertyName => $propertyId) {
                 if (!isset($catIds[$propertyName]) || !is_array($catIds[$propertyName]) || !count($catIds[$propertyName])) {
@@ -217,7 +220,7 @@ class Category {
          *
          * @return array list of the registries (property name as key, id as value).
          */
-        public function getAllProperties(array $args = array())
+        public function getAllProperties(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $objectType = $this->determineObjectType($args, 'getAllProperties');
 
@@ -234,7 +237,7 @@ class Category {
          *
          * @return array list of the registries (registry id as key, main category id as value).
          */
-        public function getAllPropertiesWithMainCat(array $args = array())
+        public function getAllPropertiesWithMainCat(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $objectType = $this->determineObjectType($args, 'getAllPropertiesWithMainCat');
 
@@ -255,7 +258,7 @@ class Category {
          *
          * @return integer The main category id of desired tree.
          */
-        public function getMainCatForProperty(array $args = array())
+        public function getMainCatForProperty(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $objectType = $this->determineObjectType($args, 'getMainCatForProperty');
 
@@ -271,7 +274,7 @@ class Category {
          *
          * @return string name of the main registry.
          */
-        public function getPrimaryProperty(array $args = array())
+        public function getPrimaryProperty(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $objectType = $this->determineObjectType($args, 'getPrimaryProperty');
 
@@ -288,7 +291,7 @@ class Category {
          *
          * @return string name of the determined object type
          */
-        protected function determineObjectType(array $args = array(), $methodName = '')
+        protected function determineObjectType(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
             «IF targets('1.3.x')»
@@ -296,7 +299,7 @@ class Category {
             «ELSE»«/* we can not use the container here, because it is not available yet during installation */»
                 $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->serviceManager, $this->serviceManager->get('translator'), $this->serviceManager->get('session'), $this->serviceManager->get('logger'));
             «ENDIF»
-            $utilArgs = array('api' => 'category', 'action' => $methodName);
+            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'api' => 'category', 'action' => $methodName«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
             }

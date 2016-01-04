@@ -104,7 +104,7 @@ class EntityConstructor {
             «ENDIF»
             «FOR listField : getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)]»
 
-                $items = array();
+                $items = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $listEntries = $listHelper->get«listField.name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();
                 foreach ($listEntries as $listEntry) {
                     if ($listEntry['default'] === true) {

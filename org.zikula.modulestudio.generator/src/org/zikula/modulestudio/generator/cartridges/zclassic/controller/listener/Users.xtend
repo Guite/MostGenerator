@@ -16,9 +16,9 @@ class Users {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'module.users.config.updated' => array('configUpdated', 5)
-                    );
+                    return [
+                        'module.users.config.updated' => ['configUpdated', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»

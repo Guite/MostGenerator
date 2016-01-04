@@ -232,7 +232,7 @@ class Entities {
              «ENDIF»
              * @var array List of change notification listeners.
              */
-            protected $_propertyChangedListeners = array();
+            protected $_propertyChangedListeners = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
         «ENDIF»
 
         /**
@@ -241,12 +241,12 @@ class Entities {
          «ENDIF»
          * @var array List of available item actions.
          */
-        protected $_actions = array();
+        protected $_actions = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         /**
          * @var array The current workflow data of this object.
          */
-        protected $__WORKFLOW__ = array();
+        protected $__WORKFLOW__ = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
         «extMan.additionalProperties»
@@ -261,8 +261,8 @@ class Entities {
             «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
         «ENDIF»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
-        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
+        «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»

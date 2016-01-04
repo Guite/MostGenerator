@@ -94,13 +94,13 @@ class BlockList {
          */
         protected function getDefaults()
         {
-            $defaults = array(
+            $defaults = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'sorting' => 'default',
                 'amount' => 5,
                 'customTemplate' => '',
                 'filter' => ''
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             return $defaults;
         }
@@ -117,8 +117,8 @@ class BlockList {
             protected function resolveCategoryIds(array $properties)
             {
                 if (!isset($properties['catIds'])) {
-                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']));
-                    $properties['catIds'] = array($primaryRegistry => array());
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $properties['catIds'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$primaryRegistry => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
                     // backwards compatibility
                     if (isset($properties['catId'])) {
                         $properties['catIds'][$primaryRegistry][] = $properties['catId'];
@@ -163,15 +163,17 @@ class BlockList {
                 $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName» module.');
             }
 
-            return array('module'          => '«appName»',
-                         'text_type'       => $this->__('«appName» list view'),
-                         'text_type_long'  => $this->__('Display list of «appName» objects.'),
-                         'allow_multiple'  => true,
-                         'form_content'    => false,
-                         'form_refresh'    => false,
-                         'show_preview'    => true,
-                         'admin_tableless' => true,
-                         'requirement'     => $requirementMessage);
+            return array(
+                'module'          => '«appName»',
+                'text_type'       => $this->__('«appName» list view'),
+                'text_type_long'  => $this->__('Display list of «appName» objects.'),
+                'allow_multiple'  => true,
+                'form_content'    => false,
+                'form_refresh'    => false,
+                'show_preview'    => true,
+                'admin_tableless' => true,
+                'requirement'     => $requirementMessage
+            );
         }
     '''
 
@@ -232,7 +234,7 @@ class BlockList {
             «ELSE»
                 $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
-            $utilArgs = array('name' => 'list');
+            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'list'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
                 $properties['objectType'] = $controllerHelper->getDefaultObjectType('block', $utilArgs);
             }
@@ -279,13 +281,13 @@ class BlockList {
 
                 $properties = null;
                 if (in_array($properties['objectType'], $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 }
 
                 // apply category filters
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
                     if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
-                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $objectType, 'catids' => $properties['catIds']));
+                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => $objectType, 'catids' => $properties['catIds']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                     }
                 }
             «ENDIF»
@@ -384,7 +386,7 @@ class BlockList {
 
             $sortParam = '';
             if ($properties['sorting'] == 'newest') {
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $properties['objectType']));
+                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {
@@ -501,10 +503,10 @@ class BlockList {
             }
             «IF hasCategorisableEntities»
 
-                $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']));
-                $properties['catIds'] = array($primaryRegistry => array());
+                $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                $properties['catIds'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$primaryRegistry => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
                 if (in_array($properties['objectType'], $this->categorisableObjectTypes)) {
-                    $properties['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $properties['objectType']));
+                    $properties['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 }
             «ENDIF»
 

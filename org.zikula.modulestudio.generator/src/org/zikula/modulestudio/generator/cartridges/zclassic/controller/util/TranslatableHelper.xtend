@@ -93,7 +93,7 @@ class TranslatableHelper {
          */
         public function getTranslatableFields($objectType)
         {
-            $fields = array();
+            $fields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             switch ($objectType) {
                 «FOR entity : getTranslatableEntities»
                     «entity.translatableFieldList»
@@ -117,7 +117,7 @@ class TranslatableHelper {
          */
         public function prepareEntityForEdit($objectType, $entity)
         {
-            $translations = array();
+            $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             // check arguments
             if (!$objectType || !$entity) {
@@ -156,7 +156,7 @@ class TranslatableHelper {
                     // Translatable extension did already fetch current translation
                     continue;
                 }
-                $translationData = array();
+                $translationData = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($fields as $field) {
                     $translationData[$field['name'] . $locale] = isset($entityTranslations[$locale]) ? $entityTranslations[$locale][$field['name']] : '';
                 }
@@ -181,7 +181,7 @@ class TranslatableHelper {
          */
         public function processEntityAfterEdit($objectType, $formData)
         {
-            $translations = array();
+            $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             // check arguments
             if (!$objectType || !is_array($formData)) {
                 return $translations;
@@ -202,7 +202,7 @@ class TranslatableHelper {
                         // skip current language as this is not treated as translation on controller level
                         continue;
                     }
-                    $translations[$locale] = array('locale' => $locale, 'fields' => array());
+                    $translations[$locale] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'locale' => $locale, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
                     $translationData = $formData[strtolower($objectType) . $locale];
                     foreach ($fields as $field) {
                         $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
@@ -212,7 +212,7 @@ class TranslatableHelper {
             }
             if ($useOnlyCurrentLocale === true) {
                 $locale = ZLanguage::getLanguageCode();
-                $translations[$locale] = array('locale' => $locale, 'fields' => array());
+                $translations[$locale] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'locale' => $locale, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
                 $translationData = $formData[strtolower($objectType) . $locale];
                 foreach ($fields as $field) {
                     $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
@@ -226,9 +226,9 @@ class TranslatableHelper {
 
     def private translatableFieldList(Entity it) '''
             case '«name.formatForCode»':
-                $fields = array(
+                $fields = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                     «translatableFieldDefinition»
-                );
+                «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 break;
     '''
 
@@ -236,16 +236,20 @@ class TranslatableHelper {
         «FOR field : getTranslatableFields SEPARATOR ','»«field.translatableFieldDefinition»«ENDFOR»
 «/* TODO no slug input element yet, see https://github.com/Atlantic18/DoctrineExtensions/issues/140
 «IF hasTranslatableSlug»,
-                    array('name' => 'slug',
-                          'default' => '')
+                    «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'name' => 'slug',
+                        'default' => ''
+                    «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»
 «ENDIF»*/»
     '''
 
     def private translatableFieldDefinition(EntityField it) {
         switch it {
             BooleanField: '''
-                    array('name' => '«name»',
-                          'default' => «IF it.defaultValue !== null && it.defaultValue != ''»«(it.defaultValue == 'true').displayBool»«ELSE»false«ENDIF»)'''
+                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'name' => '«name»',
+                        'default' => «IF it.defaultValue !== null && it.defaultValue != ''»«(it.defaultValue == 'true').displayBool»«ELSE»false«ENDIF»
+                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
             AbstractIntegerField: translatableFieldDefinitionNumeric
             DecimalField: translatableFieldDefinitionNumeric
             FloatField: translatableFieldDefinitionNumeric
@@ -253,24 +257,34 @@ class TranslatableHelper {
             ArrayField: translatableFieldDefinitionNoDefault
             ObjectField: translatableFieldDefinitionNoDefault
             AbstractDateField: '''
-                    array('name' => '«name»',
-                          'default' => '«IF it.defaultValue !== null && it.defaultValue != ''»«it.defaultValue»«ENDIF»')'''
+                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'name' => '«name»',
+                        'default' => '«IF it.defaultValue !== null && it.defaultValue != ''»«it.defaultValue»«ENDIF»'
+                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
             DerivedField: '''
-                    array('name' => '«name»',
-                          'default' => $this->__('«IF it.defaultValue !== null && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»'))'''
+                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'name' => '«name»',
+                        'default' => $this->__('«IF it.defaultValue !== null && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
+                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
             CalculatedField: '''
-                    array('name'    => '«name»',
-                          'default' => $this->__('«name.formatForDisplayCapital»'))'''
+                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'name' => '«name»',
+                        'default' => $this->__('«name.formatForDisplayCapital»')
+                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
         }
     }
 
     def private translatableFieldDefinitionNumeric(DerivedField it) '''
-                    array('name' => '«name»',
-                          'default' => 0)'''
+                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'name' => '«name»',
+                        'default' => 0
+                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
 
     def private translatableFieldDefinitionNoDefault(DerivedField it) '''
-                    array('name' => '«name»',
-                          'default' => '')'''
+                    «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        'name' => '«name»',
+                        'default' => ''
+                    «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
 
     def private translatableFunctionsImpl(Application it) '''
         «IF !targets('1.3.x')»

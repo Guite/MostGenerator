@@ -17,12 +17,12 @@ class UserLogin {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'module.users.ui.login.started'   => array('started', 5),
-                        'module.users.ui.login.veto'      => array('veto', 5),
-                        'module.users.ui.login.succeeded' => array('succeeded', 5),
-                        'module.users.ui.login.failed'    => array('failed', 5)
-                    );
+                    return [
+                        'module.users.ui.login.started'   => ['started', 5],
+                        'module.users.ui.login.veto'      => ['veto', 5],
+                        'module.users.ui.login.succeeded' => ['succeeded', 5],
+                        'module.users.ui.login.failed'    => ['failed', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»
@@ -89,7 +89,7 @@ class UserLogin {
          *
          * To, instead, redirect the user back to the log-in screen (after possibly setting an error message that will
          * be displayed), then set the event data to contain an array with a single element, `retry`, having a value
-         * of true (e.g., `$event->setData(array('retry' => true));`).  This will signal the log-in process to go back 
+         * of true (e.g., `$event->setData(«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'retry' => true«IF targets('1.3.x')»)«ELSE»]«ENDIF»);`). This will signal the log-in process to go back 
          * to the log-in screen for another attempt. The expectation is that the notifying event handler has set an 
          * error message, and that the user will be able to log-in if the instructions in that message are followed, 
          * or the conditions in that message can be met. 
@@ -142,27 +142,27 @@ class UserLogin {
          * prior to logging in. The code used for the notification might look like the following example:
          *
          *     $event->stop«IF !targets('1.3.x')»Propagation«ENDIF»();
-         *     $event->setData(array(
-         *         'redirect_func'  => array(
+         *     $event->setData(«IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+         *         'redirect_func' => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
          *             'modname'   => '«IF targets('1.3.x')»Users«ELSE»ZikulaUsersModule«ENDIF»',
          *             'type'      => 'user',
          *             'func'      => 'changePassword',
-         *             'args'      => array(
+         *             'args'      => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
          *                 'login'     => true,
-         *             ),
-         *             'session'   => array(
+         *             «IF targets('1.3.x')»)«ELSE»]«ENDIF»,
+         *             'session'   => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
          *                 'var'       => 'Users_Controller_User_changePassword',
          *                 'namespace' => 'Zikula_Users',
-         *             )
-         *         ),
-         *     ));
+         *             «IF targets('1.3.x')»)«ELSE»]«ENDIF»
+         *         «IF targets('1.3.x')»)«ELSE»]«ENDIF»,
+         *     «IF targets('1.3.x')»)«ELSE»]«ENDIF»);
          *
          «IF targets('1.3.x')»
          *     LogUtil::registerError(__("Your log-in request was not completed. You must change your web site account's password first."));
          «ELSE»
          *     $serviceManager = ServiceUtil::getManager();
          *     $session = $serviceManager->get('session');
-         *     $session->getFlashBag()->add('error', __("Your log-in request was not completed. You must change your web site account's password first."));
+         *     $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, __("Your log-in request was not completed. You must change your web site account's password first."));
          «ENDIF»
          *
          * In this example, the user will be redirected to the URL pointing to the `changePassword` function. This URL is constructed by calling 

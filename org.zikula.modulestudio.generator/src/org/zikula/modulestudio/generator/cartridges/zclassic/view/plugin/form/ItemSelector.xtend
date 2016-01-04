@@ -142,12 +142,12 @@ class ItemSelector {
                 }
                 «IF hasCategorisableEntities»
 
-                    $categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
-                    $catIds = array();
+                    $categorisableObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                    $catIds = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         // fetch selected categories to reselect them in the output
                         // the actual filtering is done inside the repository class
-                        $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
+                        $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                     }
                 «ENDIF»
 
@@ -182,7 +182,7 @@ class ItemSelector {
                     // assign category properties
                     $properties = null;
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
-                        $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                        $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                     }
                     $view->assign('properties', $properties)
                          ->assign('catIds', $catIds);

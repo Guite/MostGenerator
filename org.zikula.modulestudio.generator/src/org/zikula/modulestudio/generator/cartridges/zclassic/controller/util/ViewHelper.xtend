@@ -176,7 +176,7 @@ class ViewHelper {
          *
          * @return mixed Output.
          */
-        public function processTemplate(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request, $templateParameters = array()«ENDIF», $template = '')
+        public function processTemplate(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request, $templateParameters = []«ENDIF», $template = '')
         {
             $templateExtension = $this->determineExtension(«IF isLegacy»$view«ELSE»$twig«ENDIF», $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
             if (empty($template)) {
@@ -256,7 +256,7 @@ class ViewHelper {
         protected function determineExtension(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
             $templateExtension = '«IF isLegacy»tpl«ELSE»html.twig«ENDIF»';
-            if (!in_array($func, array('view', 'display'))) {
+            if (!in_array($func, «IF isLegacy»array(«ELSE»[«ENDIF»'view', 'display'«IF isLegacy»)«ELSE»]«ENDIF»)) {
                 return $templateExtension;
             }
 
@@ -295,22 +295,22 @@ class ViewHelper {
          */
         public function availableExtensions($type, $func)
         {
-            $extensions = array();
+            $extensions = «IF isLegacy»array()«ELSE»[]«ENDIF»;
             «IF !isLegacy»
                 $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
             «ENDIF»
             $hasAdminAccess = «IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
             if ($func == 'view') {
                 if ($hasAdminAccess) {
-                    $extensions = array(«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»);
+                    $extensions = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
                 } else {
-                    $extensions = array(«FOR format : getListOfViewFormats.filter[it == 'rss' || it == 'atom' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»);
+                    $extensions = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR format : getListOfViewFormats.filter[it == 'rss' || it == 'atom' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
                 }
             } elseif ($func == 'display') {
                 if ($hasAdminAccess) {
-                    $extensions = array(«FOR format : getListOfDisplayFormats SEPARATOR ', '»'«format»'«ENDFOR»);
+                    $extensions = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR format : getListOfDisplayFormats SEPARATOR ', '»'«format»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
                 } else {
-                    $extensions = array(«FOR format : getListOfDisplayFormats.filter[it == 'ics' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»);
+                    $extensions = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR format : getListOfDisplayFormats.filter[it == 'ics' || it == 'pdf'] SEPARATOR ', '»'«format»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
                 }
             }
 
@@ -335,7 +335,7 @@ class ViewHelper {
          *
          * @return mixed Output.
          */
-        protected function processPdf(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig, Request $request, $templateParameters = array()«ENDIF», $template)
+        protected function processPdf(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig, Request $request, $templateParameters = []«ENDIF», $template)
         {
             // first the content, to set page vars
             «IF isLegacy»

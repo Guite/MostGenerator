@@ -180,7 +180,7 @@ class Plugins {
              */
             public function getCategoryProperties($objectType)
             {
-                $result = \ModUtil::apiFunc('«appName», 'category', 'getAllProperties', array('ot' => $objectType));
+                $result = \ModUtil::apiFunc('«appName», 'category', 'getAllProperties', ['ot' => $objectType]);
 
                 return $result;
             }
@@ -195,7 +195,7 @@ class Plugins {
              */
             public function isCategoryMultiValued($objectType, $registry)
             {
-                $result = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', array('ot' => $objectType, 'registry' => $registry));
+                $result = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', ['ot' => $objectType, 'registry' => $registry]);
 
                 return $result;
             }

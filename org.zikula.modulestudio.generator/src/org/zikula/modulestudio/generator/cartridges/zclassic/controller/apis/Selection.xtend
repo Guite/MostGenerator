@@ -48,7 +48,7 @@ class Selection {
          *
          * @return array List of identifier field names.
          */
-        public function getIdFields(array $args = array())
+        public function getIdFields(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $objectType = $this->determineObjectType($args, 'getIdFields');
             «IF targets('1.3.x')»
@@ -65,7 +65,7 @@ class Selection {
             if ($this->hasCompositeKeys($objectType)) {
                 $idFields = $meta->getIdentifierFieldNames();
             } else {
-                $idFields = array($meta->getSingleIdentifierFieldName());
+                $idFields = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$meta->getSingleIdentifierFieldName()«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             }
 
             return $idFields;
@@ -102,7 +102,7 @@ class Selection {
          *
          * @return mixed Desired entity object or null.
          */
-        public function getEntity(array $args = array())
+        public function getEntity(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
                 throw new \InvalidArgumentException(__('Invalid identifier received.'));
@@ -135,7 +135,7 @@ class Selection {
          * Selects a list of entities by different criteria.
          *
          * @param string  $args['ot']       The object type to retrieve (optional).
-         * @param string  $args['idList']   A list of ids to select (optional) (default=array()).
+         * @param string  $args['idList']   A list of ids to select (optional) (default=«IF targets('1.3.x')»array()«ELSE»[]«ENDIF»).
          * @param string  $args['where']    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $args['orderBy']  The order-by clause to use when retrieving the collection (optional) (default='').
          * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
@@ -143,12 +143,12 @@ class Selection {
          *
          * @return Array with retrieved collection.
          */
-        public function getEntities(array $args = array())
+        public function getEntities(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $objectType = $this->determineObjectType($args, 'getEntities');
             $repository = $this->getRepository($objectType);
 
-            $idList = isset($args['idList']) && is_array($args['idList']) ? $args['idList'] : array();
+            $idList = isset($args['idList']) && is_array($args['idList']) ? $args['idList'] : «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             $where = isset($args['where']) ? $args['where'] : '';
             $orderBy = isset($args['orderBy']) ? $args['orderBy'] : '';
             $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
@@ -174,7 +174,7 @@ class Selection {
          *
          * @return Array with retrieved collection and amount of total records affected by this query.
          */
-        public function getEntitiesPaginated(array $args = array())
+        public function getEntitiesPaginated(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $objectType = $this->determineObjectType($args, 'getEntitiesPaginated');
             $repository = $this->getRepository($objectType);
@@ -197,7 +197,7 @@ class Selection {
          *
          * @return string the object type.
          */
-        protected function determineObjectType(array $args = array(), $methodName = '')
+        protected function determineObjectType(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
             «IF targets('1.3.x')»
@@ -205,7 +205,7 @@ class Selection {
             «ELSE»
                 $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
             «ENDIF»
-            $utilArgs = array('api' => 'selection', 'action' => $methodName);
+            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'api' => 'selection', 'action' => $methodName«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
             }
@@ -246,7 +246,7 @@ class Selection {
              *
              * @return array|ArrayCollection retrieved data array or tree node objects.
              */
-            public function getTree(array $args = array())
+            public function getTree(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
             {
                 if (!isset($args['rootId'])) {
                     throw new \InvalidArgumentException(__('Invalid root identifier received.'));
@@ -269,7 +269,7 @@ class Selection {
              *
              * @return array|ArrayCollection retrieved data array or tree node objects.
              */
-            public function getAllTrees(array $args = array())
+            public function getAllTrees(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
             {
                 $objectType = $this->determineObjectType($args, 'getTree');
                 $repository = $this->getRepository($objectType);

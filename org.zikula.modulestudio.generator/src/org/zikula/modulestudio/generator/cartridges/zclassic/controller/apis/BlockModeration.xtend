@@ -79,15 +79,17 @@ class BlockModeration {
                 $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName» module.');
             }
 
-            return array('module'          => '«appName»',
-                         'text_type'       => $this->__('Moderation'),
-                         'text_type_long'  => $this->__('Show a list of pending tasks to moderators.'),
-                         'allow_multiple'  => true,
-                         'form_content'    => false,
-                         'form_refresh'    => false,
-                         'show_preview'    => false,
-                         'admin_tableless' => true,
-                         'requirement'     => $requirementMessage);
+            return array(
+                'module'          => '«appName»',
+                'text_type'       => $this->__('Moderation'),
+                'text_type_long'  => $this->__('Show a list of pending tasks to moderators.'),
+                'allow_multiple'  => true,
+                'form_content'    => false,
+                'form_refresh'    => false,
+                'show_preview'    => false,
+                'admin_tableless' => true,
+                'requirement'     => $requirementMessage
+            );
         }
     '''
 

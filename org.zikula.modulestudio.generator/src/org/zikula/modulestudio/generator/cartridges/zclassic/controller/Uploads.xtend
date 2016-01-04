@@ -127,10 +127,10 @@ class Uploads {
              */
             public function __construct()
             {
-                $this->allowedObjectTypes = array(«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
-                $this->imageFileTypes = array('gif', 'jpeg', 'jpg', 'png', 'swf');
-                $this->forbiddenFileTypes = array('cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml');
-                $this->allowedFileSizes = array(«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»' => array(«FOR field : entity.getUploadFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»' => «field.allowedFileSize»«ENDFOR»)«ENDFOR»);
+                $this->allowedObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                $this->imageFileTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'gif', 'jpeg', 'jpg', 'png', 'swf'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                $this->forbiddenFileTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                $this->allowedFileSizes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»' => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR field : entity.getUploadFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»' => «field.allowedFileSize»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             }
 
             «performFileUpload»
@@ -167,8 +167,10 @@ class Uploads {
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
 
-            $result = array('fileName' => '',
-                            'metaData' => array());
+            $result = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'fileName' => '',
+                'metaData' => «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             // check whether uploads are allowed for the given object type
             if (!in_array($objectType, $this->allowedObjectTypes)) {
@@ -212,7 +214,7 @@ class Uploads {
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $e->getMessage());
-                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName));
+                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName]);
 
                     return false;
                 «ENDIF»
@@ -224,7 +226,7 @@ class Uploads {
                     return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! Could not move your file to the destination folder.', $dom));
-                    $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName));
+                    $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName]);
 
                     return false;
                 «ENDIF»
@@ -271,7 +273,7 @@ class Uploads {
                     return LogUtil::registerError(__('Error! No file found.', $dom));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! No file found.', $dom));
-                    $logger->error('{app}: User {user} tried to upload a file which could not be found.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+                    $logger->error('{app}: User {user} tried to upload a file which could not be found.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
 
                     return false;
                 «ENDIF»
@@ -290,7 +292,7 @@ class Uploads {
                     return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! This file type is not allowed. Please choose another file format.', $dom));
-                    $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'extension' => $extension));
+                    $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'extension' => $extension]);
 
                     return false;
                 «ENDIF»
@@ -307,8 +309,8 @@ class Uploads {
                         «IF targets('1.3.x')»
                             return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
                         «ELSE»
-                            $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
-                            $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeKB));
+                            $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB], $dom));
+                            $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeKB]);
                             return false;
                         «ENDIF»
                     }
@@ -317,8 +319,8 @@ class Uploads {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                     «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
-                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeMB));
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB], $dom));
+                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeMB]);
 
                         return false;
                     «ENDIF»
@@ -334,7 +336,7 @@ class Uploads {
                         return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
                     «ELSE»
                         $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! This file type seems not to be a valid image.', $dom));
-                        $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname')));
+                        $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
 
                         return false;
                     «ENDIF»
@@ -356,13 +358,12 @@ class Uploads {
          */
         public function readMetaDataForFile($fileName, $filePath)
         {
-            $meta = array();
+            $meta = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             if (empty($fileName)) {
                 return $meta;
             }
 
             $extensionarr = explode('.', $fileName);
-            $meta = array();
             $meta['extension'] = strtolower($extensionarr[count($extensionarr) - 1]);
             $meta['size'] = filesize($filePath);
             $meta['isImage'] = (in_array($meta['extension'], $this->imageFileTypes) ? true : false);
@@ -408,7 +409,7 @@ class Uploads {
         protected function isAllowedFileExtension($objectType, $fieldName, $extension)
         {
             // determine the allowed extensions
-            $allowedExtensions = array();
+            $allowedExtensions = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             switch ($objectType) {
                 «FOR entity : getUploadEntities.filter(Entity)»«entity.isAllowedFileExtensionEntityCase»«ENDFOR»
             }
@@ -435,14 +436,14 @@ class Uploads {
                     «FOR uploadField : uploadFields»«uploadField.isAllowedFileExtensionFieldCase»«ENDFOR»
                 }
             «ELSE»
-                $allowedExtensions = array('«uploadFields.head.allowedExtensions.replace(', ', "', '")»');
+                $allowedExtensions = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'«uploadFields.head.allowedExtensions.replace(', ', "', '")»'«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
             «ENDIF»
                 break;
     '''
 
     def private isAllowedFileExtensionFieldCase(UploadField it) '''
         case '«name.formatForCode»':
-            $allowedExtensions = array('«allowedExtensions.replace(', ', "', '")»');
+            $allowedExtensions = «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»'«allowedExtensions.replace(', ', "', '")»'«IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»;
             break;
     '''
 
@@ -573,7 +574,7 @@ class Uploads {
                 $session = $serviceManager->get('session');
                 $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, __('Error with upload:', $dom) . ' ' . $errorMessage);
                 $logger = $serviceManager->get('logger');
-                $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $errorMessage));
+                $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $errorMessage]);
 
                 return false;
             «ENDIF»
@@ -617,7 +618,7 @@ class Uploads {
                     LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $logger = $serviceManager->get('logger');
-                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName));
+                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName]);
                 «ENDIF»
             }
             $fileName = $objectData[$fieldName];
@@ -640,7 +641,7 @@ class Uploads {
                 return false;
             }
             $objectData[$fieldName] = '';
-            $objectData[$fieldName . 'Meta'] = array();
+            $objectData[$fieldName . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             return $objectData;
         }

@@ -57,30 +57,30 @@ class ItemActions {
 
     def private itemActionsTargetingDisplay(Entity it, Application app, Controller controller) '''
         «IF controller.hasActions('view')»
-            if (in_array($currentFunc, array('«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'))) {
+            if (in_array($currentFunc, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 «IF controller.tempIsAdminController && application.hasUserController && application.getMainUserController.hasActions('display')»
-                    $this->_actions[] = array(
+                    $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         «IF app.targets('1.3.x')»
                             'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)),
                         «ELSE»
-                            'url' => array('type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => array(«routeParams('this', false)»)),
+                            'url' => ['type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => [«routeParams('this', false)»]],
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»preview«ELSE»search-plus«ENDIF»',
                         'linkTitle' => __('Open preview page', $dom),
                         'linkText' => __('Preview', $dom)
-                    );
+                    «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «ENDIF»
                 «IF controller.hasActions('display')»
-                    $this->_actions[] = array(
+                    $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         «IF app.targets('1.3.x')»
                             'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)),
                         «ELSE»
-                            'url' => array('type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»display', 'arguments' => array(«routeParams('this', false)»)),
+                            'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»display', 'arguments' => [«routeParams('this', false)»]],
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»display«ELSE»eye«ENDIF»',
                         'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern())«/*__('Open detail page', $dom)*/»,
                         'linkText' => __('Details', $dom)
-                    );
+                    «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «ENDIF»
             }
         «ENDIF»
@@ -88,7 +88,7 @@ class ItemActions {
 
     def private itemActionsTargetingEdit(Entity it, Application app, Controller controller) '''
         «IF controller.hasActions('view') || controller.hasActions('display')»
-            if (in_array($currentFunc, array('«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
+            if (in_array($currentFunc, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 «IF controller.hasActions('edit')»
                     if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                         «IF ownerPermission && standardFields»
@@ -103,16 +103,16 @@ class ItemActions {
                 «ENDIF»
                 «IF controller.hasActions('delete')»
                     if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_DELETE)) {
-                        $this->_actions[] = array(
+                        $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                             «IF app.targets('1.3.x')»
                                 'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)),
                             «ELSE»
-                                'url' => array('type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»delete', 'arguments' => array(«routeParams('this', false)»)),
+                                'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»delete', 'arguments' => [«routeParams('this', false)»]],
                             «ENDIF»
                             'icon' => '«IF app.targets('1.3.x')»delete«ELSE»trash-o«ENDIF»',
                             'linkTitle' => __('Delete', $dom),
                             'linkText' => __('Delete', $dom)
-                        );
+                        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                     }
                 «ENDIF»
             }
@@ -123,16 +123,16 @@ class ItemActions {
         «IF controller.hasActions('display')»
             if ($currentFunc == 'display') {
                 «IF controller.hasActions('view')»
-                    $this->_actions[] = array(
+                    $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         «IF app.targets('1.3.x')»
                             'url' => array('type' => '«controller.formattedName»', 'func' => 'view', 'arguments' => array('ot' => '«name.formatForCode»')),
                         «ELSE»
-                            'url' => array('type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»view', 'arguments' => array()),
+                            'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»view', 'arguments' => []],
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»back«ELSE»reply«ENDIF»',
                         'linkTitle' => __('Back to overview', $dom),
                         'linkText' => __('Back to overview', $dom)
-                    );
+                    «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «ENDIF»
             }
         «ENDIF»
@@ -162,46 +162,46 @@ class ItemActions {
                                 $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
                                                  '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
                             «ELSE»
-                                $urlArgs = array('«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                                $urlArgs = ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»];
                             «ENDIF»
                             if ($currentFunc == 'view') {
                                 $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
                             } elseif ($currentFunc == 'display') {
                                 $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
                             }
-                            $this->_actions[] = array(
+                            $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                                 «IF app.targets('1.3.x')»
                                     'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
                                 «ELSE»
-                                    'url' => array('type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs),
+                                    'url' => ['type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs],
                                 «ENDIF»
                                 'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
                                 'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
                                 'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
-                            );
+                            «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                         }
                     «ELSE»
                         «IF app.targets('1.3.x')»
                             $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
                                              '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
                         «ELSE»
-                            $urlArgs = array('«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                            $urlArgs = ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»];
                         «ENDIF»
                         if ($currentFunc == 'view') {
                             $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
                         } elseif ($currentFunc == 'display') {
                             $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
                         }
-                        $this->_actions[] = array(
+                        $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                             «IF app.targets('1.3.x')»
                                 'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
                             «ELSE»
-                                'url' => array('type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs),
+                                'url' => ['type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs],
                             «ENDIF»
                             'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
                             'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
                             'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
-                        );
+                        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                     «ENDIF»
                 «ENDFOR»
             }
@@ -217,28 +217,28 @@ class ItemActions {
 
     def private itemActionsForEditAction(Entity it, Controller controller) '''
         «IF !readOnly»«/*create is allowed, but editing not*/»
-            $this->_actions[] = array(
+            $this->_actions[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 «IF application.targets('1.3.x')»
                     'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)),
                 «ELSE»
-                    'url' => array('type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => array(«routeParams('this', false)»)),
+                    'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => [«routeParams('this', false)»]],
                 «ENDIF»
                 'icon' => '«IF application.targets('1.3.x')»edit«ELSE»pencil-square-o«ENDIF»',
                 'linkTitle' => __('Edit', $dom),
                 'linkText' => __('Edit', $dom)
-            );
+            «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
         «ENDIF»
         «IF tree == EntityTreeType.NONE»
-            $this->_actions[] = array(
+            $this->_actions[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 «IF application.targets('1.3.x')»
                     'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false, 'astemplate')»)),
                 «ELSE»
-                    'url' => array('type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => array(«routeParams('this', false, 'astemplate')»)),
+                    'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => [«routeParams('this', false, 'astemplate')»]],
                 «ENDIF»
                 'icon' => '«IF application.targets('1.3.x')»saveas«ELSE»files-o«ENDIF»',
                 'linkTitle' => __('Reuse for new item', $dom),
                 'linkText' => __('Reuse', $dom)
-            );
+            «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
         «ENDIF»
     '''
 }

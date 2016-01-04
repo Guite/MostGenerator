@@ -41,11 +41,11 @@ class TemplateSelector {
         {
             «val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'»
             $dom = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
-            $result = array();
+            $result = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
-            $result[] = array('text' => __('Only item titles', $dom), 'value' => 'itemlist_display«templateExtension»');
-            $result[] = array('text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»');
-            $result[] = array('text' => __('Custom template', $dom), 'value' => 'custom');
+            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('Only item titles', $dom), 'value' => 'itemlist_display«templateExtension»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('Custom template', $dom), 'value' => 'custom'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             «IF targets('1.3.x')»
                 if (array_key_exists('assign', $params)) {

@@ -133,11 +133,13 @@ class TreeSelector {
              */
             protected function loadItems(&$params)
             {
-                $apiArgs = array('ot' => $this->objectType
-                                 'rootId' => $this->root);
+                $apiArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                    'ot' => $this->objectType
+                    'rootId' => $this->root
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $treeNodes = ModUtil::apiFunc($this->name, 'selection', 'getTree', $apiArgs);
                 if (!$treeNodes) {
-                    return array();
+                    return «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 }
 
                 return $treeNodes;

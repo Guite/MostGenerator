@@ -94,7 +94,7 @@ class ModelHelper {
             «ELSE»
                 $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
             «ENDIF»
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'canBeCreated')))) {
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'canBeCreated'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
                 throw new \Exception('Error! Invalid object type received.');
             }
 
@@ -157,7 +157,7 @@ class ModelHelper {
             «ELSE»
                 $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
             «ENDIF»
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', array('util' => 'model', 'action' => 'hasExistingInstances')))) {
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'hasExistingInstances'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
                 throw new \Exception('Error! Invalid object type received.');
             }
 

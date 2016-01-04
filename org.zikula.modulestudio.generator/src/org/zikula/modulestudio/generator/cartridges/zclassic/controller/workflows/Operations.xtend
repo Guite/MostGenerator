@@ -116,7 +116,10 @@ class Operations {
         // get entity manager
         $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
         $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+        «IF !app.targets('1.3.x')»
+            $logger = $serviceManager->get('logger');
 
+        «ENDIF»
         // save entity data
         try {
             //$this->entityManager->transactional(function($entityManager) {
@@ -125,17 +128,13 @@ class Operations {
             //});
             $result = true;
             «IF !app.targets('1.3.x')»
-
-                $logger = $serviceManager->get('logger');
-                $logger->notice('{app}: User {user} updated an entity.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
+                $logger->notice('{app}: User {user} updated an entity.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
             «ENDIF»
         } catch (\Exception $e) {
-            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
             «IF !app.targets('1.3.x')»
-
-                $logger = $serviceManager->get('logger');
-                $logger->error('{app}: User {user} tried to update an entity, but failed.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
+                $logger->error('{app}: User {user} tried to update an entity, but failed.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
             «ENDIF»
+            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
         }
     '''
 
@@ -143,24 +142,23 @@ class Operations {
         // get entity manager
         $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
         $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+        «IF !app.targets('1.3.x')»
+            $logger = $serviceManager->get('logger');
 
+        «ENDIF»
         // delete entity
         try {
             $entityManager->remove($entity);
             $entityManager->flush();
             $result = true;
             «IF !app.targets('1.3.x')»
-
-                $logger = $serviceManager->get('logger');
-                $logger->notice('{app}: User {user} deleted an entity.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
+                $logger->notice('{app}: User {user} deleted an entity.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
             «ENDIF»
         } catch (\Exception $e) {
-            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
             «IF !app.targets('1.3.x')»
-
-                $logger = $serviceManager->get('logger');
-                $logger->error('{app}: User {user} tried to delete an entity, but failed.', array('app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')));
+                $logger->error('{app}: User {user} tried to delete an entity, but failed.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
             «ENDIF»
+            «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
         }
     '''
 
@@ -168,12 +166,12 @@ class Operations {
         // workflow parameters are always lower-cased (#656)
         $recipientType = isset($params['recipientType']) ? $params['recipientType'] : $params['recipienttype'];
 
-        $notifyArgs = array(
+        $notifyArgs = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
             'recipientType' => $recipientType,
             'action' => $params['action'],
             'entity' => $entity
-        );
+        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
 
-        ModUtil::apiFunc('«app.appName»', 'notification', 'process', $notifyArgs);
+        «IF !app.targets('1.3.x')»\«ENDIF»ModUtil::apiFunc('«app.appName»', 'notification', 'process', $notifyArgs);
     '''
 }

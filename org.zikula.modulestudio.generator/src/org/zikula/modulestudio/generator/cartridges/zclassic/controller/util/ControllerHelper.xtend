@@ -138,13 +138,13 @@ class ControllerHelper {
          *
          * @return array List of allowed object types.
          */
-        public function getObjectTypes($context = '', $args = array())
+        public function getObjectTypes($context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
+            if (!in_array($context, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'«IF targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
             }
 
-            $allowedObjectTypes = array();
+            $allowedObjectTypes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «FOR entity : entities»
                 $allowedObjectTypes[] = '«entity.name.formatForCode»';
             «ENDFOR»
@@ -162,9 +162,9 @@ class ControllerHelper {
          *
          * @return string The name of the default object type.
          */
-        public function getDefaultObjectType($context = '', $args = array())
+        public function getDefaultObjectType($context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            if (!in_array($context, array('controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'))) {
+            if (!in_array($context, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api'«IF !targets('1.3.x')», 'helper'«ENDIF», 'actionHandler', 'block', 'contentType', 'util'«IF targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
             }
 
@@ -208,9 +208,9 @@ class ControllerHelper {
          */
         public function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
         {
-            $idValues = array();
+            $idValues = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF !targets('1.3.x')»
-                $routeParams = $request->get('_route_params', array());
+                $routeParams = $request->get('_route_params', []);
             «ENDIF»
             foreach ($idFields as $idField) {
                 $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
@@ -302,9 +302,11 @@ class ControllerHelper {
          */
         public function formatPermalink($name)
         {
-            $name = str_replace(array('ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'),
-                                array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'),
-                                $name);
+            $name = str_replace(
+                «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'«IF targets('1.3.x')»)«ELSE»]«ENDIF»,
+                «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'«IF targets('1.3.x')»)«ELSE»]«ENDIF»,
+                $name
+            );
             $name = DataUtil::formatPermalink($name);
 
             return strtolower($name);
@@ -431,16 +433,16 @@ class ControllerHelper {
                 try {
                     // Check if directory exist and try to create it if needed
                     if (!$fs->exists($uploadPath) && !$fs->mkdir($uploadPath, 0777)) {
-                        $this->session->getFlashBag()->add('error', $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
-                        $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', array('app' => '«appName»', 'directory' => $uploadPath));
+                        $this->session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', [$uploadPath]));
+                        $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                         return false;
                     }
 
                     // Check if directory is writable and change permissions if needed
                     if (!is_writable($uploadPath) && !$fs->chmod($uploadPath, 0777)) {
-                        $this->session->getFlashBag()->add('warning', $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
-                        $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', array('app' => '«appName»', 'directory' => $uploadPath));
+                        $this->session->getFlashBag()->add(\Zikula_Session::MESSAGE_WARNING, $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', [$uploadPath]));
+                        $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                         return false;
                     }
@@ -454,8 +456,8 @@ class ControllerHelper {
                         $fs->dumpFile($htaccessFilePath, $htaccessContent);
                     }
                 } catch (IOExceptionInterface $e) {
-                    $this->session->getFlashBag()->add('error', $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', array($e->getPath())));
-                    $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', array('app' => '«appName»', 'directory' => $uploadPath));
+                    $this->session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', [$e->getPath()]));
+                    $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
                 }
             «ENDIF»
 
@@ -505,8 +507,10 @@ class ControllerHelper {
             }
 
             // create the result array
-            $result = array('latitude' => 0,
-                            'longitude' => 0);
+            $result = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                'latitude' => 0,
+                'longitude' => 0
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             if ($json != '') {
                 $data = json_decode($json);
@@ -519,7 +523,7 @@ class ControllerHelper {
                     $result['longitude'] = str_replace(',', '.', $location->lng);
                 } else {
                     «IF !targets('1.3.x')»
-                        $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'address' => $address));
+                        $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'address' => $address]);
                     «ENDIF»
                 }
             }

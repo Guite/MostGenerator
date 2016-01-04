@@ -72,7 +72,7 @@ class Property {
          «ENDIF»
          * @var array $«name.formatForCode»Meta.
          */
-        protected $«name.formatForCode»Meta = array();
+        protected $«name.formatForCode»Meta = «IF entity.application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         «persistentProperty(name.formatForCode, fieldTypeAsString, '')»
         /**
@@ -97,7 +97,7 @@ class Property {
     '''
 
     def dispatch persistentProperty(ArrayField it) {
-        persistentProperty(name.formatForCode, fieldTypeAsString, ' = array()')
+        persistentProperty(name.formatForCode, fieldTypeAsString, if (entity.application.targets('1.3.x')) ' = array()' else ' = []')
     }
 
     /**
@@ -176,7 +176,7 @@ class Property {
                 if (it.defaultValue !== null && it.defaultValue.length > 0) it.defaultValue else '0'
             DecimalField:
                 if (it.defaultValue !== null && it.defaultValue.length > 0) it.defaultValue else '0.00'
-            ArrayField: 'array()'
+            ArrayField: if (entity.application.targets('1.3.x')) 'array()' else '[]'
             ObjectField: 'null'
             ListField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             AbstractStringField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
@@ -212,6 +212,6 @@ class Property {
         «fieldAccessorDefault»
         «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', false, false, '', '')»
         «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, 'Array()', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, if (entity.application.targets('1.3.x')) 'Array()' else '[]', '')»
     '''
 }

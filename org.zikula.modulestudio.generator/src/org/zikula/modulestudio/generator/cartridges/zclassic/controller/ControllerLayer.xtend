@@ -344,9 +344,11 @@ class ControllerLayer {
         // process each item
         foreach ($items as $itemid) {
             // check if item exists, and get record instance
-            $selectionArgs = array('ot' => $objectType,
-                                   'id' => $itemid,
-                                   'useJoins' => false);
+            $selectionArgs = «IF isLegacy»array(«ELSE»[«ENDIF»
+                'ot' => $objectType,
+                'id' => $itemid,
+                'useJoins' => false
+            «IF isLegacy»)«ELSE»]«ENDIF»;
             $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
 
             $entity->initWorkflow();
@@ -387,8 +389,8 @@ class ControllerLayer {
                 «IF isLegacy»
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
-                    $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()));
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
+                    $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }
 
@@ -401,14 +403,14 @@ class ControllerLayer {
                     LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item deleted.'));
-                    $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
+                    $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             } else {
                 «IF isLegacy»
                     LogUtil::registerStatus($this->__('Done! Item updated.'));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item updated.'));
-                    $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid));
+                    $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             }
             «IF !skipHookSubscribers»
@@ -753,12 +755,12 @@ class ControllerLayer {
              */
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
-                $links = array();
+                $links = [];
                 $serviceManager = ServiceUtil::getManager();
                 $request = $serviceManager->get('request_stack')->getCurrentRequest();
 
                 $controllerHelper = $serviceManager->get('«app.appName.formatForDB».controller_helper');
-                $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getLinks');
+                $utilArgs = ['api' => '«it.formattedName»', 'action' => 'getLinks'];
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
         
                 $permLevel = LinkContainerInterface::TYPE_ADMIN == $type ? ACCESS_ADMIN : ACCESS_READ;
@@ -793,13 +795,16 @@ class ControllerLayer {
             «IF app.needsConfig && isConfigController»
                 if («IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                     «IF isLegacy»
-                        $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
+                        $links[] = array(
+                            'url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                     «ELSE»
-                        $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
+                        $links[] = [
+                            'url' => $this->router->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
                     «ENDIF»
-                                     'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Configuration'),
-                                     'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Manage settings for this application')«IF !isLegacy»,
-                                     'icon' => 'wrench'«ENDIF»);
+                         'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Configuration'),
+                         'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Manage settings for this application')«IF !isLegacy»,
+                         'icon' => 'wrench'«ENDIF»
+                     «IF isLegacy»)«ELSE»]«ENDIF»;
                 }
             «ENDIF»
         «ENDIF»
@@ -809,12 +814,15 @@ class ControllerLayer {
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
             && «IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
             «IF isLegacy»
-                $links[] = array('url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
+                $links[] = array(
+                    'url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
             «ELSE»
-                $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
+                $links[] = [
+                    'url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
             «ENDIF»
-                             'text' => $this->«IF !isLegacy»translator->«ENDIF»__('«nameMultiple.formatForDisplayCapital»'),
-                             'title' => $this->«IF !isLegacy»translator->«ENDIF»__('«name.formatForDisplayCapital» list'));
+                 'text' => $this->«IF !isLegacy»translator->«ENDIF»__('«nameMultiple.formatForDisplayCapital»'),
+                 'title' => $this->«IF !isLegacy»translator->«ENDIF»__('«name.formatForDisplayCapital» list')
+             «IF isLegacy»)«ELSE»]«ENDIF»;
         }
     '''
 
@@ -824,26 +832,32 @@ class ControllerLayer {
                     «val userController = application.getAllUserControllers.head»
                     if («IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_READ)) {
                         «IF isLegacy»
-                            $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails13»),
+                            $links[] = array(
+                                'url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails13»),
                         «ELSE»
-                            $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails14»),«/* end quote missing here on purpose */»
+                            $links[] = [
+                                'url' => $this->router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                                         'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Frontend'),
-                                         'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Switch to user area.'),
-                                         «IF isLegacy»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»);
+                             'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Frontend'),
+                             'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Switch to user area.'),
+                             «IF isLegacy»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»
+                         «IF isLegacy»)«ELSE»]«ENDIF»;
                     }
                     '''
             UserController case !application.getAllAdminControllers.empty: '''
                     «val adminController = application.getAllAdminControllers.head»
                     if («IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                         «IF isLegacy»
-                            $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails13»),
+                            $links[] = array(
+                                'url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails13»),
                         «ELSE»
-                            $links[] = array('url' => $this->router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails14»),«/* end quote missing here on purpose */»
+                            $links[] = [
+                                'url' => $this->router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                                         'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Backend'),
-                                         'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Switch to administration area.'),
-                                         «IF isLegacy»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»);
+                             'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Backend'),
+                             'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Switch to administration area.'),
+                             «IF isLegacy»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»
+                         «IF isLegacy»)«ELSE»]«ENDIF»;
                     }
                     '''
         }
@@ -885,7 +899,7 @@ class ControllerLayer {
 
     def private indexUrlDetails14(Controller it) {
         if (hasActions('index')) 'index\''
-        else if (hasActions('view')) 'view\', array(\'ot\' => \'' + application.getLeadingEntity.name.formatForCode + '\')'
+        else if (hasActions('view')) 'view\', [\'ot\' => \'' + application.getLeadingEntity.name.formatForCode + '\']'
         else if (application.needsConfig && isConfigController) 'config\''
         else 'hooks\''
     }

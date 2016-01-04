@@ -52,7 +52,7 @@ class Notification {
          *
          * @var array $recipients.
          */
-        private $recipients = array();
+        private $recipients = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         /**
          * Which type of recipient is used ("creator", "moderator" or "superModerator").
@@ -124,7 +124,7 @@ class Notification {
          */
         protected function collectRecipients()
         {
-            $this->recipients = array();
+            $this->recipients = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
                 $objectType = $this->entity['_objectType'];
@@ -141,7 +141,7 @@ class Notification {
                     }
                 «ENDIF»
 
-                $moderatorGroup = ModUtil::apiFunc('«IF targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'get', array('gid' => $moderatorGroupId));
+                $moderatorGroup = ModUtil::apiFunc('«IF targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'get', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'gid' => $moderatorGroupId«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                 foreach (array_keys($moderatorGroup['members']) as $uid) {
                     $this->addRecipient($uid);
                 }
@@ -166,10 +166,10 @@ class Notification {
         {
             $userVars = UserUtil::getVars($userId);
 
-            $recipient = array(
+            $recipient = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'name' => (isset($userVars['name']) && !empty($userVars['name']) ? $userVars['name'] : $userVars['uname']),
                 'email' => $userVars['email']
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             $this->recipients[] = $recipient;
 
             return $recipient;
@@ -214,14 +214,14 @@ class Notification {
                     ];
                 «ENDIF»
 
-                $mailArgs = array(
+                $mailArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                     'fromname' => $siteName,
                     'toname' => $recipient['name'],
                     'toaddress' => $recipient['email'],
                     'subject' => $this->getMailSubject(),
                     'body' => «IF targets('1.3.x')»$view->fetch($template)«ELSE»$templating->render('@«appName»/' . $template, $templateParameters)«ENDIF»,
                     'html' => true
-                );
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
                 $totalResult &= ModUtil::apiFunc('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»', 'user', 'sendmessage', $mailArgs);
             }
@@ -314,13 +314,13 @@ class Notification {
                 «ENDIF»
             }
 
-            $emailData = array(
+            $emailData = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'name' => $this->entity->getTitleFromDisplayPattern(),
                 'newState' => $stateInfo['text'],
                 'remarks' => $remarks,
                 'displayUrl' => $displayUrl,
                 'editUrl' => $editUrl
-            );
+            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             return $emailData;
         }

@@ -115,12 +115,12 @@ class TimeInput {
             {
                 include_once 'lib/«IF !targets('1.3.x')»legacy/«ENDIF»viewplugins/function.jquery_timepicker.php';
         
-                $params = array(
+                $params = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                     'defaultdate' => $this->text,
                     'displayelement' => $this->getId(),
                     'readonly' => $this->readOnly,
                     'use24hour' => $this->use24Hour
-                );
+                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         
                 $result = smarty_function_jquery_timepicker($params, $view);
         

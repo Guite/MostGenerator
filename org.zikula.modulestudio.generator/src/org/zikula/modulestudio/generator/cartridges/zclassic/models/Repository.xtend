@@ -168,10 +168,10 @@ class Repository {
              */
             public function getAllowedSortingFields()
             {
-                return array(
+                return «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                     «FOR field : fields»«field.singleSortingField»«ENDFOR»
                     «extensionSortingFields»
-                );
+                «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
             }
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
@@ -374,13 +374,13 @@ class Repository {
          *
          * @return array List of template variables to be assigned.
          */
-        public function getAdditionalTemplateParameters($context = '', $args = array())
+        public function getAdditionalTemplateParameters($context = '', $args = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
+            if (!in_array($context, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
             }
 
-            $templateParameters = array();
+            $templateParameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             if ($context == 'controllerAction') {
                 «IF app.hasUploads || (hasListFieldsEntity && !app.targets('1.3.x'))»
@@ -389,7 +389,7 @@ class Repository {
                 if (!isset($args['action'])) {
                     $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST');
                 }
-                if (in_array($args['action'], array('«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'))) {
+                if (in_array($args['action'], «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
                         «IF app.targets('1.3.x')»
@@ -403,10 +403,10 @@ class Repository {
                         «ENDFOR»
                     «ENDIF»
                     «IF hasBooleanFieldsEntity»
-                        $booleanSelectorItems = array(
-                            array('value' => 'no', 'text' => __('No')),
-                            array('value' => 'yes', 'text' => __('Yes'))
-                        );
+                        $booleanSelectorItems = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
+                            «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => 'no', 'text' => __('No')«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»,
+                            «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => 'yes', 'text' => __('Yes')«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»
+                        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                         «FOR field : getBooleanFieldsEntity»
                             «val fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $booleanSelectorItems;
@@ -428,7 +428,7 @@ class Repository {
                             $templateParameters[$objectType . 'ThumbPreset«uploadField.name.formatForCodeCapital»'] = $imageHelper->getPreset($objectType, '«uploadField.name.formatForCode»', $context, $args);
                         «ENDFOR»
                     «ENDIF»
-                    if (in_array($args['action'], array('display', 'view'))) {
+                    if (in_array($args['action'], «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'display', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                         // use separate preset for images in related items
                         $templateParameters['relationThumbPreset'] = $imageHelper->getCustomPreset('', '', '«app.appName»_relateditem', $context, $args);
                     }
@@ -453,15 +453,15 @@ class Repository {
          *
          * @return array List of template variables to be assigned.
          */
-        protected function getViewQuickNavParameters($context = '', $args = array())
+        protected function getViewQuickNavParameters($context = '', $args = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
+            if (!in_array($context, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
             }
 
-            $parameters = array();
+            $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF categorisable»
-                $parameters['catIdList'] = ModUtil::apiFunc('«app.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
+                $parameters['catIdList'] = ModUtil::apiFunc('«app.appName»', 'category', 'retrieveCategoriesFromRequest', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«name.formatForCode»', 'source' => 'GET'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
@@ -585,7 +585,7 @@ class Repository {
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} truncated the {entity} entity table.', array('app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»'));
+                $logger->debug('{app}: User {user} truncated the {entity} entity table.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»']);
             «ENDIF»
         }
     '''
@@ -601,7 +601,7 @@ class Repository {
          */
         protected function addIdFilter($id, QueryBuilder $qb)
         {
-            return $this->addIdListFilter(array($id), $qb);
+            return $this->addIdListFilter(«IF app.targets('1.3.x')»array($id)«ELSE»[$id]«ENDIF», $qb);
         }
         
         /**
@@ -652,7 +652,7 @@ class Repository {
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
-            $results = $this->selectByIdList(array($id));
+            $results = $this->selectByIdList(«IF app.targets('1.3.x')»array($id)«ELSE»[$id]«ENDIF»);
 
             return (count($results) > 0) ? $results[0] : null;
         }
@@ -668,7 +668,7 @@ class Repository {
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function selectByIdList($idList = array(0), $useJoins = true, $slimMode = false)
+        public function selectByIdList($idList = «IF app.targets('1.3.x')»array(0)«ELSE»[0]«ENDIF», $useJoins = true, $slimMode = false)
         {
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
             $qb = $this->addIdListFilter($idList, $qb);
@@ -803,8 +803,6 @@ class Repository {
                           ->setMaxResults($resultsPerPage);
                     $count = 0;
                 }
-
-                return array($query, $count);
             «ELSE»
                 $query->setFirstResult($offset)
                       ->setMaxResults($resultsPerPage);
@@ -812,7 +810,7 @@ class Repository {
                 «/* TODO remove $count from this method together with 1.3.x support #260 */»
             «ENDIF»
 
-            return array($query, $count);
+            return «IF app.targets('1.3.x')»array($query, $count)«ELSE»[$query, $count]«ENDIF»;
         }
 
         /**
@@ -834,7 +832,7 @@ class Repository {
             $page = $currentPage;
 
             // check if we have any filters set
-            $parameters = $this->getViewQuickNavParameters('', array());
+            $parameters = $this->getViewQuickNavParameters('', «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»);
             $hasFilters = false;
             foreach ($parameters as $k => $v) {
                 if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
@@ -904,7 +902,7 @@ class Repository {
                 }
 
             «ENDIF»
-            $parameters = $this->getViewQuickNavParameters('', array());
+            $parameters = $this->getViewQuickNavParameters('', «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»);
             foreach ($parameters as $k => $v) {
                 if ($k == 'catId') {
                     // single category filter
@@ -918,14 +916,14 @@ class Repository {
                     $qb->andWhere('tblCategories.category IN (:categories)')
                        ->setParameter('categories', $v);
                      */
-                    $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v));
-                } elseif (in_array($k, array('q', 'searchterm'))) {
+                    $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
+                } elseif (in_array($k, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'q', 'searchterm'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                     // quick search
                     if (!empty($v)) {
                         $qb = $this->addSearchFilter($qb, $v);
                     }
                 «IF hasBooleanFieldsEntity»
-                } elseif (in_array($k, array(«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»))) {
+                } elseif (in_array($k, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                     // boolean filter
                     if ($v == 'no') {
                         $qb->andWhere('tbl.' . $k . ' = 0');
@@ -963,7 +961,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function applyDefaultFilters(QueryBuilder $qb, $parameters = array())
+        protected function applyDefaultFilters(QueryBuilder $qb, $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $currentModule = ModUtil::getName();//FormUtil::getPassedValue('module', '', 'GETPOST');
             «IF app.targets('1.3.x')»
@@ -977,7 +975,7 @@ class Repository {
 
             if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
                 // per default we show approved «nameMultiple.formatForDisplay» only
-                $onlineStates = array('approved');
+                $onlineStates = «IF app.targets('1.3.x')»array('approved')«ELSE»['approved']«ENDIF»;
                 «IF ownerPermission»
                     «IF app.targets('1.3.x')»
                         $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
@@ -1042,7 +1040,7 @@ class Repository {
          *
          * @return Array with retrieved collection and amount of total records affected by this query.
          */
-        public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+        public function selectSearch($fragment = '', $exclude = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF», $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
             $qb = $this->genericBaseQuery('', $orderBy, $useJoins);
             if (count($exclude) > 0) {
@@ -1157,9 +1155,9 @@ class Repository {
             «ELSE»
                 if (!$isPaginated) {
                     return $result;
-                } else {
-                    return array($result, $count);
                 }
+
+                return [$result, $count];
             «ENDIF»
         }
     '''
@@ -1205,7 +1203,7 @@ class Repository {
          *
          * @return integer amount of affected records
          */
-        public function selectCount($where = '', $useJoins = true, $parameters = array())
+        public function selectCount($where = '', $useJoins = true, $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             $qb = $this->getCountQuery($where, $useJoins);
 
@@ -1334,22 +1332,22 @@ class Repository {
                     // Array of plugins to load.
                     // If no plugin with default = true given the compare plugin is loaded and used for unconfigured fields.
                     // Multiple objects of the same plugin with different configurations are possible.
-                    array(
+                    [
                         «IF !fields.filter(AbstractDateField).empty»
-                            new DateFilter(array(«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/))
+                            new DateFilter([«FOR field : fields.filter(AbstractDateField) SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»/*, 'tblJoin.someJoinedField'*/])
                         «ENDIF»
-                    ),
+                    ],
 
                     // Allowed operators per field.
                     // Array in the form "field name => operator array".
                     // If a field is not set in this array all operators are allowed.
-                    array()
+                    []
                 );
                 «IF categorisable»
 
                     // add category plugins dynamically for all existing registry properties
                     // we need to create one category plugin instance for each one
-                    $categoryProperties = ModUtil::apiFunc('«app.appName»', 'category', 'getAllProperties', array('ot' => '«name.formatForCode»'));
+                    $categoryProperties = ModUtil::apiFunc('«app.appName»', 'category', 'getAllProperties', ['ot' => '«name.formatForCode»']);
                     foreach ($categoryProperties as $propertyName => $registryId) {
                         $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
                     }
@@ -1605,7 +1603,7 @@ class Repository {
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
                         $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add('error', __f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
+                        $session->getFlashBag()->add('error', __f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action], $dom));
                     «ENDIF»
                 }
 

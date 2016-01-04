@@ -56,7 +56,7 @@ class UploadProcessing {
                             $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                             if (empty($existingObjectData[$uploadField])) {
                                 $existingObject[$uploadField] = '';
-                                $existingObject[$uploadField . 'Meta'] = array();
+                                $existingObject[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                             }
                         }
                         unset($formData[$uploadField . 'DeleteFile']);
@@ -77,7 +77,7 @@ class UploadProcessing {
                     $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                     if (empty($existingObjectData[$uploadField])) {
                         $existingObject[$uploadField] = '';
-                        $existingObject[$uploadField . 'Meta'] = array();
+                        $existingObject[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                     }
                 }
 

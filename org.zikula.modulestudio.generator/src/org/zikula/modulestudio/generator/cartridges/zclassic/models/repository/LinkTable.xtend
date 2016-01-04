@@ -57,7 +57,7 @@ class LinkTable {
 
                     $serviceManager = ServiceUtil::getManager();
                     $logger = $serviceManager->get('logger');
-                    $logger->debug('{app}: User {user} truncated the {entity} entity table.', array('app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«refClass.formatForDisplay»'));
+                    $logger->debug('{app}: User {user} truncated the {entity} entity table.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«refClass.formatForDisplay»']);
                 «ENDIF»
             }
         }

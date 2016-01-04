@@ -16,9 +16,9 @@ class UserLogout {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return array(
-                        'module.users.ui.logout.succeeded' => array('succeeded', 5)
-                    );
+                    return [
+                        'module.users.ui.logout.succeeded' => ['succeeded', 5]
+                    ];
                 «ELSE»
                     return parent::getSubscribedEvents();
                 «ENDIF»

@@ -66,7 +66,7 @@ class LegacyPaginatorSwitch {
                 $paginator = new Paginator($this->query, $this->hasRelationships);
                 $count = count($paginator);
 
-                return array($paginator, $count);
+                return «IF targets('1.3.x')»array($paginator, $count)«ELSE»[$paginator, $count]«ENDIF»;
             }
         }
     '''
@@ -130,7 +130,7 @@ class LegacyPaginatorSwitch {
                     $this->query = Paginate::getPaginateQuery($this->query, $offset, $resultsPerPage);
                 }
 
-                return array($this->query, $count);
+                return «IF targets('1.3.x')»array($this->query, $count)«ELSE»[$this->query, $count]«ENDIF»;
             }
         }
     '''

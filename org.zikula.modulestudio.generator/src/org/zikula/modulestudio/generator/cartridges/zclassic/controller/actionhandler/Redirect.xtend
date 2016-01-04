@@ -33,7 +33,7 @@ class Redirect {
          */
         protected function getRedirectCodes()
         {
-            $codes = array();
+            $codes = «IF isLegacy»array()«ELSE»[]«ENDIF»;
             «FOR someController : controllers»
                 «val controllerName = someController.formattedName»
                 «IF someController.hasActions('index')»
@@ -111,7 +111,7 @@ class Redirect {
             «ENDIF»
             «IF hasActions('view')»
                 // redirect to the list of «nameMultiple.formatForCode»
-                $viewArgs = array(«IF app.isLegacy»'ot' => $this->objectType, 'lct' => $legacyControllerType«ENDIF»);
+                $viewArgs = «IF app.isLegacy»array('ot' => $this->objectType, 'lct' => $legacyControllerType)«ELSE»[]«ENDIF»;
                 «IF tree != EntityTreeType.NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
@@ -140,7 +140,7 @@ class Redirect {
                         $displayArgs = array('ot' => $this->objectType, «routeParamsLegacy('this->idValues', false, true)»);
                         $url = ModUtil::url($this->name, $currentType, 'display', $displayArgs);
                     «ELSE»
-                        $displayArgs = array(«routeParams('this->idValues', false)»);
+                        $displayArgs = [«routeParams('this->idValues', false)»];
                         $url = $serviceManager->get('router')->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_' . $routeArea . 'display', $displayArgs);
                     «ENDIF»
                 }
@@ -165,8 +165,10 @@ class Redirect {
 
             «ENDIF»
             if ($this->inlineUsage == true) {
-                $urlArgs = array('idPrefix'    => $this->idPrefix,
-                                 'commandName' => $args['commandName']);
+                $urlArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                    'idPrefix' => $this->idPrefix,
+                    'commandName' => $args['commandName']
+                «IF app.isLegacy»)«ELSE»]«ENDIF»;
                 foreach ($this->idFields as $idField) {
                     $urlArgs[$idField] = $this->idValues[$idField];
                 }
@@ -249,7 +251,7 @@ class Redirect {
                                         «IF app.isLegacy»
                                             return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                         «ELSE»
-                                            return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»display',  array('id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
+                                            return $serviceManager->get('router')->generate('«app.appName.formatForDB»_«sourceEntity.name.formatForDB»_«IF someController instanceof AdminController»admin«ENDIF»display',  ['id' => $this->relationPresets['«incomingRelation.getRelationAliasName(false)»']«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»]);
                                         «ENDIF»
                                     }
                                     return $this->getDefaultReturnUrl($args);
