@@ -567,11 +567,11 @@ class Uploads {
             }
 
             «IF targets('1.3.x')»
-                return LogUtil::registerError(__('Error with upload: ', $dom) . $errorMessage);
+                return LogUtil::registerError(__('Error with upload:', $dom) . ' ' . $errorMessage);
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 $session = $serviceManager->get('session');
-                $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, __('Error with upload: ', $dom) . $errorMessage);
+                $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, __('Error with upload:', $dom) . ' ' . $errorMessage);
                 $logger = $serviceManager->get('logger');
                 $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', array('app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $errorMessage));
 
