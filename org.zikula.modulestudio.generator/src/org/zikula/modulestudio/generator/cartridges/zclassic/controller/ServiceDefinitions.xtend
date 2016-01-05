@@ -52,6 +52,7 @@ class ServiceDefinitions {
         generateServiceFile(fsa, 'linkContainer', linkContainer)
         generateServiceFile(fsa, 'entityFactories', entityFactories)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
+        generateServiceFile(fsa, 'forms', forms)
         generateServiceFile(fsa, 'helpers', helpers)
         generateServiceFile(fsa, 'twig', twig)
         generateServiceFile(fsa, 'logger', logger)
@@ -65,6 +66,7 @@ class ServiceDefinitions {
           - { resource: 'linkContainer.yml' }
           - { resource: 'entityFactories.yml' }
           - { resource: 'eventSubscriber.yml' }
+          - { resource: 'forms.yml' }
           - { resource: 'helpers.yml' }
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
@@ -85,9 +87,7 @@ class ServiceDefinitions {
         services:
             «modPrefix».link_container:
                 class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\LinkContainer"
-                arguments:
-                    translator: "@translator"
-                    router: "@router"
+                arguments: [@translator, @router]
                 tags:
                     - { name: zikula.link_container }
     '''
@@ -102,9 +102,7 @@ class ServiceDefinitions {
         «FOR entity : entities»
             «modPrefix».«entity.name.formatForCode»_factory:
                 class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\Factory\\«entity.name.formatForCodeCapital»Factory"
-                arguments:
-                    objectManager: "@doctrine.orm.entity_manager"
-                    className: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"
+                arguments: [@doctrine.orm.entity_manager, "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"]
 
         «ENDFOR»
     '''
@@ -139,38 +137,46 @@ class ServiceDefinitions {
         listeners
     }
 
+    def private forms(Application it) '''
+        services:
+            «formsHelper»
+    '''
+
+    def private formsHelper(Application it) '''
+        # Form types
+        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Form\\\\Type\\\\'»
+        «IF needsConfig»
+            «modPrefix».form.type.appsettings:
+                class: "«nsBase.replace('Type\\\\', '')»AppSettingsType"
+                arguments: [@translator, "@zikula_extensions_module.api.variable"]
+                tags:
+                    - { name: form.type }
+        «ENDIF»
+    '''
+
     def private helpers(Application it) '''
         services:
             «servicesHelper»
     '''
 
     def private servicesHelper(Application it) '''
-        # Utility classes
+        # Helper classes
         «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Helper\\\\'»
         «modPrefix».model_helper:
             class: "«nsBase»ModelHelper"
-            arguments:
-                serviceManager: "@service_container"
+            arguments: [@service_container]
 
         «modPrefix».controller_helper:
             class: "«nsBase»ControllerHelper"
-            arguments:
-                serviceManager: "@service_container"
-                translator: "@translator"
-                session: "@session"
-                logger: "@logger"
+            arguments: [@service_container, @translator, @session, @logger]
 
         «modPrefix».view_helper:
             class: "«nsBase»ViewHelper"
-            arguments:
-                serviceManager: "@service_container"
-                translator: "@translator"
+            arguments: [@service_container, @translator]
 
         «modPrefix».workflow_helper:
             class: "«nsBase»WorkflowHelper"
-            arguments:
-                serviceManager: "@service_container"
-                translator: "@translator"
+            arguments: [@service_container, @translator]
         «IF hasUploads»
 
             «modPrefix».image_helper:
@@ -180,15 +186,13 @@ class ServiceDefinitions {
 
             «modPrefix».listentries_helper:
                 class: "«nsBase»ListEntriesHelper"
-                arguments:
-                    translator: "@translator"
+                arguments: [@translator]
         «ENDIF»
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:
                 class: "«nsBase»TranslatableHelper"
-                arguments:
-                    serviceManager: "@service_container"
+                arguments: [@service_container]
         «ENDIF»
     '''
 

@@ -89,35 +89,35 @@ class Config {
             {% block adminPageIcon %}wrench{% endblock %}
             {% block content %}
                 <div class="«appName.toLowerCase»-config">
-                    {form cssClass='form-horizontal' role='form'}
-                        {# add validation summary and a <div> element for styling the form #}
-                        {«appName.formatForDB»FormFrame}
-                            {formsetinitialfocus inputId='«getSortedVariableContainers.head.vars.head.name.formatForCode»'}
-                            «IF hasMultipleConfigSections»
-                                <ul class="nav nav-pills">
-                                «FOR varContainer : getSortedVariableContainers»
-                                    {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
-                                    <li«IF varContainer == getSortedVariableContainers.head» class="active"«ENDIF» data-toggle="pill"><a href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a></li>
-                                «ENDFOR»
-                                </ul>
+                    {% form_theme form with [
+                        'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig',
+                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                    ] %}
+                    {{ form_start(form) }}
+                    «IF hasMultipleConfigSections»
+                        <ul class="nav nav-pills">
+                        «FOR varContainer : getSortedVariableContainers»
+                            {% set tabTitle = __('«varContainer.name.formatForDisplayCapital»') %}
+                            <li«IF varContainer == getSortedVariableContainers.head» class="active"«ENDIF» data-toggle="pill"><a href="#tab«varContainer.sortOrder»" title="{{ tabTitle|e('html_attr') }}" role="tab" data-toggle="tab">{{ tabTitle }}</a></li>
+                        «ENDFOR»
+                        </ul>
 
-                            «ENDIF»
-                            «IF hasMultipleConfigSections»
-                                <div class="tab-content">
-                                    «configSections»
-                                </div>
-                            «ELSE»
-                                «configSections»
-                            «ENDIF»
+                        {{ form_errors(form) }}
+                        <div class="tab-content">
+                            «configSections»
+                        </div>
+                    «ELSE»
+                        {{ form_errors(form) }}
+                        «configSections»
+                    «ENDIF»
 
-                            <div class="form-group form-buttons">
-                                <div class="col-sm-offset-3 col-sm-9">
-                                    {formbutton commandName='save' __text='Update configuration' class='btn btn-success'}
-                                    {formbutton commandName='cancel' __text='Cancel' class='btn btn-default'}
-                                </div>
-                            </div>
-                        {/«appName.formatForDB»FormFrame}
-                    {/form}
+                    <div class="form-group">
+                        <div class="col-lg-offset-3 col-lg-9">
+                            {{ form_widget(form.save, {attr: {class: 'btn btn-success'}, icon: 'fa-check'}) }}
+                            {{ form_widget(form.cancel, {attr: {class: 'btn btn-default'}, icon: 'fa-times'}) }}
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
                 </div>
             {% endblock %}
             «IF !getAllVariables.filter[documentation !== null && documentation != ''].empty»
@@ -196,46 +196,38 @@ class Config {
                     {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
                 «ENDIF»
                 {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
-                    «inputField»
+                    «inputFieldLegacy»
             </div>
         «ELSE»
-            <div class="form-group">
-                «IF documentation !== null && documentation != ""»
-                    {% set toolTip = __('«documentation.replace("'", '"')»') %}
-                «ENDIF»
-                {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF» col-sm-3 control-label'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
-                <div class="col-sm-9">
-                    «inputField»
-                </div>
-            </div>
+            {{ form_row(form.«name.formatForCode») }}
         «ENDIF»
     '''
 
-    def private dispatch inputField(Variable it) '''
-        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'«IF !container.application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+    def private dispatch inputFieldLegacy(Variable it) '''
+        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'}
     '''
 
-    def private dispatch inputField(IntVar it) '''
+    def private dispatch inputFieldLegacy(IntVar it) '''
         «IF isUserGroupSelector»
-            {formdropdownlist id='«name.formatForCode»' group='config' __title='Choose the «name.formatForDisplay»'«IF !container.application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+            {formdropdownlist id='«name.formatForCode»' group='config' __title='Choose the «name.formatForDisplay»'}
         «ELSE»
-            {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'«IF !container.application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+            {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'}
         «ENDIF»
     '''
 
-    def private dispatch inputField(TextVar it) '''
-        {formtextinput id='«name.formatForCode»' group='config' maxLength=«IF maxLength > 0»«maxLength»«ELSE»255«ENDIF» __title='Enter the «name.formatForDisplay».'«IF !container.application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+    def private dispatch inputFieldLegacy(TextVar it) '''
+        {formtextinput id='«name.formatForCode»' group='config' maxLength=«IF maxLength > 0»«maxLength»«ELSE»255«ENDIF» __title='Enter the «name.formatForDisplay».'}
     '''
 
-    def private dispatch inputField(BoolVar it) '''
+    def private dispatch inputFieldLegacy(BoolVar it) '''
         {formcheckbox id='«name.formatForCode»' group='config'}
     '''
 
-    def private dispatch inputField(ListVar it) '''
+    def private dispatch inputFieldLegacy(ListVar it) '''
         «IF multiple»
-            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2 __title='Choose the «name.formatForDisplay»'«IF !container.application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2 __title='Choose the «name.formatForDisplay»'}
         «ELSE»
-            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF» __title='Choose the «name.formatForDisplay»'«IF !container.application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF» __title='Choose the «name.formatForDisplay»'}
         «ENDIF»
     '''
 }

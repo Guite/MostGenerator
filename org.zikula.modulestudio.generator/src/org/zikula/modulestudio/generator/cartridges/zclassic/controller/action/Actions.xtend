@@ -1178,7 +1178,7 @@ class Actions {
     '''
 
     def private dispatch actionImplBody(CustomAction it) '''
-        «IF controller instanceof AdminController
+        «IF isLegacy && controller instanceof AdminController
             && (name == 'config' || name == 'modifyconfig' || name == 'preferences')»
             «new FormHandler().formCreate(it, app.appName, 'modify')»
         «ELSE»

@@ -186,16 +186,12 @@ class ControllerLayer {
         «IF !isLegacy»
             namespace «app.appNamespace»\Controller\Base;
 
-            «IF app.needsConfig && isConfigController»
-                use «app.appNamespace»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
-
-            «ENDIF»
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             «ENDIF»
-            «IF hasActions('index') || hasActions('view') || hasActions('delete')»
+            «IF hasActions('index') || hasActions('view') || hasActions('delete') || (app.needsConfig && isConfigController)»
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
             «IF isAjaxController»
@@ -522,7 +518,7 @@ class ControllerLayer {
 
     def private configAction(Controller it, Boolean isBase) '''
         «configDocBlock(isBase)»
-        public function config«IF !isLegacy»Action«ENDIF»()
+        public function config«IF !isLegacy»Action«ENDIF»(«IF !isLegacy»Request $request«ENDIF»)
         {
             «IF isBase»
                 «configBaseImpl»
@@ -559,13 +555,38 @@ class ControllerLayer {
             }
         «ENDIF»
 
-        // Create new Form reference
-        $view = \FormUtil::newForm($this->name, $this);
+        «IF isLegacy»
+            // Create new Form reference
+            $view = \FormUtil::newForm($this->name, $this);
 
-        $templateName = '«IF isLegacy»«app.configController.formatForDB»/config.tpl«ELSE»«app.configController.formatForCodeCapital»/config.html.twig«ENDIF»';
+            $templateName = '«app.configController.formatForDB»/config.tpl';
 
-        // Execute form using supplied template and page event handler
-        return «IF !isLegacy»$this->response(«ENDIF»$view->execute($templateName, new «IF isLegacy»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»())«IF !isLegacy»)«ENDIF»;
+            // Execute form using supplied template and page event handler
+            return $view->execute($templateName, new «app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config());
+        «ELSE»
+            $form = $this->createForm('«app.appNamespace»\Form\AppSettingsType');
+
+            if ($form->handleRequest($request)->isValid()) {
+                $this->setVars($form->getData());
+
+                if ($form->get('save')->isClicked()) {
+                    $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Module configuration updated.'));
+                    $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
+                } elseif ($form->get('cancel')->isClicked()) {
+                    $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Operation cancelled.'));
+            	}
+
+                // redirect to config page again (to show with GET request)
+                return $this->redirectToRoute('«app.appName.formatForDB»_«app.configController.formatForDB»_config');
+            }
+
+            $templateParameters = [
+                'form' => $form->createView()
+            ];
+
+            // render the config form
+            return $this->render('@«app.appName»/«app.configController.formatForCodeCapital»/config.html.twig', $templateParameters);
+        «ENDIF»
     '''
 
     def private controllerImpl(Controller it) '''

@@ -12,7 +12,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class Config {
+class ConfigLegacy {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
@@ -22,34 +22,22 @@ class Config {
 
     /**
      * Entry point for config form handler.
+     * 1.3.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (!needsConfig) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/Config' + (if (targets('1.3.x')) '' else 'Handler') + '.php',
-            fh.phpFileContent(it, configHandlerBaseImpl), fh.phpFileContent(it, configHandlerImpl)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/Config.php',
+            fh.phpFileContent(it, configLegacyHandlerBaseImpl), fh.phpFileContent(it, configLegacyHandlerImpl)
         )
     }
 
-    def private configHandlerBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base;
-
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
-            use ModUtil;
-            use ServiceUtil;
-            use System;
-            use UserUtil;
-            use Zikula_Form_AbstractHandler;
-            use Zikula_Form_View;
-
-        «ENDIF»
+    def private configLegacyHandlerBaseImpl(Application it) '''
         /**
          * Configuration handler base class.
          */
-        class «IF targets('1.3.x')»«appName»_Form_Handler_«configController.toFirstUpper»_Base_Config«ELSE»ConfigHandler«ENDIF» extends Zikula_Form_AbstractHandler
+        class «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config extends Zikula_Form_AbstractHandler
         {
             /**
              * Post construction hook.
@@ -68,35 +56,23 @@ class Config {
              * @param Zikula_Form_View $view The form view instance.
              *
              * @return boolean False in case of initialization errors, otherwise true.
-             «IF !targets('1.3.x')»
-             *
-             * @throws AccessDeniedException Thrown if the user doesn't have admin permissions
-             * @throws RuntimeException          Thrown if persisting configuration vars fails
-             «ENDIF»
              */
             public function initialize(Zikula_Form_View $view)
             {
                 // permission check
-                «IF targets('1.3.x')»
-                    if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        return $view->registerError(LogUtil::registerPermissionError());
-                    }
-                «ELSE»
-                    $serviceManager = ServiceUtil::getManager();
-                    if (!$serviceManager->get('zikula_permissions_module.api.permission')->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        throw new AccessDeniedException();
-                    }
-                «ENDIF»
+                if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                    return $view->registerError(LogUtil::registerPermissionError());
+                }
                 «IF !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty»
 
                     // prepare list of user groups for moderation group selectors
-                    $userGroups = ModUtil::apiFunc('«IF targets('1.3.x')»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'getall');
-                    $userGroupItems = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                    $userGroups = ModUtil::apiFunc('Groups', 'user', 'getall');
+                    $userGroupItems = array();
                     foreach ($userGroups as $userGroup) {
-                        $userGroupItems[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                        $userGroupItems[] = array(
                             'value' => $userGroup['gid'],
                             'text' => $userGroup['name']
-                        «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                        );
                     }
                 «ENDIF»
 
@@ -159,11 +135,6 @@ class Config {
              */
             public function handleCommand(Zikula_Form_View $view, &$args)
             {
-                «IF !targets('1.3.x')»
-                    $serviceManager = ServiceUtil::getManager();
-                    $flashBag = $serviceManager->get('session')->getFlashBag();
-
-                «ENDIF»
                 if ($args['commandName'] == 'save') {
                     // check if all fields are valid
                     if (!$this->view->isValid()) {
@@ -175,42 +146,23 @@ class Config {
 
                     // update all module vars
                     try {
-                        «IF targets('1.3.x')»
-                            $this->setVars($data['config']);
-                        «ELSE»
-                            $serviceManager->get('zikula_extensions_module.api.variable')->setAll('«appName»', $data['config']);
-                        «ENDIF»
+                        $this->setVars($data['config']);
                     } catch (\Exception $e) {
                         $msg = $this->__('Error! Failed to set configuration variables.');
                         if (System::isDevelopmentMode()) {
                             $msg .= ' ' . $e->getMessage();
                         }
-                        «IF targets('1.3.x')»
-                            return LogUtil::registerError($msg);
-                        «ELSE»
-                            $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $msg);
-                            return false;
-                        «ENDIF»
+
+                        return LogUtil::registerError($msg);
                     }
 
-                    «IF targets('1.3.x')»
-                        LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
-                    «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Module configuration updated.'));
-
-                        $logger = $serviceManager->get('logger');
-                        $logger->notice('{app}: User {user} updated the configuration.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
-                    «ENDIF»
+                    LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
                 } else if ($args['commandName'] == 'cancel') {
-                    // nothing to do there
+                    LogUtil::registerStatus($this->__('Operation cancelled.'));
                 }
 
                 // redirect back to the config page
-                «IF targets('1.3.x')»
-                    $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
-                «ELSE»
-                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_«configController.formatForDB»_config');
-                «ENDIF»
+                $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
 
                 return $this->view->redirect($url);
             }
@@ -229,29 +181,19 @@ class Config {
     def private dispatch init(ListVar it) '''
         // initialise list entries for the '«name.formatForDisplay»' setting
         «/*        $listEntries = $modVars['«name.formatForCode)»'];*/»
-        $modVars['«name.formatForCode»Items'] = «IF container.application.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR item : items SEPARATOR ','»«item.itemDefinition»«ENDFOR»
-        «IF container.application.targets('1.3.x')»)«ELSE»]«ENDIF»;
+        $modVars['«name.formatForCode»Items'] = array(«FOR item : items SEPARATOR ','»«item.itemDefinition»«ENDFOR»
+        );
     '''
 
     def private itemDefinition(ListVarItem it) '''
             «IF (eContainer as ListVar).container.application.targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => '«name.formatForCode»', 'text' => '«name.formatForDisplayCapital»'«IF (eContainer as ListVar).container.application.targets('1.3.x')»)«ELSE»]«ENDIF»
     '''
 
-    def private configHandlerImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»;
-
-            use «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base\ConfigHandler as BaseConfigHandler;
-
-        «ENDIF»
+    def private configLegacyHandlerImpl(Application it) '''
         /**
          * Configuration handler implementation class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Handler_«configController.toFirstUpper»_Config extends «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config
-        «ELSE»
-        class ConfigHandler extends BaseConfigHandler
-        «ENDIF»
         {
             // feel free to extend the base handler class here
         }
