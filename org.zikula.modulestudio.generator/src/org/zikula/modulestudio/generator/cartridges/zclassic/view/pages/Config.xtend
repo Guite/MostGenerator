@@ -196,7 +196,7 @@ class Config {
                     {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
                 «ENDIF»
                 {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
-                    «inputFieldLegacy»
+                «inputFieldLegacy»
             </div>
         «ELSE»
             {{ form_row(form.«name.formatForCode») }}
