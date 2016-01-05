@@ -138,6 +138,7 @@ class Config {
         «ENDIF»
     '''
 
+    def private dispatch fieldType(TextVar it) '''Text«IF multiline»area«ENDIF»'''
     def private dispatch additionalOptions(TextVar it) ''',
         'max_length' => «IF maxLength > 0»«maxLength»«ELSE»255«ENDIF»
     '''
