@@ -111,7 +111,6 @@ class Config {
             «ENDIF»
             'required' => false,
             'data' => $modVars['«name.formatForCode»'],
-            'empty_data' => null,
             'attr' => [
                 'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')«IF documentation !== null && documentation != ''»,
                 'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»')
