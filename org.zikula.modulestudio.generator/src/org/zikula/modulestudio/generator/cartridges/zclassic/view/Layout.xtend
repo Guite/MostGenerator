@@ -9,6 +9,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -19,6 +20,7 @@ class Layout {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -69,13 +71,9 @@ class Layout {
             «IF hasViewActions || hasDisplayActions || hasEditActions»
                 {{ pageAddAsset('stylesheet', 'web/bootstrap-jqueryui/bootstrap-jqueryui.min.css') }}
                 {{ pageAddAsset('javascript', 'web/bootstrap-jqueryui/bootstrap-jqueryui.min.js') }}
-                «IF hasEditActions»
-                    {% if app.request.query.get('func') == 'edit' %}
-                        {{ polyfill() }}
-                    {% endif %}
-                «ENDIF»
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
+            {{ polyfill(«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext') }}
 
             {# initialise additional gettext domain for translations within javascript #}
             {# blocked by https://github.com/zikula/core/issues/2601 #}
