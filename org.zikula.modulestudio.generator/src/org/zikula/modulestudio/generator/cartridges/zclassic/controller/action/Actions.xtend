@@ -1040,6 +1040,18 @@ class Actions {
             «ENDIF»
         }
 
+        «IF app.hasAdminController && app.hasUserController»
+        if («IF isLegacy»$legacyControllerType == 'admin'«ELSE»$isAdmin«ENDIF») {
+            «redirectAfterDeletion(app.getAllAdminControllers.head)»
+        } else {
+            «redirectAfterDeletion(app.getMainUserController)»
+        }
+        «ELSEIF app.hasAdminController»
+            «redirectAfterDeletion(app.getAllAdminControllers.head)»
+        «ELSEIF app.hasUserController»
+            «redirectAfterDeletion(app.getMainUserController)»
+        «ENDIF»
+
         // check whether deletion is allowed
         $deleteActionId = 'delete';
         $deleteAllowed = false;
@@ -1056,80 +1068,29 @@ class Actions {
             «ELSE»
                 $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
                 $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
+
+                return $this->redirectToRoute($redirectRoute);
             «ENDIF»
         }
 
         «IF isLegacy»
             $confirmation = (bool) $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
+            if ($confirmation) {
+                «deletionProcess(action)»
+            }
         «ELSE»
-            $confirmation = $request->request->getBoolean('confirmation', false);
+            $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType');
+
+            if ($form->handleRequest($request)->isValid()) {
+                if ($form->get('delete')->isClicked()) {
+                    «deletionProcess(action)»
+                } elseif ($form->get('cancel')->isClicked()) {
+                    $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Operation cancelled.'));
+
+                    return $this->redirectToRoute($redirectRoute);
+            	}
+            }
         «ENDIF»
-        if ($confirmation && $deleteAllowed) {
-            $this->checkCsrfToken();
-
-            $hasErrors = false;
-            if ($entity->supportsHookSubscribers()) {
-                $hookAreaPrefix = $entity->getHookAreaPrefix();
-                $hookType = 'validate_delete';
-                // Let any hooks perform additional validation actions
-                «IF isLegacy»
-                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                    $validators = $this->notifyHooks($hook)->getValidators();
-                «ELSE»
-                    $hook = new ValidationHook(new ValidationProviders());
-                    $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-                «ENDIF»
-                $hasErrors = $validators->hasErrors();
-            }
-
-            if (!$hasErrors) {
-                // execute the workflow action
-                $success = $workflowHelper->executeAction($entity, $deleteActionId);
-                if ($success) {
-                    «IF isLegacy»
-                        $this->registerStatus($this->__('Done! Item deleted.'));
-                    «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item deleted.'));
-                        $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
-                    «ENDIF»
-                }
-
-                if ($entity->supportsHookSubscribers()) {
-                    // Let any hooks know that we have created, updated or deleted the «name.formatForDisplay»
-                    $hookType = 'process_delete';
-                    «IF isLegacy»
-                        $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
-                        $this->notifyHooks($hook);
-                    «ELSE»
-                        $hook = new ProcessHook($entity->createCompositeIdentifier());
-                        $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-                    «ENDIF»
-                }
-                «IF isLegacy»
-
-                    // The «name.formatForDisplay» was deleted, so we clear all cached pages this item.
-                    $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-                    ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
-                «ENDIF»
-
-                «IF app.hasAdminController && app.hasUserController»
-                if («IF isLegacy»$legacyControllerType == 'admin'«ELSE»$isAdmin«ENDIF») {
-                    «redirectAfterDeletion(app.getAllAdminControllers.head)»
-                } else {
-                    «redirectAfterDeletion(app.getMainUserController)»
-                }
-                «ELSEIF app.hasAdminController»
-                    «redirectAfterDeletion(app.getAllAdminControllers.head)»
-                «ELSEIF app.hasUserController»
-                    «redirectAfterDeletion(app.getMainUserController)»
-                «ENDIF»
-                «IF isLegacy»
-                    return $this->redirect($redirectUrl);
-                «ELSE»
-                    return new RedirectResponse(System::normalizeUrl($redirectUrl));
-                «ENDIF»
-            }
-        }
 
         «IF isLegacy»
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
@@ -1143,7 +1104,8 @@ class Actions {
         «ELSE»
             $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
             $templateParameters = [
-                'routeArea' => $isAdmin ? 'admin' : ''
+                'routeArea' => $isAdmin ? 'admin' : '',
+                'deleteForm' => $form->createView()
             ];
         «ENDIF»
 
@@ -1167,13 +1129,77 @@ class Actions {
         «ENDIF»
     '''
 
+    def private deletionProcess(Entity it, DeleteAction action) '''
+        «IF isLegacy»
+            $this->checkCsrfToken();
+
+        «ENDIF»
+        «IF !skipHookSubscribers»
+            $hookAreaPrefix = $entity->getHookAreaPrefix();
+            $hookType = 'validate_delete';
+            // Let any hooks perform additional validation actions
+            «IF isLegacy»
+                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                $validators = $this->notifyHooks($hook)->getValidators();
+            «ELSE»
+                $hook = new ValidationHook(new ValidationProviders());
+                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+            «ENDIF»
+            if ($validators->hasErrors()) {
+                «performDeletion(action)»
+                «deletePostProcessing(action)»
+            }
+        «ELSE»
+            «performDeletion(action)»
+            «deletePostProcessing(action)»
+        «ENDIF»
+    '''
+
+    def private performDeletion(Entity it, DeleteAction action) '''
+        // execute the workflow action
+        $success = $workflowHelper->executeAction($entity, $deleteActionId);
+        if ($success) {
+            «IF isLegacy»
+                $this->registerStatus($this->__('Done! Item deleted.'));
+            «ELSE»
+                $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item deleted.'));
+                $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
+            «ENDIF»
+        }
+    '''
+
+    def private deletePostProcessing(Entity it, DeleteAction action) '''
+        «IF !skipHookSubscribers»
+
+            // Let any hooks know that we have created, updated or deleted the «name.formatForDisplay»
+            $hookType = 'process_delete';
+            «IF isLegacy»
+                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
+                $this->notifyHooks($hook);
+            «ELSE»
+                $hook = new ProcessHook($entity->createCompositeIdentifier());
+                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+            «ENDIF»
+        «ENDIF»
+
+        «IF isLegacy»
+            // The «name.formatForDisplay» was deleted, so we clear all cached pages this item.
+            $cacheArgs = array('ot' => $objectType, 'item' => $entity);
+            ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+
+            return $this->redirect($redirectUrl);
+        «ELSE»
+            return $this->redirectToRoute($redirectRoute);
+        «ENDIF»
+    '''
+
     def private redirectAfterDeletion(Entity it, Controller controller) '''
         «IF isLegacy»
             // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»main page«ENDIF»
             $redirectUrl = ModUtil::url($this->name, '«name.formatForCode»', '«IF controller.hasActions('view')»view«ELSE»main«ENDIF»', array('lct' => $legacyControllerType));
         «ELSE»
             // redirect to the «IF controller.hasActions('view')»list of «nameMultiple.formatForDisplay»«ELSE»index page«ENDIF»
-            $redirectUrl = $this->get('router')->generate('«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF controller.hasActions('view')»view«ELSE»index«ENDIF»');
+            $redirectRoute = '«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . '«IF controller.hasActions('view')»view«ELSE»index«ENDIF»';
         «ENDIF»
     '''
 

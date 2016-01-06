@@ -69,26 +69,29 @@ class Delete {
             {% block adminPageIcon %}trash-o{% endblock %}
             {% block content %}
                 <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
-                    <p class="alert alert-warning">{{ __('Do you really want to delete this «name.formatForDisplay» ?') }}</p>
+                    <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode».getTitleFromDisplayPattern()}) }}</p>
 
-                    <form class="form-horizontal" action="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'delete'«routeParams(name, true)») }}" method="post" role="form">
-                        <div>
-                            <input type="hidden" id="confirmation" name="confirmation" value="1" />
-                            <fieldset>
-                                <legend>{{ __('Confirmation prompt') }}</legend>
-                                <div class="form-group form-buttons">
-                                    <div class="col-sm-offset-3 col-sm-9">
-                                        <button type="submit" class="btn btn-danger"><span class="fa fa-remove"></span> {{ __('Delete') }}</button>
-                                        <a href="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view') }}" class="btn btn-default" role="button"><span class="fa fa-times"></span> {{ __('Cancel') }}</a>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            «IF !skipHookSubscribers»
+                    {% form_theme deleteForm with [
+                        'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig',
+                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                    ] %}
+                    {{ form_start(deleteForm) }}
+                    {{ form_errors(deleteForm) }}
 
-                                «callDisplayHooks(appName)»
-                            «ENDIF»
+                    <fieldset>
+                        <legend>{{ __('Confirmation prompt') }}</legend>
+                        <div class="form-group">
+                            <div class="col-lg-offset-3 col-lg-9">
+                                {{ form_widget(deleteForm.delete, {attr: {class: 'btn btn-success'}, icon: 'fa-trash-o'}) }}
+                                {{ form_widget(deleteForm.cancel, {attr: {class: 'btn btn-default'}, icon: 'fa-times'}) }}
+                            </div>
                         </div>
-                    </form>
+                    </fieldset>
+                    «IF !skipHookSubscribers»
+
+                        «callDisplayHooks(appName)»
+                    «ENDIF»
+                    {{ form_end(form) }}
                 </div>
             {% endblock %}
         «ENDIF»

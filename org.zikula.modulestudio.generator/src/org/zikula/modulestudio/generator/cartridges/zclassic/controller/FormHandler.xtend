@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionha
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -50,6 +51,7 @@ class FormHandler {
         if (targets('1.3.x')) {
             new ConfigLegacy().generate(it, fsa)
         } else {
+            new DeleteEntity().generate(it, fsa)
             new Config().generate(it, fsa)
         }
     }

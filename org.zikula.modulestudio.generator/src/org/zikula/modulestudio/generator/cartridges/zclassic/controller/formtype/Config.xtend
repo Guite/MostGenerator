@@ -81,10 +81,10 @@ class Config {
 
                 $builder
                     «FOR modvar : getAllVariables»«modvar.definition»«ENDFOR»
-                    ->add('save', 'submit', [
+                    ->add('save', '«nsSymfonyFormType»SubmitType', [
                         'label' => $this->translator->trans('Update configuration', [], '«appName.formatForDB»')
                     ])
-                    ->add('cancel', 'submit', [
+                    ->add('cancel', '«nsSymfonyFormType»SubmitType', [
                         'label' => $this->translator->trans('Cancel', [], '«appName.formatForDB»')
                     ])
                 ;

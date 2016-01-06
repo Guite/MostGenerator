@@ -145,6 +145,13 @@ class ServiceDefinitions {
     def private formsHelper(Application it) '''
         # Form types
         «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Form\\\\Type\\\\'»
+        «IF hasDeleteActions»
+            «modPrefix».form.type.deleteentity:
+                class: "«nsBase.replace('Type\\\\', '')»DeleteEntity"
+                arguments: [@translator]
+                tags:
+                    - { name: form.type }
+        «ENDIF»
         «IF needsConfig»
             «modPrefix».form.type.appsettings:
                 class: "«nsBase.replace('Type\\\\', '')»AppSettingsType"
