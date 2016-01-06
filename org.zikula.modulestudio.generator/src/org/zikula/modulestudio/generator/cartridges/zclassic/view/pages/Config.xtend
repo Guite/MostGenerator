@@ -114,7 +114,7 @@ class Config {
                     <div class="form-group">
                         <div class="col-lg-offset-3 col-lg-9">
                             {{ form_widget(form.save, {attr: {class: 'btn btn-success'}, icon: 'fa-check'}) }}
-                            {{ form_widget(form.cancel, {attr: {class: 'btn btn-default'}, icon: 'fa-times'}) }}
+                            {{ form_widget(form.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
                         </div>
                     </div>
                     {{ form_end(form) }}

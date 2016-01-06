@@ -83,7 +83,7 @@ class Delete {
                         <div class="form-group">
                             <div class="col-lg-offset-3 col-lg-9">
                                 {{ form_widget(deleteForm.delete, {attr: {class: 'btn btn-success'}, icon: 'fa-trash-o'}) }}
-                                {{ form_widget(deleteForm.cancel, {attr: {class: 'btn btn-default'}, icon: 'fa-times'}) }}
+                                {{ form_widget(deleteForm.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
                             </div>
                         </div>
                     </fieldset>
