@@ -95,7 +95,7 @@ class Config {
              */
             public function getBlockPrefix()
             {
-                return '«appName.formatForDB»_appsettingstype';
+                return '«appName.formatForDB»_appsettings';
             }
         }
     '''
@@ -117,7 +117,7 @@ class Config {
                 'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»')
             «ENDIF»
             ]«additionalOptions»
-        ]
+        ])
     '''
 
     def private dispatch fieldType(Variable it) '''Text'''

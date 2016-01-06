@@ -173,7 +173,7 @@ class BlockModeration {
             «IF targets('1.3.x')»
                 $template = 'block/moderation.tpl';
             «ELSE»
-                $template = '«appName»:Block:moderation.html.twig';
+                $template = '@«appName»/Block/moderation.html.twig';
             «ENDIF»
 
             return $template;

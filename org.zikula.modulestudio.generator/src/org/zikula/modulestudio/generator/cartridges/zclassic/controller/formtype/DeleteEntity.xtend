@@ -18,7 +18,7 @@ class DeleteEntity {
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
     /**
-     * Entry point for config form type.
+     * Entry point for entity deletion form type.
      * 1.4.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
@@ -72,7 +72,7 @@ class DeleteEntity {
              */
             public function getBlockPrefix()
             {
-                return '«appName.formatForDB»_deleteentitytype';
+                return '«appName.formatForDB»_deleteentity';
             }
         }
     '''

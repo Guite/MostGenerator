@@ -567,9 +567,9 @@ class ControllerLayer {
             $form = $this->createForm('«app.appNamespace»\Form\AppSettingsType');
 
             if ($form->handleRequest($request)->isValid()) {
-                $this->setVars($form->getData());
-
                 if ($form->get('save')->isClicked()) {
+                    $this->setVars($form->getData());
+
                     $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Module configuration updated.'));
                     $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
                 } elseif ($form->get('cancel')->isClicked()) {

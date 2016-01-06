@@ -152,7 +152,16 @@ class ServiceDefinitions {
                 tags:
                     - { name: form.type }
         «ENDIF»
+        «IF generateListBlock»
+
+            «modPrefix».form.type.block.itemlist:
+                class: "«nsBase.replace('Form\\\\Type\\\\', '')»Block\Form\Type\ListBlockType"
+                arguments: [@translator]
+                tags:
+                    - { name: form.type }
+        «ENDIF»
         «IF needsConfig»
+
             «modPrefix».form.type.appsettings:
                 class: "«nsBase.replace('Type\\\\', '')»AppSettingsType"
                 arguments: [@translator, "@zikula_extensions_module.api.variable"]

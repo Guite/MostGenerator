@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.ListBlock
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlocksView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -25,6 +26,10 @@ class BlockList {
             fh.phpFileContent(it, listBlockBaseClass), fh.phpFileContent(it, listBlockImpl)
         )
         new BlocksView().generate(it, fsa)
+        if (!targets('1.3.x')) {
+            // form type class
+            new ListBlock().generate(it, fsa)
+        }
     }
 
     def private listBlockBaseClass(Application it) '''
@@ -85,8 +90,10 @@ class BlockList {
 
         «modify»
 
-        «update»
+        «IF targets('1.3.x')»
+            «update»
 
+        «ENDIF»
         /**
          * Returns default settings for this block.
          *
@@ -98,6 +105,7 @@ class BlockList {
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'sorting' => 'default',
                 'amount' => 5,
+                'template' => 'itemlist_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»',
                 'customTemplate' => '',
                 'filter' => ''
             «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
@@ -119,11 +127,13 @@ class BlockList {
                 if (!isset($properties['catIds'])) {
                     $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                     $properties['catIds'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$primaryRegistry => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
-                    // backwards compatibility
-                    if (isset($properties['catId'])) {
-                        $properties['catIds'][$primaryRegistry][] = $properties['catId'];
-                        unset($properties['catId']);
-                    }
+                    «IF targets('1.3.x')»
+                        // backwards compatibility
+                        if (isset($properties['catId'])) {
+                            $properties['catIds'][$primaryRegistry][] = $properties['catId'];
+                            unset($properties['catId']);
+                        }
+                    «ENDIF»
                 } elseif (!is_array($properties['catIds'])) {
                     $properties['catIds'] = explode(',', $properties['catIds']);
                 }
@@ -218,10 +228,6 @@ class BlockList {
             // set default values for all params which are not properly set
             $defaults = $this->getDefaults();
             $properties = array_merge($defaults, $properties);
-            «val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'»
-            if (!isset($properties['template'])) {
-                $properties['template'] = 'itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display«templateExtension»';
-            }
             «IF hasCategorisableEntities»
 
                 $properties = $this->resolveCategoryIds($properties);
@@ -364,6 +370,9 @@ class BlockList {
             } else {
                 $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
             }
+            «IF !targets('1.3.x')»
+                $template = '@«appName»/' . $template;
+            «ENDIF»
 
             return $template;
         }
@@ -433,9 +442,6 @@ class BlockList {
             // set default values for all params which are not properly set
             $defaults = $this->getDefaults();
             $properties = array_merge($defaults, $properties);
-            if (!isset($properties['template'])) {
-                $properties['template'] = 'itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display«templateExtension»';
-            }
             «IF hasCategorisableEntities»
 
                 $properties = $this->resolveCategoryIds($properties);
@@ -447,20 +453,26 @@ class BlockList {
                 // assign the appropriate values
                 $this->view->assign($properties);
 
-                // clear the block cache
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display«templateExtension»');
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display«templateExtension»');
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display_description«templateExtension»');
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display_description«templateExtension»');
-
                 // Return the output that has been generated by this function
                 return $this->view->fetch('block/itemlist_modify«templateExtension»');
             «ELSE»
-                return $this->renderView('Block/itemlist_modify«templateExtension», $properties);
+                $properties['isCategorisable'] = in_array($properties['objectType'], $this->categorisableObjectTypes);
+                $form = $this->createForm('«appNamespace»\Block\Form\Type\ItemListBlockType', $properties);
+
+                if ($form->handleRequest($request)->isValid()) {
+                    return $form->getData();
+                }
+
+                // render the edit form
+                return $this->renderView('@«appName»/Block/itemlist_modify«templateExtension»', [
+                    'form' => $form->createView(),
+                    'isCategorisable' => $properties['isCategorisable']
+                ]);
             «ENDIF»
         }
     '''
 
+    // 1.3.x only
     def private update(Application it) '''
         /**
          * Update block settings.
@@ -473,53 +485,33 @@ class BlockList {
         {
             // Get current content
             $properties = BlockUtil::varsFromContent($blockinfo['content']);
-            «IF !targets('1.3.x')»
-                $request = $this->get('request_stack')->getCurrentRequest();
-            «ENDIF»
 
-            «IF targets('1.3.x')»
-                $properties['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-                $properties['sorting'] = $this->request->request->filter('sorting', 'default', FILTER_SANITIZE_STRING);
-                $properties['amount'] = (int) $this->request->request->filter('amount', 5, FILTER_VALIDATE_INT);
-                $properties['template'] = $this->request->request->get('template', '');
-                $properties['customTemplate'] = $this->request->request->get('customtemplate', '');
-                $properties['filter'] = $this->request->request->get('filter', '');
-            «ELSE»
-                $properties['objectType'] = $request->request->getAlnum('objecttype', '«getLeadingEntity.name.formatForCode»');
-                $properties['sorting'] = $request->request->getAlpha('sorting', 'default');
-                $properties['amount'] = $request->request->getInt('amount', 5);
-                $properties['template'] = $request->request->getAlnum('template', '');
-                $properties['customTemplate'] = $request->request->getAlnum('customtemplate', '');
-                $properties['filter'] = $request->request->get('filter', '');
-            «ENDIF»
+            $properties['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
+            $properties['sorting'] = $this->request->request->filter('sorting', 'default', FILTER_SANITIZE_STRING);
+            $properties['amount'] = (int) $this->request->request->filter('amount', 5, FILTER_VALIDATE_INT);
+            $properties['template'] = $this->request->request->get('template', '');
+            $properties['customTemplate'] = $this->request->request->get('customtemplate', '');
+            $properties['filter'] = $this->request->request->get('filter', '');
 
-            «IF targets('1.3.x')»
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
-            «ENDIF»
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             if (!in_array($properties['objectType'], $controllerHelper->getObjectTypes('block'))) {
                 $properties['objectType'] = $controllerHelper->getDefaultObjectType('block');
             }
-            «IF hasCategorisableEntities»
 
-                $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                $properties['catIds'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$primaryRegistry => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
-                if (in_array($properties['objectType'], $this->categorisableObjectTypes)) {
-                    $properties['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                }
-            «ENDIF»
+            $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']));
+            $properties['catIds'] = array($primaryRegistry => array());
+            if (in_array($properties['objectType'], $this->categorisableObjectTypes)) {
+                $properties['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $properties['objectType']));
+            }
 
             // write back the new contents
             $blockinfo['content'] = BlockUtil::varsToContent($properties);
-            «IF targets('1.3.x')»
 
-                // clear the block cache
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($properties['objectType']) . '_display.tpl');
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
-                $this->view->clear_cache('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist_' . ucfirst($properties['objectType']) . '_display_description.tpl');
-            «ENDIF»
+            // clear the block cache
+            $this->view->clear_cache('block/itemlist_display.tpl');
+            $this->view->clear_cache('block/itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display.tpl');
+            $this->view->clear_cache('block/itemlist_display_description.tpl');
+            $this->view->clear_cache('block/itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display_description.tpl');
 
             return $blockinfo;
         }

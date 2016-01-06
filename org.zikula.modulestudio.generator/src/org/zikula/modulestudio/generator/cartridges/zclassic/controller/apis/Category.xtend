@@ -81,7 +81,7 @@ class Category {
          */
         public function hasMultipleSelection(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            if (isset($args['registry'])) {
+            if (!isset($args['registry'])) {
                 // default to the primary registry
                 $args['registry'] = $this->getPrimaryProperty($args);
             }
