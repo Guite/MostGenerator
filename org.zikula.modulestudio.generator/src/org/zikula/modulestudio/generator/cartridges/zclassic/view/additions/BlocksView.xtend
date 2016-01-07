@@ -59,6 +59,7 @@ class BlocksView {
             «editTemplateJs»
         «ELSE»
             {# Purpose of this template: Edit block for generic item list #}
+            {% form_theme form 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
             {{ form_row(form.objectType) }}
             {% if isCategorisable %}
                 {{ form_row(form.categories) }}
