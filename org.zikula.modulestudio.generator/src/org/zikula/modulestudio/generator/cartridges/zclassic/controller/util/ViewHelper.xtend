@@ -118,7 +118,7 @@ class ViewHelper {
         public function getViewTemplate(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
             // create the base template name
-            $template = DataUtil::formatForOS(«IF isLegacy»$type«ELSE»'@«appName»/' . ucfirst($type)«ENDIF» . '/' . $func);
+            $template = «IF isLegacy»$type«ELSE»'@«appName»/' . ucfirst($type)«ENDIF» . '/' . $func;
 
             // check for template extension
             $templateExtension = $this->determineExtension(«IF isLegacy»$view«ELSE»$twig«ENDIF», $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);

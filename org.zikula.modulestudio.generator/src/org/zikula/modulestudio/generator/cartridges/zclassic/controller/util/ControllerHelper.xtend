@@ -352,7 +352,7 @@ class ControllerHelper {
                 «ENDFOR»
             }
 
-            $result = DataUtil::formatForOS($basePath);
+            $result = $basePath;
             if (substr($result, -1, 1) != '/') {
                 // reappend the removed slash
                 $result .= '/';
@@ -452,7 +452,7 @@ class ControllerHelper {
                     $htaccessFileTemplate = '«rootFolder»/«IF !targets('1.3.x')»«if (systemModule) name.formatForCode else appName»/«ENDIF»«getAppDocPath»htaccessTemplate';
                     if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
                         $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
-                        $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents(DataUtil::formatForOS($htaccessFileTemplate, false)));
+                        $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents($htaccessFileTemplate, false));
                         $fs->dumpFile($htaccessFilePath, $htaccessContent);
                     }
                 } catch (IOExceptionInterface $e) {

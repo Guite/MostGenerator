@@ -36,7 +36,6 @@ class BlockList {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            use DataUtil;
             use ModUtil;
             use Zikula\Core\AbstractBlockHandler;
 
@@ -355,7 +354,7 @@ class BlockList {
                 $templateFile = $properties['customTemplate'];
             }
 
-            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_', $templateFile);
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $properties['objectType'] . '_', $templateFile);
 
             $template = '';
             if ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
@@ -511,9 +510,9 @@ class BlockList {
 
             // clear the block cache
             $this->view->clear_cache('block/itemlist_display.tpl');
-            $this->view->clear_cache('block/itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display.tpl');
+            $this->view->clear_cache('block/itemlist_' . $properties['objectType'] . '_display.tpl');
             $this->view->clear_cache('block/itemlist_display_description.tpl');
-            $this->view->clear_cache('block/itemlist_' . DataUtil::formatForOS($properties['objectType']) . '_display_description.tpl');
+            $this->view->clear_cache('block/itemlist_' . $properties['objectType'] . '_display_description.tpl');
 
             return $blockinfo;
         }
