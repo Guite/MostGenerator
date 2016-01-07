@@ -72,8 +72,8 @@ class Delete {
                     <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode».getTitleFromDisplayPattern()}) }}</p>
 
                     {% form_theme deleteForm with [
-                        'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig',
-                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                        '@«appName»/Form/bootstrap_3.html.twig',
+                        '@ZikulaFormExtensionBundle/Form/form_div_layout.html.twig'
                     ] %}
                     {{ form_start(deleteForm) }}
                     {{ form_errors(deleteForm) }}

@@ -188,7 +188,11 @@ class ItemSelector {
                          ->assign('catIds', $catIds);
                 «ENDIF»
 
-                return $view->fetch(«IF targets('1.3.x')»'external/' . $this->objectType«ELSE»'External/' . ucfirst($this->objectType)«ENDIF» . '/select.tpl');
+                «IF targets('1.3.x')»
+                    return $view->fetch('external/' . $this->objectType . '/select.tpl');
+                «ELSE»
+                    return $view->fetch('External/' . ucfirst($this->objectType) . '/select.html.twig');
+                «ENDIF»
             }
 
             /**

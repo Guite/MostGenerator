@@ -61,7 +61,7 @@ class BlocksView {
             «editTemplateJs»
         «ELSE»
             {# Purpose of this template: Edit block for generic item list #}
-            {% form_theme form 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
+            {% form_theme form '@«appName»/Form/bootstrap_3.html.twig' %}
             {{ form_row(form.objectType) }}
             «IF hasCategorisableEntities»
                 {% if isCategorisable %}
@@ -77,11 +77,8 @@ class BlocksView {
             </div>
 
             {{ form_row(form.filter) }}
-            <span class="help-block">
-                <a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{{ __('Show syntax examples') }}</a>
-            </span>
-            {{ include('@«appName»/includeFilterSyntaxDialog.html.twig') }}
 
+            {{ include('@«appName»/includeFilterSyntaxDialog.html.twig') }}
             «editTemplateJs»
         «ENDIF»
     '''

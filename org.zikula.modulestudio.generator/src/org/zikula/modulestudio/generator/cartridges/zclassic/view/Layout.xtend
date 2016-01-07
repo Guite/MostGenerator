@@ -50,7 +50,13 @@ class Layout {
             }
             fsa.generateFile(templatePath + fileName, adminBaseTemplate)
         }
-
+        fileName = 'Form/bootstrap_3' + templateExtension
+        if (!shouldBeSkipped(templatePath + fileName)) {
+            if (shouldBeMarked(templatePath + fileName)) {
+                fileName = 'Form/bootstrap_3.generated' + templateExtension
+            }
+            fsa.generateFile(templatePath + fileName, formBaseTemplate)
+        }
     }
 
     // 1.4.x only
@@ -156,6 +162,21 @@ class Layout {
                 {{ render(controller('ZikulaAdminModule:Admin:adminfooter')) }}
             {% endif %}
             {{ parent() }}
+        {% endblock %}
+    '''
+
+    // 1.4.x only
+    def formBaseTemplate(Application it) '''
+        {# purpose of this template: apply some general form extensions #}
+        {% extends '@ZikulaFormExtensionBundle/Form/bootstrap_3_zikula_admin_layout.html.twig' %}
+
+        {# add support for help messages, see http://symfony.com/doc/current/cookbook/form/form_customization.html#adding-help-messages #}
+        {% block form_widget_simple %}
+            {{ parent() }}
+
+            {% if help is defined %}
+                <span class="help-block">{{ help }}</span>
+            {% endif %}
         {% endblock %}
     '''
 

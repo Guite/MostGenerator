@@ -78,14 +78,14 @@ class Finder {
                         'empty_data' => [],
                         'attr' => [
                             'class' => 'category-selector',
-                            'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»'),
-                            'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                            'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
                         ],
                         'required' => false,
                         'multiple' => «categorisableMultiSelection.displayBool»,
                         'module' => '«app.appName»',
                         'entity' => ucfirst($options['objectType']) . 'Entity',
-                        'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity'
+                        'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
+                        'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
                     ]);
             	«ENDIF»
 

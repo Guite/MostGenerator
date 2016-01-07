@@ -324,8 +324,8 @@ class ExternalView {
             <div class="container">
                 «findTemplateObjectTypeSwitcher(app)»
                 {% form_theme finderForm with [
-                    'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig',
-                    'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                    '@«app.appName»/Form/bootstrap_3.html.twig',
+                    '@ZikulaFormExtensionBundle/Form/form_div_layout.html.twig'
                 ] %}
                 {{ form_start(finderForm, {attr: {id: '«app.appName.toFirstLower»SelectorForm'}}) }}
                 {{ form_errors(finderForm) }}
