@@ -349,13 +349,6 @@ class ExternalController {
 
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
-            $properties = [
-                'objectType' => $objectType,
-                'editorName' => $editor
-            ];
-            $form = $this->createForm('«appNamespace»\Form\Type\Finder\' . ucfirst($objectType) . 'FinderType', $properties)
-                ->setMethod('GET');
-
             $templateParameters = [
                 'editorName' => $editor,
                 'objectType' => $objectType,
@@ -366,6 +359,15 @@ class ExternalController {
                 'currentPage' => $currentPage,
                 'pager', ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]
             ];
+
+            $formOptions = [
+                'objectType' => $objectType,
+                'editorName' => $editor
+            ];
+            $form = $this->createForm('«appNamespace»\Form\Type\Finder\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions)
+                ->setMethod('GET');
+
+            $templateParameters['finderForm'] = $form;
 
             «/* shouldn't be necessary
             if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
