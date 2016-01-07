@@ -14,8 +14,11 @@ class ObjectTypeSelector {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
+    Boolean generateSmartyPlugin
+
+    def generate(Application it, IFileSystemAccess fsa, Boolean enforceLegacy) {
+        generateSmartyPlugin = targets('1.3.x') || enforceLegacy
+        if (generateSmartyPlugin) {
             val pluginFilePath = viewPluginFilePath('function', 'ObjectTypeSelector')
             if (!shouldBeSkipped(pluginFilePath)) {
                 fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, selectorObjectTypesImpl))
@@ -27,8 +30,8 @@ class ObjectTypeSelector {
 
     def private selectorObjectTypesImpl(Application it) '''
         /**
-         * The «appName.formatForDB»«IF targets('1.3.x')»ObjectTypeSelector plugin«ELSE»_objectTypeSelector function«ENDIF» provides items for a dropdown selector.
-        «IF targets('1.3.x')»
+         * The «appName.formatForDB»«IF generateSmartyPlugin»ObjectTypeSelector plugin«ELSE»_objectTypeSelector function«ENDIF» provides items for a dropdown selector.
+        «IF generateSmartyPlugin»
             «' '»*
             «' '»* Available parameters:
             «' '»*   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
@@ -39,14 +42,14 @@ class ObjectTypeSelector {
          *
          * @return string The output of the plugin.
          */
-        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ObjectTypeSelector(«IF targets('1.3.x')»$params, $view«ENDIF»)
+        «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ObjectTypeSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
             $dom = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
             $result = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             «entityEntries»
 
-            «IF targets('1.3.x')»
+            «IF generateSmartyPlugin»
                 if (array_key_exists('assign', $params)) {
                     $view->assign($params['assign'], $result);
 

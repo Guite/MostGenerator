@@ -167,9 +167,9 @@ class ContentTypeSingle {
         {
             return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'objectType' => $this->objectType,
-                 'source' => 'contentType',
-                 'displayMode' => $this->displayMode,
-                 'id' => $this->id
+                'source' => 'contentType',
+                'displayMode' => $this->displayMode,
+                'id' => $this->id
             «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
         }
 

@@ -76,6 +76,12 @@ class Plugins {
                 editPlugins
                 new ValidationError().generate(it, fsa)
             }
+        } else {
+            // content type editing is not ready for Twig yet
+            if (generateListContentType) {
+                new ObjectTypeSelector().generate(it, fsa, true)
+                new TemplateSelector().generate(it, fsa, true)
+            }
         }
         otherPlugins
     }
@@ -378,8 +384,10 @@ class Plugins {
     }
 
     def private otherPlugins(Application it) {
-        new ItemSelector().generate(it, fsa)
-        new ObjectTypeSelector().generate(it, fsa)
-        new TemplateSelector().generate(it, fsa)
+        if (generateDetailContentType) {
+            new ItemSelector().generate(it, fsa)
+        }
+        new ObjectTypeSelector().generate(it, fsa, false)
+        new TemplateSelector().generate(it, fsa, false)
     }
 }

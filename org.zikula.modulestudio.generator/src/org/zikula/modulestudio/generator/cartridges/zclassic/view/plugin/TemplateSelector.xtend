@@ -12,8 +12,11 @@ class TemplateSelector {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x')) {
+    Boolean generateSmartyPlugin
+
+    def generate(Application it, IFileSystemAccess fsa, Boolean enforceLegacy) {
+        generateSmartyPlugin = targets('1.3.x') || enforceLegacy
+        if (generateSmartyPlugin) {
             val pluginFilePath = viewPluginFilePath('function', 'TemplateSelector')
             if (!shouldBeSkipped(pluginFilePath)) {
                 fsa.generateFile(pluginFilePath, new FileHelper().phpFileContent(it, selectorTemplatesImpl))
@@ -25,8 +28,8 @@ class TemplateSelector {
 
     def private selectorTemplatesImpl(Application it) '''
         /**
-         * The «appName.formatForDB»«IF targets('1.3.x')»TemplateSelector plugin«ELSE»_templateSelector function«ENDIF» provides items for a dropdown selector.
-        «IF targets('1.3.x')»
+         * The «appName.formatForDB»«IF generateSmartyPlugin»TemplateSelector plugin«ELSE»_templateSelector function«ENDIF» provides items for a dropdown selector.
+        «IF generateSmartyPlugin»
             «' '»*
             «' '»* Available parameters:
             «' '»*   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
@@ -37,7 +40,7 @@ class TemplateSelector {
          *
          * @return string The output of the plugin.
          */
-        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TemplateSelector($params, $view)
+        «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TemplateSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
             «val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'»
             $dom = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
@@ -47,7 +50,7 @@ class TemplateSelector {
             $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('Custom template', $dom), 'value' => 'custom'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
-            «IF targets('1.3.x')»
+            «IF generateSmartyPlugin»
                 if (array_key_exists('assign', $params)) {
                     $view->assign($params['assign'], $result);
 
