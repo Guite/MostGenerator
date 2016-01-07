@@ -5,6 +5,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ListBlock {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -76,23 +78,25 @@ class ListBlock {
                         ],
                         'choices_as_values' => true
                     ]);
+                «IF hasCategorisableEntities»
 
-                if ($options['isCategorisable']) {
-                    $hasMultiSelection = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', ['ot' => $options['objectType']]);
-                    $builder->add('categoryAssignments', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
-                        'label' => $hasMultiSelection ? $this->translator->trans('Categories', [], '«app.appName.formatForDB»') : $this->translator->trans('Category', [], '«app.appName.formatForDB»'),
-                        'empty_data' => [],
-                        'attr' => [
-                            'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»'),
-                            'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
-                        ],
-                        'required' => false,
-                        'multiple' => $hasMultiSelection,
-                        'module' => '«appName»',
-                        'entity' => ucfirst($options['objectType']) . 'Entity',
-                        'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity'
-                    ]);
-            	}
+                    if ($options['isCategorisable']) {
+                        $hasMultiSelection = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', ['ot' => $options['objectType']]);
+                        $builder->add('categoryAssignments', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+                            'label' => $hasMultiSelection ? $this->translator->trans('Categories', [], '«app.appName.formatForDB»') : $this->translator->trans('Category', [], '«app.appName.formatForDB»'),
+                            'empty_data' => [],
+                            'attr' => [
+                                'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»'),
+                                'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                            ],
+                            'required' => false,
+                            'multiple' => $hasMultiSelection,
+                            'module' => '«appName»',
+                            'entity' => ucfirst($options['objectType']) . 'Entity',
+                            'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity'
+                        ]);
+                    }
+            	«ENDIF»
 
                 $builder
                     ->add('sorting', '«nsSymfonyFormType»ChoiceType', [

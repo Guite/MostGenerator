@@ -3,12 +3,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlocksView {
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -61,9 +63,11 @@ class BlocksView {
             {# Purpose of this template: Edit block for generic item list #}
             {% form_theme form 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
             {{ form_row(form.objectType) }}
-            {% if isCategorisable %}
-                {{ form_row(form.categories) }}
-            {% endif %}
+            «IF hasCategorisableEntities»
+                {% if isCategorisable %}
+                    {{ form_row(form.categories) }}
+                {% endif %}
+            «ENDIF»
             {{ form_row(form.sorting) }}
             {{ form_row(form.amount) }}
 
