@@ -141,10 +141,13 @@ class ViewHelper {
                     $templateExtension .= '.tpl';
                 }
 
+                // check if custom template exists
                 if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . $templateExtension)) {
                     $template .= '_' . DataUtil::formatForOS($tpl);
                 }
             «ELSE»
+                «/* TODO refactor this */»
+                // check if custom template exists
                 if (!empty($tpl)) {
                     $template .= '_' . DataUtil::formatForOS($tpl);
                 }
