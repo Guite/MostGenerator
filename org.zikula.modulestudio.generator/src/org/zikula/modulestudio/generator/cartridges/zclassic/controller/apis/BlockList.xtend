@@ -36,7 +36,6 @@ class BlockList {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            use BlockUtil;
             use DataUtil;
             use ModUtil;
             use Zikula\Core\AbstractBlockHandler;
