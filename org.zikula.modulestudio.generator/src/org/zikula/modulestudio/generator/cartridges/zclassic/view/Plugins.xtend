@@ -78,9 +78,14 @@ class Plugins {
             }
         } else {
             // content type editing is not ready for Twig yet
-            if (generateListContentType) {
+            if (generateListContentType || generateDetailContentType) {
                 new ObjectTypeSelector().generate(it, fsa, true)
+            }
+            if (generateListContentType) {
                 new TemplateSelector().generate(it, fsa, true)
+            }
+            if (generateDetailContentType) {
+                new ItemSelector().generate(it, fsa)
             }
         }
         otherPlugins

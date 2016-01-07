@@ -54,12 +54,13 @@ class ExternalView {
                 fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.findTemplateLegacy(it) else entity.findTemplate(it))
             }
 
-            fileName = 'select' + templateExtension
+            // content type editing is not ready for Twig yet
+            fileName = 'select.tpl'
             if (!shouldBeSkipped(templatePath + fileName)) {
                 if (shouldBeMarked(templatePath + fileName)) {
-                    fileName = 'select.generated' + templateExtension
+                    fileName = 'select.generated.tpl'
                 }
-                fsa.generateFile(templatePath + fileName, if (targets('1.3.x')) entity.selectTemplateLegacy(it) else entity.selectTemplate(it))
+                fsa.generateFile(templatePath + fileName, entity.selectTemplate(it))
             }
         }
     }
@@ -542,19 +543,19 @@ class ExternalView {
         «ENDIF»
     '''
 
-    def private selectTemplateLegacy(Entity it, Application app) '''
+    def private selectTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display a popup selector for Forms and Content integration *}
         {assign var='baseID' value='«name.formatForCode»'}
         <div id="{$baseID}Preview" style="float: right; width: 300px; border: 1px dotted #a3a3a3; padding: .2em .5em; margin-right: 1em">
             <p><strong>{gt text='«name.formatForDisplayCapital» information'}</strong></p>
-            {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='z-hide'}
+            {img id='ajax_indicator' modname='core' set='ajax' src='indicator_circle.gif' alt='' class='«IF app.targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»'}
             <div id="{$baseID}PreviewContainer">&nbsp;</div>
         </div>
         <br />
         <br />
         {assign var='leftSide' value=' style="float: left; width: 10em"'}
         {assign var='rightSide' value=' style="float: left"'}
-        {assign var='breakStyle' value=' style="clear: left"'}
+        {assign var='break' value=' style="clear: left"'}
         «IF categorisable»
 
             {if $properties ne null && is_array($properties)}
@@ -575,8 +576,8 @@ class ExternalView {
                         {/if}
                         <label for="{$baseID}_{$categorySelectorId}{$propertyName}"{$leftSide}>{$categoryLabel}:</label>
                         &nbsp;
-                        {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                        <br{$breakStyle} />
+                        {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize«IF !app.targets('1.3.x')» cssClass='form-control'«ENDIF»}
+                        <br{$break} />
                     </p>
                 {/foreach}
                 {/nocache}
@@ -591,7 +592,7 @@ class ExternalView {
                     <option value="0">{gt text='No entries found.'}</option>
                 {/foreach}
             </select>
-            <br{$breakStyle} />
+            <br{$break} />
         </p>
         <p>
             <label for="{$baseID}Sort"{$leftSide}>{gt text='Sort by'}:</label>
@@ -605,18 +606,18 @@ class ExternalView {
                     <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
                 «ENDIF»
             </select>
-            <select id="{$baseID}SortDir" name="sortdir">
+            <select id="{$baseID}SortDir" name="sortdir"«IF !app.targets('1.3.x')» class="form-control"«ENDIF»>
                 <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
                 <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
             </select>
-            <br{$breakStyle} />
+            <br{$break} />
         </p>
         «IF hasAbstractStringFieldsEntity»
             <p>
                 <label for="{$baseID}SearchTerm"{$leftSide}>{gt text='Search for'}:</label>
-                <input type="text" id="{$baseID}SearchTerm" name="q"{$rightSide} />
-                <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" />
-                <br{$breakStyle} />
+                <input type="text" id="{$baseID}SearchTerm" name="q"«IF !app.targets('1.3.x')» class="form-control"«ENDIF»{$rightSide} />
+                <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}"«IF !app.targets('1.3.x')» class="btn btn-default"«ENDIF» />
+                <br{$break} />
             </p>
         «ENDIF»
         <br />
@@ -624,99 +625,17 @@ class ExternalView {
 
         <script type="text/javascript">
         /* <![CDATA[ */
-            document.observe('dom:loaded', function() {
-                «app.appName.toFirstLower».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
-            });
-        /* ]]> */
-        </script>
-    '''
-
-    def private selectTemplate(Entity it, Application app) '''
-        {# Purpose of this template: Display a popup selector for Forms and Content integration #}
-        {% set baseID = '«name.formatForCode»' %}
-        <div id="{{ baseID }}Preview" style="float: right; width: 300px; border: 1px dotted #a3a3a3; padding: .2em .5em; margin-right: 1em">
-            <p><strong>{{ __('«name.formatForDisplayCapital» information') }}</strong></p>
-            <img id="ajax_indicator" src="{{ zasset('images/ajax/indicator_circle.gif') }}" alt="" width="16" height="16" class="hidden" />
-            <div id="{{ baseID }}PreviewContainer">&nbsp;</div>
-        </div>
-        <br />
-        <br />
-        {% set leftSide = ' style="float: left; width: 10em"' %}
-        {% set rightSide = ' style="float: left"' %}
-        {% set breakStyle = ' style="clear: left"' %}
-        «IF categorisable»
-
-            {% if properties is not null and properties is iterable %}
-                {% set lblDefault = __('All') %}
-                {% for propertyName, propertyId in properties %}
-                    <p>
-                        {% set hasMultiSelection = «app.appName.formatForDB»_isCategoryMultiValued('«name.formatForCode»', propertyName) %}
-                        {% set categoryLabel = __('Category') %}
-                        {% set categorySelectorId = 'catid' %}
-                        {% set categorySelectorName = 'catid' %}
-                        {% set categorySelectorSize = 1 %}
-                        {% if hasMultiSelection == true %}
-                            {% set categoryLabel = __('Categories') %}
-                            {% set categorySelectorName = 'catids' %}
-                            {% set categorySelectorId = 'catids__ %}
-                            {% set categorySelectorSize = 8 %}
-                        {% endif %}
-                        <label for="{{ baseID ~ '_' ~ categorySelectorId ~ propertyName }}"{{ leftSide }}>{{ categoryLabel }}:</label>
-                        &nbsp;
-                        «/* TODO migrate to Symfony forms #416 */»
-                        {# selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control' #}
-                        <br{{ breakStyle }} />
-                    </p>
-                {% endfor %}
-            {% endif %}
-        «ENDIF»
-        <p>
-            <label for="{{ baseID }}Id"{{ leftSide }}>{{ __('«name.formatForDisplayCapital»') }}:</label>
-            <select id="{{ baseID }}Id" name="id"{{ rightSide }}>
-                {% for «name.formatForCode» in items %}
-                    <option value="{{ «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }}"{% if selectedId == «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» %} selected="selected"{% endif %}>{{ «name.formatForCode».getTitleFromDisplayPattern() }}</option>
-                {% else %}
-                    <option value="0">{{ __('No entries found.') }}</option>
-                {% endfor %}
-            </select>
-            <br{{ breakStyle }} />
-        </p>
-        <p>
-            <label for="{{ baseID }}Sort"{{ leftSide }}>{{ __('Sort by') }}:</label>
-            <select id="{{ baseID }}Sort" name="sort"{{ rightSide }}>
-                «FOR field : getDerivedFields»
-                    <option value="«field.name.formatForCode»"{% if sort == '«field.name.formatForCode»' %} selected="selected"{% endif %}>{{ __('«field.name.formatForDisplayCapital»') }}</option>
-                «ENDFOR»
-                «IF standardFields»
-                    <option value="createdDate"{{ sort == 'createdDate' ? ' selected="selected"' : '' }}>{{ __('Creation date') }}</option>
-                    <option value="createdUserId"{{ sort == 'createdUserId' ? ' selected="selected"' : '' }}>{{ __('Creator') }}</option>
-                    <option value="updatedDate"{{ sort == 'updatedDate' ? ' selected="selected"' : '' }}>{{ __('Update date') }}</option>
-                «ENDIF»
-            </select>
-            <select id="{{ baseID }}SortDir" name="sortdir" class="form-control">
-                <option value="asc"{{ sortdir == 'asc' ? ' selected="selected"' : '' }}>{{ __('ascending') }}</option>
-                <option value="desc"{{ sortdir == 'desc' ? ' selected="selected"' : '' }}>{{ __('descending') }}</option>
-            </select>
-            <br{{ breakStyle }} />
-        </p>
-        «IF hasAbstractStringFieldsEntity»
-            <p>
-                <label for="{{ baseID }}SearchTerm"{{ leftSide }}>{{ __('Search for') }}:</label>
-                <input type="text" id="{{ baseID }}SearchTerm" name="q" class="form-control"{{ rightSide }} />
-                <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{{ __('Filter') }}" class="btn btn-default" />
-                <br{{ breakStyle }} />
-            </p>
-        «ENDIF»
-        <br />
-        <br />
-
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            ( function($) {
-                $(document).ready(function() {
-                    «app.appName.toFirstLower».itemSelector.onLoad('{{ baseID }}', {{ selectedId|default(0) }});
+            «IF app.targets('1.3.x')»
+                document.observe('dom:loaded', function() {
+                    «app.appName.toFirstLower».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
                 });
-            })(jQuery);
+            «ELSE»
+                ( function($) {
+                    $(document).ready(function() {
+                        «app.appName.toFirstLower».itemSelector.onLoad('{{$baseID}}', {{$selectedId|default:0}});
+                    });
+                })(jQuery);
+            «ENDIF»
         /* ]]> */
         </script>
     '''

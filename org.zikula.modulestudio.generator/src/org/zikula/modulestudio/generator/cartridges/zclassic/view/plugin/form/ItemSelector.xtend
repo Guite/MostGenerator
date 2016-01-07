@@ -191,7 +191,7 @@ class ItemSelector {
                 «IF targets('1.3.x')»
                     return $view->fetch('external/' . $this->objectType . '/select.tpl');
                 «ELSE»
-                    return $view->fetch('External/' . ucfirst($this->objectType) . '/select.html.twig');
+                    return $view->fetch('External/' . ucfirst($this->objectType) . '/select.tpl');
                 «ENDIF»
             }
 
