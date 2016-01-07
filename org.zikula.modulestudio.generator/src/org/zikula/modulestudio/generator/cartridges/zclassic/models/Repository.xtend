@@ -391,26 +391,24 @@ class Repository {
                 }
                 if (in_array($args['action'], «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
-                    «IF hasListFieldsEntity»
-                        «IF app.targets('1.3.x')»
+                    «IF app.targets('1.3.x')»
+                        «IF hasListFieldsEntity»
                             $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
-                        «ELSE»
-                            $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+                            «FOR field : getListFieldsEntity»
+                                «var fieldName = field.name.formatForCode»
+                                $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
+                            «ENDFOR»
                         «ENDIF»
-                        «FOR field : getListFieldsEntity»
-                            «var fieldName = field.name.formatForCode»
-                            $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
-                        «ENDFOR»
-                    «ENDIF»
-                    «IF hasBooleanFieldsEntity»
-                        $booleanSelectorItems = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                            «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => 'no', 'text' => __('No')«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»,
-                            «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => 'yes', 'text' => __('Yes')«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»
-                        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
-                        «FOR field : getBooleanFieldsEntity»
-                            «val fieldName = field.name.formatForCode»
-                            $templateParameters['«fieldName»Items'] = $booleanSelectorItems;
-                        «ENDFOR»
+                        «IF hasBooleanFieldsEntity»
+                            $booleanSelectorItems = array(
+                                array('value' => 'no', 'text' => __('No')),
+                                array('value' => 'yes', 'text' => __('Yes'))
+                            );
+                            «FOR field : getBooleanFieldsEntity»
+                                «val fieldName = field.name.formatForCode»
+                                $templateParameters['«fieldName»Items'] = $booleanSelectorItems;
+                            «ENDFOR»
+                        «ENDIF»
                     «ENDIF»
                 }
 

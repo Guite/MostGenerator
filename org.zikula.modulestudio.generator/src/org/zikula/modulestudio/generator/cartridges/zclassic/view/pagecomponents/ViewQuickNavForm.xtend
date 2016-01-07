@@ -50,15 +50,16 @@ class ViewQuickNavForm {
                 <input type="submit" name="updateview" id="quicknavSubmit" value="{gt text='OK'}" />
             </fieldset>
         </form>
-
         <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
                 «application.vendorAndName»InitQuickNavigation('«name.formatForCode»');
-                {{if isset($searchFilter) && $searchFilter eq false}}
-                    {{* we can hide the submit button if we have no quick search field *}}
-                    $('quicknavSubmit').addClassName('z-hide');
-                {{/if}}
+                «IF hasAbstractStringFieldsEntity»
+                    {{if isset($searchFilter) && $searchFilter eq false}}
+                        {{* we can hide the submit button if we have no quick search field *}}
+                        $('quicknavSubmit').addClassName('z-hide');
+                    {{/if}}
+                «ENDIF»
             });
         /* ]]> */
         </script>
@@ -66,39 +67,42 @@ class ViewQuickNavForm {
     '''
 
     def private quickNavForm(Entity it) '''
-        «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
         {% if hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_EDIT' %}
-        {% set objectType = '«name.formatForCode»' %}
-        <form action="{{ path('«application.appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" method="get" id="«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm" class="«application.appName.toLowerCase»-quicknav {# form-inline #}navbar-form" role="navigation">
+            {% form_theme quickNavForm with [
+                '@«application.appName»/Form/bootstrap_3.html.twig',
+                '@ZikulaFormExtensionBundle/Form/form_div_layout.html.twig'
+            ] %}
+            {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav navbar-form', role: 'navigation'}}) }}
+            {{ form_errors(quickNavForm) }}
             <fieldset>
                 <h3>{{ __('Quick navigation') }}</h3>
-                <input type="hidden" name="all" value="{{ all|default(0) }}" />
-                <input type="hidden" name="own" value="{{ own|default(0) }}" />
-                {% set lblDefault = __('All') %}
                 «formFields»
-                <input type="submit" name="updateview" id="quicknavSubmit" value="{{ __('OK') }}" class="btn btn-default btn-sm" />
+                {{ form_widget(quickNavForm.updateview, {attr: {class: 'btn btn-default btn-sm'}}) }}
             </fieldset>
-        </form>
-
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            ( function($) {
-                $(document).ready(function() {
-                    «application.vendorAndName»InitQuickNavigation('«name.formatForCode»');
-                    {% if searchFilter|default and searchFilter == false %}
-                        {# we can hide the submit button if we have no quick search field #}
-                        $('#quicknavSubmit').addClass('hidden');
-                    {% endif %}
-                });
-            })(jQuery);
-        /* ]]> */
-        </script>
+            {{ form_end(quickNavForm) }}
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                ( function($) {
+                    $(document).ready(function() {
+                        «application.vendorAndName»InitQuickNavigation('«name.formatForCode»');
+                        «IF hasAbstractStringFieldsEntity»
+                            {% if searchFilter|default and searchFilter == false %}
+                                {# we can hide the submit button if we have no quick search field #}
+                                $('#quicknavSubmit').addClass('hidden');
+                            {% endif %}
+                        «ENDIF»
+                    });
+                })(jQuery);
+            /* ]]> */
+            </script>
         {% endif %}
     '''
 
     def private formFields(Entity it) '''
-        «categoriesFields»
+        «IF categorisable»
+            «categoriesFields»
+        «ENDIF»
         «val incomingRelations = getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]»
         «IF !incomingRelations.empty»
             «FOR relation : incomingRelations»
@@ -154,59 +158,35 @@ class ViewQuickNavForm {
     '''
 
     def private categoriesFields(Entity it) '''
-        «IF categorisable»
-            «IF application.targets('1.3.x')»
-                {if !isset($categoryFilter) || $categoryFilter eq true}
-                    {nocache}
-                    {modapifunc modname='«application.appName»' type='category' func='getAllProperties' ot=$objectType assign='properties'}
-                    {if $properties ne null && is_array($properties)}
-                        {gt text='All' assign='lblDefault'}
-                        {foreach key='propertyName' item='propertyId' from=$properties}
-                            {modapifunc modname='«application.appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
-                            {gt text='Category' assign='categoryLabel'}
-                            {assign var='categorySelectorId' value='catid'}
-                            {assign var='categorySelectorName' value='catid'}
-                            {assign var='categorySelectorSize' value='1'}
-                            {if $hasMultiSelection eq true}
-                                {gt text='Categories' assign='categoryLabel'}
-                                {assign var='categorySelectorName' value='catids'}
-                                {assign var='categorySelectorId' value='catids__'}
-                                {assign var='categorySelectorSize' value='5'}
-                            {/if}
-                            <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
-                            &nbsp;
-                            {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                        {/foreach}
-                    {/if}
-                    {/nocache}
+        «IF application.targets('1.3.x')»
+            {if !isset($categoryFilter) || $categoryFilter eq true}
+                {nocache}
+                {modapifunc modname='«application.appName»' type='category' func='getAllProperties' ot=$objectType assign='properties'}
+                {if $properties ne null && is_array($properties)}
+                    {gt text='All' assign='lblDefault'}
+                    {foreach key='propertyName' item='propertyId' from=$properties}
+                        {modapifunc modname='«application.appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                        {gt text='Category' assign='categoryLabel'}
+                        {assign var='categorySelectorId' value='catid'}
+                        {assign var='categorySelectorName' value='catid'}
+                        {assign var='categorySelectorSize' value='1'}
+                        {if $hasMultiSelection eq true}
+                            {gt text='Categories' assign='categoryLabel'}
+                            {assign var='categorySelectorName' value='catids'}
+                            {assign var='categorySelectorId' value='catids__'}
+                            {assign var='categorySelectorSize' value='5'}
+                        {/if}
+                        <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
+                        &nbsp;
+                        {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                    {/foreach}
                 {/if}
-            «ELSE»
-                {% if categoryFilter is not defined or categoryFilter == true %}
-                    {% set properties = «application.appName.formatForDB»_getCategoryProperties(objectType) %}
-                    {% if properties is not null and properties is iterable %}
-                        {% set lblDefault = __('All') %}
-                        {% for propertyName, propertyId in properties %}
-                            {% set hasMultiSelection = «application.appName.formatForDB»_isCategoryMultiValued(objectType, propertyName) %}
-                            {% set categoryLabel = __('Category') %}
-                            {% set categorySelectorId = 'catid' %}
-                            {% set categorySelectorName = 'catid' %}
-                            {% set categorySelectorSize = 1 %}
-                            {% if hasMultiSelection == true %}
-                                {% set categoryLabel = __('Categories') %}
-                                {% set categorySelectorName = 'catids' %}
-                                {% set categorySelectorId = 'catids__' %}
-                                {% set categorySelectorSize = 5 %}
-                            {% endif %}
-                            <div class="form-group">
-                                <label for="{{ categorySelectorId ~ propertyName }}">{{ categoryLabel }}</label>
-                                &nbsp;
-                                «/* TODO migrate to Symfony forms #416 */»
-                                {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control input-sm'}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endif %}
-            «ENDIF»
+                {/nocache}
+            {/if}
+        «ELSE»
+            {% if categoryFilter is not defined or categoryFilter == true %}
+                {{ form_row(quickNavForm.categories) }}
+            {% endif %}
         «ENDIF»
     '''
 
@@ -214,99 +194,59 @@ class ViewQuickNavForm {
         «val fieldName = name.formatForCode»
         «IF entity.application.targets('1.3.x')»
             {if !isset($«fieldName»Filter) || $«fieldName»Filter eq true}
-                «formFieldImpl»
+                «formFieldImplLegacy»
             {/if}
         «ELSE»
             {% if «fieldName»Filter is not defined or «fieldName»Filter == true %}
-                <div class="form-group">
-                    «formFieldImpl»
-                </div>
+                {{ form_row(quickNavForm.«fieldName») }}
             {% endif %}
         «ENDIF»
     '''
 
-    def private dispatch formFieldImpl(BooleanField it) '''
+    // 1.3.x only
+    def private dispatch formFieldImplLegacy(BooleanField it) '''
         «val fieldName = name.formatForCode»
-        «val fieldLabel = if (name == 'workflowState') 'state' else name»
-        «IF entity.application.targets('1.3.x')»
-            <label for="«fieldName»">{gt text='«fieldLabel.formatForDisplayCapital»'}</label>
-            <select id="«fieldName»" name="«fieldName»">
-                <option value="">{$lblDefault}</option>
-            {foreach item='option' from=$«fieldName»Items}
-                <option value="{$option.value}"{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
-            {/foreach}
-            </select>
-        «ELSE»
-            <label for="«fieldName»">{{ __('«fieldLabel.formatForDisplayCapital»') }}</label>
-            <select id="«fieldName»" name="«fieldName»" class="form-control input-sm">
-                <option value="">{{ lblDefault }}</option>
-            {% for option in «fieldName»Items %}
-                <option value="{{ option.value }}"{{ option.value == «fieldName» ? ' selected="selected"' : '' }}>{{ option.text }}</option>
-            {% endfor %}
-            </select>
+        <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
+        <select id="«fieldName»" name="«fieldName»">
+            <option value="">{$lblDefault}</option>
+        {foreach item='option' from=$«fieldName»Items}
+            <option value="{$option.value}"{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
+        {/foreach}
+        </select>
+    '''
+
+    // 1.3.x only
+    def private dispatch formFieldImplLegacy(StringField it) '''
+        «val fieldName = name.formatForCode»
+        <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
+        «IF country»
+            {selector_countries name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault defaultValue=''}
+        «ELSEIF language || locale»
+            {html_select_locales name='«fieldName»' selected=$«fieldName»}
         «ENDIF»
     '''
 
-    def private dispatch formFieldImpl(StringField it) '''
+    // 1.3.x only
+    def private dispatch formFieldImplLegacy(UserField it) '''
         «val fieldName = name.formatForCode»
-        «IF entity.application.targets('1.3.x')»
-            <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
-            «IF country»
-                {selector_countries name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault defaultValue=''}
-            «ELSEIF language || locale»
-                {html_select_locales name='«fieldName»' selected=$«fieldName»}
-            «ENDIF»
-        «ELSE»
-            <label for="«fieldName»">{{ __('«name.formatForDisplayCapital»') }}</label>
-            «IF country»
-                «/* TODO migrate to Symfony forms #416 */»
-                {selector_countries name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault defaultValue=''}
-            «ELSEIF language || locale»
-                «/* TODO migrate to Symfony forms #416 */»
-                {html_select_locales name='«fieldName»' selected=$«fieldName»}
-            «ENDIF»
-        «ENDIF»
+        <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
+        {selector_user name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault}
     '''
 
-    def private dispatch formFieldImpl(UserField it) '''
+    // 1.3.x only
+    def private dispatch formFieldImplLegacy(ListField it) '''
         «val fieldName = name.formatForCode»
-        «IF entity.application.targets('1.3.x')»
-            <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
-            {selector_user name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault}
+        <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
+        <select id="«fieldName»" name="«fieldName»">
+            <option value="">{$lblDefault}</option>
+        {foreach item='option' from=$«fieldName»Items}
+        «IF multiple»
+            <option value="%{$option.value}"{if $option.title ne ''} title="{$option.title|safetext}"{/if}{if "%`$option.value`" eq $formats} selected="selected"{/if}>{$option.text|safetext}</option>
         «ELSE»
-            <label for="«fieldName»">{{ __('«name.formatForDisplayCapital»') }}</label>
-            «/* TODO migrate to Symfony forms #416 -> core needs to provide a form type for this */»
-            {# selector_user name='«fieldName»' selectedValue=$«fieldName» defaultText=$lblDefault #}
+            <option value="{$option.value}"{if $option.title ne ''} title="{$option.title|safetext}"{/if}{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
         «ENDIF»
-    '''
-
-    def private dispatch formFieldImpl(ListField it) '''
-        «val fieldName = name.formatForCode»
-        «IF entity.application.targets('1.3.x')»
-            <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
-            <select id="«fieldName»" name="«fieldName»">
-                <option value="">{$lblDefault}</option>
-            {foreach item='option' from=$«fieldName»Items}
-            «IF multiple»
-                <option value="%{$option.value}"{if $option.title ne ''} title="{$option.title|safetext}"{/if}{if "%`$option.value`" eq $formats} selected="selected"{/if}>{$option.text|safetext}</option>
-            «ELSE»
-                <option value="{$option.value}"{if $option.title ne ''} title="{$option.title|safetext}"{/if}{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
-            «ENDIF»
-            {/foreach}
-            </select>
-        «ELSE»
-            <label for="«fieldName»">{{ __('«name.formatForDisplayCapital»') }}</label>
-            <select id="«fieldName»" name="«fieldName»" class="form-control input-sm">
-                <option value="">{{ lblDefault }}</option>
-            {% for option in «fieldName»Items %}
-            «IF multiple»
-                <option value="%{{ option.value }}"{% if option.title is not empty %} title="{{ option.title|e('html_attr') }}"{% endif %}{{ '%' ~ option.value == formats ? ' selected="selected"' : '' }}>{{ option.text }}</option>
-            «ELSE»
-                <option value="{{ option.value }}"{% if option.title is not empty %} title="{{ option.title|e('html_attr') }}"{% endif %}{{ option.value == «fieldName» ? ' selected="selected"' : '' }}>{{ option.text }}</option>
-            «ENDIF»
-            {/foreach}
-            </select>
-        «ENDIF»
+        {/foreach}
+        </select>
     '''
 
     def private dispatch formField(JoinRelationship it) '''
@@ -342,27 +282,7 @@ class ViewQuickNavForm {
             {/if}
         «ELSE»
             {% if «sourceName»Filter not defined or «sourceName»Filter == true %}
-                <div class="form-group">
-                    <label for="«sourceAliasName»">{{ __('«(source as Entity).nameMultiple.formatForDisplayCapital»') }}</label>
-                    {% set mainSearchTerm = '' %}
-                    {% if app.request.query.has('q') %}
-                        {% set mainSearchTerm = app.request.query.get('q') %}
-                        {{ app.request.query.remove('q') }}
-                    {% endif %}
-                    «/* TODO replace modapifunc -> migrate to Symfony forms #416 */»
-                    {% set listEntries = [] %}
-                    {# modapifunc modname='«source.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»'«IF !(source as Entity).categorisable» useJoins=false«ENDIF» assign='listEntries' #}
-                    <select id="«sourceAliasName»" name="«sourceAliasName»" class="form-control input-sm">
-                        <option value="">{{ lblDefault }}</option>
-                    {% for option in listEntries %}
-                        {% set entryId = «FOR pkField : source.getPrimaryKeyFields SEPARATOR ' ~ '»option.«pkField.name.formatForCode»«ENDFOR» %}
-                        <option value="{{ entryId }}"{{ entryId == «sourceAliasName» ? ' selected="selected"' : '' }}>{{ option.getTitleFromDisplayPattern() }}</option>
-                    {% endfor %}
-                    </select>
-                    {% if mainSearchTerm is not empty %}
-                        {{ app.request.query.set('q', mainSearchTerm) }}
-                    {% endif %}
-                </div>
+                {{ form_row(quickNavForm.«sourceName») }}
             {% endif %}
         «ENDIF»
     '''
@@ -406,45 +326,14 @@ class ViewQuickNavForm {
             {/if}
         «ELSE»
             {% if sorting is not defined or sorting == true %}
-                <div class="form-group">
-                    <label for="sortBy">{{ __('Sort by') }}</label>
-                    &nbsp;
-                    <select id="sortBy" name="sort" class="form-control input-sm">
-                        «FOR field : getDerivedFields»
-                            «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                <option value="«field.name.formatForCode»"{{ sort == '«field.name.formatForCode»' ? ' selected="selected"' : '' }}>{{ __('«field.name.formatForDisplayCapital»') }}</option>
-                            «ENDIF»
-                        «ENDFOR»
-                        «IF standardFields»
-                            <option value="createdDate"{{ sort == 'createdDate' ? ' selected="selected"' : '' }}>{{ __('Creation date') }}</option>
-                            <option value="createdUserId"{{ sort == 'createdUserId' ? ' selected="selected"' : '' }}>{{ __('Creator') }}</option>
-                            <option value="updatedDate"{{ sort == 'updatedDate' ? ' selected="selected"' : '' }}>{{ __('Update date') }}</option>
-                        «ENDIF»
-                    </select>
-                </div>
-                <div class="form-group">
-                    <select id="sortDir" name="sortdir" class="form-control input-sm">
-                        <option value="asc"{{ sdir == 'asc' ? ' selected="selected"' : '' }}>{{ __('ascending') }}</option>
-                        <option value="desc"{{ sdir == 'desc' ? ' selected="selected"' : '' }}>{{ __('descending') }}</option>
-                    </select>
-                </div>
+                {{ form_row(quickNavForm.sort) }}
+                {{ form_row(quickNavForm.sortdir) }}
             {% else %}
-                <input type="hidden" name="sort" value="{{ sort }}" />
-                <input type="hidden" name="sdir" value="{{ sdir == 'desc' ? 'asc' : 'desc' }}" />
+                {{ form_row(quickNavForm.sort, {attr: {class: 'hidden'}}) }}
+                {{ form_row(quickNavForm.sortdir, {attr: {class: 'hidden'}}) }}
             {% endif %}
             {% if pageSizeSelector is not defined or pageSizeSelector == true %}
-                <div class="form-group">
-                    <label for="num">{{ __('Page size') }}</label>
-                    <select id="num" name="num" class="form-control input-sm" style="min-width: 70px">
-                        <option value="5"{{ pageSize == 5 ? ' selected="selected"' : '' }}>5</option>
-                        <option value="10"{{ pageSize == 10 ? ' selected="selected"' : '' }}>10</option>
-                        <option value="15"{{ pageSize == 15 ? ' selected="selected"' : '' }}>15</option>
-                        <option value="20"{{ pageSize == 20 ? ' selected="selected"' : '' }}>20</option>
-                        <option value="30"{{ pageSize == 30 ? ' selected="selected"' : '' }}>30</option>
-                        <option value="50"{{ pageSize == 50 ? ' selected="selected"' : '' }}>50</option>
-                        <option value="100"{{ pageSize == 100 ? ' selected="selected"' : '' }}>100</option>
-                    </select>
-                </div>
+                {{ form_row(quickNavForm.num) }}
             {% endif %}
         «ENDIF»
     '''

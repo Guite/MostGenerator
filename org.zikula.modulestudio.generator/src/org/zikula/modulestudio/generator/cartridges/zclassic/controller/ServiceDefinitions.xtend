@@ -145,6 +145,16 @@ class ServiceDefinitions {
     def private formsHelper(Application it) '''
         # Form types
         «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Form\\\\Type\\\\'»
+        «IF hasViewActions»
+            «FOR entity : getAllEntities.filter[e|e.hasActions('view')]»
+
+                «modPrefix».form.type.«entity.name.formatForDB»quicknav:
+                    class: "«nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType"
+                    arguments: [@translator, @request_stack«IF entity.hasListFieldsEntity», @«appName.formatForDB».listentries_helper«ENDIF»]
+                    tags:
+                        - { name: form.type }
+            «ENDFOR»
+        «ENDIF»
         «IF hasDeleteActions»
             «modPrefix».form.type.deleteentity:
                 class: "«nsBase.replace('Type\\\\', '')»DeleteEntity"

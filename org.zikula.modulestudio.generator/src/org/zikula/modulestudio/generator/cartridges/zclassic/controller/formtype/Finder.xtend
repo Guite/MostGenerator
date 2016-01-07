@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -22,7 +23,7 @@ class Finder {
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
     /**
-     * Entry point for config form type.
+     * Entry point for entity finder form type.
      * 1.4.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
@@ -31,7 +32,7 @@ class Finder {
         }
         app = it
         for (entity : getAllEntities) {
-            generateClassPair(fsa, getAppSourceLibPath + 'Form/' + entity.name.formatForCodeCapital + 'FinderType.php',
+            generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Finder/' + entity.name.formatForCodeCapital + 'FinderType.php',
                 fh.phpFileContent(it, entity.finderTypeBaseImpl), fh.phpFileContent(it, entity.finderTypeImpl)
             )
         }
@@ -102,54 +103,7 @@ class Finder {
                         ],
                         'choices_as_values' => true
                     ])
-                    ->add('sort', '«nsSymfonyFormType»ChoiceType', [
-                        'label' => $this->translator->trans('Sort by', [], '«app.appName.formatForDB»') . ':',
-                        'empty_data' => '',
-                        'attr' => [
-                            'id' => '«app.appName.toFirstLower»Sort'
-                        ],
-                        'choices' => [
-                            «FOR field : getDerivedFields»
-                                $this->translator->trans('«field.name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
-                            «ENDFOR»
-                            «IF standardFields»
-                                $this->translator->trans('Creation date', [], '«app.appName.formatForDB»') => 'createdDate',
-                                $this->translator->trans('Creator', [], '«app.appName.formatForDB»') => 'createdUserId',
-                                $this->translator->trans('Update date', [], '«app.appName.formatForDB»') => 'updatedDate'
-                            «ENDIF»
-                        ],
-                        'choices_as_values' => true
-                    ])
-                    ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
-                        'label' => $this->translator->trans('Sort direction', [], '«app.appName.formatForDB»') . ':',
-                        'empty_data' => 'asc',
-                        'attr' => [
-                            'id' => '«app.appName.toFirstLower»SortDir'
-                        ],
-                        'choices' => [
-                            $this->translator->trans('Ascending', [], '«app.appName.formatForDB»') => 'asc',
-                            $this->translator->trans('Descending', [], '«app.appName.formatForDB»') => 'desc'
-                        ],
-                        'choices_as_values' => true
-                    ])
-                    ->add('num', '«nsSymfonyFormType»ChoiceType', [
-                        'label' => $this->translator->trans('Page size', [], '«app.appName.formatForDB»') . ':',
-                        'empty_data' => 20,
-                        'attr' => [
-                            'id' => '«app.appName.toFirstLower»PageSize',
-                            'class' => 'text-right'
-                        ],
-                        'choices' => [
-                            5 => 5,
-                            10 => 10,
-                            15 => 15,
-                            20 => 20,
-                            30 => 30,
-                            50 => 50,
-                            100 => 100
-                        ],
-                        'choices_as_values' => true
-                    ])
+                    «sortingAndPageSize»
                     ->add('q', '«nsSymfonyFormType»TextType', [
                         'label' => $this->translator->trans('Search for', [], '«app.appName.formatForDB»') . ':',
                         'attr' => [
@@ -181,6 +135,59 @@ class Finder {
                 return '«app.appName.formatForDB»_«name.formatForDB»finder';
             }
         }
+    '''
+
+    def private sortingAndPageSize(Entity it) '''
+        ->add('sort', '«nsSymfonyFormType»ChoiceType', [
+            'label' => $this->translator->trans('Sort by', [], '«app.appName.formatForDB»') . ':',
+            'empty_data' => '',
+            'attr' => [
+                'id' => '«app.appName.toFirstLower»Sort'
+            ],
+            'choices' => [
+                «FOR field : getDerivedFields»
+                    «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
+                        $this->translator->trans('«field.name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                    «ENDIF»
+                «ENDFOR»
+                «IF standardFields»
+                    $this->translator->trans('Creation date', [], '«app.appName.formatForDB»') => 'createdDate',
+                    $this->translator->trans('Creator', [], '«app.appName.formatForDB»') => 'createdUserId',
+                    $this->translator->trans('Update date', [], '«app.appName.formatForDB»') => 'updatedDate'
+                «ENDIF»
+            ],
+            'choices_as_values' => true
+        ])
+        ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
+            'label' => $this->translator->trans('Sort direction', [], '«app.appName.formatForDB»') . ':',
+            'empty_data' => 'asc',
+            'attr' => [
+                'id' => '«app.appName.toFirstLower»SortDir'
+            ],
+            'choices' => [
+                $this->translator->trans('Ascending', [], '«app.appName.formatForDB»') => 'asc',
+                $this->translator->trans('Descending', [], '«app.appName.formatForDB»') => 'desc'
+            ],
+            'choices_as_values' => true
+        ])
+        ->add('num', '«nsSymfonyFormType»ChoiceType', [
+            'label' => $this->translator->trans('Page size', [], '«app.appName.formatForDB»') . ':',
+            'empty_data' => 20,
+            'attr' => [
+                'id' => '«app.appName.toFirstLower»PageSize',
+                'class' => 'text-right'
+            ],
+            'choices' => [
+                5 => 5,
+                10 => 10,
+                15 => 15,
+                20 => 20,
+                30 => 30,
+                50 => 50,
+                100 => 100
+            ],
+            'choices_as_values' => true
+        ])
     '''
 
     def private finderTypeImpl(Entity it) '''

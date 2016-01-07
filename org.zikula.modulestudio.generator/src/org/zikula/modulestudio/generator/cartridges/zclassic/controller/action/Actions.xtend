@@ -621,6 +621,23 @@ class Actions {
             $templateParameters['pagesize'] = $resultsPerPage;
             $templateParameters['currentUrlObject'] = $currentUrlObject;
             $templateParameters = array_merge($templateParameters, $additionalParameters);
+
+            $formOptions = [
+                'objectType' => $objectType,
+                'all' => $templateParameters['showAllEntries'],
+                'own' => $templateParameters['showOwnEntries']
+            ];
+            $form = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\' . ucfirst($objectType) . 'QuickNavType', $templateParameters, $formOptions)
+                ->setMethod('GET');
+
+            $templateParameters['quickNavForm'] = $form;
+
+            «/* shouldn't be necessary
+            if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
+                $templateParameters = array_merge($templateParameters, $form->getData());
+            }
+ 
+            */»
         «ENDIF»
 
         «IF isLegacy»

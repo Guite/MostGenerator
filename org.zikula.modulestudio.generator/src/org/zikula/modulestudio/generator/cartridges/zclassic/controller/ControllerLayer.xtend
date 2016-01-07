@@ -17,6 +17,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.UrlRoutingLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ShortUrlsLegacy
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.QuickNavigation
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
@@ -64,6 +65,9 @@ class ControllerLayer {
             }
         } else {
             new Routing().generate(it, fsa)
+            if (hasViewActions) {
+                new QuickNavigation().generate(it, fsa)
+            }
         }
 
         if (generateExternalControllerAndFinder) {

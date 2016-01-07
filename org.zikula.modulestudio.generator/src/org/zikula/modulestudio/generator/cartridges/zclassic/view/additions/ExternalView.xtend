@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.additions
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -469,7 +470,9 @@ class ExternalView {
             <label for="«app.appName.toFirstLower»Sort">{gt text='Sort by'}:</label>
             <select id="«app.appName.toFirstLower»Sort" name="sort" class="z-floatleft" style="width: 100px; margin-right: 10px">
                 «FOR field : getDerivedFields»
-                    <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                    «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
+                        <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                    «ENDIF»
                 «ENDFOR»
                 «IF standardFields»
                     <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>

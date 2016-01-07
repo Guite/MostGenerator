@@ -125,10 +125,6 @@ class Plugins {
                 «ENDIF»
                 new \Twig_SimpleFunction('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
                 new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector']),
-                «IF hasCategorisableEntities»
-                    new \Twig_SimpleFunction('«appNameLower»_categoryProperties', [$this, 'getCategoryProperties']),
-                    new \Twig_SimpleFunction('«appNameLower»_isCategoryMultiValued', [$this, 'isCategoryMultiValued']),
-                «ENDIF»
                 new \Twig_SimpleFunction('«appNameLower»_userVar', [$this, 'getUserVar']),
                 new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar']),
                 new \Twig_SimpleFunction('«appNameLower»_thumb', [$this, 'getImageThumb'])
@@ -181,37 +177,6 @@ class Plugins {
 
     // 1.4.x only
     def private twigExtensionCompat(Application it) '''
-        «IF hasCategorisableEntities»
-            /**
-             * Returns all properties for categories of a certain object type.
-             *
-             * @param string $objectType Name of object type.
-             *
-             * @return array
-             */
-            public function getCategoryProperties($objectType)
-            {
-                $result = \ModUtil::apiFunc('«appName», 'category', 'getAllProperties', ['ot' => $objectType]);
-
-                return $result;
-            }
-
-            /**
-             * Checks whether a category field is multi-valued or not.
-             *
-             * @param string $objectType Name of object type.
-             * @param string $registry   Property name of registry.
-             *
-             * @return boolean
-             */
-            public function isCategoryMultiValued($objectType, $registry)
-            {
-                $result = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', ['ot' => $objectType, 'registry' => $registry]);
-
-                return $result;
-            }
-
-        «ENDIF»
         /**
          * Returns the value of a user variable.
          *

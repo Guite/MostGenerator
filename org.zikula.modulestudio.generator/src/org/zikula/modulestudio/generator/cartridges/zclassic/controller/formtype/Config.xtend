@@ -115,8 +115,10 @@ class Config {
             'attr' => [
                 'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')«IF documentation !== null && documentation != ''»
             «ENDIF»
-            ]«IF documentation !== null && documentation != ''»,
-            'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»')«ENDIF»«additionalOptions»
+            ],
+            «IF documentation !== null && documentation != ''»
+                'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»'),
+            «ENDIF»«additionalOptions»
         ])
     '''
 
@@ -131,6 +133,7 @@ class Config {
     def private dispatch additionalOptions(IntVar it) ''',
         'max_length' => 255,
         «IF hasUserGroupSelectors && isUserGroupSelector»
+            // Zikula core should provide a form type for this to hide entity details
             'class' => 'Zikula\GroupsModule\Entity\GroupsEntity',
             'choice_label' => 'name'
         «ELSE»
@@ -139,7 +142,7 @@ class Config {
     '''
 
     def private dispatch fieldType(TextVar it) '''Text«IF multiline»area«ENDIF»'''
-    def private dispatch additionalOptions(TextVar it) ''',
+    def private dispatch additionalOptions(TextVar it) '''
         'max_length' => «IF maxLength > 0»«maxLength»«ELSE»255«ENDIF»
     '''
 
@@ -149,7 +152,7 @@ class Config {
 
     def private dispatch fieldType(ListVar it) '''Choice'''
     def private dispatch titleAttribute(ListVar it) '''Choose the «name.formatForDisplay».'''
-    def private dispatch additionalOptions(ListVar it) ''',
+    def private dispatch additionalOptions(ListVar it) '''
         'choices' => [
             «FOR item : items»«item.itemDefinition»«IF item != items.last»,«ENDIF»«ENDFOR»
         ],
