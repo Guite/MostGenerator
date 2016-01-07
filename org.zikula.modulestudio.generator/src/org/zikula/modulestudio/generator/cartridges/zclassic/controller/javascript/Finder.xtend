@@ -97,7 +97,7 @@ class Finder {
         «objName».finder.onLoad = function (baseId, selectedId)
         {
             «IF targets('1.3.x')»
-                $$('div.categoryselector select').invoke('observe', 'change', «objName».finder.onParamChanged);
+                $$('div.category-selector select').invoke('observe', 'change', «objName».finder.onParamChanged);
                 $('«elemPrefix»Sort').observe('change', «objName».finder.onParamChanged);
                 $('«elemPrefix»SortDir').observe('change', «objName».finder.onParamChanged);
                 $('«elemPrefix»PageSize').observe('change', «objName».finder.onParamChanged);
@@ -106,14 +106,21 @@ class Finder {
                 $('«elemPrefix»Submit').addClassName('z-hide');
                 $('«elemPrefix»Cancel').observe('click', «objName».finder.handleCancel);
             «ELSE»
-                jQuery('div.categoryselector select').change(«objName».finder.onParamChanged);
+                jQuery('div.category-selector select').change(«objName».finder.onParamChanged);
                 jQuery('#«elemPrefix»Sort').change(«objName».finder.onParamChanged);
                 jQuery('#«elemPrefix»SortDir').change(«objName».finder.onParamChanged);
                 jQuery('#«elemPrefix»PageSize').change(«objName».finder.onParamChanged);
-                jQuery('#«elemPrefix»SearchGo').click(«objName».finder.onParamChanged);
-                jQuery('#«elemPrefix»SearchGo').keypress(«objName».finder.onParamChanged);
-                jQuery('#«elemPrefix»Submit').addClass('hidden');
                 jQuery('#«elemPrefix»Cancel').click(«objName».finder.handleCancel);
+
+                var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
+                selectedItems.click(function (e) {
+                    e.preventDefault();
+                    «objName».finder.selectItem(jQuery(this).data('itemid'));
+                });
+                selectedItems.keypress(function (e) {
+                    e.preventDefault();
+                    «objName».finder.selectItem(jQuery(this).data('itemid'));
+                });
             «ENDIF»
         };
 

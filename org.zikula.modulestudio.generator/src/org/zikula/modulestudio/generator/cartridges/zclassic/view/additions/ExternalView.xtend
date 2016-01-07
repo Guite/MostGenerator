@@ -268,18 +268,22 @@ class ExternalView {
 
                 <fieldset>
                     <legend>{gt text='Search and select «name.formatForDisplay»'}</legend>
-                    «findTemplateCategories(app)»
 
-                    «findTemplatePasteAs(app)»
+                    «IF categorisable»
+                        «findTemplateCategoriesLegacy(app)»
+                    «ENDIF»
+                    «findTemplatePasteAsLegacy(app)»
                     <br />
 
                     «findTemplateObjectId(app)»
 
-                    «findTemplateSorting(app)»
+                    «findTemplateSortingLegacy(app)»
 
-                    «findTemplatePageSize(app)»
+                    «findTemplatePageSizeLegacy(app)»
 
-                    «findTemplateSearch(app)»
+                    «IF hasAbstractStringFieldsEntity»
+                        «findTemplateSearchLegacy(app)»
+                    «ENDIF»
                     <div style="margin-left: 6em">
                         {pager display='page' rowcount=$pager.numitems limit=$pager.itemsperpage posvar='pos' template='pagercss.tpl' maxpages='10'}
                     </div>
@@ -306,10 +310,9 @@ class ExternalView {
             <link type="text/css" rel="stylesheet" href="{{ zasset('style/core.css') }}" />
             <link type="text/css" rel="stylesheet" href="{{ zasset('@«app.appName»:css/style.css') }}" />
             <link type="text/css" rel="stylesheet" href="{{ zasset('@«app.appName»:css/finder.css') }}" />
-            {% set ourEntry = getModVar('ZConfig', 'entrypoint', 'index.php') %}
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                Zikula.Config = {'entrypoint': '{{ ourEntry }}', 'baseURL': '{{ pageGetVar('homepath') }}'}; /* ]]> */
+                Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ pageGetVar('homepath') }}'}; /* ]]> */
             </script>
             <link rel="stylesheet" href="web/bootstrap/css/bootstrap.min.css" type="text/css" />
             <link rel="stylesheet" href="web/bootstrap/css/bootstrap-theme.css" type="text/css" />
@@ -318,40 +321,41 @@ class ExternalView {
             <script type="text/javascript" src="{{ zasset('@«app.appName»:js/«app.appName».Finder.js') }}"></script>
         </head>
         <body>
-        <div class="container">
-            «findTemplateObjectTypeSwitcher(app)»
-            <form action="{{ ourEntry }}" id="«app.appName.toFirstLower»SelectorForm" method="get" class="form{# -horizontal #}" role="form">
-            <div>
-                <input type="hidden" name="module" value="«app.appName»" />
-                <input type="hidden" name="type" value="external" />
-                <input type="hidden" name="func" value="finder" />
-                <input type="hidden" name="objectType" value="{{ objectType }}" />
-                <input type="hidden" name="editor" id="editorName" value="{{ editorName }}" />
-
+            <div class="container">
+                «findTemplateObjectTypeSwitcher(app)»
+                {% form_theme finderForm with [
+                    'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig',
+                    'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                ] %}
+                {{ form_start(finderForm, {attr: {id: '«app.appName.toFirstLower»SelectorForm'}}) }}
+                {{ form_errors(finderForm) }}
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
-                    «findTemplateCategories(app)»
-
-                    «findTemplatePasteAs(app)»
+                    «IF categorisable»
+                        {{ form_row(finderForm.categories) }}
+                    «ENDIF»
+                    {{ form_row(finderForm.pasteas) }}
                     <br />
-
                     «findTemplateObjectId(app)»
 
-                    «findTemplateSorting(app)»
-
-                    «findTemplatePageSize(app)»
-
-                    «findTemplateSearch(app)»
+                    {{ form_row(finderForm.sort) }}
+                    {{ form_row(finderForm.sortdir) }}
+                    {{ form_row(finderForm.num) }}
+                    «IF hasAbstractStringFieldsEntity»
+                        {{ form_row(finderForm.q) }}
+                    «ENDIF»
                     <div>
                         {{ pager({ display: 'page', rowcount: pager.numitems, limit: pager.itemsperpage, posvar: 'pos', maxpages: 10, route: '«app.appName.formatForDB»_external_finder'}) }}
                     </div>
-                    <input type="submit" id="«app.appName.toFirstLower»Submit" name="submitButton" value="{{ __('Change selection') }}" class="btn btn-success" />
-                    <input type="button" id="«app.appName.toFirstLower»Cancel" name="cancelButton" value="{{ __('Cancel') }}" class="btn btn-default" />
-                    <br />
+                    <div class="form-group">
+                        <div class="col-lg-offset-3 col-lg-9">
+                            {{ form_widget(finderForm.update, {attr: {class: 'btn btn-success'}, icon: 'fa-check'}) }}
+                            {{ form_widget(finderForm.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
+                        </div>
+                    </div>
                 </fieldset>
+                {{ form_end(finderForm) }}
             </div>
-            </form>
-        </div>
 
             «findTemplateJs(app)»
 
@@ -371,88 +375,49 @@ class ExternalView {
             «ELSE»
                 <ul class="nav nav-pills nav-justified">
                 «FOR entity : app.getAllEntities.filter[e|e.name != name] SEPARATOR ' | '»
-                    <li{% if objectType == '«entity.name.formatForCode»' %} class="active"{% endif %}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
+                    <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
                 «ENDFOR»
                 </ul>
             «ENDIF»
         «ENDIF»
     '''
 
-    def private findTemplateCategories(Entity it, Application app) '''
-        «IF categorisable»
-
-            «IF app.targets('1.3.x')»
-                {if $properties ne null && is_array($properties)}
-                    {gt text='All' assign='lblDefault'}
-                    {nocache}
-                    {foreach key='propertyName' item='propertyId' from=$properties}
-                        <div class="z-formrow category-selector">
-                            {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
-                            {gt text='Category' assign='categoryLabel'}
-                            {assign var='categorySelectorId' value='catid'}
-                            {assign var='categorySelectorName' value='catid'}
-                            {assign var='categorySelectorSize' value='1'}
-                            {if $hasMultiSelection eq true}
-                                {gt text='Categories' assign='categoryLabel'}
-                                {assign var='categorySelectorName' value='catids'}
-                                {assign var='categorySelectorId' value='catids__'}
-                                {assign var='categorySelectorSize' value='8'}
-                            {/if}
-                            <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
-                            &nbsp;
-                            {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                            <span class="z-sub z-formnote">{gt text='This is an optional filter.'}</span>
-                        </div>
-                    {/foreach}
-                    {/nocache}
-                {/if}
-            «ELSE»
-                {% if properties is not null and properties is iterable %}
-                    {% set lblDefault = __('All') %}
-                    {% for propertyName, propertyId in properties %}
-                        <div class="form-group category-selector">
-                            {% set hasMultiSelection = «app.appName.formatForDB»_isCategoryMultiValued(objectType, propertyName) %}
-                            {% set categoryLabel = __('Category') %}
-                            {% set categorySelectorId = 'catid' %}
-                            {% set categorySelectorName = 'catid' %}
-                            {% set categorySelectorSize = 1 %}
-                            {% if hasMultiSelection == true %}
-                                {% set categoryLabel = __('Categories') %}
-                                {% set categorySelectorName = 'catids' %}
-                                {% set categorySelectorId = 'catids__ %}
-                                {% set categorySelectorSize = 8 %}
-                            {% endif %}
-                            <label for="{{ categorySelectorId ~ propertyName }}" class="col-sm-3 control-label">{{ categoryLabel }}</label>
-                            <div class="col-sm-9">
-                                «/* TODO migrate to Symfony forms #416 */»
-                                {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize cssClass='form-control'}
-                                <span class="help-block">{{ __('This is an optional filter.') }}</span>
-                            </div>
-                        </div>
-                    {/foreach}
-                {% endif %}
-            «ENDIF»
-        «ENDIF»
+    // 1.3.x only
+    def private findTemplateCategoriesLegacy(Entity it, Application app) '''
+        {if $properties ne null && is_array($properties)}
+            {gt text='All' assign='lblDefault'}
+            {nocache}
+            {foreach key='propertyName' item='propertyId' from=$properties}
+                <div class="z-formrow category-selector">
+                    {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                    {gt text='Category' assign='categoryLabel'}
+                    {assign var='categorySelectorId' value='catid'}
+                    {assign var='categorySelectorName' value='catid'}
+                    {assign var='categorySelectorSize' value='1'}
+                    {if $hasMultiSelection eq true}
+                        {gt text='Categories' assign='categoryLabel'}
+                        {assign var='categorySelectorName' value='catids'}
+                        {assign var='categorySelectorId' value='catids__'}
+                        {assign var='categorySelectorSize' value='8'}
+                    {/if}
+                    <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
+                    &nbsp;
+                    {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                    <span class="z-sub z-formnote">{gt text='This is an optional filter.'}</span>
+                </div>
+            {/foreach}
+            {/nocache}
+        {/if}
     '''
 
-    def private findTemplatePasteAs(Entity it, Application app) '''
-        <div class="«IF app.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«app.appName.toFirstLower»PasteAs"«IF !app.targets('1.3.x')» class="col-sm-3 control-label"«ENDIF»>«IF app.targets('1.3.x')»{gt text='Paste as'}«ELSE»{{ __('Paste as') }}«ENDIF»:</label>
-            «IF !app.targets('1.3.x')»
-                <div class="col-sm-9">
-            «ENDIF»
-                <select id="«app.appName.toFirstLower»PasteAs" name="pasteas"«IF !app.targets('1.3.x')» class="form-control"«ENDIF»>
-                    «IF app.targets('1.3.x')»
-                        <option value="1">{gt text='Link to the «name.formatForDisplay»'}</option>
-                        <option value="2">{gt text='ID of «name.formatForDisplay»'}</option>
-                    «ELSE»
-                        <option value="1">{{ __('Link to the «name.formatForDisplay»') }}</option>
-                        <option value="2">{{ __('ID of «name.formatForDisplay»') }}</option>
-                    «ENDIF»
-                </select>
-            «IF !app.targets('1.3.x')»
-                </div>
-            «ENDIF»
+    // 1.3.x only
+    def private findTemplatePasteAsLegacy(Entity it, Application app) '''
+        <div class="z-formrow">
+            <label for="«app.appName.toFirstLower»PasteAs">{gt text='Paste as'}:</label>
+            <select id="«app.appName.toFirstLower»PasteAs" name="pasteas">
+                <option value="1">{gt text='Link to the «name.formatForDisplay»'}</option>
+                <option value="2">{gt text='ID of «name.formatForDisplay»'}</option>
+            </select>
         </div>
     '''
 
@@ -480,7 +445,7 @@ class ExternalView {
                         {% for «name.formatForCode» in items %}
                             <li>
                                 {% set itemId = «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }}
-                                <a href="#" onclick="«app.appName.toFirstLower».finder.selectItem({{ itemId }})" onkeypress="«app.appName.toFirstLower».finder.selectItem({{ itemId }})">{{ «name.formatForCode»->getTitleFromDisplayPattern() }}</a>
+                                <a href="#" data-itemid="{{ itemId }}">{{ «name.formatForCode»->getTitleFromDisplayPattern() }}</a>
                                 <input type="hidden" id="url{{ itemId }}" value="«IF app.hasUserController»{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}«ENDIF»" />
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
@@ -497,94 +462,50 @@ class ExternalView {
         </div>
     '''
 
-    def private findTemplateSorting(Entity it, Application app) '''
-        <div class="«IF app.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«app.appName.toFirstLower»Sort"«IF !app.targets('1.3.x')» class="col-sm-3 control-label"«ENDIF»>«IF app.targets('1.3.x')»{gt text='Sort by'}«ELSE»{{ __('Sort by') }}«ENDIF»:</label>
-            «IF !app.targets('1.3.x')»
-                <div class="col-sm-9">
-            «ENDIF»
-                <select id="«app.appName.toFirstLower»Sort" name="sort" class="«IF app.targets('1.3.x')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="width: 1«IF app.targets('1.3.x')»0«ELSE»5«ENDIF»0px; margin-right: 10px">
-                «IF app.targets('1.3.x')»
-                    «FOR field : getDerivedFields»
-                        <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
-                    «ENDFOR»
-                    «IF standardFields»
-                        <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
-                        <option value="createdUserId"{if $sort eq 'createdUserId'} selected="selected"{/if}>{gt text='Creator'}</option>
-                        <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
-                    «ENDIF»
-                    </select>
-                    <select id="«app.appName.toFirstLower»SortDir" name="sortdir" style="width: 100px">
-                        <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
-                        <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
-                    </select>
-                «ELSE»
-                    «FOR field : getDerivedFields»
-                        <option value="«field.name.formatForCode»"{{ sort == '«field.name.formatForCode»' ? ' selected="selected"' : '' }}>{{ __('«field.name.formatForDisplayCapital»') }}</option>
-                    «ENDFOR»
-                    «IF standardFields»
-                        <option value="createdDate"{{ sort == 'createdDate' ? ' selected="selected"' : '' }}>{{ __('Creation date') }}</option>
-                        <option value="createdUserId"{{ sort == 'createdUserId' ? ' selected="selected"' : '' }}>{{ __('Creator') }}</option>
-                        <option value="updatedDate"{{ sort == 'updatedDate' ? ' selected="selected"' : '' }}>{{ __('Update date') }}</option>
-                    «ENDIF»
-                    </select>
-                    <select id="«app.appName.toFirstLower»SortDir" name="sortdir" class="form-control" style="width: 150px">
-                        <option value="asc"{{ sortdir == 'asc' ? ' selected="selected"' : '' }}>{{ __('ascending') }}</option>
-                        <option value="desc"{{ sortdir == 'desc' ? ' selected="selected"' : '' }}>{{ __('descending') }}</option>
-                    </select>
+    // 1.3.x only
+    def private findTemplateSortingLegacy(Entity it, Application app) '''
+        <div class="z-formrow">
+            <label for="«app.appName.toFirstLower»Sort">{gt text='Sort by'}:</label>
+            <select id="«app.appName.toFirstLower»Sort" name="sort" class="z-floatleft" style="width: 100px; margin-right: 10px">
+                «FOR field : getDerivedFields»
+                    <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
+                «ENDFOR»
+                «IF standardFields»
+                    <option value="createdDate"{if $sort eq 'createdDate'} selected="selected"{/if}>{gt text='Creation date'}</option>
+                    <option value="createdUserId"{if $sort eq 'createdUserId'} selected="selected"{/if}>{gt text='Creator'}</option>
+                    <option value="updatedDate"{if $sort eq 'updatedDate'} selected="selected"{/if}>{gt text='Update date'}</option>
                 «ENDIF»
-            «IF !app.targets('1.3.x')»
-                </div>
-            «ENDIF»
+            </select>
+            <select id="«app.appName.toFirstLower»SortDir" name="sortdir" style="width: 100px">
+                <option value="asc"{if $sortdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
+                <option value="desc"{if $sortdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
+            </select>
         </div>
     '''
 
-    def private findTemplatePageSize(Entity it, Application app) '''
-        <div class="«IF app.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-            <label for="«app.appName.toFirstLower»PageSize"«IF !app.targets('1.3.x')» class="col-sm-3 control-label"«ENDIF»>«IF app.targets('1.3.x')»{gt text='Page size'}«ELSE»{{ __('Page size') }}«ENDIF»:</label>
-            «IF !app.targets('1.3.x')»
-                <div class="col-sm-9">
-            «ENDIF»
-                <select id="«app.appName.toFirstLower»PageSize" name="num"«IF app.targets('1.3.x')» style="width: 50px; text-align: right"«ELSE» class="form-control text-right" style="width: 100px"«ENDIF»>
-                    «IF app.targets('1.3.x')»
-                        <option value="5"{if $pager.itemsperpage eq 5} selected="selected"{/if}>5</option>
-                        <option value="10"{if $pager.itemsperpage eq 10} selected="selected"{/if}>10</option>
-                        <option value="15"{if $pager.itemsperpage eq 15} selected="selected"{/if}>15</option>
-                        <option value="20"{if $pager.itemsperpage eq 20} selected="selected"{/if}>20</option>
-                        <option value="30"{if $pager.itemsperpage eq 30} selected="selected"{/if}>30</option>
-                        <option value="50"{if $pager.itemsperpage eq 50} selected="selected"{/if}>50</option>
-                        <option value="100"{if $pager.itemsperpage eq 100} selected="selected"{/if}>100</option>
-                    «ELSE»
-                        <option value="5"{{ pager.itemsperpage == 5 ? ' selected="selected"' : '' }}>5</option>
-                        <option value="10"{{ pager.itemsperpage == 10 ? ' selected="selected"' : '' }}>10</option>
-                        <option value="15"{{ pager.itemsperpage == 15 ? ' selected="selected"' : '' }}>15</option>
-                        <option value="20"{{ pager.itemsperpage == 20 ? ' selected="selected"' : '' }}>20</option>
-                        <option value="30"{{ pager.itemsperpage == 30 ? ' selected="selected"' : '' }}>30</option>
-                        <option value="50"{{ pager.itemsperpage == 50 ? ' selected="selected"' : '' }}>50</option>
-                        <option value="100"{{ pager.itemsperpage == 100 ? ' selected="selected"' : '' }}>100</option>
-                    «ENDIF»
-                </select>
-            «IF !app.targets('1.3.x')»
-                </div>
-            «ENDIF»
+    // 1.3.x only
+    def private findTemplatePageSizeLegacy(Entity it, Application app) '''
+        <div class="z-formrow">
+            <label for="«app.appName.toFirstLower»PageSize">{gt text='Page size'}:</label>
+            <select id="«app.appName.toFirstLower»PageSize" name="num" style="width: 50px; text-align: right">
+                <option value="5"{if $pager.itemsperpage eq 5} selected="selected"{/if}>5</option>
+                <option value="10"{if $pager.itemsperpage eq 10} selected="selected"{/if}>10</option>
+                <option value="15"{if $pager.itemsperpage eq 15} selected="selected"{/if}>15</option>
+                <option value="20"{if $pager.itemsperpage eq 20} selected="selected"{/if}>20</option>
+                <option value="30"{if $pager.itemsperpage eq 30} selected="selected"{/if}>30</option>
+                <option value="50"{if $pager.itemsperpage eq 50} selected="selected"{/if}>50</option>
+                <option value="100"{if $pager.itemsperpage eq 100} selected="selected"{/if}>100</option>
+            </select>
         </div>
     '''
 
-    def private findTemplateSearch(Entity it, Application app) '''
-        «IF hasAbstractStringFieldsEntity»
-            <div class="«IF app.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-                <label for="«app.appName.toFirstLower»SearchTerm"«IF !app.targets('1.3.x')» class="col-sm-3 control-label"«ENDIF»>«IF app.targets('1.3.x')»{gt text='Search for'}«ELSE»{{ __('Search for') }}«ENDIF»:</label>
-            «IF !app.targets('1.3.x')»
-                <div class="col-sm-9">
-            «ENDIF»
-                    <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="q" class="«IF app.targets('1.3.x')»z-floatleft«ELSE»form-control pull-left«ENDIF»" style="width: 150px; margin-right: 10px" />
-                    <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="«IF app.targets('1.3.x')»{gt text='Filter'}«ELSE»{{ __('Filter') }}«ENDIF»" style="width: 80px"«IF !app.targets('1.3.x')» class="btn btn-default"«ENDIF» />
-            «IF !app.targets('1.3.x')»
-                </div>
-            «ENDIF»
-            </div>
-
-        «ENDIF»
+    // 1.3.x only
+    def private findTemplateSearchLegacy(Entity it, Application app) '''
+        <div class="z-formrow">
+            <label for="«app.appName.toFirstLower»SearchTerm">{gt text='Search for'}:</label>
+            <input type="text" id="«app.appName.toFirstLower»SearchTerm" name="q" class="z-floatleft" style="width: 150px; margin-right: 10px" />
+            <input type="button" id="«app.appName.toFirstLower»SearchGo" name="gosearch" value="{gt text='Filter'}" style="width: 80px" />
+        </div>
     '''
 
     def private findTemplateJs(Entity it, Application app) '''

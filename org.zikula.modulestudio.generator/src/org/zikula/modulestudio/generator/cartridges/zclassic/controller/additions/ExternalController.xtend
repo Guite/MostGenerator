@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -25,6 +26,7 @@ class ExternalController {
         generateClassPair(fsa, getAppSourceLibPath + 'Controller/External' + (if (isLegacy) '' else 'Controller') + '.php',
             fh.phpFileContent(it, externalBaseClass), fh.phpFileContent(it, externalImpl)
         )
+        new Finder().generate(it, fsa)
         new ExternalView().generate(it, fsa)
     }
 
@@ -347,28 +349,30 @@ class ExternalController {
 
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
-            «IF hasCategorisableEntities»
-                «categoryInitialisation»
+            $properties = [
+                'objectType' => $objectType,
+                'editorName' => $editor
+            ];
+            $form = $this->createForm('«appNamespace»\Form\Type\Finder\' . ucfirst($objectType) . 'FinderType', $properties)
+                ->setMethod('GET');
 
-                // collect category properties
-                $properties = null;
-                if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', ['ot' => $objectType]);
-                }
-
-            «ENDIF»
             $templateParameters = [
                 'editorName' => $editor,
                 'objectType' => $objectType,
+                'finderForm' => $form->createView(),
                 'items' => $entities,
                 'sort' => $sort,
                 'sortdir' => $sdir,
                 'currentPage' => $currentPage,
-                'pager', ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]«IF hasCategorisableEntities»,
-                'properties' => $properties,
-                'catIds' => $categoryIds«ENDIF»
+                'pager', ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]
             ];
 
+            «/* shouldn't be necessary
+            if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
+                $templateParameters = array_merge($templateParameters, $form->getData());
+            }
+
+            */»
             return $this->render('@«appName»/External/' . ucfirst($objectType) . '/find.html.twig', $templateParameters);
         «ENDIF»
     '''

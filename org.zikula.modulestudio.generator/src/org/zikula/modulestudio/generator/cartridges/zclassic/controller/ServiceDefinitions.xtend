@@ -160,6 +160,16 @@ class ServiceDefinitions {
                 tags:
                     - { name: form.type }
         «ENDIF»
+        «IF generateExternalControllerAndFinder»
+            «FOR entity : getAllEntities»
+
+                «modPrefix».form.type.«entity.name.formatForDB»finder:
+                    class: "«nsBase»Finder\«entity.name.formatForCodeCapital»FinderType"
+                    arguments: [@translator]
+                    tags:
+                        - { name: form.type }
+            «ENDFOR»
+        «ENDIF»
         «IF needsConfig»
 
             «modPrefix».form.type.appsettings:

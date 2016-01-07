@@ -102,7 +102,7 @@ class Config {
 
     def private definition(Variable it) '''
         ->add('«name.formatForCode»', '«nsSymfonyFormType»«fieldType»Type', [
-            'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
+            'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
             «IF documentation !== null && documentation != ''»
                 'label_attr' => [
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
@@ -158,7 +158,7 @@ class Config {
     '''
 
     def private itemDefinition(ListVarItem it) '''
-        '«name.formatForDisplayCapital»' => $this->translator->trans('«name.formatForCode»', [], '«app.appName.formatForDB»')
+        $this->translator->trans('«name.formatForCode»', [], '«app.appName.formatForDB»') => '«name.formatForDisplayCapital»'
     '''
 
     def private configTypeImpl(Application it) '''
