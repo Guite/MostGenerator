@@ -113,6 +113,7 @@ class EntityMetaData {
             'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
             'required' => false,
             «IF 'startdate'.equals(name) || 'enddate'.equals(name)»
+                'widget' => 'single_text',
             «ELSEIF 'language'.equals(name)»
                 'attr' => [
                     'title' => $this->translator->trans('Choose a language', [], '«app.appName.formatForDB»')

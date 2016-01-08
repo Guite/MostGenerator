@@ -422,7 +422,7 @@ class Validation {
                 ]);
             «ELSE»
                 jQuery('.validate-nospace').each( function() {
-                    if («vendorAndName»ValidateNoSpace(jQuery(this).val())) {
+                    if (!«vendorAndName»ValidateNoSpace(jQuery(this).val())) {
                         document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('This value must not contain spaces.', '«appName.formatForDB»_js'));
                     } else {
                         document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -430,7 +430,7 @@ class Validation {
                 });
                 «IF hasColourFields»
                     jQuery('.validate-htmlcolour').each( function() {
-                        if («vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
+                        if (!«vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a valid html colour code.', '«appName.formatForDB»_js'));
                         } else {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -439,7 +439,7 @@ class Validation {
                 «ENDIF»
                 «IF hasUploads»
                     jQuery('.validate-upload').each( function() {
-                        if («vendorAndName»ValidateUploadExtension(jQuery(this).val(), jQuery(this))) {
+                        if (!«vendorAndName»ValidateUploadExtension(jQuery(this).val(), jQuery(this))) {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a valid file extension.', '«appName.formatForDB»_js'));
                         } else {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -449,7 +449,7 @@ class Validation {
                 «IF !datetimeFields.empty»
                     «IF datetimeFields.exists[past]»
                         jQuery('.validate-datetime-past').each( function() {
-                            if («vendorAndName»ValidateDatetimePast(jQuery(this).val())) {
+                            if (!«vendorAndName»ValidateDatetimePast(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -458,7 +458,7 @@ class Validation {
                     «ENDIF»
                     «IF datetimeFields.exists[future]»
                         jQuery('.validate-datetime-future').each( function() {
-                            if («vendorAndName»ValidateDatetimeFuture(jQuery(this).val())) {
+                            if (!«vendorAndName»ValidateDatetimeFuture(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -469,7 +469,7 @@ class Validation {
                 «IF !dateFields.empty»
                     «IF dateFields.exists[past]»
                         jQuery('.validate-date-past').each( function() {
-                            if («vendorAndName»ValidateDatePast(jQuery(this).val())) {
+                            if (!«vendorAndName»ValidateDatePast(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -478,7 +478,7 @@ class Validation {
                     «ENDIF»
                     «IF dateFields.exists[future]»
                         jQuery('.validate-date-future').each( function() {
-                            if («vendorAndName»ValidateDateFuture(jQuery(this).val())) {
+                            if (!«vendorAndName»ValidateDateFuture(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -489,7 +489,7 @@ class Validation {
                 «IF !timeFields.empty»
                     «IF timeFields.exists[past]»
                         jQuery('.validate-time-past').each( function() {
-                            if («vendorAndName»ValidateTimePast(jQuery(this).val())) {
+                            if (!«vendorAndName»ValidateTimePast(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the past.', '«appName.formatForDB»_js'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -498,7 +498,7 @@ class Validation {
                     «ENDIF»
                     «IF timeFields.exists[future]»
                         jQuery('.validate-time-future').each( function() {
-                            if («vendorAndName»ValidateTimeFuture(jQuery(this).val())) {
+                            if (!«vendorAndName»ValidateTimeFuture(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('Please select a value in the future.', '«appName.formatForDB»_js'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -511,7 +511,7 @@ class Validation {
                     «val endDateField = entity.getEndDateField»
                     «IF startDateField !== null && endDateField !== null»
                         jQuery('.validate-daterange-«entity.name.formatForDB»').each( function() {
-                            if («vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(jQuery(this).val())) {
+                            if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
@@ -521,7 +521,7 @@ class Validation {
                 «ENDFOR»
                 «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                     jQuery('.validate-unique').each( function() {
-                        if («vendorAndName»UniqueCheck(jQuery(this).attr('id'), jQuery(this).val(), jQuery(this), currentEntityId)) {
+                        if (!«vendorAndName»UniqueCheck(jQuery(this).attr('id'), jQuery(this).val(), jQuery(this), currentEntityId)) {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('This value is already assigned, but must be unique. Please change it.', '«appName.formatForDB»_js'));
                         } else {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');

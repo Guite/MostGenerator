@@ -52,7 +52,6 @@ class DateInput {
                 return __FILE__;
             }
 
-
             /**
              * Create event handler.
              *
