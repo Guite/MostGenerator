@@ -915,17 +915,19 @@ class Actions {
         «IF isLegacy»)«ELSE»]«ENDIF»;
 
         $hasErrors = false;
-        if ($entity->supportsHookSubscribers()) {
-            «IF isLegacy»
-                $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
-            «ELSE»
-                $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
-            «ENDIF»
-            // Let any hooks perform additional validation actions
-            $hookType = 'validate_edit';
-            $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
-            $hasErrors = !$validationHooksPassed;
-        }
+        «IF app.hasHookSubscribers»
+            if ($entity->supportsHookSubscribers()) {
+                «IF isLegacy»
+                    $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
+                «ELSE»
+                    $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
+                «ENDIF»
+                // Let any hooks perform additional validation actions
+                $hookType = 'validate_edit';
+                $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+                $hasErrors = !$validationHooksPassed;
+            }
+        «ENDIF»
 
         if (!$hasErrors) {
             foreach ($idFields as $idField) {
@@ -936,20 +938,22 @@ class Actions {
             }
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
+            «IF app.hasHookSubscribers»
 
-            if ($entity->supportsHookSubscribers()) {
-                $hookType = 'process_edit';
-                $url = null;
-                if ($action != 'delete') {
-                    $urlArgs = $entity->createUrlArgs();
-                    «IF isLegacy»
-                        $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                    «ELSE»
-                        $url = new RouteUrl('«app.appName.formatForDB»_' . $objectType . '_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
-                    «ENDIF»
+                if ($entity->supportsHookSubscribers()) {
+                    $hookType = 'process_edit';
+                    $url = null;
+                    if ($action != 'delete') {
+                        $urlArgs = $entity->createUrlArgs();
+                        «IF isLegacy»
+                            $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                        «ELSE»
+                            $url = new RouteUrl('«app.appName.formatForDB»_' . $objectType . '_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
+                        «ENDIF»
+                    }
+                    $hookHelper->callProcessHooks($entity, $hookType, $url);
                 }
-                $hookHelper->callProcessHooks($entity, $hookType, $url);
-            }
+            «ENDIF»
             «IF !isLegacy»
 
                 $logger = $this->get('logger');

@@ -776,14 +776,14 @@ class FormHandler {
 
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
+            «IF hasHookSubscribers»
 
-            if ($entity->supportsHookSubscribers()) {
-                «IF targets('1.3.x')»
-                    $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
-                «ELSE»
-                    $hookHelper = $this->serviceManager->get('«app.appName.formatForDB».hook_helper');
-                «ENDIF»
-                if ($action != 'cancel') {
+                if ($entity->supportsHookSubscribers() && $action != 'cancel') {
+                    «IF targets('1.3.x')»
+                        $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
+                    «ELSE»
+                        $hookHelper = $this->serviceManager->get('«app.appName.formatForDB».hook_helper');
+                    «ENDIF»
                     // Let any hooks perform additional validation actions
                     $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
                     $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
@@ -791,7 +791,7 @@ class FormHandler {
                         return false;
                     }
                 }
-            }
+            «ENDIF»
             «IF hasTranslatable»
 
                 if ($isRegularAction && $this->hasTranslatableFields === true) {
@@ -805,21 +805,23 @@ class FormHandler {
                     // the workflow operation failed
                     return false;
                 }
+                «IF hasHookSubscribers»
 
-                if ($entity->supportsHookSubscribers()) {
-                    // Let any hooks know that we have created, updated or deleted an item
-                    $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
-                    $url = null;
-                    if ($action != 'delete') {
-                        $urlArgs = $entity->createUrlArgs();
-                        «IF targets('1.3.x')»
-                            $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                        «ELSE»
-                            $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
-                        «ENDIF»
+                    if ($entity->supportsHookSubscribers()) {
+                        // Let any hooks know that we have created, updated or deleted an item
+                        $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                        $url = null;
+                        if ($action != 'delete') {
+                            $urlArgs = $entity->createUrlArgs();
+                            «IF targets('1.3.x')»
+                                $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                            «ELSE»
+                                $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
+                            «ENDIF»
+                        }
+                        $hookHelper->callProcessHooks($entity, $hookType, $url);
                     }
-                    $hookHelper->callProcessHooks($entity, $hookType, $url);
-                }
+                «ENDIF»
                 «IF targets('1.3.x')»
 
                     // An item was created, updated or deleted, so we clear all cached pages for this item.
