@@ -116,9 +116,6 @@ class FormHandler {
             use Zikula_Form_AbstractHandler;
             use Zikula_Form_View;
             use ZLanguage;
-            use Zikula\Core\Hook\ProcessHook;
-            use Zikula\Core\Hook\ValidationHook;
-            use Zikula\Core\Hook\ValidationProviders;
             use Zikula\Core\RouteUrl;
 
         «ENDIF»
@@ -781,19 +778,16 @@ class FormHandler {
             $entity = $this->entityRef;
 
             if ($entity->supportsHookSubscribers()) {
-                $hookAreaPrefix = $entity->getHookAreaPrefix();
+                «IF targets('1.3.x')»
+                    $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
+                «ELSE»
+                    $hookHelper = $this->serviceManager->get('«app.appName.formatForDB».hook_helper');
+                «ENDIF»
                 if ($action != 'cancel') {
-                    $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-
                     // Let any hooks perform additional validation actions
-                    «IF targets('1.3.x')»
-                        $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                        $validators = $this->notifyHooks($hook)->getValidators();
-                    «ELSE»
-                        $hook = new ValidationHook(new ValidationProviders());
-                        $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-                    «ENDIF»
-                    if ($validators->hasErrors()) {
+                    $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                    $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+                    if (!$validationHooksPassed) {
                         return false;
                     }
                 }
@@ -824,13 +818,7 @@ class FormHandler {
                             $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
                         «ENDIF»
                     }
-                    «IF targets('1.3.x')»
-                        $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                        $this->notifyHooks($hook);
-                    «ELSE»
-                        $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                        $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-                    «ENDIF»
+                    $hookHelper->callProcessHooks($entity, $hookType, $url);
                 }
                 «IF targets('1.3.x')»
 

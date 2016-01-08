@@ -62,6 +62,13 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether the application contains at least one entity with hook subscriber capability.
+     */
+    def hasHookSubscribers(Application it) {
+        !getAllEntities.filter[e|!e.skipHookSubscribers].empty
+    }
+
+    /**
      * Checks whether the application contains at least one entity with at least one image field.
      */
     def hasImageFields(Application it) {

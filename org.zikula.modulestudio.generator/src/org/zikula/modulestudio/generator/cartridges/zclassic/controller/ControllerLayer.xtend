@@ -214,11 +214,6 @@ class ControllerLayer {
             use UserUtil;
             use ZLanguage;
             use Zikula\Core\Controller\AbstractController;
-            «IF (hasActions('view') && isAdminController) || hasActions('delete')»
-                use Zikula\Core\Hook\ProcessHook;
-                use Zikula\Core\Hook\ValidationHook;
-                use Zikula\Core\Hook\ValidationProviders;
-            «ENDIF»
             use Zikula\Core\RouteUrl;
             «controllerBaseImportsResponse»
 
@@ -258,11 +253,6 @@ class ControllerLayer {
                 use Zikula\Component\SortableColumns\SortableColumns;
             «ENDIF»
             use Zikula\Core\Controller\AbstractController;
-            «IF (hasActions('view') && app.hasAdminController) || hasActions('delete')»
-                use Zikula\Core\Hook\ProcessHook;
-                use Zikula\Core\Hook\ValidationHook;
-                use Zikula\Core\Hook\ValidationProviders;
-            «ENDIF»
             use Zikula\Core\ModUrl;
             use Zikula\Core\RouteUrl;
             «entityControllerBaseImportsResponse»
@@ -335,8 +325,14 @@ class ControllerLayer {
 
         «IF isLegacy»
             $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+            «IF !skipHookSubscribers»
+                $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
+            «ENDIF»
         «ELSE»
             $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+            «IF !skipHookSubscribers»
+                $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
+            «ENDIF»
             $flashBag = $this->request->getSession()->getFlashBag();
             $logger = $this->get('logger');
         «ENDIF»
@@ -360,24 +356,16 @@ class ControllerLayer {
                 // action not allowed, skip this object
                 continue;
             }
+
             «IF !skipHookSubscribers»
-
-                $hookAreaPrefix = $entity->getHookAreaPrefix();
-
                 // Let any hooks perform additional validation actions
                 $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
-                «IF isLegacy»
-                    $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                    $validators = $this->notifyHooks($hook)->getValidators();
-                «ELSE»
-                    $hook = new ValidationHook(new ValidationProviders());
-                    $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-                «ENDIF»
-                if ($validators->hasErrors()) {
+                $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+                if (!$validationHooksPassed) {
                     continue;
                 }
-            «ENDIF»
 
+            «ENDIF»
             $success = false;
             try {
                 if (!$entity->validate()) {
@@ -423,16 +411,10 @@ class ControllerLayer {
                     «IF isLegacy»
                         $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                     «ELSE»
-                        $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
+                        $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
                     «ENDIF»
                 }
-                «IF isLegacy»
-                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                    $this->notifyHooks($hook);
-                «ELSE»
-                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-                «ENDIF»
+                $hookHelper->callProcessHooks($entity, $hookType, $url);
             «ENDIF»
             «IF isLegacy»
 

@@ -275,9 +275,6 @@ class Repository {
             «IF hasArchive && getEndDateField !== null»
                 use ZLanguage;
                 use Zikula\Core\RouteUrl;
-                use Zikula\Core\Hook\ProcessHook;
-                use Zikula\Core\Hook\ValidationHook;
-                use Zikula\Core\Hook\ValidationProviders;
             «ENDIF»
 
         «ENDIF»
@@ -1564,26 +1561,24 @@ class Repository {
             $action = 'archive';
             «IF app.targets('1.3.x')»
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
+                «IF !skipHookSubscribers»
+                    $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
+                «ENDIF»
             «ELSE»
                 $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
+                «IF !skipHookSubscribers»
+                    $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
+                «ENDIF»
             «ENDIF»
 
             foreach ($affectedEntities as $entity) {
                 $entity->initWorkflow();
 
                 «IF !skipHookSubscribers»
-                    $hookAreaPrefix = $entity->getHookAreaPrefix();
-
                     // Let any hooks perform additional validation actions
                     $hookType = 'validate_edit';
-                    «IF app.targets('1.3.x')»
-                        $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                        $validators = $serviceManager->getService('zikula.hookmanager')->notify($hook)->getValidators();
-                    «ELSE»
-                        $hook = new ValidationHook(new ValidationProviders());
-                        $validators = $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
-                    «ENDIF»
-                    if ($validators->hasErrors()) {
+                    $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+                    if (!$validationHooksPassed) {
                         continue;
                     }
 
@@ -1601,27 +1596,24 @@ class Repository {
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
                         $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add('error', __f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action], $dom));
+                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, __f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action], $dom));
                     «ENDIF»
                 }
 
                 if (!$success) {
                     continue;
                 }
-
                 «IF !skipHookSubscribers»
+
                     // Let any hooks know that we have updated an item
                     $hookType = 'process_edit';
                     $urlArgs = $entity->createUrlArgs();
                     «IF app.targets('1.3.x')»
                         $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                        $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                        $serviceManager->getService('zikula.hookmanager')->notify($hook);
                     «ELSE»
                         $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
-                        $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                        $serviceManager->get('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
                     «ENDIF»
+                    $hookHelper->callProcessHooks($entity, $hookType, $url);
                 «ENDIF»
                 «IF app.targets('1.3.x')»
 

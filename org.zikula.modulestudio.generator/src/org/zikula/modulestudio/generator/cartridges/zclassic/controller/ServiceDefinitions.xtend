@@ -231,6 +231,12 @@ class ServiceDefinitions {
         «modPrefix».workflow_helper:
             class: "«nsBase»WorkflowHelper"
             arguments: [@service_container, @translator]
+        «IF hasHookSubscribers»
+
+            «modPrefix».hook_helper:
+                class: "«nsBase»HookHelper"
+                arguments: [@hook_dispatcher]
+        «ENDIF»
         «IF hasUploads»
 
             «modPrefix».image_helper:

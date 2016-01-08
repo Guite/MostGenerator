@@ -916,17 +916,15 @@ class Actions {
 
         $hasErrors = false;
         if ($entity->supportsHookSubscribers()) {
-            $hookAreaPrefix = $entity->getHookAreaPrefix();
-            $hookType = 'validate_edit';
-            // Let any hooks perform additional validation actions
             «IF isLegacy»
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
+                $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
             «ELSE»
-                $hook = new ValidationHook(new ValidationProviders());
-                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
             «ENDIF»
-            $hasErrors = $validators->hasErrors();
+            // Let any hooks perform additional validation actions
+            $hookType = 'validate_edit';
+            $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+            $hasErrors = !$validationHooksPassed;
         }
 
         if (!$hasErrors) {
@@ -944,16 +942,13 @@ class Actions {
                 $url = null;
                 if ($action != 'delete') {
                     $urlArgs = $entity->createUrlArgs();
-                    $url = new «IF isLegacy»Zikula_«ENDIF»ModUrl($this->name, «IF isLegacy»FormUtil::getPassedValue('type', 'user', 'GETPOST')«ELSE»$objectType«ENDIF», 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    «IF isLegacy»
+                        $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    «ELSE»
+                        $url = new RouteUrl('«app.appName.formatForDB»_' . $objectType . '_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
+                    «ENDIF»
                 }
-
-                «IF isLegacy»
-                    $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                    $this->notifyHooks($hook);
-                «ELSE»
-                    $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                    $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-                «ENDIF»
+                $hookHelper->callProcessHooks($entity, $hookType, $url);
             }
             «IF !isLegacy»
 
@@ -1152,17 +1147,15 @@ class Actions {
 
         «ENDIF»
         «IF !skipHookSubscribers»
-            $hookAreaPrefix = $entity->getHookAreaPrefix();
-            $hookType = 'validate_delete';
-            // Let any hooks perform additional validation actions
             «IF isLegacy»
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
+                $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
             «ELSE»
-                $hook = new ValidationHook(new ValidationProviders());
-                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
             «ENDIF»
-            if ($validators->hasErrors()) {
+            // Let any hooks perform additional validation actions
+            $hookType = 'validate_delete';
+            $validationHooksPassed = $hookHelper->callValidationHooks($entity, $hookType);
+            if ($validationHooksPassed) {
                 «performDeletion(action)»
                 «deletePostProcessing(action)»
             }
@@ -1188,15 +1181,9 @@ class Actions {
     def private deletePostProcessing(Entity it, DeleteAction action) '''
         «IF !skipHookSubscribers»
 
-            // Let any hooks know that we have created, updated or deleted the «name.formatForDisplay»
+            // Let any hooks know that we have deleted the «name.formatForDisplay»
             $hookType = 'process_delete';
-            «IF isLegacy»
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
-                $this->notifyHooks($hook);
-            «ELSE»
-                $hook = new ProcessHook($entity->createCompositeIdentifier());
-                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
-            «ENDIF»
+            $hookHelper->callProcessHooks($entity, $hookType, null);
         «ENDIF»
 
         «IF isLegacy»

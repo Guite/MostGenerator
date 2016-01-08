@@ -40,7 +40,6 @@ class Installer {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Base;
 
-            use «appNamespace»\Helper\HookHelper;
             «IF hasCategorisableEntities»
                 use CategoryUtil;
                 use CategoryRegistryUtil;
@@ -50,7 +49,9 @@ class Installer {
             «IF hasUploads»
                 use FileUtil;
             «ENDIF»
-            use HookUtil;
+            «IF hasHookSubscribers/* || hasHookProviders*/»
+                use HookUtil;
+            «ENDIF»
             use ModUtil;
             use System;
             use UserUtil;
@@ -203,22 +204,25 @@ class Installer {
                 $this->registerPersistentEventHandlers();
 
             «ENDIF»
-            // register hook subscriber bundles
-            «IF targets('1.3.x')»
-                HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
-                «/*TODO see #15
-                    // register hook provider bundles
+            «IF hasHookSubscribers»
+                // register hook subscriber bundles
+                «IF targets('1.3.x')»
+                    HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
+                «ELSE»
+                    $subscriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
+                    HookUtil::registerSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
+                «ENDIF»
+            «ENDIF»
+            «/*TODO see #15
+            «IF hasHookProviders»
+                // register hook provider bundles
+                «IF targets('1.3.x')»
                     HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
-                */»
-            «ELSE»
-                $subsriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
-                HookUtil::registerSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
-                «/*TODO see #15
-                    // register hook provider bundles
+                «ELSE»
                     $providerHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::PROVIDER_TYPE);
                     HookUtil::registerProviderBundles($providerHookContainer->getHookProviderBundles());
-                */»
-            «ENDIF»
+                «ENDIF»
+            «ENDIF»*/»
 
             // initialisation successful
             return true;
