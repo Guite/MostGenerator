@@ -18,8 +18,6 @@ class Section {
 
     Relations relationHelper = new Relations
 
-    /* TODO migrate to Symfony forms #416 */
-
     /**
      * Entry point for edit sections beside the actual fields.
      */
@@ -88,7 +86,7 @@ class Section {
                 {{ include('Helper/includeAttributesEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
             «ENDIF»
             «IF categorisable»
-                {{ include('Helper/includeCategoriesEdit.html.twig', { 'obj': «name.formatForDB», 'groupName': '«name.formatForDB»Obj'«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+                {{ include('Helper/includeCategoriesEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
             «ENDIF»
             «relationHelper.generateIncludeStatement(it, app, fsa)»
             «IF metaData»
@@ -182,19 +180,7 @@ class Section {
             «ELSE»
                 <fieldset>
                     <legend>{{ __('Communication') }}</legend>
-                    <div class="form-group">
-                        {formlabel for='additionalNotificationRemarks' __text='Additional remarks' cssClass='col-sm-3 control-label'}
-                        {% set fieldTitle = __('Enter any additions about your changes') %}
-                        {% if mode == 'create' %}
-                            {% set fieldTitle = __('Enter any additions about your content') %}
-                        {% if %}
-                        {formtextinput group='«name.formatForDB»' id='additionalNotificationRemarks' mandatory=false title=$fieldTitle textMode='multiline' rows='6«/*8*/»'}
-                        {% if isModerator or isSuperModerator %}
-                            <span class="help-block">{{ __('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.') }}</span>
-                        {% elseif isCreator %}
-                            <span class="help-block">{{ __('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.') }}</span>
-                        {% endif %}
-                    </div>
+                    {{ form_row(form.additionalNotificationRemarks) }}
                 </fieldset>
             «ENDIF»
         «ENDIF»
@@ -217,12 +203,7 @@ class Section {
             {% if mode == 'create' %}
                 <fieldset>
                     <legend>{{ __('Return control') }}</legend>
-                    <div class="form-group">
-                        {formlabel for='repeatCreation' __text='Create another item after save' cssClass='col-sm-3 control-label'}
-                        <div class="col-sm-9">
-                            {formcheckbox group='«name.formatForDB»' id='repeatCreation' readOnly=false}
-                        </div>
-                    </div>
+                    {{ form_row(form.repeatCreation) }}
                 </fieldset>
             {/if}
         «ENDIF»
@@ -236,7 +217,7 @@ class Section {
         «ELSE»
             {# include possible submit actions #}
             <div class="form-group form-buttons">
-                <div class="col-sm-offset-3 col-sm-9">
+                <div class="col-lg-offset-3 col-lg-9">
                     «submitActionsImpl»
                 </div>
         «ENDIF»
@@ -259,17 +240,9 @@ class Section {
             {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»' formnovalidate='formnovalidate'}
         «ELSE»
             {% for action in actions %}
-                {% set actionIdCapital = action.id|capitalize %}
-                {% set actionTitle = __(action.title) %}
-                {# % set actionDescription = __(action.description) % #}{# TODO: formbutton could support title attributes #}
-                {% if action.id == 'delete' %}
-                    {% set deleteConfirmMsg = __('Really delete this «name.formatForDisplay»?') %}
-                    {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass confirmMessage=$deleteConfirmMsg}
-                {% else %}
-                    {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
-                {% endif %}
-            {/foreach}
-            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»' formnovalidate='formnovalidate'}
+                {{ form_widget(attribute(form, action.id), {attr: {class: action.buttonClass}, icon: action.id == 'delete' ? 'fa-trash-o' : '') }}
+            {% endfor %}
+            {{ form_widget(form.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
         «ENDIF»
     '''
 

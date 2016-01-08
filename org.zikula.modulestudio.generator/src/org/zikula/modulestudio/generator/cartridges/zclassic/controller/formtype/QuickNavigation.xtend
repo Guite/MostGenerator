@@ -102,6 +102,8 @@ class QuickNavigation {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
+                $objectType = '«name.formatForCode»';
+
                 $builder
                     ->add('all', '«nsSymfonyFormType»HiddenType', [
                         'data' => $options['all'],
@@ -113,7 +115,7 @@ class QuickNavigation {
                     ]);
                 «IF categorisable»
 
-                    $builder->add('categoryAssignments', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+                    $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
                         'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
                         'empty_data' => [],
                         'attr' => [
@@ -123,8 +125,8 @@ class QuickNavigation {
                         'required' => false,
                         'multiple' => «categorisableMultiSelection.displayBool»,
                         'module' => '«app.appName»',
-                        'entity' => ucfirst($options['objectType']) . 'Entity',
-                        'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
+                        'entity' => ucfirst($objectType) . 'Entity',
+                        'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($objectType) . 'CategoryEntity',
                         'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
                     ]);
             	«ENDIF»

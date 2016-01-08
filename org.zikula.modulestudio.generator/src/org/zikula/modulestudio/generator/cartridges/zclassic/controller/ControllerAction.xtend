@@ -187,8 +187,8 @@ class ControllerAction {
     def private dispatch methodArgs(Entity it, DisplayAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
     def private dispatch methodArgsCall(Entity it, DisplayAction action) '''$request, $«name.formatForCode»''' 
 
-    def private dispatch methodArgs(Entity it, EditAction action) '''Request $request«/* TODO migrate to Symfony forms #416 */»''' 
-    def private dispatch methodArgsCall(Entity it, EditAction action) '''$request«/* TODO migrate to Symfony forms #416 */»''' 
+    def private dispatch methodArgs(Entity it, EditAction action) '''Request $request''' 
+    def private dispatch methodArgsCall(Entity it, EditAction action) '''$request''' 
 
     def private dispatch methodArgs(Entity it, DeleteAction action) '''Request $request, «name.formatForCodeCapital»Entity $«name.formatForCode»''' 
     def private dispatch methodArgsCall(Entity it, DeleteAction action) '''$request, $«name.formatForCode»''' 

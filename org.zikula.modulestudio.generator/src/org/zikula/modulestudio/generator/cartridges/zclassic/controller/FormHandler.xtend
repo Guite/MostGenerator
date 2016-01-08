@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
-import de.guite.modulestudio.metamodel.Action
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
@@ -37,6 +36,8 @@ class FormHandler {
 
     Application app
 
+    /* TODO migrate to Symfony forms #416 */
+
     /**
      * Entry point for Form handler classes.
      */
@@ -64,20 +65,6 @@ class FormHandler {
             new Config().generate(it, fsa)
         }
     }
-
-    def formCreate(Action it, String appName, String actionName) '''
-        // Create new Form reference
-        $view = FormUtil::newForm('«appName.formatForCode»', $this);
-
-        «IF controller.application.targets('1.3.x')»
-            $handlerClass = '«appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»';
-        «ELSE»
-            $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«controller.name.formatForCodeCapital»\\«actionName.formatForCodeCapital»Handler';
-        «ENDIF»
-
-        // Execute form using supplied template and page event handler
-        return $view->execute('«controller.formattedName.toFirstUpper»/«actionName.formatForCode.toFirstLower».«IF controller.application.targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»', new $handlerClass());
-    '''
 
     /**
      * Entry point for generic Form handler base classes.

@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -69,6 +70,18 @@ class EditEntity {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
+                $objectType = '«name.formatForCode»';
+
+«/* TODO
+required form options
+
+
+required template vars
+'«entity.name.formatForDB»' -> entity instance
+'mode' -> create or edit
+'form' -> edit form
+'actions' -> list of workflow actions
+ */»
                 «/* TODO add fields */»
 
                 «/* note: */»
@@ -77,6 +90,27 @@ class EditEntity {
                 // $builder->add('addition', '«nsSymfonyFormType»TextType', ['mapped' => false]);
                 // form fields not contained in submitted data are explictly set to null
 
+                «IF geographical»
+                    «/* TODO */»
+                «ENDIF»
+                «IF attributable»
+                    «/* TODO */»
+                «ENDIF»
+                «IF categorisable»
+                    $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+                        'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
+                        'empty_data' => [],
+                        'attr' => [
+                            'class' => 'category-selector'
+                        ],
+                        'required' => false,
+                        'multiple' => «categorisableMultiSelection.displayBool»,
+                        'module' => '«app.appName»',
+                        'entity' => ucfirst($objectType) . 'Entity',
+                        'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($objectType) . 'CategoryEntity'
+                    ]);
+                «ENDIF»
+                «/* TODO relations */»
                 «IF metaData»
 
                     // embedded meta data form
@@ -84,6 +118,44 @@ class EditEntity {
                         'constraints' => new Valid()
                     ]);
                 «ENDIF»
+                «IF workflow != EntityWorkflowType.NONE»
+                    «/* TODO additionalNotificationRemarks
+                    <div class="form-group">
+                        {formlabel for='additionalNotificationRemarks' __text='Additional remarks' cssClass='col-sm-3 control-label'}
+                        {% set fieldTitle = __('Enter any additions about your changes') %}
+                        {% if mode == 'create' %}
+                            {% set fieldTitle = __('Enter any additions about your content') %}
+                        {% if %}
+                        {formtextinput group='«name.formatForDB»' id='additionalNotificationRemarks' mandatory=false title=$fieldTitle textMode='multiline' rows='6'}
+                        {% if isModerator or isSuperModerator %}
+                            <span class="help-block">{{ __('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.') }}</span>
+                        {% elseif isCreator %}
+                            <span class="help-block">{{ __('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.') }}</span>
+                        {% endif %}
+                    </div>
+
+                     */»
+                «ENDIF»
+                «/* TODO return control
+                        {formlabel for='repeatCreation' __text='Create another item after save' cssClass='col-sm-3 control-label'}
+                        <div class="col-sm-9">
+                            {formcheckbox group='«name.formatForDB»' id='repeatCreation' readOnly=false}
+                        </div>
+                */»
+                «/* TODO submit buttons
+                 for ($actions as $action) {
+fieldName: $action['id']
+label -> __($action['title'])
+attr
+	id -> 'btn' . ucfirst($action['id'])
+	class -> $action['buttonClass']
+	title -> __($action['description'])
+
+                 }
+                 cancel
+                   -> __('Cancel')
+                   -> id btnCancel
+                 */»
             }
 
             /**

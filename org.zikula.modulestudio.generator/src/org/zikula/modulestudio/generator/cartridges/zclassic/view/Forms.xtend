@@ -512,6 +512,11 @@ class Forms {
                     allFormFields.change(executeCustomValidationConstraints);
 
                     formButtons = $('#{{ __formid }} .form-buttons input');
+                    $('#btnDelete').bind('click keypress', function (e) {
+                        if (!window.confirm('{{ __('Really delete this «name.formatForDisplay»?') }}')) {
+                            e.preventDefault();
+                        }
+                    });
                     $('#{{ __formid }}').submit(handleFormSubmit);
 
                     {% if mode != 'create' %}

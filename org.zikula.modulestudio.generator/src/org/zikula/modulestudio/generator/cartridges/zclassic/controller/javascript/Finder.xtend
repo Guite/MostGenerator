@@ -113,11 +113,7 @@ class Finder {
                 jQuery('#«elemPrefix»Cancel').click(«objName».finder.handleCancel);
 
                 var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
-                selectedItems.click(function (e) {
-                    e.preventDefault();
-                    «objName».finder.selectItem(jQuery(this).data('itemid'));
-                });
-                selectedItems.keypress(function (e) {
+                selectedItems.bind('click keypress', function (e) {
                     e.preventDefault();
                     «objName».finder.selectItem(jQuery(this).data('itemid'));
                 });

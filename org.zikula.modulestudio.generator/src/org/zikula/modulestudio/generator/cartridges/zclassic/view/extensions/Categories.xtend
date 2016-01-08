@@ -155,22 +155,6 @@ class Categories {
     '''
 
     def private editBody(Application it) '''
-        «/* TODO migrate to Symfony forms #416 */»
-        {% for registryId, registryCid in registries %}
-            {% set categorySelectorLabel = __('Category') %}
-            {% set selectionMode = 'single' %}
-            {% if attribute(multiSelectionPerRegistry, registryId) == true %}
-                {% set categorySelectorLabel = __('Categories') %}
-                {% set selectionMode = 'multiple' %}
-            {% endif %}
-            <div class="form-group">
-                {formlabel for="category_`$registryId`" text=$categorySelectorLabel cssClass='col-sm-3 control-label'}
-                <div class="col-sm-9">
-                    {formcategoryselector id="category_`$registryId`" category=$registryCid
-                                          dataField='categories' group=$groupName registryId=$registryId doctrine2=true
-                                          selectionMode=$selectionMode}
-                </div>
-            </div>
-        {% endfor %}
+        {{ form_row(form.categories) }}
     '''
 }

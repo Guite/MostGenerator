@@ -17,7 +17,6 @@ import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.FormHandler
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -623,7 +622,6 @@ class Actions {
             $templateParameters = array_merge($templateParameters, $additionalParameters);
 
             $formOptions = [
-                'objectType' => $objectType,
                 'all' => $templateParameters['showAllEntries'],
                 'own' => $templateParameters['showOwnEntries']
             ];
@@ -975,7 +973,7 @@ class Actions {
     }
 
     def private dispatch actionImplBody(Entity it, EditAction action) '''
-        «/* new ActionHandler().formCreate(appName, controller.formattedName, 'edit')*/»
+        «/* TODO migrate to Symfony forms #416 */»
         // create new Form reference
         $view = FormUtil::newForm($this->name, $this);
 
@@ -1214,7 +1212,14 @@ class Actions {
     def private dispatch actionImplBody(CustomAction it) '''
         «IF isLegacy && controller instanceof AdminController
             && (name == 'config' || name == 'modifyconfig' || name == 'preferences')»
-            «new FormHandler().formCreate(it, app.appName, 'modify')»
+            «val actionName = 'modify'»
+            // Create new Form reference
+            $view = FormUtil::newForm('«app.appName.formatForCode»', $this);
+
+            $handlerClass = '«app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»';
+
+            // Execute form using supplied template and page event handler
+            return $view->execute('«controller.formattedName.toFirstUpper»/«actionName.formatForCode.toFirstLower».«IF controller.application.targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»', new $handlerClass());
         «ELSE»
             /** TODO: custom logic */
         «ENDIF»

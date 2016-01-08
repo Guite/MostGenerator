@@ -225,6 +225,6 @@ class MetaData {
     '''
 
     def private formRow(String fieldName) '''
-        {{ form_row(form.«fieldName») }}
+        {{ form_row(form.metadata.«fieldName») }}
     '''
 }

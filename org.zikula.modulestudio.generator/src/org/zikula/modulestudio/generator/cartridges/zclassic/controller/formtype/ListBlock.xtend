@@ -87,7 +87,7 @@ class ListBlock {
 
                     if ($options['isCategorisable']) {
                         $hasMultiSelection = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', ['ot' => $options['objectType']]);
-                        $builder->add('categoryAssignments', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+                        $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
                             'label' => ($hasMultiSelection ? $this->translator->trans('Categories', [], '«app.appName.formatForDB»') : $this->translator->trans('Category', [], '«app.appName.formatForDB»')) . ':',
                             'empty_data' => [],
                             'attr' => [

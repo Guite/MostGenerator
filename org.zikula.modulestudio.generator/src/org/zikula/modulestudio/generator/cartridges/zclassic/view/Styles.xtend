@@ -109,7 +109,7 @@ class Styles {
     def private validationStyles(Application it) '''
         /* validation */
         «IF targets('1.3.x')»
-            div.«fieldGroupClass» input.required, div.«fieldGroupClass» textarea.required {
+            div.z-formrow input.required, div.z-formrow textarea.required {
                 /*border: 1px solid #00a8e6;*/
                 background-color: #ffffff;
             }
@@ -126,11 +126,11 @@ class Styles {
             }
         «ENDIF»
         «IF targets('1.3.x')»
-            div.«fieldGroupClass» input.validation-failed, div.«fieldGroupClass» textarea.validation-failed {
+            div.z-formrow input.validation-failed, div.z-formrow textarea.validation-failed {
                 border: 1px solid #f30;
                 color: #f30;
             }
-            div.«fieldGroupClass» input.validation-passed, div.«fieldGroupClass» textarea.validation-passed {
+            div.z-formrow input.validation-passed, div.z-formrow textarea.validation-passed {
                 border: 1px solid #0c0;
                 color: #000;
             }
@@ -144,8 +144,6 @@ class Styles {
             }
         «ENDIF»
     '''
-
-    def private fieldGroupClass(Application it) '''«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»'''
 
     def private autoCompletion(Application it) '''
         «val hasUserFields = hasUserFields»

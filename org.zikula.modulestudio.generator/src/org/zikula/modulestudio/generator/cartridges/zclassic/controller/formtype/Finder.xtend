@@ -79,7 +79,7 @@ class Finder {
                     ]);
                 «IF categorisable»
 
-                    $builder->add('categoryAssignments', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+                    $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
                         'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
                         'empty_data' => [],
                         'attr' => [
