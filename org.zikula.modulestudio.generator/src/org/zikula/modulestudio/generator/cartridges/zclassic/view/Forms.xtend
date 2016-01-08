@@ -99,7 +99,7 @@ class Forms {
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js')) }}
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js')) }}
             «IF (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
-                {{ pageAddAsset('javascript', 'web/bootstrap-3-typeahead/bootstrap3-typeahead.min.js') }}
+                {{ pageAddAsset('javascript', 'web/typeahead.js/dist/typeahead.bundle.min.js') }}
             «ENDIF»
         «ENDIF»
 
