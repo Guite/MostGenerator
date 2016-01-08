@@ -80,7 +80,8 @@ class ExternalView {
             «ENDIF»
             </p>
         {/if}
-        {checkpermissionblock component='«app.appName»::' instance='::' level='ACCESS_EDIT'}«/* TODO review whether this permission check is required here */»
+        {checkpermissionblock component='«app.appName»::' instance='::' level='ACCESS_EDIT'}
+            {* for normal users without edit permission show only the actual file per default *}
             {if $displayMode eq 'embed'}
                 <p class="«app.appName.toLowerCase»-external-title">
                     <strong>{$«name.formatForCode»->getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'«ENDIF»}</strong>
@@ -130,7 +131,8 @@ class ExternalView {
             «ENDIF»
             </p>
         {% endif %}
-        {% if hasPermission('«app.appName»::', '::', 'ACCESS_EDIT') %}«/* TODO review whether this permission check is required here */»
+        {% if hasPermission('«app.appName»::', '::', 'ACCESS_EDIT') %}
+            {# for normal users without edit permission show only the actual file per default #}
             {% if displayMode == 'embed' %}
                 <p class="«app.appName.toLowerCase»-external-title">
                     <strong>{{ «name.formatForCode».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters('«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}</strong>

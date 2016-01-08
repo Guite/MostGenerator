@@ -155,9 +155,27 @@ class ServiceDefinitions {
                         - { name: form.type }
             «ENDFOR»
         «ENDIF»
+        «IF hasEditActions»
+            «FOR entity : getAllEntities.filter[e|e.hasActions('edit')]»
+
+                «modPrefix».form.type.«entity.name.formatForDB»:
+                    class: "«nsBase»«entity.name.formatForCodeCapital»Type"
+                    arguments: [@translator]
+                    tags:
+                        - { name: form.type }
+            «ENDFOR»
+            «IF hasMetaDataEntities»
+
+                «modPrefix».form.type.entitymetadata:
+                    class: "«nsBase.replace('Type\\\\', '')»EntityMetaDataType"
+                    arguments: [@translator]
+                    tags:
+                        - { name: form.type }
+            «ENDIF»
+        «ENDIF»
         «IF hasDeleteActions»
             «modPrefix».form.type.deleteentity:
-                class: "«nsBase.replace('Type\\\\', '')»DeleteEntity"
+                class: "«nsBase.replace('Type\\\\', '')»DeleteEntityType"
                 arguments: [@translator]
                 tags:
                     - { name: form.type }

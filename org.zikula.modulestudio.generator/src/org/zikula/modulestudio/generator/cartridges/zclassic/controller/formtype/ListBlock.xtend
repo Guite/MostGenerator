@@ -114,7 +114,7 @@ class ListBlock {
                         'label' => $this->translator->trans('Amount', [], '«app.appName.formatForDB»') . ':',
                         'attr' => [
                             'title' => $this->translator->trans('The maximum amount of items to be shown. Only digits are allowed.', [], '«app.appName.formatForDB»')
-                        ]
+                        ],
                         'empty_data' => 5,
                         'max_length' => 2,
                         'scale' => 0,
@@ -135,7 +135,7 @@ class ListBlock {
                         'required' => false,
                         'attr' => [
                             'title' => $this->translator->trans('Example', [], '«app.appName.formatForDB»') . ': <em>itemlist_[objectType]_display.html.twig</em>'
-                        ]
+                        ],
                         'max_length' => 80,
                         'help' => $this->translator->trans('Example', [], '«app.appName.formatForDB»') . ': <em>itemlist_[objectType]_display.html.twig</em>'
                     ])

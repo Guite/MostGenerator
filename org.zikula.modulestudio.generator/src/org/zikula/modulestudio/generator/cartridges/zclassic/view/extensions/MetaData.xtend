@@ -204,47 +204,27 @@ class MetaData {
     '''
 
     def private formRowWrapper(String fieldName, Integer length) '''
-        «IF app.targets('1.3.x')»«formRowLegacy(fieldName, length)»«ELSE»«formRow(fieldName, length)»«ENDIF»
+        «IF app.targets('1.3.x')»«formRowLegacy(fieldName, length)»«ELSE»«formRow(fieldName)»«ENDIF»
     '''
 
     def private formRowLegacy(String fieldName, Integer length) '''
-        «val label = fieldName.formatForDisplayCapital»
-
         <div class="z-formrow">
-            {formlabel for='metadata«label»' __text='«label»'}
+            {formlabel for='metadata«fieldName»' __text='«fieldName.formatForDisplayCapital»'}
             «IF 'startdate'.equals(fieldName) || 'enddate'.equals(fieldName)»
                 {if $mode ne 'create'}
-                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true}
+                    {formdateinput group='meta' id='metadata«fieldName»' dataField='«fieldName»' mandatory=false includeTime=true}
                 {else}
-                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true defaultValue='now'}
+                    {formdateinput group='meta' id='metadata«fieldName»' dataField='«fieldName»' mandatory=false includeTime=true defaultValue='now'}
                 {/if}
             «ELSEIF 'language'.equals(fieldName)»
-                {formlanguageselector group='meta' id='metadata«label»' mandatory=false __title='Choose a language' dataField='«fieldName»'}
+                {formlanguageselector group='meta' id='metadata«fieldName»' mandatory=false __title='Choose a language' dataField='«fieldName»'}
             «ELSE»
-                {formtextinput group='meta' id='metadata«label»' dataField='«fieldName»' maxLength=«length»}
+                {formtextinput group='meta' id='metadata«fieldName»' dataField='«fieldName»' maxLength=«length»}
             «ENDIF»
         </div>
     '''
 
-    def private formRow(String fieldName, Integer length) '''
-        «/* TODO migrate to Symfony forms #416 */»
-        «val label = fieldName.formatForDisplayCapital»
-
-        <div class="form-group">
-            {formlabel for='metadata«label»' __text='«label»' cssClass='col-sm-3 control-label'}
-            <div class="col-sm-9">
-                «IF 'startdate'.equals(fieldName) || 'enddate'.equals(fieldName)»
-                {if $mode ne 'create'}
-                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true cssClass='form-control'}
-                {else}
-                    {formdateinput group='meta' id='metadata«label»' dataField='«fieldName»' mandatory=false includeTime=true defaultValue='now' cssClass='form-control'}
-                {/if}
-                «ELSEIF 'language'.equals(fieldName)»
-                {formlanguageselector group='meta' id='metadata«label»' mandatory=false __title='Choose a language' dataField='«fieldName»' cssClass='form-control'}
-                «ELSE»
-                {formtextinput group='meta' id='metadata«label»' dataField='«fieldName»' maxLength=«length» cssClass='form-control'}
-                «ENDIF»
-            </div>
-        </div>
+    def private formRow(String fieldName) '''
+        {{ form_row(form.«fieldName») }}
     '''
 }
