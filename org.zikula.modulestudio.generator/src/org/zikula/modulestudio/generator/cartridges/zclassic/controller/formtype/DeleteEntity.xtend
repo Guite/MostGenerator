@@ -47,6 +47,11 @@ class DeleteEntity {
              */
             private $translator;
 
+            /**
+             * DeleteEntityType constructor.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
             public function __construct(TranslatorInterface $translator)
             {
                 $this->translator = $translator;

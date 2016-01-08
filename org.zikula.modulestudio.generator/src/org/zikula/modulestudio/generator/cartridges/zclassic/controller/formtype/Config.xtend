@@ -66,6 +66,12 @@ class Config {
              */
             private $variableApi;
 
+            /**
+             * AppSettingsType constructor.
+             *
+             * @param TranslatorInterface $translator  Translator service instance.
+             * @param VariableApi         $variableApi VariableApi service instance.
+             */
             public function __construct(TranslatorInterface $translator, VariableApi $variableApi)
             {
                 $this->translator = $translator;

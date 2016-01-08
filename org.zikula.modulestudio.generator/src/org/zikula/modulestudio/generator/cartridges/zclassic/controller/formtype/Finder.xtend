@@ -55,6 +55,11 @@ class Finder {
              */
             private $translator;
 
+            /**
+             * «name.formatForCodeCapital»FinderType constructor.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
             public function __construct(TranslatorInterface $translator)
             {
                 $this->translator = $translator;

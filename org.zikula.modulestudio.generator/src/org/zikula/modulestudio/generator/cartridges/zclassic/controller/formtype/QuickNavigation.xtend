@@ -79,6 +79,15 @@ class QuickNavigation {
                 private $listHelper;
             «ENDIF»
 
+            /**
+             * «name.formatForCodeCapital»QuickNavType constructor.
+             *
+             * @param TranslatorInterface $translator   Translator service instance.
+             * @param RequestStack        $requestStack RequestStack service instance.
+            «IF hasListFieldsEntity»
+                «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance.
+            «ENDIF»
+             */
             public function __construct(TranslatorInterface $translator, RequestStack $requestStack«IF hasListFieldsEntity»ListEntriesHelper $listHelper«ENDIF»)
             {
                 $this->translator = $translator;

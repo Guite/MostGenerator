@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionha
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EntityMetaData
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -42,10 +43,17 @@ class FormHandler {
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
         if (hasEditActions()) {
-            generateCommon('edit', fsa)
-            for (entity : getAllEntities) {
-                if (entity.hasActions('edit')) {
+            if (targets('1.3.x')) {
+                generateCommon('edit', fsa)
+                for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
                     entity.generate('edit', fsa)
+                }
+            } else {
+                for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
+                    new EditEntity().generate(entity, fsa)
+                }
+                if (hasMetaDataEntities) {
+                    new EntityMetaData().generate(it, fsa)
                 }
             }
         }
@@ -54,9 +62,6 @@ class FormHandler {
         } else {
             new DeleteEntity().generate(it, fsa)
             new Config().generate(it, fsa)
-            if (hasMetaDataEntities) {
-                new EntityMetaData().generate(it, fsa)
-            }
         }
     }
 

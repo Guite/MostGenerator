@@ -50,6 +50,11 @@ class EntityMetaData {
              */
             private $translator;
 
+            /**
+             * EntityMetaDataType constructor.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
             public function __construct(TranslatorInterface $translator)
             {
                 $this->translator = $translator;
@@ -96,6 +101,7 @@ class EntityMetaData {
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver->setDefaults([
+                    // define class for underlying data (required for embedding forms)
                     'data_class' => 'Zikula\Core\Doctrine\Entity\AbstractEntityMetadata'
                 ]);
             }
@@ -127,7 +133,7 @@ class EntityMetaData {
          */
         class EntityMetaDataType extends BaseEntityMetaDataType
         {
-            // feel free to extend the list block form type class here
+            // feel free to extend the meta data form type class here
         }
     '''
 }
