@@ -20,8 +20,6 @@ class Config {
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
-    /* TODO migrate to Symfony forms #416 */
-
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.x')) configController.formatForDB else configController.formatForDB.toFirstUpper) + '/'
         val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
