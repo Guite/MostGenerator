@@ -76,47 +76,18 @@ class Finder {
                     ])
                     ->add('editor', '«nsSymfonyFormType»HiddenType', [
                         'data' => $options['editorName']
-                    ]);
-                «IF categorisable»
+                    ])
+                ;
 
-                    $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
-                        'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
-                        'empty_data' => [],
-                        'attr' => [
-                            'class' => 'category-selector',
-                            'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
-                        ],
-                        'required' => false,
-                        'multiple' => «categorisableMultiSelection.displayBool»,
-                        'module' => '«app.appName»',
-                        'entity' => ucfirst($options['objectType']) . 'Entity',
-                        'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
-                        'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
-                    ]);
+                «IF categorisable»
+                    $this->addCategoriesField($builder, $options);
             	«ENDIF»
+                $this->addPasteAsField($builder, $options);
+                $this->addSortingFields($builder, $options);
+                $this->addAmountField($builder, $options);
+                $this->addSearchField($builder, $options);
 
                 $builder
-                    ->add('pasteas', '«nsSymfonyFormType»ChoiceType', [
-                        'label' => $this->translator->trans('Paste as', [], '«app.appName.formatForDB»') . ':',
-                        'empty_data' => 1,
-                        'attr' => [
-                            'id' => '«app.appName.toFirstLower»PasteAs'
-                        ],
-                        'choices' => [
-                            $this->translator->trans('Link to the «name.formatForDisplay»', [], '«app.appName.formatForDB»') => 1,
-                            $this->translator->trans('ID of «name.formatForDisplay»', [], '«app.appName.formatForDB»') => 2
-                        ],
-                        'choices_as_values' => true
-                    ])
-                    «sortingAndPageSize»
-                    ->add('q', '«nsSymfonyFormType»TextType', [
-                        'label' => $this->translator->trans('Search for', [], '«app.appName.formatForDB»') . ':',
-                        'attr' => [
-                            'id' => '«app.appName.toFirstLower»SearchTerm'
-                        ],
-                        'required' => false,
-                        'max_length' => 255
-                    ])
                     ->add('update', '«nsSymfonyFormType»SubmitType', [
                         'label' => $this->translator->trans('Change selection', [], '«app.appName.formatForDB»'),
                         'attr' => [
@@ -132,6 +103,18 @@ class Finder {
                 ;
             }
 
+            «IF categorisable»
+                «addCategoriesField»
+
+            «ENDIF»
+            «addPasteAsField»
+
+            «addSortingFields»
+
+            «addAmountField»
+
+            «addSearchField»
+
             /**
              * {@inheritdoc}
              */
@@ -142,57 +125,150 @@ class Finder {
         }
     '''
 
-    def private sortingAndPageSize(Entity it) '''
-        ->add('sort', '«nsSymfonyFormType»ChoiceType', [
-            'label' => $this->translator->trans('Sort by', [], '«app.appName.formatForDB»') . ':',
-            'empty_data' => '',
-            'attr' => [
-                'id' => '«app.appName.toFirstLower»Sort'
-            ],
-            'choices' => [
-                «FOR field : getDerivedFields»
-                    «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                        $this->translator->trans('«field.name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
-                    «ENDIF»
-                «ENDFOR»
-                «IF standardFields»
-                    $this->translator->trans('Creation date', [], '«app.appName.formatForDB»') => 'createdDate',
-                    $this->translator->trans('Creator', [], '«app.appName.formatForDB»') => 'createdUserId',
-                    $this->translator->trans('Update date', [], '«app.appName.formatForDB»') => 'updatedDate'
-                «ENDIF»
-            ],
-            'choices_as_values' => true
-        ])
-        ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
-            'label' => $this->translator->trans('Sort direction', [], '«app.appName.formatForDB»') . ':',
-            'empty_data' => 'asc',
-            'attr' => [
-                'id' => '«app.appName.toFirstLower»SortDir'
-            ],
-            'choices' => [
-                $this->translator->trans('Ascending', [], '«app.appName.formatForDB»') => 'asc',
-                $this->translator->trans('Descending', [], '«app.appName.formatForDB»') => 'desc'
-            ],
-            'choices_as_values' => true
-        ])
-        ->add('num', '«nsSymfonyFormType»ChoiceType', [
-            'label' => $this->translator->trans('Page size', [], '«app.appName.formatForDB»') . ':',
-            'empty_data' => 20,
-            'attr' => [
-                'id' => '«app.appName.toFirstLower»PageSize',
-                'class' => 'text-right'
-            ],
-            'choices' => [
-                5 => 5,
-                10 => 10,
-                15 => 15,
-                20 => 20,
-                30 => 30,
-                50 => 50,
-                100 => 100
-            ],
-            'choices_as_values' => true
-        ])
+    def private addCategoriesField(Entity it) '''
+        /**
+         * Adds a categories field.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options
+         */
+        public function addCategoriesField(FormBuilderInterface $builder, array $options)
+        {
+            $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
+                'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
+                'empty_data' => [],
+                'attr' => [
+                    'class' => 'category-selector',
+                    'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                ],
+                'required' => false,
+                'multiple' => «categorisableMultiSelection.displayBool»,
+                'module' => '«app.appName»',
+                'entity' => ucfirst($options['objectType']) . 'Entity',
+                'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
+                'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+            ]);
+        }
+    '''
+
+    def private addPasteAsField(Entity it) '''
+        /**
+         * Adds a "paste as" field.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options
+         */
+        public function addPasteAsField(FormBuilderInterface $builder, array $options)
+        {
+            $builder->add('pasteas', '«nsSymfonyFormType»ChoiceType', [
+                'label' => $this->translator->trans('Paste as', [], '«app.appName.formatForDB»') . ':',
+                'empty_data' => 1,
+                'attr' => [
+                    'id' => '«app.appName.toFirstLower»PasteAs'
+                ],
+                'choices' => [
+                    $this->translator->trans('Link to the «name.formatForDisplay»', [], '«app.appName.formatForDB»') => 1,
+                    $this->translator->trans('ID of «name.formatForDisplay»', [], '«app.appName.formatForDB»') => 2
+                ],
+                'choices_as_values' => true
+            ]);
+        }
+    '''
+
+    def private addSortingFields(Entity it) '''
+        /**
+         * Adds sorting fields.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options
+         */
+        public function addSortingFields(FormBuilderInterface $builder, array $options)
+        {
+            $builder
+                ->add('sort', '«nsSymfonyFormType»ChoiceType', [
+                    'label' => $this->translator->trans('Sort by', [], '«app.appName.formatForDB»') . ':',
+                    'empty_data' => '',
+                    'attr' => [
+                        'id' => '«app.appName.toFirstLower»Sort'
+                    ],
+                    'choices' => [
+                        «FOR field : getDerivedFields»
+                            «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
+                                $this->translator->trans('«field.name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                            «ENDIF»
+                        «ENDFOR»
+                        «IF standardFields»
+                            $this->translator->trans('Creation date', [], '«app.appName.formatForDB»') => 'createdDate',
+                            $this->translator->trans('Creator', [], '«app.appName.formatForDB»') => 'createdUserId',
+                            $this->translator->trans('Update date', [], '«app.appName.formatForDB»') => 'updatedDate'
+                        «ENDIF»
+                    ],
+                    'choices_as_values' => true
+                ])
+                ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
+                    'label' => $this->translator->trans('Sort direction', [], '«app.appName.formatForDB»') . ':',
+                    'empty_data' => 'asc',
+                    'attr' => [
+                        'id' => '«app.appName.toFirstLower»SortDir'
+                    ],
+                    'choices' => [
+                        $this->translator->trans('Ascending', [], '«app.appName.formatForDB»') => 'asc',
+                        $this->translator->trans('Descending', [], '«app.appName.formatForDB»') => 'desc'
+                    ],
+                    'choices_as_values' => true
+                ])
+            ;
+        }
+    '''
+
+    def private addAmountField(Entity it) '''
+        /**
+         * Adds a page size field.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options
+         */
+        public function addAmountField(FormBuilderInterface $builder, array $options)
+        {
+            $builder->add('num', '«nsSymfonyFormType»ChoiceType', [
+                'label' => $this->translator->trans('Page size', [], '«app.appName.formatForDB»') . ':',
+                'empty_data' => 20,
+                'attr' => [
+                    'id' => '«app.appName.toFirstLower»PageSize',
+                    'class' => 'text-right'
+                ],
+                'choices' => [
+                    5 => 5,
+                    10 => 10,
+                    15 => 15,
+                    20 => 20,
+                    30 => 30,
+                    50 => 50,
+                    100 => 100
+                ],
+                'choices_as_values' => true
+            ]);
+        }
+    '''
+
+    def private addSearchField(Entity it) '''
+        /**
+         * Adds a search field.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options
+         */
+        public function addSearchField(FormBuilderInterface $builder, array $options)
+        {
+            $builder->add('q', '«nsSymfonyFormType»TextType', [
+                'label' => $this->translator->trans('Search for', [], '«app.appName.formatForDB»') . ':',
+                'attr' => [
+                    'id' => '«app.appName.toFirstLower»SearchTerm'
+                ],
+                'required' => false,
+                'max_length' => 255
+            ]);
+        }
     '''
 
     def private finderTypeImpl(Entity it) '''

@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.ListVar
 import de.guite.modulestudio.metamodel.ListVarItem
 import de.guite.modulestudio.metamodel.TextVar
 import de.guite.modulestudio.metamodel.Variable
+import de.guite.modulestudio.metamodel.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -67,6 +68,11 @@ class Config {
             private $variableApi;
 
             /**
+             * @var array
+             */
+            private $modVars;
+
+            /**
              * AppSettingsType constructor.
              *
              * @param TranslatorInterface $translator  Translator service instance.
@@ -76,6 +82,7 @@ class Config {
             {
                 $this->translator = $translator;
                 $this->variableApi = $variableApi;
+                $this->modVars = $this->variableApi->getAll('«appName»');
             }
 
             /**
@@ -83,10 +90,11 @@ class Config {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
-                $modVars = $this->variableApi->getAll('«appName»');
+                «FOR varContainer : variables»
+                    $this->add«varContainer.name.formatForCodeCapital»Fields($builder, $options);
+                «ENDFOR»
 
                 $builder
-                    «FOR modvar : getAllVariables»«modvar.definition»«ENDFOR»
                     ->add('save', '«nsSymfonyFormType»SubmitType', [
                         'label' => $this->translator->trans('Update configuration', [], '«appName.formatForDB»')
                     ])
@@ -96,6 +104,10 @@ class Config {
                 ;
             }
 
+            «FOR varContainer : variables»
+                «varContainer.addFieldsMethod»
+
+            «ENDFOR»
             /**
              * {@inheritdoc}
              */
@@ -103,6 +115,21 @@ class Config {
             {
                 return '«appName.formatForDB»_appsettings';
             }
+        }
+    '''
+
+    def private addFieldsMethod(Variables it) '''
+        /**
+         * Adds fields for «name.formatForDisplay» fields.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options
+         */
+        public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options)
+        {
+            $builder
+                «FOR modvar : vars»«modvar.definition»«ENDFOR»
+            ;
         }
     '''
 
@@ -116,7 +143,7 @@ class Config {
                 ],
             «ENDIF»
             'required' => false,
-            'data' => $modVars['«name.formatForCode»'],
+            'data' => $this->modVars['«name.formatForCode»'],
             'empty_data' => '«value»',
             'attr' => [
                 'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')«IF documentation !== null && documentation != ''»
