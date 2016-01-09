@@ -1,10 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 
-import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.BooleanField
-import de.guite.modulestudio.metamodel.DateField
-import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
@@ -15,10 +12,7 @@ import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
-import de.guite.modulestudio.metamodel.TimeField
-import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
-import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -398,7 +392,7 @@ if attributable:
         «ENDIF»
         'max_length' => «length»
     '''
-
+/*
     def private dispatch TODO(StringField it, String groupSuffix, String idSuffix) '''
         «IF minLength > 0» minLength=«minLength»«ENDIF»
         «IF regexp !== null && regexp != ''»
@@ -406,13 +400,13 @@ if attributable:
             <span class="help-block">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
         «ENDIF»
     '''
-
+*/
     def private dispatch formType(TextField it) '''Textarea'''
     def private dispatch additionalOptions(TextField it) '''
         'required' => «mandatory.displayBool»,
         'max_length' => «length»
     '''
-
+/*
     def private dispatch TODO(TextField it, String groupSuffix, String idSuffix) '''
         «IF minLength > 0» minLength=«minLength»«ENDIF»
         «IF regexp !== null && regexp != ''»
@@ -420,17 +414,17 @@ if attributable:
             <span class="help-block">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
         «ENDIF»
     '''
-
+*/
     def private dispatch formType(EmailField it) '''Email'''
     def private dispatch additionalOptions(EmailField it) '''
         'required' => «mandatory.displayBool»,
         'max_length' => «length»
     '''
-
+/*
     def private dispatch TODO(EmailField it, String groupSuffix, String idSuffix) '''
         «IF minLength > 0» minLength=«minLength»«ENDIF»
     '''
-
+*/
     def private dispatch formType(UrlField it) '''Url'''
     def private dispatch additionalOptions(UrlField it) '''
         'required' => «mandatory.displayBool»,
@@ -438,14 +432,14 @@ if attributable:
         'default_protocol' => 'http'*/»
     '''
 
-
+/*
     def private dispatch TODO(UrlField it, String groupSuffix, String idSuffix) '''
         «IF minLength > 0» minLength=«minLength»«ENDIF»
     '''
-
+*/
 /* TODO */
 
-/* TODO help can be an array now */
+/* TODO help can be an array now * /
 
     def private dispatch formField(UploadField it, String groupSuffix, String idSuffix) '''
         «IF mandatory»
@@ -495,7 +489,7 @@ if attributable:
             </span>
         «ENDIF»
     '''
-
+*/
     def private fetchListEntries(ListField it) '''
         $listEntries = $this->listHelper->getEntries('«entity.name.formatForCode»', '«name.formatForCode»');
         $choices = [];
@@ -523,7 +517,7 @@ if attributable:
         'multiple' => «multiple.displayBool»,
         'expanded' => «useChecks.displayBool»
     '''
-
+/*
     def private dispatch formField(UserField it, String groupSuffix, String idSuffix) '''
         {«entity.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' cssClass='«IF mandatory»required «ENDIF»form-control'}
         {% if mode != 'create' and «entity.name.formatForDB».«name.formatForDB» and inlineUsage != true %}
@@ -572,7 +566,7 @@ if attributable:
     def private dispatch formFieldDetails(TimeField it, String groupSuffix, String idSuffix) '''
         {«entity.application.appName.formatForDB»TimeInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8«validationHelper.fieldValidationCssClass(it, true)»}
     '''
-
+*/
     def private addGeographicalFields(Entity it) '''
         /**
          * Adds fields for coordinates.
