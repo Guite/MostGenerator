@@ -175,7 +175,13 @@ class Layout {
             {{ parent() }}
 
             {% if help is defined %}
-                <span class="help-block">{{ help }}</span>
+                {% if help is iterable %}
+                    {% for helpText in help %}
+                        <span class="help-block z-sub">{{ helpText }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="help-block z-sub">{{ help }}</span>
+                {% endif %}
             {% endif %}
         {% endblock %}
     '''

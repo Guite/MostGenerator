@@ -260,7 +260,7 @@ class Finder {
          */
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('q', '«nsSymfonyFormType»TextType', [
+            $builder->add('q', '«nsSymfonyFormType»SearchType', [
                 'label' => $this->translator->trans('Search for', [], '«app.appName.formatForDB»') . ':',
                 'attr' => [
                     'id' => '«app.appName.toFirstLower»SearchTerm'

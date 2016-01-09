@@ -14,7 +14,11 @@ class CountrySelector {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/CountrySelector.php',
             fh.phpFileContent(it, formCountrySelectorBaseImpl), fh.phpFileContent(it, formCountrySelectorImpl)
         )

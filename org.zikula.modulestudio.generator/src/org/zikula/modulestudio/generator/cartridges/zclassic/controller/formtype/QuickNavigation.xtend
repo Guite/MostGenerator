@@ -350,7 +350,7 @@ class QuickNavigation {
          */
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
-            $builder->add('q', '«nsSymfonyFormType»TextType', [
+            $builder->add('q', '«nsSymfonyFormType»SearchType', [
                 'label' => $this->translator->trans('Search', [], '«app.appName.formatForDB»'),
                 'attr' => [
                     'id' => 'searchTerm'
@@ -452,7 +452,7 @@ class QuickNavigation {
     '''
 
     def private dispatch fieldImpl(DerivedField it) '''
-        $builder->add('«name.formatForCode»', '«nsSymfonyFormType»«fieldType»Type', [
+        $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
             'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
             'required' => false,
             «additionalOptions»

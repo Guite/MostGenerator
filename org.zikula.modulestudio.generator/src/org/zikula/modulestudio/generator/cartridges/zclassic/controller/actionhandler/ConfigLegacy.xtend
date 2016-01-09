@@ -84,18 +84,8 @@ class ConfigLegacy {
                 // assign all module vars
                 $this->view->assign('config', $modVars);
 
-                // custom initialisation aspects
-                $this->initializeAdditions();
-
                 // everything okay, no initialization errors occured
                 return true;
-            }
-
-            /**
-             * Method stub for own additions in subclasses.
-             */
-            protected function initializeAdditions()
-            {
             }
 
             /**

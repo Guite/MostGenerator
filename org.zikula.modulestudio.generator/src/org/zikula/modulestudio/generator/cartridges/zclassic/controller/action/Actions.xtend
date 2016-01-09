@@ -973,36 +973,41 @@ class Actions {
     }
 
     def private dispatch actionImplBody(Entity it, EditAction action) '''
-        «/* TODO migrate to Symfony forms #416 */»
-        // create new Form reference
-        $view = FormUtil::newForm($this->name, $this);
-
-        // build form handler class name
         «IF isLegacy»
+            // create new Form reference
+            $view = FormUtil::newForm($this->name, $this);
+
+            // build form handler class name
             $handlerClass = $this->name . '_Form_Handler_«name.formatForCodeCapital»_Edit';
-        «ELSE»
-            $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«name.formatForCodeCapital»\\EditHandler';
-        «ENDIF»
 
-        // determine the output template
-        «IF isLegacy»
+            // determine the output template
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
+            $template = $viewHelper->getViewTemplate($this->view, $objectType, 'edit', array());
+
+            // execute form using supplied template and page event handler
+            return $view->execute($template, new $handlerClass());
         «ELSE»
+            «/* TODO */»
+            // build form handler class name
+            $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«name.formatForCodeCapital»\\EditHandler';
+
+            // determine the output template
             $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
-        «ENDIF»
-        $template = $viewHelper->getViewTemplate($«IF isLegacy»this->«ENDIF»view, $objectType, 'edit', «IF isLegacy»array()«ELSE»$request«ENDIF»);
+            $template = $viewHelper->getViewTemplate($this->get('twig'), $objectType, 'edit', $request);
 
-        «IF !isLegacy»
+            «/* TODO implement Symfony forms #416 */»
             // temporary workaround until Symfony forms are adopted (#416)
             // let legacy forms know if we are in admin or user area
             $request->query->set('lct', $isAdmin ? 'admin' : 'user');
 
+            «/* TODO // execute form using supplied template and page event handler
+            //return $this->response($view->execute($template, new $handlerClass()));
+            */»
+            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'edit', $request, $templateParameters);
         «ENDIF»
-        // execute form using supplied template and page event handler
-        return «IF !isLegacy»$this->response(«ENDIF»$view->execute($template, new $handlerClass())«IF !isLegacy»)«ENDIF»;
     '''
 
     def private dispatch actionImplBody(DeleteAction it) '''

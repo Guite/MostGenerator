@@ -144,14 +144,8 @@ class Attributes {
     '''
 
     def private editBody(Application it) '''
-        «/* TODO migrate to Symfony forms #416 */»
         {% for fieldName, fieldValue in attributes %}
-            <div class="form-group">
-                {formlabel for="attributes`$fieldName`"' text=$fieldName cssClass='col-sm-3 control-label'}
-                <div class="col-sm-9">
-                    {formtextinput id="attributes`$fieldName`" group='attributes' dataField=$fieldName maxLength=255 cssClass='form-control'}
-                </div>
-            </div>
+            {{ form_row(attribute(form.attributes, fieldName)) }}
         {% endfor %}
     '''
 }

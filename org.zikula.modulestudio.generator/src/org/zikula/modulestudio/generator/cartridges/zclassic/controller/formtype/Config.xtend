@@ -146,8 +146,7 @@ class Config {
             'data' => $this->modVars['«name.formatForCode»'],
             'empty_data' => '«value»',
             'attr' => [
-                'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')«IF documentation !== null && documentation != ''»
-            «ENDIF»
+                'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')
             ],
             «IF documentation !== null && documentation != ''»
                 'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»'),
@@ -157,13 +156,13 @@ class Config {
 
     def private dispatch fieldType(Variable it) '''Text'''
     def private dispatch titleAttribute(Variable it) '''Enter the «name.formatForDisplay».'''
-    def private dispatch additionalOptions(Variable it) ''',
+    def private dispatch additionalOptions(Variable it) '''
         'max_length' => 255
     '''
 
     def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Entity«ELSE»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
-    def private dispatch additionalOptions(IntVar it) ''',
+    def private dispatch additionalOptions(IntVar it) '''
         'max_length' => 255,
         «IF hasUserGroupSelectors && isUserGroupSelector»
             // Zikula core should provide a form type for this to hide entity details
@@ -176,7 +175,9 @@ class Config {
 
     def private dispatch fieldType(TextVar it) '''Text«IF multiline»area«ENDIF»'''
     def private dispatch additionalOptions(TextVar it) '''
-        'max_length' => «IF maxLength > 0»«maxLength»«ELSE»255«ENDIF»
+        «IF maxLength > 0 || !multiline»
+            'max_length' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»
+        «ENDIF»
     '''
 
     def private dispatch fieldType(BoolVar it) '''Checkbox'''

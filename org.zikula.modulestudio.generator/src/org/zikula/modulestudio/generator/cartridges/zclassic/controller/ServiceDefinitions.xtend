@@ -160,7 +160,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: "«nsBase»«entity.name.formatForCodeCapital»Type"
-                    arguments: [@translator]
+                    arguments: [@translator«IF entity.hasListFieldsEntity», @«appName.formatForDB».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»

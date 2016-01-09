@@ -325,7 +325,7 @@ class Plugins {
         if (hasColourFields) {
             new ColourInput().generate(it, fsa)
         }
-        if (hasCountryFields) {
+        if (hasCountryFields && targets('1.3.x')) {
             new CountrySelector().generate(it, fsa)
         }
         if (hasGeographical) {

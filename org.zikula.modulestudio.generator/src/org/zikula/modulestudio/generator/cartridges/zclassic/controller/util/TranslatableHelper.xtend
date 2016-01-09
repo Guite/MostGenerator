@@ -75,6 +75,8 @@ class TranslatableHelper {
             «ENDIF»
             «getTranslatableFieldsImpl»
 
+            «getSupportedLanguages»
+
             «prepareEntityForEdit»
 
             «processEntityAfterEdit»
@@ -89,7 +91,7 @@ class TranslatableHelper {
          *
          * @param string $objectType The currently treated object type.
          *
-         * @return array list of translatable fields
+         * @return array list of translatable fields.
          */
         public function getTranslatableFields($objectType)
         {
@@ -104,6 +106,20 @@ class TranslatableHelper {
         }
     '''
 
+    def private getSupportedLanguages(Application it) '''
+        /**
+         * Return list of supported languages on the current system.
+         *
+         * @param string $objectType The currently treated object type.
+         *
+         * @return array list of language codes.
+         */
+        public function getSupportedLanguages($objectType)
+        {
+            return ZLanguage::getInstalledLanguages();
+        }
+    '''
+
     def private prepareEntityForEdit(Application it) '''
         /**
          * Post-processing method copying all translations to corresponding arrays.
@@ -113,7 +129,7 @@ class TranslatableHelper {
          * @param string              $objectType The currently treated object type.
          * @param Zikula_EntityAccess $entity     The entity being edited.
          *
-         * @return array collected translations having the locales as keys
+         * @return array collected translations having the language codes as keys.
          */
         public function prepareEntityForEdit($objectType, $entity)
         {
@@ -149,19 +165,19 @@ class TranslatableHelper {
             «ENDIF»
             $entityTranslations = $repository->findTranslations($entity);
 
-            $supportedLocales = ZLanguage::getInstalledLanguages();
+            $supportedLanguages = $this->getSupportedLanguages($objectType);
             $currentLanguage = ZLanguage::getLanguageCode();
-            foreach ($supportedLocales as $locale) {
-                if ($locale == $currentLanguage) {
+            foreach ($supportedLanguages as $language) {
+                if ($language == $currentLanguage) {
                     // Translatable extension did already fetch current translation
                     continue;
                 }
                 $translationData = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($fields as $field) {
-                    $translationData[$field['name'] . $locale] = isset($entityTranslations[$locale]) ? $entityTranslations[$locale][$field['name']] : '';
+                    $translationData[$field['name'] . $language] = isset($entityTranslations[$language]) ? $entityTranslations[$language][$field['name']] : '';
                 }
                 // add data to collected translations
-                $translations[$locale] = $translationData;
+                $translations[$language] = $translationData;
             }
 
             return $translations;
@@ -177,7 +193,7 @@ class TranslatableHelper {
          * @param string $objectType The currently treated object type.
          * @param array  $formData   Form data containing translations.
          *
-         * @return array collected translations having the locales as keys
+         * @return array collected translations having the language codes as keys.
          */
         public function processEntityAfterEdit($objectType, $formData)
         {
@@ -192,31 +208,31 @@ class TranslatableHelper {
                 return $translations;
             }
 
-            $supportedLocales = ZLanguage::getInstalledLanguages();
-            $useOnlyCurrentLocale = true;
+            $useOnlyCurrentLanguage = true;
             if (System::getVar('multilingual') == 1) {
-                $useOnlyCurrentLocale = false;
+                $useOnlyCurrentLanguage = false;
+                $supportedLanguages = $this->getSupportedLanguages($objectType);
                 $currentLanguage = ZLanguage::getLanguageCode();
-                foreach ($supportedLocales as $locale) {
-                    if ($locale == $currentLanguage) {
+                foreach ($supportedLanguages as $language) {
+                    if ($language == $currentLanguage) {
                         // skip current language as this is not treated as translation on controller level
                         continue;
                     }
-                    $translations[$locale] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'locale' => $locale, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
-                    $translationData = $formData[strtolower($objectType) . $locale];
+                    $translations[$language] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'language' => $language, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
+                    $translationData = $formData[strtolower($objectType) . $language];
                     foreach ($fields as $field) {
-                        $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
-                        unset($formData[$field['name'] . $locale]);
+                        $translations[$language]['fields'][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
+                        unset($formData[$field['name'] . $language]);
                     }
                 }
             }
-            if ($useOnlyCurrentLocale === true) {
-                $locale = ZLanguage::getLanguageCode();
-                $translations[$locale] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'locale' => $locale, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
-                $translationData = $formData[strtolower($objectType) . $locale];
+            if ($useOnlyCurrentLanguage === true) {
+                $language = ZLanguage::getLanguageCode();
+                $translations[$language] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'language' => $language, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
+                $translationData = $formData[strtolower($objectType) . $language];
                 foreach ($fields as $field) {
-                    $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
-                    unset($formData[$field['name'] . $locale]);
+                    $translations[$language]['fields'][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
+                    unset($formData[$field['name'] . $language]);
                 }
             }
 

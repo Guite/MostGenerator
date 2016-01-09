@@ -214,7 +214,7 @@ class Config {
     '''
 
     def private dispatch inputFieldLegacy(TextVar it) '''
-        {formtextinput id='«name.formatForCode»' group='config' maxLength=«IF maxLength > 0»«maxLength»«ELSE»255«ENDIF» __title='Enter the «name.formatForDisplay».'«IF multiline» textMode='multiline' rows='6«/*8*/»' cols='50'«ENDIF»}
+        {formtextinput id='«name.formatForCode»' group='config'«IF maxLength > 0 || !multiline» maxLength=«IF maxLength > 0»«maxLength»«ELSE»255«ENDIF»«ENDIF» __title='Enter the «name.formatForDisplay».'«IF multiline» textMode='multiline' rows='6«/*8*/»' cols='50'«ENDIF»}
     '''
 
     def private dispatch inputFieldLegacy(BoolVar it) '''

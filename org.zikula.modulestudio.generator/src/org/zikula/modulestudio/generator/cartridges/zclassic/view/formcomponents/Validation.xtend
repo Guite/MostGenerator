@@ -25,69 +25,53 @@ class Validation {
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
+    // 1.3.x only
     def dispatch mandatoryValidationMessage(DerivedField it, String idSuffix) '''
-        «IF isLegacyApp»
-            «IF mandatory»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='required'}
-            «ENDIF»
-            «IF unique»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-unique'}
-            «ENDIF»
+        «IF mandatory»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='required'}
+        «ENDIF»
+        «IF unique»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-unique'}
         «ENDIF»
     '''
     def dispatch mandatoryValidationMessage(ListField it, String idSuffix) {
     }
 
+    // 1.3.x only
     def dispatch additionalValidationMessages(DerivedField it, String idSuffix) {
     }
     def dispatch additionalValidationMessages(AbstractIntegerField it, String idSuffix) '''
-        «IF isLegacyApp»
-            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-digits'}
-        «ENDIF»
+        {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-digits'}
     '''
     def dispatch additionalValidationMessages(UserField it, String idSuffix) '''
     '''
     def dispatch additionalValidationMessages(DecimalField it, String idSuffix) '''
-        «IF isLegacyApp»
-            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
-        «ENDIF»
+        {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
     '''
     def dispatch additionalValidationMessages(FloatField it, String idSuffix) '''
-        «IF isLegacyApp»
-            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
-        «ENDIF»
+        {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
     '''
     def dispatch additionalValidationMessages(AbstractStringField it, String idSuffix) '''
-        «IF isLegacyApp»
-            «IF nospace»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
-            «ENDIF»
+        «IF nospace»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
         «ENDIF»
     '''
     def dispatch additionalValidationMessages(StringField it, String idSuffix) '''
-        «IF isLegacyApp»
-            «IF nospace && !country && !language && !locale»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
-            «ENDIF»
-            «IF htmlcolour»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-htmlcolour'}
-            «ENDIF»
+        «IF nospace && !country && !language && !locale»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-nospace'}
+        «ENDIF»
+        «IF htmlcolour»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-htmlcolour'}
         «ENDIF»
     '''
     def dispatch additionalValidationMessages(EmailField it, String idSuffix) '''
-        «IF isLegacyApp»
-            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-email'}
-        «ENDIF»
+        {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-email'}
     '''
     def dispatch additionalValidationMessages(UrlField it, String idSuffix) '''
-        «IF isLegacyApp»
-            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-url'}
-        «ENDIF»
+        {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-url'}
     '''
     def dispatch additionalValidationMessages(UploadField it, String idSuffix) '''
-        «IF isLegacyApp»
-            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-upload'}
-        «ENDIF»
+        {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-upload'}
     '''
     def dispatch additionalValidationMessages(ListField it, String idSuffix) {
     }
@@ -103,31 +87,25 @@ class Validation {
         «additionalValidationMessagesDateRange(idSuffix)»
     '''
     def private additionalValidationMessagesDefault(AbstractDateField it, String idSuffix) '''
-        «IF isLegacyApp»
-            «IF past»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-past'}
-            «ELSEIF future»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-future'}
-            «ENDIF»
+        «IF past»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-past'}
+        «ELSEIF future»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString.toLowerCase»-future'}
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DatetimeField it, String idSuffix) '''
-        «IF isLegacyApp»
-            «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
-            «ENDIF»
+        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DateField it, String idSuffix) '''
-        «IF isLegacyApp»
-            «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
-                {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
-            «ENDIF»
+        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
+            {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
         «ENDIF»
     '''
 
-    def fieldValidationCssClass(DerivedField it, Boolean addFormControl) ''' cssClass='«IF addFormControl && !isLegacyApp»form-control «ENDIF»«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»' '''
-    def fieldValidationCssClassOptional(UploadField it, Boolean addFormControl)''' cssClass='«IF addFormControl && !isLegacyApp»form-control «ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»' '''
+    def fieldValidationCssClass(DerivedField it) '''«IF !isLegacyApp» cssClass='«ENDIF»«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
+    def fieldValidationCssClassOptional(UploadField it)'''«IF !isLegacyApp» cssClass='«ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
             AbstractIntegerField: ' validate-digits'

@@ -382,7 +382,7 @@ class FormHandler {
          */
         public function initialize(Zikula_Form_View $view)
         {
-            $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
+            $this->inlineUsage = UserUtil::getTheme() == 'Printer' ? true : false;
             «IF targets('1.3.x')»
                 $this->idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
             «ELSE»
@@ -635,12 +635,12 @@ class FormHandler {
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
-                foreach ($translations as $locale => $translationData) {
-                    $this->view->assign($this->objectTypeLower . $locale, $translationData);
+                foreach ($translations as $language => $translationData) {
+                    $this->view->assign($this->objectTypeLower . $language, $translationData);
                 }
 
                 // assign list of installed languages for translatable extension
-                $this->view->assign('supportedLocales', ZLanguage::getInstalledLanguages());
+                $this->view->assign('supportedLanguages', $translatableHelper->getSupportedLanguages($this->objectType));
             }
         «ENDIF»
     '''

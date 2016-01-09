@@ -78,8 +78,6 @@ class Forms {
         relationHelper.generateInclusionTemplate(it, app, fsa)
     }
 
-    /* TODO migrate to Symfony forms #416 */
-
     def private formTemplateHeader(Entity it, Application app, String actionName) '''
         «IF app.targets('1.3.x')»
             {* purpose of this template: build the form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» *}
@@ -154,23 +152,19 @@ class Forms {
     '''
 
     def private formTemplateBody(Entity it, Application app, String actionName, IFileSystemAccess fsa) '''
-        {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.x')» role='form'«ENDIF»}
-            «IF app.targets('1.3.x')»
+        «IF app.targets('1.3.x')»
+            {form «IF hasUploadFieldsEntity»enctype='multipart/form-data' «ENDIF»cssClass='«IF app.targets('1.3.x')»z-form«ELSE»form-horizontal«ENDIF»'«IF !app.targets('1.3.x')» role='form'«ENDIF»}
                 {* add validation summary and a <div> element for styling the form *}
-            «ELSE»
-                {# add validation summary and a <div> element for styling the form #}
-            «ENDIF»
-            {«app.appName.formatForDB»FormFrame}
-            «IF !getEditableFields.empty»
-                «IF (getEditableFields.head) instanceof ListField && !(getEditableFields.head as ListField).useChecks»
-                    {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»' doSelect=true}
-                «ELSE»
-                    {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»'}
-                «ENDIF»
-            «ENDIF»
+                {«app.appName.formatForDB»FormFrame}
+                    «IF !getEditableFields.empty»
+                        «IF (getEditableFields.head) instanceof ListField && !(getEditableFields.head as ListField).useChecks»
+                            {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»' doSelect=true}
+                        «ELSE»
+                            {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»'}
+                        «ENDIF»
+                    «ENDIF»
 
-            «IF useGroupingPanels('edit')»
-                «IF app.targets('1.3.x')»
+                «IF useGroupingPanels('edit')»
                     <div id="«app.appName.toFirstLower»Panel" class="z-panels">
                         <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator z-pointer">{gt text='Fields'}</h3>
                         <div class="z-panel-content z-panel-active" style="overflow: visible">
@@ -179,26 +173,38 @@ class Forms {
                         «new Section().generate(it, app, fsa)»
                     </div>
                 «ELSE»
-                    <div class="panel-group" id="accordion">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{{ __('Fields') }}</a></h3>
-                            </div>
-                            <div id="collapseFields" class="panel-collapse collapse in">
-                                <div class="panel-body">
-                                    «fieldDetails(app)»
-                                </div>
+                    «fieldDetails(app)»
+                    «new Section().generate(it, app, fsa)»
+                «ENDIF»
+                {/«app.appName.formatForDB»FormFrame}
+            {/form}
+        «ELSE»
+            {% form_theme form with [
+                '@«application.appName»/Form/bootstrap_3.html.twig',
+                '@ZikulaFormExtensionBundle/Form/form_div_layout.html.twig'
+            ] %}
+            {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm'}}) }}
+            {{ form_errors(form) }}
+            «IF useGroupingPanels('edit')»
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFields">{{ __('Fields') }}</a></h3>
+                        </div>
+                        <div id="collapseFields" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                «fieldDetails(app)»
                             </div>
                         </div>
-                        «new Section().generate(it, app, fsa)»
                     </div>
-                «ENDIF»
+                    «new Section().generate(it, app, fsa)»
+                </div>
             «ELSE»
                 «fieldDetails(app)»
                 «new Section().generate(it, app, fsa)»
             «ENDIF»
-            {/«app.appName.formatForDB»FormFrame}
-        {/form}
+            {{ form_end(form) }}
+        «ENDIF»
         </div>
         «IF app.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
@@ -227,50 +233,50 @@ class Forms {
         «IF hasTranslatableFields»
             «IF application.targets('1.3.x')»
                 {formvolatile}
-                    {assign var='useOnlyCurrentLocale' value=true}
+                    {assign var='useOnlyCurrentLanguage' value=true}
                     {if $modvars.ZConfig.multilingual}
-                        {if $supportedLocales ne '' && is_array($supportedLocales) && count($supportedLocales) gt 1}
-                            {assign var='useOnlyCurrentLocale' value=false}
+                        {if is_array($supportedLanguages) && count($supportedLanguages) gt 1}
+                            {assign var='useOnlyCurrentLanguage' value=false}
                             {nocache}
                             {lang assign='currentLanguage'}
-                            {foreach item='locale' from=$supportedLocales}
-                                {if $locale eq $currentLanguage}
+                            {foreach item='language' from=$supportedLanguages}
+                                {if $language eq $currentLanguage}
                                     «translatableFieldSet('', '')»
                                 {/if}
                             {/foreach}
-                            {foreach item='locale' from=$supportedLocales}
-                                {if $locale ne $currentLanguage}
-                                    «translatableFieldSet('$locale', '$locale')»
+                            {foreach item='language' from=$supportedLanguages}
+                                {if $language ne $currentLanguage}
+                                    «translatableFieldSet('$language', '$language')»
                                 {/if}
                             {/foreach}
                             {/nocache}
                         {/if}
                     {/if}
-                    {if $useOnlyCurrentLocale eq true}
-                        {lang assign='locale'}
+                    {if $useOnlyCurrentLanguage eq true}
+                        {lang assign='language'}
                         «translatableFieldSet('', '')»
                     {/if}
                 {/formvolatile}
             «ELSE»
-                {% set useOnlyCurrentLocale = true %}
+                {% set useOnlyCurrentLanguage = true %}
                 {% if getModVar('ZConfig', 'multilingual') %}
-                    {% if supportedLocales != '' and supportedLocales is iterable and supportedLocales|length > 1 %}
-                        {% set useOnlyCurrentLocale = false %}
+                    {% if supportedLanguages is iterable and supportedLanguages|length > 1 %}
+                        {% set useOnlyCurrentLanguage = false %}
                         {% set currentLanguage = lang() %}
-                        {% for locale in supportedLocales %}
-                            {% if locale == currentLanguage %}
+                        {% for language in supportedLanguages %}
+                            {% if language == currentLanguage %}
                                 «translatableFieldSet('', '')»
                             {% endif %}
                         {% endfor %}
-                        {% for locale in supportedLocales %}
-                            {% if locale != currentLanguage %}
-                                «translatableFieldSet('$locale', '$locale')»
+                        {% for language in supportedLanguages %}
+                            {% if language != currentLanguage %}
+                                «translatableFieldSet('language', 'language')»
                             {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% endif %}
-                {% if useOnlyCurrentLocale == true %}
-                    {% set locale = lang() %}
+                {% if useOnlyCurrentLanguage == true %}
+                    {% set language = lang() %}
                     «translatableFieldSet('', '')»
                 {% endif %}
             «ENDIF»
@@ -279,7 +285,7 @@ class Forms {
 
     def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
         <fieldset>
-            <legend>«IF application.targets('1.3.x')»{$locale|getlanguagename|safehtml}«ELSE»{{ locale|languageName|safeHtml }}«ENDIF»</legend>
+            <legend>«IF application.targets('1.3.x')»{$language|getlanguagename|safehtml}«ELSE»{{ language|languageName|safeHtml }}«ENDIF»</legend>
             «FOR field : getEditableTranslatableFields»«field.fieldWrapper(groupSuffix, idSuffix)»«ENDFOR»
             «IF hasTranslatableSlug»
                 «slugField(groupSuffix, idSuffix)»
@@ -300,19 +306,15 @@ class Forms {
             «ENDIF»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    <div class="«IF app.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-                        {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'«IF !app.targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
-                        «IF !app.targets('1.3.x')»
-                            <div class="col-sm-9">
-                        «ENDIF»
-                            {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number«IF !app.targets('1.3.x')» form-control«ENDIF»'}
-                            «IF app.targets('1.3.x')»
-                                {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
-                            «ENDIF»
-                        «IF !app.targets('1.3.x')»
-                            </div>
-                        «ENDIF»
-                    </div>
+                    «IF app.targets('1.3.x')»
+                        <div class="z-formrow">
+                            {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'}
+                            {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number'}
+                            {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
+                        </div>
+                    «ELSE»
+                        {{ form_row(form.«geoFieldName») }}
+                    «ENDIF»
                 «ENDFOR»
             «ENDIF»
         </fieldset>
@@ -320,21 +322,7 @@ class Forms {
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
         «IF hasSluggableFields && slugUpdatable && !application.targets('1.3.x')»
-            <div class="«IF application.targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»«IF !application.targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
-                «IF !application.targets('1.3.x')»
-                    <div class="col-sm-9">
-                «ENDIF»
-                    {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255 cssClass='«IF slugUnique»«/*required */»validate-unique«ENDIF»«IF !application.targets('1.3.x')»«IF slugUnique» «ENDIF»form-control«ENDIF»'}
-                    <span class="«IF application.targets('1.3.x')»z-sub z-formnote«ELSE»help-block«ENDIF»">{gt text='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'}</span>
-                «IF slugUnique && application.targets('1.3.x')»
-                    «/*{«application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
-                    {«application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
-                «ENDIF»
-                «IF !application.targets('1.3.x')»
-                    </div>
-                «ENDIF»
-        </div>
+            {{ form_row(form.«IF groupSuffix != ''»«groupSuffix».«ENDIF»slug«idSuffix») }}
         «ENDIF»
     '''
 
@@ -474,16 +462,16 @@ class Forms {
             function triggerFormValidation()
             {
                 executeCustomValidationConstraints();
-                if (!document.getElementById('{{ __formid }}').checkValidity()) {
+                if (!document.getElementById('«name.formatForCode»EditForm').checkValidity()) {
                     // This does not really submit the form,
                     // but causes the browser to display the error message
-                    jQuery('#{{ __formid }}').find(':submit').not(jQuery('#btnDelete')).click();
+                    jQuery('#«name.formatForCode»EditForm').find(':submit').not(jQuery('#btnDelete')).first().click();
                 }
             }
 
             function handleFormSubmit (event) {
                 triggerFormValidation();
-                if (!document.getElementById('{{ __formid }}').checkValidity()) {
+                if (!document.getElementById('«name.formatForCode»EditForm').checkValidity()) {
                     event.preventDefault();
                     return false;
                 }
@@ -508,22 +496,22 @@ class Forms {
                     «ENDIF»
                     «relationHelper.initJs(it, app, true)»
     
-                    var allFormFields = $('#{{ __formid }} input, #{{ __formid }} select, #{{ __formid }} textarea');
+                    var allFormFields = $('#«name.formatForCode»EditForm input, #«name.formatForCode»EditForm select, #«name.formatForCode»EditForm textarea');
                     allFormFields.change(executeCustomValidationConstraints);
 
-                    formButtons = $('#{{ __formid }} .form-buttons input');
+                    formButtons = $('#«name.formatForCode»EditForm .form-buttons input');
                     $('#btnDelete').bind('click keypress', function (e) {
                         if (!window.confirm('{{ __('Really delete this «name.formatForDisplay»?') }}')) {
                             e.preventDefault();
                         }
                     });
-                    $('#{{ __formid }}').submit(handleFormSubmit);
+                    $('#«name.formatForCode»EditForm').submit(handleFormSubmit);
 
                     {% if mode != 'create' %}
                         triggerFormValidation();
                     {% endif %}
 
-                    $('#{{ __formid }} label').tooltip();
+                    $('#«name.formatForCode»EditForm label').tooltip();
                     «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
                 });
             })(jQuery);
@@ -639,11 +627,21 @@ class Forms {
     '''
 
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
-        «/*No input fields for foreign keys, relations are processed further down*/»
+        «/* No input fields for foreign keys, relations are processed further down */»
         «IF entity.getIncomingJoinRelations.filter[e|e.getSourceFields.head == name.formatForDB].empty»
-            <div class="«IF entity.application.targets('1.3.x')»z-formrow«IF !visible» z-hide«ENDIF»«ELSE»form-group«IF !visible» hidden«ENDIF»«ENDIF»">
-                «fieldHelper.formRow(it, groupSuffix, idSuffix)»
-            </div>
+            «IF entity.application.targets('1.3.x')»
+                <div class="z-formrow«IF !visible» z-hide«ENDIF»">
+                    «fieldHelper.formRow(it, groupSuffix, idSuffix)»
+                </div>
+            «ELSE»
+                «IF !visible»
+                    <div class="hidden">
+                        «fieldHelper.formRow(it, groupSuffix, idSuffix)»
+                    </div>
+                «ELSE»
+                    «fieldHelper.formRow(it, groupSuffix, idSuffix)»
+                «ENDIF»
+            «ENDIF»
         «ENDIF»
     '''
 
