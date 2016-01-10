@@ -42,7 +42,6 @@ class Installer {
 
             «IF hasCategorisableEntities»
                 use CategoryUtil;
-                use CategoryRegistryUtil;
                 use DBUtil;
             «ENDIF»
             use EventUtil;
@@ -180,7 +179,7 @@ class Installer {
                         $registry = new CategoryRegistryEntity();
                         $registry->setModname('«appName»');
                         $registry->setEntityname('«entity.name.formatForCodeCapital»');
-                        $registry->setProperty($categoryApi->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»')]);
+                        $registry->setProperty($categoryApi->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»']));
                         $registry->setCategory_Id($categoryGlobal['id']);
 
                         try {

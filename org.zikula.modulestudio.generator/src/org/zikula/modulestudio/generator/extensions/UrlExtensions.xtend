@@ -51,7 +51,7 @@ class UrlExtensions {
      * @param template Whether to create the syntax for a template (true) or for source code (false)
      * @return String collected url parameter string.
      */
-    def routeParams(Entity it, String objName, Boolean template) ''', { «routePkParams(objName, template)»«appendSlug(objName, template)» }'''
+    def routeParams(Entity it, String objName, Boolean template) '''«IF template», { «ENDIF»«routePkParams(objName, template)»«appendSlug(objName, template)»«IF template» }«ENDIF»'''
 
     /**
      * Collects parameters for a route relating a given entity,
