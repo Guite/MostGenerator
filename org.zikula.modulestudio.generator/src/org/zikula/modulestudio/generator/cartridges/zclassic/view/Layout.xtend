@@ -108,7 +108,7 @@ class Layout {
                         <p class="alert alert-info alert-dismissable text-center">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                             {% set itemObjectType = modItem.objectType|lower %}
-                            <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', { 'workflowState': modItem.state }) }}" class="bold alert-link">{{ modItem.message }}</a>
+                            <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', { workflowState: modItem.state }) }}" class="bold alert-link">{{ modItem.message }}</a>
                         </p>
                     {% endfor %}
                 {% endif %}

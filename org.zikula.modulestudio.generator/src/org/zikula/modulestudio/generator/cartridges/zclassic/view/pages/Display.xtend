@@ -418,10 +418,10 @@ class Display {
             «ENDIF»
         «ELSE»
             «IF attributable»
-                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { 'obj': «objName»«IF useGroupingPanels('display')», 'panel': true«ENDIF»}) }}
+                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
             «ENDIF»
             «IF categorisable»
-                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { 'obj': «objName»«IF useGroupingPanels('display')», 'panel': true«ENDIF»}) }}
+                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
             «ENDIF»
             «IF tree != EntityTreeType.NONE»
                 «IF useGroupingPanels('display')»
@@ -436,7 +436,7 @@ class Display {
                 «ENDIF»
                         {{ include(
                             '@«application.appName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
-                            { 'allParents': true, 'directParent': true, 'allChildren': true, 'directChildren': true, 'predecessors': true, 'successors': true preandsuccessors=true}
+                            { allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true }
                         ) }}
                 «IF useGroupingPanels('display')»
                             </div>
@@ -445,10 +445,10 @@ class Display {
                 «ENDIF»
             «ENDIF»
             «IF metaData»
-                {{ include('@«application.appName»/Helper/includeMetaDataDisplay.html.twig', { 'obj': «objName»«IF useGroupingPanels('display')», 'panel': true«ENDIF»}) }}
+                {{ include('@«application.appName»/Helper/includeMetaDataDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
             «ENDIF»
             «IF standardFields»
-                {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { 'obj': «objName»«IF useGroupingPanels('display')», 'panel': true«ENDIF»}) }}
+                {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
             «ENDIF»
         «ENDIF»
     '''

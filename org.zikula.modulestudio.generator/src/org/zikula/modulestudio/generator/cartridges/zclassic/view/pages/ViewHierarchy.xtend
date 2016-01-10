@@ -119,9 +119,9 @@ class ViewHierarchy {
                     </p>
 
                     {% for rootId, treeNodes in trees %}
-                        {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', { 'rootId': rootId, 'items': treeNodes }) }}
+                        {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', { rootId: rootId, items: treeNodes }) }}
                     {% else %}
-                        {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', { 'rootId': 1, 'items': null }) }}
+                        {{ include('@«appName»/«name.formatForCodeCapital»/viewTreeItems.html.twig', { rootId: 1, items: null }) }}
                     {% endfor %}
 
                     <br style="clear: left" />

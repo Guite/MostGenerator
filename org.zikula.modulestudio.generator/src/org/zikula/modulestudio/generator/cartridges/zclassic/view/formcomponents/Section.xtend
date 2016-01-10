@@ -83,18 +83,18 @@ class Section {
             «ENDIF»
         «ELSE»
             «IF attributable»
-                {{ include('Helper/includeAttributesEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+                {{ include('Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
             «ENDIF»
             «IF categorisable»
-                {{ include('Helper/includeCategoriesEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+                {{ include('Helper/includeCategoriesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
             «ENDIF»
             «relationHelper.generateIncludeStatement(it, app, fsa)»
             «IF metaData»
-                {{ include('Helper/includeMetaDataEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+                {{ include('Helper/includeMetaDataEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
             «ENDIF»
             «IF standardFields»
                 {% if mode != 'create' %}
-                    {{ include('Helper/includeStandardFieldsEdit.html.twig', { 'obj': «name.formatForDB»«IF useGroupingPanels('edit')», 'panel': true«ENDIF» }) }}
+                    {{ include('Helper/includeStandardFieldsEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
         «ENDIF»

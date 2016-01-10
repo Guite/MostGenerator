@@ -97,7 +97,7 @@ class View {
             «IF application.targets('1.3.x')»
                 {include file='«name.formatForCode»/viewQuickNav.tpl' all=$all own=$own«IF !hasVisibleWorkflow» workflowStateFilter=false«ENDIF»}{* see template file for available options *}
             «ELSE»
-                {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', { 'all': $all, 'own': own«IF !hasVisibleWorkflow», 'workflowStateFilter': false«ENDIF»}) }}{# see template file for available options #}
+                {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', { all: all, own: own«IF !hasVisibleWorkflow», workflowStateFilter: false«ENDIF» }) }}{# see template file for available options #}
             «ENDIF»
 
             «viewForm(appName)»
@@ -158,11 +158,11 @@ class View {
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
             {% else %}
                 {% set linkTitle = __('Show all entries') %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', { 'all': 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
+                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', { all: 1 }) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
             {% endif %}
             «IF tree != EntityTreeType.NONE»
                 {% set linkTitle = __('Switch to hierarchy view') %}
-                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', { 'tpl': 'tree' }) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-code-fork">{{ linkTitle }}</a>
+                <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view', { tpl: 'tree' }) }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-code-fork">{{ linkTitle }}</a>
             «ENDIF»
         «ENDIF»
     '''

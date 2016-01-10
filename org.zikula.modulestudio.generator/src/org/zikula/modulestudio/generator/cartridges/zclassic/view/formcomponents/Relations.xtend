@@ -104,7 +104,7 @@ class Relations {
         «ELSE»
             {{ include(
                 '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
-                { 'group': '«linkingEntity.name.formatForDB»', 'alias': '«relationAliasName.toFirstLower»', 'aliasReverse': '«relationAliasReverse.toFirstLower»', 'mandatory': «(!nullable).displayBool», 'idPrefix': '«uniqueNameForJs»', 'linkingItem': «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», 'panel': true«ENDIF», 'displayMode': '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»', 'allowEditing': «hasEdit.displayBool»}
+                { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», panel: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»', allowEditing: «hasEdit.displayBool» }
             ) }}
         «ENDIF»
     '''
@@ -236,7 +236,7 @@ class Relations {
                 {% if attribute(linkingItem, alias) is defined %}
                     {{ include(
                         «includeStatement»,
-                        { 'item«IF many»s«ENDIF»': attribute(linkingItem, alias) }
+                        { item«IF many»s«ENDIF»: attribute(linkingItem, alias) }
                     ) }}
                 {% else %}
                     {{ include(«includeStatement») }}

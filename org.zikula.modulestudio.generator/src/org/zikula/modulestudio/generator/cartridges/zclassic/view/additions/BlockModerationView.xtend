@@ -50,7 +50,7 @@ class BlockModerationView {
             <ul>
             {% for modItem in moderationObjects %}
                 {% set itemObjectType = modItem.objectType|lower %}
-                <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', { 'workflowState': modItem.state }) }}" class="bold">{{ modItem.message }}</a></li>
+                <li><a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', { workflowState: modItem.state }) }}" class="bold">{{ modItem.message }}</a></li>
             {% endfor %}
             </ul>
         {% endif %}

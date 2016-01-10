@@ -216,7 +216,7 @@ class Relations {
         {% if «relatedEntity.name.formatForCode».«relationAliasName»|default %}
             {{ include(
                 '@«application.appName»/«otherEntity.name.formatForCodeCapital»/includeDisplayItemList«IF many»Many«ELSE»One«ENDIF».html.twig',
-                { 'item«IF many»s«ENDIF»': «relatedEntity.name.formatForCode».«relationAliasName»}
+                { item«IF many»s«ENDIF»: «relatedEntity.name.formatForCode».«relationAliasName» }
             ) }}
         {% endif %}
 
@@ -232,7 +232,7 @@ class Relations {
             {% if mayManage or (uid is defined and «relatedEntity.name.formatForCode».createdUserId is defined and «relatedEntity.name.formatForCode».createdUserId == uid) %}
             <p class="managelink">
                 {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
-                <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { '«relationAliasNameParam»': «relatedEntity.idFieldsAsParameterTemplate», 'returnTo': area|lower ~ 'Display«relatedEntity.name.formatForCodeCapital»'}) }}" title="{{ createTitle }}" class="fa fa-plus">{{ createTitle }}</a>
+                <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate», returnTo: area|lower ~ 'Display«relatedEntity.name.formatForCodeCapital»' }) }}" title="{{ createTitle }}" class="fa fa-plus">{{ createTitle }}</a>
             </p>
             {% endif %}
             «IF !many»
