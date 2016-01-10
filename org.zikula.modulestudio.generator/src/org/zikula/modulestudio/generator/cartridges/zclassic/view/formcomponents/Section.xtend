@@ -217,7 +217,7 @@ class Section {
         «ELSE»
             {# include possible submit actions #}
             <div class="form-group form-buttons">
-                <div class="col-lg-offset-3 col-lg-9">
+                <div class="col-sm-offset-3 col-sm-9">
                     «submitActionsImpl»
                 </div>
         «ENDIF»
