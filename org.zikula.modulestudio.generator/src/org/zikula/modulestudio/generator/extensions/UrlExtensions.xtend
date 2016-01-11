@@ -78,7 +78,7 @@ class UrlExtensions {
      * @param customVarName Custom name for using another field name as url parameter
      * @return String collected url parameter string.
      */
-    def routeParams(Entity it, String objName, Boolean template, String customVarName) ''', { «routePkParams(objName, template, customVarName)»«appendSlug(objName, template)» }'''
+    def routeParams(Entity it, String objName, Boolean template, String customVarName) '''«IF template», { «ENDIF»«routePkParams(objName, template, customVarName)»«appendSlug(objName, template)»«IF template» }«ENDIF»'''
 
     /**
      * Collects primary key parameters for a route relating a given entity,
