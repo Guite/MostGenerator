@@ -23,10 +23,7 @@ class UserType {
     def private userTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use PageUtil;
         use Symfony\Component\Form\AbstractType;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\Form\FormView\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
 
         /**
