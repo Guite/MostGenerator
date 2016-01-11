@@ -69,7 +69,7 @@ class Config {
                 {/form}
             </div>
             {include file='«configController.formatForDB»/footer.tpl'}
-            «IF !getAllVariables.filter[documentation !== null && documentation != ''].empty»
+            «IF !getAllVariables.filter[null !== documentation && documentation != ''].empty»
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
@@ -118,7 +118,7 @@ class Config {
                     {{ form_end(form) }}
                 </div>
             {% endblock %}
-            «IF !getAllVariables.filter[documentation !== null && documentation != ''].empty»
+            «IF !getAllVariables.filter[null !== documentation && documentation != ''].empty»
                 {% block footer %}
                     {{ parent() }}
 
@@ -168,7 +168,7 @@ class Config {
             «IF app.targets('1.3.x')»
                 <legend>{$tabTitle}</legend>
 
-                «IF documentation !== null && documentation != ''»
+                «IF null !== documentation && documentation != ''»
                     <p class="z-confirmationmsg">{gt text='«documentation.replace("'", "")»'|nl2br}</p>
                 «ELSEIF !app.hasMultipleConfigSections || isPrimaryVarContainer»
                     <p class="z-confirmationmsg">{gt text='Here you can manage all basic settings for this application.'}</p>
@@ -176,7 +176,7 @@ class Config {
             «ELSE»
                 <legend>{{ tabTitle }}</legend>
 
-                «IF documentation !== null && documentation != ''»
+                «IF null !== documentation && documentation != ''»
                     <p class="alert alert-info">{{ __('«documentation.replace("'", "")»')|nl2br }}</p>
                 «ELSEIF !app.hasMultipleConfigSections || isPrimaryVarContainer»
                     <p class="alert alert-info">{{ __('Here you can manage all basic settings for this application.') }}</p>
@@ -190,10 +190,10 @@ class Config {
     def private formRow(Variable it) '''
         «IF container.application.targets('1.3.x')»
             <div class="z-formrow">
-                «IF documentation !== null && documentation != ""»
+                «IF null !== documentation && documentation != ""»
                     {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
                 «ENDIF»
-                {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF documentation !== null && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»}
+                {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF null !== documentation && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»'«IF null !== documentation && documentation != ''» title=$toolTip«ENDIF»}
                 «inputFieldLegacy»
             </div>
         «ELSE»

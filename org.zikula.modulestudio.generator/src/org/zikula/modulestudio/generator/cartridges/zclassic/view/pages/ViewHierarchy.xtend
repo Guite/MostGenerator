@@ -42,7 +42,7 @@ class ViewHierarchy {
                 {gt text='«name.formatForDisplayCapital» hierarchy' assign='templateTitle'}
                 {pagesetvar name='title' value=$templateTitle}
                 «templateHeader»
-                «IF documentation !== null && documentation != ''»
+                «IF null !== documentation && documentation != ''»
 
                     <p class="z-informationmsg">{gt text='«documentation.replace('\'', '\\\'')»'}</p>
                 «ENDIF»
@@ -88,7 +88,7 @@ class ViewHierarchy {
             {% block adminPageIcon %}list{% endblock %}
             {% block content %}
                 <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
-                    «IF documentation !== null && documentation != ''»
+                    «IF null !== documentation && documentation != ''»
 
                         <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
                     «ENDIF»

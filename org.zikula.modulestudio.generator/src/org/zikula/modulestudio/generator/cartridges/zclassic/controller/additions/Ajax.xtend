@@ -565,7 +565,7 @@ class Ajax {
                     «IF entity.hasSluggableFields && entity.slugUnique»
                         case 'slug':
                                 $entity = $repository->selectBySlug($value, false, $exclude);
-                                $result = ($entity != null && isset($entity['slug']));
+                                $result = null !== $entity && isset($entity['slug']);
                                 break;
                     «ENDIF»
                     }
@@ -1095,7 +1095,7 @@ class Ajax {
         //$this->entityManager->transactional(function($entityManager) {
             $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $id, 'useJoins' => false«IF app.isLegacy»)«ELSE»]«ENDIF»);
             $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $destId, 'useJoins' => false«IF app.isLegacy»)«ELSE»]«ENDIF»);
-            if ($entity == null || $destEntity == null) {
+            if (null === $entity || null === $destEntity) {
                 return new «IF app.isLegacy»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
             }
 

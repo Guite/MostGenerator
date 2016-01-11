@@ -163,7 +163,7 @@ class Utils {
      * @return String The concatenated identifier.
      */
     def templateIdWithSuffix(String name, String suffix) {
-        if (suffix !== null && suffix != '')
+        if (null !== suffix && suffix != '')
             '"' + name + '`' + suffix + '`"'
         else
             "'" + name + "'"

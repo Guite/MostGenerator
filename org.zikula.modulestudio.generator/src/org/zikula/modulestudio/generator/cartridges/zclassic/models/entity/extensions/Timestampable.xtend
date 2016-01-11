@@ -25,7 +25,7 @@ class Timestampable extends AbstractExtension implements EntityExtensionInterfac
         «ENDIF»
     '''
 
-    def private timestampableDetails(AbstractDateField it) '''«IF timestampable == EntityTimestampableType::CHANGE», field="«timestampableChangeTriggerField.formatForCode»"«IF timestampableChangeTriggerValue !== null && timestampableChangeTriggerValue != ''», value="«timestampableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
+    def private timestampableDetails(AbstractDateField it) '''«IF timestampable == EntityTimestampableType::CHANGE», field="«timestampableChangeTriggerField.formatForCode»"«IF null !== timestampableChangeTriggerValue && timestampableChangeTriggerValue != ''», value="«timestampableChangeTriggerValue.formatForCode»"«ENDIF»«ENDIF»'''
 
     /**
      * Generates additional entity properties.

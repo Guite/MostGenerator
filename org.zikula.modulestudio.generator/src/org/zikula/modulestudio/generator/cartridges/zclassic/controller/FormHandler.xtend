@@ -19,6 +19,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TimeTypeExtension
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadTypeExtension
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UserType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -78,6 +79,9 @@ class FormHandler {
                 }
                 if (hasTrees) {
                     new EntityTreeType().generate(it, fsa)
+                }
+                if (hasUploads) {
+                    new UploadTypeExtension().generate(it, fsa)
                 }
                 if (hasUserFields) {
                     new UserType().generate(it, fsa)
@@ -744,7 +748,7 @@ class FormHandler {
             {
                 $entity = $this->entityRef;
 
-                $metaData = $entity->getMetadata() != null ? $entity->getMetadata()->toArray() : «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $metaData = null !== $entity->getMetadata() ? $entity->getMetadata()->toArray() : «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $this->view->assign('meta', $metaData);
             }
         «ENDIF»

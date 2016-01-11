@@ -244,6 +244,21 @@ class ServiceDefinitions {
                     tags:
                         - { name: form.type }
             «ENDIF»
+            «IF hasUploads»
+
+                «modPrefix».form.upload_type_extension:
+                    class: "«nsBase.replace('Type\\\\', '')»Extension\UploadTypeExtension"
+                    arguments: [@translator]
+                    tags:
+                        - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\FileType" }
+            «ENDIF»
+            «IF hasUserFields»
+
+                «modPrefix».form.type.field.user:
+                    class: "«nsBase»Field\UserType"
+                    tags:
+                        - { name: form.type }
+            «ENDIF»
         «ENDIF»
     '''
 

@@ -298,7 +298,7 @@ class Relations {
             «ENDIF»
             {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
 
-            <input type="hidden" id="{{ idPrefix }}ItemList" name="{{ idPrefix }}ItemList" value="{% if item«IF many»s«ENDIF» is defined and item«IF many»s«ENDIF» is iterable«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}«IF many»{% for item in items %}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»«IF many»{% if loop.last != true %},{% endif %}{% endfor %}«ENDIF»{% endif %}" />
+            <input type="hidden" id="{{ idPrefix }}ItemList" name="{{ idPrefix }}ItemList" value="{% if item«IF many»s«ENDIF» is defined and item«IF many»s«ENDIF» is iterable«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}«IF many»{% for item in items %}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»«IF many»{% if not loop.last %},{% endif %}{% endfor %}«ENDIF»{% endif %}" />
             <input type="hidden" id="{{ idPrefix }}Mode" name="{{ idPrefix }}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
             <ul id="{{ idPrefix }}ReferenceList">

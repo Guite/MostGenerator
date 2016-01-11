@@ -110,7 +110,7 @@ class Property {
 
     def persistentProperty(DerivedField it, String name, String type, String init, String modifier) '''
         /**
-         «IF documentation !== null && documentation != ''»
+         «IF null !== documentation && documentation != ''»
           * «documentation»
          «ENDIF»
          «IF primaryKey»
@@ -124,7 +124,7 @@ class Property {
           «ENDIF»
         «ENDIF»
         «extMan.columnAnnotations(it)»
-         * @ORM\Column(«IF dbName !== null && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+         * @ORM\Column(«IF null !== dbName && dbName != ''»name="«dbName.formatForCode»", «ENDIF»«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
         «IF !entity.application.targets('1.3.x')»
             «thVal.fieldAnnotations(it)»
@@ -173,17 +173,17 @@ class Property {
             BooleanField:
                 if (it.defaultValue == true || it.defaultValue == 'true') 'true' else 'false'
             AbstractIntegerField:
-                if (it.defaultValue !== null && it.defaultValue.length > 0) it.defaultValue else '0'
+                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             DecimalField:
-                if (it.defaultValue !== null && it.defaultValue.length > 0) it.defaultValue else '0.00'
+                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: if (entity.application.targets('1.3.x')) 'array()' else '[]'
             ObjectField: 'null'
-            ListField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
-            AbstractStringField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
+            ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
+            AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             AbstractDateField:
-                if (it.mandatory && it.defaultValue !== null && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else 'null'
+                if (it.mandatory && null !== it.defaultValue && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else 'null'
             FloatField:
-                if (it.defaultValue !== null && it.defaultValue.length > 0) it.defaultValue else '0'
+                if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             default: '\'\''
         }
     }
@@ -201,7 +201,7 @@ class Property {
     '''
 
     def dispatch fieldAccessor(IntegerField it) '''
-        «IF isIndexByField/* || (aggregateFor != null && aggregateFor != ''*/»
+        «IF isIndexByField/* || (null !== aggregateFor && aggregateFor != ''*/»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
         «ELSE»
             «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, false, '', '')»

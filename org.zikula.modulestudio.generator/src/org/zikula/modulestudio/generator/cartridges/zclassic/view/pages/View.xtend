@@ -83,7 +83,7 @@ class View {
                 {pagesetvar name='title' value=$templateTitle}
                 «templateHeader»
             «ENDIF»
-            «IF documentation !== null && documentation != ''»
+            «IF null !== documentation && documentation != ''»
 
                 «IF application.targets('1.3.x')»
                     <p class="z-informationmsg">{gt text='«documentation.replace('\'', '\\\'')»'}</p>

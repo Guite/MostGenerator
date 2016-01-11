@@ -23,7 +23,7 @@ class DateTypeExtension {
 
         use Symfony\Component\Form\AbstractTypeExtension;
         use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\Form\FormView\FormView;
+        use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula_View;
 
@@ -68,8 +68,6 @@ class DateTypeExtension {
              */
             public function configureOptions(OptionsResolver $resolver)
             {
-                parent::configureOptions($resolver);
-
                 $resolver->setDefaults([
                     'max_length' => 10,
                     'attr' => [

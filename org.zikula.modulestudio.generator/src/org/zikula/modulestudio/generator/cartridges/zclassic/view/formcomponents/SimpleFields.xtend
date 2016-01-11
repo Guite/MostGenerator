@@ -60,13 +60,13 @@ class SimpleFields {
 
     // 1.3.x only
     def private initDocumentationToolTip(DerivedField it) '''
-        «IF documentation !== null && documentation != ''»
+        «IF null !== documentation && documentation != ''»
             {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
         «ENDIF»
     '''
 
     // 1.3.x only
-    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF documentation !== null && documentation != ''»«entity.application.appName.toLowerCase»-form-tooltips«ENDIF»'«IF documentation !== null && documentation != ''» title=$toolTip«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) ''' cssClass='«IF null !== documentation && documentation != ''»«entity.application.appName.toLowerCase»-form-tooltips«ENDIF»'«IF null !== documentation && documentation != ''» title=$toolTip«ENDIF»'''
 
     // 1.3.x only
     def private formLabelText(DerivedField it) {
@@ -167,7 +167,7 @@ class SimpleFields {
             «ELSE»
                 {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it)»}
             «ENDIF»
-            «IF regexp !== null && regexp != ''»
+            «IF null !== regexp && regexp != ''»
                 <span class="z-formnote">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
             «ENDIF»
         «ELSE»
@@ -178,7 +178,7 @@ class SimpleFields {
     def private dispatch formField(TextField it, String groupSuffix, String idSuffix) '''
         «IF isLegacyApp»
             {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='multiline'«IF minLength > 0» minLength=«minLength»«ENDIF» rows='6«/*8*/»' cols='50'«validationHelper.fieldValidationCssClass(it)»}
-            «IF regexp !== null && regexp != ''»
+            «IF null !== regexp && regexp != ''»
                 <span class="z-formnote">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
             «ENDIF»
         «ELSE»
@@ -216,9 +216,9 @@ class SimpleFields {
                 <span class="z-formnote z-sub"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide" style="clear:left;">{gt text='Reset to empty value'}</a></span>
             «ENDIF»
 
-                <span class="z-formnote">{gt text='Allowed file extensions:'} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
+                <span class="z-formnote">{gt text='Allowed file extensions'}: <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
             «IF allowedFileSize > 0»
-                <span class="z-formnote">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.application.appName.formatForDB»GetFileSize:'':false:false}</span>
+                <span class="z-formnote">{gt text='Allowed file size'}: {'«allowedFileSize»'|«entity.application.appName.formatForDB»GetFileSize:'':false:false}</span>
             «ENDIF»
             «decideWhetherToShowCurrentFile»
         «ELSE»
@@ -312,7 +312,7 @@ class SimpleFields {
         {if $mode ne 'create'}
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«validationHelper.fieldValidationCssClass(it)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
         {/if}
         «IF !mandatory && nullable»
             <span class="z-formnote z-sub"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></span>
@@ -323,7 +323,7 @@ class SimpleFields {
         {if $mode ne 'create'}
             {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it)»}
         {else}
-            {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+            {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
         {/if}
         «IF !mandatory && nullable»
             <span class="z-formnote z-sub"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></span>

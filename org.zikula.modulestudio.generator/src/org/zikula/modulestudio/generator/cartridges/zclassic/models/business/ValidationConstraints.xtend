@@ -131,7 +131,7 @@ class ValidationConstraints {
         «IF nospace»
             «' '»* @Assert\Regex(pattern="/\s/", match=false, message="This value must not contain space chars.")
         «ENDIF»
-        «IF regexp !== null && regexp != ''»
+        «IF null !== regexp && regexp != ''»
             «' '»* @Assert\Regex(pattern="«regexp»"«IF regexpOpposite», match=false«ENDIF»)
         «ENDIF»
     '''
@@ -211,21 +211,21 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(DatetimeField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\DateTime()
-        «IF validatorAddition !== null && validatorAddition != ''»
+        «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
     '''
     def dispatch fieldAnnotations(DateField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\Date()
-        «IF validatorAddition !== null && validatorAddition != ''»
+        «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
     '''
     def dispatch fieldAnnotations(TimeField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\Time()
-        «IF validatorAddition !== null && validatorAddition != ''»
+        «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
     '''
@@ -480,7 +480,7 @@ class ValidationConstraints {
         «var includesNotNullableField = false»
         «FOR item : items SEPARATOR ', '»
             «val referencedField = entity.getDerivedFields.filter[name == item.name]?.head»
-            «IF referencedField !== null && !referencedField.nullable»
+            «IF null !== referencedField && !referencedField.nullable»
                 «includesNotNullableField = true»
             «ENDIF»
         «ENDFOR»

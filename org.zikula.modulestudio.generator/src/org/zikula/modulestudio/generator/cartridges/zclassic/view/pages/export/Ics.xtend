@@ -99,7 +99,7 @@ class Ics {
             ORGANIZER;CN="{{ «appName.toLowerCase»_userVar('uname', «objName».createdUserId) }}":MAILTO:{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }}
         «ENDIF»
         «IF categorisable»
-            CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if loop.first != true %},{% endif %}{{ catMapping.category.display_name[lang]|upper %}{% endfor %}
+            CATEGORIES:{% for propName, catMapping in «objName».categories %}{% if not loop.first %},{% endif %}{{ catMapping.category.display_name[lang]|upper %}{% endfor %}
         «ENDIF»
         SUMMARY{{ «objName».getTitleFromDisplayPattern()|«appName.formatForDB»_icalText }}
         «IF hasTextFieldsEntity»

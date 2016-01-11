@@ -162,14 +162,14 @@ class EntityMethods {
         var result = ''
         var usedDisplayPattern = displayPattern
 
-        if (isInheriting && (usedDisplayPattern === null || usedDisplayPattern == '')) {
+        if (isInheriting && (null === usedDisplayPattern || usedDisplayPattern == '')) {
             // fetch inherited display pattern from parent entity
             if (parentType instanceof Entity) {
                 usedDisplayPattern = (parentType as Entity).displayPattern
             }
         }
 
-        if (usedDisplayPattern === null || usedDisplayPattern == '') {
+        if (null === usedDisplayPattern || usedDisplayPattern == '') {
             usedDisplayPattern = name.formatForDisplay
         }
 

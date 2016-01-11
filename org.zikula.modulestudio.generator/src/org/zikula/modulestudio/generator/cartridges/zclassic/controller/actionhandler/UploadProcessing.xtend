@@ -47,7 +47,7 @@ class UploadProcessing {
             // process all fields
             foreach ($this->uploadFields as $uploadField => $isMandatory) {
                 // check if an existing file must be deleted
-                $hasOldFile = (!empty($existingObjectData[$uploadField]));
+                $hasOldFile = !empty($existingObjectData[$uploadField]);
                 $hasBeenDeleted = !$hasOldFile;
                 if ($this->mode != 'create') {
                     if (isset($formData[$uploadField . 'DeleteFile'])) {

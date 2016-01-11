@@ -250,8 +250,8 @@ class ListEntriesHelper {
         $states[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
             'value'   => '«value.replace("'", "")»',
             'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital.replace("'", "")»'),
-            'title'   => «IF documentation !== null && documentation != ''»$this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
-            'image'   => '«IF image !== null && image != ''»«image».png«ENDIF»',
+            'title'   => «IF null !== documentation && documentation != ''»$this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
+            'image'   => '«IF null !== image && image != ''»«image».png«ENDIF»',
             'default' => «^default.displayBool»
         «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
     '''

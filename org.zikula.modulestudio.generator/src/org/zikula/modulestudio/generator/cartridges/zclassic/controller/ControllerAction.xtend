@@ -128,7 +128,7 @@ class ControllerAction {
     }
 
     def private actionDocMethodDocumentation(Action it) {
-        if (documentation !== null && documentation != '') {
+        if (null !== documentation && documentation != '') {
             ' * ' + documentation.replace('*/', '*')
         } else {
             ''
@@ -162,10 +162,10 @@ class ControllerAction {
                + ' * @param int     $pos          Current pager position.\n'
                + ' * @param int     $num          Amount of entries to display.\n'
             DisplayAction:
-                (if (refEntity !== null && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
+                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
             DeleteAction:
-                (if (refEntity !== null && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
+                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
                + ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n'
             default: ''

@@ -264,7 +264,7 @@ class TranslatableHelper {
             BooleanField: '''
                     «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         'name' => '«name»',
-                        'default' => «IF it.defaultValue !== null && it.defaultValue != ''»«(it.defaultValue == 'true').displayBool»«ELSE»false«ENDIF»
+                        'default' => «IF null !== it.defaultValue && it.defaultValue != ''»«(it.defaultValue == 'true').displayBool»«ELSE»false«ENDIF»
                     «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
             AbstractIntegerField: translatableFieldDefinitionNumeric
             DecimalField: translatableFieldDefinitionNumeric
@@ -275,12 +275,12 @@ class TranslatableHelper {
             AbstractDateField: '''
                     «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         'name' => '«name»',
-                        'default' => '«IF it.defaultValue !== null && it.defaultValue != ''»«it.defaultValue»«ENDIF»'
+                        'default' => '«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ENDIF»'
                     «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
             DerivedField: '''
                     «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         'name' => '«name»',
-                        'default' => $this->__('«IF it.defaultValue !== null && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
+                        'default' => $this->__('«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
                     «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
             CalculatedField: '''
                     «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»

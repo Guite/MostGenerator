@@ -55,7 +55,7 @@ class FileHelper {
         «IF targets('1.3.x')»
             * @package «name»
         «ENDIF»
-        * @author «author»«IF email !== null && email != ''» <«email»>«ENDIF».
+        * @author «author»«IF null !== email && email != ''» <«email»>«ENDIF».
         * @link «IF url != ''»«url»«ELSE»«msUrl»«ENDIF»«IF url != 'http://zikula.org'»
         * @link http://zikula.org«ENDIF»
     '''
@@ -97,7 +97,7 @@ class FileHelper {
          */
         public function set«name.formatForCodeCapital»(«IF useHint»«type» «ENDIF»$«name»«IF init != ''» = «init»«ENDIF»)
         {
-            «IF customImpl !== null && customImpl != ''»
+            «IF null !== customImpl && customImpl != ''»
                 «customImpl»
             «ELSE»
                 «setterMethodImpl(name, type)»

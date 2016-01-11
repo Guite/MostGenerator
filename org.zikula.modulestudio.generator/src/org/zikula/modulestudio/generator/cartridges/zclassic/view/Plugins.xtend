@@ -155,7 +155,7 @@ class Plugins {
                 «IF hasGeographical»
                     new \Twig_SimpleFilter('«appNameLower»_geoData', [$this, 'formatGeoData']),
                 «ENDIF»
-                «IF (generateIcsTemplates && !entities.filter[getStartDateField !== null && getEndDateField !== null].empty)»
+                «IF (generateIcsTemplates && !entities.filter[null !== startDateField && null !== endDateField].empty)»
                     new \Twig_SimpleFilter('«appNameLower»_icalText', [$this, 'formatIcalText']),
                 «ENDIF»
                 new \Twig_SimpleFilter('«appNameLower»_profileLink', [$this, 'profileLink'])
@@ -318,7 +318,7 @@ class Plugins {
         if (generateModerationPanel && needsApproval) {
             new ModerationObjects().generate(it, fsa)
         }
-        if (generateIcsTemplates && !entities.filter[getStartDateField !== null && getEndDateField !== null].empty) {
+        if (generateIcsTemplates && !entities.filter[null !== startDateField && null !== endDateField].empty) {
             new FormatIcalText().generate(it, fsa)
         }
     }

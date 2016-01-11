@@ -47,7 +47,7 @@ class Json {
         {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
         {{ «appName.formatForDB»_templateHeaders(contentType='application/json') }}[
         {% for «objName» in items %}
-            {% if loop.first != true %},{% endif %}
+            {% if not loop.first %},{% endif %}
             {{ «objName».toJson() }}
         {/foreach}
         ]

@@ -84,7 +84,7 @@ class Csv {
         "«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
 
     def private dispatch displayEntry(BooleanField it) '''
-        "«IF entity.application.targets('1.3.x')»{if !$«entity.name.formatForCode».«name.formatForCode»}0{else}1{/if}«ELSE»{% if «entity.name.formatForCode».«name.formatForCode» != true %}0{% else %}1{% endif %}«ENDIF»"'''
+        "«IF entity.application.targets('1.3.x')»{if !$«entity.name.formatForCode».«name.formatForCode»}0{else}1{/if}«ELSE»{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}«ENDIF»"'''
 
     def private displayRelatedEntry(JoinRelationship it, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
@@ -106,7 +106,7 @@ class Csv {
         «ELSE»
             {% if «relObjName»|default %}
                 {% for relatedItem in «relObjName» %}
-                {{ relatedItem.getTitleFromDisplayPattern() }}{% if loop.last != true %}, {% endif %}
+                {{ relatedItem.getTitleFromDisplayPattern() }}{% if not loop.last %}, {% endif %}
                 {% endfor %}
             {% endif %}
         «ENDIF»

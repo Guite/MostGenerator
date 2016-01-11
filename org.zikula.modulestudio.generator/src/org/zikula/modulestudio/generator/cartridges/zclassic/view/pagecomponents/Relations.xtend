@@ -119,13 +119,13 @@ class Relations {
         «ENDIF»
         «IF hasActions('display')»
             {% spaceless %}
-            {% if nolink != true %}
+            {% if not nolink %}
                 <a href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routeParams('item', true)») }}" title="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}">
             {% endif %}
         «ENDIF»
             {{ item.getTitleFromDisplayPattern() }}
         «IF hasActions('display')»
-            {% if nolink != true %}
+            {% if not nolink %}
                 </a>
                 <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routePkParams('item', true)»«appendSlug('item', true)», 'theme': 'Printer'}) }}" title="{{ __('Open quick view window') }}" class="fa fa-search-plus hidden"></a>
             {% endif %}
@@ -134,16 +134,16 @@ class Relations {
         «IF !many»</h4>
         «ENDIF»
         «IF hasActions('display')»
-            {% if nolink != true %}
-            <script type="text/javascript">
-            /* <![CDATA[ */
-                ( function($) {
-                    $(document).ready(function() {
-                        «app.vendorAndName»InitInlineWindow($('#«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display'), '{{ item.getTitleFromDisplayPattern()|e('js') }}');
-                    });
-                })(jQuery);
-            /* ]]> */
-            </script>
+            {% if not nolink %}
+                <script type="text/javascript">
+                /* <![CDATA[ */
+                    ( function($) {
+                        $(document).ready(function() {
+                            «app.vendorAndName»InitInlineWindow($('#«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display'), '{{ item.getTitleFromDisplayPattern()|e('js') }}');
+                        });
+                    })(jQuery);
+                /* ]]> */
+                </script>
             {% endif %}
         «ENDIF»
         «IF hasImageFieldsEntity»
@@ -222,7 +222,7 @@ class Relations {
 
         «IF otherEntity.hasActions('edit')»
             «IF !many»
-                {% if «relatedEntity.name.formatForCode».«relationAliasName» is not defined or «relatedEntity.name.formatForCode».«relationAliasName» == null %}
+                {% if «relatedEntity.name.formatForCode».«relationAliasName» is not defined or «relatedEntity.name.formatForCode».«relationAliasName» is null %}
             «ENDIF»
             {% set permLevel = 'ACCESS_«IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»' %}
             {% if routeArea == 'admin' %}

@@ -144,7 +144,7 @@ class Association {
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
              * @ORM\ManyToMany(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
-             «IF orderByReverse !== null && orderByReverse != ''»
+             «IF null !== orderByReverse && orderByReverse != ''»
               * @ORM\OrderBy({"«orderByReverse»" = "ASC"})
              «ENDIF»
             «IF !application.targets('1.3.x')»
@@ -210,8 +210,8 @@ class Association {
 
     def private dispatch outgoingMappingAdditions(JoinRelationship it) ''''''
     def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»'''
-    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy !== null && indexBy != ''», indexBy="«indexBy»"«ENDIF»)'''
-    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy !== null && indexBy != ''», indexBy="«indexBy»"«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && indexBy != ''», indexBy="«indexBy»"«ENDIF»)'''
+    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF null !== indexBy && indexBy != ''», indexBy="«indexBy»"«ENDIF»'''
 
     def private dispatch outgoing(OneToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -223,7 +223,7 @@ class Association {
           * @ORM\OneToMany(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
          «ENDIF»
         «joinDetails(true)»
-         «IF orderBy !== null && orderBy != ''»
+         «IF null !== orderBy && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
         «IF !application.targets('1.3.x')»
@@ -249,7 +249,7 @@ class Association {
          *
          * @ORM\ManyToMany(targetEntity="«/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
-         «IF orderBy !== null && orderBy != ''»
+         «IF null !== orderBy && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
         «IF !application.targets('1.3.x')»
@@ -400,7 +400,7 @@ class Association {
     '''
 
     def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
-        «IF !useTarget && indexBy !== null && indexBy != ''»
+        «IF !useTarget && null !== indexBy && indexBy != ''»
             /**
              * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
@@ -459,7 +459,7 @@ class Association {
         «addMethodImplDefault(useTarget, selfIsMany, name, nameSingle, type)»
     '''
     def private dispatch addMethodImpl(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
-        «IF !useTarget && indexBy !== null && indexBy != ''»
+        «IF !useTarget && null !== indexBy && indexBy != ''»
             «addMethodSignature(useTarget, name, nameSingle, type)»
             {
                 $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
@@ -491,7 +491,7 @@ class Association {
         «ENDIF»
     '''
     def private dispatch addMethodImpl(ManyToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle, String type) '''
-        «IF !useTarget && indexBy !== null && indexBy != ''»
+        «IF !useTarget && null !== indexBy && indexBy != ''»
             «addMethodSignature(useTarget, name, nameSingle, type)»
             {
                 $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;

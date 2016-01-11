@@ -94,18 +94,18 @@ class Validation {
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DatetimeField it, String idSuffix) '''
-        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
+        «IF null !== entity.startDateField && null !== entity.endDateField»
             {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DateField it, String idSuffix) '''
-        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
+        «IF null !== entity.startDateField && null !== entity.endDateField»
             {«entity.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
         «ENDIF»
     '''
 
-    def fieldValidationCssClass(DerivedField it) '''«IF !isLegacyApp» cssClass='«ENDIF»«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
-    def fieldValidationCssClassOptional(UploadField it)'''«IF !isLegacyApp» cssClass='«ENDIF»«IF unique»validate-unique«ENDIF»«IF cssClass !== null && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
+    def fieldValidationCssClass(DerivedField it) '''«IF !isLegacyApp» cssClass='«ENDIF»«IF isLegacyApp && mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
+    def fieldValidationCssClassOptional(UploadField it)'''«IF !isLegacyApp» cssClass='«ENDIF»«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
             AbstractIntegerField: ' validate-digits'
@@ -129,8 +129,8 @@ class Validation {
 
     def private fieldValidationCssClassAdditionsDefault(AbstractDateField it) '''«IF it.past» validate-«fieldTypeAsString.toLowerCase»-past«ELSEIF it.future» validate-«fieldTypeAsString.toLowerCase»-future«ENDIF»'''
 
-    def private dispatch fieldValidationCssClassDateRange(DatetimeField it) '''«IF entity.getStartDateField !== null && entity.getEndDateField !== null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
-    def private dispatch fieldValidationCssClassDateRange(DateField it) '''«IF entity.getStartDateField !== null && entity.getEndDateField !== null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
+    def private dispatch fieldValidationCssClassDateRange(DatetimeField it) '''«IF null !== entity.startDateField && null !== entity.endDateField» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
+    def private dispatch fieldValidationCssClassDateRange(DateField it) '''«IF null !== entity.startDateField && null !== entity.endDateField» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
 
     def private isLegacyApp(DerivedField it) {
         entity.application.targets('1.3.x')

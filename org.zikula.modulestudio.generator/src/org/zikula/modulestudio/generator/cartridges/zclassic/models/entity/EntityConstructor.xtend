@@ -79,22 +79,22 @@ class EntityConstructor {
             «ENDFOR»
         «ENDIF»
         «val mandatoryFields = getDerivedFields.filter[mandatory && !primaryKey]»
-        «FOR mandatoryField : mandatoryFields.filter(IntegerField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
+        «FOR mandatoryField : mandatoryFields.filter(IntegerField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(UserField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
+        «FOR mandatoryField : mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uid');
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
+        «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(AbstractDateField).filter[defaultValue === null || defaultValue == '' || defaultValue.length == 0]»
+        «FOR mandatoryField : mandatoryFields.filter(AbstractDateField).filter[null === defaultValue || defaultValue == '' || defaultValue.length == 0]»
             $this->«mandatoryField.name.formatForCode» = «mandatoryField.defaultAssignment»;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(FloatField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
+        «FOR mandatoryField : mandatoryFields.filter(FloatField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «IF !getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)].empty»
+        «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty»
 
             $serviceManager = ServiceUtil::getManager();
             «IF application.targets('1.3.x')»
@@ -102,7 +102,7 @@ class EntityConstructor {
             «ELSE»
                 $listHelper = $serviceManager->get('«application.appName.formatForDB».listentries_helper');
             «ENDIF»
-            «FOR listField : getListFieldsEntity.filter[name != 'workflowState' && (defaultValue === null || defaultValue.length == 0)]»
+            «FOR listField : getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)]»
 
                 $items = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $listEntries = $listHelper->get«listField.name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();

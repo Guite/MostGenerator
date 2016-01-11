@@ -137,7 +137,7 @@ class Xml {
         «IF entity.application.targets('1.3.x')»
             <«name.formatForCode»>{if !$«entity.name.formatForCode».«name.formatForCode»}0{else}1{/if}</«name.formatForCode»>
         «ELSE»
-            <«name.formatForCode»>{% if «entity.name.formatForCode».«name.formatForCode» != true %}0{% else %}1{% endif %}</«name.formatForCode»>
+            <«name.formatForCode»>{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}</«name.formatForCode»>
         «ENDIF»
     '''
 

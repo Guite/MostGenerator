@@ -505,7 +505,7 @@ class ModelExtensions {
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(DataObject it) {
-        fields.filter(IntegerField).filter[aggregateFor !== null && aggregateFor != '']
+        fields.filter(IntegerField).filter[null !== aggregateFor && aggregateFor != '']
     }
 
     /**
@@ -513,7 +513,7 @@ class ModelExtensions {
      * that is either the subFolderName attribute (if set) or the name otherwise.
      */
     def subFolderPathSegment(UploadField it) {
-        (if (subFolderName !== null && subFolderName != '') subFolderName else name).formatForDB
+        (if (null !== subFolderName && subFolderName != '') subFolderName else name).formatForDB
     }
 
     /**

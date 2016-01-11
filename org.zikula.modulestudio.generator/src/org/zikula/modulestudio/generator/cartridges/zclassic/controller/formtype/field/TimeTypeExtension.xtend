@@ -23,7 +23,7 @@ class TimeTypeExtension {
 
         use Symfony\Component\Form\AbstractTypeExtension;
         use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\Form\FormView\FormView;
+        use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use ZI18n;
         use Zikula_View;
@@ -82,8 +82,6 @@ class TimeTypeExtension {
              */
             public function configureOptions(OptionsResolver $resolver)
             {
-                parent::configureOptions($resolver);
-
                 $i18n = ZI18n::getInstance();
                 $resolver
                     ->setOptional(['use24Hour'])

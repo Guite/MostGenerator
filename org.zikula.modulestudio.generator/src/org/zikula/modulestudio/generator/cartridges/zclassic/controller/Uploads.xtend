@@ -85,6 +85,8 @@ class Uploads {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Base;
 
+            use Symfony\Component\Filesystem\Filesystem;
+            use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             use DataUtil;
             use FileUtil;
             use ModUtil;
@@ -190,9 +192,16 @@ class Uploads {
             }
 
             // retrieve the final file name
-            $fileName = $fileData[$fieldName]['name'];
+            $fileName = $fileData[$fieldName]«IF targets('1.3.x')»['name']«ELSE»->getClientOriginalName()«ENDIF»;
             $fileNameParts = explode('.', $fileName);
-            $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+            «IF targets('1.3.x')»
+                $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+            «ELSE»
+                $extension = null !== $file->guessExtension() ? $file->guessExtension() : $file->guessClientExtension();
+                if (null === $extension) {
+                    $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+                }
+            «ENDIF»
             $extension = str_replace('jpeg', 'jpg', $extension);
             $fileNameParts[count($fileNameParts) - 1] = $extension;
             $fileName = implode('.', $fileNameParts);
@@ -221,16 +230,22 @@ class Uploads {
             }
             $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
-            if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
-                «IF targets('1.3.x')»
-                    return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
-                «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! Could not move your file to the destination folder.', $dom));
-                    $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName]);
+            «IF targets('1.3.x')»
+                if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
+                    «IF targets('1.3.x')»
+                        return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
+                    «ELSE»
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! Could not move your file to the destination folder.', $dom));
+                        $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName]);
 
-                    return false;
-                «ENDIF»
-            }
+                        return false;
+                    «ENDIF»
+                }
+            «ELSE»
+                $targetFile = $fileData[$fieldName]->move($basePath, $fileName);
+
+                «doFileValidation('$basePath . $fileName')»
+            «ENDIF»
 
             // collect data to return
             $result['fileName'] = $fileName;
@@ -265,7 +280,7 @@ class Uploads {
             «ENDIF»
 
             // check if a file has been uploaded properly without errors
-            if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
+            if (!is_array($file) || (is_array($file) && $file['error'] != '0')) {
                 if (is_array($file)) {
                     return $this->handleError($file);
                 }
@@ -280,9 +295,17 @@ class Uploads {
             }
 
             // extract file extension
-            $fileName = $file['name'];
-            $fileNameParts = explode('.', $fileName);
-            $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+            $fileName = $file«IF targets('1.3.x')»['name']«ELSE»->getClientOriginalName()«ENDIF»;
+            «IF targets('1.3.x')»
+                $fileNameParts = explode('.', $fileName);
+                $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+            «ELSE»
+                $extension = null !== $file->guessExtension() ? $file->guessExtension() : $file->guessClientExtension();
+                if (null === $extension) {
+                    $fileNameParts = explode('.', $fileName);
+                    $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+                }
+            «ENDIF»
             $extension = str_replace('jpeg', 'jpg', $extension);
 
             // validate extension
@@ -297,53 +320,74 @@ class Uploads {
                     return false;
                 «ENDIF»
             }
+            «IF targets('1.3.x')»
 
-            // validate file size
-            $maxSize = $this->allowedFileSizes[$objectType][$fieldName];
-            if ($maxSize > 0) {
-                $fileSize = filesize($file['tmp_name']);
-                if ($fileSize > $maxSize) {
-                    $maxSizeKB = $maxSize / 1024;
-                    if ($maxSizeKB < 1024) {
-                        $maxSizeKB = DataUtil::formatNumber($maxSizeKB); 
-                        «IF targets('1.3.x')»
-                            return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
-                        «ELSE»
-                            $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB], $dom));
-                            $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeKB]);
-                            return false;
-                        «ENDIF»
-                    }
-                    $maxSizeMB = $maxSizeKB / 1024;
-                    $maxSizeMB = DataUtil::formatNumber($maxSizeMB); 
-                    «IF targets('1.3.x')»
-                        return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
-                    «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB], $dom));
-                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeMB]);
-
-                        return false;
-                    «ENDIF»
-                }
-            }
-
-            // validate image file
-            $isImage = in_array($extension, $this->imageFileTypes);
-            if ($isImage) {
-                $imgInfo = getimagesize($file['tmp_name']);
-                if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
-                    «IF targets('1.3.x')»
-                        return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
-                    «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! This file type seems not to be a valid image.', $dom));
-                        $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
-
-                        return false;
-                    «ENDIF»
-                }
-            }
+                «doFileValidation('$file[\'tmp_name\']')»
+            «ENDIF»
 
             return true;
+        }
+    '''
+
+    def private doFileValidation(Application it, String fileVar) '''
+        // validate file size
+        $maxSize = $this->allowedFileSizes[$objectType][$fieldName];
+        if ($maxSize > 0) {
+            $fileSize = filesize(«fileVar»);
+            if ($fileSize > $maxSize) {
+                $maxSizeKB = $maxSize / 1024;
+                if ($maxSizeKB < 1024) {
+                    $maxSizeKB = DataUtil::formatNumber($maxSizeKB); 
+                    «IF targets('1.3.x')»
+                        return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                    «ELSE»
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB], $dom));
+                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeKB]);
+
+                        $fs = new Filesystem();
+                        try {
+                            $fs->remove(array(«fileVar»));
+                        } catch (IOExceptionInterface $e) {
+                            $logger->error('{app}: The file could not be properly removed from the file system.', []);
+                        }
+
+                        return false;
+                    «ENDIF»
+                }
+                $maxSizeMB = $maxSizeKB / 1024;
+                $maxSizeMB = DataUtil::formatNumber($maxSizeMB); 
+                «IF targets('1.3.x')»
+                    return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                «ELSE»
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB], $dom));
+                    $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeMB]);
+
+                    $fs = new Filesystem();
+                    try {
+                        $fs->remove(array(«fileVar»));
+                    } catch (IOExceptionInterface $e) {
+                        $logger->error('{app}: The file could not be properly removed from the file system.', []);
+                    }
+
+                    return false;
+                «ENDIF»
+            }
+        }
+
+        // validate image file
+        $isImage = in_array($extension, $this->imageFileTypes);
+        if ($isImage) {
+            $imgInfo = getimagesize(«fileVar»);
+            if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
+                «IF targets('1.3.x')»
+                    return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
+                «ELSE»
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, __('Error! This file type seems not to be a valid image.', $dom));
+                    $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
+
+                    return false;
+                «ENDIF»
+            }
         }
     '''
 
@@ -366,7 +410,7 @@ class Uploads {
             $extensionarr = explode('.', $fileName);
             $meta['extension'] = strtolower($extensionarr[count($extensionarr) - 1]);
             $meta['size'] = filesize($filePath);
-            $meta['isImage'] = (in_array($meta['extension'], $this->imageFileTypes) ? true : false);
+            $meta['isImage'] = in_array($meta['extension'], $this->imageFileTypes ? true : false);
 
             if (!$meta['isImage']) {
                 return $meta;

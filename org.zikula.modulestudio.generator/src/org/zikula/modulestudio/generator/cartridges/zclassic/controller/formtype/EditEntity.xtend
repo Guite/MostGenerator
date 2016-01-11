@@ -16,6 +16,7 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
+import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
@@ -303,7 +304,7 @@ if attributable:
         «ENDIF»
         $builder->add('«name.formatForCode»«IF idSuffix != ''» . «idSuffix»«ENDIF»', '«formType»Type', [
             'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
-            «IF documentation !== null && documentation != ''»
+            «IF null !== documentation && documentation != ''»
                 'label_attr' => [
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
                     'title' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»')
@@ -320,7 +321,7 @@ if attributable:
                 «ENDIF»
                 'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')
             ],
-            «IF documentation !== null && documentation != ''»
+            «IF null !== documentation && documentation != ''»
                 'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»'),
             «ENDIF»«additionalOptions»
         ]);
@@ -422,7 +423,7 @@ if attributable:
             'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
         «ENDIF»
         'max_length' => «length»,
-        «IF regexp !== null && regexp != ''»
+        «IF null !== regexp && regexp != ''»
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
@@ -434,7 +435,7 @@ if attributable:
     def private dispatch additionalOptions(TextField it) '''
         'required' => «mandatory.displayBool»,
         'max_length' => «length»,
-        «IF regexp !== null && regexp != ''»
+        «IF null !== regexp && regexp != ''»
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
@@ -455,61 +456,16 @@ if attributable:
         'default_protocol' => 'http'*/»
     '''
 
-/* TODO */
-
-/* TODO help can be an array now * /
-
-TODO form type extension
-
-    def private dispatch formField(UploadField it, String groupSuffix, String idSuffix) '''
-        «IF mandatory»
-            {if $mode eq 'create'}
-                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it, true)»}
-            {else}
-                {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassOptional(it, true)»}
-                <span class="help-block"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">{gt text='Reset to empty value'}</a></span>
-            {/if}
-        «ELSE»
-            {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassOptional(it, true)»}
-            <span class="help-block"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">{gt text='Reset to empty value'}</a></span>
-        «ENDIF»
-
-            <span class="help-block">{{ __('Allowed file extensions:') }} <span id="«name.formatForCode»FileExtensions">«allowedExtensions»</span></span>
-        «IF allowedFileSize > 0»
-            <span class="help-block">{{ __('Allowed file size:') }} {{ '«allowedFileSize»'|«entity.application.appName.formatForDB»_fileSize('', false, false) }}</span>
-        «ENDIF»
-        «decideWhetherToShowCurrentFile»
+    def private dispatch formType(UploadField it) '''«nsSymfonyFormType»File'''
+    def private dispatch additionalOptions(UploadField it) '''
+        'required' => «mandatory.displayBool»«IF mandatory» && $options['mode'] == 'create'«ENDIF»,
+        'file_meta' => 'get«name.formatForCodeCapital»Meta',
+        'file_path' => 'get«name.formatForCodeCapital»FullPath',
+        'file_url' => 'get«name.formatForCodeCapital»FullPathUrl',
+        'allowed_extensions' => '«allowedExtensions»',
+        'allowed_size' => «allowedFileSize»
     '''
 
-    def private decideWhetherToShowCurrentFile(UploadField it) '''
-        «val fieldName = entity.name.formatForDB + '.' + name.formatForCode»
-        {% if mode != 'create' and «fieldName» is not empty %}
-            «showCurrentFile»
-        {% endif %}
-    '''
-
-    def private showCurrentFile(UploadField it) '''
-        «val appNameSmall = entity.application.appName.formatForDB»
-        «val objName = entity.name.formatForDB»
-        «val realName = objName + '.' + name.formatForCode»
-        <span class="help-block">
-            {{ __('Current file') }}:
-            <a href="{{ «realName»FullPathUrl }}" title="{{ formattedEntityTitle|e('html_attr') }}"{% if «realName»Meta.isImage %} class="lightbox"{% endif %}>
-            {% if «realName»Meta.isImage %}
-                {{ «entity.application.appName.formatForDB»_thumb({ image: «realName»FullPath, objectid: '«entity.name.formatForCode»«FOR pkField : entity.getPrimaryKeyFields»-' ~ «objName».«pkField.name.formatForCode» ~ '«ENDFOR»', preset: «entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital», tag: true, img_alt: formattedEntityTitle, img_class: 'img-thumbnail' }) }}
-            {% else %}
-                {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName»FullPath, false, false) }})
-            {% endif %}
-            </a>
-        </span>
-        «IF !mandatory»
-            <span class="help-block">
-                {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}
-                {formlabel for='«name.formatForCode»DeleteFile' __text='Delete existing file'}
-            </span>
-        «ENDIF»
-    '''
-*/
     def private fetchListEntries(ListField it) '''
         $listEntries = $this->listHelper->getEntries('«entity.name.formatForCode»', '«name.formatForCode»');
         $choices = [];
@@ -558,20 +514,15 @@ TODO form type extension
     def private dispatch additionalOptions(AbstractDateField it) '''
         'empty_data' => «defaultData»,
         'required' => «mandatory.displayBool»,
-        'help' => [
-            «IF past»
-                $this->translator->trans('Note: this value must be in the past.', [], '«app.appName.formatForDB»'),
-            «ELSEIF future»
-                $this->translator->trans('Note: this value must be in the future.', [], '«app.appName.formatForDB»'),
-            «ENDIF»
-            «IF !mandatory && nullable»
-                '<a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">' . $this->translator->trans('Reset to empty value', [], '«app.appName.formatForDB»') . '</a>'
-            «ENDIF»
-        ],
+        «IF past»
+            'help' => $this->translator->trans('Note: this value must be in the past.', [], '«app.appName.formatForDB»'),
+        «ELSEIF future»
+            'help' => $this->translator->trans('Note: this value must be in the future.', [], '«app.appName.formatForDB»'),
+        «ENDIF»
         'widget' => 'single_text'
     '''
-    def private dispatch defaultData(DatetimeField it) '''«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i')«ELSE»''«ENDIF»'''
-    def private dispatch defaultData(DateField it) '''«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d')«ELSE»''«ENDIF»'''
+    def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i')«ELSE»''«ENDIF»'''
+    def private dispatch defaultData(DateField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d')«ELSE»''«ENDIF»'''
     def private dispatch additionalOptions(TimeField it) '''
         'empty_data' => '«defaultValue»',
         'required' => «mandatory.displayBool»,

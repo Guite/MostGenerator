@@ -177,7 +177,7 @@ class Validation {
                         data: params,
                         async: false
                     }).done(function(res) {
-                        if (res.data == null || res.data.isDuplicate === true) {
+                        if (null == res.data || res.data.isDuplicate === true) {
                             result = false;
                         }
                     })«/*.fail(function(jqXHR, textStatus) {
@@ -298,7 +298,7 @@ class Validation {
         «FOR entity : entities»
             «val startDateField = entity.getStartDateField»
             «val endDateField = entity.getEndDateField»
-            «IF startDateField !== null && endDateField !== null»
+            «IF null !== startDateField && null !== endDateField»
 
                 function «vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(val)
                 {
@@ -406,9 +406,7 @@ class Validation {
                         «ENDIF»
                     «ENDIF»
                     «FOR entity : entities»
-                        «val startDateField = entity.getStartDateField»
-                        «val endDateField = entity.getEndDateField»
-                        «IF startDateField !== null && endDateField !== null»
+                        «IF null !== entity.startDateField && null !== entity.endDateField»
                             ['validate-daterange-«entity.name.formatForDB»', Zikula.__('The start must be before the end.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                                 return «vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(val);
                             }],
@@ -507,9 +505,7 @@ class Validation {
                     «ENDIF»
                 «ENDIF»
                 «FOR entity : entities»
-                    «val startDateField = entity.getStartDateField»
-                    «val endDateField = entity.getEndDateField»
-                    «IF startDateField !== null && endDateField !== null»
+                    «IF null !== entity.startDateField && null !== entity.endDateField»
                         jQuery('.validate-daterange-«entity.name.formatForDB»').each( function() {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(Zikula.__('The start must be before the end.', '«appName.formatForDB»_js'));

@@ -3,6 +3,8 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import de.guite.modulestudio.metamodel.AdminController
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Controller
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -184,6 +186,55 @@ class Layout {
                 {% endif %}
             {% endif %}
         {% endblock %}
+        «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
+
+            {% block date_widget %}
+                {{ parent() }}
+                {% if not mandatory %}
+                    <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                {% endif %}
+            {% endblock %}
+        «ENDIF»
+        «IF !getAllEntities.filter[e|!e.fields.filter(DatetimeField).empty].empty»
+
+            {% block datetime_widget %}
+                {{ parent() }}
+                {% if not mandatory %}
+                    <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                {% endif %}
+            {% endblock %}
+        «ENDIF»
+        «IF hasUploads»
+
+            {% block file_widget %}
+                {% spaceless %}
+
+                {{ parent() }}
+                {% if not mandatory %}
+                    <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                {% endif %}
+                <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
+                {% if allowed_size is not null and allowed_size > 0 %}
+                    <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size|«appName.formatForDB»_fileSize('', false, false) }}</span>
+                {% endif %}
+                {% if file_path is not null %}
+                    <span class="help-block">
+                        {{ __('Current file') }}:
+                        <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="lightbox"{% endif %}>
+                        {% if file_meta.isImage %}
+                            {{ «appName.formatForDB»_thumb({ image: file_path, objectid: object_type ~ object_id, preset: template_from_string("{{ object_type }}ThumbPreset{{ id|capitalize }}"), tag: true, img_alt: formattedEntityTitle, img_class: 'img-thumbnail' }) }}
+                        {% else %}
+                            {{ __('Download') }} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
+                        {% endif %}
+                        </a>
+                    </span>
+                {% if not mandatory %}
+                    {{ form_row(attribute(form, id ~ 'DeleteFile')) }}
+                {% endif %}
+
+                {% endspaceless %}
+            {% endblock %}
+        «ENDIF»
         «IF hasUserFields»
 
             {% block «appName.formatForDB»_field_user_widget %}
@@ -196,7 +247,7 @@ class Layout {
                     <i class="fa fa-refresh fa-spin hidden" id="{{ id }}Indicator"></i>
                     <span id="{{ id }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
                 </div>
-                {% if mode != 'create' and value and inlineUsage != true %}
+                {% if value and not inlineUsage %}
                     <span class="help-block avatar">
                         {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
                     </span>

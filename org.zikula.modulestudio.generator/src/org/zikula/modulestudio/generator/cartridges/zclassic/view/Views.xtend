@@ -126,7 +126,7 @@ class Views {
             }
         }
         if (entity.hasActions('display')) {
-            if (generateIcsTemplates && entity.getStartDateField !== null && entity.getEndDateField !== null) {
+            if (generateIcsTemplates && null !== entity.startDateField && null !== entity.endDateField) {
                 new Ics().generate(entity, appName, fsa)
             }
         }

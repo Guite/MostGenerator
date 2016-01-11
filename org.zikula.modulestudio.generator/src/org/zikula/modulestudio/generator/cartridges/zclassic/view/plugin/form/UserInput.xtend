@@ -93,10 +93,10 @@ class UserInput {
                 $result = '';
 
                 // start code from TextInput base class
-                $titleHtml = ($this->toolTip != null ? ' title="' . $view->translateForDisplay($this->toolTip) . '"' : '');
-                $readOnlyHtml = ($this->readOnly ? ' readonly="readonly" tabindex="-1"' : '');
-                $sizeHtml = ($this->size > 0 ? " size=\"{$this->size}\"" : '');
-                $maxLengthHtml = ($this->maxLength > 0 ? " maxlength=\"{$this->maxLength}\"" : '');
+                $titleHtml = null !== $this->toolTip ? ' title="' . $view->translateForDisplay($this->toolTip) . '"' : '';
+                $readOnlyHtml = $this->readOnly ? ' readonly="readonly" tabindex="-1"' : '';
+                $sizeHtml = $this->size > 0 ? " size=\"{$this->size}\"" : '';
+                $maxLengthHtml = $this->maxLength > 0 ? " maxlength=\"{$this->maxLength}\"" : '';
                 $class = $this->getStyleClass();
 
                 $attributes = $this->renderAttributes($view);

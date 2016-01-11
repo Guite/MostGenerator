@@ -138,7 +138,7 @@ class ContentTypeSingle {
          */
         public function display()
         {
-            if ($this->id != null && !empty($this->displayMode)) {
+            if (null !== $this->id && !empty($this->displayMode)) {
                 return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
 
@@ -150,7 +150,7 @@ class ContentTypeSingle {
          */
         public function displayEditing()
         {
-            if ($this->id != null && !empty($this->displayMode)) {
+            if (null !== $this->id && !empty($this->displayMode)) {
                 return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
             $dom = ZLanguage::getModuleDomain('«appName»');

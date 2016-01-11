@@ -147,7 +147,7 @@ class Rss {
                 «ENDIF»
                 «IF categorisable»
 
-                    <category><![CDATA[{{ __('Categories') }}: {% for propName, catMapping in «objName».categories %}{{ catMapping.category.display_name[lang] }}{% if loop.last != true %}, {% endif %}{% endfor %}]]></category>
+                    <category><![CDATA[{{ __('Categories') }}: {% for propName, catMapping in «objName».categories %}{{ catMapping.category.display_name[lang] }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
                 «ENDIF»
 
                 «description(objName)»

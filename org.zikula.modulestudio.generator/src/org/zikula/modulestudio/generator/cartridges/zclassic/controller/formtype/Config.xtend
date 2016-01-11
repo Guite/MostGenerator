@@ -136,7 +136,7 @@ class Config {
     def private definition(Variable it) '''
         ->add('«name.formatForCode»', '«fieldType»Type', [
             'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
-            «IF documentation !== null && documentation != ''»
+            «IF null !== documentation && documentation != ''»
                 'label_attr' => [
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
                     'title' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»')
@@ -148,7 +148,7 @@ class Config {
             'attr' => [
                 'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')
             ],
-            «IF documentation !== null && documentation != ''»
+            «IF null !== documentation && documentation != ''»
                 'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»'),
             «ENDIF»«additionalOptions»
         ])
