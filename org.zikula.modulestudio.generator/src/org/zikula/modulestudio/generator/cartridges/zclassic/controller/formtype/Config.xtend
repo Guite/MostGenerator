@@ -47,7 +47,7 @@ class Config {
         «IF hasUserGroupSelectors»
             use ModUtil;
         «ENDIF»
-        use Symfony\Component\Form\AbstractType as SymfonyAbstractType;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Translation\TranslatorInterface;
         use Zikula\ExtensionsModule\Api\VariableApi;
@@ -55,7 +55,7 @@ class Config {
         /**
          * Configuration form type base class.
          */
-        class AppSettingsType extends SymfonyAbstractType
+        class AppSettingsType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -134,7 +134,7 @@ class Config {
     '''
 
     def private definition(Variable it) '''
-        ->add('«name.formatForCode»', '«nsSymfonyFormType»«fieldType»Type', [
+        ->add('«name.formatForCode»', '«fieldType»Type', [
             'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
             «IF documentation !== null && documentation != ''»
                 'label_attr' => [
@@ -154,13 +154,13 @@ class Config {
         ])
     '''
 
-    def private dispatch fieldType(Variable it) '''Text'''
+    def private dispatch fieldType(Variable it) '''«nsSymfonyFormType»Text'''
     def private dispatch titleAttribute(Variable it) '''Enter the «name.formatForDisplay».'''
     def private dispatch additionalOptions(Variable it) '''
         'max_length' => 255
     '''
 
-    def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Entity«ELSE»Integer«ENDIF»'''
+    def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
     def private dispatch additionalOptions(IntVar it) '''
         'max_length' => 255,
@@ -173,18 +173,18 @@ class Config {
         «ENDIF»
     '''
 
-    def private dispatch fieldType(TextVar it) '''Text«IF multiline»area«ENDIF»'''
+    def private dispatch fieldType(TextVar it) '''«nsSymfonyFormType»Text«IF multiline»area«ENDIF»'''
     def private dispatch additionalOptions(TextVar it) '''
         «IF maxLength > 0 || !multiline»
             'max_length' => «IF maxLength > 0»«maxLength»«ELSEIF !multiline»255«ENDIF»
         «ENDIF»
     '''
 
-    def private dispatch fieldType(BoolVar it) '''Checkbox'''
+    def private dispatch fieldType(BoolVar it) '''«nsSymfonyFormType»Checkbox'''
     def private dispatch titleAttribute(BoolVar it) '''The «name.formatForDisplay» option.'''
     def private dispatch additionalOptions(BoolVar it) ''''''
 
-    def private dispatch fieldType(ListVar it) '''Choice'''
+    def private dispatch fieldType(ListVar it) '''«nsSymfonyFormType»Choice'''
     def private dispatch titleAttribute(ListVar it) '''Choose the «name.formatForDisplay».'''
     def private dispatch additionalOptions(ListVar it) '''
         'choices' => [

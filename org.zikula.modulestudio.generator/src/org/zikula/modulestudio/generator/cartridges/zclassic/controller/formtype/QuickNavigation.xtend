@@ -51,7 +51,7 @@ class QuickNavigation {
     def private quickNavTypeBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\QuickNavigation\Base;
 
-        use Symfony\Component\Form\AbstractType as SymfonyAbstractType;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\Translation\TranslatorInterface;
@@ -62,7 +62,7 @@ class QuickNavigation {
         /**
          * «name.formatForDisplayCapital» quick navigation form type base class.
          */
-        class «name.formatForCodeCapital»QuickNavType extends SymfonyAbstractType
+        class «name.formatForCodeCapital»QuickNavType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -90,7 +90,7 @@ class QuickNavigation {
                 «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance.
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, RequestStack $requestStack«IF hasListFieldsEntity»ListEntriesHelper $listHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator, RequestStack $requestStack«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
             {
                 $this->translator = $translator;
                 $this->requestStack = $requestStack;
@@ -496,7 +496,7 @@ class QuickNavigation {
 
     def private dispatch fieldImpl(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        $builder->add('«sourceAliasName»', '«nsSymfonyFormType»EntityType', [
+        $builder->add('«sourceAliasName»', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', [
             'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
             'class' => '«source.entityClassName('', false)»',
             'choice_label' => 'getTitleFromDisplayPattern',

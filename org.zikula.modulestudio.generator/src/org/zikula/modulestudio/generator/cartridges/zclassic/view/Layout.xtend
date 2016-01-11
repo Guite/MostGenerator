@@ -184,6 +184,28 @@ class Layout {
                 {% endif %}
             {% endif %}
         {% endblock %}
+        «IF hasUserFields»
+
+            {% block «appName.formatForDB»_field_user_widget %}
+                {{ block('hidden_widget') }}
+                <div id="{{ id }}LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user hidden">
+                    <i class="fa fa-search" title="{{ __('Search user') }}"></i>{% if required %}<span class="required">*</span>{% endif %}
+                    <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
+                    <input type="hidden" id="{{ id }}" name="{{ id }}" {{ block('widget_attributes') }} value="{{ value }}" />
+                    <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" {{ block('widget_attributes') }} value="{% if value > 0 %}{{ «appName.formatForDB»_userVar('uname', value) }}{% endif %}" />
+                    <i class="fa fa-refresh fa-spin hidden" id="{{ id }}Indicator"></i>
+                    <span id="{{ id }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
+                </div>
+                {% if mode != 'create' and value and inlineUsage != true %}
+                    <span class="help-block avatar">
+                        {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
+                    </span>
+                    {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
+                        <span class="help-block"><a href="{{ path('zikulausersmodule_admin_modify', { 'userid': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
+                    {% endif %}
+                {% endif %}
+            {% endblock %}
+        «ENDIF»
     '''
 
     // 1.3.x only

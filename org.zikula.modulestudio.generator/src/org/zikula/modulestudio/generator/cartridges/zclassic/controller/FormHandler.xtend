@@ -1,8 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
+import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.ConfigLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
@@ -12,6 +14,12 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EntityMetaData
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ColourType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.DateTypeExtension
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TimeTypeExtension
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UserType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -55,6 +63,24 @@ class FormHandler {
                 }
                 if (hasMetaDataEntities) {
                     new EntityMetaData().generate(it, fsa)
+                }
+                if (hasColourFields) {
+                    new ColourType().generate(it, fsa)
+                }
+                if (hasGeographical) {
+                    new GeoType().generate(it, fsa)
+                }
+                if (!getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty) {
+                    new DateTypeExtension().generate(it, fsa)
+                }
+                if (!getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty) {
+                    new TimeTypeExtension().generate(it, fsa)
+                }
+                if (hasTrees) {
+                    new EntityTreeType().generate(it, fsa)
+                }
+                if (hasUserFields) {
+                    new UserType().generate(it, fsa)
                 }
             }
         }
@@ -745,7 +771,7 @@ class FormHandler {
         public function handleCommand(Zikula_Form_View $view, &$args)
         {
             $action = $args['commandName'];
-            $isRegularAction = !in_array($action, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'delete', 'cancel'«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+            $isRegularAction = !in_array($action, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'delete'«IF targets('1.3.x')», 'cancel')«ELSE», 'reset', 'cancel']«ENDIF»);
 
             if ($isRegularAction) {
                 // do forms validation including checking all validators on the page to validate their input
@@ -754,7 +780,7 @@ class FormHandler {
                 }
             }
 
-            if ($action != 'cancel') {
+            if («IF targets('1.3.x')»$action != 'cancel'«ELSE»!in_array($action, ['reset', 'cancel'])«ENDIF») {
                 $otherFormData = $this->fetchInputData($view, $args);
                 if ($otherFormData === false) {
                     return false;
@@ -765,7 +791,7 @@ class FormHandler {
             $entity = $this->entityRef;
             «IF hasHookSubscribers»
 
-                if ($entity->supportsHookSubscribers() && $action != 'cancel') {
+                if ($entity->supportsHookSubscribers() && «IF targets('1.3.x')»$action != 'cancel'«ELSE»!in_array($action, ['reset', 'cancel'])«ENDIF») {
                     «IF targets('1.3.x')»
                         $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
                     «ELSE»
@@ -786,7 +812,7 @@ class FormHandler {
                 }
             «ENDIF»
 
-            if ($action != 'cancel') {
+            if («IF targets('1.3.x')»$action != 'cancel'«ELSE»!in_array($action, ['reset', 'cancel'])«ENDIF») {
                 $success = $this->applyAction($args);
                 if (!$success) {
                     // the workflow operation failed
@@ -1017,7 +1043,7 @@ class FormHandler {
 
             «IF hasUserFields || hasUploads || hasListFields || (hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
 
-                if ($args['commandName'] != 'cancel') {
+                if («IF targets('1.3.x')»$args['commandName'] != 'cancel'«ELSE»!in_array($args['commandName, ['reset', 'cancel'])«ENDIF») {
                     «IF hasUserFields»
                         if (count($this->userFields) > 0) {
                             foreach ($this->userFields as $userField => $isMandatory) {

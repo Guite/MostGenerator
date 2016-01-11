@@ -16,8 +16,9 @@ class TreeSelector {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!hasTrees) {
+        if (!hasTrees || !targets('1.3.x')) {
             return
         }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/TreeSelector.php',
@@ -29,27 +30,13 @@ class TreeSelector {
     }
 
     def private treeSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-            use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
-
-            use ModUtil;
-            use ServiceUtil;
-            use Zikula_Form_View;
-
-        «ENDIF»
         /**
          * Tree selector.
          *
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
-        «ELSE»
-        class TreeSelector extends BaseAbstractObjectSelector
-        «ENDIF»
         {
             /**
              * Root node id (when using multiple roots).
@@ -106,13 +93,9 @@ class TreeSelector {
 
                 parent::create($view, $params);
 
-                «IF targets('1.3.x')»
-                    $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
-                «ELSE»
-                    $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($this->objectType) . 'Entity';
-                «ENDIF»
+                $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+                $entityManager = $serviceManager->getService('doctrine.entitymanager');
                 $this->repository = $entityManager->getRepository($entityClass);
             }
 
@@ -133,13 +116,13 @@ class TreeSelector {
              */
             protected function loadItems(&$params)
             {
-                $apiArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                $apiArgs = array(
                     'ot' => $this->objectType
                     'rootId' => $this->root
-                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                );
                 $treeNodes = ModUtil::apiFunc($this->name, 'selection', 'getTree', $apiArgs);
                 if (!$treeNodes) {
-                    return «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                    return array();
                 }
 
                 return $treeNodes;
@@ -194,23 +177,13 @@ class TreeSelector {
     '''
 
     def private treeSelectorImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\TreeSelector as BaseTreeSelector;
-
-        «ENDIF»
         /**
          * Tree selector.
          *
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_TreeSelector extends «appName»_Form_Plugin_Base_TreeSelector
-        «ELSE»
-        class TreeSelector extends BaseTreeSelector
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -228,7 +201,7 @@ class TreeSelector {
          */
         function smarty_function_«appName.formatForDB»TreeSelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
+            return $view->registerPlugin('«appName»_Form_Plugin_TreeSelector', $params);
         }
     '''
 }

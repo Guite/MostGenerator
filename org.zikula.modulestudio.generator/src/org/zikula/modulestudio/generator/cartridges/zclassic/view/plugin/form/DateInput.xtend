@@ -14,7 +14,11 @@ class DateInput {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/DateInput.php',
             fh.phpFileContent(it, formDateInputBaseImpl), fh.phpFileContent(it, formDateInputImpl)
         )
@@ -24,22 +28,13 @@ class DateInput {
     }
 
     def private formDateInputBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-            use DateUtil;
-            use Zikula_Form_Plugin_DateInput;
-            use Zikula_Form_View;
-            use ZLanguage;
-
-        «ENDIF»
         /**
          * Date value input. Not ready for datetime fields, only for raw dates.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_DateInput plugin since
          * the date input inherits from it.
          */
-        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»DateInput extends Zikula_Form_Plugin_DateInput
+        class «appName»_Form_Plugin_Base_DateInput extends Zikula_Form_Plugin_DateInput
         {
             /**
              * Get filename of this file.
@@ -96,7 +91,7 @@ class DateInput {
                     $d = strtolower($this->defaultValue);
                     $now = getdate();
                     $date = null;
-        
+
                     if ($d == 'now') {
                         $date = time();
                     } elseif ($d == 'today') {
@@ -113,36 +108,36 @@ class DateInput {
                     } elseif ($d == 'custom') {
                         $date = strtotime($this->initDate);
                     }
-        
+
                     if ($date != null) {
                         $this->text = DateUtil::getDatetime($date, $this->ifFormat, false);
                     } else {
                         $this->text = __('Unknown date');
                     }
                 }
-        
+
                 if ($view->isPostBack() && !empty($this->text)) {
                     $date = strtotime($this->text);
                     $this->text = DateUtil::getDatetime($date, $this->ifFormat, false);
                 }
-        
+
                 if (strlen($this->text) > 10) {
                     $this->text = substr($this->text, 0, 10);
                 }
-        
+
                 $defaultDate = new \DateTime($this->text);
                 list ($dateFormat, $dateFormatJs) = $this->getDateFormat();
 
-                include_once 'lib/«IF !targets('1.3.x')»legacy/«ENDIF»viewplugins/function.jquery_datepicker.php';
-        
-                $params = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                include_once 'lib/viewplugins/function.jquery_datepicker.php';
+
+                $params = array(
                     'defaultdate' => $defaultDate,
                     'displayelement' => $this->getId(),
                     'readonly' => $this->readOnly,
                     'displayformat_datetime' => $dateFormat,
                     'displayformat_javascript' => $dateFormatJs
-                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-        
+                );
+
                 $result = smarty_function_jquery_datepicker($params, $view);
 
                 $attributes = $this->renderAttributes($view) . ' class="' . $this->getStyleClass() . '" ';
@@ -159,36 +154,22 @@ class DateInput {
              */
             protected function getDateFormat()
             {
-                $dateFormat = 'Y-m-d';
-                $dateFormatJs = 'yy-mm-dd';
-                if (ZLanguage::getLanguageCode() == 'de') {
-                    $dateFormat = 'd.m.Y';
-                    $dateFormatJs = 'dd.mm.yy';
-                }
+                $dateFormat = str_replace('%', '', DATEONLYFORMAT_FIXED);
+                $dateFormatJs = str_replace(array('Y', 'm', 'd'), array('yy', 'mm', 'dd'), $dateFormat);
 
-                return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$dateFormat, $dateFormatJs«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                return array($dateFormat, $dateFormatJs);
             }
         }
     '''
 
     def private formDateInputImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\DateInput as BaseDateInput;
-
-        «ENDIF»
         /**
          * Date value input. Not ready for datetime fields, only for raw dates.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_DateInput plugin since
          * the date input inherits from it.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_DateInput extends «appName»_Form_Plugin_Base_DateInput
-        «ELSE»
-        class DateInput extends BaseDateInput
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -205,7 +186,7 @@ class DateInput {
          */
         function smarty_function_«appName.formatForDB»DateInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_DateInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\DateInput«ENDIF»', $params);
+            return $view->registerPlugin('«appName»_Form_Plugin_DateInput', $params);
         }
     '''
 }

@@ -39,14 +39,14 @@ class ListBlock {
     def private listBlockTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Block\Form\Type\Base;
 
-        use Symfony\Component\Form\AbstractType as SymfonyAbstractType;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Translation\TranslatorInterface;
 
         /**
          * List block form type base class.
          */
-        class ItemListBlockType extends SymfonyAbstractType
+        class ItemListBlockType extends AbstractType
         {
             /**
              * @var TranslatorInterface

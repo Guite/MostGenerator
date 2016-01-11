@@ -641,13 +641,7 @@ class AbstractObjectSelector {
          */
         protected function createItemIdentifier($item)
         {
-            // create concatenated list of identifiers (for composite keys)
-            $itemId = '';
-            foreach ($this->idFields as $idField) {
-                $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
-            }
-
-            return $itemId;
+            return $item->createCompositeIdentifier();
         }
 
         /**

@@ -72,10 +72,6 @@ class Plugins {
             if (hasEditActions || needsConfig) {
                 new Frame().generate(it, fsa)
             }
-            if (hasEditActions) {
-                editPlugins
-                new ValidationError().generate(it, fsa)
-            }
         } else {
             // content type editing is not ready for Twig yet
             if (generateListContentType || generateDetailContentType) {
@@ -86,6 +82,12 @@ class Plugins {
             }
             if (generateDetailContentType) {
                 new ItemSelector().generate(it, fsa)
+            }
+        }
+        if (hasEditActions) {
+            editPlugins
+            if (targets('1.3.x')) {
+                new ValidationError().generate(it, fsa)
             }
         }
         otherPlugins
@@ -322,33 +324,37 @@ class Plugins {
     }
 
     def private editPlugins(Application it) {
-        if (hasColourFields) {
-            new ColourInput().generate(it, fsa)
-        }
-        if (hasCountryFields && targets('1.3.x')) {
-            new CountrySelector().generate(it, fsa)
-        }
-        if (hasGeographical) {
-            new GeoInput().generate(it, fsa)
-        }
-        if (!entities.filter[!fields.filter(DateField).empty].empty) {
-            new DateInput().generate(it, fsa)
-        }
-        if (!entities.filter[!fields.filter(TimeField).empty].empty) {
-            new TimeInput().generate(it, fsa)
+        if (targets('1.3.x')) {
+            if (hasColourFields) {
+                new ColourInput().generate(it, fsa)
+            }
+            if (hasCountryFields) {
+                new CountrySelector().generate(it, fsa)
+            }
+            if (hasGeographical) {
+                new GeoInput().generate(it, fsa)
+            }
+            if (!entities.filter[!fields.filter(DateField).empty].empty) {
+                new DateInput().generate(it, fsa)
+            }
+            if (!entities.filter[!fields.filter(TimeField).empty].empty) {
+                new TimeInput().generate(it, fsa)
+            }
         }
         val hasRelations = !relations.empty
-        if (hasTrees || hasRelations) {
+        if ((hasTrees && targets('1.3.x')) || hasRelations) {
+            // TODO implement custom form type or form type extension
             new AbstractObjectSelector().generate(it, fsa)
         }
-        if (hasTrees) {
+        if (hasTrees && targets('1.3.x')) {
             new TreeSelector().generate(it, fsa)
         }
         if (hasRelations) {
+            // TODO implement custom form types or form type extensions
             new RelationSelectorList().generate(it, fsa)
             new RelationSelectorAutoComplete().generate(it, fsa)
         }
-        if (hasUserFields) {
+        if (hasUserFields && targets('1.3.x')) {
             new UserInput().generate(it, fsa)
         }
     }

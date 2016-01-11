@@ -14,7 +14,11 @@ class UserInput {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/UserInput.php',
             fh.phpFileContent(it, formUserInputBaseImpl), fh.phpFileContent(it, formUserInputImpl)
         )
@@ -24,24 +28,13 @@ class UserInput {
     }
 
     def private formUserInputBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-            use DataUtil;
-            use System;
-            use UserUtil;
-            use Zikula_Form_Plugin_TextInput;
-            use Zikula_Form_View;
-            use ZLanguage;
-
-        «ENDIF»
         /**
          * User field plugin providing an autocomplete for user names.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the user input inherits from it.
          */
-        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»UserInput extends Zikula_Form_Plugin_TextInput
+        class «appName»_Form_Plugin_Base_UserInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Get filename of this file.
@@ -82,7 +75,7 @@ class UserInput {
             {
                 $class = parent::getStyleClass();
 
-                return str_replace('z-form-text', 'z-form-user«IF !targets('1.3.x')» typeahead«ENDIF»', $class);
+                return str_replace('z-form-text', 'z-form-user', $class);
             }
 
             /**
@@ -120,31 +113,19 @@ class UserInput {
 
                 $searchTitle = __('Search user', $dom);
                 $selectorAttributes = $titleHtml . $sizeHtml . $maxLengthHtml . $readOnlyHtml . ' value="' . $selectorDefaultValue . '" class="' . $class . '"' . $attributes;
-                «IF targets('1.3.x')»
-                    $result = '<div id="' . $this->getId() . 'LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user z-hide">
-                            <img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchTitle . '" title="' . $searchTitle . '" />
-                            <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector"' . $selectorAttributes . ' />
-                            <img src="' . System::getBaseUrl() . 'images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $this->getId() . 'Indicator" style="display: none" />
-                            <span id="' . $this->getId() . 'NoResultsHint" class="z-hide">' . __('No results found!', $dom) . '</span>
-                            <div id="' . $this->getId() . 'SelectorChoices"></div>';
-                «ELSE»
-                    $result = '<div id="' . $this->getId() . 'LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user hidden">
-                            <i class="fa fa-search" title="' . $searchTitle . '"></i>';
-                «ENDIF»
+                $result = '<div id="' . $this->getId() . 'LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user z-hide">
+                        <img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchTitle . '" title="' . $searchTitle . '" />
+                        <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector"' . $selectorAttributes . ' />
+                        <img src="' . System::getBaseUrl() . 'images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $this->getId() . 'Indicator" style="display: none" />
+                        <span id="' . $this->getId() . 'NoResultsHint" class="z-hide">' . __('No results found!', $dom) . '</span>
+                        <div id="' . $this->getId() . 'SelectorChoices"></div>';
 
                 if ($this->mandatory && $this->mandatorysym) {
-                    $result .= '<span class="«IF targets('1.3.x')»z-form-mandatory-flag«ELSE»requires«ENDIF»">*</span>';
+                    $result .= '<span class="z-form-mandatory-flag">*</span>';
                 }
 
                 $result .= '<noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>' . "\n";
-                «IF targets('1.3.x')»
-                    $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />' . "\n";
-                «ELSE»
-                    $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />
-                            <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector" autocomplete="off"' . $selectorAttributes . ' />
-                            <i class="fa fa-refresh fa-spin hidden" id="' . $this->getId() . 'Indicator"></i>
-                            <span id="' . $this->getId() . 'NoResultsHint" class="hidden">' . __('No results found!', $dom) . '</span>';
-                «ENDIF»
+                $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />' . "\n";
                 $result .= '</div>' . "\n";
 
                 return $result;
@@ -195,23 +176,13 @@ class UserInput {
     '''
 
     def private formUserInputImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\UserInput as BaseUserInput;
-
-        «ENDIF»
         /**
          * User field plugin providing an autocomplete for user names.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the user input inherits from it.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_UserInput extends «appName»_Form_Plugin_Base_UserInput
-        «ELSE»
-        class UserInput extends BaseUserInput
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -229,7 +200,7 @@ class UserInput {
          */
         function smarty_function_«appName.formatForDB»UserInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_UserInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\UserInput«ENDIF»', $params);
+            return $view->registerPlugin('«appName»_Form_Plugin_UserInput', $params);
         }
     '''
 }

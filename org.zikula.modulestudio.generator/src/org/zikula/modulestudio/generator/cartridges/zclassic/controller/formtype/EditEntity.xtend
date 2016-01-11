@@ -1,7 +1,10 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 
+import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.BooleanField
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
@@ -12,7 +15,9 @@ import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
+import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UrlField
+import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -54,12 +59,16 @@ class EditEntity {
     def private editTypeBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\Base;
 
-        use Symfony\Component\Form\AbstractType as SymfonyAbstractType;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
         «IF metaData»
             use Symfony\Component\Validator\Constraints\Valid;
+        «ENDIF»
+        «IF hasTranslatableFields»
+            use Zikula\ExtensionsModule\Api\VariableApi;
+            use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
@@ -68,12 +77,24 @@ class EditEntity {
         /**
          * «name.formatForDisplayCapital» editing form type base class.
          */
-        class «name.formatForCodeCapital»Type extends SymfonyAbstractType
+        class «name.formatForCodeCapital»Type extends AbstractType
         {
             /**
              * @var TranslatorInterface
              */
             private $translator;
+            «IF hasTranslatableFields»
+
+                /**
+                 * @var VariableApi
+                 */
+                private $variableApi;
+
+                /**
+                 * @var TranslatableHelper
+                 */
+                private $translatableHelper;
+            «ENDIF»
             «IF hasListFieldsEntity»
 
                 /**
@@ -85,14 +106,22 @@ class EditEntity {
             /**
              * «name.formatForCodeCapital»Type constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator «IF hasTranslatableFields» «ENDIF»Translator service instance.
+            «IF hasTranslatableFields»
+                «' '»* @param VariableApi         $variableApi VariableApi service instance.
+                «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance.
+            «ENDIF»
             «IF hasListFieldsEntity»
-                «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance.
+                «' '»* @param ListEntriesHelper   $listHelper   «IF hasTranslatableFields» «ENDIF»ListEntriesHelper service instance.
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator«IF hasListFieldsEntity»ListEntriesHelper $listHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator«IF hasTranslatableFields», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
             {
                 $this->translator = $translator;
+                «IF hasTranslatableFields»
+                    $this->variableApi = $variableApi;
+                    $this->translatableHelper = $translatableHelper;
+                «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
                 «ENDIF»
@@ -115,6 +144,7 @@ if (workflow != none)
     isSuperModerator
     isCreator
 'actions' -> list of workflow actions
+inlineUsage => false/true
 
 required template vars
 '«entity.name.formatForDB»' -> entity instance
@@ -181,6 +211,8 @@ if attributable:
              */
             public function configureOptions(OptionsResolver $resolver)
             {
+                parent::configureOptions($resolver);
+
                 $resolver->setDefaults([
                     // define class for underlying data (required for embedding forms)
                     'data_class' => '«entityClassName('', false)»'
@@ -198,29 +230,29 @@ if attributable:
          */
         public function addEntityFields(FormBuilderInterface $builder, array $options)
         {
-            «/* TODO */»
             «IF hasTranslatableFields»
-                {% set useOnlyCurrentLanguage = true %}
-                {% if getModVar('ZConfig', 'multilingual') %}
-                    {% if supportedLanguages is iterable and supportedLanguages|length > 1 %}
-                        {% set useOnlyCurrentLanguage = false %}
-                        {% set currentLanguage = lang() %}
-                        {% for language in supportedLanguages %}
-                            {% if language == currentLanguage %}
+                $useOnlyCurrentLanguage = true;
+                if ($this->variableApi->get('ZConfig', 'multilingual')) {
+                    $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
+                    if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
+                        $useOnlyCurrentLanguage = false;
+                        $currentLanguage = \ZLanguage::getLanguageCode();
+                        foreach ($supportedLanguages as $language) {
+                            if ($language == $currentLanguage) {
                                 «translatableFieldSet('', '')»
-                            {% endif %}
-                        {% endfor %}
-                        {% for language in supportedLanguages %}
-                            {% if language != currentLanguage %}
-                                «translatableFieldSet('language', 'language')»
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                {% endif %}
-                {% if useOnlyCurrentLanguage == true %}
-                    {% set language = lang() %}
+                            }
+                        }
+                        foreach ($supportedLanguages as $language) {
+                            if ($language != $currentLanguage) {
+                                «translatableFieldSet('$language', '$language')»
+                            }
+                        }
+                    }
+                }
+                if ($useOnlyCurrentLanguage === true) {
+                    $language = \ZLanguage::getLanguageCode();
                     «translatableFieldSet('', '')»
-                {% endif %}
+                }
             «ENDIF»
             «IF !hasTranslatableFields
                 || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
@@ -242,7 +274,6 @@ if attributable:
     '''
 
     def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
-        «/* TODO */»
         «FOR field : getEditableTranslatableFields»«field.fieldImpl(groupSuffix, idSuffix)»«ENDFOR»
         «IF hasTranslatableSlug»
             «slugField(groupSuffix, idSuffix)»
@@ -251,7 +282,7 @@ if attributable:
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
         «IF hasSluggableFields && slugUpdatable»
-            $builder->add('slug«idSuffix»', '«nsSymfonyFormType»TextType', [
+            $builder->add('slug'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«nsSymfonyFormType»TextType', [
                 'label' => $this->translator->trans('Permalink', [], '«app.appName.formatForDB»'),
                 'required' => false«/* slugUnique.displayBool */»,
                 'attr' => [
@@ -270,7 +301,7 @@ if attributable:
         «IF it instanceof ListField»
             «fetchListEntries»
         «ENDIF»
-        $builder->add('«name.formatForCode»«idSuffix»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSE»«nsSymfonyFormType»«formType»«ENDIF»Type', [
+        $builder->add('«name.formatForCode»«IF idSuffix != ''» . «idSuffix»«ENDIF»', '«formType»Type', [
             'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
             «IF documentation !== null && documentation != ''»
                 'label_attr' => [
@@ -292,23 +323,23 @@ if attributable:
             «IF documentation !== null && documentation != ''»
                 'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»'),
             «ENDIF»«additionalOptions»
-        ])
+        ]);
     '''
 
-    def private dispatch formType(DerivedField it) '''Text'''
+    def private dispatch formType(DerivedField it) '''«nsSymfonyFormType»Text'''
     def private dispatch titleAttribute(DerivedField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'''
     def private dispatch additionalOptions(DerivedField it) '''
         'required' => «mandatory.displayBool»,
         'max_length' => 255
     '''
 
-    def private dispatch formType(BooleanField it) '''Checkbox'''
+    def private dispatch formType(BooleanField it) '''«nsSymfonyFormType»Checkbox'''
     def private dispatch titleAttribute(BooleanField it) '''«name.formatForDisplay» ?'''
     def private dispatch additionalOptions(BooleanField it) '''
         'required' => «mandatory.displayBool»,
     '''
 
-    def private dispatch formType(IntegerField it) '''Integer'''
+    def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»Integer'''
     def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay». Only digits are allowed.'''
     def private dispatch additionalOptions(IntegerField it) '''
         «val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0»
@@ -318,20 +349,20 @@ if attributable:
         «IF hasMin || hasMax»
             «IF hasMin && hasMax»
                 «IF minValue == maxValue»
-                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value% => «minValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value%' => «minValue»], '«app.appName.formatForDB»'),
                 «ELSE»
-                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue% => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
                 «ENDIF»
             «ELSEIF hasMin»
-                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue% => «minValue»], '«app.appName.formatForDB»'),
+                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»], '«app.appName.formatForDB»'),
             «ELSEIF hasMax»
-                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue% => «maxValue»], '«app.appName.formatForDB»'),
+                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
             «ENDIF»
         «ENDIF»
         'scale' => 0
     '''
 
-    def private dispatch formType(DecimalField it) '''«IF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(DecimalField it) '''
         «val hasMin = minValue > 0»
         «val hasMax = maxValue > 0»
@@ -344,20 +375,20 @@ if attributable:
         «IF hasMin || hasMax»
             «IF hasMin && hasMax»
                 «IF minValue == maxValue»
-                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value% => «minValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value%' => «minValue»], '«app.appName.formatForDB»'),
                 «ELSE»
-                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue% => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
                 «ENDIF»
             «ELSEIF hasMin»
-                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue% => «minValue»], '«app.appName.formatForDB»'),
+                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»], '«app.appName.formatForDB»'),
             «ELSEIF hasMax»
-                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue% => «maxValue»], '«app.appName.formatForDB»'),
+                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
             «ENDIF»
         «ENDIF»
         'scale' => «scale»
     '''
 
-    def private dispatch formType(FloatField it) '''«IF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(FloatField it) '''
         «val hasMin = minValue > 0»
         «val hasMax = maxValue > 0»
@@ -370,76 +401,65 @@ if attributable:
         «IF hasMin || hasMax»
             «IF hasMin && hasMax»
                 «IF minValue == maxValue»
-                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value% => «minValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value%' => «minValue»], '«app.appName.formatForDB»'),
                 «ELSE»
-                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue% => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
                 «ENDIF»
             «ELSEIF hasMin»
-                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue% => «minValue»], '«app.appName.formatForDB»'),
+                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»], '«app.appName.formatForDB»'),
             «ELSEIF hasMax»
-                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue% => «maxValue»], '«app.appName.formatForDB»'),
+                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
             «ENDIF»
         «ENDIF»
         'scale' => 2
     '''
 
-    def private dispatch formType(StringField it) '''«IF country»Country«ELSEIF language»Language«ELSEIF locale»Locale«ELSEIF htmlcolour»«/* TODO colour type */»«ELSEIF password»Password«ELSE»Text«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF country»«nsSymfonyFormType»Country«ELSEIF language»«nsSymfonyFormType»Language«ELSEIF locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF htmlcolour»«app.appNamespace»\Form\Type\Field\Colour«ELSEIF password»«nsSymfonyFormType»Password«ELSE»«nsSymfonyFormType»Text«ENDIF»'''
     def private dispatch titleAttribute(StringField it) '''«IF country || language || locale || htmlcolour»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
         'required' => «mandatory.displayBool»,
         «IF !mandatory && (country || language || locale)»
             'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
         «ENDIF»
-        'max_length' => «length»
-    '''
-/*
-    def private dispatch TODO(StringField it, String groupSuffix, String idSuffix) '''
-        «IF minLength > 0» minLength=«minLength»«ENDIF»
+        'max_length' => «length»,
         «IF regexp !== null && regexp != ''»
-            'pattern' => string with html5 pattern attribute
-            <span class="help-block">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
+            «IF !regexpOpposite»
+                'pattern' => '«regexp.replace('\'', '')»',
+            «ENDIF»
+            'help' => $this->translator->trans('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'], '«app.appName.formatForDB»')
         «ENDIF»
     '''
-*/
-    def private dispatch formType(TextField it) '''Textarea'''
+
+    def private dispatch formType(TextField it) '''«nsSymfonyFormType»Textarea'''
     def private dispatch additionalOptions(TextField it) '''
         'required' => «mandatory.displayBool»,
-        'max_length' => «length»
-    '''
-/*
-    def private dispatch TODO(TextField it, String groupSuffix, String idSuffix) '''
-        «IF minLength > 0» minLength=«minLength»«ENDIF»
+        'max_length' => «length»,
         «IF regexp !== null && regexp != ''»
-            'pattern' => string with html5 pattern attribute
-            <span class="help-block">{gt text='Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%s".' tag1='«regexp.replace('\'', '')»'}</span>
+            «IF !regexpOpposite»
+                'pattern' => '«regexp.replace('\'', '')»',
+            «ENDIF»
+            'help' => $this->translator->trans('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'], '«app.appName.formatForDB»')
         «ENDIF»
     '''
-*/
-    def private dispatch formType(EmailField it) '''Email'''
+
+    def private dispatch formType(EmailField it) '''«nsSymfonyFormType»Email'''
     def private dispatch additionalOptions(EmailField it) '''
         'required' => «mandatory.displayBool»,
         'max_length' => «length»
     '''
-/*
-    def private dispatch TODO(EmailField it, String groupSuffix, String idSuffix) '''
-        «IF minLength > 0» minLength=«minLength»«ENDIF»
-    '''
-*/
-    def private dispatch formType(UrlField it) '''Url'''
+
+    def private dispatch formType(UrlField it) '''«nsSymfonyFormType»Url'''
     def private dispatch additionalOptions(UrlField it) '''
         'required' => «mandatory.displayBool»,
         'max_length' => «length»«/*,
         'default_protocol' => 'http'*/»
     '''
 
-/*
-    def private dispatch TODO(UrlField it, String groupSuffix, String idSuffix) '''
-        «IF minLength > 0» minLength=«minLength»«ENDIF»
-    '''
-*/
 /* TODO */
 
 /* TODO help can be an array now * /
+
+TODO form type extension
 
     def private dispatch formField(UploadField it, String groupSuffix, String idSuffix) '''
         «IF mandatory»
@@ -500,10 +520,16 @@ if attributable:
         }
     '''
 
-    def private dispatch formType(ListField it) '''Choice'''
+    def private dispatch formType(ListField it) '''«nsSymfonyFormType»Choice'''
     def private dispatch titleAttribute(ListField it) '''Choose the «name.formatForDisplay»'''
     def private dispatch additionalOptions(ListField it) '''
-        'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
+        «IF !useChecks»
+            «IF mandatory»
+                'placeholder' => '',
+            «ELSE»
+                'placeholder' => $this->translator->trans('Choose an option', [], '«app.appName.formatForDB»'),
+            «ENDIF»
+        «ENDIF»
         'choices' => $choices,
         'choices_as_values' => true,
         'choice_attr' => $choiceAttributes,
@@ -517,56 +543,47 @@ if attributable:
         'multiple' => «multiple.displayBool»,
         'expanded' => «useChecks.displayBool»
     '''
-/*
-    def private dispatch formField(UserField it, String groupSuffix, String idSuffix) '''
-        {«entity.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' cssClass='«IF mandatory»required «ENDIF»form-control'}
-        {% if mode != 'create' and «entity.name.formatForDB».«name.formatForDB» and inlineUsage != true %}
-            <span class="help-block avatar">
-                {{ «entity.application.appName.formatForDB»_userAvatar(uid=«entity.name.formatForDB».«name.formatForDB», rating='g') }}
-            </span>
-            {% if hasPermission('Users::', '::', 'ACCESS_ADMIN') %}
-            <span class="help-block"><a href="{{ path('zikulausersmodule_admin_modify', { 'userid': «entity.name.formatForDB».«name.formatForDB» }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
-            {% endif %}
-        {% endif %}
+
+    def private dispatch formType(UserField it) '''«app.appNamespace»\Form\Type\Field\User'''
+    def private dispatch titleAttribute(UserField it) '''Enter a part of the user name to search'''
+    def private dispatch additionalOptions(UserField it) '''
+        'required' => «mandatory.displayBool»,
+        'max_length' => «length»,
+        'inlineUsage' => $options['inlineUsage']
     '''
 
-    def private dispatch formField(AbstractDateField it, String groupSuffix, String idSuffix) '''
-        «formFieldDetails(groupSuffix, idSuffix)»
+    def private dispatch formType(DatetimeField it) '''«nsSymfonyFormType»DateTime'''
+    def private dispatch formType(DateField it) '''«nsSymfonyFormType»Date'''
+    def private dispatch formType(TimeField it) '''«nsSymfonyFormType»Time'''
+    def private dispatch additionalOptions(AbstractDateField it) '''
+        'empty_data' => «defaultData»,
+        'required' => «mandatory.displayBool»,
+        'help' => [
+            «IF past»
+                $this->translator->trans('Note: this value must be in the past.', [], '«app.appName.formatForDB»'),
+            «ELSEIF future»
+                $this->translator->trans('Note: this value must be in the future.', [], '«app.appName.formatForDB»'),
+            «ENDIF»
+            «IF !mandatory && nullable»
+                '<a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">' . $this->translator->trans('Reset to empty value', [], '«app.appName.formatForDB»') . '</a>'
+            «ENDIF»
+        ],
+        'widget' => 'single_text'
+    '''
+    def private dispatch defaultData(DatetimeField it) '''«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i')«ELSE»''«ENDIF»'''
+    def private dispatch defaultData(DateField it) '''«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d')«ELSE»''«ENDIF»'''
+    def private dispatch additionalOptions(TimeField it) '''
+        'empty_data' => '«defaultValue»',
+        'required' => «mandatory.displayBool»,
         «IF past»
-            <span class="help-block">{{ __('Note: this value must be in the past.') }}</span>
+            'help' => $this->translator->trans('Note: this value must be in the past.', [], '«app.appName.formatForDB»'),
         «ELSEIF future»
-            <span class="help-block">{{ __('Note: this value must be in the future.') }}</span>
+            'help' => $this->translator->trans('Note: this value must be in the future.', [], '«app.appName.formatForDB»'),
         «ENDIF»
+        'widget' => 'single_text',
+        'max_length' => 8
     '''
 
-    def private dispatch formFieldDetails(AbstractDateField it, String groupSuffix, String idSuffix) {
-    }
-    def private dispatch formFieldDetails(DatetimeField it, String groupSuffix, String idSuffix) '''
-        {if $mode ne 'create'}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«validationHelper.fieldValidationCssClass(it, true)»}
-        {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
-        {/if}
-        «IF !mandatory && nullable»
-            <span class="help-block"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
-        «ENDIF»
-    '''
-
-    def private dispatch formFieldDetails(DateField it, String groupSuffix, String idSuffix) '''
-        {if $mode ne 'create'}
-            {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it, true)»}
-        {else}
-            {«entity.application.appName.formatForDB»DateInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it, true)»}
-        {/if}
-        «IF !mandatory && nullable»
-            <span class="help-block"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
-        «ENDIF»
-    '''
-
-    def private dispatch formFieldDetails(TimeField it, String groupSuffix, String idSuffix) '''
-        {«entity.application.appName.formatForDB»TimeInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='singleline' maxLength=8«validationHelper.fieldValidationCssClass(it, true)»}
-    '''
-*/
     def private addGeographicalFields(Entity it) '''
         /**
          * Adds fields for coordinates.
@@ -576,10 +593,14 @@ if attributable:
          */
         public function addGeographicalFields(FormBuilderInterface $builder, array $options)
         {
-            «/* TODO */»
             «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'}
-                {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number'}
+                $builder->add('«geoFieldName»', '«app.appNamespace»\Form\Type\Field\GeoType', [
+                    'label' => $this->translator->trans('«geoFieldName.toFirstUpper»', [], '«app.appName.formatForDB»') . ':',
+                    'attr' => [
+                        'class' => 'validate-number',
+                    ],
+                    'required' => false
+                ]);
             «ENDFOR»
         }
     '''
@@ -639,7 +660,7 @@ if attributable:
         public function addMetaDataFields(FormBuilderInterface $builder, array $options)
         {
             // embedded meta data form
-            $builder->add('metadata', '«app.appNamespace»\Form\EntityMetaDataType', [
+            $builder->add('metadata', '«app.appNamespace»\Form\Type\EntityMetaDataType', [
                 'constraints' => new Valid()
             ]);
         }
@@ -714,6 +735,12 @@ if attributable:
                     ]
                 ]);
             }
+            $builder->add('reset', '«nsSymfonyFormType»ResetType', [
+                'label' => $this->translator->trans('Reset', [], '«app.appName.formatForDB»'),
+                'attr' => [
+                    'id' => 'btnReset'
+                ]
+            ]);
             $builder->add('cancel', '«nsSymfonyFormType»SubmitType', [
                 'label' => $this->translator->trans('Cancel', [], '«app.appName.formatForDB»'),
                 'attr' => [

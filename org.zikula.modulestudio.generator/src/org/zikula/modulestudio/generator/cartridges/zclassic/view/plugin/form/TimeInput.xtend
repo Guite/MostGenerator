@@ -14,7 +14,11 @@ class TimeInput {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/TimeInput.php',
             fh.phpFileContent(it, formTimeInputBaseImpl), fh.phpFileContent(it, formTimeInputImpl)
         )
@@ -24,20 +28,13 @@ class TimeInput {
     }
 
     def private formTimeInputBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-            use Zikula_Form_Plugin_TextInput;
-            use Zikula_Form_View;
-
-        «ENDIF»
         /**
          * Time value input.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the time input inherits from it.
          */
-        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»TimeInput extends Zikula_Form_Plugin_TextInput
+        class «appName»_Form_Plugin_Base_TimeInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Flag for switching between 24 and 12 hour mode.
@@ -78,8 +75,8 @@ class TimeInput {
                 if (isset($params['use24Hour'])) {
                     $this->use24Hour = (bool) $params['use24Hour'];
                 } else {
-                    $i18n = «IF !targets('1.3.x')»\«ENDIF»ZI18n::getInstance();
-                    $this->use24Hour = ($i18n->locale->getTimeformat() == 24);
+                    $i18n = ZI18n::getInstance();
+                    $this->use24Hour = $i18n->locale->getTimeformat() == 24;
                 }
 
                 if (isset($params['addSeconds'])) {
@@ -113,17 +110,17 @@ class TimeInput {
              */
             public function render(Zikula_Form_View $view)
             {
-                include_once 'lib/«IF !targets('1.3.x')»legacy/«ENDIF»viewplugins/function.jquery_timepicker.php';
-        
-                $params = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+                include_once 'lib/viewplugins/function.jquery_timepicker.php';
+
+                $params = array(
                     'defaultdate' => $this->text,
                     'displayelement' => $this->getId(),
                     'readonly' => $this->readOnly,
                     'use24hour' => $this->use24Hour
-                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-        
+                );
+
                 $result = smarty_function_jquery_timepicker($params, $view);
-        
+
                 // override time format
                 $result .= "<script type=\"text/javascript\">
                     /* <![CDATA[ */
@@ -224,23 +221,13 @@ class TimeInput {
     '''
 
     def private formTimeInputImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\TimeInput as BaseTimeInput;
-
-        «ENDIF»
         /**
          * Time value input.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the time input inherits from it.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_TimeInput extends «appName»_Form_Plugin_Base_TimeInput
-        «ELSE»
-        class TimeInput extends BaseTimeInput
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -257,7 +244,7 @@ class TimeInput {
          */
         function smarty_function_«appName.formatForDB»TimeInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_TimeInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\TimeInput«ENDIF»', $params);
+            return $view->registerPlugin('«appName»_Form_Plugin_TimeInput', $params);
         }
     '''
 }

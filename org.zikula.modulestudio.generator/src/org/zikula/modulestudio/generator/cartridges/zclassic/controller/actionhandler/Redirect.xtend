@@ -89,7 +89,7 @@ class Redirect {
          * Get the default redirect url. Required if no returnTo parameter has been supplied.
          * This method is called in handleCommand so we know which command has been performed.
          *
-         * @param array  $args List of arguments.
+         * @param array $args List of arguments.
          *
          * @return string The default redirect url.
          */
@@ -105,7 +105,7 @@ class Redirect {
                 «ELSE»
                     «/* TODO refactor lct away */»
                     $legacyControllerType = $this->request->query->getAlpha('lct', 'user');
-                    $routeArea = ($legacyControllerType == 'admin' ? 'admin' : '');
+                    $routeArea = $legacyControllerType == 'admin' ? 'admin' : '';
                 «ENDIF»
 
             «ENDIF»
@@ -154,7 +154,7 @@ class Redirect {
         /**
          * Get url to redirect to.
          *
-         * @param array  $args List of arguments.
+         * @param array $args List of arguments.
          *
          * @return string The redirect url.
          */

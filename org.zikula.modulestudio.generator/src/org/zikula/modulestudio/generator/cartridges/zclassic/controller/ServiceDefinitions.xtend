@@ -1,6 +1,8 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -18,8 +20,8 @@ class ServiceDefinitions {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -150,7 +152,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
                     class: "«nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType"
-                    arguments: [@translator, @request_stack«IF entity.hasListFieldsEntity», @«appName.formatForDB».listentries_helper«ENDIF»]
+                    arguments: [@translator, @request_stack«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -160,14 +162,14 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: "«nsBase»«entity.name.formatForCodeCapital»Type"
-                    arguments: [@translator«IF entity.hasListFieldsEntity», @«appName.formatForDB».listentries_helper«ENDIF»]
+                    arguments: [@translator«IF entity.hasTranslatableFields», @zikula_extensions_module.api.variable, @«modPrefix».translatable_helper«ENDIF»«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
             «IF hasMetaDataEntities»
 
                 «modPrefix».form.type.entitymetadata:
-                    class: "«nsBase.replace('Type\\\\', '')»EntityMetaDataType"
+                    class: "«nsBase»EntityMetaDataType"
                     arguments: [@translator]
                     tags:
                         - { name: form.type }
@@ -202,9 +204,46 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.appsettings:
                 class: "«nsBase.replace('Type\\\\', '')»AppSettingsType"
-                arguments: [@translator, "@zikula_extensions_module.api.variable"]
+                arguments: [@translator, @zikula_extensions_module.api.variable]
                 tags:
                     - { name: form.type }
+        «ENDIF»
+        «IF hasEditActions»
+            «IF hasColourFields»
+
+                «modPrefix».form.type.field.colour:
+                    class: "«nsBase»Field\ColourType"
+                    tags:
+                        - { name: form.type }
+            «ENDIF»
+            «IF hasGeographical»
+
+                «modPrefix».form.type.field.geo:
+                    class: "«nsBase»Field\GeoType"
+                    tags:
+                        - { name: form.type }
+            «ENDIF»
+            «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
+
+                «modPrefix».form.date_type_extension:
+                    class: "«nsBase.replace('Type\\\\', '')»Extension\DateTypeExtension"
+                    tags:
+                        - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\DateType" }
+            «ENDIF»
+            «IF !getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty»
+
+                «modPrefix».form.time_type_extension:
+                    class: "«nsBase.replace('Type\\\\', '')»Extension\TimeTypeExtension"
+                    tags:
+                        - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\TimeType" }
+            «ENDIF»
+            «IF hasTrees»
+
+                «modPrefix».form.type.field.entitytree:
+                    class: "«nsBase»Field\EntityTreeType"
+                    tags:
+                        - { name: form.type }
+            «ENDIF»
         «ENDIF»
     '''
 

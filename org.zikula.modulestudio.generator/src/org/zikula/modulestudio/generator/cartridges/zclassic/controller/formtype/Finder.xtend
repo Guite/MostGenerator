@@ -41,14 +41,14 @@ class Finder {
     def private finderTypeBaseImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\Finder\Base;
 
-        use Symfony\Component\Form\AbstractType as SymfonyAbstractType;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Translation\TranslatorInterface;
 
         /**
          * «name.formatForDisplayCapital» finder form type base class.
          */
-        class «name.formatForCodeCapital»FinderType extends SymfonyAbstractType
+        class «name.formatForCodeCapital»FinderType extends AbstractType
         {
             /**
              * @var TranslatorInterface

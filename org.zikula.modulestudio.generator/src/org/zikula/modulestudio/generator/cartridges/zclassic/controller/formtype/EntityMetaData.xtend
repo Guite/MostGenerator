@@ -27,15 +27,15 @@ class EntityMetaData {
             return
         }
         app = it
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/EntityMetaDataType.php',
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/EntityMetaDataType.php',
             fh.phpFileContent(it, metaDataTypeBaseImpl), fh.phpFileContent(it, metaDataTypeImpl)
         )
     }
 
     def private metaDataTypeBaseImpl(Application it) '''
-        namespace «appNamespace»\Form\Base;
+        namespace «appNamespace»\Form\Type\Base;
 
-        use Symfony\Component\Form\AbstractType as SymfonyAbstractType;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
@@ -43,7 +43,7 @@ class EntityMetaData {
         /**
          * Entity meta data form type base class.
          */
-        class EntityMetaDataType extends SymfonyAbstractType
+        class EntityMetaDataType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -100,6 +100,8 @@ class EntityMetaData {
              */
             public function configureOptions(OptionsResolver $resolver)
             {
+                parent::configureOptions($resolver);
+
                 $resolver->setDefaults([
                     // define class for underlying data (required for embedding forms)
                     'data_class' => 'Zikula\Core\Doctrine\Entity\AbstractEntityMetadata'
@@ -125,9 +127,9 @@ class EntityMetaData {
     '''
 
     def private metaDataTypeImpl(Application it) '''
-        namespace «appNamespace»\Form;
+        namespace «appNamespace»\Form\Type;
 
-        use «appNamespace»\Form\Base\EntityMetaDataType as BaseEntityMetaDataType;
+        use «appNamespace»\Form\Type\Base\EntityMetaDataType as BaseEntityMetaDataType;
 
         /**
          * Entity meta data form type implementation class.

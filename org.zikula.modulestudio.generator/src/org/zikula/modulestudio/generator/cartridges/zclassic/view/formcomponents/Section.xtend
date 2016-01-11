@@ -237,11 +237,12 @@ class Section {
                     {formbutton id="btn`$actionIdCapital`" commandName=$action.id text=$actionTitle class=$action.buttonClass}
                 {/if}
             {/foreach}
-            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='«IF isLegacyApp»z-bt-cancel«ELSE»btn btn-default«ENDIF»' formnovalidate='formnovalidate'}
+            {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='z-bt-cancel' formnovalidate='formnovalidate'}
         «ELSE»
             {% for action in actions %}
                 {{ form_widget(attribute(form, action.id), {attr: {class: action.buttonClass}, icon: action.id == 'delete' ? 'fa-trash-o' : '') }}
             {% endfor %}
+            {{ form_widget(form.reset, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-refresh'}) }}
             {{ form_widget(form.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
         «ENDIF»
     '''

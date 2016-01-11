@@ -14,7 +14,11 @@ class ColourInput {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/ColourInput.php',
             fh.phpFileContent(it, formColourInputBaseImpl), fh.phpFileContent(it, formColourInputImpl)
         )
@@ -24,16 +28,6 @@ class ColourInput {
     }
 
     def private formColourInputBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-            use DataUtil;
-            use PageUtil;
-            use Zikula_Form_Plugin_TextInput;
-            use Zikula_Form_View;
-            use ZLanguage;
-
-        «ENDIF»
         /**
          * Colour field plugin including colour picker.
          *
@@ -42,7 +36,7 @@ class ColourInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the colour input inherits from it.
          */
-        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»ColourInput extends Zikula_Form_Plugin_TextInput
+        class «appName»_Form_Plugin_Base_ColourInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Get filename of this file.
@@ -105,14 +99,8 @@ class ColourInput {
                 }
 
                 if ($firstTime) {
-                    «IF targets('1.3.x')»
-                        PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
-                        PageUtil::addVar('javascript', 'javascript/picky_color/picky_color.js');
-                    «ELSE»
-                        PageUtil::addVar('stylesheet', 'web/jquery-minicolors/jquery.minicolors.css');
-                        PageUtil::addVar('javascript', 'jquery');
-                        PageUtil::addVar('javascript', 'web/jquery-minicolors/jquery.minicolors.min.js');
-                    «ENDIF»
+                    PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
+                    PageUtil::addVar('javascript', 'javascript/picky_color/picky_color.js');
                 }
                 $firstTime = false;
 
@@ -120,20 +108,12 @@ class ColourInput {
 
                 $result .= "<script type=\"text/javascript\">
                     /* <![CDATA[ */
-                        «IF targets('1.3.x')»
-                            var namePicky = new PickyColor({
-                                field: '" . $this->getId() . "',
-                                color: '" . DataUtil::formatForDisplay($this->text) . "',
-                                colorWell: '" . $this->getId() . "',
-                                closeText: '" . __('Close', $dom) . "'
-                            });
-                        «ELSE»
-                            ( function($) {
-                                $(document).ready(function() {
-                                    $('#" . $this->getId() . "').minicolors({theme: 'bootstrap'});
-                                });
-                            })(jQuery);
-                        «ENDIF»
+                        var namePicky = new PickyColor({
+                            field: '" . $this->getId() . "',
+                            color: '" . DataUtil::formatForDisplay($this->text) . "',
+                            colorWell: '" . $this->getId() . "',
+                            closeText: '" . __('Close', $dom) . "'
+                        });
                     /* ]]> */
                     </script>";
 
@@ -185,12 +165,6 @@ class ColourInput {
     '''
 
     def private formColourInputImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\ColourInput as BaseColourInput;
-
-        «ENDIF»
         /**
          * Colour field plugin including colour picker.
          *
@@ -199,11 +173,7 @@ class ColourInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the colour input inherits from it.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_ColourInput extends «appName»_Form_Plugin_Base_ColourInput
-        «ELSE»
-        class ColourInput extends BaseColourInput
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -221,7 +191,7 @@ class ColourInput {
          */
         function smarty_function_«appName.formatForDB»ColourInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_ColourInput«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\ColourInput«ENDIF»', $params);
+            return $view->registerPlugin('«appName»_Form_Plugin_ColourInput', $params);
         }
     '''
 }

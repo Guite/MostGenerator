@@ -33,14 +33,14 @@ class DeleteEntity {
     def private deleteEntityTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Base;
 
-        use Symfony\Component\Form\AbstractType as SymfonyAbstractType;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Translation\TranslatorInterface;
 
         /**
          * Entity deletion form type base class.
          */
-        class DeleteEntityType extends SymfonyAbstractType
+        class DeleteEntityType extends AbstractType
         {
             /**
              * @var TranslatorInterface
