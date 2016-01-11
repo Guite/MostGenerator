@@ -119,7 +119,7 @@ class MigrationHelper {
             $componentLength = strlen('«name.formatForCodeCapital»') + 1;
 
             $conn->executeQuery("UPDATE $dbName.categories_registry
-                                 SET modname = CONCAT('«appName»', SUBSTRING(component, $componentLength))
+                                 SET modname = CONCAT('«appName»', SUBSTRING(modname, $componentLength))
                                  WHERE modname LIKE '«name.formatForCodeCapital»%';
             ");
         }
