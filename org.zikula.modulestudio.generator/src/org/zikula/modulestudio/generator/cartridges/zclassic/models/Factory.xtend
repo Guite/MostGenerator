@@ -104,7 +104,7 @@ class Factory {
             {
                 $entityClass = $this->className;
 
-                return new $entityClass(«/* TODO consider any arguments */»);
+                return new $entityClass(«/* TODO constructor arguments if required */»);
             }
 
             «fh.getterAndSetterMethods(it, 'className', 'string', false, false, '', '')»

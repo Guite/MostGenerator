@@ -67,6 +67,7 @@ class EditEntity {
         «IF metaData»
             use Symfony\Component\Validator\Constraints\Valid;
         «ENDIF»
+        use «app.appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory
         «IF hasTranslatableFields»
             use Zikula\ExtensionsModule\Api\VariableApi;
             use «app.appNamespace»\Helper\TranslatableHelper;
@@ -84,6 +85,11 @@ class EditEntity {
              * @var TranslatorInterface
              */
             private $translator;
+
+            /**
+             * @var «name.formatForCodeCapital»Factory
+             */
+            private $entityFactory;
             «IF hasTranslatableFields»
 
                 /**
@@ -108,6 +114,7 @@ class EditEntity {
              * «name.formatForCodeCapital»Type constructor.
              *
              * @param TranslatorInterface $translator «IF hasTranslatableFields» «ENDIF»Translator service instance.
+             * @param «name.formatForCodeCapital»Factory $entityFactory Entity factory service instance.
             «IF hasTranslatableFields»
                 «' '»* @param VariableApi         $variableApi VariableApi service instance.
                 «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance.
@@ -116,9 +123,10 @@ class EditEntity {
                 «' '»* @param ListEntriesHelper   $listHelper   «IF hasTranslatableFields» «ENDIF»ListEntriesHelper service instance.
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator«IF hasTranslatableFields», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, «IF hasTranslatableFields», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
             {
                 $this->translator = $translator;
+                $this->entityFactory = $entityFactory;
                 «IF hasTranslatableFields»
                     $this->variableApi = $variableApi;
                     $this->translatableHelper = $translatableHelper;

@@ -54,6 +54,9 @@ class ServiceDefinitions {
         generateServiceFile(fsa, 'linkContainer', linkContainer)
         generateServiceFile(fsa, 'entityFactories', entityFactories)
         generateServiceFile(fsa, 'eventSubscriber', eventSubscriber)
+        if (hasEditActions) {
+            generateServiceFile(fsa, 'formFields', formFields)
+        }
         generateServiceFile(fsa, 'forms', forms)
         generateServiceFile(fsa, 'helpers', helpers)
         generateServiceFile(fsa, 'twig', twig)
@@ -68,6 +71,9 @@ class ServiceDefinitions {
           - { resource: 'linkContainer.yml' }
           - { resource: 'entityFactories.yml' }
           - { resource: 'eventSubscriber.yml' }
+        «IF hasEditActions»
+            «'  '»- { resource: 'formFields.yml' }
+        «ENDIF»
           - { resource: 'forms.yml' }
           - { resource: 'helpers.yml' }
           - { resource: 'twig.yml' }
@@ -139,6 +145,74 @@ class ServiceDefinitions {
         listeners
     }
 
+    def private formFields(Application it) '''
+        services:
+            «formFieldsHelper»
+    '''
+
+    def private formFieldsHelper(Application it) '''
+        # Form field types
+        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Form\\\\Type\\\\'»
+        «IF hasColourFields»
+
+            «modPrefix».form.type.field.colour:
+                class: "«nsBase»Field\ColourType"
+                tags:
+                    - { name: form.type }
+        «ENDIF»
+        «IF hasGeographical»
+
+            «modPrefix».form.type.field.geo:
+                class: "«nsBase»Field\GeoType"
+                tags:
+                    - { name: form.type }
+        «ENDIF»
+        «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
+
+            «modPrefix».form.date_type_extension:
+                class: "«nsBase.replace('Type\\\\', '')»Extension\DateTypeExtension"
+                tags:
+                    - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\DateType" }
+        «ENDIF»
+        «IF !getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty»
+
+            «modPrefix».form.time_type_extension:
+                class: "«nsBase.replace('Type\\\\', '')»Extension\TimeTypeExtension"
+                tags:
+                    - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\TimeType" }
+        «ENDIF»
+        «IF hasMultiListFields»
+
+            «modPrefix».form.type.field.multilist:
+                class: "«nsBase»Field\MultiListType"
+                arguments: [@«modPrefix».listentries_helper]
+                tags:
+                    - { name: form.type }
+        «ENDIF»
+        «IF hasTrees»
+
+            «modPrefix».form.type.field.entitytree:
+                class: "«nsBase»Field\EntityTreeType"
+                tags:
+                    - { name: form.type }
+        «ENDIF»
+        «IF hasUploads»
+
+            «modPrefix».form.upload_type_extension:
+                class: "«nsBase.replace('Type\\\\', '')»Extension\UploadTypeExtension"
+                arguments: [@translator]
+                tags:
+                    - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\FileType" }
+        «ENDIF»
+        «IF hasUserFields»
+
+            «modPrefix».form.type.field.user:
+                class: "«nsBase»Field\UserType"
+                tags:
+                    - { name: form.type }
+        «ENDIF»
+    '''
+
     def private forms(Application it) '''
         services:
             «formsHelper»
@@ -162,7 +236,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: "«nsBase»«entity.name.formatForCodeCapital»Type"
-                    arguments: [@translator«IF entity.hasTranslatableFields», @zikula_extensions_module.api.variable, @«modPrefix».translatable_helper«ENDIF»«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
+                    arguments: [@translator, «modPrefix».«entity.name.formatForCode»_factory«IF entity.hasTranslatableFields», @zikula_extensions_module.api.variable, @«modPrefix».translatable_helper«ENDIF»«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -207,66 +281,6 @@ class ServiceDefinitions {
                 arguments: [@translator, @zikula_extensions_module.api.variable]
                 tags:
                     - { name: form.type }
-        «ENDIF»
-        «IF hasEditActions»
-            «IF hasColourFields»
-
-                «modPrefix».form.type.field.colour:
-                    class: "«nsBase»Field\ColourType"
-                    tags:
-                        - { name: form.type }
-            «ENDIF»
-            «IF hasGeographical»
-
-                «modPrefix».form.type.field.geo:
-                    class: "«nsBase»Field\GeoType"
-                    tags:
-                        - { name: form.type }
-            «ENDIF»
-            «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
-
-                «modPrefix».form.date_type_extension:
-                    class: "«nsBase.replace('Type\\\\', '')»Extension\DateTypeExtension"
-                    tags:
-                        - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\DateType" }
-            «ENDIF»
-            «IF !getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty»
-
-                «modPrefix».form.time_type_extension:
-                    class: "«nsBase.replace('Type\\\\', '')»Extension\TimeTypeExtension"
-                    tags:
-                        - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\TimeType" }
-            «ENDIF»
-            «IF hasMultiListFields»
-
-                «modPrefix».form.type.field.multilist:
-                    class: "«nsBase»Field\MultiListType"
-                    arguments: [@«modPrefix».listentries_helper]
-                    tags:
-                        - { name: form.type }
-            «ENDIF»
-            «IF hasTrees»
-
-                «modPrefix».form.type.field.entitytree:
-                    class: "«nsBase»Field\EntityTreeType"
-                    tags:
-                        - { name: form.type }
-            «ENDIF»
-            «IF hasUploads»
-
-                «modPrefix».form.upload_type_extension:
-                    class: "«nsBase.replace('Type\\\\', '')»Extension\UploadTypeExtension"
-                    arguments: [@translator]
-                    tags:
-                        - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\FileType" }
-            «ENDIF»
-            «IF hasUserFields»
-
-                «modPrefix».form.type.field.user:
-                    class: "«nsBase»Field\UserType"
-                    tags:
-                        - { name: form.type }
-            «ENDIF»
         «ENDIF»
     '''
 

@@ -647,9 +647,9 @@ class FormHandler {
             } else {
                 «IF isLegacy»
                     $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
-                    $entity = new $entityClass();
+                    $entity = new $entityClass(«/* TODO constructor arguments if required */»);
                 «ELSE»
-                    $entityClass = '«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'Entity';
+                    «/* TODO to be replaced by empty_data option in edit form type */»
                     $createMethod = 'create' . ucfirst($this->objectType);
                     $entity = $this->view->getContainer()->get('«appName.formatForDB».' . $this->objectType . '_factory')->$createMethod();
                 «ENDIF»
