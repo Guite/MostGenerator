@@ -77,9 +77,9 @@ class TranslatableHelper {
 
             «getSupportedLanguages»
 
-            «prepareEntityForEdit»
+            «prepareEntityForEditing»
 
-            «processEntityAfterEdit»
+            «processEntityAfterEditing»
         }
     '''
 
@@ -120,7 +120,7 @@ class TranslatableHelper {
         }
     '''
 
-    def private prepareEntityForEdit(Application it) '''
+    def private prepareEntityForEditing(Application it) '''
         /**
          * Post-processing method copying all translations to corresponding arrays.
          * This ensures easy compatibility to the Forms plugins where it
@@ -131,7 +131,7 @@ class TranslatableHelper {
          *
          * @return array collected translations having the language codes as keys.
          */
-        public function prepareEntityForEdit($objectType, $entity)
+        public function prepareEntityForEditing($objectType, $entity)
         {
             $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
@@ -184,7 +184,7 @@ class TranslatableHelper {
         }
     '''
 
-    def private processEntityAfterEdit(Application it) '''
+    def private processEntityAfterEditing(Application it) '''
         /**
          * Post-editing method copying all translated fields back to their subarrays.
          * This ensures easy compatibility to the Forms plugins where it
@@ -195,7 +195,7 @@ class TranslatableHelper {
          *
          * @return array collected translations having the language codes as keys.
          */
-        public function processEntityAfterEdit($objectType, $formData)
+        public function processEntityAfterEditing($objectType, $formData)
         {
             $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             // check arguments

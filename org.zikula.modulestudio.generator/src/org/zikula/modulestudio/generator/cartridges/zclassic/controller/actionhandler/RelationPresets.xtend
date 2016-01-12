@@ -110,7 +110,7 @@ class RelationPresets {
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherObjectType = (if (useTarget) target else source).name.formatForCode»
         if (!empty($this->relationPresets['«alias»'])) {
-            $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»);
+            $relObj = ModUtil::apiFunc('«application.appName»', 'selection', 'getEntity', «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»);
             if ($relObj != null) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);
