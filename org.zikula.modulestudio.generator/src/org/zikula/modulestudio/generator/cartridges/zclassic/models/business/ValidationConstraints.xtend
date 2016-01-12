@@ -56,7 +56,7 @@ class ValidationConstraints {
 
     def dispatch fieldAnnotations(BooleanField it) '''
         «IF mandatory»
-            «' '»* @Assert\True(message="This option is mandatory.")
+            «' '»* @Assert\IsTrue(message="This option is mandatory.")
         «ELSEIF !nullable»
             «' '»* @Assert\NotNull()
         «ENDIF»
@@ -294,7 +294,7 @@ class ValidationConstraints {
          * Checks whether the «name.formatForCode» field contains a valid user id.
          * This method is used for validation.
          *
-         * @Assert\True(message="This value must be a valid user id.")
+         * @Assert\IsTrue(message="This value must be a valid user id.")
          */
         public function is«name.formatForCodeCapital»UserValid()
         {
@@ -317,7 +317,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» field value is in the past.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="This value must be a date in the past.")
+                 * @Assert\IsTrue(message="This value must be a date in the past.")
                  */
                 public function is«name.formatForCodeCapital»DateTimeValidPast()
                 {
@@ -333,7 +333,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» field value is in the future.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="This value must be a date in the future.")
+                 * @Assert\IsTrue(message="This value must be a date in the future.")
                  */
                 public function is«name.formatForCodeCapital»DateTimeValidFuture()
                 {
@@ -352,7 +352,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» value is earlier than the «endDateField.name.formatForCode» value.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="The start date must be before the end date.")
+                 * @Assert\IsTrue(message="The start date must be before the end date.")
                  */
                 public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
                 {
@@ -369,7 +369,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» field value is in the past.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="This value must be a date in the past.")
+                 * @Assert\IsTrue(message="This value must be a date in the past.")
                  */
                 public function is«name.formatForCodeCapital»DateValidPast()
                 {
@@ -385,7 +385,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» field value is in the future.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="This value must be a date in the future.")
+                 * @Assert\IsTrue(message="This value must be a date in the future.")
                  */
                 public function is«name.formatForCodeCapital»DateValidFuture()
                 {
@@ -404,7 +404,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» value is earlier than the «endDateField.name.formatForCode» value.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="The start date must be before the end date.")
+                 * @Assert\IsTrue(message="The start date must be before the end date.")
                  */
                 public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
                 {
@@ -421,7 +421,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» field value is in the past.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="This value must be a time in the past.")
+                 * @Assert\IsTrue(message="This value must be a time in the past.")
                  */
                 public function is«name.formatForCodeCapital»TimeValidPast()
                 {
@@ -437,7 +437,7 @@ class ValidationConstraints {
                  * Checks whether the «name.formatForCode» field value is in the future.
                  * This method is used for validation.
                  *
-                 * @Assert\True(message="This value must be a time in the future.")
+                 * @Assert\IsTrue(message="This value must be a time in the future.")
                  */
                 public function is«name.formatForCodeCapital»TimeValidFuture()
                 {
