@@ -452,7 +452,7 @@ class QuickNavigation {
     '''
 
     def private dispatch fieldImpl(DerivedField it) '''
-        $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
+        $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
             'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
             'required' => false,
             «additionalOptions»
@@ -475,13 +475,15 @@ class QuickNavigation {
         'choice_label' => 'uname'
     '''
 
-    def private dispatch fieldType(ListField it) '''Choice'''
+    def private dispatch fieldType(ListField it) '''«/* called for multiple=false only */»Choice'''
     def private dispatch additionalOptions(ListField it) '''
         'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
         'choices' => $choices,
         'choices_as_values' => true,
-        'choice_attr' => $choiceAttributes,
-        'multiple' => «multiple.displayBool»
+        'choice_attr' => $choiceAttributes«IF !multiple»,«ENDIF»
+        «IF !multiple»
+        	'multiple' => «multiple.displayBool»
+    	«ENDIF»
     '''
 
     def private dispatch fieldType(BooleanField it) '''Choice'''

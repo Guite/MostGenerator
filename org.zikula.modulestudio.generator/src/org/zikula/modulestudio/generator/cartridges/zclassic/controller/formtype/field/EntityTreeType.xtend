@@ -24,7 +24,6 @@ class EntityTreeType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,15 +32,6 @@ class EntityTreeType {
          */
         class EntityTreeType extends AbstractType
         {
-            /**
-             * {@inheritdoc}
-             */
-            public function buildForm(FormBuilderInterface $builder, array $options)
-            {
-
-                parent::buildForm($builder, $options);
-            }
-
             /**
              * {@inheritdoc}
              */

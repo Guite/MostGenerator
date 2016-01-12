@@ -132,6 +132,13 @@ class ModelExtensions {
     }
 
     /**
+     * Checks whether the application contains at least one list field with multi selection.
+     */
+    def hasMultiListFields(Application it) {
+        !getAllListFields.filter[l|l.multiple].empty
+    }
+
+    /**
      * Returns a list of all entities with at least one list field.
      */
     def getListEntities(Application it) {

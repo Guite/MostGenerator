@@ -476,7 +476,7 @@ if attributable:
         }
     '''
 
-    def private dispatch formType(ListField it) '''«nsSymfonyFormType»Choice'''
+    def private dispatch formType(ListField it) '''«IF multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»Choice«ENDIF»'''
     def private dispatch titleAttribute(ListField it) '''Choose the «name.formatForDisplay»'''
     def private dispatch additionalOptions(ListField it) '''
         «IF !useChecks»
@@ -496,7 +496,9 @@ if attributable:
                 'help' => $this->translator->trans('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»], '«app.appName.formatForDB»'),
             «ENDIF»
         «ENDIF»
-        'multiple' => «multiple.displayBool»,
+        «IF !multiple»
+            'multiple' => «multiple.displayBool»,
+        «ENDIF»
         'expanded' => «useChecks.displayBool»
     '''
 

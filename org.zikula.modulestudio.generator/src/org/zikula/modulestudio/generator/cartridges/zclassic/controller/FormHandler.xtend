@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionha
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessing
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
@@ -18,6 +19,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.DateTypeExtension
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TimeTypeExtension
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadTypeExtension
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UserType
@@ -85,6 +87,10 @@ class FormHandler {
                 }
                 if (hasUserFields) {
                     new UserType().generate(it, fsa)
+                }
+                if (hasMultiListFields) {
+                    new MultiListType().generate(it, fsa)
+                    new ListFieldTransformer().generate(it, fsa)
                 }
             }
         }
@@ -324,25 +330,26 @@ class FormHandler {
                  */
                 protected $uploadFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
             «ENDIF»
-            «IF isLegacy && hasUserFields»
+            «IF isLegacy»
+                «IF hasUserFields»
 
-                /**
-                 * Array with user field names and mandatory flags.
-                 *
-                 * @var array
-                 */
-                protected $userFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                    /**
+                     * Array with user field names and mandatory flags.
+                     *
+                     * @var array
+                     */
+                    protected $userFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                «ENDIF»
+                «IF hasListFields»
+
+                    /**
+                     * Array with list field names and multiple flags.
+                     *
+                     * @var array
+                     */
+                    protected $listFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                «ENDIF»
             «ENDIF»
-            «IF hasListFields»
-
-                /**
-                 * Array with list field names and multiple flags.
-                 *
-                 * @var array
-                 */
-                protected $listFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-            «ENDIF»
-
 
             /**
              * Post construction hook.
@@ -1050,7 +1057,7 @@ class FormHandler {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
-            «IF hasUserFields || hasUploads || hasListFields || (hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
+            «IF (isLegacy && hasUserFields) || hasUploads || (isLegacy && hasListFields) || (hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
 
                 if («IF isLegacy»$args['commandName'] != 'cancel'«ELSE»!in_array($args['commandName, ['reset', 'cancel'])«ENDIF») {
                     «IF isLegacy && hasUserFields»
@@ -1075,7 +1082,7 @@ class FormHandler {
                         }
 
                     «ENDIF»
-                    «IF hasListFields»
+                    «IF isLegacy && hasListFields»
                         if (count($this->listFields) > 0) {
                             foreach ($this->listFields as $listField => $multiple) {
                                 if (!$multiple) {
@@ -1090,6 +1097,7 @@ class FormHandler {
                                 }
                             }
                         }
+
                     «ENDIF»
                     «IF !isLegacy && hasSluggable»
 
@@ -1362,13 +1370,15 @@ class FormHandler {
                 // array with upload fields and mandatory flags
                 $this->uploadFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
             «ENDIF»
-            «IF app.isLegacy && hasUserFieldsEntity»
-                // array with user fields and mandatory flags
-                $this->userFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR userField : getUserFieldsEntity SEPARATOR ', '»'«userField.name.formatForCode»' => «userField.mandatory.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
-            «ENDIF»
-            «IF hasListFieldsEntity»
-                // array with list fields and multiple flags
-                $this->listFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
+            «IF app.isLegacy»
+                «IF hasUserFieldsEntity»
+                    // array with user fields and mandatory flags
+                    $this->userFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR userField : getUserFieldsEntity SEPARATOR ', '»'«userField.name.formatForCode»' => «userField.mandatory.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
+                «ENDIF»
+                «IF hasListFieldsEntity»
+                    // array with list fields and multiple flags
+                    $this->listFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
+                «ENDIF»
             «ENDIF»
         }
     '''
@@ -1488,7 +1498,7 @@ class FormHandler {
             $this->entityRef = $entity;
 
             $entityData = $entity->toArray();
-            «IF app.hasListFields»
+            «IF app.isLegacy && app.hasListFields»
 
                 if (count($this->listFields) > 0) {
                     «IF app.isLegacy»

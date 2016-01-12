@@ -237,6 +237,14 @@ class ServiceDefinitions {
                     tags:
                         - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\TimeType" }
             «ENDIF»
+            «IF hasMultiListFields»
+
+                «modPrefix».form.type.field.multilist:
+                    class: "«nsBase»Field\MultiListType"
+                    arguments: [@translator, @«modPrefix».listentries_helper]
+                    tags:
+                        - { name: form.type }
+            «ENDIF»
             «IF hasTrees»
 
                 «modPrefix».form.type.field.entitytree:
