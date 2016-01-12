@@ -38,12 +38,17 @@ class UserType {
             {
                 parent::configureOptions($resolver);
 
-                $resolver->setDefaults([
-                    'attr' => [
-                        'class' => 'user-selector typeahead'
-                    ],
-                    'inlineUsage' => false
-                ]);
+                $resolver
+                    ->setDefaults([
+                        'attr' => [
+                            'class' => 'user-selector typeahead'
+                        ],
+                        'inlineUsage' => false
+                    ])
+                    ->setAllowedTypes([
+                        'inlineUsage' => 'bool'
+                    ])
+                ;
             }
 
             /**

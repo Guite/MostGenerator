@@ -65,20 +65,28 @@ class EntityTreeType {
             {
                 parent::configureOptions($resolver);
 
-                $resolver->setDefaults([
-                    'root' => 1,
-                    'includeLeafNodes' => true,
-                    'includeRootNode' => false,
-                    'useJoins' => true,
-                    'attr' => [
-                        'class' => 'entity-tree'
-                    ],
-                    «/*'query_builder' => function (EntityRepository $er) {
-                        return $er->selectTree($options['root'], $options['useJoins']);
-                    },*/»
-                    'choices' => $choices,
-                    'choices_as_values' => true
-                ]);
+                $resolver
+                    ->setDefaults([
+                        'root' => 1,
+                        'includeLeafNodes' => true,
+                        'includeRootNode' => false,
+                        'useJoins' => true,
+                        'attr' => [
+                            'class' => 'entity-tree'
+                        ],
+                        «/*'query_builder' => function (EntityRepository $er) {
+                            return $er->selectTree($options['root'], $options['useJoins']);
+                        },*/»
+                        'choices' => $choices,
+                        'choices_as_values' => true
+                    ])
+                    ->setAllowedTypes([
+                        'root' => 'int',
+                        'includeLeafNodes' => 'bool',
+                        'includeRootNode' => 'bool',
+                        'useJoins' => 'bool'
+                    ])
+                ;
             }
 
             /**

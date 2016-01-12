@@ -54,6 +54,7 @@ class QuickNavigation {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
+        use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
@@ -202,6 +203,26 @@ class QuickNavigation {
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»quicknav';
             }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function configureOptions(OptionsResolver $resolver)
+            {
+                parent::configureOptions($resolver);
+
+                $resolver
+                    ->setDefaults([
+                        'all' => 0,
+                        'own' => 0
+                    ])
+                    ->setRequired(['all', 'own'])
+                    ->setAllowedValues([
+                        'all' => [0, 1],
+                        'own' => [0, 1]
+                    ])
+                ;
+            }
         }
     '''
 
@@ -210,7 +231,7 @@ class QuickNavigation {
          * Adds a categories field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
@@ -236,7 +257,7 @@ class QuickNavigation {
          * Adds fields for incoming relationships.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options)
         {
@@ -264,7 +285,7 @@ class QuickNavigation {
          * Adds list fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addListFields(FormBuilderInterface $builder, array $options)
         {
@@ -286,7 +307,7 @@ class QuickNavigation {
          * Adds user fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addUserFields(FormBuilderInterface $builder, array $options)
         {
@@ -301,7 +322,7 @@ class QuickNavigation {
          * Adds country fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addCountryFields(FormBuilderInterface $builder, array $options)
         {
@@ -316,7 +337,7 @@ class QuickNavigation {
          * Adds language fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addLanguageFields(FormBuilderInterface $builder, array $options)
         {
@@ -331,7 +352,7 @@ class QuickNavigation {
          * Adds locale fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addLocaleFields(FormBuilderInterface $builder, array $options)
         {
@@ -346,7 +367,7 @@ class QuickNavigation {
          * Adds a search field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
@@ -366,7 +387,7 @@ class QuickNavigation {
          * Adds sorting fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addSortingFields(FormBuilderInterface $builder, array $options)
         {
@@ -411,7 +432,7 @@ class QuickNavigation {
          * Adds a page size field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
@@ -441,7 +462,7 @@ class QuickNavigation {
          * Adds boolean fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addBooleanFields(FormBuilderInterface $builder, array $options)
         {

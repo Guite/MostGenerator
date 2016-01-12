@@ -123,7 +123,7 @@ class Config {
          * Adds fields for «name.formatForDisplay» fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options)
         {

@@ -113,6 +113,13 @@ class UploadTypeExtension {
                         'allowed_extensions' => '',
                         'allowed_size' => 0
                     ])
+                    ->setAllowedTypes([
+                        'file_meta' => 'array',
+                        'file_path' => 'string',
+                        'file_url' => 'string',
+                        'allowed_extensions' => 'string',
+                        'allowed_size' => 'int'
+                    ])
                 ;
             }
 

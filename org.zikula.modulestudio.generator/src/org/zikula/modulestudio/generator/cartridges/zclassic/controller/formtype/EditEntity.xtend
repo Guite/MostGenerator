@@ -214,10 +214,40 @@ if attributable:
             {
                 parent::configureOptions($resolver);
 
-                $resolver->setDefaults([
-                    // define class for underlying data (required for embedding forms)
-                    'data_class' => '«entityClassName('', false)»'
-                ]);
+                $resolver
+                    ->setDefaults([
+                        // define class for underlying data (required for embedding forms)
+                        'data_class' => '«entityClassName('', false)»',
+                        'mode' => 'create',
+                        «IF attributable»
+                            'attributes' => [],
+                        «ENDIF»
+                        «IF workflow != EntityWorkflowType.NONE»
+                            'isModerator' => false,
+                            'isSuperModerator' => false,
+                            'isCreator' => false,
+                        «ENDIF»
+                        'actions' => [],
+                        'inlineUsage' => false
+                    ])
+                    ->setRequired(['mode', 'actions'])
+                    ->setAllowedTypes([
+                        'mode' => 'string',
+                        «IF attributable»
+                            'attributes' => 'array',
+                        «ENDIF»
+                        «IF workflow != EntityWorkflowType.NONE»
+                            'isModerator' => 'bool',
+                            'isSuperModerator' => 'bool',
+                            'isCreator' => 'bool',
+                        «ENDIF»
+                        'actions' => 'array',
+                        'inlineUsage' => 'bool'
+                    ])
+                    ->setAllowedValues([
+                        'mode' => ['create', 'edit']
+                    ])
+                ;
             }
         }
     '''
@@ -227,7 +257,7 @@ if attributable:
          * Adds basic entity fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addEntityFields(FormBuilderInterface $builder, array $options)
         {
@@ -542,7 +572,7 @@ if attributable:
          * Adds fields for coordinates.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addGeographicalFields(FormBuilderInterface $builder, array $options)
         {
@@ -563,7 +593,7 @@ if attributable:
          * Adds fields for attributes.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addAttributeFields(FormBuilderInterface $builder, array $options)
         {
@@ -584,7 +614,7 @@ if attributable:
          * Adds a categories field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
@@ -608,7 +638,7 @@ if attributable:
          * Adds a meta data fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addMetaDataFields(FormBuilderInterface $builder, array $options)
         {
@@ -624,7 +654,7 @@ if attributable:
          * Adds the return control field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addReturnControlField(FormBuilderInterface $builder, array $options)
         {
@@ -641,7 +671,7 @@ if attributable:
          * Adds a field for additional notification remarks.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options)
         {
@@ -674,7 +704,7 @@ if attributable:
          * Adds submit buttons.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addSubmitButtons(FormBuilderInterface $builder, array $options)
         {

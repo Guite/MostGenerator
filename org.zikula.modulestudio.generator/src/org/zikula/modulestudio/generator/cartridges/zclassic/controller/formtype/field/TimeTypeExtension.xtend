@@ -93,7 +93,7 @@ class TimeTypeExtension {
                         'use24Hour' => $i18n->locale->getTimeformat() == 24;
                     ])
                     ->setAllowedTypes([
-                        'use24Hour' => 'boolean'
+                        'use24Hour' => 'bool'
                     ])
                 ;
             }

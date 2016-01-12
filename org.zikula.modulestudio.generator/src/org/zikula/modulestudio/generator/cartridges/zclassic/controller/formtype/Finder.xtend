@@ -43,6 +43,7 @@ class Finder {
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
+        use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
 
         /**
@@ -122,6 +123,29 @@ class Finder {
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»finder';
             }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function configureOptions(OptionsResolver $resolver)
+            {
+                parent::configureOptions($resolver);
+
+                $resolver
+                    ->setDefaults([
+                        'objectType' => '«app.leadingEntity.name.formatForCode»',
+                        'editorName' => 'ckeditor'
+                    ])
+                    ->setRequired(['objectType', 'editorName'])
+                    ->setAllowedTypes([
+                        'objectType' => 'string',
+                        'editorName' => 'string'
+                    ])
+                    ->setAllowedValues([
+                        'editorName' => ['xinha', 'tinymce', 'ckeditor']
+                    ])
+                ;
+            }
         }
     '''
 
@@ -130,7 +154,7 @@ class Finder {
          * Adds a categories field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
@@ -156,7 +180,7 @@ class Finder {
          * Adds a "paste as" field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addPasteAsField(FormBuilderInterface $builder, array $options)
         {
@@ -180,7 +204,7 @@ class Finder {
          * Adds sorting fields.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addSortingFields(FormBuilderInterface $builder, array $options)
         {
@@ -226,7 +250,7 @@ class Finder {
          * Adds a page size field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
@@ -256,7 +280,7 @@ class Finder {
          * Adds a search field.
          *
          * @param FormBuilderInterface The form builder.
-         * @param array                The options
+         * @param array                The options.
          */
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
