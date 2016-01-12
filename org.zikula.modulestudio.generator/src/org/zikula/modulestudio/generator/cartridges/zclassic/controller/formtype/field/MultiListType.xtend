@@ -45,7 +45,7 @@ class MultiListType {
             private $listHelper;
 
             /**
-             * AppSettingsType constructor.
+             * MultiListType constructor.
              *
              * @param ListEntriesHelper $listHelper ListEntriesHelper service instance.
              */
@@ -84,7 +84,7 @@ class MultiListType {
     def private multiListTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Field;
 
-        use «appNamespace»\Form\Base\AppSettingsType as BaseAppSettingsType;
+        use «appNamespace»\Form\Field\Base\MultiListType as BaseMultiListType;
 
         /**
          * Multi list field type implementation class.
