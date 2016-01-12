@@ -32,7 +32,6 @@ class MultiListType {
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\Translation\TranslatorInterface;
         use «app.appNamespace»\Helper\ListEntriesHelper;
 
         /**
@@ -41,11 +40,6 @@ class MultiListType {
         class MultiListType extends AbstractType
         {
             /**
-             * @var TranslatorInterface
-             */
-            private $translator;
-
-            /**
              * @var ListEntriesHelper
              */
             private $listHelper;
@@ -53,12 +47,10 @@ class MultiListType {
             /**
              * AppSettingsType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance.
-             * @param ListEntriesHelper   $listHelper ListEntriesHelper service instance.
+             * @param ListEntriesHelper $listHelper ListEntriesHelper service instance.
              */
-            public function __construct(TranslatorInterface $translator, ListEntriesHelper $listHelper)
+            public function __construct(ListEntriesHelper $listHelper)
             {
-                $this->translator = $translator;
                 $this->listHelper = $listHelper;
             }
 

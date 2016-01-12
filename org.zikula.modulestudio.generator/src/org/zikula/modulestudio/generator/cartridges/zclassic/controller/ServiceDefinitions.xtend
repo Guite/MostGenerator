@@ -241,7 +241,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.field.multilist:
                     class: "«nsBase»Field\MultiListType"
-                    arguments: [@translator, @«modPrefix».listentries_helper]
+                    arguments: [@«modPrefix».listentries_helper]
                     tags:
                         - { name: form.type }
             «ENDIF»
