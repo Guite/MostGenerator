@@ -62,7 +62,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
     override extensionClassImports(Entity it) '''
         use Doctrine\ORM\Mapping as ORM;
         «IF !application.targets('1.3.x')»
-            Zikula\CategoriesModule\Entity\«extensionBaseClass»;
+            use Zikula\CategoriesModule\Entity\«extensionBaseClass»;
         «ENDIF»
     '''
 
