@@ -139,7 +139,13 @@ class QuickNavigation {
                 «IF hasLocaleFieldsEntity»
                     $this->addLocaleFields($builder, $options);
                 «ENDIF»
+                «IF hasCurrencyFieldsEntity»
+                    $this->addCurrencyFields($builder, $options);
+                «ENDIF»
                 «IF hasAbstractStringFieldsEntity»
+                    «IF hasTimezoneFieldsEntity»
+                        $this->addTimeZoneFields($builder, $options);
+                    «ENDIF»
                     $this->addSearchField($builder, $options);
                 «ENDIF»
                 $this->addSortingFields($builder, $options);
@@ -183,7 +189,15 @@ class QuickNavigation {
                 «addLocaleFields»
 
             «ENDIF»
+            «IF hasCurrencyFieldsEntity»
+                «addCurrencyFields»
+
+            «ENDIF»
             «IF hasAbstractStringFieldsEntity»
+                «IF hasTimezoneFieldsEntity»
+                    «addTimezoneFields»
+
+                «ENDIF»
                 «addSearchField»
 
             «ENDIF»
@@ -362,6 +376,36 @@ class QuickNavigation {
         }
     '''
 
+    def private addCurrencyFields(Entity it) '''
+        /**
+         * Adds currency fields.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options.
+         */
+        public function addCurrencyFields(FormBuilderInterface $builder, array $options)
+        {
+            «FOR field : getCurrencyFieldsEntity»
+                «field.fieldImpl»
+            «ENDFOR»
+        }
+    '''
+
+    def private addTimezoneFields(Entity it) '''
+        /**
+         * Adds time zone fields.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options.
+         */
+        public function addTimezoneFields(FormBuilderInterface $builder, array $options)
+        {
+            «FOR field : getTimezoneFieldsEntity»
+                «field.fieldImpl»
+            «ENDFOR»
+        }
+    '''
+
     def private addSearchField(Entity it) '''
         /**
          * Adds a search field.
@@ -483,7 +527,7 @@ class QuickNavigation {
     def private dispatch fieldType(DerivedField it) ''''''
     def private dispatch additionalOptions(DerivedField it) ''''''
 
-    def private dispatch fieldType(StringField it) '''«IF country»Country«ELSEIF language»Language«ELSEIF locale»Locale«ENDIF»'''
+    def private dispatch fieldType(StringField it) '''«IF country»Country«ELSEIF language»Language«ELSEIF locale»Locale«ELSEIF currency»Currency«ELSEIF timezone»Timezone«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
         'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»')
     '''

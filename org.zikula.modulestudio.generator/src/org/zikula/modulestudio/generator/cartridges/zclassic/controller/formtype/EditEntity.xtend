@@ -361,6 +361,10 @@ if attributable:
                 «IF readonly»
                     'readonly' => 'readonly',
                 «ENDIF»
+                «IF it instanceof IntegerField && (it as IntegerField).range»
+                    'min' => «(it as IntegerField).minValue»,
+                    'max' => «(it as IntegerField).maxValue»,
+                «ENDIF»
                 'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')
             ],
             «IF null !== documentation && documentation != ''»
@@ -382,14 +386,17 @@ if attributable:
         'required' => «mandatory.displayBool»,
     '''
 
-    def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»Integer'''
+    def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentual»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay». Only digits are allowed.'''
     def private dispatch additionalOptions(IntegerField it) '''
         «val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0»
         «val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0»
         'required' => «mandatory.displayBool»,
         'max_length' => «length»,
-        «IF hasMin || hasMax»
+        «IF percentual»
+            'type' => 'integer',
+        «ENDIF»
+        «IF !range && (hasMin || hasMax)»
             «IF hasMin && hasMax»
                 «IF minValue == maxValue»
                     'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value%' => «minValue»], '«app.appName.formatForDB»'),
@@ -405,7 +412,7 @@ if attributable:
         'scale' => 0
     '''
 
-    def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF percentual»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(DecimalField it) '''
         «val hasMin = minValue > 0»
         «val hasMax = maxValue > 0»
@@ -414,6 +421,9 @@ if attributable:
         «/* not required since these are the default values IF currency»
             'currency' => 'EUR',
             'divisor' => 1,
+        «ENDIF*/»
+        «/* not required since these are the default values IF percentual»
+            'type' => 'fractional',
         «ENDIF*/»
         «IF hasMin || hasMax»
             «IF hasMin && hasMax»
@@ -431,7 +441,7 @@ if attributable:
         'scale' => «scale»
     '''
 
-    def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF percentual»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(FloatField it) '''
         «val hasMin = minValue > 0»
         «val hasMax = maxValue > 0»
@@ -440,6 +450,9 @@ if attributable:
         «/* not required since these are the default values IF currency»
             'currency' => 'EUR',
             'divisor' => 1,
+        «ENDIF*/»
+        «/* not required since these are the default values IF percentual»
+            'type' => 'fractional',
         «ENDIF*/»
         «IF hasMin || hasMax»
             «IF hasMin && hasMax»
@@ -457,11 +470,11 @@ if attributable:
         'scale' => 2
     '''
 
-    def private dispatch formType(StringField it) '''«IF country»«nsSymfonyFormType»Country«ELSEIF language»«nsSymfonyFormType»Language«ELSEIF locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF htmlcolour»«app.appNamespace»\Form\Type\Field\Colour«ELSEIF password»«nsSymfonyFormType»Password«ELSE»«nsSymfonyFormType»Text«ENDIF»'''
-    def private dispatch titleAttribute(StringField it) '''«IF country || language || locale || htmlcolour»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
+    def private dispatch formType(StringField it) '''«IF country»«nsSymfonyFormType»Country«ELSEIF language»«nsSymfonyFormType»Language«ELSEIF locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF htmlcolour»«app.appNamespace»\Form\Type\Field\Colour«ELSEIF password»«nsSymfonyFormType»Password«ELSEIF currency»«nsSymfonyFormType»Currency«ELSEIF timezone»«nsSymfonyFormType»Timezone«ELSE»«nsSymfonyFormType»Text«ENDIF»'''
+    def private dispatch titleAttribute(StringField it) '''«IF country || language || locale || htmlcolour || currency || timezone»Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ELSE»Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
         'required' => «mandatory.displayBool»,
-        «IF !mandatory && (country || language || locale)»
+        «IF !mandatory && (country || language || locale || currency || timezone)»
             'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
         «ENDIF»
         'max_length' => «length»,

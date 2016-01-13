@@ -309,42 +309,42 @@ class ModelExtensions {
      * Checks whether this entity has at least one user field.
      */
     def hasUserFieldsEntity(DataObject it) {
-        !getUserFieldsEntity.empty || getParentDataObjects.exists[target.getUserFieldsEntity.empty]
+        !getUserFieldsEntity.empty
     }
 
     /**
      * Returns a list of all user fields of this entity.
      */
     def getUserFieldsEntity(DataObject it) {
-        fields.filter(UserField)
+        getSelfAndParentDataObjects.map[fields.filter(UserField)].flatten
     }
 
     /**
      * Checks whether this entity has at least one upload field.
      */
     def hasUploadFieldsEntity(DataObject it) {
-        !getUploadFieldsEntity.empty || getParentDataObjects.exists[target.getUploadFieldsEntity.empty]
+        !getUploadFieldsEntity.empty
     }
 
     /**
      * Returns a list of all upload fields of this entity.
      */
     def getUploadFieldsEntity(DataObject it) {
-        fields.filter(UploadField)
+        getSelfAndParentDataObjects.map[fields.filter(UploadField)].flatten
     }
 
     /**
      * Checks whether this entity has at least one list field.
      */
     def hasListFieldsEntity(DataObject it) {
-        !getListFieldsEntity.empty || getParentDataObjects.exists[target.getListFieldsEntity.empty]
+        !getListFieldsEntity.empty
     }
 
     /**
      * Returns a list of all list fields of this entity.
      */
     def getListFieldsEntity(DataObject it) {
-        fields.filter(ListField)
+        getSelfAndParentDataObjects.map[fields.filter(ListField)].flatten
     }
 
     /**
@@ -365,14 +365,21 @@ class ModelExtensions {
      * Returns a list of inheriting data objects.
      */
     def private getParentDataObjects(DataObject it) {
-        outgoing.filter(InheritanceRelationship).filter[target !== null]
+        outgoing.filter(InheritanceRelationship).filter[target !== null].map[target]
+    }
+
+    /**
+     * Returns a list of an object and it's inheriting data objects.
+     */
+    def getSelfAndParentDataObjects(DataObject it) {
+        getParentDataObjects.toList + #[it]
     }
 
     /**
      * Checks whether this entity has at least one image field.
      */
     def hasImageFieldsEntity(DataObject it) {
-        !getImageFieldsEntity.empty || getParentDataObjects.exists[target.getImageFieldsEntity.empty]
+        !getImageFieldsEntity.empty
     }
 
     /**
@@ -386,119 +393,147 @@ class ModelExtensions {
      * Checks whether this entity has at least one colour field.
      */
     def hasColourFieldsEntity(DataObject it) {
-        !getColourFieldsEntity.empty || getParentDataObjects.exists[target.getColourFieldsEntity.empty]
+        !getColourFieldsEntity.empty
     }
 
     /**
      * Returns a list of all colour fields of this entity.
      */
     def getColourFieldsEntity(DataObject it) {
-        getDerivedFields.filter(StringField).filter[htmlcolour]
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[htmlcolour]].flatten
     }
 
     /**
      * Checks whether this entity has at least one country field.
      */
     def hasCountryFieldsEntity(DataObject it) {
-        !getCountryFieldsEntity.empty || getParentDataObjects.exists[target.getCountryFieldsEntity.empty]
+        !getCountryFieldsEntity.empty
     }
 
     /**
      * Returns a list of all country fields of this entity.
      */
     def getCountryFieldsEntity(DataObject it) {
-        getDerivedFields.filter(StringField).filter[country]
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[country]].flatten
     }
 
     /**
      * Checks whether this entity has at least one language field.
      */
     def hasLanguageFieldsEntity(DataObject it) {
-        !getLanguageFieldsEntity.empty || getParentDataObjects.exists[target.getLanguageFieldsEntity.empty]
+        !getLanguageFieldsEntity.empty
     }
 
     /**
      * Returns a list of all language fields of this entity.
      */
     def getLanguageFieldsEntity(DataObject it) {
-        getDerivedFields.filter(StringField).filter[language]
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[language]].flatten
     }
 
     /**
      * Checks whether this entity has at least one locale field.
      */
     def hasLocaleFieldsEntity(DataObject it) {
-        !getLocaleFieldsEntity.empty || getParentDataObjects.exists[target.getLocaleFieldsEntity.empty]
+        !getLocaleFieldsEntity.empty
     }
 
     /**
      * Returns a list of all locale fields of this entity.
      */
     def getLocaleFieldsEntity(DataObject it) {
-        getDerivedFields.filter(StringField).filter[locale]
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[locale]].flatten
+    }
+
+    /**
+     * Checks whether this entity has at least one time zone field.
+     */
+    def hasTimezoneFieldsEntity(DataObject it) {
+        !getTimezoneFieldsEntity.empty
+    }
+
+    /**
+     * Returns a list of all time zone fields of this entity.
+     */
+    def getTimezoneFieldsEntity(DataObject it) {
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[timezone]].flatten
+    }
+
+    /**
+     * Checks whether this entity has at least one currency field.
+     */
+    def hasCurrencyFieldsEntity(DataObject it) {
+        !getCurrencyFieldsEntity.empty
+    }
+
+    /**
+     * Returns a list of all currency fields of this entity.
+     */
+    def getCurrencyFieldsEntity(DataObject it) {
+        getSelfAndParentDataObjects.map[fields.filter(StringField).filter[currency]].flatten
     }
 
     /**
      * Checks whether this entity has at least one textual field.
      */
     def hasAbstractStringFieldsEntity(DataObject it) {
-        !getAbstractStringFieldsEntity.empty || getParentDataObjects.exists[target.getAbstractStringFieldsEntity.empty]
+        !getAbstractStringFieldsEntity.empty
     }
 
     /**
      * Returns a list of all textual fields of this entity.
      */
     def getAbstractStringFieldsEntity(DataObject it) {
-        getDerivedFields.filter(AbstractStringField)
+        getSelfAndParentDataObjects.map[fields.filter(AbstractStringField)].flatten
     }
 
     /**
      * Checks whether this entity has at least one string field.
      */
     def hasStringFieldsEntity(DataObject it) {
-        !getStringFieldsEntity.empty || getParentDataObjects.exists[target.getStringFieldsEntity.empty]
+        !getStringFieldsEntity.empty
     }
 
     /**
      * Returns a list of all string fields of this entity.
      */
     def getStringFieldsEntity(DataObject it) {
-        getDerivedFields.filter(StringField)
+        getSelfAndParentDataObjects.map[fields.filter(StringField)].flatten
     }
 
     /**
      * Checks whether this entity has at least one text field.
      */
     def hasTextFieldsEntity(DataObject it) {
-        !getTextFieldsEntity.empty || getParentDataObjects.exists[target.getTextFieldsEntity.empty]
+        !getTextFieldsEntity.empty
     }
 
     /**
      * Returns a list of all text fields of this entity.
      */
     def getTextFieldsEntity(DataObject it) {
-        getDerivedFields.filter(TextField)
+        getSelfAndParentDataObjects.map[fields.filter(TextField)].flatten
     }
 
     /**
      * Checks whether this entity has at least one boolean field.
      */
     def hasBooleanFieldsEntity(DataObject it) {
-        !getBooleanFieldsEntity.empty || getParentDataObjects.exists[target.getBooleanFieldsEntity.empty]
+        !getBooleanFieldsEntity.empty
     }
 
     /**
      * Returns a list of all boolean fields of this entity.
      */
     def getBooleanFieldsEntity(DataObject it) {
-        fields.filter(BooleanField)
+        getSelfAndParentDataObjects.map[fields.filter(BooleanField)].flatten
     }
 
     /**
      * Checks whether this entity has at least one boolean field having ajax toggle enabled.
      */
     def hasBooleansWithAjaxToggleEntity(DataObject it) {
-        !getBooleansWithAjaxToggleEntity.empty || getParentDataObjects.exists[target.getBooleansWithAjaxToggleEntity.empty]
+        !getBooleansWithAjaxToggleEntity.empty
     }
 
     /**
@@ -512,7 +547,7 @@ class ModelExtensions {
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(DataObject it) {
-        fields.filter(IntegerField).filter[null !== aggregateFor && aggregateFor != '']
+        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[null !== aggregateFor && aggregateFor != '']].flatten
     }
 
     /**
@@ -577,13 +612,14 @@ class ModelExtensions {
      * Determines the version field of a data object if there is one.
      */
     def getVersionField(DataObject it) {
-        val intVersions = fields.filter(IntegerField).filter[version]
-        if (!intVersions.empty)
-            intVersions.head
-        else {
-            val datetimeVersions = fields.filter(DatetimeField).filter[version]
-            if (!datetimeVersions.empty)
-                datetimeVersions.head
+        val intVersions = getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[version]].flatten
+        if (!intVersions.empty) {
+            return intVersions.head
+        }
+
+        val datetimeVersions = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[version]].flatten
+        if (!datetimeVersions.empty) {
+            datetimeVersions.head
         }
     }
 
@@ -612,13 +648,14 @@ class ModelExtensions {
      * Determines the start date field of a data object if there is one.
      */
     def getStartDateField(DataObject it) {
-        val datetimeFields = fields.filter(DatetimeField).filter[startDate]
-        if (!datetimeFields.empty)
-            datetimeFields.head
-        else {
-            val dateFields = fields.filter(DateField).filter[startDate]
-            if (!dateFields.empty)
-                dateFields.head
+        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[startDate]].flatten
+        if (!datetimeFields.empty) {
+            return datetimeFields.head
+        }
+
+        val dateFields = getSelfAndParentDataObjects.map[fields.filter(DateField).filter[startDate]].flatten
+        if (!dateFields.empty) {
+            dateFields.head
         }
     }
 
@@ -626,13 +663,14 @@ class ModelExtensions {
      * Determines the end date field of a data object if there is one.
      */
     def getEndDateField(DataObject it) {
-        val datetimeFields = fields.filter(DatetimeField).filter[endDate]
-        if (!datetimeFields.empty)
-            datetimeFields.head
-        else {
-            val dateFields = fields.filter(DateField).filter[endDate]
-            if (!dateFields.empty)
-                dateFields.head
+        val datetimeFields = getSelfAndParentDataObjects.map[fields.filter(DatetimeField).filter[endDate]].flatten
+        if (!datetimeFields.empty) {
+            return datetimeFields.head
+        }
+
+        val dateFields = getSelfAndParentDataObjects.map[fields.filter(DateField).filter[endDate]].flatten
+        if (!dateFields.empty) {
+            dateFields.head
         }
     }
 

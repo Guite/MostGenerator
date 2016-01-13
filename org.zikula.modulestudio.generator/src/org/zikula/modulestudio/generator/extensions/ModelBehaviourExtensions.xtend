@@ -187,7 +187,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the sortable extension enabled.
      */
     def getSortableFields(Entity it) {
-        fields.filter(IntegerField).filter[sortablePosition]
+        getSelfAndParentDataObjects.map[fields.filter(IntegerField).filter[sortablePosition]].flatten
     }
 
     /**
@@ -201,7 +201,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the timestampable extension enabled.
      */
     def getTimestampableFields(Entity it) {
-        fields.filter(AbstractDateField).filter[timestampable != EntityTimestampableType.NONE]
+        getSelfAndParentDataObjects.map[fields.filter(AbstractDateField).filter[timestampable != EntityTimestampableType.NONE]].flatten
     }
 
     /**
@@ -215,7 +215,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the translatable extension enabled.
      */
     def getTranslatableFields(Entity it) {
-        getDerivedFields.filter[translatable]
+        getSelfAndParentDataObjects.map[getDerivedFields.filter[translatable]].flatten
     }
 
     /**
