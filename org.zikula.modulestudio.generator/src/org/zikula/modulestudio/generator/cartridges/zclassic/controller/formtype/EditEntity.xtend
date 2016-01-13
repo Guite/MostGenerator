@@ -62,6 +62,7 @@ class EditEntity {
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
+        use Symfony\Component\Form\FormInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
         «IF metaData»
@@ -226,6 +227,9 @@ if attributable:
                     ->setDefaults([
                         // define class for underlying data (required for embedding forms)
                         'data_class' => '«entityClassName('', false)»',
+                        'empty_data' => function (FormInterface $form) {
+                            return $this->entityFactory->create«name.formatForCodeCapital»():
+                        },
                         'mode' => 'create',
                         «IF attributable»
                             'attributes' => [],
