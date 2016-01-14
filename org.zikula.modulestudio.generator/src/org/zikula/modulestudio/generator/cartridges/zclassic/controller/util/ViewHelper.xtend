@@ -57,7 +57,7 @@ class ViewHelper {
                 /**
                  * @var ContainerBuilder
                  */
-                private $container;
+                protected $container;
 
                 /**
                  * @var Translator

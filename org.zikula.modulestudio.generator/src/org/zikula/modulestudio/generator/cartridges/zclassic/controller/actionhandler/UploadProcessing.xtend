@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler
 
 import de.guite.modulestudio.metamodel.Application
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -10,13 +9,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
  */
 class UploadProcessing {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension Utils = new Utils
 
     def generate(Application it) {
-        if (hasUploads)
+        if (hasUploads) {
             handleUploads
+        }
     }
 
     def private handleUploads(Application it) '''
@@ -34,15 +33,13 @@ class UploadProcessing {
                 return $formData;
             }
 
-            // initialise the upload handler
             «IF targets('1.3.x')»
-                $uploadManager = new «appName»_UploadHandler();
-            «ELSE»
-                $uploadManager = $this->view->getServiceManager()->get('«appName.formatForDB».upload_handler');
+                // initialise the upload handler
+                $uploadHandler = new «appName»_UploadHandler();
             «ENDIF»
             $existingObjectData = $existingObject->toArray();
 
-            $objectId = ($this->mode != 'create') ? $this->idValues[0] : 0;
+            $objectId = $this->mode != 'create' ? $this->idValues[0] : 0;
 
             // process all fields
             foreach ($this->uploadFields as $uploadField => $isMandatory) {
@@ -53,7 +50,7 @@ class UploadProcessing {
                     if (isset($formData[$uploadField . 'DeleteFile'])) {
                         if ($hasOldFile && $formData[$uploadField . 'DeleteFile'] === true) {
                             // remove upload file (and image thumbnails)
-                            $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
+                            $existingObjectData = $«IF !targets('1.3.x')»this->«ENDIF»uploadHandler->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                             if (empty($existingObjectData[$uploadField])) {
                                 $existingObject[$uploadField] = '';
                                 $existingObject[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
@@ -74,7 +71,7 @@ class UploadProcessing {
 
                 if ($hasOldFile && $hasBeenDeleted !== true && $this->mode != 'create') {
                     // remove old upload file (and image thumbnails)
-                    $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
+                    $existingObjectData = $«IF !targets('1.3.x')»this->«ENDIF»uploadHandler->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                     if (empty($existingObjectData[$uploadField])) {
                         $existingObject[$uploadField] = '';
                         $existingObject[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
@@ -82,7 +79,7 @@ class UploadProcessing {
                 }
 
                 // do the actual upload (includes validation, physical file processing and reading meta data)
-                $uploadResult = $uploadManager->performFileUpload($this->objectType, $formData, $uploadField);
+                $uploadResult = $«IF !targets('1.3.x')»this->«ENDIF»uploadHandler->performFileUpload($this->objectType, $formData, $uploadField);
                 // assign the upload file name
                 $formData[$uploadField] = $uploadResult['fileName'];
                 // assign the meta data

@@ -78,7 +78,7 @@ class EditFunctions {
 
                 «ENDIF»
                 «IF targets('1.3.x')»
-                    if ($(fieldName + 'LiveSearch') === null) {
+                    if (null === $(fieldName + 'LiveSearch')) {
                         return;
                     }
                     $(fieldName + 'LiveSearch').removeClassName('z-hide');
@@ -190,7 +190,7 @@ class EditFunctions {
         function «vendorAndName»ResetUploadField(fieldName)
         {
             «IF targets('1.3.x')»
-                if ($(fieldName) != null) {
+                if (null != $(fieldName)) {
                     $(fieldName).setAttribute('type', 'input');
                     $(fieldName).setAttribute('type', 'file');
                 }
@@ -213,7 +213,7 @@ class EditFunctions {
 
             fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
             «IF targets('1.3.x')»
-                if ($('reset' + fieldNameCapitalised + 'Val') != null) {
+                if (null != $('reset' + fieldNameCapitalised + 'Val')) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
                         «vendorAndName»ResetUploadField(fieldName);
@@ -237,10 +237,10 @@ class EditFunctions {
         function «vendorAndName»ResetDateField(fieldName)
         {
             «IF targets('1.3.x')»
-                if ($(fieldName) != null) {
+                if (null != $(fieldName)) {
                     $(fieldName).value = '';
                 }
-                if ($(fieldName + 'cal') != null) {
+                if (null != $(fieldName + 'cal')) {
                     $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
                 }
             «ELSE»
@@ -264,7 +264,7 @@ class EditFunctions {
 
             fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
             «IF targets('1.3.x')»
-                if ($('reset' + fieldNameCapitalised + 'Val') != null) {
+                if (null != $('reset' + fieldNameCapitalised + 'Val')) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
                         «vendorAndName»ResetDateField(fieldName);
@@ -361,7 +361,7 @@ class EditFunctions {
                     if (!choices || choices == '<ul></ul>') {
                         this.stopIndicator();
                         var idPrefix = this.options.indicator.replace('Indicator', '');
-                        if ($(idPrefix + 'NoResultsHint') != null) {
+                        if (null != $(idPrefix + 'NoResultsHint')) {
                             $(idPrefix + 'NoResultsHint').removeClassName('«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»');
                         }
                     } else {
@@ -423,7 +423,7 @@ class EditFunctions {
         {
             «IF targets('1.3.x')»
                 // if we don't have a toggle link do nothing
-                if ($(idPrefix + 'AddLink') === null) {
+                if (null === $(idPrefix + 'AddLink')) {
                     return;
                 }
 
@@ -537,7 +537,7 @@ class EditFunctions {
                     // yes, it is
                     found = true;
                     // look whether there is already a window instance
-                    if (relationHandler.windowInstance !== null) {
+                    if (null !== relationHandler.windowInstance) {
                         // unset it
                         «IF targets('1.3.x')»
                             relationHandler.windowInstance.destroy();
@@ -622,7 +622,7 @@ class EditFunctions {
             itemPreview = '';
 
             «IF targets('1.3.x')»
-                if ($('itemPreview' + selectedListItem.id) !== null) {
+                if (null !== $('itemPreview' + selectedListItem.id)) {
                     itemPreview = $('itemPreview' + selectedListItem.id).innerHTML;
                 }
             «ELSE»
@@ -740,13 +740,13 @@ class EditFunctions {
 
             «IF targets('1.3.x')»
                 // add handling for the toggle link if existing
-                if ($(idPrefix + 'AddLink') !== null) {
+                if (null !== $(idPrefix + 'AddLink')) {
                     $(idPrefix + 'AddLink').observe('click', function (e) {
                         «vendorAndName»ToggleRelatedItemForm(idPrefix);
                     });
                 }
                 // add handling for the cancel button
-                if ($(idPrefix + 'SelectorDoCancel') !== null) {
+                if (null !== $(idPrefix + 'SelectorDoCancel')) {
                     $(idPrefix + 'SelectorDoCancel').observe('click', function (e) {
                         «vendorAndName»ResetRelatedItemForm(idPrefix);
                     });
@@ -778,11 +778,11 @@ class EditFunctions {
 
                         // modify the query string before the request
                         queryString = defaultQueryString + '&ot=' + objectType;
-                        if ($(idPrefix + 'ItemList') !== null) {
+                        if (null !== $(idPrefix + 'ItemList')) {
                             queryString += '&exclude=' + $F(idPrefix + 'ItemList');
                         }
 
-                        if ($(idPrefix + 'NoResultsHint') != null) {
+                        if (null != $(idPrefix + 'NoResultsHint')) {
                             $(idPrefix + 'NoResultsHint').addClassName('z-hide');
                         }
 
@@ -795,7 +795,7 @@ class EditFunctions {
                     }
                 };
                 relationHandler.each(function (relationHandler) {
-                    if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && relationHandler.acInstance === null) {
+                    if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && null === relationHandler.acInstance) {
                         relationHandler.acInstance = new Ajax.Autocompleter(
                             idPrefix + 'Selector',
                             idPrefix + 'SelectorChoices',
@@ -874,7 +874,7 @@ class EditFunctions {
                 };
 
                 relationHandler.each(function (key, relationHandler) {
-                    if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && relationHandler.acInstance === null) {
+                    if (relationHandler.prefix === (idPrefix + 'SelectorDoNew') && null === relationHandler.acInstance) {
                         relationHandler.acInstance = 'yes';
 
                         acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion');
@@ -896,7 +896,7 @@ class EditFunctions {
             «ENDIF»
 
             «IF targets('1.3.x')»
-                if (!includeEditing || $(idPrefix + 'SelectorDoNew') === null) {
+                if (!includeEditing || null === $(idPrefix + 'SelectorDoNew')) {
                     return;
                 }
             «ELSE»
@@ -967,7 +967,7 @@ class EditFunctions {
                     // do we have an item created
                     if (itemId > 0) {
                         // look whether there is an auto completion instance
-                        if (relationHandler.acInstance !== null) {
+                        if (null !== relationHandler.acInstance) {
                             // activate it
                             «IF targets('1.3.x')»
                                 relationHandler.acInstance.activate();
@@ -985,7 +985,7 @@ class EditFunctions {
                         }
                     }
                     // look whether there is a windows instance
-                    if (relationHandler.windowInstance !== null) {
+                    if (null !== relationHandler.windowInstance) {
                         // close it
                         relationHandler.windowInstance.closeHandler();
                     }

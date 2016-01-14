@@ -134,7 +134,7 @@ class Finder {
             «ELSE»
                 editor = jQuery('#editorName').val();
             «ENDIF»
-            if (editor === 'xinha') {
+            if ('xinha' === editor) {
                 w = parent.window;
                 window.close();
                 w.focus();
@@ -190,8 +190,8 @@ class Finder {
             «ELSE»
                 editor = jQuery('#editorName').val();
             «ENDIF»
-            if (editor === 'xinha') {
-                if (window.opener.current«appName»Editor !== null) {
+            if ('xinha' === editor) {
+                if (null !== window.opener.current«appName»Editor) {
                     html = «vendorAndName»GetPasteSnippet('html', itemId);
 
                     window.opener.current«appName»Editor.focusEditor();
@@ -200,10 +200,10 @@ class Finder {
                     html = «vendorAndName»GetPasteSnippet('url', itemId);
                     var currentInput = window.opener.current«appName»Input;
 
-                    if (currentInput.tagName === 'INPUT') {
+                    if ('INPUT' === currentInput.tagName) {
                         // Simply overwrite value of input elements
                         currentInput.value = html;
-                    } else if (currentInput.tagName === 'TEXTAREA') {
+                    } else if ('TEXTAREA' === currentInput.tagName) {
                         // Try to paste into textarea - technique depends on environment
                         if (typeof document.selection !== 'undefined') {
                             // IE: Move focus to textarea (which fortunately keeps its current selection) and overwrite selection
@@ -222,12 +222,12 @@ class Finder {
                         }
                     }
                 }
-            } else if (editor === 'tinymce') {
+            } else if ('tinymce' === editor) {
                 html = «vendorAndName»GetPasteSnippet('html', itemId);
                 tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
                 // other tinymce commands: mceImage, mceInsertLink, mceReplaceContent, see http://www.tinymce.com/wiki.php/Command_identifiers
-            } else if (editor === 'ckeditor') {
-                if (window.opener.current«appName»Editor !== null) {
+            } else if ('ckeditor' === editor) {
+                if (null !== window.opener.current«appName»Editor) {
                     html = «vendorAndName»GetPasteSnippet('html', itemId);
 
                     window.opener.current«appName»Editor.insertHtml(html);
@@ -237,7 +237,6 @@ class Finder {
             }
             «vendorAndName»ClosePopup();
         };
-
 
         function «vendorAndName»ClosePopup()
         {
@@ -279,9 +278,9 @@ class Finder {
             «ELSE»
                 jQuery('#«elemPrefix»ObjectType').change(«objName».itemSelector.onParamChanged);
 
-                if (jQuery('#' + baseId + '_catidMain').size() > 0) {
+                if (jQuery('#' + baseId + '_catidMain').length > 0) {
                     jQuery('#' + baseId + '_catidMain').change(«objName».itemSelector.onParamChanged);
-                } else if (jQuery('#' + baseId + '_catidsMain').size() > 0) {
+                } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
                     jQuery('#' + baseId + '_catidsMain').change(«objName».itemSelector.onParamChanged);
                 }
                 jQuery('#' + baseId + 'Id').change(«objName».itemSelector.onItemChanged);
@@ -317,9 +316,9 @@ class Finder {
                           'sortdir=' + $F(baseId + 'SortDir') + '&' +
                           'q=' + $F(baseId + 'SearchTerm');
             «ELSE»
-                if (jQuery('#' + baseId + '_catidMain').size() > 0) {
+                if (jQuery('#' + baseId + '_catidMain').length > 0) {
                     params += 'catidMain=' + jQuery('#' + baseId + '_catidMain').val() + '&';
-                } else if (jQuery('#' + baseId + '_catidsMain').size() > 0) {
+                } else if (jQuery('#' + baseId + '_catidsMain').length > 0) {
                     params += 'catidsMain=' + jQuery('#' + baseId + '_catidsMain').val() + '&';
                 }
                 params += 'sort=' + jQuery('#' + baseId + 'Sort').val() + '&' +
@@ -415,7 +414,7 @@ class Finder {
                 }
             }
 
-            if (selectedElement !== null) {
+            if (null !== selectedElement) {
                 «IF targets('1.3.x')»
                     $(baseId + 'PreviewContainer')
                         .update(window.atob(selectedElement.previewInfo))

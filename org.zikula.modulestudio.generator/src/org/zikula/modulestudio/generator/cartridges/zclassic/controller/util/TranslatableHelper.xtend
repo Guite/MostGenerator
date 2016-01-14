@@ -59,7 +59,7 @@ class TranslatableHelper {
                 /**
                  * @var ContainerBuilder
                  */
-                private $container;
+                protected $container;
 
                 /**
                  * Constructor.

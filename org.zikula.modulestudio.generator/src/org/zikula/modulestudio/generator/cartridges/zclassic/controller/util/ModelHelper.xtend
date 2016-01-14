@@ -50,7 +50,7 @@ class ModelHelper {
                 /**
                  * @var ContainerBuilder
                  */
-                private $container;
+                protected $container;
 
                 /**
                  * Constructor.

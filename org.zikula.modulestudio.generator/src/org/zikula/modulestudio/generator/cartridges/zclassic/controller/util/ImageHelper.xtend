@@ -41,7 +41,7 @@ class ImageHelper {
                  *
                  * @var string
                  */
-                private $name;
+                protected $name;
 
                 /**
                  * Constructor.

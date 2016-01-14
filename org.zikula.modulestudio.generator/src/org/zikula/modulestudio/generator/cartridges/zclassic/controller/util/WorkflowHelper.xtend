@@ -54,12 +54,12 @@ class WorkflowHelper {
                  *
                  * @var string
                  */
-                private $name;
+                protected $name;
 
                 /**
                  * @var ContainerBuilder
                  */
-                private $container;
+                protected $container;
 
                 /**
                  * @var Translator

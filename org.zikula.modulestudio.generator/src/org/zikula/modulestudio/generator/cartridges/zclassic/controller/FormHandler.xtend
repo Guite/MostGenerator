@@ -130,9 +130,14 @@ class FormHandler {
         «IF !isLegacy»
             namespace «appNamespace»\Form\Handler\Common\Base;
 
+            use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+            use Symfony\Component\Routing\Router;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+            «IF hasUploads»
+                use «appNamespace»\UploadHandler;
+            «ENDIF»
 
             use ModUtil;
             use System;
@@ -369,22 +374,53 @@ class FormHandler {
                 {
                 }
             «ELSE»
-            	/**
-            	 * The current request.
-            	 *
-            	 * @var Request
-            	 */
-            	protected $request = null;
+                /**
+                 * @var ContainerBuilder
+                 */
+                protected $container;
 
-            	/**
-            	 * Constructor.
-            	 *
-            	 * @param RequestStack $requestStack RequestStack service instance.
-            	 */
-            	public function __construct(RequestStack $requestStack)
-            	{
-            	    $this->request = $requestStack->getCurrentRequest();
-            	}
+                /**
+                 * The current request.
+                 *
+                 * @var Request
+                 */
+                protected $request = null;
+
+                /**
+                 * The router.
+                 *
+                 * @var Router
+                 */
+                protected $router = null;
+                «IF hasUploads»
+
+                    /**
+                     * The upload handler.
+                     *
+                     * @var UploadHandler
+                     */
+                    protected $uploadHandler = null;
+                «ENDIF»
+
+                /**
+                 * Constructor.
+                 *
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 * @param RequestStack           $requestStack   RequestStack service instance.
+                 * @param Router                 $router         Router service instance.
+                «IF hasUploads»
+                    «' '»* @param UploadHandler          $uploadHandler  UploadHandler service instance.
+                «ENDIF»
+                 */
+                public function __construct(\Zikula_ServiceManager $serviceManager, RequestStack $requestStack, Router $router«IF hasUploads», UploadHandler $uploadHandler«ENDIF»)
+                {
+                    $this->container = $serviceManager;
+                    $this->request = $requestStack->getCurrentRequest();
+                    $this->router = $router;
+                    «IF hasUploads»
+                        $this->uploadHandler = $uploadHandler;
+                    «ENDIF»
+                }
 
 
 «/* TODO
@@ -423,8 +459,9 @@ class FormHandler {
     }
 
 
-processForm($templateParameters)
-getTemplateParameters()
+$this->templateParameters
+  processForm($templateParameters) -> set
+  getTemplateParameters() -> get
 
 
 required form options
@@ -462,7 +499,7 @@ if attributable:
                     $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                     $repository = $this->entityManager->getRepository($entityClass);
                 «ELSE»
-                    $repository = $this->view->getServiceManager()->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
+                    $repository = $this->container->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
                 «ENDIF»
                 $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»
                     'controller' => \FormUtil::getPassedValue('type', 'user', 'GETPOST'),
@@ -530,7 +567,7 @@ if attributable:
             «IF app.isLegacy»
                 $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
             «ELSE»
-                $controllerHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«app.appName.formatForDB».controller_helper');
             «ENDIF»
 
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, «IF isLegacy»array()«ELSE»[]«ENDIF», $this->objectType, $this->idFields);
@@ -540,7 +577,7 @@ if attributable:
             $this->mode = ($hasIdentifier) ? 'edit' : 'create';
 
             «IF !app.isLegacy»
-                $permissionHelper = $this->view->getServiceManager()->get('zikula_permissions_module.api.permission');
+                $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
             if ($this->mode == 'edit') {
@@ -587,7 +624,7 @@ if attributable:
             «IF isLegacy»
                 $workflowHelper = new «appName»_Util_Workflow($this->view->getServiceManager());
             «ELSE»
-                $workflowHelper = $this->view->getServiceManager()->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $this->container->get('«appName.formatForDB».workflow_helper');
             «ENDIF»
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
@@ -595,7 +632,7 @@ if attributable:
                     return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not determine workflow actions.'));
-                    $logger = $this->view->getServiceManager()->get('logger');
+                    $logger = $this->container->get('logger');
                     $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()]);
                     throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
                 «ENDIF»
@@ -753,7 +790,7 @@ if attributable:
                 «IF isLegacy»
                     $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
                 «ELSE»
-                    $translatableHelper = $this->serviceManager->get('«app.appName.formatForDB».translatable_helper');
+                    $translatableHelper = $this->container->get('«app.appName.formatForDB».translatable_helper');
                 «ENDIF»
                 $translations = $translatableHelper->prepareEntityForEditing($this->objectType, $entity);
 
@@ -869,6 +906,17 @@ if attributable:
          */
         public function handleCommand(Zikula_Form_View $view, &$args)
         {
+            «IF !isLegacy»
+                «/* TODO: fix implementation */»
+                // build $args for BC (e.g. used by handleInlineRedirect)
+                $args = [];
+                foreach ($actions as $actions) {
+                    if ($form->get($action['id'])->isClicked()) {
+                        $args['commandName'] = $action['id'];
+                    }
+                }
+
+            «ENDIF»
             $action = $args['commandName'];
             $isRegularAction = !in_array($action, «IF isLegacy»array(«ELSE»[«ENDIF»'delete'«IF isLegacy», 'cancel')«ELSE», 'reset', 'cancel']«ENDIF»);
 
@@ -894,7 +942,7 @@ if attributable:
                     «IF isLegacy»
                         $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
                     «ELSE»
-                        $hookHelper = $this->serviceManager->get('«app.appName.formatForDB».hook_helper');
+                        $hookHelper = $this->container->get('«app.appName.formatForDB».hook_helper');
                     «ENDIF»
                     // Let any hooks perform additional validation actions
                     $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
@@ -1030,7 +1078,7 @@ if attributable:
                 «IF isLegacy»
                     $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
                 «ELSE»
-                    $translatableHelper = $this->serviceManager->get('«app.appName.formatForDB».translatable_helper');
+                    $translatableHelper = $this->container->get('«app.appName.formatForDB».translatable_helper');
                 «ENDIF»
                 $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $formData);
 
@@ -1105,7 +1153,7 @@ if attributable:
                 «ELSE»
                     $flashType = ($success === true) ? \Zikula_Session::MESSAGE_STATUS : \Zikula_Session::MESSAGE_ERROR;
                     $this->request->getSession()->getFlashBag()->add($flashType, $message);
-                    $logger = $this->view->getServiceManager()->get('logger');
+                    $logger = $this->container->get('logger');
                     $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
                     if ($success === true) {
                         $logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
@@ -1185,7 +1233,7 @@ if attributable:
                             «IF app.isLegacy»
                                 $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
                             «ELSE»
-                                $controllerHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».controller_helper');
+                                $controllerHelper = $this->container->get('«app.appName.formatForDB».controller_helper');
                             «ENDIF»
                             $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                         }
@@ -1488,7 +1536,7 @@ if attributable:
             // only allow editing for the owner or people with higher permissions
             if (isset($entity['createdUserId']) && $entity['createdUserId'] != UserUtil::getVar('uid')) {
                 «IF !app.isLegacy»
-                    $permissionHelper = $this->view->getServiceManager()->get('zikula_permissions_module.api.permission');
+                    $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
                 «ENDIF»
                 if (!«IF app.isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
                     «IF app.isLegacy»
@@ -1547,13 +1595,13 @@ if attributable:
                 «IF app.isLegacy»
                     $modelHelper = new «app.appName»_Util_Model($this->view->getServiceManager());
                 «ELSE»
-                    $modelHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».model_helper');
+                    $modelHelper = $this->container->get('«app.appName.formatForDB».model_helper');
                 «ENDIF»
                 if (!$modelHelper->canBeCreated($this->objectType)) {
                     «IF app.isLegacy»
                         LogUtil::registerError($this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
                     «ELSE»
-                        $logger = $this->view->getServiceManager()->get('logger');
+                        $logger = $this->container->get('logger');
                         $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType]);
                     «ENDIF»
 
@@ -1584,7 +1632,7 @@ if attributable:
                     «IF app.isLegacy»
                         $helper = new «app.appName»_Util_ListEntries($this->view->getServiceManager());
                     «ELSE»
-                        $helper = $this->view->getServiceManager()->get('«app.appName.formatForDB».listentries_helper');
+                        $helper = $this->container->get('«app.appName.formatForDB».listentries_helper');
                     «ENDIF»
 
                     foreach ($this->listFields as $listField => $isMultiple) {
@@ -1608,7 +1656,7 @@ if attributable:
                 $uid = UserUtil::getVar('uid');
                 $isCreator = $entity['createdUserId'] == $uid;
                 «IF !app.isLegacy»
-                    $varHelper = $this->view->getServiceManager()->get('zikula_extensions_module.api.variable');
+                    $varHelper = $this->container->get('zikula_extensions_module.api.variable');
                 «ENDIF»
                 «IF workflow == EntityWorkflowType.ENTERPRISE»
                     $groupArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF app.isLegacy»$this->getVar(«ELSE»$varHelper->get('«app.appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2)«IF app.isLegacy»)«ELSE»]«ENDIF»;
@@ -1744,7 +1792,9 @@ if attributable:
                 «IF app.isLegacy»
                     $workflowHelper = new «app.appName»_Util_Workflow($this->view->getServiceManager());
                 «ELSE»
-                    $workflowHelper = $this->view->getServiceManager()->get('«app.appName.formatForDB».workflow_helper');
+                    $workflowHelper = $this->container->get('«app.appName.formatForDB».workflow_helper');
+                    $flashBag = $this->request->getSession()->getFlashBag();
+                    $logger = $this->container->get('logger');
                 «ENDIF»
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
@@ -1752,8 +1802,7 @@ if attributable:
                     «IF app.isLegacy»
                         LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                     «ELSE»
-                        $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
-                        $logger = $this->view->getServiceManager()->get('logger');
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                         $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()]);
                     «ENDIF»
             «ENDIF»
@@ -1761,8 +1810,7 @@ if attributable:
                 «IF app.isLegacy»
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
-                    $logger = $this->view->getServiceManager()->get('logger');
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
                     $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }
