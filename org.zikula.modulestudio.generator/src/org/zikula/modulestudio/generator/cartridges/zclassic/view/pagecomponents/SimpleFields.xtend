@@ -64,16 +64,16 @@ class SimpleFields {
     }
 
     def dispatch displayField(IntegerField it, String objName, String page) '''
-        «IF isLegacyApp»{$«objName».«name.formatForCode»}«ELSE»{{ «objName».«name.formatForCode» }}«ENDIF»«IF percentual»%«ENDIF»'''
+        «IF isLegacyApp»{$«objName».«name.formatForCode»}«ELSE»{{ «objName».«name.formatForCode» }}«ENDIF»«IF percentage»%«ENDIF»'''
 
     def dispatch displayField(DecimalField it, String objName, String page) {
-        if (percentual) '''
+        if (percentage) '''
             «IF isLegacyApp»{math equation='x * y' x=$«objName».«name.formatForCode» y=100 assign='percentValue'}{$percentValue|formatnumber}«ELSE»{{ («objName».«name.formatForCode» * 100)|localizednumber }}«ENDIF»%'''
         else '''
             «IF isLegacyApp»{$«objName».«name.formatForCode»|format«IF currency»currency«ELSE»number«ENDIF»}«ELSE»{{ «objName».«name.formatForCode»|localized«IF currency»currency«ELSE»number«ENDIF» }}«ENDIF»'''
     }
     def dispatch displayField(FloatField it, String objName, String page) {
-        if (percentual) '''
+        if (percentage) '''
             «IF isLegacyApp»{math equation='x * y' x=$«objName».«name.formatForCode» y=100 assign='percentValue'}{$percentValue|formatnumber}«ELSE»{{ («objName».«name.formatForCode» * 100)|localizednumber }}«ENDIF»%'''
         else '''
             «IF isLegacyApp»{$«objName».«name.formatForCode»|format«IF currency»currency«ELSE»number«ENDIF»}«ELSE»{{ «objName».«name.formatForCode»|localized«IF currency»currency«ELSE»number«ENDIF» }}«ENDIF»'''

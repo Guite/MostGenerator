@@ -386,14 +386,14 @@ if attributable:
         'required' => «mandatory.displayBool»,
     '''
 
-    def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentual»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
+    def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay». Only digits are allowed.'''
     def private dispatch additionalOptions(IntegerField it) '''
         «val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0»
         «val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0»
         'required' => «mandatory.displayBool»,
         'max_length' => «length»,
-        «IF percentual»
+        «IF percentage»
             'type' => 'integer',
         «ENDIF»
         «IF !range && (hasMin || hasMax)»
@@ -412,7 +412,7 @@ if attributable:
         'scale' => 0
     '''
 
-    def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF percentual»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(DecimalField it) '''
         «val hasMin = minValue > 0»
         «val hasMax = maxValue > 0»
@@ -422,7 +422,7 @@ if attributable:
             'currency' => 'EUR',
             'divisor' => 1,
         «ENDIF*/»
-        «/* not required since these are the default values IF percentual»
+        «/* not required since these are the default values IF percentage»
             'type' => 'fractional',
         «ENDIF*/»
         «IF hasMin || hasMax»
@@ -441,7 +441,7 @@ if attributable:
         'scale' => «scale»
     '''
 
-    def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF percentual»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
+    def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(FloatField it) '''
         «val hasMin = minValue > 0»
         «val hasMax = maxValue > 0»
@@ -451,7 +451,7 @@ if attributable:
             'currency' => 'EUR',
             'divisor' => 1,
         «ENDIF*/»
-        «/* not required since these are the default values IF percentual»
+        «/* not required since these are the default values IF percentage»
             'type' => 'fractional',
         «ENDIF*/»
         «IF hasMin || hasMax»

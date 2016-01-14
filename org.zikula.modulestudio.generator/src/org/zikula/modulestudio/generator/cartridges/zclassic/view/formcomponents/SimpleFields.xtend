@@ -89,9 +89,9 @@ class SimpleFields {
 
     def private dispatch formField(IntegerField it, String groupSuffix, String idSuffix) '''
         «IF isLegacyApp»
-            «IF percentual»<div>«ENDIF»
+            «IF percentage»<div>«ENDIF»
             {formintinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' maxLength=«length»«IF minValue.toString != '0'» minValue=«minValue»«ENDIF»«IF maxValue.toString != '0'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
-            «IF percentual»%</div>«ENDIF»
+            «IF percentage»%</div>«ENDIF»
             «val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0»
             «val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0»
             «IF hasMin || hasMax»
@@ -114,9 +114,9 @@ class SimpleFields {
 
     def private dispatch formField(DecimalField it, String groupSuffix, String idSuffix) '''
         «IF isLegacyApp»
-            «IF percentual»<div>«ENDIF»
+            «IF percentage»<div>«ENDIF»
             {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
-            «IF percentual»%</div>«ENDIF»
+            «IF percentage»%</div>«ENDIF»
             «val hasMin = minValue > 0»
             «val hasMax = maxValue > 0»
             «IF hasMin || hasMax»
@@ -139,9 +139,9 @@ class SimpleFields {
 
     def private dispatch formField(FloatField it, String groupSuffix, String idSuffix) '''
         «IF isLegacyApp»
-            «IF percentual»<div>«ENDIF»
+            «IF percentage»<div>«ENDIF»
             {formfloatinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«IF minValue != 0 && minValue.toString != '0.0' && minValue.toString() != '0.00'» minValue=«minValue»«ENDIF»«IF maxValue != 0 && maxValue.toString() != '0.0' && maxValue.toString() != '0.00'» maxValue=«maxValue»«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
-            «IF percentual»%</div>«ENDIF»
+            «IF percentage»%</div>«ENDIF»
             «val hasMin = minValue > 0»
             «val hasMax = maxValue > 0»
             «IF hasMin || hasMax»
