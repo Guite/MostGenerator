@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.ConfigLegacy
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.FormLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessing
@@ -44,6 +45,7 @@ class FormHandler {
     FileHelper fh = new FileHelper
     Redirect redirectHelper = new Redirect
     RelationPresets relationPresetsHelper = new RelationPresets
+    FormLegacy legacyParts = new FormLegacy
 
     Application app
 
@@ -150,23 +152,7 @@ class FormHandler {
          * This handler class handles the page events of editing forms.
          * It collects common functionality required by different object types.
         «IF isLegacy»
-            «' '»*
-            «' '» Member variables in a form handler object are persisted across different page requests. This means
-            «' '» a member variable $this->X can be set on one request and on the next request it will still contain
-            «' '» the same value.
-            «' '»
-            «' '» A form handler will be notified of various events happening during it's life-cycle.
-            «' '» When a specific event occurs then the corresponding event handler (class method) will be executed. Handlers
-            «' '» are named exactly like their events - this is how the framework knows which methods to call.
-            «' '»
-            «' '» The list of events is:
-            «' '»
-            «' '» - <b>initialize</b>: this event fires before any of the events for the plugins and can be used to setup
-            «' '»   the form handler. The event handler typically takes care of reading URL variables, access control
-            «' '»   and reading of data from the database.
-            «' '»
-            «' '» - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
-            «' '»   Zikula_Form_Plugin_Button plugin to signal that the user activated a button.
+            «legacyParts.handlerDescription»
         «ENDIF»
          */
         «IF isLegacy»
@@ -289,26 +275,6 @@ class FormHandler {
                  */
                 protected $hasAttributes = false;
             «ENDIF»
-            «IF isLegacy»
-                «IF hasCategorisableEntities»
-
-                    /**
-                     * Whether the entity is categorisable or not.
-                     *
-                     * @var boolean
-                     */
-                    protected $hasCategories = false;
-                «ENDIF»
-                «IF hasMetaDataEntities»
-
-                    /**
-                     * Whether the entity has meta data or not.
-                     *
-                     * @var boolean
-                     */
-                    protected $hasMetaData = false;
-                «ENDIF»
-            «ENDIF»
             «IF hasSluggable»
 
                 /**
@@ -337,42 +303,9 @@ class FormHandler {
                 protected $uploadFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
             «ENDIF»
             «IF isLegacy»
-                «IF hasUserFields»
+                «legacyParts.memberVars(it)»
 
-                    /**
-                     * Array with user field names and mandatory flags.
-                     *
-                     * @var array
-                     */
-                    protected $userFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-                «ENDIF»
-                «IF hasListFields»
-
-                    /**
-                     * Array with list field names and multiple flags.
-                     *
-                     * @var array
-                     */
-                    protected $listFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-                «ENDIF»
-
-                /**
-                 * Post construction hook.
-                 *
-                 * @return mixed
-                 */
-                public function setup()
-                {
-                }
-
-                /**
-                 * Pre-initialise hook.
-                 *
-                 * @return void
-                 */
-                public function preInitialize()
-                {
-                }
+                «legacyParts.stubs»
             «ELSE»
                 /**
                  * @var ContainerBuilder
@@ -652,8 +585,8 @@ if attributable:
         «initTranslationsForEditing»
         «initAttributesForEditing»
         «IF isLegacy»
-            «initCategoriesForEditing»
-            «initMetaDataForEditing»
+            «legacyParts.initCategoriesForEditing(it)»
+            «legacyParts.initMetaDataForEditing(it)»
         «ENDIF»
     '''
 
@@ -664,25 +597,15 @@ if attributable:
                 $this->initAttributesForEditing();
             }
         «ENDIF»
-        «IF isLegacy»
-            «IF hasCategorisableEntities»
-
-                if ($this->hasCategories === true) {
-                    $this->initCategoriesForEditing();
-                }
-            «ENDIF»
-            «IF hasMetaDataEntities»
-
-                if ($this->hasMetaData === true) {
-                    $this->initMetaDataForEditing();
-                }
-            «ENDIF»
-        «ENDIF»
         «IF hasTranslatable»
 
             if ($this->hasTranslatableFields === true) {
                 $this->initTranslationsForEditing();
             }
+        «ENDIF»
+        «IF isLegacy»
+
+            «legacyParts.initExtensions(it)»
         «ENDIF»
     '''
 
@@ -765,10 +688,6 @@ if attributable:
                 «IF isLegacy»
                     $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                     $entity = new $entityClass(«/* TODO constructor arguments if required */»);
-                «ELSE»
-                    «/* TODO to be replaced by empty_data option in edit form type */»
-                    $createMethod = 'create' . ucfirst($this->objectType);
-                    $entity = $this->view->getContainer()->get('«appName.formatForDB».' . $this->objectType . '_factory')->$createMethod();
                 «ENDIF»
             }
 
@@ -837,51 +756,6 @@ if attributable:
                 return «IF isLegacy»array(«ELSE»[«ENDIF»
                     'field1', 'field2', 'field3'
                 «IF isLegacy»)«ELSE»]«ENDIF»;
-            }
-        «ENDIF»
-    '''
-
-    // 1.3.x only
-    def private initCategoriesForEditing(Application it) '''
-        «IF hasCategorisableEntities»
-
-            /**
-             * Initialise categories.
-             */
-            protected function initCategoriesForEditing()
-            {
-                $entity = $this->entityRef;
-
-                // assign the actual object for categories listener
-                $this->view->assign($this->objectTypeLower . 'Obj', $entity);
-
-                // load and assign registered categories
-                $registries = ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $this->idFields[0]));
-
-                // check if multiple selection is allowed for this object type
-                $multiSelectionPerRegistry = array();
-                foreach ($registries as $registryId => $registryCid) {
-                    $multiSelectionPerRegistry[$registryId] = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
-                }
-                $this->view->assign('registries', $registries)
-                           ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
-            }
-        «ENDIF»
-    '''
-
-    // 1.3.x only
-    def private initMetaDataForEditing(Application it) '''
-        «IF hasMetaDataEntities && isLegacy»
-
-            /**
-             * Initialise meta data.
-             */
-            protected function initMetaDataForEditing()
-            {
-                $entity = $this->entityRef;
-
-                $metaData = null !== $entity->getMetadata() ? $entity->getMetadata()->toArray() : array();
-                $this->view->assign('meta', $metaData);
             }
         «ENDIF»
     '''
@@ -1027,35 +901,7 @@ if attributable:
         «ENDIF»
         «IF hasMetaDataEntities && isLegacy»
 
-            /**
-             * Prepare update of meta data.
-             *
-             * @param Zikula_EntityAccess $entity   currently treated entity instance.
-             * @param Array               $formData form data to be merged.
-             */
-            protected function processMetaDataForUpdate($entity, $formData)
-            {
-                $metaData = $entity->getMetadata();
-                if (is_null($metaData)) {
-                    «IF isLegacy»
-                        $metaDataEntityClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'MetaData';
-                    «ELSE»
-                        $metaDataEntityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'MetaDataEntity';
-                    «ENDIF»
-                    $metaData = new $metaDataEntityClass($entity);
-                }
-
-                if (isset($formData['meta']) && is_array($formData['meta'])) {
-                    // convert form date values into DateTime objects
-                    $formData['meta']['startdate'] = new \DateTime($formData['meta']['startdate']);
-                    $formData['meta']['enddate'] = new \DateTime($formData['meta']['enddate']);
-
-                    // now set meta data values
-                    $metaData->merge($formData['meta']);
-                }
-                $entity->setMetadata($metaData);
-                unset($formData['meta']);
-            }
+            «legacyParts.processMetaDataForUpdate(it)»
         «ENDIF»
         «IF hasTranslatable»
 
@@ -1188,17 +1034,8 @@ if attributable:
             «IF (isLegacy && hasUserFields) || hasUploads || (isLegacy && hasListFields) || (hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
 
                 if («IF isLegacy»$args['commandName'] != 'cancel'«ELSE»!in_array($args['commandName, ['reset', 'cancel'])«ENDIF») {
-                    «IF isLegacy && hasUserFields»
-                        if (count($this->userFields) > 0) {
-                            foreach ($this->userFields as $userField => $isMandatory) {
-                                «IF isLegacy»
-                                    $entityData[$userField] = (int) $this->request->request->filter($userField, 0, FILTER_VALIDATE_INT);
-                                «ELSE»
-                                    $entityData[$userField] = $this->request->request->getInt($userField, 0);
-                                «ENDIF»
-                                unset($entityData[$userField . 'Selector']);
-                            }
-                        }
+                    «IF isLegacy»
+                        «legacyParts.processSpecialFields(it)»
 
                     «ENDIF»
                     «IF hasUploads»
@@ -1210,25 +1047,7 @@ if attributable:
                         }
 
                     «ENDIF»
-                    «IF isLegacy && hasListFields»
-                        if (count($this->listFields) > 0) {
-                            foreach ($this->listFields as $listField => $multiple) {
-                                if (!$multiple) {
-                                    continue;
-                                }
-                                if (is_array($entityData[$listField])) { 
-                                    $values = $entityData[$listField];
-                                    $entityData[$listField] = '';
-                                    if (count($values) > 0) {
-                                        $entityData[$listField] = '###' . implode('###', $values) . '###';
-                                    }
-                                }
-                            }
-                        }
-
-                    «ENDIF»
                     «IF !isLegacy && hasSluggable»
-
                         if ($this->hasSlugUpdatableField === true && isset($entityData['slug'])) {
                             «IF app.isLegacy»
                                 $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
@@ -1272,22 +1091,19 @@ if attributable:
                     $this->processAttributesForUpdate($entity, $formData);
                 }
             «ENDIF»
-            «IF hasMetaDataEntities && isLegacy»
 
-                if ($this->hasMetaData === true) {
-                    $this->processMetaDataForUpdate($entity, $formData);
-                }
+            «IF app.isLegacy»
+                «legacyParts.processExtensions(it)»
+
             «ENDIF»
-
-            // search for relationship plugins to update the corresponding data
-            $entityData = $this->writeRelationDataToEntity($view, $entity, $entityData);
-
             // assign fetched data
             $entity->merge($entityData);
+            «IF app.isLegacy»
 
-            // we must persist related items now (after the merge) to avoid validation errors
-            // if cascades cause the main entity becoming persisted automatically, too
-            $this->persistRelationData($view);
+                // we must persist related items now (after the merge) to avoid validation errors
+                // if cascades cause the main entity becoming persisted automatically, too
+                $this->persistRelationData($view);
+            «ENDIF»
 
             // save updated entity
             $this->entityRef = $entity;
@@ -1295,67 +1111,12 @@ if attributable:
             // return remaining form data
             return $formData;
         }
+        «IF app.isLegacy»
 
-        /**
-         * Updates the entity with new relationship data.
-         *
-         * @param Zikula_Form_View    $view       The form view instance.
-         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
-         * @param array               $entityData Entity related form data.
-         *
-         * @return array form data after processing.
-         */
-        protected function writeRelationDataToEntity(Zikula_Form_View $view, $entity, $entityData)
-        {
-            $entityData = $this->writeRelationDataToEntity_rec($entity, $entityData, $view->plugins);
+            «legacyParts.writeRelationDataToEntity(it)»
 
-            return $entityData;
-        }
-
-        /**
-         * Searches for relationship plugins to write their updated values
-         * back to the given entity.
-         *
-         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
-         * @param array               $entityData Entity related form data.
-         * @param array               $plugins    List of form plugin which are searched.
-         *
-         * @return array form data after processing.
-         */
-        protected function writeRelationDataToEntity_rec($entity, $entityData, $plugins)
-        {
-            foreach ($plugins as $plugin) {
-                if ($plugin instanceof «IF isLegacy»«appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'assignRelatedItemsToEntity')) {
-                    $entityData = $plugin->assignRelatedItemsToEntity($entity, $entityData);
-                }
-                $entityData = $this->writeRelationDataToEntity_rec($entity, $entityData, $plugin->plugins);
-            }
-
-            return $entityData;
-        }
-
-        /**
-         * Persists any related items.
-         *
-         * @param Zikula_Form_View $view The form view instance.
-         */
-        protected function persistRelationData(Zikula_Form_View $view)
-        {
-            $this->persistRelationData_rec($view->plugins);
-        }
-
-        /**
-         * Searches for relationship plugins to persist their related items.
-         */
-        protected function persistRelationData_rec($plugins)
-        {
-            foreach ($plugins as $plugin) {
-                if ($plugin instanceof «IF isLegacy»«appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'persistRelatedItems')) {
-                    $plugin->persistRelatedItems();
-                }
-                $this->persistRelationData_rec($plugin->plugins);
-            }
-        }
+            «legacyParts.persistRelationData(it)»
+        «ENDIF»
     '''
 
     def private applyAction(Application it, String actionName) '''
@@ -1417,7 +1178,6 @@ if attributable:
 
             «initialize(actionName)»
 
-            «formHandlerBasePostInitialize»
             «IF ownerPermission && standardFields»
 
                 «formHandlerBaseInitEntityForEditing»
@@ -1458,7 +1218,6 @@ if attributable:
             use SecurityUtil;
             use System;
             use UserUtil;
-            use Zikula_Form_View;
         «ENDIF»
     '''
 
@@ -1480,14 +1239,6 @@ if attributable:
             «IF app.hasAttributableEntities»
                 $this->hasAttributes = «attributable.displayBool»;
             «ENDIF»
-            «IF app.isLegacy»
-                «IF app.hasCategorisableEntities»
-                    $this->hasCategories = «categorisable.displayBool»;
-                «ENDIF»
-                «IF app.hasMetaDataEntities»
-                    $this->hasMetaData = «metaData.displayBool»;
-                «ENDIF»
-            «ENDIF»
             «IF app.hasSluggable»
                 $this->hasSlugUpdatableField = «(!app.isLegacy && hasSluggableFields && slugUpdatable).displayBool»;
             «ENDIF»
@@ -1499,27 +1250,8 @@ if attributable:
                 $this->uploadFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
             «ENDIF»
             «IF app.isLegacy»
-                «IF hasUserFieldsEntity»
-                    // array with user fields and mandatory flags
-                    $this->userFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR userField : getUserFieldsEntity SEPARATOR ', '»'«userField.name.formatForCode»' => «userField.mandatory.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
-                «ENDIF»
-                «IF hasListFieldsEntity»
-                    // array with list fields and multiple flags
-                    $this->listFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
-                «ENDIF»
+                «legacyParts.setMemberVars(it)»
             «ENDIF»
-        }
-    '''
-
-    def private formHandlerBasePostInitialize(Entity it) '''
-        /**
-         * Post-initialise hook.
-         *
-         * @return void
-         */
-        public function postInitialize()
-        {
-            parent::postInitialize();
         }
     '''
 

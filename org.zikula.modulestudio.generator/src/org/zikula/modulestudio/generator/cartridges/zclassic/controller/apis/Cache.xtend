@@ -21,8 +21,9 @@ class Cache {
 
     FileHelper fh = new FileHelper
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
-        if (!targets('1.3.x')) { // only generated for 1.3.x, because 1.4.x is migrated to Twig
+        if (!targets('1.3.x')) {
             return
         }
         println('Generating cache api')
