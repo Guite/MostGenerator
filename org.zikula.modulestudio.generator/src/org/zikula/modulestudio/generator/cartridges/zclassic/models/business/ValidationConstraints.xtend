@@ -324,11 +324,7 @@ class ValidationConstraints {
                     $format = 'U';
                     return $this['«name.formatForCode»']->format($format) < date($format);
                 }
-            «ENDIF»
-            «IF past && future»
-
-            «ENDIF»
-            «IF future»
+            «ELSEIF future»
                 /**
                  * Checks whether the «name.formatForCode» field value is in the future.
                  * This method is used for validation.
@@ -376,11 +372,7 @@ class ValidationConstraints {
                     $format = 'Ymd';
                     return $this['«name.formatForCode»']->format($format) < date($format);
                 }
-            «ENDIF»
-            «IF past && future»
-
-            «ENDIF»
-            «IF future»
+            «ELSEIF future»
                 /**
                  * Checks whether the «name.formatForCode» field value is in the future.
                  * This method is used for validation.
@@ -428,11 +420,7 @@ class ValidationConstraints {
                     $format = 'His';
                     return $this['«name.formatForCode»']->format($format) < date($format);
                 }
-            «ENDIF»
-            «IF past && future»
-
-            «ENDIF»
-            «IF future»
+            «ELSEIF future»
                 /**
                  * Checks whether the «name.formatForCode» field value is in the future.
                  * This method is used for validation.
