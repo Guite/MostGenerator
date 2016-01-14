@@ -60,7 +60,7 @@ class UploadTypeExtension {
                     return;
                 }
 
-                $builder->add($options['attr']['id'] . 'DeleteFile', 'Symfony\Component\Form\Extension\Core\Type\Type', [
+                $builder->add($options['attr']['id'] . 'DeleteFile', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', [
                     'mapped' => false,
                     'label' => $this->translator->trans('Delete existing file', [], '«appName.formatForDB»'),
                     'required' => false,
