@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.application
 import java.io.File
 import java.util.ArrayList
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.IStatus
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.zikula.modulestudio.generator.cartridges.reporting.ReportingServices
 
@@ -100,9 +101,8 @@ class WorkflowSettings {
 
         try {
             collectAvailableReports
-        } catch (Exception exc) {
-            // TODO Auto-generated catch block
-            exc.printStackTrace
+        } catch (Exception e) {
+            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.toString, e)
         }
     }
 

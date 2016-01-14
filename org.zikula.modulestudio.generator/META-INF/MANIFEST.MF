@@ -16,7 +16,7 @@ Require-Bundle: de.guite.modulestudio.mostdsl;bundle-version="1.0.0",
  org.zikula.modulestudio.generator.reporting;bundle-version="1.0.0"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.zikula.modulestudio.generator.application.Activator
+Bundle-Activator: org.zikula.modulestudio.generator.application.ModuleStudioGeneratorActivator
 Export-Package: org.zikula.modulestudio.generator.application,
  org.zikula.modulestudio.generator.cartridges,
  org.zikula.modulestudio.generator.cartridges.zclassic,

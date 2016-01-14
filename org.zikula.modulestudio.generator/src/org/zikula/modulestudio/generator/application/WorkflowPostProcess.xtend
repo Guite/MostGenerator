@@ -3,9 +3,11 @@ package org.zikula.modulestudio.generator.application
 import java.io.File
 import java.io.IOException
 import org.eclipse.core.runtime.FileLocator
+import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.emf.mwe.utils.FileCopy
+import org.zikula.modulestudio.generator.cartridges.reporting.Activator
 import org.zikula.modulestudio.generator.cartridges.reporting.ReportingFacade
 import org.zikula.modulestudio.generator.workflow.components.ModelFileCopier
 
@@ -56,7 +58,7 @@ class WorkflowPostProcess {
      */
     def private copyAdminImage() {
         val fileCopy = new FileCopy
-        val bundle = Platform.getBundle(Activator.PLUGIN_ID)
+        val bundle = Platform.getBundle(ModuleStudioGeneratorActivator.PLUGIN_ID)
         var resources = FileLocator.findEntries(bundle, new Path('/src/resources/images/MOST_48.png')) //$NON-NLS-1$
         val resourcesExported = FileLocator.findEntries(bundle, new Path('/resources/images/MOST_48.png')) //$NON-NLS-1$
         if (resources.empty) {
@@ -82,8 +84,7 @@ class WorkflowPostProcess {
                     fileCopy.invoke(null)
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace
+                ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.toString, e)
             }
         }
     }
@@ -93,7 +94,7 @@ class WorkflowPostProcess {
      */
     def private void exportBirtReports() {
         try {
-            val reportingBundle = Platform.getBundle(org.zikula.modulestudio.generator.cartridges.reporting.Activator.PLUGIN_ID)
+            val reportingBundle = Platform.getBundle(Activator.PLUGIN_ID)
             var resources = FileLocator.findEntries(reportingBundle, new Path(settings.getReportPath))
             val resourcesExported = FileLocator.findEntries(reportingBundle, new Path('src/' + settings.getReportPath)) //$NON-NLS-1$
             if (resources.size < 1) {
@@ -112,8 +113,7 @@ class WorkflowPostProcess {
             }
             reportingFacade.shutDown
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace
+            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.toString, e)
         }
     }
 }

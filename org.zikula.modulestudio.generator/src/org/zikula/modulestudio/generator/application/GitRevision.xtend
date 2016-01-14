@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.Path
 class GitRevision {
 
 	def static read() throws IOException {
-		val bundle = Activator.getDefault.bundle
+		val bundle = ModuleStudioGeneratorActivator.getDefault.bundle
 		var url = FileLocator.find(bundle, new Path('gitrevision.txt'), null)
 		
 		if (url === null) {
