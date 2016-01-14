@@ -172,6 +172,15 @@ class Layout {
         {# purpose of this template: apply some general form extensions #}
         {% extends '@ZikulaFormExtensionBundle/Form/bootstrap_3_zikula_admin_layout.html.twig' %}
 
+        {# add required asterisk to labels, see http://symfony.com/doc/current/cookbook/form/form_customization.html#adding-a-required-asterisk-to-field-labels #}
+        {% block form_label %}
+            {{ parent() }}
+
+            {% if required %}
+                <span class="required" title="{{ __('This field is required') }}">*</span>
+            {% endif %}
+        {% endblock %}
+
         {# add support for help messages, see http://symfony.com/doc/current/cookbook/form/form_customization.html#adding-help-messages #}
         {% block form_widget_simple %}
             {{ parent() }}
