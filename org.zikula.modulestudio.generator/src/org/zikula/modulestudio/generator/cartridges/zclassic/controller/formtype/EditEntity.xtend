@@ -237,20 +237,6 @@ if attributable:
                             «FOR field : fields.filter(UserField)»
                                 'is«field.name.formatForCodeCapital»UserValid' => '«field.name.formatForCode»',
                             «ENDFOR»
-                            «FOR field : fields.filter(DatetimeField).filter[mandatory && (past || future)]»
-                                «IF field.past»
-                                    'is«field.name.formatForCodeCapital»DateTimeValidPast' => '«field.name.formatForCode»',
-                                «ELSEIF field.future»
-                                    'is«field.name.formatForCodeCapital»DateTimeValidFuture' => '«field.name.formatForCode»',
-                                «ENDIF»
-                            «ENDFOR»
-                            «FOR field : fields.filter(DateField).filter[mandatory && (past || future)]»
-                                «IF field.past»
-                                    'is«field.name.formatForCodeCapital»DateValidPast' => '«field.name.formatForCode»',
-                                «ELSEIF field.future»
-                                    'is«field.name.formatForCodeCapital»DateValidFuture' => '«field.name.formatForCode»',
-                                «ENDIF»
-                            «ENDFOR»
                             «FOR field : fields.filter(TimeField).filter[mandatory && (past || future)]»
                                 «IF field.past»
                                     'is«field.name.formatForCodeCapital»TimeValidPast' => '«field.name.formatForCode»',

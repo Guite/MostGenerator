@@ -211,6 +211,11 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(DatetimeField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\DateTime()
+        «IF past»
+            «' '»* @Assert\LessThan("now")
+        «ELSEIF future»
+            «' '»* @Assert\GreaterThan("now")
+        «ENDIF»
         «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
@@ -218,6 +223,11 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(DateField it) '''
         «fieldAnnotationsMandatory»
         «' '»* @Assert\Date()
+        «IF past»
+            «' '»* @Assert\LessThan("now")
+        «ELSEIF future»
+            «' '»* @Assert\GreaterThan("now")
+        «ENDIF»
         «IF null !== validatorAddition && validatorAddition != ''»
             «' '»* @Assert\«validatorAddition»
         «ENDIF»
@@ -311,39 +321,9 @@ class ValidationConstraints {
     '''
 
     def dispatch validationMethods(DatetimeField it) '''
-        «IF mandatory»
-            «IF past»
-                /**
-                 * Checks whether the «name.formatForCode» field value is in the past.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="This value must be a date in the past.")
-                 */
-                public function is«name.formatForCodeCapital»DateTimeValidPast()
-                {
-                    $format = 'U';
-                    return $this['«name.formatForCode»']->format($format) < date($format);
-                }
-            «ELSEIF future»
-                /**
-                 * Checks whether the «name.formatForCode» field value is in the future.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="This value must be a date in the future.")
-                 */
-                public function is«name.formatForCodeCapital»DateTimeValidFuture()
-                {
-                    $format = 'U';
-                    return $this['«name.formatForCode»']->format($format) > date($format);
-                }
-            «ENDIF»
-        «ENDIF»
         «IF startDate»
             «val endDateField = entity.getEndDateField»
-            «IF endDateField !== null»
-                «IF mandatory && (past || future)»
-
-                «ENDIF»
+            «IF null !== endDateField»
                 /**
                  * Checks whether the «name.formatForCode» value is earlier than the «endDateField.name.formatForCode» value.
                  * This method is used for validation.
@@ -359,39 +339,9 @@ class ValidationConstraints {
     '''
 
     def dispatch validationMethods(DateField it) '''
-        «IF mandatory»
-            «IF past»
-                /**
-                 * Checks whether the «name.formatForCode» field value is in the past.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="This value must be a date in the past.")
-                 */
-                public function is«name.formatForCodeCapital»DateValidPast()
-                {
-                    $format = 'Ymd';
-                    return $this['«name.formatForCode»']->format($format) < date($format);
-                }
-            «ELSEIF future»
-                /**
-                 * Checks whether the «name.formatForCode» field value is in the future.
-                 * This method is used for validation.
-                 *
-                 * @Assert\IsTrue(message="This value must be a date in the future.")
-                 */
-                public function is«name.formatForCodeCapital»DateValidFuture()
-                {
-                    $format = 'Ymd';
-                    return $this['«name.formatForCode»']->format($format) > date($format);
-                }
-            «ENDIF»
-        «ENDIF»
         «IF startDate»
             «val endDateField = entity.getEndDateField»
-            «IF endDateField !== null»
-                «IF mandatory && (past || future)»
-
-                «ENDIF»
+            «IF null !== endDateField»
                 /**
                  * Checks whether the «name.formatForCode» value is earlier than the «endDateField.name.formatForCode» value.
                  * This method is used for validation.

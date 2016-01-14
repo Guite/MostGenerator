@@ -988,8 +988,7 @@ class Actions {
             return $view->execute($template, new $handlerClass());
         «ELSE»
             «/* TODO */»
-            // build form handler class name
-            $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«name.formatForCodeCapital»\\EditHandler';
+            $formHandler = new EditHandler();
 
             // determine the output template
             $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
