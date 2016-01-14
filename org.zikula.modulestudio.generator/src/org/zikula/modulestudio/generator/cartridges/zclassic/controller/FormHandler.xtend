@@ -55,12 +55,13 @@ class FormHandler {
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
         if (hasEditActions()) {
-            if (isLegacy) {
-                generateCommon('edit', fsa)
-                for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
-                    entity.generate('edit', fsa)
-                }
-            } else {
+            // form handlers
+            generateCommon('edit', fsa)
+            for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
+                entity.generate('edit', fsa)
+            }
+            if (!isLegacy) {
+                // form types
                 for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
                     new EditEntity().generate(entity, fsa)
                 }
@@ -97,6 +98,7 @@ class FormHandler {
         if (isLegacy) {
             new ConfigLegacy().generate(it, fsa)
         } else {
+            // additional form types
             new DeleteEntity().generate(it, fsa)
             new Config().generate(it, fsa)
         }
@@ -128,16 +130,13 @@ class FormHandler {
         «IF !isLegacy»
             namespace «appNamespace»\Form\Handler\Common\Base;
 
-            use «appNamespace»\Form\Plugin\AbstractObjectSelector;
-
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+            use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
             use ModUtil;
             use System;
             use UserUtil;
-            use Zikula_Form_AbstractHandler;
-            use Zikula_Form_View;
             use ZLanguage;
             use Zikula\Core\RouteUrl;
 
@@ -145,28 +144,30 @@ class FormHandler {
         /**
          * This handler class handles the page events of editing forms.
          * It collects common functionality required by different object types.
-         *
-         * Member variables in a form handler object are persisted across different page requests. This means
-         * a member variable $this->X can be set on one request and on the next request it will still contain
-         * the same value.
-         *
-         * A form handler will be notified of various events happening during it's life-cycle.
-         * When a specific event occurs then the corresponding event handler (class method) will be executed. Handlers
-         * are named exactly like their events - this is how the framework knows which methods to call.
-         *
-         * The list of events is:
-         *
-         * - <b>initialize</b>: this event fires before any of the events for the plugins and can be used to setup
-         *   the form handler. The event handler typically takes care of reading URL variables, access control
-         *   and reading of data from the database.
-         *
-         * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
-         *   Zikula_Form_Plugin_Button plugin to signal that the user activated a button.
+        «IF isLegacy»
+            «' '»*
+            «' '» Member variables in a form handler object are persisted across different page requests. This means
+            «' '» a member variable $this->X can be set on one request and on the next request it will still contain
+            «' '» the same value.
+            «' '»
+            «' '» A form handler will be notified of various events happening during it's life-cycle.
+            «' '» When a specific event occurs then the corresponding event handler (class method) will be executed. Handlers
+            «' '» are named exactly like their events - this is how the framework knows which methods to call.
+            «' '»
+            «' '» The list of events is:
+            «' '»
+            «' '» - <b>initialize</b>: this event fires before any of the events for the plugins and can be used to setup
+            «' '»   the form handler. The event handler typically takes care of reading URL variables, access control
+            «' '»   and reading of data from the database.
+            «' '»
+            «' '» - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
+            «' '»   Zikula_Form_Plugin_Button plugin to signal that the user activated a button.
+        «ENDIF»
          */
         «IF isLegacy»
         class «appName»_Form_Handler_Common_Base_«actionName.formatForCodeCapital» extends Zikula_Form_AbstractHandler
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends Zikula_Form_AbstractHandler
+        class «actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             /**
@@ -349,25 +350,42 @@ class FormHandler {
                      */
                     protected $listFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 «ENDIF»
+
+                /**
+                 * Post construction hook.
+                 *
+                 * @return mixed
+                 */
+                public function setup()
+                {
+                }
+
+                /**
+                 * Pre-initialise hook.
+                 *
+                 * @return void
+                 */
+                public function preInitialize()
+                {
+                }
+            «ELSE»
+            	/**
+            	 * The current request.
+            	 *
+            	 * @var Request
+            	 */
+            	protected $request = null;
+
+            	/**
+            	 * Constructor.
+            	 *
+            	 * @param RequestStack $requestStack RequestStack service instance.
+            	 */
+            	public function __construct(RequestStack $requestStack)
+            	{
+            	    $this->request = $requestStack->getCurrentRequest();
+            	}
             «ENDIF»
-
-            /**
-             * Post construction hook.
-             *
-             * @return mixed
-             */
-            public function setup()
-            {
-            }
-
-            /**
-             * Pre-initialise hook.
-             *
-             * @return void
-             */
-            public function preInitialize()
-            {
-            }
 
             «initialize(actionName)»
 
@@ -480,7 +498,7 @@ class FormHandler {
                 if ($this->hasPageLockSupport === true && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
                     // try to guarantee that only one person at a time can be editing this entity
                     ModUtil::apiFunc('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'pageLock', «IF isLegacy»array(«ELSE»[«ENDIF»
-                                         'lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
+                                         'lockName' => «IF isLegacy»$this->name«ELSE»'«app.appName»'«ENDIF» . $this->objectTypeCapital . $this->createCompositeIdentifier(),
                                          'returnUrl' => $this->getRedirectUrl(null)
                     «IF isLegacy»)«ELSE»]«ENDIF»);
                 }
@@ -867,7 +885,7 @@ class FormHandler {
 
             if ($this->hasPageLockSupport === true && $this->mode == 'edit' && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
                 ModUtil::apiFunc('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'releaseLock', «IF isLegacy»array(«ELSE»[«ENDIF»
-                                     'lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()
+                                     'lockName' => «IF isLegacy»$this->name«ELSE»'«app.appName»'«ENDIF» . $this->objectTypeCapital . $this->createCompositeIdentifier()
                 «IF isLegacy»)«ELSE»]«ENDIF»);
             }
 

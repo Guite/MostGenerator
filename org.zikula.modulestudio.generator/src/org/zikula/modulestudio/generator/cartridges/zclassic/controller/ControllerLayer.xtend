@@ -225,9 +225,6 @@ class ControllerLayer {
             namespace «app.appNamespace»\Controller\Base;
 
             use «entityClassName('', false)»;
-            «IF hasActions('edit')»
-                use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\EditHandler;
-            «ENDIF»
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             «IF hasActions('display') || hasActions('edit') || hasActions('delete')»

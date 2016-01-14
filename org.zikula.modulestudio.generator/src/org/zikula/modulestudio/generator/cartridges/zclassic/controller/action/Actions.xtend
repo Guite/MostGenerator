@@ -988,7 +988,7 @@ class Actions {
             return $view->execute($template, new $handlerClass());
         «ELSE»
             «/* TODO */»
-            $formHandler = new EditHandler();
+            $formHandler = $this->get('«app.appName.formatForDB».form.handler.«name.formatForDB»');
 
             // determine the output template
             $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
@@ -996,6 +996,27 @@ class Actions {
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
             $template = $viewHelper->getViewTemplate($this->get('twig'), $objectType, 'edit', $request);
+
+«/* TODO
+required form options
+'mode' -> create or edit
+if attributable
+    attributes
+if (workflow != none)
+    isModerator
+    isSuperModerator
+    isCreator
+'actions' -> list of workflow actions
+inlineUsage => false/true
+
+required template vars
+'«entity.name.formatForDB»' -> entity instance
+'mode' -> create or edit
+'form' -> edit form
+'actions' -> list of workflow actions
+if attributable:
+    attributes -> list of fieldNames
+ */»
 
             «/* TODO implement Symfony forms #416 */»
             // temporary workaround until Symfony forms are adopted (#416)

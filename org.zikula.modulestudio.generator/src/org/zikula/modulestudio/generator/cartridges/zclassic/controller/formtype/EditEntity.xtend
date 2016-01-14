@@ -142,28 +142,6 @@ class EditEntity {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
-                $objectType = '«name.formatForCode»';
-
-«/* TODO
-required form options
-'mode' -> create or edit
-if attributable
-    attributes
-if (workflow != none)
-    isModerator
-    isSuperModerator
-    isCreator
-'actions' -> list of workflow actions
-inlineUsage => false/true
-
-required template vars
-'«entity.name.formatForDB»' -> entity instance
-'mode' -> create or edit
-'form' -> edit form
-'actions' -> list of workflow actions
-if attributable:
-    attributes -> list of fieldNames
- */»
                 $this->addEntityFields($builder, $options);
                 «IF attributable»
                     $this->addAttributeFields($builder, $options);
@@ -670,8 +648,8 @@ if attributable:
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
-                'entity' => ucfirst($objectType) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($objectType) . 'CategoryEntity'
+                'entity' => '«name.formatForCodeCapital»Entity',
+                'entityCategoryClass' => '«app.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity'
             ]);
         }
     '''

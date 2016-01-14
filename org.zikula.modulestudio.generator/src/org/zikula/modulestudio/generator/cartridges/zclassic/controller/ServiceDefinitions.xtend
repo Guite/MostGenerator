@@ -88,13 +88,13 @@ class ServiceDefinitions {
     def private servicesUploadHandler(Application it) '''
         # Upload handler class
         «modPrefix».upload_handler:
-            class: "«appNamespace.replace('\\', '\\\\')»\\UploadHandler"
+            class: «appNamespace»\UploadHandler
     '''
 
     def private linkContainer(Application it) '''
         services:
             «modPrefix».link_container:
-                class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\LinkContainer"
+                class: «appNamespace»\Container\LinkContainer
                 arguments: [@translator, @router]
                 tags:
                     - { name: zikula.link_container }
@@ -109,8 +109,8 @@ class ServiceDefinitions {
         # Entity factory classes
         «FOR entity : entities»
             «modPrefix».«entity.name.formatForCode»_factory:
-                class: "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\Factory\\«entity.name.formatForCodeCapital»Factory"
-                arguments: [@doctrine.orm.entity_manager, "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"]
+                class: «appNamespace»\Entity\Factory\«entity.name.formatForCodeCapital»Factory
+                arguments: [@doctrine.orm.entity_manager, «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity]
 
         «ENDFOR»
     '''
@@ -122,10 +122,9 @@ class ServiceDefinitions {
 
     def private servicesEventSubscriber(Application it) '''
         # Event subscriber and listener classes
-        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Listener\\\\'»
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
-                class: "«nsBase»«className»Listener"
+                class: «appNamespace»\Listener\«className»Listener
                 tags:
                     - { name: kernel.event_subscriber }
 
@@ -152,39 +151,39 @@ class ServiceDefinitions {
 
     def private formFieldsHelper(Application it) '''
         # Form field types
-        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Form\\\\Type\\\\'»
+        «val nsBase = appNamespace + '\\Form\\Type\\'»
         «IF hasColourFields»
 
             «modPrefix».form.type.field.colour:
-                class: "«nsBase»Field\ColourType"
+                class: «nsBase»Field\ColourType
                 tags:
                     - { name: form.type }
         «ENDIF»
         «IF hasGeographical»
 
             «modPrefix».form.type.field.geo:
-                class: "«nsBase»Field\GeoType"
+                class: «nsBase»Field\GeoType
                 tags:
                     - { name: form.type }
         «ENDIF»
         «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
 
             «modPrefix».form.date_type_extension:
-                class: "«nsBase.replace('Type\\\\', '')»Extension\DateTypeExtension"
+                class: «nsBase.replace('Type\\', '')»Extension\DateTypeExtension
                 tags:
-                    - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\DateType" }
+                    - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\DateType }
         «ENDIF»
         «IF !getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty»
 
             «modPrefix».form.time_type_extension:
-                class: "«nsBase.replace('Type\\\\', '')»Extension\TimeTypeExtension"
+                class: «nsBase.replace('Type\\', '')»Extension\TimeTypeExtension
                 tags:
-                    - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\TimeType" }
+                    - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\TimeType }
         «ENDIF»
         «IF hasMultiListFields»
 
             «modPrefix».form.type.field.multilist:
-                class: "«nsBase»Field\MultiListType"
+                class: «nsBase»Field\MultiListType
                 arguments: [@«modPrefix».listentries_helper]
                 tags:
                     - { name: form.type }
@@ -192,22 +191,22 @@ class ServiceDefinitions {
         «IF hasTrees»
 
             «modPrefix».form.type.field.entitytree:
-                class: "«nsBase»Field\EntityTreeType"
+                class: «nsBase»Field\EntityTreeType
                 tags:
                     - { name: form.type }
         «ENDIF»
         «IF hasUploads»
 
             «modPrefix».form.upload_type_extension:
-                class: "«nsBase.replace('Type\\\\', '')»Extension\UploadTypeExtension"
+                class: «nsBase.replace('Type\\', '')»Extension\UploadTypeExtension
                 arguments: [@translator]
                 tags:
-                    - { name: form.type_extension, extended-type: "Symfony\Component\Form\Extension\Core\Type\FileType" }
+                    - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FileType }
         «ENDIF»
         «IF hasUserFields»
 
             «modPrefix».form.type.field.user:
-                class: "«nsBase»Field\UserType"
+                class: «nsBase»Field\UserType
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -220,12 +219,12 @@ class ServiceDefinitions {
 
     def private formsHelper(Application it) '''
         # Form types
-        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Form\\\\Type\\\\'»
+        «val nsBase = appNamespace + '\\Form\\Type\\'»
         «IF hasViewActions»
             «FOR entity : getAllEntities.filter[e|e.hasActions('view')]»
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
-                    class: "«nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType"
+                    class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
                     arguments: [@translator, @request_stack«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
@@ -234,8 +233,14 @@ class ServiceDefinitions {
         «IF hasEditActions»
             «FOR entity : getAllEntities.filter[e|e.hasActions('edit')]»
 
+                «modPrefix».form.handler.«entity.name.formatForDB»:
+                    class: «nsBase.replace('Type\\', '')»\Handler\«entity.name.formatForCodeCapital»\EditHandler
+                    arguments: [@request_stack]
+                    tags:
+                        - { name: form.type }
+
                 «modPrefix».form.type.«entity.name.formatForDB»:
-                    class: "«nsBase»«entity.name.formatForCodeCapital»Type"
+                    class: «nsBase»«entity.name.formatForCodeCapital»Type
                     arguments: [@translator, «modPrefix».«entity.name.formatForCode»_factory«IF entity.hasTranslatableFields», @zikula_extensions_module.api.variable, @«modPrefix».translatable_helper«ENDIF»«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
@@ -243,7 +248,7 @@ class ServiceDefinitions {
             «IF hasMetaDataEntities»
 
                 «modPrefix».form.type.entitymetadata:
-                    class: "«nsBase»EntityMetaDataType"
+                    class: «nsBase»EntityMetaDataType
                     arguments: [@translator]
                     tags:
                         - { name: form.type }
@@ -251,7 +256,7 @@ class ServiceDefinitions {
         «ENDIF»
         «IF hasDeleteActions»
             «modPrefix».form.type.deleteentity:
-                class: "«nsBase.replace('Type\\\\', '')»DeleteEntityType"
+                class: «nsBase.replace('Type\\', '')»DeleteEntityType
                 arguments: [@translator]
                 tags:
                     - { name: form.type }
@@ -259,7 +264,7 @@ class ServiceDefinitions {
         «IF generateListBlock»
 
             «modPrefix».form.type.block.itemlist:
-                class: "«nsBase.replace('Form\\\\Type\\\\', '')»Block\Form\Type\ListBlockType"
+                class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ListBlockType
                 arguments: [@translator]
                 tags:
                     - { name: form.type }
@@ -268,7 +273,7 @@ class ServiceDefinitions {
             «FOR entity : getAllEntities»
 
                 «modPrefix».form.type.«entity.name.formatForDB»finder:
-                    class: "«nsBase»Finder\«entity.name.formatForCodeCapital»FinderType"
+                    class: «nsBase»Finder\«entity.name.formatForCodeCapital»FinderType
                     arguments: [@translator]
                     tags:
                         - { name: form.type }
@@ -277,7 +282,7 @@ class ServiceDefinitions {
         «IF needsConfig»
 
             «modPrefix».form.type.appsettings:
-                class: "«nsBase.replace('Type\\\\', '')»AppSettingsType"
+                class: «nsBase.replace('Type\\', '')»AppSettingsType
                 arguments: [@translator, @zikula_extensions_module.api.variable]
                 tags:
                     - { name: form.type }
@@ -291,43 +296,43 @@ class ServiceDefinitions {
 
     def private servicesHelper(Application it) '''
         # Helper classes
-        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Helper\\\\'»
+        «val nsBase = appNamespace + '\\Helper\\'»
         «modPrefix».model_helper:
-            class: "«nsBase»ModelHelper"
+            class: «nsBase»ModelHelper
             arguments: [@service_container]
 
         «modPrefix».controller_helper:
-            class: "«nsBase»ControllerHelper"
+            class: «nsBase»ControllerHelper
             arguments: [@service_container, @translator, @session, @logger]
 
         «modPrefix».view_helper:
-            class: "«nsBase»ViewHelper"
+            class: «nsBase»ViewHelper
             arguments: [@service_container, @translator]
 
         «modPrefix».workflow_helper:
-            class: "«nsBase»WorkflowHelper"
+            class: «nsBase»WorkflowHelper
             arguments: [@service_container, @translator]
         «IF hasHookSubscribers»
 
             «modPrefix».hook_helper:
-                class: "«nsBase»HookHelper"
+                class: «nsBase»HookHelper
                 arguments: [@hook_dispatcher]
         «ENDIF»
         «IF hasUploads»
 
             «modPrefix».image_helper:
-                class: "«nsBase»ImageHelper"
+                class: «nsBase»ImageHelper
         «ENDIF»
         «IF hasListFields»
 
             «modPrefix».listentries_helper:
-                class: "«nsBase»ListEntriesHelper"
+                class: «nsBase»ListEntriesHelper
                 arguments: [@translator]
         «ENDIF»
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:
-                class: "«nsBase»TranslatableHelper"
+                class: «nsBase»TranslatableHelper
                 arguments: [@service_container]
         «ENDIF»
     '''
@@ -339,9 +344,9 @@ class ServiceDefinitions {
 
     def private servicesTwig(Application it) '''
         # Twig extension
-        «val nsBase = appNamespace.replace('\\', '\\\\') + '\\\\Twig\\\\'»
+        «val nsBase = appNamespace + '\\Twig\\'»
         «modPrefix».twig_extension:
-            class: "«nsBase»TwigExtension"
+            class: «nsBase»TwigExtension
             public: false
             tags:
                 - { name: twig.extension }
@@ -355,7 +360,7 @@ class ServiceDefinitions {
     def private servicesLogger(Application it) '''
         # Log processor
         «modPrefix».log.processor:
-            class: "Monolog\\Processor\\PsrLogMessageProcessor"
+            class: Monolog\Processor\PsrLogMessageProcessor
             tags:
                 - { name: monolog.processor }
     '''
