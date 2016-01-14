@@ -987,45 +987,24 @@ class Actions {
             // execute form using supplied template and page event handler
             return $view->execute($template, new $handlerClass());
         «ELSE»
-            «/* TODO */»
-            $formHandler = $this->get('«app.appName.formatForDB».form.handler.«name.formatForDB»');
+            // temporary workarounds
+            // let repository know if we are in admin or user area
+            $request->query->set('lct', $isAdmin ? 'admin' : 'user');
+            // let entities know if we are in admin or user area
+            System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
 
-            // determine the output template
-            $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
-            $template = $viewHelper->getViewTemplate($this->get('twig'), $objectType, 'edit', $request);
 
-«/* TODO
-required form options
-'mode' -> create or edit
-if attributable
-    attributes
-if (workflow != none)
-    isModerator
-    isSuperModerator
-    isCreator
-'actions' -> list of workflow actions
-inlineUsage => false/true
+            // delegate form processing to the form handler
+            $formHandler = $this->get('«app.appName.formatForDB».form.handler.«name.formatForDB»');
+            $formHandler->processForm($templateParameters);
 
-required template vars
-'«entity.name.formatForDB»' -> entity instance
-'mode' -> create or edit
-'form' -> edit form
-'actions' -> list of workflow actions
-if attributable:
-    attributes -> list of fieldNames
- */»
+            $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
+            $templateParameters = $formHandler->getTemplateParameters();
 
-            «/* TODO implement Symfony forms #416 */»
-            // temporary workaround until Symfony forms are adopted (#416)
-            // let legacy forms know if we are in admin or user area
-            $request->query->set('lct', $isAdmin ? 'admin' : 'user');
-
-            «/* TODO // execute form using supplied template and page event handler
-            //return $this->response($view->execute($template, new $handlerClass()));
-            */»
+            // fetch and return the appropriate template
             return $viewHelper->processTemplate($this->get('twig'), $objectType, 'edit', $request, $templateParameters);
         «ENDIF»
     '''

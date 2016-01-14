@@ -87,7 +87,7 @@ class SimpleFields {
                 «IF isLegacyApp»{if $«realName» gt 0}«ELSE»{% if «realName» > 0 %}«ENDIF»
             «ENDIF»
             «IF page == 'display'»
-                  «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
+                  «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
             «ENDIF»
                 «IF isLegacyApp»
                     {$«realName»|profilelinkbyuid}
@@ -126,7 +126,7 @@ class SimpleFields {
                 «IF isLegacyApp»{if $«realName» ne ''}«ELSE»{% if «realName» is not empty %}«ENDIF»
             «ENDIF»
             «IF page == 'display'»
-                  «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
+                  «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
             «ENDIF»
             «IF isLegacyApp»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
@@ -158,7 +158,7 @@ class SimpleFields {
                 «IF isLegacyApp»{if $«realName» ne ''}«ELSE»{% if «realName» is not empty %}«ENDIF»
             «ENDIF»
             «IF page == 'display'»
-                  «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
+                  «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
             «ENDIF»
             «IF isLegacyApp»
                 <a href="{$«realName»}" title="{gt text='Visit this page'}">{icon type='url' size='extrasmall' __alt='Homepage'}</a>

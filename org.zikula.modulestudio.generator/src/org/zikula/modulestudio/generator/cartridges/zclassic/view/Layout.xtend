@@ -89,7 +89,7 @@ class Layout {
             {# { pageAddVar('jsgettext', '«appName.formatForDB»_js:«appName»') } #}
         {% endblock %}
 
-        {% if app.request.query.get('theme') != 'Printer' %}
+        {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
             {% block appTitle %}
                 <h2 class="userheader">{{ __('«name.formatForDisplayCapital»') }}</h2>
             «/* TODO replace modulelinks, blocked by https://github.com/zikula/core/pull/2648 * /»
@@ -102,7 +102,7 @@ class Layout {
         {% endblock %}
         {{ pageSetVar('title', block('title')) }}
 
-        {% if app.request.query.get('theme') != 'Printer' %}
+        {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
             «IF generateModerationPanel && needsApproval»
                 {% set moderationObjects = «appName.formatForDB»_moderationObjects() %}
                 {% if moderationObjects|length > 0 %}
@@ -122,7 +122,7 @@ class Layout {
         {% block content %}{% endblock %}
 
         {% block footer %}
-            {% if app.request.query.get('theme') != 'Printer' %}
+            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
                 «IF generatePoweredByBacklinksIntoFooterTemplates»
                     «new FileHelper().msWeblink(it)»
                 «ENDIF»
@@ -150,7 +150,7 @@ class Layout {
         {# purpose of this template: admin area base layout #}
         {% extends '«appName»::base.html.twig' %}
         {% block header %}
-            {% if app.request.query.get('theme') != 'Printer' %}
+            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
                 {{ render(controller('ZikulaAdminModule:Admin:adminheader')) }}
             {% endif %}
             {{ parent() }}
@@ -160,7 +160,7 @@ class Layout {
             <h3><span class="fa fa-{% block adminPageIcon %}{% endblock %}"></span>{% block title %}{% endblock %}</h3>
         {% endblock %}
         {% block footer %}
-            {% if app.request.query.get('theme') != 'Printer' %}
+            {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
                 {{ render(controller('ZikulaAdminModule:Admin:adminfooter')) }}
             {% endif %}
             {{ parent() }}

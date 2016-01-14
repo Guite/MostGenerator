@@ -127,7 +127,7 @@ class Relations {
         «IF hasActions('display')»
             {% if not nolink %}
                 </a>
-                <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routePkParams('item', true)»«appendSlug('item', true)», 'theme': 'Printer'}) }}" title="{{ __('Open quick view window') }}" class="fa fa-search-plus hidden"></a>
+                <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routePkParams('item', true)»«appendSlug('item', true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window') }}" class="fa fa-search-plus hidden"></a>
             {% endif %}
             {% endspaceless %}
         «ENDIF»

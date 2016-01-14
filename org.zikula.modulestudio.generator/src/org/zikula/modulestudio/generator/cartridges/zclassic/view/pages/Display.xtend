@@ -89,7 +89,7 @@ class Display {
                         </div>
                     {/if}
                 «ELSE»
-                    {% if app.request.query.get('theme') != 'Printer' %}
+                    {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
                         <div class="row">
                             <div class="col-sm-9">
                     {% endif %}
@@ -104,7 +104,7 @@ class Display {
                             <div class="z-panel-content z-panel-active" style="overflow: visible">
                     {/if}
                 «ELSE»
-                    {% if app.request.query.get('theme') != 'Printer' %}
+                    {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
                         <div class="panel-group" id="accordion">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
@@ -123,7 +123,7 @@ class Display {
                         </div>«/* fields panel */»
                     {/if}
                 «ELSE»
-                    {% if app.request.query.get('theme') != 'Printer' %}
+                    {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
                                 </div>
                             </div>
                         </div>
@@ -132,7 +132,7 @@ class Display {
             «ENDIF»
             «displayExtensions(objName)»
 
-            «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
+            «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
                 «IF !skipHookSubscribers»
                     «callDisplayHooks(appName)»
                 «ENDIF»
@@ -170,7 +170,7 @@ class Display {
         «ENDIF»
         «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && isLegacyApp)»
 
-        «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'Printer' %}«ENDIF»
+        «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
             <script type="text/javascript">
             /* <![CDATA[ */
                 «IF isLegacyApp»
@@ -306,14 +306,14 @@ class Display {
             <dt>{{ __('«relationAliasName.formatForDisplayCapital»') }}</dt>
             <dd>
             {% if «relObjName»|default %}
-              {% if app.request.query.get('theme') != 'Printer' %}
+              {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
               «IF linkEntity.hasActions('display')»
                   <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
               «ENDIF»
                 {{ «relObjName».getTitleFromDisplayPattern() }}
               «IF linkEntity.hasActions('display')»
                 {% endspaceless %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'Printer' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="hidden"><span class="fa fa-eye"></span></a>
+                <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="hidden"><span class="fa fa-eye"></span></a>
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {

@@ -385,6 +385,68 @@ class FormHandler {
             	{
             	    $this->request = $requestStack->getCurrentRequest();
             	}
+
+
+«/* TODO
+
+
+
+
+
+    $form = $this->createForm('...\MyType', $mode != 'create' ? $task : null);
+
+    // handle form request and check validity constraints of $task
+    if ($form->handleRequest($request)->isValid()) {
+        // check if form has been submitted (independent of validity)
+        $isSubmitted = $form->isSubmitted();
+
+        // access field data in controller
+        $form->get('dueDate')->getData();
+
+        // change data of unmapped field
+        $form->get('addition')->setData('My custom value');
+
+        // access original task object (if it is somehow not available)
+        $task = $form->getData();
+
+        // persist the task with new data
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($task);
+        $em->flush();
+
+        // check which button has been clicked
+        $nextAction = $form->get('saveAndAdd')->isClicked()
+            ? 'task_new'
+            : 'task_success';
+
+        return $this->redirectToRoute($router->generate($nextAction));
+    }
+
+
+processForm($templateParameters)
+getTemplateParameters()
+
+
+required form options
+'mode' -> create or edit
+if attributable
+    attributes
+if (workflow != none)
+    isModerator
+    isSuperModerator
+    isCreator
+'actions' -> list of workflow actions
+inlineUsage => false/true
+
+required template vars
+'«entity.name.formatForDB»' -> entity instance
+'mode' -> create or edit
+'form' -> $form->createView()
+'actions' -> list of workflow actions
+if attributable:
+    attributes -> list of fieldNames
+ */»
+
             «ENDIF»
 
             «initialize(actionName)»
@@ -439,7 +501,7 @@ class FormHandler {
          */
         public function initialize(Zikula_Form_View $view)
         {
-            $this->inlineUsage = UserUtil::getTheme() == 'Printer' ? true : false;
+            $this->inlineUsage = UserUtil::getTheme() == '«IF isLegacy»Printer«ELSE»ZikulaPrinterTheme«ENDIF»' ? true : false;
             «IF isLegacy»
                 $this->idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
             «ELSE»
