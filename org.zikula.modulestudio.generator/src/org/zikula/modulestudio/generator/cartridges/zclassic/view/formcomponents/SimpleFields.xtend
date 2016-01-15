@@ -265,8 +265,15 @@ class SimpleFields {
 
     def private dispatch formField(ListField it, String groupSuffix, String idSuffix) '''
         «IF isLegacyApp»
-            «IF multiple == true && useChecks == true»
-                {formcheckboxlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' repeatColumns=2}
+            «IF expanded == true»
+                «IF multiple == true»
+                    {formcheckboxlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' repeatColumns=2}
+                «ELSE»
+                    «FOR item : items»
+                        {formradiobutton group=«templateIdWithSuffix(entity.name.formatForDB, groupSuffix)» id=«templateIdWithSuffix(name.formatForCode, idSuffix + '_' + item.name.formatForCode)» dataField=«templateIdWithSuffix(name.formatForCode, idSuffix)» value='«item.value»' mandatory=«mandatory.displayBool»}
+                        {formlabel for='«templateIdWithSuffix(name.formatForCode, idSuffix + '_' + item.name.formatForCode)»' __text='«item.name.formatForDisplayCapital»'}
+                    «ENDFOR»
+                «ENDIF»
             «ELSE»
                 {formdropdownlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' selectionMode='«IF multiple»multiple«ELSE»single«ENDIF»'}
             «ENDIF»

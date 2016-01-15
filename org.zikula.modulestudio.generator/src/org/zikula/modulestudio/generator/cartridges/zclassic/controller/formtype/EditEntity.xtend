@@ -563,7 +563,7 @@ class EditEntity {
     def private dispatch formType(ListField it) '''«IF multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»Choice«ENDIF»'''
     def private dispatch titleAttribute(ListField it) '''Choose the «name.formatForDisplay»'''
     def private dispatch additionalOptions(ListField it) '''
-        «IF !useChecks»
+        «IF !expanded»
             «IF mandatory»
                 'placeholder' => '',
             «ELSE»
@@ -583,7 +583,7 @@ class EditEntity {
         «IF !multiple»
             'multiple' => «multiple.displayBool»,
         «ENDIF»
-        'expanded' => «useChecks.displayBool»
+        'expanded' => «expanded.displayBool»
     '''
 
     def private dispatch formType(UserField it) '''«app.appNamespace»\Form\Type\Field\User'''

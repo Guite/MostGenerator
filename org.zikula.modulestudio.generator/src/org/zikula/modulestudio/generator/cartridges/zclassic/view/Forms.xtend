@@ -157,7 +157,7 @@ class Forms {
                 {* add validation summary and a <div> element for styling the form *}
                 {«app.appName.formatForDB»FormFrame}
                     «IF !getEditableFields.empty»
-                        «IF (getEditableFields.head) instanceof ListField && !(getEditableFields.head as ListField).useChecks»
+                        «IF (getEditableFields.head) instanceof ListField && !(getEditableFields.head as ListField).expanded»
                             {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»' doSelect=true}
                         «ELSE»
                             {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»'}
