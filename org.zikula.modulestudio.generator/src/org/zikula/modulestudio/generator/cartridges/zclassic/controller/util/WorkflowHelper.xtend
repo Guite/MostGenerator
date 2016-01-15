@@ -39,7 +39,7 @@ class WorkflowHelper {
             use ModUtil;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Zikula\Common\Translator\Translator;
-            use Zikula_ServiceManager;
+            use Zikula\Core\Doctrine\EntityAccess;
             use Zikula_Workflow_Util;
 
         «ENDIF»
@@ -236,7 +236,7 @@ class WorkflowHelper {
         /**
          * Retrieve the available actions for a given entity object.
          *
-         * @param \Zikula_EntityAccess $entity The given entity instance.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity The given entity instance.
          *
          * @return array List of available workflow actions.
          */
@@ -372,9 +372,9 @@ class WorkflowHelper {
         /**
          * Executes a certain workflow action for a given entity object.
          *
-         * @param \Zikula_EntityAccess $entity   The given entity instance.
-         * @param string               $actionId Name of action to be executed.
-         * @param bool                 $recursive true if the function called itself.  
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   The given entity instance.
+         * @param string«IF targets('1.3.x')»       «ENDIF»        $actionId Name of action to be executed.
+         * @param bool«IF targets('1.3.x')»       «ENDIF»          $recursive true if the function called itself.  
          *
          * @return bool False on error or true if everything worked well.
          */
@@ -409,7 +409,7 @@ class WorkflowHelper {
         /**
          * Performs a conversion of the workflow object back to an array.
          *
-         * @param \Zikula_EntityAccess $entity The given entity instance (excplicitly assigned by reference as form handlers use arrays).
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity The given entity instance (excplicitly assigned by reference as form handlers use arrays).
          *
          * @return bool False on error or true if everything worked well.
          */

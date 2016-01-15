@@ -60,17 +60,17 @@ class Config {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * @var VariableApi
              */
-            private $variableApi;
+            protected $variableApi;
 
             /**
              * @var array
              */
-            private $modVars;
+            protected $modVars;
 
             /**
              * AppSettingsType constructor.

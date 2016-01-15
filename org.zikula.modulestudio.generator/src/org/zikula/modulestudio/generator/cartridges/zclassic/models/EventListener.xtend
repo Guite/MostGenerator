@@ -146,7 +146,7 @@ class EventListener {
                     return;
                 }
 
-                $this[$fieldName] = (isset($this[$fieldName]) && !empty($this[$fieldName])) ? DataUtil::formatForDisplay($this[$fieldName]) : '';
+                $this[$fieldName] = isset($this[$fieldName]) && !empty($this[$fieldName]) ? DataUtil::formatForDisplay($this[$fieldName]) : '';
             }
         «ENDIF»
 

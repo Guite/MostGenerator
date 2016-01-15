@@ -44,7 +44,6 @@ class ViewHelper {
             use Symfony\Component\HttpFoundation\Response;
             use Zikula\Common\Translator\Translator;
             use Zikula\Core\Response\PlainResponse;
-            use Zikula_ServiceManager;
             use Zikula_View;
 
         «ENDIF»

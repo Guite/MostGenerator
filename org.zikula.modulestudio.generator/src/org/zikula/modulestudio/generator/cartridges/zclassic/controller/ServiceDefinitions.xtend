@@ -225,7 +225,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
-                    arguments: [@service_container, @translator, @request_stack«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
+                    arguments: [@translator, @request_stack«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -235,7 +235,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.handler.«entity.name.formatForDB»:
                     class: «nsBase.replace('Type\\', '')»\Handler\«entity.name.formatForCodeCapital»\EditHandler
-                    arguments: [@request_stack, @router«IF hasUploads», @«modPrefix».upload_handler«ENDIF»]
+                    arguments: [@service_container, @translator, @request_stack, @router«IF hasUploads», @«modPrefix».upload_handler«ENDIF»]
                     tags:
                         - { name: form.type }
 

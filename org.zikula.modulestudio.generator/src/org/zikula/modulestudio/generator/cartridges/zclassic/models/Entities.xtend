@@ -156,10 +156,10 @@ class Entities {
             use ServiceUtil;
             use System;
             use UserUtil;
-            use Zikula_EntityAccess;
             use Zikula_Exception;
             use Zikula_Workflow_Util;
             use ZLanguage;
+            use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
 
         «modelEntityBaseImplClass(app)»
@@ -180,7 +180,7 @@ class Entities {
         «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital»Entity extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ENDIF»
         {
             «modelEntityBaseImplBody(app)»

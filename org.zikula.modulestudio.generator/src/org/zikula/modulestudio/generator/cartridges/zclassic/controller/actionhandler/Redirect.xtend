@@ -25,7 +25,7 @@ class Redirect {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
-    def getRedirectCodes(Application it, String actionName) '''
+    def getRedirectCodes(Application it) '''
         /**
          * Get list of allowed redirect codes.
          *
@@ -55,7 +55,7 @@ class Redirect {
         }
     '''
 
-    def getRedirectCodes(Entity it, Application app, String actionName) '''
+    def getRedirectCodes(Entity it, Application app) '''
         /**
          * Get list of allowed redirect codes.
          *
@@ -86,7 +86,7 @@ class Redirect {
         }
     '''
 
-    def getDefaultReturnUrl(Entity it, Application app, String actionName) '''
+    def getDefaultReturnUrl(Entity it, Application app) '''
         /**
          * Get the default redirect url. Required if no returnTo parameter has been supplied.
          * This method is called in handleCommand so we know which command has been performed.
@@ -129,7 +129,7 @@ class Redirect {
             «ENDIF»
             «IF hasActions('display') && tree != EntityTreeType.NONE»
 
-                if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
+                if ($args['commandName'] != 'delete' && !($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create' && $args['commandName'] == 'cancel')) {
                     // redirect to the detail page of treated «name.formatForCode»
                     «IF app.isLegacy»
                         $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
@@ -146,7 +146,7 @@ class Redirect {
         }
     '''
 
-    def getRedirectUrl(Entity it, Application app, String actionName) '''
+    def getRedirectUrl(Entity it, Application app) '''
         /**
          * Get url to redirect to.
          *
@@ -156,23 +156,25 @@ class Redirect {
          */
         protected function getRedirectUrl($args)
         {
-            if ($this->inlineUsage == true) {
-                $urlArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»
-                    'idPrefix' => $this->idPrefix,
-                    'commandName' => $args['commandName']
-                «IF app.isLegacy»)«ELSE»]«ENDIF»;
-                foreach ($this->idFields as $idField) {
-                    $urlArgs[$idField] = $this->idValues[$idField];
+            «IF !incoming.empty || !outgoing.empty»
+                if ($this->«IF app.isLegacy»inlineUsage«ELSE»templateParameters['inlineUsage']«ENDIF» == true) {
+                    $urlArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                        'idPrefix' => $this->idPrefix,
+                        'commandName' => $args['commandName']
+                    «IF app.isLegacy»)«ELSE»]«ENDIF»;
+                    foreach ($this->idFields as $idField) {
+                        $urlArgs[$idField] = $this->idValues[$idField];
+                    }
+
+                    // inline usage, return to special function for closing the «IF app.isLegacy»Zikula.UI.Window«ELSE»modal window«ENDIF» instance
+                    «IF app.isLegacy»
+                        return ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'handleInlineRedirect', $urlArgs);
+                    «ELSE»
+                        return $this->router->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_handleinlineredirect', $urlArgs);
+                    «ENDIF»
                 }
 
-                // inline usage, return to special function for closing the Zikula.UI.Window instance
-                «IF app.isLegacy»
-                    return ModUtil::url($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'handleInlineRedirect', $urlArgs);
-                «ELSE»
-                    return $this->router->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_handleinlineredirect', $urlArgs);
-                «ENDIF»
-            }
-
+            «ENDIF»
             if ($this->repeatCreateAction) {
                 return $this->repeatReturnUrl;
             }
@@ -206,7 +208,7 @@ class Redirect {
                     «ENDIF»
                     «IF someController.hasActions('display')»
                         case '«controllerName»Display':
-                            if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
+                            if ($args['commandName'] != 'delete' && !($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create' && $args['commandName'] == 'cancel')) {
                                 «IF app.isLegacy»
                                     $urlArgs['ot'] = $this->objectType;
                                 «ENDIF»

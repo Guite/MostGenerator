@@ -57,8 +57,8 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
          */
         public function setAttribute($name, $value)
         {
-            if(isset($this->attributes[$name])) {
-                if($value == null) {
+            if (isset($this->attributes[$name])) {
+                if (null === $value) {
                     $this->attributes->remove($name);
                 } else {
                     $this->attributes[$name]->setValue($value);

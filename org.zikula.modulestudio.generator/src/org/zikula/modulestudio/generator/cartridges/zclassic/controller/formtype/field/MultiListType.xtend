@@ -42,7 +42,7 @@ class MultiListType {
             /**
              * @var ListEntriesHelper
              */
-            private $listHelper;
+            protected $listHelper;
 
             /**
              * MultiListType constructor.

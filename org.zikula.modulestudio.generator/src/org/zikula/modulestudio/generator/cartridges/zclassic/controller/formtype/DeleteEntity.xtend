@@ -45,7 +45,7 @@ class DeleteEntity {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * DeleteEntityType constructor.

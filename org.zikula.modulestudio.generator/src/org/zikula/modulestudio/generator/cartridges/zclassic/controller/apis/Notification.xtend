@@ -34,6 +34,7 @@ class Notification {
             use UserUtil;
 
             use Zikula_AbstractBase;
+            use Zikula\Core\Doctrine\EntityAccess;
 
         «ENDIF»
         /**
@@ -64,7 +65,7 @@ class Notification {
         /**
          * The entity which has been changed before.
          *
-         * @var Zikula_EntityAccess entity.
+         * @var «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess entity.
          */
         private $entity = '';
 

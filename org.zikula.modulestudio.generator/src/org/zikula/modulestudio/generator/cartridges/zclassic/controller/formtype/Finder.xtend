@@ -54,7 +54,7 @@ class Finder {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * «name.formatForCodeCapital»FinderType constructor.

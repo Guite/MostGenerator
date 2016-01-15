@@ -41,6 +41,7 @@ class HookHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper\Base;
 
+            use Zikula\Core\Doctrine\EntityAccess;
             use Zikula\Core\Hook\ProcessHook;
             use Zikula\Core\Hook\ValidationHook;
             use Zikula\Core\Hook\ValidationProviders;
@@ -83,8 +84,8 @@ class HookHelper {
         /**
          * Calls validation hooks.
          *
-         * @param Zikula_EntityAccess $entity   The currently processed entity.
-         * @param string              $hookType Name of hook type to be called.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   The currently processed entity.
+         * @param string«IF targets('1.3.x')»       «ENDIF»       $hookType Name of hook type to be called.
          *
          * @return boolean Whether validation is passed or not.
          */
@@ -109,8 +110,8 @@ class HookHelper {
         /**
          * Calls process hooks.
          *
-         * @param Zikula_EntityAccess $entity The currently processed entity.
-         * @param string              $hookType Name of hook type to be called.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity The currently processed entity.
+         * @param string«IF targets('1.3.x')»       «ENDIF»       $hookType Name of hook type to be called.
         «IF targets('1.3.x')»
             «' '»* @param Zikula_ModUrl       $url      The url object.
         «ELSE»

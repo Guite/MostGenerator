@@ -993,9 +993,12 @@ class Actions {
             // let entities know if we are in admin or user area
             System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
 
+            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
             // delegate form processing to the form handler
             $formHandler = $this->get('«app.appName.formatForDB».form.handler.«name.formatForDB»');

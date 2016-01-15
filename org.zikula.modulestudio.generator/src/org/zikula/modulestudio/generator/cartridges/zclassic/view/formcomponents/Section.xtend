@@ -170,7 +170,7 @@ class Section {
                             {gt text='Enter any additions about your content' assign='fieldTitle'}
                         {/if}
                         {formtextinput group='«name.formatForDB»' id='additionalNotificationRemarks' mandatory=false title=$fieldTitle textMode='multiline' rows='6«/*8*/»' cols='50'}
-                        {if $isModerator || $isSuperModerator}
+                        {if $isModerator«IF workflow == EntityWorkflowType.ENTERPRISE» || $isSuperModerator«ENDIF»}
                             <span class="z-formnote">{gt text='These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.'}</span>
                         {elseif $isCreator}
                             <span class="z-formnote">{gt text='These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.'}</span>

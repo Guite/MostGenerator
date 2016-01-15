@@ -39,7 +39,7 @@ class UploadTypeExtension {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * UploadTypeExtension constructor.

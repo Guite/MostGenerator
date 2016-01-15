@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionh
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.JoinRelationship
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -35,6 +36,22 @@ class FormLegacy {
     '''
 
     def memberVars(Application it) '''
+
+        /**
+         * One of "create" or "edit".
+         *
+         * @var string
+         */
+        protected $mode;
+        «IF !relations.filter(JoinRelationship).empty»
+
+            /**
+             * Whether this form is being used inline within a window.
+             *
+             * @var boolean
+             */
+            protected $inlineUsage = false;
+        «ENDIF»
         «IF hasCategorisableEntities»
 
             /**
@@ -90,6 +107,25 @@ class FormLegacy {
          */
         public function preInitialize()
         {
+        }
+    '''
+
+    def postInitialise(Application it, String actionName) '''
+        /**
+         * Post-initialise hook.
+         *
+         * @return void
+         */
+        public function postInitialize()
+        {
+            $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
+            $utilArgs = array(
+                'controller' => FormUtil::getPassedValue('type', 'user', 'GETPOST'),
+                'action' => '«actionName.formatForCode.toFirstLower»',
+                'mode' => $this->mode
+            );
+            $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
         }
     '''
 
@@ -180,6 +216,40 @@ class FormLegacy {
         «ENDIF»
     '''
 
+    def handleCommandDescription(Application it) '''
+        «' '»* This event handler is called when a command is issued by the user. Commands are typically something
+        «' '»* that originates from a {@link Zikula_Form_Plugin_Button} plugin. The passed args contains different properties
+        «' '»* depending on the command source, but you should at least find a <var>$args['commandName']</var>
+        «' '»* value indicating the name of the command. The command name is normally specified by the plugin
+        «' '»* that initiated the command.
+        «' '»*
+        «' '»* @param Zikula_Form_View $view The form view instance.
+        «' '»* @param array            $args Additional arguments.
+        «' '»*
+        «' '»* @see Zikula_Form_Plugin_Button
+        «' '»* @see Zikula_Form_Plugin_ImageButton
+    '''
+
+    def clearCache(Application it) '''
+        // An item was created, updated or deleted, so we clear all cached pages for this item.
+        $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
+        ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+
+        // clear view cache to reflect our changes
+        $this->view->clear_cache();
+    '''
+
+    def removeAdditionalUploadInformationBeforeMerge(Application it) '''
+        // remove fields for form options to prevent them being merged into the entity object
+        if (count($this->uploadFields) > 0) {
+            foreach ($this->uploadFields as $uploadField => $isMandatory) {
+                if (isset($entityData[$uploadField . 'DeleteFile'])) {
+                    unset($entityData[$uploadField . 'DeleteFile']);
+                }
+            }
+        }
+    '''
+
     def processExtensions(Application it) '''
         «IF hasMetaDataEntities»
             if ($this->hasMetaData === true) {
@@ -189,6 +259,12 @@ class FormLegacy {
         «ENDIF»
         // search for relationship plugins to update the corresponding data
         $entityData = $this->writeRelationDataToEntity($view, $entity, $entityData);
+    '''
+
+    def postMerge(Application it) '''
+        // we must persist related items now (after the merge) to avoid validation errors
+        // if cascades cause the main entity becoming persisted automatically, too
+        $this->persistRelationData($view);
     '''
 
     def writeRelationDataToEntity(Application it) '''
@@ -299,5 +375,18 @@ class FormLegacy {
             // array with list fields and multiple flags
             $this->listFields = array(«FOR listField : getListFieldsEntity SEPARATOR ', '»'«listField.name.formatForCode»' => «listField.multiple.displayBool»«ENDFOR»);
         «ENDIF»
+    '''
+
+    def initListFields(Entity it) '''
+        if (count($this->listFields) > 0) {
+            $listHelper = new «application.appName»_Util_ListEntries($this->view->getServiceManager());
+
+            foreach ($this->listFields as $listField => $isMultiple) {
+                $entityData[$listField . 'Items'] = $listHelper->getEntries($this->objectType, $listField);
+                if ($isMultiple) {
+                    $entityData[$listField] = $listHelper->extractMultiList($entityData[$listField]);
+                }
+            }
+        }
     '''
 }

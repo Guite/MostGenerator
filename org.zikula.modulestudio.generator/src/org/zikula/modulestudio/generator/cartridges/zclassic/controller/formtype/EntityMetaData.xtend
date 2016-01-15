@@ -48,7 +48,7 @@ class EntityMetaData {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * EntityMetaDataType constructor.

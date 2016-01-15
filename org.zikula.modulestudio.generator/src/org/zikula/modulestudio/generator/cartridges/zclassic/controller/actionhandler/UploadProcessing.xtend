@@ -22,12 +22,12 @@ class UploadProcessing {
         /**
          * Helper method to process upload fields.
          *
-         * @param array  $formData       The form input data.
-         * @param object $existingObject Data of existing entity object.
+         * @param «IF targets('1.3.x')»       «ENDIF»array        $formData The form input data.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   Existing entity object.
          *
          * @return array form data after processing.
          */
-        protected function handleUploads($formData, $existingObject)
+        protected function handleUploads($formData, $entity)
         {
             if (!count($this->uploadFields)) {
                 return $formData;
@@ -37,9 +37,9 @@ class UploadProcessing {
                 // initialise the upload handler
                 $uploadHandler = new «appName»_UploadHandler();
             «ENDIF»
-            $existingObjectData = $existingObject->toArray();
+            $existingObjectData = $entity->toArray();
 
-            $objectId = $this->mode != 'create' ? $this->idValues[0] : 0;
+            $objectId = $this->«IF targets('1.3.x')»mode«ELSE»templateParameters['mode']«ENDIF» != 'create' ? $this->idValues[0] : 0;
 
             // process all fields
             foreach ($this->uploadFields as $uploadField => $isMandatory) {
@@ -52,8 +52,8 @@ class UploadProcessing {
                             // remove upload file (and image thumbnails)
                             $existingObjectData = $«IF !targets('1.3.x')»this->«ENDIF»uploadHandler->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                             if (empty($existingObjectData[$uploadField])) {
-                                $existingObject[$uploadField] = '';
-                                $existingObject[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                                $entity[$uploadField] = '';
+                                $entity[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                             }
                         }
                         unset($formData[$uploadField . 'DeleteFile']);
@@ -69,28 +69,32 @@ class UploadProcessing {
                     continue;
                 }
 
-                if ($hasOldFile && $hasBeenDeleted !== true && $this->mode != 'create') {
+                if ($hasOldFile && true !== $hasBeenDeleted && $this->«IF targets('1.3.x')»mode«ELSE»templateParameters['mode']«ENDIF» != 'create') {
                     // remove old upload file (and image thumbnails)
                     $existingObjectData = $«IF !targets('1.3.x')»this->«ENDIF»uploadHandler->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                     if (empty($existingObjectData[$uploadField])) {
-                        $existingObject[$uploadField] = '';
-                        $existingObject[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                        $entity[$uploadField] = '';
+                        $entity[$uploadField . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                     }
                 }
 
                 // do the actual upload (includes validation, physical file processing and reading meta data)
                 $uploadResult = $«IF !targets('1.3.x')»this->«ENDIF»uploadHandler->performFileUpload($this->objectType, $formData, $uploadField);
                 // assign the upload file name
-                $formData[$uploadField] = $uploadResult['fileName'];
+                «IF targets('1.3.x')»$formData«ELSE»$entity«ENDIF»[$uploadField] = $uploadResult['fileName'];
                 // assign the meta data
-                $formData[$uploadField . 'Meta'] = $uploadResult['metaData'];
+                «IF targets('1.3.x')»$formData«ELSE»$entity«ENDIF»[$uploadField . 'Meta'] = $uploadResult['metaData'];
 
                 // if current field is mandatory check if everything has been done
-                if ($isMandatory && empty($formData[$uploadField])) {
+                if ($isMandatory && empty(«IF targets('1.3.x')»$formData«ELSE»$entity«ENDIF»[$uploadField])) {
                     // mandatory upload has not been completed successfully
                     return false;
                 }
 
+                «IF !targets('1.3.x')»
+                    $this->entityRef = $entity;
+
+                «ENDIF»
                 // upload succeeded
             }
 

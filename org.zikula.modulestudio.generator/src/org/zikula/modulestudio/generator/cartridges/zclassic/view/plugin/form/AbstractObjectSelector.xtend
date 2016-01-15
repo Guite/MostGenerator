@@ -31,7 +31,7 @@ class AbstractObjectSelector {
             use FormUtil;
             use ModUtil;
             use ServiceUtil;
-            use Zikula_EntityAccess;
+            use Zikula\Core\Doctrine\EntityAccess;
             use Zikula_Form_Plugin_DropdownList;
             use Zikula_Form_View;
         «ENDIF»
@@ -343,7 +343,7 @@ class AbstractObjectSelector {
             $newValue = null;
 
             if ($this->selectionMode == 'single') {
-                if ($value instanceof Zikula_EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
+                if ($value instanceof «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
                     $newValue = $value->createCompositeIdentifier();
                 } elseif (is_array($value)) {
                     $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $value['_objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
@@ -355,7 +355,7 @@ class AbstractObjectSelector {
                 $newValue = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 if (is_array($value) || $value instanceof Collection) {
                     foreach ($value as $entity) {
-                        if ($entity instanceof Zikula_EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
+                        if ($entity instanceof «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
                             $newValue[] = $entity->createCompositeIdentifier();
                         } elseif (is_array($entity)) {
                             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $entity['_objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
@@ -495,8 +495,8 @@ class AbstractObjectSelector {
         /**
          * Reassign related items to the edited entity.
          *
-         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
-         * @param array               $entityData Entity related form data.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity     Reference to the updated entity.
+         * @param array«IF targets('1.3.x')»       «ENDIF»        $entityData Entity related form data.
          *
          * @return array form data after processing.
          */

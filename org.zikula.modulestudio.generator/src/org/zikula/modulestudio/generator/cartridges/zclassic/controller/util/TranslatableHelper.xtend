@@ -46,7 +46,7 @@ class TranslatableHelper {
             use ServiceUtil;
             use System;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
-            use Zikula_ServiceManager;
+            use Zikula\Core\Doctrine\EntityAccess;
             use ZLanguage;
 
         «ENDIF»
@@ -126,8 +126,8 @@ class TranslatableHelper {
          * This ensures easy compatibility to the Forms plugins where it
          * it is not possible yet to define sub arrays in the group attribute.
          *
-         * @param string              $objectType The currently treated object type.
-         * @param Zikula_EntityAccess $entity     The entity being edited.
+         * @param string«IF targets('1.3.x')»       «ENDIF»       $objectType The currently treated object type.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity     The entity being edited.
          *
          * @return array collected translations having the language codes as keys.
          */

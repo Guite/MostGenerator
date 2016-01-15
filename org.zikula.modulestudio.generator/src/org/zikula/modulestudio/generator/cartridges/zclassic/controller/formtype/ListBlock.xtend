@@ -52,7 +52,7 @@ class ListBlock {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * ItemListBlockType constructor.

@@ -68,18 +68,18 @@ class QuickNavigation {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * @var RequestStack
              */
-            private $requestStack;
+            protected $requestStack;
             «IF hasListFieldsEntity»
 
                 /**
                  * @var ListEntriesHelper
                  */
-                private $listHelper;
+                protected $listHelper;
             «ENDIF»
 
             /**

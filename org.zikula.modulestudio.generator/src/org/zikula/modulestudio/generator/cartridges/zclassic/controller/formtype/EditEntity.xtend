@@ -85,30 +85,30 @@ class EditEntity {
             /**
              * @var TranslatorInterface
              */
-            private $translator;
+            protected $translator;
 
             /**
              * @var «name.formatForCodeCapital»Factory
              */
-            private $entityFactory;
+            protected $entityFactory;
             «IF hasTranslatableFields»
 
                 /**
                  * @var VariableApi
                  */
-                private $variableApi;
+                protected $variableApi;
 
                 /**
                  * @var TranslatableHelper
                  */
-                private $translatableHelper;
+                protected $translatableHelper;
             «ENDIF»
             «IF hasListFieldsEntity»
 
                 /**
                  * @var ListEntriesHelper
                  */
-                private $listHelper;
+                protected $listHelper;
             «ENDIF»
 
             /**
@@ -232,7 +232,9 @@ class EditEntity {
                         «ENDIF»
                         «IF workflow != EntityWorkflowType.NONE»
                             'isModerator' => false,
-                            'isSuperModerator' => false,
+                            «IF workflow == EntityWorkflowType.ENTERPRISE»
+                                'isSuperModerator' => false,
+                            «ENDIF»
                             'isCreator' => false,
                         «ENDIF»
                         'actions' => [],
@@ -246,7 +248,9 @@ class EditEntity {
                         «ENDIF»
                         «IF workflow != EntityWorkflowType.NONE»
                             'isModerator' => 'bool',
-                            'isSuperModerator' => 'bool',
+                            «IF workflow == EntityWorkflowType.ENTERPRISE»
+                                'isSuperModerator' => 'bool',
+                            «ENDIF»
                             'isCreator' => 'bool',
                         «ENDIF»
                         'actions' => 'array',
@@ -697,7 +701,7 @@ class EditEntity {
         public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options)
         {
             $helpText = '';
-            if ($options['isModerator'] || $options['isSuperModerator']) {
+            if ($options['isModerator']«IF workflow == EntityWorkflowType.ENTERPRISE» || $options['isSuperModerator']«ENDIF») {
                 $helpText = $this->translator->trans('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.', [], '«app.appName.formatForDB»');
         	} elseif ($options['isCreator']) {
         	    $helpText = $this->translator->trans('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.', [], '«app.appName.formatForDB»');
