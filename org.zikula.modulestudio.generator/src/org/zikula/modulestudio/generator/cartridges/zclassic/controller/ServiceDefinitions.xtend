@@ -112,7 +112,7 @@ class ServiceDefinitions {
         «FOR entity : entities»
             «modPrefix».«entity.name.formatForCode»_factory:
                 class: «appNamespace»\Entity\Factory\«entity.name.formatForCodeCapital»Factory
-                arguments: [@doctrine.orm.entity_manager, «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity]
+                arguments: ["@doctrine.orm.entity_manager", «appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity]
 
         «ENDFOR»
     '''
@@ -186,7 +186,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.multilist:
                 class: «nsBase»Field\MultiListType
-                arguments: [@«modPrefix».listentries_helper]
+                arguments: ["@«modPrefix».listentries_helper"]
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -227,7 +227,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
-                    arguments: [@translator, @request_stack«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
+                    arguments: [@translator, "@request_stack"«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -238,14 +238,14 @@ class ServiceDefinitions {
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:
                         class: «nsBase.replace('Type\\', '')»\Handler\«entity.name.formatForCodeCapital»\EditHandler
-                        arguments: [@service_container, @translator, @request_stack, @router«IF hasUploads», @«modPrefix».upload_handler«ENDIF»]
+                        arguments: ["@service_container", @translator, "@request_stack", @router«IF hasUploads», "@«modPrefix».upload_handler«ENDIF»"]
                         tags:
                             - { name: form.type }
                 «ENDIF»
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: «nsBase»«entity.name.formatForCodeCapital»Type
-                    arguments: [@translator, «modPrefix».«entity.name.formatForCode»_factory«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», @zikula_extensions_module.api.variable, @«modPrefix».translatable_helper«ENDIF»«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
+                    arguments: [@translator, "@«modPrefix».«entity.name.formatForCode»_factory"«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», "@zikula_extensions_module.api.variable", "@«modPrefix».translatable_helper"«ENDIF»«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -287,7 +287,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.appsettings:
                 class: «nsBase.replace('Type\\', '')»AppSettingsType
-                arguments: [@translator, @zikula_extensions_module.api.variable]
+                arguments: [@translator, "@zikula_extensions_module.api.variable"]
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -303,24 +303,24 @@ class ServiceDefinitions {
         «val nsBase = appNamespace + '\\Helper\\'»
         «modPrefix».model_helper:
             class: «nsBase»ModelHelper
-            arguments: [@service_container]
+            arguments: ["@service_container"]
 
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
-            arguments: [@service_container, @translator, @session, @logger]
+            arguments: ["@service_container", @translator, @session, @logger]
 
         «modPrefix».view_helper:
             class: «nsBase»ViewHelper
-            arguments: [@service_container, @translator]
+            arguments: ["@service_container", @translator]
 
         «modPrefix».workflow_helper:
             class: «nsBase»WorkflowHelper
-            arguments: [@service_container, @translator]
+            arguments: ["@service_container", @translator]
         «IF hasHookSubscribers»
 
             «modPrefix».hook_helper:
                 class: «nsBase»HookHelper
-                arguments: [@hook_dispatcher]
+                arguments: ["@hook_dispatcher"]
         «ENDIF»
         «IF hasUploads»
 
@@ -337,7 +337,7 @@ class ServiceDefinitions {
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
-                arguments: [@service_container]
+                arguments: ["@service_container"]
         «ENDIF»
     '''
 

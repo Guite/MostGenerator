@@ -563,13 +563,14 @@ class QuickNavigation {
 
     def private dispatch fieldImpl(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        $builder->add('«sourceAliasName»', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', [
-            'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
-            'class' => '«source.entityClassName('', false)»',
+        $builder->add('«sourceAliasName.formatForCode»', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', [
+            'class' => '«app.appName»:«source.name.formatForCodeCapital»Entity',
             'choice_label' => 'getTitleFromDisplayPattern',
-            'label' => $this->translator->trans('«(source as Entity).nameMultiple.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
+            'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
+            'required' => false,
+            'label' => $this->translator->trans('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
             'attr' => [
-                'id' => '«sourceAliasName»'
+                'id' => '«sourceAliasName.formatForCode»'
             ]
         ]);
     '''

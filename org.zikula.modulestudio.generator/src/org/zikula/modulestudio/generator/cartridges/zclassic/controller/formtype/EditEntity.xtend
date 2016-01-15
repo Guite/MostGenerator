@@ -14,8 +14,10 @@ import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.IntegerField
+import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.MappedSuperClass
+import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
@@ -31,6 +33,7 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -39,6 +42,7 @@ class EditEntity {
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -48,6 +52,8 @@ class EditEntity {
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
     List<String> extensions = #[]
+    Iterable<JoinRelationship> incomingRelations
+    Iterable<JoinRelationship> outgoingRelations
 
     /**
      * Entry point for entity editing form type.
@@ -58,12 +64,14 @@ class EditEntity {
             return
         }
         if (it instanceof Entity) {
-            if (metaData) extensions.add('metadata') 
-            if (hasTranslatableFields) extensions.add('translatable') 
-            if (attributable) extensions.add('attributes') 
-            if (categorisable) extensions.add('categories') 
+            if (metaData) extensions.add('metadata')
+            if (hasTranslatableFields) extensions.add('translatable')
+            if (attributable) extensions.add('attributes')
+            if (categorisable) extensions.add('categories')
         }
         app = it.application
+        incomingRelations = getBidirectionalIncomingJoinRelations.filter[source.application == app && source instanceof Entity]
+        outgoingRelations = getOutgoingJoinRelations.filter[target.application == app && target instanceof Entity]
         app.generateClassPair(fsa, app.getAppSourceLibPath + 'Form/Type/' + name.formatForCodeCapital + 'Type.php',
             fh.phpFileContent(app, editTypeBaseImpl), fh.phpFileContent(app, editTypeImpl)
         )
@@ -156,18 +164,23 @@ class EditEntity {
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $this->addEntityFields($builder, $options);
+                «val parents = getParentDataObjects(#[])»
+                «IF !parents.empty»
+                    $builder->add('parentFields', '«app.appNamespace»\Form\Type\«parents.head.name.formatForCodeCapital»Type', [
+                        'data_class' => '«entityClassName('', false)»'
+                    ]);
+                «ENDIF»
                 «IF extensions.contains('attributes')»
                     $this->addAttributeFields($builder, $options);
                 «ENDIF»
                 «IF extensions.contains('categories')»
                     $this->addCategoriesField($builder, $options);
                 «ENDIF»
-                «/* TODO relations */»
-                «val parents = getParentDataObjects(#[])»
-                «IF !parents.empty»
-                    $builder->add('parentFields', '«app.appNamespace»\Form\Type\«parents.head.name.formatForCodeCapital»Type', [
-                        'data_class' => '«entityClassName('', false)»'
-                    ]);
+                «IF !incomingRelations.empty»
+                    $this->addIncomingRelationshipFields($builder, $options);
+                «ENDIF»
+                «IF !outgoingRelations.empty»
+                    $this->addOutgoingRelationshipFields($builder, $options);
                 «ENDIF»
                 «IF extensions.contains('metadata')»
                     $this->addMetaDataFields($builder, $options);
@@ -191,6 +204,14 @@ class EditEntity {
             «ENDIF»
             «IF extensions.contains('categories')»
                 «addCategoriesField(it as Entity)»
+
+            «ENDIF»
+            «IF !incomingRelations.empty»
+                «addIncomingRelationshipFields»
+
+            «ENDIF»
+            «IF !outgoingRelations.empty»
+                «addOutgoingRelationshipFields»
 
             «ENDIF»
             «IF extensions.contains('metadata')»
@@ -685,6 +706,64 @@ class EditEntity {
                 'entityCategoryClass' => '«app.appNamespace»\Entity\«name.formatForCodeCapital»CategoryEntity'
             ]);
         }
+    '''
+
+    def private addIncomingRelationshipFields(DataObject it) '''
+        /**
+         * Adds fields for incoming relationships.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options.
+         */
+        public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options)
+        {
+            «FOR relation : incomingRelations»
+                «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_TARGET_SIDE»
+                «relation.fieldImpl(false, autoComplete)»
+            «ENDFOR»
+        }
+    '''
+
+    def private addOutgoingRelationshipFields(DataObject it) '''
+        /**
+         * Adds fields for outgoing relationships.
+         *
+         * @param FormBuilderInterface The form builder.
+         * @param array                The options.
+         */
+        public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options)
+        {
+            «FOR relation : outgoingRelations»
+                «val autoComplete = relation.useAutoCompletion != RelationAutoCompletionUsage.NONE && relation.useAutoCompletion != RelationAutoCompletionUsage.ONLY_SOURCE_SIDE»
+                «relation.fieldImpl(true, autoComplete)»
+            «ENDFOR»
+        }
+    '''
+
+    def private fieldImpl(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
+        «val aliasName = getRelationAliasName(outgoing)»
+        «IF autoComplete»
+            «/* TODO add auto completion support */»
+        «ELSE»
+            $builder->add('«aliasName.formatForCode»', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', [
+                'class' => '«app.appName»:«(if (outgoing) target else source).name.formatForCodeCapital»Entity',
+                'choice_label' => 'getTitleFromDisplayPattern',
+                'multiple' => «isManySide(outgoing).displayBool»,
+                'expanded' => «(if (outgoing) expandedTarget else expandedSource).displayBool»,
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->selectWhere('', '', false, true);
+                },
+                «IF outgoing && !nullable»
+                    'placeholder' => $this->translator->trans('Please choose an option', [], '«app.appName.formatForDB»'),
+                    'required' => false,
+                «ENDIF»
+                'label' => $this->translator->trans('«aliasName.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
+                'attr' => [
+                    'id' => '«aliasName.formatForCode»',
+                    'title' => $this->translator->trans('Choose the «aliasName.formatForDisplay»', [], '«app.appName.formatForDB»')
+                ]
+            ]);
+        «ENDIF»
     '''
 
     def private addMetaDataFields(Entity it) '''

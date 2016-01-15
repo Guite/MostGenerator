@@ -166,7 +166,7 @@ class Config {
         'max_length' => 255,
         «IF hasUserGroupSelectors && isUserGroupSelector»
             // Zikula core should provide a form type for this to hide entity details
-            'class' => 'Zikula\GroupsModule\Entity\GroupsEntity',
+            'class' => 'ZikulaGroupsModule:GroupsEntity',
             'choice_label' => 'name'
         «ELSE»
             'scale' => 0

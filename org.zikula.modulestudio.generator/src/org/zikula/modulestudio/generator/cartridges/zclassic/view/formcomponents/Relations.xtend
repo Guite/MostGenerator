@@ -100,11 +100,11 @@ class Relations {
 
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
         «IF application.targets('1.3.x')»
-            {include file='«ownEntity.name.formatForCode»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»' allowEditing=«hasEdit.displayBool»}
+            {include file='«ownEntity.name.formatForCode»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF usesAutoCompletion(incoming)»autocomplete«ELSE»choices«ENDIF»' allowEditing=«hasEdit.displayBool»}
         «ELSE»
             {{ include(
                 '@«application.appName»/«ownEntity.name.formatForCodeCapital»/«templateName».html.twig',
-                { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», panel: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»dropdown«ENDIF»', allowEditing: «hasEdit.displayBool» }
+                { group: '«linkingEntity.name.formatForDB»', alias: '«relationAliasName.toFirstLower»', aliasReverse: '«relationAliasReverse.toFirstLower»', mandatory: «(!nullable).displayBool», idPrefix: '«uniqueNameForJs»', linkingItem: «linkingEntity.name.formatForDB»«IF linkingEntity.useGroupingPanels('edit')», panel: true«ENDIF», displayMode: '«IF usesAutoCompletion(incoming)»autocomplete«ELSE»choices«ENDIF»', allowEditing: «hasEdit.displayBool» }
             ) }}
         «ENDIF»
     '''
@@ -114,7 +114,7 @@ class Relations {
         «IF app.targets('1.3.x')»
             {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» *}
             {if !isset($displayMode)}
-                {assign var='displayMode' value='dropdown'}
+                {assign var='displayMode' value='choices'}
             {/if}
             {if !isset($allowEditing)}
                 {assign var='allowEditing' value=false}
@@ -135,7 +135,7 @@ class Relations {
         «ELSE»
             {# purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» #}
             {% displayMode is not defined or displayMode is empty %}
-                {% set displayMode = 'dropdown' %}
+                {% set displayMode = 'choices' %}
             {% endif %}
             {% if allowEditing is not defined or allowEditing is empty %}
                 {% set allowEditing = false %}
@@ -162,12 +162,13 @@ class Relations {
         «ENDIF»
     '''
 
+    // 1.3.x only
     def private includedEditTemplateBodyLegacy(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
         <div class="z-formrow">
-        «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
+        «val pluginAttributes = formPluginAttributesLegacy(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
         «val appnameLower = application.appName.formatForDB»
-        {if $displayMode eq 'dropdown'}
+        {if $displayMode eq 'choices'}
             {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»}
             {«appnameLower»RelationSelectorList «pluginAttributes»«IF !application.targets('1.3.x')» cssClass='form-control'«ENDIF»}
         {elseif $displayMode eq 'autocomplete'}
@@ -186,32 +187,29 @@ class Relations {
     '''
 
     def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
-        «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
-        «/* TODO migrate to Symfony forms #416 */»
-        <div class="form-group">
-        «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
+        «val aliasName = getRelationAliasName(!incoming)»
         «val appnameLower = application.appName.formatForDB»
-        {% if displayMode == 'dropdown' %}
-            {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF» cssClass='col-sm-3 control-label'}
-            <div class="col-sm-9">
-                {«appnameLower»RelationSelectorList «pluginAttributes» cssClass='form-control'}
-            </div>
+        {% if displayMode == 'choices' %}
+            {{ form_row(form.«aliasName.formatForCode») }}
         {% elseif displayMode == 'autocomplete' %}
-            «IF !isManyToMany && !incoming»
-                «component_ParentEditing(ownEntity, many)»
-            «ELSE»
-                {% set createLink = '' %}
-                {% if allowEditing == true %}
-                    {% set createLink = path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') %}
-                {% endif %}
-                {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool» cssClass='form-control'}
-                «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
-            «ENDIF»
+            «/* TODO add auto completion support */»
+            <div class="form-group">
+                «IF !isManyToMany && !incoming»
+                    «component_ParentEditing(ownEntity, many)»
+                «ELSE»
+                    {% set createLink = '' %}
+                    {% if allowEditing == true %}
+                        {% set createLink = path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') %}
+                    {% endif %}
+                    {«appnameLower»RelationSelectorAutoComplete idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool» cssClass='form-control'}
+                    «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
+                «ENDIF»
+            </div>
         {% endif %}
-        </div>
     '''
 
-    def private formPluginAttributes(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
+    // 1.3.x only
+    def private formPluginAttributesLegacy(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
 
     def private component_ParentEditing(JoinRelationship it, Entity targetEntity, Boolean many) '''
         «/*just a reminder for the parent view which is not tested yet (see #10)
