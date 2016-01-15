@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.BooleanField
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.DatetimeField
 import de.guite.modulestudio.metamodel.DecimalField
@@ -11,8 +12,10 @@ import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.FloatField
+import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.StringField
 import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
@@ -20,6 +23,7 @@ import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import java.math.BigInteger
+import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Validation
@@ -43,13 +47,21 @@ class EditEntity {
     Application app
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
+    List<String> extensions = #[]
+
     /**
      * Entry point for entity editing form type.
      * 1.4.x only.
      */
-    def generate(Entity it, IFileSystemAccess fsa) {
-        if (!hasActions('edit')) {
+    def generate(DataObject it, IFileSystemAccess fsa) {
+        if (!(it instanceof MappedSuperClass) && !hasActions('edit')) {
             return
+        }
+        if (it instanceof Entity) {
+            if (metaData) extensions.add('metadata') 
+            if (hasTranslatableFields) extensions.add('translatable') 
+            if (attributable) extensions.add('attributes') 
+            if (categorisable) extensions.add('categories') 
         }
         app = it.application
         app.generateClassPair(fsa, app.getAppSourceLibPath + 'Form/Type/' + name.formatForCodeCapital + 'Type.php',
@@ -57,7 +69,7 @@ class EditEntity {
         )
     }
 
-    def private editTypeBaseImpl(Entity it) '''
+    def private editTypeBaseImpl(DataObject it) '''
         namespace «app.appNamespace»\Form\Type\Base;
 
         use Symfony\Component\Form\AbstractType;
@@ -65,12 +77,13 @@ class EditEntity {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
-        «IF metaData»
+        «IF extensions.contains('metadata')»
             use Symfony\Component\Validator\Constraints\Valid;
         «ENDIF»
         use «app.appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory
-        «IF hasTranslatableFields»
+        «IF extensions.contains('translatable')»
             use Zikula\ExtensionsModule\Api\VariableApi;
+            use ZLanguage;
             use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
         «IF hasListFieldsEntity»
@@ -91,7 +104,7 @@ class EditEntity {
              * @var «name.formatForCodeCapital»Factory
              */
             protected $entityFactory;
-            «IF hasTranslatableFields»
+            «IF extensions.contains('translatable')»
 
                 /**
                  * @var VariableApi
@@ -114,21 +127,21 @@ class EditEntity {
             /**
              * «name.formatForCodeCapital»Type constructor.
              *
-             * @param TranslatorInterface $translator «IF hasTranslatableFields» «ENDIF»Translator service instance.
+             * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»Translator service instance.
              * @param «name.formatForCodeCapital»Factory $entityFactory Entity factory service instance.
-            «IF hasTranslatableFields»
+            «IF extensions.contains('translatable')»
                 «' '»* @param VariableApi         $variableApi VariableApi service instance.
                 «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance.
             «ENDIF»
             «IF hasListFieldsEntity»
-                «' '»* @param ListEntriesHelper   $listHelper   «IF hasTranslatableFields» «ENDIF»ListEntriesHelper service instance.
+                «' '»* @param ListEntriesHelper   $listHelper   «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance.
             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, «IF hasTranslatableFields», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, «IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
             {
                 $this->translator = $translator;
                 $this->entityFactory = $entityFactory;
-                «IF hasTranslatableFields»
+                «IF extensions.contains('translatable')»
                     $this->variableApi = $variableApi;
                     $this->translatableHelper = $translatableHelper;
                 «ENDIF»
@@ -143,49 +156,57 @@ class EditEntity {
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $this->addEntityFields($builder, $options);
-                «IF attributable»
+                «IF extensions.contains('attributes')»
                     $this->addAttributeFields($builder, $options);
                 «ENDIF»
-                «IF categorisable»
+                «IF extensions.contains('categories')»
                     $this->addCategoriesField($builder, $options);
                 «ENDIF»
                 «/* TODO relations */»
-                «IF metaData»
+                «val parents = getParentDataObjects(#[])»
+                «IF !parents.empty»
+                    $builder->add('parentFields', '«app.appNamespace»\Form\Type\«parents.head.name.formatForCodeCapital»Type', [
+                        'data_class' => '«entityClassName('', false)»'
+                    ]);
+                «ENDIF»
+                «IF extensions.contains('metadata')»
                     $this->addMetaDataFields($builder, $options);
                 «ENDIF»
-                «IF workflow != EntityWorkflowType.NONE»
+                «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
                 «ENDIF»
                 $this->addReturnControlField($builder, $options);
                 $this->addSubmitButtons($builder, $options);
             }
 
-            «addEntityFields»
+            «addFields»
 
-            «IF geographical»
-                «addGeographicalFields»
-
-            «ENDIF»
-            «IF attributable»
-                «addAttributeFields»
+            «IF it instanceof Entity && (it as Entity).geographical»
+                «addGeographicalFields(it as Entity)»
 
             «ENDIF»
-            «IF categorisable»
-                «addCategoriesField»
+            «IF extensions.contains('attributes')»
+                «addAttributeFields(it as Entity)»
 
             «ENDIF»
-            «IF metaData»
-                «addMetaDataFields»
+            «IF extensions.contains('categories')»
+                «addCategoriesField(it as Entity)»
 
             «ENDIF»
-            «IF workflow != EntityWorkflowType.NONE»
-                «addAdditionalNotificationRemarksField»
+            «IF extensions.contains('metadata')»
+                «addMetaDataFields(it as Entity)»
 
             «ENDIF»
-            «addReturnControlField»
+            «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
+                «addAdditionalNotificationRemarksField(it as Entity)»
 
-            «addSubmitButtons»
+            «ENDIF»
+            «IF it instanceof Entity»
+                «addReturnControlField»
 
+                «addSubmitButtons»
+
+            «ENDIF»
             /**
              * {@inheritdoc}
              */
@@ -226,13 +247,16 @@ class EditEntity {
                                 'is«startDateField.name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»' => '«startDateField.name.formatForCode»',
                             «ENDIF»
                         ],
+                        «IF !incoming.filter(InheritanceRelationship).empty»
+                            'inherit_data' => true,
+                        «ENDIF»
                         'mode' => 'create',
-                        «IF attributable»
+                        «IF extensions.contains('attributes')»
                             'attributes' => [],
                         «ENDIF»
-                        «IF workflow != EntityWorkflowType.NONE»
+                        «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                             'isModerator' => false,
-                            «IF workflow == EntityWorkflowType.ENTERPRISE»
+                            «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
                                 'isSuperModerator' => false,
                             «ENDIF»
                             'isCreator' => false,
@@ -243,12 +267,12 @@ class EditEntity {
                     ->setRequired(['mode', 'actions'])
                     ->setAllowedTypes([
                         'mode' => 'string',
-                        «IF attributable»
+                        «IF extensions.contains('attributes')»
                             'attributes' => 'array',
                         «ENDIF»
-                        «IF workflow != EntityWorkflowType.NONE»
+                        «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                             'isModerator' => 'bool',
-                            «IF workflow == EntityWorkflowType.ENTERPRISE»
+                            «IF it instanceof Entity && (it as Entity).workflow == EntityWorkflowType.ENTERPRISE»
                                 'isSuperModerator' => 'bool',
                             «ENDIF»
                             'isCreator' => 'bool',
@@ -264,7 +288,7 @@ class EditEntity {
         }
     '''
 
-    def private addEntityFields(Entity it) '''
+    def private addFields(DataObject it) '''
         /**
          * Adds basic entity fields.
          *
@@ -273,44 +297,49 @@ class EditEntity {
          */
         public function addEntityFields(FormBuilderInterface $builder, array $options)
         {
-            «IF hasTranslatableFields»
-                $useOnlyCurrentLanguage = true;
-                if ($this->variableApi->get('ZConfig', 'multilingual')) {
-                    $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
-                    if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
-                        $useOnlyCurrentLanguage = false;
-                        $currentLanguage = \ZLanguage::getLanguageCode();
-                        foreach ($supportedLanguages as $language) {
-                            if ($language == $currentLanguage) {
-                                «translatableFieldSet('', '')»
+            «val hasTranslatable = extensions.contains('translatable')»
+            «IF it instanceof Entity»
+                «IF hasTranslatable»
+                    $useOnlyCurrentLanguage = true;
+                    if ($this->variableApi->get('ZConfig', 'multilingual')) {
+                        $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
+                        if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
+                            $useOnlyCurrentLanguage = false;
+                            $currentLanguage = ZLanguage::getLanguageCode();
+                            foreach ($supportedLanguages as $language) {
+                                if ($language == $currentLanguage) {
+                                    «translatableFieldSet('', '')»
+                                }
                             }
-                        }
-                        foreach ($supportedLanguages as $language) {
-                            if ($language != $currentLanguage) {
-                                «translatableFieldSet('$language', '$language')»
+                            foreach ($supportedLanguages as $language) {
+                                if ($language != $currentLanguage) {
+                                    «translatableFieldSet('$language', '$language')»
+                                }
                             }
                         }
                     }
-                }
-                if ($useOnlyCurrentLanguage === true) {
-                    $language = \ZLanguage::getLanguageCode();
-                    «translatableFieldSet('', '')»
-                }
+                    if ($useOnlyCurrentLanguage === true) {
+                        $language = ZLanguage::getLanguageCode();
+                        «translatableFieldSet('', '')»
+                    }
+                «ENDIF»
             «ENDIF»
-            «IF !hasTranslatableFields
-                || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
-                || geographical»
-                «IF hasTranslatableFields»
+            «IF !hasTranslatable
+                || (hasTranslatable && (!getEditableNonTranslatableFields.empty || (it instanceof Entity && (it as Entity).hasSluggableFields && !(it as Entity).hasTranslatableSlug)))
+                || (it instanceof Entity) && (it as Entity).geographical»
+                «IF hasTranslatable»
                     «FOR field : getEditableNonTranslatableFields»«field.fieldImpl('', '')»«ENDFOR»
                 «ELSE»
                     «FOR field : getEditableFields»«field.fieldImpl('', '')»«ENDFOR»
                 «ENDIF»
-                «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
+                «IF it instanceof Entity»
+                    «IF !hasTranslatable || (hasSluggableFields && !hasTranslatableSlug)»
 
-                    «slugField('', '')»
-                «ENDIF»
-                «IF geographical»
-                    $this->addGeographicalFields($builder, $options);
+                        «slugField('', '')»
+                    «ENDIF»
+                    «IF geographical»
+                        $this->addGeographicalFields($builder, $options);
+                    «ENDIF»
                 «ENDIF»
             «ENDIF»
         }
@@ -758,7 +787,7 @@ class EditEntity {
         }
     '''
 
-    def private editTypeImpl(Entity it) '''
+    def private editTypeImpl(DataObject it) '''
         namespace «app.appNamespace»\Form\Type;
 
         use «app.appNamespace»\Form\Type\Base\«name.formatForCodeCapital»Type as Base«name.formatForCodeCapital»Type;

@@ -2,6 +2,8 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DateField
+import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -231,17 +233,19 @@ class ServiceDefinitions {
             «ENDFOR»
         «ENDIF»
         «IF hasEditActions»
-            «FOR entity : getAllEntities.filter[e|e.hasActions('edit')]»
+            «FOR entity : entities.filter[e|e instanceof MappedSuperClass || e.hasActions('edit')]»
+                «IF entity instanceof Entity»
 
-                «modPrefix».form.handler.«entity.name.formatForDB»:
-                    class: «nsBase.replace('Type\\', '')»\Handler\«entity.name.formatForCodeCapital»\EditHandler
-                    arguments: [@service_container, @translator, @request_stack, @router«IF hasUploads», @«modPrefix».upload_handler«ENDIF»]
-                    tags:
-                        - { name: form.type }
+                    «modPrefix».form.handler.«entity.name.formatForDB»:
+                        class: «nsBase.replace('Type\\', '')»\Handler\«entity.name.formatForCodeCapital»\EditHandler
+                        arguments: [@service_container, @translator, @request_stack, @router«IF hasUploads», @«modPrefix».upload_handler«ENDIF»]
+                        tags:
+                            - { name: form.type }
+                «ENDIF»
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: «nsBase»«entity.name.formatForCodeCapital»Type
-                    arguments: [@translator, «modPrefix».«entity.name.formatForCode»_factory«IF entity.hasTranslatableFields», @zikula_extensions_module.api.variable, @«modPrefix».translatable_helper«ENDIF»«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
+                    arguments: [@translator, «modPrefix».«entity.name.formatForCode»_factory«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», @zikula_extensions_module.api.variable, @«modPrefix».translatable_helper«ENDIF»«IF entity.hasListFieldsEntity», @«modPrefix».listentries_helper«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»

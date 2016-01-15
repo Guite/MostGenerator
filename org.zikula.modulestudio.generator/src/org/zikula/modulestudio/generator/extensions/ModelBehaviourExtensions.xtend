@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.AbstractDateField
 import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.AccountDeletionHandler
 import de.guite.modulestudio.metamodel.Application
+import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntitySlugStyle
 import de.guite.modulestudio.metamodel.EntityTimestampableType
@@ -228,8 +229,12 @@ class ModelBehaviourExtensions {
     /**
      * Returns a list of all editable fields with the translatable extension disabled.
      */
-    def getEditableNonTranslatableFields(Entity it) {
-        getEditableFields.filter[!translatable]
+    def getEditableNonTranslatableFields(DataObject it) {
+        if (it instanceof Entity) {
+            getEditableFields.filter[!translatable]
+        } else {
+            getEditableFields
+        }
     }
 
     /**

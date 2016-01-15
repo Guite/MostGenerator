@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
+import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.ConfigLegacy
@@ -65,7 +66,7 @@ class FormHandler {
             }
             if (!isLegacy) {
                 // form types
-                for (entity : getAllEntities.filter[e|e.hasActions('edit')]) {
+                for (entity : entities.filter[e|e instanceof MappedSuperClass || e.hasActions('edit')]) {
                     new EditEntity().generate(entity, fsa)
                 }
                 if (hasMetaDataEntities) {

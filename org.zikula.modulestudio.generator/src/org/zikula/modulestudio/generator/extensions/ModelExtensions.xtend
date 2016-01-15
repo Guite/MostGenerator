@@ -287,9 +287,9 @@ class ModelExtensions {
      * Returns a list of all editable fields of the given entity.
      * At the moment instances of ArrayField and ObjectField are excluded.
      */
-    def getEditableFields(Entity it) {
+    def getEditableFields(DataObject it) {
         var fields = getDerivedFields.filter[name != 'workflowState']
-        if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
+        if (it instanceof Entity && (it as Entity).identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter[!primaryKey]
         }
         val wantedFields = fields.exclude(ArrayField).exclude(ObjectField)
@@ -364,15 +364,20 @@ class ModelExtensions {
     /**
      * Returns a list of inheriting data objects.
      */
-    def private getParentDataObjects(DataObject it) {
-        outgoing.filter(InheritanceRelationship).filter[target !== null].map[target]
+    def List<DataObject> getParentDataObjects(DataObject it, List<DataObject> parents) {
+        val inheritanceRelation = outgoing.filter(InheritanceRelationship).filter[null !== target]
+        if (!inheritanceRelation.empty) {
+            parents.add(inheritanceRelation.head.target)
+            inheritanceRelation.head.target.getParentDataObjects(parents)
+        }
+        parents
     }
 
     /**
      * Returns a list of an object and it's inheriting data objects.
      */
     def getSelfAndParentDataObjects(DataObject it) {
-        getParentDataObjects.toList + #[it]
+        getParentDataObjects(#[]) + #[it]
     }
 
     /**

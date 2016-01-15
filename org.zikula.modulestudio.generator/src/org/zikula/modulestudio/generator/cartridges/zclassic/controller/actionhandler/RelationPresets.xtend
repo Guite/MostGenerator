@@ -100,7 +100,11 @@ class RelationPresets {
                     «relation.saveSinglePreset(true)»
                 «ENDFOR»
                 «ENDIF»
-                $this->entityManager->flush();
+                «IF app.targets('1.3.x')»
+                    $this->entityManager->flush();
+                «ELSE»
+                    $this->container->get('doctrine.orm.entity_manager').flush();
+                «ENDIF»
             }
         «ENDIF»
     '''
