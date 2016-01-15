@@ -341,21 +341,21 @@ class Plugins {
                 new TimeInput().generate(it, fsa)
             }
         }
-        val hasRelations = !relations.empty
-        if ((hasTrees && targets('1.3.x')) || hasRelations) {
-            // TODO implement custom form type or form type extension
-            new AbstractObjectSelector().generate(it, fsa)
-        }
-        if (hasTrees && targets('1.3.x')) {
-            new TreeSelector().generate(it, fsa)
-        }
-        if (hasRelations) {
-            // TODO implement custom form types or form type extensions
-            new RelationSelectorList().generate(it, fsa)
-            new RelationSelectorAutoComplete().generate(it, fsa)
-        }
-        if (hasUserFields && targets('1.3.x')) {
-            new UserInput().generate(it, fsa)
+        if (targets('1.3.x')) {
+            val hasRelations = !relations.empty
+            if (hasTrees || hasRelations) {
+                new AbstractObjectSelector().generate(it, fsa)
+            }
+            if (hasTrees) {
+                new TreeSelector().generate(it, fsa)
+            }
+            if (hasRelations) {
+                new RelationSelectorList().generate(it, fsa)
+                new RelationSelectorAutoComplete().generate(it, fsa)
+            }
+            if (hasUserFields) {
+                new UserInput().generate(it, fsa)
+            }
         }
     }
 

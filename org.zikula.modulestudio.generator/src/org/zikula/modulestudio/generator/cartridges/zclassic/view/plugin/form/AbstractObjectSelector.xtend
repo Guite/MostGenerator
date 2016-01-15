@@ -14,36 +14,24 @@ class AbstractObjectSelector {
 
     FileHelper fh = new FileHelper
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/AbstractObjectSelector.php',
             fh.phpFileContent(it, selectorBaseImpl), fh.phpFileContent(it, selectorImpl)
         )
     }
 
     def private selectorBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-        «ENDIF»
         use Doctrine\Common\Collections\Collection;
         use Doctrine\ORM\QueryBuilder;
-        «IF !targets('1.3.x')»
-            use FormUtil;
-            use ModUtil;
-            use ServiceUtil;
-            use Zikula\Core\Doctrine\EntityAccess;
-            use Zikula_Form_Plugin_DropdownList;
-            use Zikula_Form_View;
-        «ENDIF»
 
         /**
          * Abstract object selector plugin base class.
          */
-        «IF targets('1.3.x')»
         abstract class «appName»_Form_Plugin_Base_AbstractObjectSelector extends Zikula_Form_Plugin_DropdownList
-        «ELSE»
-        class AbstractObjectSelector extends Zikula_Form_Plugin_DropdownList
-        «ENDIF»
         {
             «memberVars»
 
@@ -107,7 +95,7 @@ class AbstractObjectSelector {
          *
          * @var array
          */
-        public $idFields = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+        public $idFields = array();
 
         /**
          * Where clause.
@@ -150,14 +138,14 @@ class AbstractObjectSelector {
          *
          * @var boolean
          */
-        public $preselectedItems = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+        public $preselectedItems = array();
 
         /**
          * List of selected items.
          *
          * @var boolean
          */
-        public $selectedItems = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+        public $selectedItems = array();
     '''
 
     def private createPlugin(Application it) '''
@@ -173,13 +161,13 @@ class AbstractObjectSelector {
         public function create(Zikula_Form_View $view, &$params)
         {
             if (!isset($params['objectType']) || empty($params['objectType'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'«appName.formatForDB»RelationSelectorList', 'objectType'«IF targets('1.3.x')»)«ELSE»]«ENDIF»));
+                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»RelationSelectorList', 'objectType')));
             }
             $this->objectType = $params['objectType'];
             unset($params['objectType']);
 
             if (!isset($params['aliasReverse']) || empty($params['aliasReverse'])) {
-                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'relationtesterRelationSelectorList', 'aliasReverse'«IF targets('1.3.x')»)«ELSE»]«ENDIF»));
+                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('relationtesterRelationSelectorList', 'aliasReverse')));
             }
             $this->aliasReverse = $params['aliasReverse'];
             unset($params['aliasReverse']);
@@ -214,7 +202,7 @@ class AbstractObjectSelector {
 
             parent::create($view, $params);
 
-            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
             $this->cssClass .= ' ' . $this->getStyleClass() . ' ' . strtolower($this->objectType);
         }
 
@@ -292,12 +280,12 @@ class AbstractObjectSelector {
          */
         protected function loadItems(&$params)
         {
-            $selectionArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $selectionArgs = array(
                 'ot' => $this->objectType,
                 'where' => $this->where,
                 'orderBy' => $this->orderBy,
                 'useJoins' => false
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            );
 
             if ($this->resultsPerPage < 1) {
                 // no pagination
@@ -343,22 +331,22 @@ class AbstractObjectSelector {
             $newValue = null;
 
             if ($this->selectionMode == 'single') {
-                if ($value instanceof «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
+                if ($value instanceof Zikula_EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
                     $newValue = $value->createCompositeIdentifier();
                 } elseif (is_array($value)) {
-                    $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $value['_objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $value['_objectType']));
                     $newValue = $value[$idFields[0]];
                 } else {
                     $newValue[] = $value;
                 }
             } else {
-                $newValue = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $newValue = array();
                 if (is_array($value) || $value instanceof Collection) {
                     foreach ($value as $entity) {
-                        if ($entity instanceof «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
+                        if ($entity instanceof Zikula_EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
                             $newValue[] = $entity->createCompositeIdentifier();
                         } elseif (is_array($entity)) {
-                            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $entity['_objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $entity['_objectType']));
                             $newValue[] = $entity[$idFields[0]];
                         } else {
                             $newValue[] = $entity;
@@ -385,7 +373,7 @@ class AbstractObjectSelector {
             $entityData = isset($params['linkingItem']) ? $params['linkingItem'] : $view->get_template_vars('linkingItem');
 
             $alias = $this->id;
-            $itemIds = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $itemIds = array();
             $many = ($this->selectionMode == 'multiple');
 
             if (isset($entityData[$alias])) {
@@ -404,9 +392,9 @@ class AbstractObjectSelector {
 
             if (count($itemIds) > 0) {
                 if ($this->selectionMode != 'multiple') {
-                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $alias, 'id' => $itemIds[0]«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $alias, 'id' => $itemIds[0]));
                 } else {
-                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntities', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $alias, 'idList' => $itemIds«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    $entityData[$alias] = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => $alias, 'idList' => $itemIds));
                 }
             }
 
@@ -428,20 +416,14 @@ class AbstractObjectSelector {
             $alias = $this->id;
             $many = ($this->selectionMode == 'multiple');
 
-            «IF targets('1.3.x')»
-                $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
-            «ENDIF»
+            $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
-                $repository = $entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
-            «ENDIF»
+            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $repository = $entityManager->getRepository($entityClass);
 
             $inputValue = FormUtil::getPassedValue($this->inputName, $this->getSelectedValue(), $source);
             if (empty($inputValue)) {
-                return $many ? «IF targets('1.3.x')»array()«ELSE»[]«ENDIF» : null;
+                return $many ? array() : null;
             }
 
             if (!is_array($inputValue)) {
@@ -449,12 +431,12 @@ class AbstractObjectSelector {
             }
 
             if (!is_array($inputValue) || !count($inputValue)) {
-                return $many ? «IF targets('1.3.x')»array()«ELSE»[]«ENDIF» : null;
+                return $many ? array() : null;
             }
 
             // fix for #446
             if (count($inputValue) == 1 && empty($inputValue[0])) {
-                return $many ? «IF targets('1.3.x')»array()«ELSE»[]«ENDIF» : null;
+                return $many ? array() : null;
             }
 
             $this->selectedItems = $this->fetchRelatedItems($view, $inputValue);
@@ -470,16 +452,10 @@ class AbstractObjectSelector {
          */
         protected function fetchRelatedItems($view, $inputValue)
         {
-            «IF targets('1.3.x')»
-                $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
-            «ENDIF»
+            $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
-                $repository = $entityManager->getRepository($entityClass);
-            «ELSE»
-                $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
-            «ENDIF»
+            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $repository = $entityManager->getRepository($entityClass);
 
             $qb = $repository->genericBaseQuery('', '', false);
             $qb = $this->buildWhereClause($inputValue, $qb);
@@ -495,8 +471,8 @@ class AbstractObjectSelector {
         /**
          * Reassign related items to the edited entity.
          *
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity     Reference to the updated entity.
-         * @param array«IF targets('1.3.x')»       «ENDIF»        $entityData Entity related form data.
+         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
+         * @param array               $entityData Entity related form data.
          *
          * @return array form data after processing.
          */
@@ -505,15 +481,7 @@ class AbstractObjectSelector {
             $alias = $this->id;
             $many = ($this->selectionMode == 'multiple');
 
-            «IF targets('1.3.x')»
-                $entity[$alias] = $this->preselectedItems;
-            «ELSE»
-                if ($many) {
-                    $entity[$alias] = $this->preselectedItems;
-                } else {
-                    $entity[$alias] = count($this->preselectedItems) ? $this->preselectedItems[0] : null;
-                }
-            «ENDIF»
+            $entity[$alias] = $this->preselectedItems;
 
             // remove all existing references
             if ($many) {
@@ -557,7 +525,7 @@ class AbstractObjectSelector {
         public function persistRelatedItems()
         {
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+            $entityManager = $serviceManager->getService('doctrine.entitymanager');
         
             foreach ($this->selectedItems as $relatedItem) {
                 $entityManager->persist($relatedItem);
@@ -654,9 +622,9 @@ class AbstractObjectSelector {
          */
         protected function decodeCompositeIdentifier($itemIds)
         {
-            $idValues = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $idValues = array();
             foreach ($this->idFields as $idField) {
-                $idValues[$idField] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $idValues[$idField] = array();
             }
             foreach ($itemIds as $itemId) {
                 $itemIdParts = explode('_', $itemId);
@@ -672,20 +640,10 @@ class AbstractObjectSelector {
     '''
 
     def private selectorImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\AbstractObjectSelector as BaseAbstractObjectSelector;
-
-        «ENDIF»
         /**
          * Abstract object selector plugin implementation class.
          */
-        «IF targets('1.3.x')»
         abstract class «appName»_Form_Plugin_AbstractObjectSelector extends «appName»_Form_Plugin_Base_AbstractObjectSelector
-        «ELSE»
-        class AbstractObjectSelector extends BaseAbstractObjectSelector
-        «ENDIF»
         {
             // feel free to add your customisation here
         }

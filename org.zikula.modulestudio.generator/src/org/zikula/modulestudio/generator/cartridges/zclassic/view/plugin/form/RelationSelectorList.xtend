@@ -14,7 +14,11 @@ class RelationSelectorList {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorList.php',
             fh.phpFileContent(it, relationSelectorBaseImpl), fh.phpFileContent(it, relationSelectorImpl)
         )
@@ -24,22 +28,10 @@ class RelationSelectorList {
     }
 
     def private relationSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-            use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
-
-            use Zikula_Form_View;
-
-        «ENDIF»
         /**
          * Relation selector plugin base class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_Base_RelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
-        «ELSE»
-        class RelationSelectorList extends BaseAbstractObjectSelector
-        «ENDIF»
         {
             /**
              * Get filename of this file.
@@ -97,20 +89,10 @@ class RelationSelectorList {
     '''
 
     def private relationSelectorImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\RelationSelectorList as BaseRelationSelectorList;
-
-        «ENDIF»
         /**
          * Relation selector plugin implementation class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_RelationSelectorList extends «appName»_Form_Plugin_Base_RelationSelectorList
-        «ELSE»
-        class RelationSelectorList extends BaseRelationSelectorList
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -127,7 +109,7 @@ class RelationSelectorList {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorList($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
+            return $view->registerPlugin('«appName»_Form_Plugin_RelationSelectorList', $params);
         }
     '''
 }

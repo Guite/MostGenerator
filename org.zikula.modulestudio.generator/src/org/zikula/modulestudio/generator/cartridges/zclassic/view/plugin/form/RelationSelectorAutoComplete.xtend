@@ -14,7 +14,11 @@ class RelationSelectorAutoComplete {
 
     FileHelper fh = new FileHelper()
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/RelationSelectorAutoComplete.php',
             fh.phpFileContent(it, relationSelectorBaseImpl), fh.phpFileContent(it, relationSelectorImpl)
         )
@@ -24,24 +28,10 @@ class RelationSelectorAutoComplete {
     }
 
     def private relationSelectorBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin\Base;
-
-            use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
-
-            use DataUtil;
-            use Zikula_Form_View;
-            use ZLanguage;
-
-        «ENDIF»
         /**
          * Relation selector plugin base class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_Base_RelationSelectorAutoComplete extends «appName»_Form_Plugin_AbstractObjectSelector
-        «ELSE»
-        class RelationSelectorAutoComplete extends BaseAbstractObjectSelector
-        «ENDIF»
         {
             /**
              * Identifier prefix (unique name for JS).
@@ -86,7 +76,7 @@ class RelationSelectorAutoComplete {
             public function load(Zikula_Form_View $view, &$params)
             {
                 $this->processRequestData($view, 'GET');
-    
+
                 $params['fetchItemsDuringLoad'] = false;
                 // load list items
                 parent::load($view, $params);
@@ -116,7 +106,7 @@ class RelationSelectorAutoComplete {
              */
             protected function getStyleClass()
             {
-                return 'z-form-relationlist «IF targets('1.3.x')»autocomplete«ELSE»typeahead«ENDIF»';
+                return 'z-form-relationlist autocomplete';
             }
 
             /**
@@ -139,17 +129,17 @@ class RelationSelectorAutoComplete {
                             break;
                     «ENDFOR»
                 }
-
-                $addLinkText = $many ? __f('Add %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom) : __f('Select %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom);
-                $selectLabelText = __f('Find %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom);
-                $searchIconText = __f('Search %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom);
+«/* TODO */»
+                $addLinkText = $many ? __f('Add %s', array($entityNameTranslated), $dom) : __f('Select %s', array($entityNameTranslated), $dom);
+                $selectLabelText = __f('Find %s', array($entityNameTranslated), $dom);
+                $searchIconText = __f('Search %s', array($entityNameTranslated), $dom);
 
                 $idPrefix = $this->idPrefix;
 
                 $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$entityNameTranslated«IF targets('1.3.x')»)«ELSE»]«ENDIF», $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
                 }
 
                 $alias = $this->id;
@@ -204,20 +194,10 @@ class RelationSelectorAutoComplete {
     '''
 
     def private relationSelectorImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Form\Plugin;
-
-            use «appNamespace»\Form\Plugin\Base\RelationSelectorAutoComplete as BaseRelationSelectorAutoComplete;
-
-        «ENDIF»
         /**
          * Relation selector plugin implementation class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Form_Plugin_RelationSelectorAutoComplete extends «appName»_Form_Plugin_Base_RelationSelectorAutoComplete
-        «ELSE»
-        class RelationSelectorAutoComplete extends BaseRelationSelectorAutoComplete
-        «ENDIF»
         {
             // feel free to add your customisation here
         }
@@ -234,7 +214,7 @@ class RelationSelectorAutoComplete {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorAutoComplete($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.x')»«appName»_Form_Plugin_RelationSelectorAutoComplete«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorAutoComplete«ENDIF»', $params);
+            return $view->registerPlugin('«appName»_Form_Plugin_RelationSelectorAutoComplete', $params);
         }
     '''
 }
