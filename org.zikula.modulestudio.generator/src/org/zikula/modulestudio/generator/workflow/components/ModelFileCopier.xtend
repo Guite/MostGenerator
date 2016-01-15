@@ -5,9 +5,11 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.channels.FileChannel
+import org.eclipse.core.runtime.IStatus
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.zikula.modulestudio.generator.application.ModuleStudioGeneratorActivator
 
 /**
  * Workflow component class for copying model files into the output folder.
@@ -108,8 +110,7 @@ class ModelFileCopier implements IWorkflowComponent {
                 return
             }
             if (!target.exists) {
-                if (!target.parentFile.exists
-                        && !target.parentFile.mkdirs) {
+                if (!target.parentFile.exists && !target.parentFile.mkdirs) {
                     return
                 }
                 if (!target.createNewFile) {
@@ -122,16 +123,15 @@ class ModelFileCopier implements IWorkflowComponent {
             try {
                 sourceChannel = new FileInputStream(source).channel
                 destinationChannel = new FileOutputStream(target).channel
-                destinationChannel.transferFrom(sourceChannel, 0,
-                        sourceChannel.size)
+                destinationChannel.transferFrom(sourceChannel, 0, sourceChannel.size)
                 sourceChannel.close
                 destinationChannel.close
             } finally {
                 sourceChannel?.close
                 destinationChannel?.close
             }
-        } catch (IOException x) {
-            // TODO
+        } catch (IOException e) {
+            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
         }
     }
 

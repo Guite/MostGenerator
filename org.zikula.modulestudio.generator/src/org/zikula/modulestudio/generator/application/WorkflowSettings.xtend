@@ -102,7 +102,7 @@ class WorkflowSettings {
         try {
             collectAvailableReports
         } catch (Exception e) {
-            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.toString, e)
+            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
         }
     }
 

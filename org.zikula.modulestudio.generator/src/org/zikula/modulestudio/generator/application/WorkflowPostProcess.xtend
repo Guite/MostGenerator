@@ -84,7 +84,7 @@ class WorkflowPostProcess {
                     fileCopy.invoke(null)
                 }
             } catch (IOException e) {
-                ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.toString, e)
+                ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
             }
         }
     }
@@ -113,7 +113,7 @@ class WorkflowPostProcess {
             }
             reportingFacade.shutDown
         } catch (Exception e) {
-            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.toString, e)
+            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
         }
     }
 }
