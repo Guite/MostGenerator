@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.Relationship
 
 /**
@@ -64,6 +65,13 @@ class ModelJoinExtensions {
      */
     def getIncomingJoinRelations(DataObject it) {
         incoming.filter(JoinRelationship)
+    }
+
+    /**
+     * Whether the application contains any relationships using auto completion.
+     */
+    def needsAutoCompletion(Application it) {
+        !relations.filter(JoinRelationship).filter[useAutoCompletion != RelationAutoCompletionUsage.NONE].empty
     }
 
     /**

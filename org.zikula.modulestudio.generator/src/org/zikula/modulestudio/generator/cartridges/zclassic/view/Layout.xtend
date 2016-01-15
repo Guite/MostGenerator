@@ -13,6 +13,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
@@ -23,6 +24,7 @@ class Layout {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -264,6 +266,40 @@ class Layout {
                         <span class="help-block"><a href="{{ path('zikulausersmodule_admin_modify', { 'userid': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>
                     {% endif %}
                 {% endif %}
+            {% endblock %}
+        «ENDIF»
+        «IF needsAutoCompletion»
+
+            {% block «appName.formatForDB»_field_autocompletionrelation_widget %}
+                {% set entityNameTranslated = '' %}
+                {% set withImage = false %}
+                «FOR entity : entities»
+                    {% «IF entity != entities.head»else«ENDIF»if objectType == '«entity.name.formatForCode»' %}
+                        {% set entityNameTranslated = __('«entity.name.formatForDisplay»') %}
+                        «IF entity.hasImageFieldsEntity»
+                            {% set withImage = true %}
+                        «ENDIF»
+                «ENDFOR»
+                {% endif %}
+                {% set idPrefix = uniqueNameForJs %}
+                {% set addLinkText = multiple ? __f('Add %name%', { '%name%': entityNameTranslated }) : __f('Select %name%', { '%entityName%': entityNameTranslated }) %}
+                {% set createLink = createUrl != '' ? '<a id="' ~ uniqueNameForJs ~ 'SelectorDoNew" href="' ~ createUrl ~ '" title="' ~ __f('Create new %name%', { '%name%': entityNameTranslated }) ~ '" class="btn btn-default «appName.toLowerCase»-inline-button">' ~ __('Create') ~ '</a>' : '' %}
+
+                <div class="«appName.toLowerCase»-relation-rightside">'
+                    <a id="{{ uniqueNameForJs }}AddLink" href="javascript:void(0);" class="hidden">{{ addLinkText }}</a>
+                    <div id="{{ idPrefix }}AddFields" class="«appName.toLowerCase»-autocomplete{{ withImage ? '-with-image' : '' }}">
+                        <label for="{{ idPrefix }}Selector">{{ __f('Find %name%', { '%name%': entityNameTranslated }) }}</label>
+                        <br />
+                        <i class="fa fa-search" title="{{ __f('Search %name%', { '%name%': entityNameTranslated })|e('html_attr') }}"></i>
+                        <input type="hidden" name="{{ idPrefix }}Scope" id="{{ idPrefix }}Scope" value="{{ multiple ? '0' : '1' }}" />
+                        <input type="text" id="{{ idPrefix }}Selector" name="{{ idPrefix }}Selector" value="{# value #}" autocomplete="off" {{ block('widget_attributes') }} />
+                        <i class="fa fa-refresh fa-spin hidden" id="{{ idPrefix }}Indicator"></i>
+                        <span id="{{ idPrefix }}NoResultsHint" class="hidden">{{ __('No results found!') }}</span>
+                        <input type="button" id="{{ idPrefix }}SelectorDoCancel" name="{{ idPrefix }}SelectorDoCancel" value="{{ __('Cancel') }}" class="btn btn-default «appName.toLowerCase»-inline-button" />
+                        {{ createLink }}
+                        <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
+                    </div>
+                </div>
             {% endblock %}
         «ENDIF»
     '''

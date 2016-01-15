@@ -30,6 +30,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -40,6 +41,7 @@ class ControllerLayer {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -145,7 +147,7 @@ class ControllerLayer {
                 «actionHelper.generate(action, true)»
 
             «ENDFOR»
-            «IF hasActions('edit')»
+            «IF hasActions('edit') && app.needsAutoCompletion»
 
                 «handleInlineRedirect(true)»
             «ENDIF»
@@ -177,7 +179,7 @@ class ControllerLayer {
 
                 «handleSelectedObjects(true)»
             «ENDIF»
-            «IF hasActions('edit')»
+            «IF hasActions('edit') && app.needsAutoCompletion»
 
                 «handleInlineRedirect(true)»
             «ENDIF»

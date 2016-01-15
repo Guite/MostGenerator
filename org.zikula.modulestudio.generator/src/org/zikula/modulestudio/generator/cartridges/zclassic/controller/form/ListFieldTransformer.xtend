@@ -37,7 +37,7 @@ class ListFieldTransformer {
             protected $listHelper;
 
             /**
-             * AppSettingsType constructor.
+             * ListFieldTransformer constructor.
              *
              * @param ListEntriesHelper $listHelper ListEntriesHelper service instance.
              */

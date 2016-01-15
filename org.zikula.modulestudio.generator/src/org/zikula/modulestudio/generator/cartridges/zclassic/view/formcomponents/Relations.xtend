@@ -186,38 +186,31 @@ class Relations {
         </div>
     '''
 
+    // 1.3.x only
+    def private formPluginAttributesLegacy(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
+
     def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
         «val aliasName = getRelationAliasName(!incoming)»
-        «val appnameLower = application.appName.formatForDB»
         {% if displayMode == 'choices' %}
             {{ form_row(form.«aliasName.formatForCode») }}
         {% elseif displayMode == 'autocomplete' %}
-            «/* TODO add auto completion support */»
-            <div class="form-group">
-                «IF !isManyToMany && !incoming»
-                    «component_ParentEditing(ownEntity, many)»
-                «ELSE»
-                    {% set createLink = '' %}
-                    {% if allowEditing == true %}
-                        {% set createLink = path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') %}
-                    {% endif %}
-                    {«appnameLower»RelationSelectorAutoComplete idPrefix=$idPrefix createLink=$createLink withImage=«ownEntity.hasImageFieldsEntity.displayBool» cssClass='form-control'}
-                    «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
-                «ENDIF»
-            </div>
+            «IF !isManyToMany && !incoming»
+                «component_ParentEditing(ownEntity, many)»
+            «ELSE»
+                {% set createUrl = allowEditing ? path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') : '' %}
+                {{ form_row(form.«aliasName.formatForCode») }}
+                «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
+            «ENDIF»
         {% endif %}
     '''
-
-    // 1.3.x only
-    def private formPluginAttributesLegacy(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
 
     def private component_ParentEditing(JoinRelationship it, Entity targetEntity, Boolean many) '''
         «/*just a reminder for the parent view which is not tested yet (see #10)
             Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
             Problem: address must know the customerid.
-            TODO: only for $mode ne create: 
-                <p>TODO ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
-                <p>TODO EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
+            TODO: only for $mode != create: 
+                <p>ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
+                <p>EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
         */»
     '''
 
@@ -246,9 +239,9 @@ class Relations {
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) {
         if (application.targets('1.3.x')) '''
-            file='«targetEntity.name.formatForCode»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
+            file='«targetEntity.name.formatForCode»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl'«''»'''
         else '''
-            '«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig' '''
+            '«targetEntity.name.formatForCodeCapital»/includeSelect«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».html.twig'«''»'''
     }
 
     def private component_ItemList(JoinRelationship it, Application app, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
@@ -296,7 +289,7 @@ class Relations {
             «ENDIF»
             {% set removeImage = '<span class="fa fa-trash-o"></span>' %}
 
-            <input type="hidden" id="{{ idPrefix }}ItemList" name="{{ idPrefix }}ItemList" value="{% if item«IF many»s«ENDIF» is defined and item«IF many»s«ENDIF» is iterable«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}«IF many»{% for item in items %}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»«IF many»{% if not loop.last %},{% endif %}{% endfor %}«ENDIF»{% endif %}" />
+            <input type="hidden" id="{{ idPrefix }}" name="{{ idPrefix }}" value="{% if item«IF many»s«ENDIF» is defined and item«IF many»s«ENDIF» is iterable«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» and item.«pkField.name.formatForCode» is defined«ENDFOR»«ENDIF» %}«IF many»{% for item in items %}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»«IF many»{% if not loop.last %},{% endif %}{% endfor %}«ENDIF»{% endif %}" />
             <input type="hidden" id="{{ idPrefix }}Mode" name="{{ idPrefix }}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
             <ul id="{{ idPrefix }}ReferenceList">

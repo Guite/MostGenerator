@@ -16,6 +16,7 @@ import de.guite.modulestudio.metamodel.InheritanceRelationship
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ListField
+import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.StringField
@@ -742,10 +743,16 @@ class EditEntity {
 
     def private fieldImpl(JoinRelationship it, Boolean outgoing, Boolean autoComplete) '''
         «val aliasName = getRelationAliasName(outgoing)»
-        «IF autoComplete»
-            «/* TODO add auto completion support */»
-        «ELSE»
-            $builder->add('«aliasName.formatForCode»', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', [
+        $builder->add('«aliasName.formatForCode»', '«formType(autoComplete)»Type', [
+            «IF autoComplete»
+                «val uniqueNameForJs = getUniqueRelationNameForJs(app, (if (outgoing) source else target), isManySide(outgoing), (if (!isManyToMany) outgoing else !outgoing), aliasName)»
+                'objectType' => '«(if (outgoing) target else source).name.formatForCode»',
+                'multiple' => «isManySide(outgoing).displayBool»,
+                'uniqueNameForJs' => '«uniqueNameForJs»',
+                «IF outgoing && !nullable»
+                    'required' => false,
+                «ENDIF»
+            «ELSE»
                 'class' => '«app.appName»:«(if (outgoing) target else source).name.formatForCodeCapital»Entity',
                 'choice_label' => 'getTitleFromDisplayPattern',
                 'multiple' => «isManySide(outgoing).displayBool»,
@@ -757,14 +764,26 @@ class EditEntity {
                     'placeholder' => $this->translator->trans('Please choose an option', [], '«app.appName.formatForDB»'),
                     'required' => false,
                 «ENDIF»
-                'label' => $this->translator->trans('«aliasName.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
-                'attr' => [
-                    'id' => '«aliasName.formatForCode»',
-                    'title' => $this->translator->trans('Choose the «aliasName.formatForDisplay»', [], '«app.appName.formatForDB»')
-                ]
-            ]);
-        «ENDIF»
+            «ENDIF»
+            'label' => $this->translator->trans('«aliasName.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
+            'attr' => [
+                'id' => '«aliasName.formatForCode»',
+                'title' => $this->translator->trans('Choose the «aliasName.formatForDisplay»', [], '«app.appName.formatForDB»')
+            ]
+        ]);
     '''
+
+    def private formType(JoinRelationship it, Boolean autoComplete) {
+        if (autoComplete) '''«app.appNamespace»\Form\Type\Field\AutoCompletionRelation'''
+        else '''Symfony\Bridge\Doctrine\Form\Type\Entity'''
+    }
+
+    def private isManyToMany(JoinRelationship it) {
+        switch it {
+            ManyToManyRelationship: true
+            default: false
+        }
+    }
 
     def private addMetaDataFields(Entity it) '''
         /**

@@ -32,6 +32,7 @@ class MultiListType {
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
+        use «appNamespace»\Form\DataTransformer\ListFieldTransformer;
         use «app.appNamespace»\Helper\ListEntriesHelper;
 
         /**

@@ -374,7 +374,7 @@ class AbstractObjectSelector {
 
             $alias = $this->id;
             $itemIds = array();
-            $many = ($this->selectionMode == 'multiple');
+            $many = $this->selectionMode == 'multiple';
 
             if (isset($entityData[$alias])) {
                 $relatedItems = $entityData[$alias];

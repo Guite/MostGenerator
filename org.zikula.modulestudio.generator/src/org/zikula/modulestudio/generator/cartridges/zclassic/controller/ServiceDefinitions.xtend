@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -23,6 +24,7 @@ class ServiceDefinitions {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -209,6 +211,14 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.user:
                 class: «nsBase»Field\UserType
+                tags:
+                    - { name: form.type }
+        «ENDIF»
+        «IF needsAutoCompletion»
+
+            «modPrefix».form.type.field.autocompletionrelation:
+                class: «nsBase»Field\AutoCompletionRelationType
+                arguments: [@translator, "@doctrine.orm.entity_manager"]
                 tags:
                     - { name: form.type }
         «ENDIF»

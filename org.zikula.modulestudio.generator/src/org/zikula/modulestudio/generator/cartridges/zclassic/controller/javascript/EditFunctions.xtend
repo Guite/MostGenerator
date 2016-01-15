@@ -396,7 +396,7 @@ class EditFunctions {
     '''
 
     def private relationFunctions(Application it) '''
-        «IF !getJoinRelations.empty»
+        «IF needsAutoCompletion»
             «toggleRelatedItemForm»
 
             «resetRelatedItemForm»
@@ -577,7 +577,7 @@ class EditFunctions {
             «IF targets('1.3.x')»
                 itemIds = $F(idPrefix + 'ItemList');
             «ELSE»
-                itemIds = jQuery('#' + idPrefix + 'ItemList').val();
+                itemIds = jQuery('#' + idPrefix).val();
             «ENDIF»
             itemIdsArr = itemIds.split(',');
 
@@ -595,7 +595,7 @@ class EditFunctions {
                 $(idPrefix + 'ItemList').value = itemIds;
                 $(idPrefix + 'Reference_' + removeId).remove();
             «ELSE»
-                jQuery('#' + idPrefix + 'ItemList').val(itemIds);
+                jQuery('#' + idPrefix).val(itemIds);
                 jQuery('#' + idPrefix + 'Reference_' + removeId).remove();
             «ENDIF»
         }
@@ -708,7 +708,7 @@ class EditFunctions {
                 itemIds += newItemId;
                 $(idPrefix + 'ItemList').value = itemIds;
             «ELSE»
-                itemIds = jQuery('#' + idPrefix + 'ItemList').val();
+                itemIds = jQuery('#' + idPrefix).val();
                 if (itemIds !== '') {
                     if (jQuery('#' + idPrefix + 'Scope').val() === '0') {
                         itemIdsArr = itemIds.split(',');
@@ -723,7 +723,7 @@ class EditFunctions {
                     }
                 }
                 itemIds += newItemId;
-                jQuery('#' + idPrefix + 'ItemList').val(itemIds);
+                jQuery('#' + idPrefix).val(itemIds);
             «ENDIF»
 
             «vendorAndName»ResetRelatedItemForm(idPrefix);
@@ -879,8 +879,8 @@ class EditFunctions {
 
                         acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion');
                         acUrl += '&ot=' + objectType;
-                        if (jQuery('#' + idPrefix + 'ItemList').size() > 0) {
-                            acUrl += '&exclude=' + jQuery('#' + idPrefix + 'ItemList').val();
+                        if (jQuery('#' + idPrefix).size() > 0) {
+                            acUrl += '&exclude=' + jQuery('#' + idPrefix).val();
                         }
 
                         jQuery('#' + idPrefix + 'Selector').typeahead(acOptions);
@@ -923,7 +923,7 @@ class EditFunctions {
             «IF targets('1.3.x')»
                 itemIds = $F(idPrefix + 'ItemList');
             «ELSE»
-                itemIds = jQuery('#' + idPrefix + 'ItemList').val();
+                itemIds = jQuery('#' + idPrefix).val();
             «ENDIF»
             itemIdsArr = itemIds.split(',');
             itemIdsArr.each(function (existingId) {

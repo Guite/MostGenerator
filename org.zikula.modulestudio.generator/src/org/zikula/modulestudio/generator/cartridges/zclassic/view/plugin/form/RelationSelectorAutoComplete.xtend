@@ -119,7 +119,7 @@ class RelationSelectorAutoComplete {
             public function render(Zikula_Form_View $view)
             {
                 $dom = ZLanguage::getModuleDomain('«appName»');
-                $many = ($this->selectionMode == 'multiple');
+                $many = $this->selectionMode == 'multiple';
 
                 $entityNameTranslated = '';
                 switch ($this->objectType) {
@@ -129,49 +129,36 @@ class RelationSelectorAutoComplete {
                             break;
                     «ENDFOR»
                 }
-«/* TODO */»
+
                 $addLinkText = $many ? __f('Add %s', array($entityNameTranslated), $dom) : __f('Select %s', array($entityNameTranslated), $dom);
                 $selectLabelText = __f('Find %s', array($entityNameTranslated), $dom);
                 $searchIconText = __f('Search %s', array($entityNameTranslated), $dom);
 
                 $idPrefix = $this->idPrefix;
 
-                $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="«IF targets('1.3.x')»z-hide«ELSE»hidden«ENDIF»">' . $addLinkText . '</a>';
+                $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="z-hide">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . $idPrefix . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityNameTranslated), $dom) . '" class="z-button «appName.toLowerCase»-inline-button">' . __('Create', $dom) . '</a>';
                 }
-
-                $alias = $this->id;
-                $class = $this->getStyleClass();
 
                 $result = '
                     <div class="«appName.toLowerCase»-relation-rightside">'
                         . $addLink . '
-                        <div id="' . $idPrefix . 'AddFields" class="«appName.toLowerCase»-autocomplete' . (($this->withImage) ? '-with-image' : '') . '">
+                        <div id="' . $idPrefix . 'AddFields" class="«appName.toLowerCase»-autocomplete' . ($this->withImage ? '-with-image' : '') . '">
                             <label for="' . $idPrefix . 'Selector">' . $selectLabelText . '</label>
-                            <br />';
-
-                «IF targets('1.3.x')»
-                    $result .= '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchIconText . '" />
-                                <input type="text" name="' . $idPrefix . 'Selector" id="' . $idPrefix . 'Selector" value="" />
-                                <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . ((!$many) ? '0' : '1') . '" />
-                                <img src="' . System::getBaseUrl() . 'images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $idPrefix . 'Indicator" style="display: none" />
-                                <span id="' . $idPrefix . 'NoResultsHint" class="z-hide">' . __('No results found!', $dom) . '</span>
-                                <div id="' . $idPrefix . 'SelectorChoices" class=""></div>';
-                «ELSE»
-                    $result .= '<i class="fa fa-search" title="' . $searchIconText . '"><i>
-                                <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . ((!$many) ? '0' : '1') . '" />
-                                <input type="text" id="' . $idPrefix . 'Selector" name="' . $idPrefix . 'Selector" value="' . DataUtil::formatForDisplay($this->text) . '" autocomplete="off" class="' . $class . '" />
-                                <i class="fa fa-refresh fa-spin hidden" id="' . $idPrefix . 'Indicator"></i>
-                                <span id="' . $idPrefix . 'NoResultsHint" class="hidden">' . __('No results found!', $dom) . '</span>';
-                «ENDIF»
-                $result .= '
-                                <input type="button" id="' . $idPrefix . 'SelectorDoCancel" name="' . $idPrefix . 'SelectorDoCancel" value="' . __('Cancel', $dom) . '" class="«IF targets('1.3.x')»z-button«ELSE»btn btn-default«ENDIF» «appName.toLowerCase»-inline-button" />'
-                                . $createLink . '
-                                <noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>
-                            </div>
-                        </div>' . "\n";
+                            <br />
+                            <img src="' . System::getBaseUrl() . 'images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchIconText . '" />
+                            <input type="text" name="' . $idPrefix . 'Selector" id="' . $idPrefix . 'Selector" value="" />
+                            <input type="hidden" name="' . $idPrefix . 'Scope" id="' . $idPrefix . 'Scope" value="' . (!$many ? '0' : '1') . '" />
+                            <img src="' . System::getBaseUrl() . 'images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $idPrefix . 'Indicator" style="display: none" />
+                            <span id="' . $idPrefix . 'NoResultsHint" class="z-hide">' . __('No results found!', $dom) . '</span>
+                            <div id="' . $idPrefix . 'SelectorChoices" class=""></div>';
+                            <input type="button" id="' . $idPrefix . 'SelectorDoCancel" name="' . $idPrefix . 'SelectorDoCancel" value="' . __('Cancel', $dom) . '" class="z-button «appName.toLowerCase»-inline-button" />'
+                            . $createLink . '
+                            <noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>
+                        </div>
+                    </div>' . "\n";
 
                 return $result;
             }
