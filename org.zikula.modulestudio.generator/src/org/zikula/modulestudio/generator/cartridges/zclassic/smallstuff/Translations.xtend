@@ -19,6 +19,9 @@ class Translations {
         if (!shouldBeSkipped(getAppLocalePath + 'index.html')) {
             fsa.generateFile(getAppLocalePath + 'index.html', msUrl)
         }
+        if (!targets('1.3.x')) {
+            return
+        }
         if (!shouldBeSkipped(getAppLocalePath + 'de/index.html')) {
             fsa.generateFile(getAppLocalePath + 'de/index.html', msUrl)
         }

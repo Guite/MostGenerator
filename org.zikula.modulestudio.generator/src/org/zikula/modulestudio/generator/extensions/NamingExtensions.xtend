@@ -208,7 +208,7 @@ class NamingExtensions {
         if (targets('1.3.x'))
             getAppSourcePath + 'locale/'
         else
-            getResourcesPath + 'locale/'
+            getResourcesPath + 'translations/'
     }
 
     /**
