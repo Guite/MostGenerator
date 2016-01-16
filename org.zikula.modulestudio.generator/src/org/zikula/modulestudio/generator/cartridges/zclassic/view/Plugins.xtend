@@ -62,7 +62,7 @@ class Plugins {
                 fh.phpFileContent(it, twigExtensionBaseImpl), fh.phpFileContent(it, twigExtensionImpl)
             )
         } else {
-        	generateInternal
+            generateInternal
         }
     }
 
@@ -192,7 +192,7 @@ class Plugins {
         {
             if (!$uid) {
                 $uid = -1;
-        	}
+            }
 
             $result = \UserUtil::getVar($name, $uid, $default);
 
@@ -215,16 +215,16 @@ class Plugins {
             $params = ['uid' => $uid];
             if ($width) {
                 $params['width'] = $width;
-        	}
+            }
             if ($height) {
                 $params['height'] = $height;
-        	}
+            }
             if ($size) {
                 $params['size'] = $size;
-        	}
+            }
             if ($rating) {
                 $params['rating'] = $rating;
-        	}
+            }
 
             include_once 'lib/legacy/viewplugins/function.useravatar.php';
 

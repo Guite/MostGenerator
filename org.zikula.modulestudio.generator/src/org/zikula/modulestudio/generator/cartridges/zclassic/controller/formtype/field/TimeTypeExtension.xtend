@@ -75,7 +75,7 @@ class TimeTypeExtension {
                     </script>";
 
                 PageUtil::addVar('footer', $customScript);
-        	}
+            }
 
             /**
              * {@inheritdoc}

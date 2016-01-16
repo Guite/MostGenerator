@@ -830,9 +830,9 @@ class EditEntity {
             $helpText = '';
             if ($options['isModerator']«IF workflow == EntityWorkflowType.ENTERPRISE» || $options['isSuperModerator']«ENDIF») {
                 $helpText = $this->translator->trans('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.', [], '«app.appName.formatForDB»');
-        	} elseif ($options['isCreator']) {
-        	    $helpText = $this->translator->trans('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.', [], '«app.appName.formatForDB»');
-        	}
+            } elseif ($options['isCreator']) {
+                $helpText = $this->translator->trans('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.', [], '«app.appName.formatForDB»');
+            }
 
             $builder->add('additionalNotificationRemarks', '«nsSymfonyFormType»TextareaType', [
                 'mapped' => false,

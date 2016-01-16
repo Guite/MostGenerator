@@ -162,10 +162,10 @@ class FileHelper {
     '''
 
     def private dispatch setterAssignment(AbstractDateField it, String name, String type) '''
-            if (is_object($«name») && $«name» instanceOf \DateTime) {
-                $this->«name» = $«name»;
-            } else {
-                $this->«name» = new \DateTime($«name»);
-            }
+        if (is_object($«name») && $«name» instanceOf \DateTime) {
+            $this->«name» = $«name»;
+        } else {
+            $this->«name» = new \DateTime($«name»);
+        }
     '''
 }

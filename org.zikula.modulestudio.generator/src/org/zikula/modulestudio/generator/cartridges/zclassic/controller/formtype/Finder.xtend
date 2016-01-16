@@ -82,7 +82,7 @@ class Finder {
 
                 «IF categorisable»
                     $this->addCategoriesField($builder, $options);
-            	«ENDIF»
+                «ENDIF»
                 $this->addPasteAsField($builder, $options);
                 $this->addSortingFields($builder, $options);
                 $this->addAmountField($builder, $options);

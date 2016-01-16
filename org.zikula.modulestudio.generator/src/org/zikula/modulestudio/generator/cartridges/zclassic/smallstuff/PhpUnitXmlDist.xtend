@@ -24,17 +24,17 @@ class PhpUnitXmlDist {
 
     def private phpUnitXml(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
-
-        <phpunit backupGlobals="false"
-                 backupStaticAttributes="false"
-                 colors="true"
-                 convertErrorsToExceptions="true"
-                 convertNoticesToExceptions="true"
-                 convertWarningsToExceptions="true"
-                 processIsolation="false"
-                 stopOnFailure="false"
-                 syntaxCheck="false"
-                 bootstrap="vendor/autoload.php"
+        <phpunit
+            backupGlobals="false"
+            backupStaticAttributes="false"
+            colors="true"
+            convertErrorsToExceptions="true"
+            convertNoticesToExceptions="true"
+            convertWarningsToExceptions="true"
+            processIsolation="false"
+            stopOnFailure="false"
+            syntaxCheck="false"
+            bootstrap="vendor/autoload.php"
         >
             <testsuites>
                 <testsuite name="«appName» Module Test Suite">

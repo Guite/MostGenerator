@@ -111,7 +111,7 @@ class TreeData {
                 $tree->setOption('id', 'itemTree' . $params['root']);
                 $tree->setOption('treeClass', 'z-nestedsetlist');
                 $tree->setOption('nodePrefix', 'tree' . $params['root'] . 'node_');
-                $tree->setOption('sortable', ((isset($params['sortable']) && $params['sortable']) ? true : false));
+                $tree->setOption('sortable', isset($params['sortable']) && $params['sortable'] ? true : false);
                 $tree->setOption('withWraper', true);
 
                 // disable drag and drop for root category
@@ -144,7 +144,7 @@ class TreeData {
             {
                 $output = '';
                 $idPrefix = 'tree' . $rootId . 'node_' . $item->createCompositeIdentifier();
-                $title = (($descriptionFieldName != '') ? strip_tags($item[$descriptionFieldName]) : '');
+                $title = ($descriptionFieldName != '' ? strip_tags($item[$descriptionFieldName]) : '');
                 $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $item->getLvl() . '">';
 
                 $liContent = $item->getTitleFromDisplayPattern();

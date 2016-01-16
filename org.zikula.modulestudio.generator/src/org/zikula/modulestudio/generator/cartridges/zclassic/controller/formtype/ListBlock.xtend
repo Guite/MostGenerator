@@ -72,7 +72,7 @@ class ListBlock {
                 $this->addObjectTypeField($builder, $options);
                 «IF hasCategorisableEntities»
                     $this->addCategoriesField($builder, $options);
-            	«ENDIF»
+                «ENDIF»
                 $this->addSortingField($builder, $options);
                 $this->addAmountField($builder, $options);
                 $this->addTemplateFields($builder, $options);

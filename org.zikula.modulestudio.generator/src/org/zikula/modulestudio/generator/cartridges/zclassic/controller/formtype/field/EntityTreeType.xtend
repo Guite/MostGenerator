@@ -56,7 +56,7 @@ class EntityTreeType {
              */
             $choices = function(Options $options) {
                 return $this->loadChoices($options);
-        	};
+            };
 
             /**
              * {@inheritdoc}

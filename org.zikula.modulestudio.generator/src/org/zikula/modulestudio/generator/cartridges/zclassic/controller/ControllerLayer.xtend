@@ -562,7 +562,7 @@ class ControllerLayer {
                     $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
                 } elseif ($form->get('cancel')->isClicked()) {
                     $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Operation cancelled.'));
-            	}
+                }
 
                 // redirect to config page again (to show with GET request)
                 return $this->redirectToRoute('«app.appName.formatForDB»_«app.configController.formatForDB»_config');

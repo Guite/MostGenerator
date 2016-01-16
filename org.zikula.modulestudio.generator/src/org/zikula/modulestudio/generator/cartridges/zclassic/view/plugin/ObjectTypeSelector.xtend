@@ -44,8 +44,14 @@ class ObjectTypeSelector {
          */
         «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ObjectTypeSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
-            $dom = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
-            $result = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            «IF targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«appName»');
+                $result = array();
+            «ELSE»
+                $serviceManager = \ServiceUtil::getManager();
+                $translator = $serviceManager->get('translator');
+                $result = [];
+            «ENDIF»
 
             «entityEntries»
 
@@ -63,7 +69,11 @@ class ObjectTypeSelector {
 
     def private entityEntries(Application it) '''
         «FOR entity : getAllEntities»
-            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            «IF targets('1.3.x')»
+                $result[] = array('text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»');
+            «ELSE»
+                $result[] = ['text' => $translator->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
+            «ENDIF»
         «ENDFOR»
     '''
 }

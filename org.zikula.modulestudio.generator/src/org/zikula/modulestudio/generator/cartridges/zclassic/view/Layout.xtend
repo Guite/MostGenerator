@@ -33,7 +33,7 @@ class Layout {
     IFileSystemAccess fsa
 
     new(IFileSystemAccess fsa) {
-	    this.fsa = fsa
+        this.fsa = fsa
     }
 
     // 1.4.x only

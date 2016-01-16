@@ -38,7 +38,6 @@ class ItemSelector {
             «IF hasCategorisableEntities»use ModUtil;«ENDIF»
             use PageUtil;
             use ServiceUtil;
-            use ThemeUtil;
             use Zikula_Form_Plugin_TextInput;
             use Zikula_Form_View;
             use Zikula_View;

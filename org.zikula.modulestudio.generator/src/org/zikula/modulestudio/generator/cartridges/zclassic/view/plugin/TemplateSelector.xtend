@@ -43,12 +43,22 @@ class TemplateSelector {
         «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TemplateSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {
             «val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'»
-            $dom = «IF !targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«appName»');
-            $result = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            «IF targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«appName»');
+                $result = array();
 
-            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('Only item titles', $dom), 'value' => 'itemlist_display«templateExtension»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-            $result[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'text' => __('Custom template', $dom), 'value' => 'custom'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                $result[] = array('text' => __('Only item titles', $dom), 'value' => 'itemlist_display«templateExtension»');
+                $result[] = array('text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»');
+                $result[] = array('text' => __('Custom template', $dom), 'value' => 'custom');
+            «ELSE»
+                $serviceManager = \ServiceUtil::getManager();
+                $translator = $serviceManager->get('translator');
+                $result = [];
+
+                $result[] = ['text' => $translator->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
+                $result[] = ['text' => $translator->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
+                $result[] = ['text' => $translator->__('Custom template'), 'value' => 'custom'];
+            «ENDIF»
 
             «IF generateSmartyPlugin»
                 if (array_key_exists('assign', $params)) {

@@ -41,7 +41,7 @@ class QuickNavigation {
         }
         app = it
         for (entity : getAllEntities.filter[e|e.hasActions('view')]) {
-        	incomingRelations = entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]
+            incomingRelations = entity.getBidirectionalIncomingJoinRelationsWithOneSource.filter[source instanceof Entity]
             generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/QuickNavigation/' + entity.name.formatForCodeCapital + 'QuickNavType.php',
                 fh.phpFileContent(it, entity.quickNavTypeBaseImpl), fh.phpFileContent(it, entity.quickNavTypeImpl)
             )
@@ -120,7 +120,7 @@ class QuickNavigation {
 
                 «IF categorisable»
                     $this->addCategoriesField($builder, $options);
-            	«ENDIF»
+                «ENDIF»
                 «IF !incomingRelations.empty»
                     $this->addIncomingRelationshipFields($builder, $options);
                 «ENDIF»
@@ -547,8 +547,8 @@ class QuickNavigation {
         'choices_as_values' => true,
         'choice_attr' => $choiceAttributes«IF !multiple»,«ENDIF»
         «IF !multiple»
-        	'multiple' => «multiple.displayBool»
-    	«ENDIF»
+            'multiple' => «multiple.displayBool»
+        «ENDIF»
     '''
 
     def private dispatch fieldType(BooleanField it) '''Choice'''

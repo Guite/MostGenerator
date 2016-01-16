@@ -84,15 +84,15 @@ class UploadTypeExtension {
                 // assign basic file properties
                 if (array_key_exists('file_meta', $options)) {
                     $view->vars['file_meta'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_meta']) : null;
-            	}
+                }
 
                 if (array_key_exists('file_path', $options)) {
                     $view->vars['file_path'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_path']) : null;
-            	}
+                }
 
                 if (array_key_exists('file_url', $options)) {
                     $view->vars['file_url'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_url']) : null;
-            	}
+                }
 
                 // assign other custom options
                 $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options) ? $options['allowed_extensions'] : '';

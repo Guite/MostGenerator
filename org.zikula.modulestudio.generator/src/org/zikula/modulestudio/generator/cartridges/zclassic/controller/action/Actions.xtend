@@ -1109,7 +1109,7 @@ class Actions {
                     $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Operation cancelled.'));
 
                     return $this->redirectToRoute($redirectRoute);
-            	}
+                }
             }
         «ENDIF»
 

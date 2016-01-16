@@ -120,7 +120,7 @@ class HookHelper {
          */
         public function callProcessHooks($entity, $hookType, $url)
         {
-        	$hookAreaPrefix = $entity->getHookAreaPrefix();
+            $hookAreaPrefix = $entity->getHookAreaPrefix();
 
             «IF targets('1.3.x')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
