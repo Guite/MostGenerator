@@ -15,7 +15,6 @@ class EntityMetaData {
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
-    Application app
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
     /**
@@ -26,7 +25,6 @@ class EntityMetaData {
         if (!hasMetaDataEntities) {
             return
         }
-        app = it
         generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/EntityMetaDataType.php',
             fh.phpFileContent(it, metaDataTypeBaseImpl), fh.phpFileContent(it, metaDataTypeImpl)
         )
@@ -112,13 +110,13 @@ class EntityMetaData {
 
     def private fieldImpl(String name, Integer length) '''
         ->add('«name»', '«nsSymfonyFormType»«IF 'startdate'.equals(name) || 'enddate'.equals(name)»DateTime«ELSEIF 'language'.equals(name)»Language«ELSE»Text«ENDIF»Type', [
-            'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
+            'label' => $this->translator->__('«name.formatForDisplayCapital»') . ':',
             'required' => false,
             «IF 'startdate'.equals(name) || 'enddate'.equals(name)»
                 'widget' => 'single_text',
             «ELSEIF 'language'.equals(name)»
                 'attr' => [
-                    'title' => $this->translator->trans('Choose a language', [], '«app.appName.formatForDB»')
+                    'title' => $this->translator->__('Choose a language')
                 ],
             «ELSE»
                 'max_length' => «length»

@@ -31,6 +31,10 @@ class View {
          *
          * Occurs just before `Zikula_View#__construct()` finishes.
          * The subject is the Zikula_View instance.
+        «IF !targets('1.3.x')»
+            «' '»*
+            «' '»* Note that Zikula_View is deprecated and being replaced by Twig.
+        «ENDIF»
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
@@ -50,6 +54,10 @@ class View {
          * Receives `Zikula_View` instance as subject,
          * args are `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'template' => $template«IF targets('1.3.x')»)«ELSE»]«ENDIF»`,
          * $data was the result of the fetch to be filtered.
+        «IF !targets('1.3.x')»
+            «' '»*
+            «' '»* Note that Zikula_View is deprecated and being replaced by Twig.
+        «ENDIF»
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */

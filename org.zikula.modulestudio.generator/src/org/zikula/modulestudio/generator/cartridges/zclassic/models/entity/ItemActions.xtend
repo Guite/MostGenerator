@@ -38,11 +38,12 @@ class ItemActions {
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             $component = '«app.appName»:«name.formatForCodeCapital»:';
             $instance = «idFieldsAsParameterCode('this')» . '::';
-            «val appName = app.appName»
-            $dom = ZLanguage::getModuleDomain('«appName»');
-            «IF !app.targets('1.3.x')»
+            «IF app.targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«app.appName»');
+            «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                $translator = $serviceManager->get('translator');
             «ENDIF»
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentLegacyControllerType == '«controller.formattedName»') {
@@ -66,8 +67,8 @@ class ItemActions {
                             'url' => ['type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => [«routeParams('this', false)»]],
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»preview«ELSE»search-plus«ENDIF»',
-                        'linkTitle' => __('Open preview page', $dom),
-                        'linkText' => __('Preview', $dom)
+                        'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Open preview page'«IF app.targets('1.3.x')», $dom«ENDIF»),
+                        'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Preview'«IF app.targets('1.3.x')», $dom«ENDIF»)
                     «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «ENDIF»
                 «IF controller.hasActions('display')»
@@ -78,8 +79,8 @@ class ItemActions {
                             'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»display', 'arguments' => [«routeParams('this', false)»]],
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»display«ELSE»eye«ENDIF»',
-                        'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern())«/*__('Open detail page', $dom)*/»,
-                        'linkText' => __('Details', $dom)
+                        'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern()),
+                        'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Details'«IF app.targets('1.3.x')», $dom«ENDIF»)
                     «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «ENDIF»
             }
@@ -110,8 +111,8 @@ class ItemActions {
                                 'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»delete', 'arguments' => [«routeParams('this', false)»]],
                             «ENDIF»
                             'icon' => '«IF app.targets('1.3.x')»delete«ELSE»trash-o«ENDIF»',
-                            'linkTitle' => __('Delete', $dom),
-                            'linkText' => __('Delete', $dom)
+                            'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Delete'«IF app.targets('1.3.x')», $dom«ENDIF»),
+                            'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Delete'«IF app.targets('1.3.x')», $dom«ENDIF»)
                         «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                     }
                 «ENDIF»
@@ -130,8 +131,8 @@ class ItemActions {
                             'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»view', 'arguments' => []],
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»back«ELSE»reply«ENDIF»',
-                        'linkTitle' => __('Back to overview', $dom),
-                        'linkText' => __('Back to overview', $dom)
+                        'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Back to overview'«IF app.targets('1.3.x')», $dom«ENDIF»),
+                        'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Back to overview'«IF app.targets('1.3.x')», $dom«ENDIF»)
                     «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «ENDIF»
             }
@@ -176,8 +177,8 @@ class ItemActions {
                                     'url' => ['type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs],
                                 «ENDIF»
                                 'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
-                                'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
-                                'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
+                                'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»),
+                                'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»)
                             «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                         }
                     «ELSE»
@@ -199,8 +200,8 @@ class ItemActions {
                                 'url' => ['type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs],
                             «ENDIF»
                             'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
-                            'linkTitle' => __('Create «otherEntity.name.formatForDisplay»', $dom),
-                            'linkText' => __('Create «otherEntity.name.formatForDisplay»', $dom)
+                            'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»),
+                            'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»)
                         «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
                     «ENDIF»
                 «ENDFOR»
@@ -224,8 +225,8 @@ class ItemActions {
                     'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => [«routeParams('this', false)»]],
                 «ENDIF»
                 'icon' => '«IF application.targets('1.3.x')»edit«ELSE»pencil-square-o«ENDIF»',
-                'linkTitle' => __('Edit', $dom),
-                'linkText' => __('Edit', $dom)
+                'linkTitle' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Edit'«IF application.targets('1.3.x')», $dom«ENDIF»),
+                'linkText' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Edit'«IF application.targets('1.3.x')», $dom«ENDIF»)
             «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
         «ENDIF»
         «IF tree == EntityTreeType.NONE»
@@ -236,8 +237,8 @@ class ItemActions {
                     'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => [«routeParams('this', false, 'astemplate')»]],
                 «ENDIF»
                 'icon' => '«IF application.targets('1.3.x')»saveas«ELSE»files-o«ENDIF»',
-                'linkTitle' => __('Reuse for new item', $dom),
-                'linkText' => __('Reuse', $dom)
+                'linkTitle' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Reuse for new item'«IF application.targets('1.3.x')», $dom«ENDIF»),
+                'linkText' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Reuse'«IF application.targets('1.3.x')», $dom«ENDIF»)
             «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
         «ENDIF»
     '''

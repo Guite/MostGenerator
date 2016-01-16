@@ -90,7 +90,7 @@ class Account {
                             «ELSE»
                                 'url' => $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
                             «ENDIF»
-                            'title'   => $this->__('My «entity.nameMultiple.formatForDisplay»'),
+                            'title'   => $this->«IF !targets('1.3.x')»get('translator')->«ENDIF»__('My «entity.nameMultiple.formatForDisplay»'),
                             'icon'    => 'windowlist.png',
                             'module'  => 'core',
                             'set'     => 'icons/large'
@@ -106,7 +106,7 @@ class Account {
                         «ELSE»
                             'url'   => $this->get('router')->generate('«appName.formatForDB»_admin_index'),
                         «ENDIF»
-                        'title'  => $this->__('«name.formatForDisplayCapital» Backend'),
+                        'title'  => $this->«IF !targets('1.3.x')»get('translator')->«ENDIF»__('«name.formatForDisplayCapital» Backend'),
                         'icon'   => 'configure.png',
                         'module' => 'core',
                         'set'    => 'icons/large'

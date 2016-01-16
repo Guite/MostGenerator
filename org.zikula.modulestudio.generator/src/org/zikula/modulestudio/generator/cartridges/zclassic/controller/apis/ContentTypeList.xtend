@@ -155,9 +155,15 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            «IF targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«appName»');
 
-            return __('«appName» list view', $dom);
+                return __('«appName» list view', $dom);
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+
+                return $serviceManager->get('translator')->__('«appName» list view');
+            «ENDIF»
         }
 
         /**
@@ -167,9 +173,15 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            «IF targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«appName»');
 
-            return __('Display list of «appName» objects.', $dom);
+                return __('Display list of «appName» objects.', $dom);
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+
+                return $serviceManager->get('translator')->__('Display list of «appName» objects.');
+            «ENDIF»
         }
 
         /**
@@ -477,11 +489,16 @@ class ContentTypeList {
             «IF hasCategorisableEntities»
 
                 // assign category data
-                $this->view->assign('registries', $this->catRegistries);
-                $this->view->assign('properties', $this->catProperties);
+                $this->view->assign('registries', $this->catRegistries)
+                           ->assign('properties', $this->catProperties);
 
                 // assign categories lists for simulating category selectors
-                $dom = ZLanguage::getModuleDomain('«appName»');
+                «IF targets('1.3.x')»
+                    $dom = ZLanguage::getModuleDomain('«appName»');
+                «ELSE»
+                    $serviceManager = ServiceUtil::getManager();
+                    $translator = $serviceManager->get('translator');
+                «ENDIF»
                 $locale = ZLanguage::getLanguageCode();
                 $categories = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($this->catRegistries as $registryId => $registryCid) {
@@ -496,7 +513,7 @@ class ContentTypeList {
                     //$mainCategory = CategoryUtil::getCategoryByID($registryCid);
                     $cats = CategoryUtil::getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
                     $catsForDropdown = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-                        «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => '', 'text' => __('All', $dom)«IF targets('1.3.x')»)«ELSE»]«ENDIF»
+                        «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => '', 'text' => «IF !targets('1.3.x')»$translator->«ENDIF»__('All'«IF targets('1.3.x')», $dom«ENDIF»)«IF targets('1.3.x')»)«ELSE»]«ENDIF»
                     «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                     foreach ($cats as $cat) {
                         $catName = isset($cat['display_name'][$locale]) ? $cat['display_name'][$locale] : $cat['name'];

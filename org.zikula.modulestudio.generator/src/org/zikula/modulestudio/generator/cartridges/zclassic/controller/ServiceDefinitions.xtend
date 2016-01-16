@@ -93,6 +93,7 @@ class ServiceDefinitions {
         # Upload handler class
         «modPrefix».upload_handler:
             class: «appNamespace»\UploadHandler
+            arguments: [@translator]
     '''
 
     def private linkContainer(Application it) '''
@@ -347,7 +348,7 @@ class ServiceDefinitions {
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
-                arguments: ["@service_container"]
+                arguments: ["@service_container", @translator]
         «ENDIF»
     '''
 

@@ -8,6 +8,7 @@ class ControllerHelperFunctions {
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
+    // 1.3.x only
     def controllerPostInitialize(Object it, Boolean caching, String additionalCommands) '''
         /**
          * Post initialise.

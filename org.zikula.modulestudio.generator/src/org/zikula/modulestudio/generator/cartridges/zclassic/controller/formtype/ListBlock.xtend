@@ -43,16 +43,14 @@ class ListBlock {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
 
         /**
          * List block form type base class.
          */
         class ItemListBlockType extends AbstractType
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+            use TranslatorTrait;
 
             /**
              * ItemListBlockType constructor.
@@ -60,6 +58,16 @@ class ListBlock {
              * @param TranslatorInterface $translator Translator service instance.
              */
             public function __construct(TranslatorInterface $translator)
+            {
+                $this->setTranslator($translator);
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(TranslatorInterface $translator)
             {
                 $this->translator = $translator;
             }
@@ -134,18 +142,18 @@ class ListBlock {
         public function addObjectTypeField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('objectType', '«nsSymfonyFormType»ChoiceType', [
-                'label' => $this->translator->trans('Object type', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Object type') . ':',
                 'empty_data' => '«app.leadingEntity.name.formatForCode»',
                 'attr' => [
-                    'title' => $this->translator->trans('If you change this please save the block once to reload the parameters below.', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('If you change this please save the block once to reload the parameters below.')
                 ],
                 'choices' => [
                     «FOR entity : getAllEntities»
-                        $this->translator->trans('«entity.nameMultiple.formatForDisplayCapital»', [], '«app.appName.formatForDB»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
+                        $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
                     «ENDFOR»
                 ],
                 'choices_as_values' => true,
-                'help' => $this->translator->trans('If you change this please save the block once to reload the parameters below.', [], '«app.appName.formatForDB»')
+                'help' => $this->__('If you change this please save the block once to reload the parameters below.')
             ]);
         }
     '''
@@ -165,18 +173,18 @@ class ListBlock {
 
             $hasMultiSelection = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', ['ot' => $options['objectType']]);
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
-                'label' => ($hasMultiSelection ? $this->translator->trans('Categories', [], '«app.appName.formatForDB»') : $this->translator->trans('Category', [], '«app.appName.formatForDB»')) . ':',
+                'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
                 'empty_data' => [],
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('This is an optional filter.')
                 ],
                 'required' => false,
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
                 'entity' => ucfirst($options['objectType']) . 'Entity',
                 'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
-                'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                'help' => $this->__('This is an optional filter.')
             ]);
         }
     '''
@@ -191,12 +199,12 @@ class ListBlock {
         public function addSortingField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('sorting', '«nsSymfonyFormType»ChoiceType', [
-                'label' => $this->translator->trans('Sorting', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Sorting') . ':',
                 'empty_data' => 'default',
                 'choices' => [
-                    $this->translator->trans('Random', [], '«app.appName.formatForDB»') => 'random',
-                    $this->translator->trans('Newest', [], '«app.appName.formatForDB»') => 'newest',
-                    $this->translator->trans('Default', [], '«app.appName.formatForDB»') => 'default'
+                    $this->__('Random') => 'random',
+                    $this->__('Newest') => 'newest',
+                    $this->__('Default') => 'default'
                 ],
                 'choices_as_values' => true
             ]);
@@ -213,14 +221,14 @@ class ListBlock {
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('amount', '«nsSymfonyFormType»IntegerType', [
-                'label' => $this->translator->trans('Amount', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Amount') . ':',
                 'attr' => [
-                    'title' => $this->translator->trans('The maximum amount of items to be shown. Only digits are allowed.', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('The maximum amount of items to be shown. Only digits are allowed.')
                 ],
                 'empty_data' => 5,
                 'max_length' => 2,
                 'scale' => 0,
-                'help' => $this->translator->trans('The maximum amount of items to be shown. Only digits are allowed.', [], '«app.appName.formatForDB»')
+                'help' => $this->__('The maximum amount of items to be shown. Only digits are allowed.')
             ]);
         }
     '''
@@ -236,23 +244,23 @@ class ListBlock {
         {
             $builder
                 ->add('template', '«nsSymfonyFormType»ChoiceType', [
-                    'label' => $this->translator->trans('Template', [], '«app.appName.formatForDB»') . ':',
+                    'label' => $this->__('Template') . ':',
                     'empty_data' => 'itemlist_display.html.twig',
                     'choices' => [
-                        $this->translator->trans('Only item titles', [], '«app.appName.formatForDB»') => 'itemlist_display.html.twig',
-                        $this->translator->trans('With description', [], '«app.appName.formatForDB»') => 'itemlist_display_description.html.twig',
-                        $this->translator->trans('Custom template', [], '«app.appName.formatForDB»') => 'custom'
+                        $this->__('Only item titles') => 'itemlist_display.html.twig',
+                        $this->__('With description') => 'itemlist_display_description.html.twig',
+                        $this->__('Custom template') => 'custom'
                     ],
                     'choices_as_values' => true
                 ])
                 ->add('customTemplate', '«nsSymfonyFormType»TextType', [
-                    'label' => $this->translator->trans('Custom template', [], '«app.appName.formatForDB»') . ':',
+                    'label' => $this->__('Custom template') . ':',
                     'required' => false,
                     'attr' => [
-                        'title' => $this->translator->trans('Example', [], '«app.appName.formatForDB»') . ': <em>itemlist_[objectType]_display.html.twig</em>'
+                        'title' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>'
                     ],
                     'max_length' => 80,
-                    'help' => $this->translator->trans('Example', [], '«app.appName.formatForDB»') . ': <em>itemlist_[objectType]_display.html.twig</em>'
+                    'help' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>'
                 ])
             ;
         }
@@ -268,10 +276,10 @@ class ListBlock {
         public function addFilterField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('filter', '«nsSymfonyFormType»TextType', [
-                'label' => $this->translator->trans('Filter (expert option)', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Filter (expert option)') . ':',
                 'required' => false,
                 'max_length' => 255,
-                'help' => '<a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">' . $this->translator->trans('Show syntax examples', [], '«app.appName.formatForDB»') . '</a>'
+                'help' => '<a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">' . $this->__('Show syntax examples') . '</a>'
             ]);
         }
     '''

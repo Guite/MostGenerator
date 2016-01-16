@@ -12,7 +12,11 @@ class LegacyPaginatorSwitch {
 
     FileHelper fh = new FileHelper
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
         println("Generating paginator switch classes")
         var fileName = 'Paginator.php'
         generateClassPair(fsa, getAppSourceLibPath + 'Paginator/' + fileName,

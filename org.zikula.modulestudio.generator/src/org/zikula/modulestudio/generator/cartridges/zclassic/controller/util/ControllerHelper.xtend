@@ -50,7 +50,7 @@ class ControllerHelper {
                 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             «ENDIF»
             use Symfony\Component\HttpFoundation\Session\Session;
-            use Zikula\Common\Translator\Translator;
+            use Symfony\Component\Translation\TranslatorInterface;
             use Zikula_Request_Http;
             «IF hasGeographical»
                 use ZLanguage;
@@ -69,7 +69,7 @@ class ControllerHelper {
                 protected $container;
 
                 /**
-                 * @var Translator
+                 * @var TranslatorInterface
                  */
                 protected $translator;
 
@@ -88,13 +88,13 @@ class ControllerHelper {
                  * Initialises member vars.
                  *
                  * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
-                 * @param Translator             $translator     Translator service instance.
+                 * @param TranslatorInterface    $translator     Translator service instance.
                  * @param Session                $session        Session service instance.
                  * @param Logger                 $logger         Logger service instance.
                  *
                  * @return void
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager, $translator, Session $session, Logger $logger)
+                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, Session $session, Logger $logger)
                 {
                     $this->container = $serviceManager;
                     $this->translator = $translator;

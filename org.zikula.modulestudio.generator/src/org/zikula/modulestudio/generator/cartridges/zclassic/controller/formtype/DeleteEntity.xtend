@@ -64,10 +64,10 @@ class DeleteEntity {
             {
                 $builder
                     ->add('delete', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->trans('Delete', [], '«appName.formatForDB»')
+                        'label' => $this->translator->__('Delete')
                     ])
                     ->add('cancel', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->trans('Cancel', [], '«appName.formatForDB»')
+                        'label' => $this->translator->__('Cancel')
                     ])
                 ;
             }

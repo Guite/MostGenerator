@@ -52,19 +52,23 @@ class Mailz {
          */
         public function getPlugins(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
+            «IF !targets('1.3.x')»
+                $translator = $this->get('translator');
+
+            «ENDIF»
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
             $plugins = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             $plugins[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'pluginid'      => 1,
                 'module'        => '«appName»',
-                'title'         => $this->__('3 newest «itemDesc»'),
-                'description'   => $this->__('A list of the three newest «itemDesc».')
+                'title'         => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('3 newest «itemDesc»'),
+                'description'   => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('A list of the three newest «itemDesc».')
             «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             $plugins[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'pluginid'      => 2,
                 'module'        => '«appName»',
-                'title'         => $this->__('3 random «itemDesc»'),
-                'description'   => $this->__('A list of three random «itemDesc».')
+                'title'         => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('3 random «itemDesc»'),
+                'description'   => $«IF targets('1.3.x')»this«ELSE»translator«ENDIF»->__('A list of three random «itemDesc».')
             «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
             return $plugins;

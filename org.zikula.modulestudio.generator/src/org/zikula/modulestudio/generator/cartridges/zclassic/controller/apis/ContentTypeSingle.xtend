@@ -34,7 +34,6 @@ class ContentTypeSingle {
 
             use ModUtil;
             use ServiceUtil;
-            use ZLanguage;
 
         «ENDIF»
         /**
@@ -82,9 +81,15 @@ class ContentTypeSingle {
          */
         public function getTitle()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            «IF targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«appName»');
 
-            return __('«appName» detail view', $dom);
+                return __('«appName» detail view', $dom);
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+
+                return $serviceManager->get('translator')->__('«appName» detail view');
+            «ENDIF»
         }
 
         /**
@@ -94,9 +99,15 @@ class ContentTypeSingle {
          */
         public function getDescription()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            «IF targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«appName»');
 
-            return __('Display or link a single «appName» object.', $dom);
+                return __('Display or link a single «appName» object.', $dom);
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+
+                return $serviceManager->get('translator')->__('Display or link a single «appName» object.');
+            «ENDIF»
         }
 
         /**
@@ -153,9 +164,16 @@ class ContentTypeSingle {
             if (null !== $this->id && !empty($this->displayMode)) {
                 return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
-            $dom = ZLanguage::getModuleDomain('«appName»');
 
-            return __('No item selected.', $dom);
+            «IF targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«appName»');
+
+                return __('No item selected.', $dom);
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+                
+                return $serviceManager->get('translator')->__('No item selected.');
+            «ENDIF»
         }
 
         /**

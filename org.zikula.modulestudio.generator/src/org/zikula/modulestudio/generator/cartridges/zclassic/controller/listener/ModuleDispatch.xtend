@@ -1,9 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
 import de.guite.modulestudio.metamodel.Application
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleDispatch {
+    extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
     CommonExample commonExample = new CommonExample()
@@ -133,7 +135,13 @@ class ModuleDispatch {
                 parent::customClassName($event);
 
                 // Format data like so:
-                // $event->data[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'url' => ModUtil::url('«appName»', 'user', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'), 'text' => __('Link Text')«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                «IF targets('1.3.x')»
+                    // $dom = ZLanguage::getModuleDomain('«appName»');
+                    // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', 'main'), 'text' => __('Link text', $dom));
+                «ELSE»
+                    // $serviceManager = \ServiceUtil::getManager();
+                    // $event->data[] = ['url' => $serviceManager->get('router')->generate('«appName.formatForDB»_user_index'), 'text' => $serviceManager->get('translator')->__('Link text')];
+                «ENDIF»
 
                 «commonExample.generalEventProperties(it)»
             «ENDIF»

@@ -113,9 +113,9 @@ class Installer {
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
-                        return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                        return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                     «ELSE»
-                        $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
+                        $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception') . ': ' . $e->getMessage());
                         $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                         return false;
@@ -286,9 +286,9 @@ class Installer {
                     } catch (\Exception $e) {
                         if (System::isDevelopmentMode()) {
                             «IF targets('1.3.x')»
-                                return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                                return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                             «ELSE»
-                                $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
+                                $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception') . ': ' . $e->getMessage());
                                 $logger->error('{app}: User {user} could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                                 return false;
@@ -363,9 +363,9 @@ class Installer {
             } catch (\Exception $e) {
                 if (System::isDevelopmentMode()) {
                     «IF targets('1.3.x')»
-                        return LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                        return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                     «ELSE»
-                        $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception: ') . $e->getMessage());
+                        $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception') . ': ' . $e->getMessage());
                         $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $e->getMessage()]);
 
                         return false;

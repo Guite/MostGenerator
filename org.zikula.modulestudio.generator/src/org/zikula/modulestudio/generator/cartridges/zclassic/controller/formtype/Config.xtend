@@ -50,6 +50,7 @@ class Config {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\VariableApi;
 
         /**
@@ -57,10 +58,7 @@ class Config {
          */
         class AppSettingsType extends AbstractType
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+            use TranslatorTrait;
 
             /**
              * @var VariableApi
@@ -80,9 +78,19 @@ class Config {
              */
             public function __construct(TranslatorInterface $translator, VariableApi $variableApi)
             {
-                $this->translator = $translator;
+                $this->setTranslator($translator);
                 $this->variableApi = $variableApi;
                 $this->modVars = $this->variableApi->getAll('«appName»');
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(TranslatorInterface $translator)
+            {
+                $this->translator = $translator;
             }
 
             /**
@@ -96,10 +104,10 @@ class Config {
 
                 $builder
                     ->add('save', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->trans('Update configuration', [], '«appName.formatForDB»')
+                        'label' => $this->__('Update configuration')
                     ])
                     ->add('cancel', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->trans('Cancel', [], '«appName.formatForDB»')
+                        'label' => $this->__('Cancel')
                     ])
                 ;
             }
@@ -135,21 +143,21 @@ class Config {
 
     def private definition(Variable it) '''
         ->add('«name.formatForCode»', '«fieldType»Type', [
-            'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
+            'label' => $this->__('«name.formatForDisplayCapital»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
-                    'title' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
             «ENDIF»
             'required' => false,
             'data' => $this->modVars['«name.formatForCode»'],
             'empty_data' => '«value»',
             'attr' => [
-                'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')
+                'title' => $this->__('«titleAttribute»')
             ],
             «IF null !== documentation && documentation != ''»
-                'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»'),
+                'help' => $this->__('«documentation.replace("'", '"')»'),
             «ENDIF»«additionalOptions»
         ])
     '''
@@ -195,7 +203,7 @@ class Config {
     '''
 
     def private itemDefinition(ListVarItem it) '''
-        $this->translator->trans('«name.formatForCode»', [], '«app.appName.formatForDB»') => '«name.formatForDisplayCapital»'
+        $this->__('«name.formatForCode»') => '«name.formatForDisplayCapital»'
     '''
 
     def private configTypeImpl(Application it) '''

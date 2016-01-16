@@ -150,6 +150,7 @@ class FormHandler {
             use Symfony\Component\Routing\RouterInterface;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use Symfony\Component\Translation\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
             «IF hasUploads»
                 use «appNamespace»\UploadHandler;
             «ENDIF»
@@ -174,6 +175,10 @@ class FormHandler {
         class «actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
+            «IF !isLegacy»
+                use TranslatorTrait;
+
+            «ENDIF»
             /**
              * Name of treated object type.
              *
@@ -309,11 +314,6 @@ class FormHandler {
                 protected $container;
 
                 /**
-                 * @var TranslatorInterface
-                 */
-                protected $translator;
-
-                /**
                  * The current request.
                  *
                  * @var Request
@@ -364,12 +364,22 @@ class FormHandler {
                 public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router«IF hasUploads», UploadHandler $uploadHandler«ENDIF»)
                 {
                     $this->container = $serviceManager;
-                    $this->translator = $translator;
+                    $this->setTranslator($translator);
                     $this->request = $requestStack->getCurrentRequest();
                     $this->router = $router;
                     «IF hasUploads»
                         $this->uploadHandler = $uploadHandler;
                     «ENDIF»
+                }
+
+                /**
+                 * Sets the translator.
+                 *
+                 * @param TranslatorInterface $translator Translator service instance.
+                 */
+                public function setTranslator(TranslatorInterface $translator)
+                {
+                    $this->translator = $translator;
                 }
             «ENDIF»
 

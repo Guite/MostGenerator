@@ -119,9 +119,13 @@ class PermissionCheck {
         function «app.appName»_workflow_«wfType.textualName»_gettextstrings()
         {
             «val wfDefinition = new Definition»
+            «IF !app.targets('1.3.x')»
+                $serviceManager = \ServiceUtil::getManager();
+                $translator = $serviceManager->get('translator');
+            «ENDIF»
             return «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                'title' => no__('«wfType.textualName.formatForDisplayCapital» workflow («wfType.approvalType.formatForDisplay» approval)'),
-                'description' => no__('«wfDefinition.workflowDescription(wfType)»'),
+                'title' => «app.gettextCall»('«wfType.textualName.formatForDisplayCapital» workflow («wfType.approvalType.formatForDisplay» approval)'),
+                'description' => «app.gettextCall»('«wfDefinition.workflowDescription(wfType)»'),
 
                 «val lastState = states.last»
                 «gettextStates(lastState)»
@@ -141,7 +145,7 @@ class PermissionCheck {
     '''
 
     def private gettextState(ListFieldItem it) '''
-        no__('«name»') => no__('«documentation»')'''
+        «app.gettextCall»('«name»') => «app.gettextCall»('«documentation»')'''
 
     def private gettextActionsPerState(ListFieldItem lastState) '''
         // action titles and descriptions for each state
@@ -295,6 +299,8 @@ class PermissionCheck {
     '''
 
     def private actionImpl(String title) '''
-        no__('«title»') => no__('«getWorkflowActionDescription(wfType, title)»')«IF title != 'Delete'»,«ENDIF»
+        «app.gettextCall»('«title»') => «app.gettextCall»('«getWorkflowActionDescription(wfType, title)»')«IF title != 'Delete'»,«ENDIF»
     '''
+
+    def private gettextCall(Application it) '''«IF targets('1.3.x')»no__«ELSE»$translator->«ENDIF»'''
 }

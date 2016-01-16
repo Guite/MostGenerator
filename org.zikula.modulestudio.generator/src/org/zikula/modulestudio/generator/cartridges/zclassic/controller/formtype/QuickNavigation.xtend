@@ -56,6 +56,7 @@ class QuickNavigation {
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
@@ -65,10 +66,7 @@ class QuickNavigation {
          */
         class «name.formatForCodeCapital»QuickNavType extends AbstractType
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+            use TranslatorTrait;
 
             /**
              * @var RequestStack
@@ -93,11 +91,21 @@ class QuickNavigation {
              */
             public function __construct(TranslatorInterface $translator, RequestStack $requestStack«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
             {
-                $this->translator = $translator;
+                $this->setTranslator($translator);
                 $this->requestStack = $requestStack;
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
                 «ENDIF»
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(TranslatorInterface $translator)
+            {
+                $this->translator = $translator;
             }
 
             /**
@@ -154,7 +162,7 @@ class QuickNavigation {
                     $this->addBooleanFields($builder, $options);
                 «ENDIF»
                 $builder->add('updateview', '«nsSymfonyFormType»SubmitType', [
-                    'label' => $this->translator->trans('OK', [], '«app.appName.formatForDB»'),
+                    'label' => $this->__('OK'),
                     'attr' => [
                         'id' => 'quicknavSubmit'
                     ]
@@ -250,18 +258,18 @@ class QuickNavigation {
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
-                'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'),
                 'empty_data' => [],
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('This is an optional filter.')
                 ],
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
                 'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($objectType) . 'CategoryEntity',
-                'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                'help' => $this->__('This is an optional filter.')
             ]);
         }
     '''
@@ -416,7 +424,7 @@ class QuickNavigation {
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('q', '«nsSymfonyFormType»SearchType', [
-                'label' => $this->translator->trans('Search', [], '«app.appName.formatForDB»'),
+                'label' => $this->__('Search'),
                 'attr' => [
                     'id' => 'searchTerm'
                 ],
@@ -437,33 +445,33 @@ class QuickNavigation {
         {
             $builder
                 ->add('sort', '«nsSymfonyFormType»ChoiceType', [
-                    'label' => $this->translator->trans('Sort by', [], '«app.appName.formatForDB»') . ':',
+                    'label' => $this->__('Sort by'),
                     'attr' => [
                         'id' => '«app.appName.toFirstLower»Sort'
                     ],
                     'choices' => [
                         «FOR field : getDerivedFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                $this->translator->trans('«field.name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                                $this->__('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
                             «ENDIF»
                         «ENDFOR»
                         «IF standardFields»
-                            $this->translator->trans('Creation date', [], '«app.appName.formatForDB»') => 'createdDate',
-                            $this->translator->trans('Creator', [], '«app.appName.formatForDB»') => 'createdUserId',
-                            $this->translator->trans('Update date', [], '«app.appName.formatForDB»') => 'updatedDate'
+                            $this->__('Creation date') => 'createdDate',
+                            $this->__('Creator') => 'createdUserId',
+                            $this->__('Update date') => 'updatedDate'
                         «ENDIF»
                     ],
                     'choices_as_values' => true
                 ])
                 ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
-                    'label' => $this->translator->trans('Sort direction', [], '«app.appName.formatForDB»') . ':',
+                    'label' => $this->__('Sort direction'),
                     'empty_data' => 'asc',
                     'attr' => [
                         'id' => '«app.appName.toFirstLower»SortDir'
                     ],
                     'choices' => [
-                        $this->translator->trans('Ascending', [], '«app.appName.formatForDB»') => 'asc',
-                        $this->translator->trans('Descending', [], '«app.appName.formatForDB»') => 'desc'
+                        $this->__('Ascending') => 'asc',
+                        $this->__('Descending') => 'desc'
                     ],
                     'choices_as_values' => true
                 ])
@@ -481,7 +489,7 @@ class QuickNavigation {
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('num', '«nsSymfonyFormType»ChoiceType', [
-                'label' => $this->translator->trans('Page size', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Page size'),
                 'empty_data' => 20,
                 'attr' => [
                     'id' => '«app.appName.toFirstLower»PageSize',
@@ -518,7 +526,7 @@ class QuickNavigation {
 
     def private dispatch fieldImpl(DerivedField it) '''
         $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
-            'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
+            'label' => $this->__('«name.formatForDisplayCapital»'),
             'required' => false,
             «additionalOptions»
         ]);
@@ -529,12 +537,12 @@ class QuickNavigation {
 
     def private dispatch fieldType(StringField it) '''«IF country»Country«ELSEIF language»Language«ELSEIF locale»Locale«ELSEIF currency»Currency«ELSEIF timezone»Timezone«ENDIF»'''
     def private dispatch additionalOptions(StringField it) '''
-        'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»')
+        'placeholder' => $this->__('All')
     '''
 
     def private dispatch fieldType(UserField it) '''Entity'''
     def private dispatch additionalOptions(UserField it) '''
-        'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
+        'placeholder' => $this->__('All'),
         // Zikula core should provide a form type for this to hide entity details
         'class' => 'Zikula\UsersModule\Entity\UserEntity',
         'choice_label' => 'uname'
@@ -542,7 +550,7 @@ class QuickNavigation {
 
     def private dispatch fieldType(ListField it) '''«/* called for multiple=false only */»Choice'''
     def private dispatch additionalOptions(ListField it) '''
-        'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
+        'placeholder' => $this->__('All'),
         'choices' => $choices,
         'choices_as_values' => true,
         'choice_attr' => $choiceAttributes«IF !multiple»,«ENDIF»
@@ -553,10 +561,10 @@ class QuickNavigation {
 
     def private dispatch fieldType(BooleanField it) '''Choice'''
     def private dispatch additionalOptions(BooleanField it) '''
-        'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
+        'placeholder' => $this->__('All'),
         'choices' => [
-            $this->translator->trans('No', [], '«app.appName.formatForDB»') => 'no',
-            $this->translator->trans('Yes', [], '«app.appName.formatForDB»') => 'yes'
+            $this->__('No') => 'no',
+            $this->__('Yes') => 'yes'
         ],
         'choices_as_values' => true
     '''
@@ -566,9 +574,9 @@ class QuickNavigation {
         $builder->add('«sourceAliasName.formatForCode»', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', [
             'class' => '«app.appName»:«source.name.formatForCodeCapital»Entity',
             'choice_label' => 'getTitleFromDisplayPattern',
-            'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
+            'placeholder' => $this->__('All'),
             'required' => false,
-            'label' => $this->translator->trans('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
+            'label' => $this->__('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»'),
             'attr' => [
                 'id' => '«sourceAliasName.formatForCode»'
             ]

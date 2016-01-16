@@ -45,16 +45,14 @@ class Finder {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
 
         /**
          * «name.formatForDisplayCapital» finder form type base class.
          */
         class «name.formatForCodeCapital»FinderType extends AbstractType
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+            use TranslatorTrait;
 
             /**
              * «name.formatForCodeCapital»FinderType constructor.
@@ -62,6 +60,16 @@ class Finder {
              * @param TranslatorInterface $translator Translator service instance.
              */
             public function __construct(TranslatorInterface $translator)
+            {
+                $this->setTranslator($translator);
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(TranslatorInterface $translator)
             {
                 $this->translator = $translator;
             }
@@ -90,13 +98,13 @@ class Finder {
 
                 $builder
                     ->add('update', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->trans('Change selection', [], '«app.appName.formatForDB»'),
+                        'label' => $this->__('Change selection'),
                         'attr' => [
                             'id' => '«app.appName.toFirstLower»Submit'
                         ]
                     ])
                     ->add('cancel', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->trans('Cancel', [], '«app.appName.formatForDB»'),
+                        'label' => $this->__('Cancel'),
                         'attr' => [
                             'id' => '«app.appName.toFirstLower»Cancel'
                         ]
@@ -159,18 +167,18 @@ class Finder {
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
-                'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
                 'empty_data' => [],
                 'attr' => [
                     'class' => 'category-selector',
-                    'title' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('This is an optional filter.')
                 ],
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($options['objectType']) . 'Entity',
                 'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
-                'help' => $this->translator->trans('This is an optional filter.', [], '«app.appName.formatForDB»')
+                'help' => $this->__('This is an optional filter.')
             ]);
         }
     '''
@@ -185,14 +193,14 @@ class Finder {
         public function addPasteAsField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('pasteas', '«nsSymfonyFormType»ChoiceType', [
-                'label' => $this->translator->trans('Paste as', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Paste as') . ':',
                 'empty_data' => 1,
                 'attr' => [
                     'id' => '«app.appName.toFirstLower»PasteAs'
                 ],
                 'choices' => [
-                    $this->translator->trans('Link to the «name.formatForDisplay»', [], '«app.appName.formatForDB»') => 1,
-                    $this->translator->trans('ID of «name.formatForDisplay»', [], '«app.appName.formatForDB»') => 2
+                    $this->__('Link to the «name.formatForDisplay»') => 1,
+                    $this->__('ID of «name.formatForDisplay»') => 2
                 ],
                 'choices_as_values' => true
             ]);
@@ -210,7 +218,7 @@ class Finder {
         {
             $builder
                 ->add('sort', '«nsSymfonyFormType»ChoiceType', [
-                    'label' => $this->translator->trans('Sort by', [], '«app.appName.formatForDB»') . ':',
+                    'label' => $this->__('Sort by') . ':',
                     'empty_data' => '',
                     'attr' => [
                         'id' => '«app.appName.toFirstLower»Sort'
@@ -218,26 +226,26 @@ class Finder {
                     'choices' => [
                         «FOR field : getDerivedFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                $this->translator->trans('«field.name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                                $this->__('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
                             «ENDIF»
                         «ENDFOR»
                         «IF standardFields»
-                            $this->translator->trans('Creation date', [], '«app.appName.formatForDB»') => 'createdDate',
-                            $this->translator->trans('Creator', [], '«app.appName.formatForDB»') => 'createdUserId',
-                            $this->translator->trans('Update date', [], '«app.appName.formatForDB»') => 'updatedDate'
+                            $this->__('Creation date') => 'createdDate',
+                            $this->__('Creator') => 'createdUserId',
+                            $this->__('Update date') => 'updatedDate'
                         «ENDIF»
                     ],
                     'choices_as_values' => true
                 ])
                 ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
-                    'label' => $this->translator->trans('Sort direction', [], '«app.appName.formatForDB»') . ':',
+                    'label' => $this->__('Sort direction') . ':',
                     'empty_data' => 'asc',
                     'attr' => [
                         'id' => '«app.appName.toFirstLower»SortDir'
                     ],
                     'choices' => [
-                        $this->translator->trans('Ascending', [], '«app.appName.formatForDB»') => 'asc',
-                        $this->translator->trans('Descending', [], '«app.appName.formatForDB»') => 'desc'
+                        $this->__('Ascending') => 'asc',
+                        $this->__('Descending') => 'desc'
                     ],
                     'choices_as_values' => true
                 ])
@@ -255,7 +263,7 @@ class Finder {
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('num', '«nsSymfonyFormType»ChoiceType', [
-                'label' => $this->translator->trans('Page size', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Page size') . ':',
                 'empty_data' => 20,
                 'attr' => [
                     'id' => '«app.appName.toFirstLower»PageSize',
@@ -285,7 +293,7 @@ class Finder {
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('q', '«nsSymfonyFormType»SearchType', [
-                'label' => $this->translator->trans('Search for', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('Search for') . ':',
                 'attr' => [
                     'id' => '«app.appName.toFirstLower»SearchTerm'
                 ],

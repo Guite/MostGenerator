@@ -89,6 +89,7 @@ class EditEntity {
         «IF extensions.contains('metadata')»
             use Symfony\Component\Validator\Constraints\Valid;
         «ENDIF»
+        use Zikula\Common\Translator\TranslatorTrait;
         use «app.appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory
         «IF extensions.contains('translatable')»
             use Zikula\ExtensionsModule\Api\VariableApi;
@@ -104,10 +105,7 @@ class EditEntity {
          */
         class «name.formatForCodeCapital»Type extends AbstractType
         {
-            /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
+            use TranslatorTrait;
 
             /**
              * @var «name.formatForCodeCapital»Factory
@@ -148,7 +146,7 @@ class EditEntity {
              */
             public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory, «IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
             {
-                $this->translator = $translator;
+                $this->setTranslator($translator);
                 $this->entityFactory = $entityFactory;
                 «IF extensions.contains('translatable')»
                     $this->variableApi = $variableApi;
@@ -157,6 +155,16 @@ class EditEntity {
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
                 «ENDIF»
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(TranslatorInterface $translator)
+            {
+                $this->translator = $translator;
             }
 
             /**
@@ -377,15 +385,15 @@ class EditEntity {
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
         «IF hasSluggableFields && slugUpdatable»
             $builder->add('slug'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«nsSymfonyFormType»TextType', [
-                'label' => $this->translator->trans('Permalink', [], '«app.appName.formatForDB»'),
+                'label' => $this->__('Permalink') . ':',
                 'required' => false«/* slugUnique.displayBool */»,
                 'attr' => [
                     «IF slugUnique»
                         'class' => 'validate-unique',
                     «ENDIF»
-                    'title' => $this->translator->trans('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»')
                 ],
-                'help' => $this->translator->trans('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»', [], '«app.appName.formatForDB»'),
+                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'),
                 'max_length' => 255
             ]);
         «ENDIF»
@@ -396,11 +404,11 @@ class EditEntity {
             «fetchListEntries»
         «ENDIF»
         $builder->add('«name.formatForCode»«IF idSuffix != ''» . «idSuffix»«ENDIF»', '«formType»Type', [
-            'label' => $this->translator->trans('«name.formatForDisplayCapital»', [], '«app.appName.formatForDB»') . ':',
+            'label' => $this->__('«name.formatForDisplayCapital»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
-                    'title' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»')
+                    'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
             «ENDIF»
             «IF readonly»
@@ -416,10 +424,10 @@ class EditEntity {
                     'min' => «(it as IntegerField).minValue»,
                     'max' => «(it as IntegerField).maxValue»,
                 «ENDIF»
-                'title' => $this->translator->trans('«titleAttribute»', [], '«app.appName.formatForDB»')
+                'title' => $this->__('«titleAttribute»')
             ],
             «IF null !== documentation && documentation != ''»
-                'help' => $this->translator->trans('«documentation.replace("'", '"')»', [], '«app.appName.formatForDB»'),
+                'help' => $this->__('«documentation.replace("'", '"')»'),
             «ENDIF»«additionalOptions»
         ]);
     '''
@@ -450,14 +458,14 @@ class EditEntity {
         «IF !range && (hasMin || hasMax)»
             «IF hasMin && hasMax»
                 «IF minValue == maxValue»
-                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value%' => «minValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»]),
                 «ELSE»
-                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»]),
                 «ENDIF»
             «ELSEIF hasMin»
-                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»]),
             «ELSEIF hasMax»
-                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]'),
             «ENDIF»
         «ENDIF»
         'scale' => 0
@@ -479,14 +487,14 @@ class EditEntity {
         «IF hasMin || hasMax»
             «IF hasMin && hasMax»
                 «IF minValue == maxValue»
-                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value%' => «minValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»]),
                 «ELSE»
-                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»]),
                 «ENDIF»
             «ELSEIF hasMin»
-                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»]),
             «ELSEIF hasMax»
-                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]),
             «ENDIF»
         «ENDIF»
         'scale' => «scale»
@@ -508,14 +516,14 @@ class EditEntity {
         «IF hasMin || hasMax»
             «IF hasMin && hasMax»
                 «IF minValue == maxValue»
-                    'help' => $this->translator->trans('Note: this value must exactly be %value%.', ['%value%' => «minValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»]),
                 «ELSE»
-                    'help' => $this->translator->trans('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                    'help' => $this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»]),
                 «ENDIF»
             «ELSEIF hasMin»
-                'help' => $this->translator->trans('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»]),
             «ELSEIF hasMax»
-                'help' => $this->translator->trans('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]),
             «ENDIF»
         «ENDIF»
         'scale' => 2
@@ -526,14 +534,14 @@ class EditEntity {
     def private dispatch additionalOptions(StringField it) '''
         'required' => «mandatory.displayBool»,
         «IF !mandatory && (country || language || locale || currency || timezone)»
-            'placeholder' => $this->translator->trans('All', [], '«app.appName.formatForDB»'),
+            'placeholder' => $this->__('All'),
         «ENDIF»
         'max_length' => «length»,
         «IF null !== regexp && regexp != ''»
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
-            'help' => $this->translator->trans('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'], '«app.appName.formatForDB»')
+            'help' => $this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])
         «ENDIF»
     '''
 
@@ -545,7 +553,7 @@ class EditEntity {
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
-            'help' => $this->translator->trans('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'], '«app.appName.formatForDB»')
+            'help' => $this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])
         «ENDIF»
     '''
 
@@ -589,7 +597,7 @@ class EditEntity {
             «IF mandatory»
                 'placeholder' => '',
             «ELSE»
-                'placeholder' => $this->translator->trans('Choose an option', [], '«app.appName.formatForDB»'),
+                'placeholder' => $this->__('Choose an option'),
             «ENDIF»
         «ENDIF»
         'choices' => $choices,
@@ -597,9 +605,9 @@ class EditEntity {
         'choice_attr' => $choiceAttributes,
         «IF multiple && min > 0 && max > 0»
             «IF min == max»
-                'help' => $this->translator->trans('Note: you must select exactly %min% choices.', ['%min%' => «min»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: you must select exactly %min% choices.', ['%min%' => «min»]),
             «ELSE»
-                'help' => $this->translator->trans('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»], '«app.appName.formatForDB»'),
+                'help' => $this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»]),
             «ENDIF»
         «ENDIF»
         «IF !multiple»
@@ -623,9 +631,9 @@ class EditEntity {
         'empty_data' => «defaultData»,
         'required' => «mandatory.displayBool»,
         «IF past»
-            'help' => $this->translator->trans('Note: this value must be in the past.', [], '«app.appName.formatForDB»'),
+            'help' => $this->__('Note: this value must be in the past.'),
         «ELSEIF future»
-            'help' => $this->translator->trans('Note: this value must be in the future.', [], '«app.appName.formatForDB»'),
+            'help' => $this->__('Note: this value must be in the future.'),
         «ENDIF»
         'widget' => 'single_text'
     '''
@@ -635,9 +643,9 @@ class EditEntity {
         'empty_data' => '«defaultValue»',
         'required' => «mandatory.displayBool»,
         «IF past»
-            'help' => $this->translator->trans('Note: this value must be in the past.', [], '«app.appName.formatForDB»'),
+            'help' => $this->__('Note: this value must be in the past.'),
         «ELSEIF future»
-            'help' => $this->translator->trans('Note: this value must be in the future.', [], '«app.appName.formatForDB»'),
+            'help' => $this->__('Note: this value must be in the future.'),
         «ENDIF»
         'widget' => 'single_text',
         'max_length' => 8
@@ -654,7 +662,7 @@ class EditEntity {
         {
             «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                 $builder->add('«geoFieldName»', '«app.appNamespace»\Form\Type\Field\GeoType', [
-                    'label' => $this->translator->trans('«geoFieldName.toFirstUpper»', [], '«app.appName.formatForDB»') . ':',
+                    'label' => $this->__('«geoFieldName.toFirstUpper»') . ':',
                     'attr' => [
                         'class' => 'validate-number',
                     ],
@@ -676,7 +684,7 @@ class EditEntity {
             foreach ($options['attributes'] as $attributeName => $attributeValue) {
                 $builder->add('attributes' . $attributeName, '«nsSymfonyFormType»TextType', [
                     'mapped' => false,
-                    'label' => $this->translator->trans($attributeName, [], '«app.appName.formatForDB»'),
+                    'label' => $this->__($attributeName),
                     'data' => $attributeValue,
                     'required' => false,
                     'max_length' => 255
@@ -695,7 +703,7 @@ class EditEntity {
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
-                'label' => $this->translator->trans('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
                 'empty_data' => [],
                 'attr' => [
                     'class' => 'category-selector'
@@ -761,14 +769,14 @@ class EditEntity {
                     return $er->selectWhere('', '', false, true);
                 },
                 «IF outgoing && !nullable»
-                    'placeholder' => $this->translator->trans('Please choose an option', [], '«app.appName.formatForDB»'),
+                    'placeholder' => $this->__('Please choose an option'),
                     'required' => false,
                 «ENDIF»
             «ENDIF»
-            'label' => $this->translator->trans('«aliasName.formatForDisplayCapital»', [], '«app.appName.formatForDB»'),
+            'label' => $this->__('«aliasName.formatForDisplayCapital»'),
             'attr' => [
                 'id' => '«aliasName.formatForCode»',
-                'title' => $this->translator->trans('Choose the «aliasName.formatForDisplay»', [], '«app.appName.formatForDB»')
+                'title' => $this->__('Choose the «aliasName.formatForDisplay»')
             ]
         ]);
     '''
@@ -812,7 +820,7 @@ class EditEntity {
         {
             $builder->add('repeatCreation', '«nsSymfonyFormType»CheckboxType', [
                 'mapped' => false,
-                'label' => $this->translator->trans('Create another item after save', [], '«app.appName.formatForDB»'),
+                'label' => $this->__('Create another item after save'),
                 'required' => false
             ]);
         }
@@ -829,21 +837,21 @@ class EditEntity {
         {
             $helpText = '';
             if ($options['isModerator']«IF workflow == EntityWorkflowType.ENTERPRISE» || $options['isSuperModerator']«ENDIF») {
-                $helpText = $this->translator->trans('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.', [], '«app.appName.formatForDB»');
+                $helpText = $this->__('These remarks (like a reason for deny) are not stored, but added to any notification emails send to the creator.');
             } elseif ($options['isCreator']) {
-                $helpText = $this->translator->trans('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.', [], '«app.appName.formatForDB»');
+                $helpText = $this->__('These remarks (like questions about conformance) are not stored, but added to any notification emails send to our moderators.');
             }
 
             $builder->add('additionalNotificationRemarks', '«nsSymfonyFormType»TextareaType', [
                 'mapped' => false,
-                'label' => $this->translator->trans('Additional remarks', [], '«app.appName.formatForDB»'),
+                'label' => $this->__('Additional remarks'),
                 'label_attr' => [
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
                     'title' => $helpText
                 ],
                 'attr' => [
                     'id' => 'additionalNotificationRemarks',
-                    'title' => $options['mode'] == 'create' ? $this->translator->trans('Enter any additions about your content', [], '«app.appName.formatForDB»') : $this->translator->trans('Enter any additions about your changes', [], '«app.appName.formatForDB»')
+                    'title' => $options['mode'] == 'create' ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
                 ],
                 'required' => false,
                 'help' => $helpText
@@ -862,22 +870,22 @@ class EditEntity {
         {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], '«nsSymfonyFormType»SubmitType', [
-                    'label' => $this->translator->trans($action['title'], [], '«app.appName.formatForDB»'),
+                    'label' => $this->__($action['title']),
                     'attr' => [
                         'id' => 'btn' . ucfirst($action['id']),
                         'class' => $action['buttonClass'],
-                        'title' => $this->translator->trans($action['description'], [], '«app.appName.formatForDB»')
+                        'title' => $this->__($action['description'])
                     ]
                 ]);
             }
             $builder->add('reset', '«nsSymfonyFormType»ResetType', [
-                'label' => $this->translator->trans('Reset', [], '«app.appName.formatForDB»'),
+                'label' => $this->__('Reset'),
                 'attr' => [
                     'id' => 'btnReset'
                 ]
             ]);
             $builder->add('cancel', '«nsSymfonyFormType»SubmitType', [
-                'label' => $this->translator->trans('Cancel', [], '«app.appName.formatForDB»'),
+                'label' => $this->__('Cancel'),
                 'attr' => [
                     'id' => 'btnCancel'
                 ]

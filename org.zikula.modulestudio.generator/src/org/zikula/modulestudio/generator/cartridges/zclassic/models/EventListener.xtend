@@ -251,8 +251,7 @@ class EventListener {
                 «IF application.targets('1.3.x')»
                     $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
                 «ELSE»
-                    $serviceManager = ServiceUtil::getManager();
-                    $entityManager = $serviceManager->get«IF application.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+                    $entityManager = $serviceManager->get('doctrine.entitymanager');
                     $result = true;
                     try {
                         $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
@@ -263,12 +262,14 @@ class EventListener {
                     }
                 «ENDIF»
                 if ($result === false) {
-                    $dom = ZLanguage::getModuleDomain('«application.appName»');
                     «IF application.targets('1.3.x')»
+                        $dom = ZLanguage::getModuleDomain('«application.appName»');
+
                         return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
                     «ELSE»
                         $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add('error', __('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+                        $session->getFlashBag()->add('error', $serviceManager->get('translator')->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
+
                         return false;
                     «ENDIF»
                 }

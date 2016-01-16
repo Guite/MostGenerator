@@ -78,6 +78,7 @@ class Search {
         «getResults»
     '''
 
+    // 1.3.x only
     def private infoLegacy(Application it) '''
         /**
          * Get search plugin information.
@@ -93,6 +94,7 @@ class Search {
         }
     '''
 
+    // 1.3.x only
     def private optionsLegacy(Application it) '''
         /**
          * Display the search form.
@@ -148,6 +150,7 @@ class Search {
         }
     '''
 
+    // 1.3.x only
     def private searchLegacy(Application it) '''
         /**
          * Executes the actual search process.
@@ -260,6 +263,7 @@ class Search {
         }
     '''
 
+    // 1.3.x only
     def private searchCheckLegacy(Application it) '''
         /**
          * Assign URL to items.

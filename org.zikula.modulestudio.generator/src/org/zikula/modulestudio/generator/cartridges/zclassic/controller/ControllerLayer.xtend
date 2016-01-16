@@ -315,8 +315,10 @@ class ControllerLayer {
     '''
 
     def private handleSelectedObjectsBaseImpl(Entity it) '''
-        $this->checkCsrfToken();
+        «IF isLegacy»
+            $this->checkCsrfToken();
 
+        «ENDIF»
         $objectType = '«name.formatForCode»';
 
         // Get parameters

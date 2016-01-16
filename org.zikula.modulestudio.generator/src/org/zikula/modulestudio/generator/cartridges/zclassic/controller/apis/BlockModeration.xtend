@@ -157,6 +157,11 @@ class BlockModeration {
                 // return the block to the theme
                 return BlockUtil::themeBlock($blockinfo);
             «ELSE»
+                // set a block title
+                if (empty($properties['title'])) {
+                    $properties['title'] = $this->__('Moderation');
+                }
+
                 return $this->renderView($template, [«/*'properties' => $properties, */»'moderationObjects' => $amounts]);
             «ENDIF»
         }

@@ -33,7 +33,7 @@ class ListEntriesHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper\Base;
 
-            use Zikula\Common\Translator\Translator;
+            use Symfony\Component\Translation\TranslatorInterface;
 
         «ENDIF»
         /**
@@ -43,7 +43,7 @@ class ListEntriesHelper {
         {
             «IF !targets('1.3.x')»
                 /**
-                 * @var Translator
+                 * @var TranslatorInterface
                  */
                 protected $translator;
 
@@ -51,11 +51,11 @@ class ListEntriesHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param Translator $translator Translator service instance.
+                 * @param TranslatorInterface $translator Translator service instance.
                  *
                  * @return void
                  */
-                public function __construct($translator)
+                public function __construct(TranslatorInterface $translator)
                 {
                     $this->translator = $translator;
                 }

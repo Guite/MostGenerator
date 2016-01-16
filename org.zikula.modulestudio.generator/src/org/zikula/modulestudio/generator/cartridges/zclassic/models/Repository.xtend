@@ -614,7 +614,13 @@ class Repository {
             foreach ($idList as $id) {
                 // check id parameter
                 if ($id == 0) {
-                    throw new \InvalidArgumentException(__('Invalid identifier received.'));
+                    «IF application.targets('1.3.x')»
+                        $dom = ZLanguage::getModuleDomain($this->name);
+                        throw new \InvalidArgumentException(__('Invalid identifier received.', $dom));
+                    «ELSE»
+                        $serviceManager = ServiceUtil::getManager();
+                        throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid identifier received.'));
+                    «ENDIF»
                 }
 
                 if (is_array($id)) {
@@ -693,7 +699,13 @@ class Repository {
         {
             // check input parameter
             if ($slugTitle == '') {
-                throw new \InvalidArgumentException(__('Invalid slug title received.'));
+                «IF application.targets('1.3.x')»
+                    $dom = ZLanguage::getModuleDomain($this->name);
+                    throw new \InvalidArgumentException(__('Invalid slug title received.', $dom));
+                «ELSE»
+                    $serviceManager = ServiceUtil::getManager();
+                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid slug title received.'));
+                «ENDIF»
             }
 
             $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
@@ -1591,12 +1603,12 @@ class Repository {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(\Exception $e) {
-                    $dom = ZLanguage::getModuleDomain($this->name);
                     «IF app.targets('1.3.x')»
+                        $dom = ZLanguage::getModuleDomain($this->name);
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
                         $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, __f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action], $dom));
+                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator')->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
                     «ENDIF»
                 }
 

@@ -3,12 +3,10 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UploadTypeExtension {
-    extension FormattingExtensions = new FormattingExtensions()
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
@@ -62,10 +60,10 @@ class UploadTypeExtension {
 
                 $builder->add($options['attr']['id'] . 'DeleteFile', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', [
                     'mapped' => false,
-                    'label' => $this->translator->trans('Delete existing file', [], '«appName.formatForDB»'),
+                    'label' => $this->translator->__('Delete existing file'),
                     'required' => false,
                     'attr' => [
-                        'title' => $this->translator->trans('Delete this file ?', [], '«appName.formatForDB»')
+                        'title' => $this->translator->__('Delete this file ?')
                     ]
                 ]);
             }

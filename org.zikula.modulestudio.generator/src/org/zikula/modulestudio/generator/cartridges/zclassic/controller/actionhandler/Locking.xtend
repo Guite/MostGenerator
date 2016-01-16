@@ -22,7 +22,7 @@ class Locking {
     '''
 
     def addPageLock(Application it) '''
-        if ($this->hasPageLockSupport === true && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
+        if (true === $this->hasPageLockSupport && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
             // try to guarantee that only one person at a time can be editing this entity
             ModUtil::apiFunc('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'pageLock', «IF isLegacy»array(«ELSE»[«ENDIF»
                                  'lockName' => «IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF» . $this->objectTypeCapital . $this->createCompositeIdentifier(),
@@ -32,7 +32,7 @@ class Locking {
     '''
 
     def releasePageLock(Application it) '''
-        if ($this->hasPageLockSupport === true && $this->mode == 'edit' && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
+        if (true === $this->hasPageLockSupport && $this->mode == 'edit' && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
             ModUtil::apiFunc('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'releaseLock', «IF isLegacy»array(«ELSE»[«ENDIF»
                                  'lockName' => «IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF» . $this->objectTypeCapital . $this->createCompositeIdentifier()
             «IF isLegacy»)«ELSE»]«ENDIF»);

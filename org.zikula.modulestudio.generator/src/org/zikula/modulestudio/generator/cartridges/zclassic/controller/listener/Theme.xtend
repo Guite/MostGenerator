@@ -35,6 +35,10 @@ class Theme {
          * Occurs on the startup of the `Zikula_View_Theme#__construct()`.
          * The subject is the Zikula_View_Theme instance.
          * Is useful to setup a customized theme configuration or cache_id.
+        «IF !targets('1.3.x')»
+            «' '»*
+            «' '»* Note that Zikula_View_Theme is deprecated and being replaced by Twig.
+        «ENDIF»
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
@@ -52,6 +56,10 @@ class Theme {
          *
          * Occurs just before `Zikula_View_Theme#__construct()` finishes.
          * The subject is the Zikula_View_Theme instance.
+        «IF !targets('1.3.x')»
+            «' '»*
+            «' '»* Note that Zikula_View_Theme is deprecated and being replaced by Twig.
+        «ENDIF»
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */

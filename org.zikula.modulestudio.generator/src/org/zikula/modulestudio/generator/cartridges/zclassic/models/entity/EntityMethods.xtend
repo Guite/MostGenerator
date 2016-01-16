@@ -438,13 +438,13 @@ class EntityMethods {
         if ((!in_array($currentFunc, «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display'«IF application.targets('1.3.x')»)«ELSE»]«ENDIF») && empty($isReuse)) || $forceLoading) {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«application.appName»');
             if (!$result) {
-                $dom = ZLanguage::getModuleDomain('«application.appName»');
                 «IF application.targets('1.3.x')»
+                    $dom = ZLanguage::getModuleDomain('«application.appName»');
                     LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
                     $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add('error', __('Error! Could not load the associated workflow.', $dom));
+                    $session->getFlashBag()->add('error', $serviceManager->get('translator')->__('Error! Could not load the associated workflow.'));
                 «ENDIF»
             }
         }

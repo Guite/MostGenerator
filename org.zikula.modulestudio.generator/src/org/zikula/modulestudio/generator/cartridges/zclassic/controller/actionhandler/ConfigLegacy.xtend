@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
+// 1.3.x only
 class ConfigLegacy {
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
@@ -22,7 +23,6 @@ class ConfigLegacy {
 
     /**
      * Entry point for config form handler.
-     * 1.3.x only.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (!needsConfig) {

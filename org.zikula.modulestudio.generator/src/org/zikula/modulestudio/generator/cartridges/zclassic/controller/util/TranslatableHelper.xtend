@@ -46,6 +46,7 @@ class TranslatableHelper {
             use ServiceUtil;
             use System;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
+            use Symfony\Component\Translation\TranslatorInterface;
             use Zikula\Core\Doctrine\EntityAccess;
             use ZLanguage;
 
@@ -62,14 +63,21 @@ class TranslatableHelper {
                 protected $container;
 
                 /**
+                 * @var TranslatorInterface
+                 */
+                protected $translator;
+
+                /**
                  * Constructor.
                  * Initialises member vars.
                  *
                  * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
+                 * @param TranslatorInterface    $translator     Translator service instance.
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager)
+                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator)
                 {
                     $this->container = $serviceManager;
+                    $this->translator = $translator;
                 }
 
             «ENDIF»
@@ -280,12 +288,12 @@ class TranslatableHelper {
             DerivedField: '''
                     «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         'name' => '«name»',
-                        'default' => $this->__('«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
+                        'default' => $this«IF !entity.application.targets('1.3.x')»->translator«ENDIF»->__('«IF null !== it.defaultValue && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»')
                     «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
             CalculatedField: '''
                     «IF entity.application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         'name' => '«name»',
-                        'default' => $this->__('«name.formatForDisplayCapital»')
+                        'default' => $this«IF !entity.application.targets('1.3.x')»->translator«ENDIF»->__('«name.formatForDisplayCapital»')
                     «IF entity.application.targets('1.3.x')»)«ELSE»]«ENDIF»'''
         }
     }

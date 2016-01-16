@@ -324,6 +324,11 @@ class BlockList {
                 // return the block to the theme
                 return BlockUtil::themeBlock($blockinfo);
             «ELSE»
+                // set a block title
+                if (empty($properties['title'])) {
+                    $properties['title'] = $this->__('«appName» items');
+                }
+
                 $template = $this->getDisplayTemplate($properties);
 
                 $templateParameters = [

@@ -105,7 +105,12 @@ class Selection {
         public function getEntity(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
-                throw new \InvalidArgumentException(__('Invalid identifier received.'));
+                «IF targets('1.3.x')»
+                    $dom = ZLanguage::getModuleDomain('«appName»');
+                    throw new \InvalidArgumentException(__('Invalid identifier received.', $dom));
+                «ELSE»
+                    throw new \InvalidArgumentException($this->get('translator')->__('Invalid identifier received.'));
+                «ENDIF»
             }
             $objectType = $this->determineObjectType($args, 'getEntity');
             $repository = $this->getRepository($objectType);
@@ -223,7 +228,12 @@ class Selection {
         protected function getRepository($objectType = '')
         {
             if (empty($objectType)) {
-                throw new \InvalidArgumentException(__('Invalid object type received.'));
+                «IF targets('1.3.x')»
+                    $dom = ZLanguage::getModuleDomain('«appName»');
+                    throw new \InvalidArgumentException(__('Invalid object type received.', $dom));
+                «ELSE»
+                    throw new \InvalidArgumentException($this->get('translator')->__('Invalid object type received.'));
+                «ENDIF»
             }
 
             «IF targets('1.3.x')»
@@ -249,7 +259,12 @@ class Selection {
             public function getTree(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
             {
                 if (!isset($args['rootId'])) {
-                    throw new \InvalidArgumentException(__('Invalid root identifier received.'));
+                    «IF targets('1.3.x')»
+                        $dom = ZLanguage::getModuleDomain('«appName»');
+                        throw new \InvalidArgumentException(__('Invalid root identifier received.', $dom));
+                    «ELSE»
+                        throw new \InvalidArgumentException($this->get('translator')->__('Invalid root identifier received.'));
+                    «ENDIF»
                 }
                 $rootId = $args['rootId'];
 

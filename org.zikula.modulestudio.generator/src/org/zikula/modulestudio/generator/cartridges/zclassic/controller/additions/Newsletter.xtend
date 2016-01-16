@@ -62,7 +62,13 @@ class Newsletter {
          */
         public function getTitle()
         {
-            return $this->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            «IF targets('1.3.x')»
+                return $this->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+
+                return $serviceManager->get('translator')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            «ENDIF»
         }
 
         /**
@@ -72,7 +78,13 @@ class Newsletter {
          */
         public function getDisplayName()
         {
-            return $this->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
+            «IF targets('1.3.x')»
+                return $this->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+
+                return $serviceManager->get('translator')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
+            «ENDIF»
         }
 
         /**
@@ -82,7 +94,13 @@ class Newsletter {
          */
         public function getDescription()
         {
-            return $this->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
+            «IF targets('1.3.x')»
+                return $this->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+            
+                return $serviceManager->get('translator')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
+            «ENDIF»
         }
 
         /**
@@ -103,20 +121,29 @@ class Newsletter {
          */
         public function getParameters()
         {
+            «IF !targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
+                $translator = $serviceManager->get('translator');
+
+            «ENDIF»
             $objectTypes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             if (ModUtil::available($this->modname) && ModUtil::loadApi($this->modname)) {
                 «FOR entity : getAllEntities»
-                    $objectTypes['«entity.name.formatForCode»'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    «IF targets('1.3.x')»
+                        $objectTypes['«entity.name.formatForCode»'] = array('name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'));
+                    «ELSE»
+                        $objectTypes['«entity.name.formatForCode»'] = ['name' => $translator->__('«entity.nameMultiple.formatForDisplayCapital»')];
+                    «ENDIF»
                 «ENDFOR»
             }
-        
+
             $active = $this->getPluginVar('ObjectTypes', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
             foreach ($objectTypes as $k => $v) {
                 $objectTypes[$k]['nwactive'] = in_array($k, $active);
             }
 
             $args = $this->getPluginVar('Args', «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
-        
+
             return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'number' => 1,
                 'param'  => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»

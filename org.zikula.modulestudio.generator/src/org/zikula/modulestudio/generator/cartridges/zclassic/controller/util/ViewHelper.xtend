@@ -42,7 +42,7 @@ class ViewHelper {
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\Response;
-            use Zikula\Common\Translator\Translator;
+            use Symfony\Component\Translation\TranslatorInterface;
             use Zikula\Core\Response\PlainResponse;
             use Zikula_View;
 
@@ -59,7 +59,7 @@ class ViewHelper {
                 protected $container;
 
                 /**
-                 * @var Translator
+                 * @var TranslatorInterface
                  */
                 protected $translator;
 
@@ -68,11 +68,11 @@ class ViewHelper {
                  * Initialises member vars.
                  *
                  * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
-                 * @param Translator             $translator     Translator service instance.
+                 * @param TranslatorInterface    $translator     Translator service instance.
                  *
                  * @return void
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager, $translator)
+                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator)
                 {
                     $this->container = $serviceManager;
                     $this->translator = $translator;

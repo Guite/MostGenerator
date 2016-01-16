@@ -2,11 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import de.guite.modulestudio.metamodel.Application
 
+// 1.3.x only
 class ErrorsLegacy {
 
     CommonExample commonExample = new CommonExample()
 
-    // obsolete, used for 1.3.x only
     def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `setup.errorreporting` event.

@@ -106,7 +106,7 @@ class Notification {
             }
 
             if (!ModUtil::available('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»') || !ModUtil::loadApi('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»', 'user')) {
-                return LogUtil::registerError($this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+                return LogUtil::registerError($this->«IF targets('1.3.x')»get('translator')->«ENDIF»__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
             }
 
             $result = $this->sendMails();
@@ -232,15 +232,19 @@ class Notification {
 
         protected function getMailSubject()
         {
+            «IF !targets('1.3.x')»
+                $translator = $this->get('translator');
+
+            «ENDIF»
             $mailSubject = '';
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
                 if ($this->action == 'submit') {
-                    $mailSubject = $this->__('New content has been submitted');
+                    $mailSubject = «IF targets('1.3.x')»$this«ELSE»$translator«ENDIF»->__('New content has been submitted');
                 } else {
-                    $mailSubject = $this->__('Content has been updated');
+                    $mailSubject = «IF targets('1.3.x')»$this«ELSE»$translator«ENDIF»->__('Content has been updated');
                 }
             } elseif ($this->recipientType == 'creator') {
-                $mailSubject = $this->__('Your submission has been updated');
+                $mailSubject = «IF targets('1.3.x')»$this«ELSE»$translator«ENDIF»->__('Your submission has been updated');
             }
 
             return $mailSubject;
