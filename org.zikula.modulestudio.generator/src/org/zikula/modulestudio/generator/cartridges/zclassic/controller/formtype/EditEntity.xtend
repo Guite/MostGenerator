@@ -52,7 +52,7 @@ class EditEntity {
     Application app
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
-    List<String> extensions = #[]
+    List<String> extensions = newArrayList
     Iterable<JoinRelationship> incomingRelations
     Iterable<JoinRelationship> outgoingRelations
 
