@@ -112,52 +112,56 @@ class Atom {
             <id>{{ uniqueID }}</id>
             <updated>{{ «IF standardFields»items[0].updatedDate«ELSE»'now'«ENDIF»|date('Y-m-dTH:M:SZ') }}</updated>
         {% endif %}
-        <link rel="alternate" type="text/html" hreflang="{{ lang() }}" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasActions('index')»index«ELSEIF hasActions('view')»view«ELSE»«app.getAdminAndUserControllers.map[actions].flatten.toList.head.name.formatForCode»«ENDIF»') }}" />
-        <link rel="self" type="application/atom+xml" href="{{ homePath ~ app.request.getPathInfo() }}" />
-        <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ homePath|e }}</rights>
-
+            <link rel="alternate" type="text/html" hreflang="{{ lang() }}" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasActions('index')»index«ELSEIF hasActions('view')»view«ELSE»«app.getAdminAndUserControllers.map[actions].flatten.toList.head.name.formatForCode»«ENDIF»') }}" />
+            <link rel="self" type="application/atom+xml" href="{{ homePath ~ app.request.getPathInfo() }}" />
+            <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ homePath|e }}</rights>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-            <entry>
-                <title type="html">{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}</title>
-                <link rel="alternate" type="text/html" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}" />
-                {% set uniqueID %}tag:{{ homePath|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}{% endset %}
-                <id>{{ uniqueID }}</id>
-                «IF standardFields»
-                    {% if «objName».updatedDate|default %}
-                        <updated>{{ «objName».updatedDate|date('Y-m-dTH:M:SZ') }}</updated>
-                    {% endif %}
-                    {% if «objName».createdDate|default %}
-                        <published>{{ «objName».createdDate|date('Y-m-dTH:M:SZ') }}</published>
-                    {% endif %}
-                «ENDIF»
-                «IF !standardFields»
-                    «IF metaData»
-                        {% if «objName».metadata is defined and «objName».metadata.author is defined %}
-                            <author>{{ «objName».metadata.author }}</author>
-                        {/if}
-                    «ENDIF»
-                «ELSE»
-                    {% if «objName».createdUserId is defined %}
-                        {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
-                        {% set cr_name = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
-                        <author>
-                           <name>{{ cr_name|default(cr_uname) }}</name>
-                           <uri>{{ «appName.toLowerCase»_userVar('_UYOURHOMEPAGE', «objName».createdUserId, '-') }}</uri>
-                           <email>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }}</email>
-                        </author>
-                        «IF metaData»
-                            {% elseif «objName».metadata is defined and «objName».metadata.author is defined %}
-                            <author>{{ «objName».metadata.author }}</author>
-                        «ENDIF»
-                        #}
-                    {% endif %}
-                «ENDIF»
-
-                «description(objName)»
-            </entry>
+            {{ block('entry') }}
         {% endfor %}
         </feed>
+        {% block entry %}
+            <entry>
+                {{ block('entry_content') }}
+            </entry>
+        {% endblock %}
+        {% block entry_content %}
+            <title type="html">{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}</title>
+            <link rel="alternate" type="text/html" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}" />
+            {% set uniqueID %}tag:{{ homePath|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}{% endset %}
+            <id>{{ uniqueID }}</id>
+            «IF standardFields»
+                {% if «objName».updatedDate|default %}
+                    <updated>{{ «objName».updatedDate|date('Y-m-dTH:M:SZ') }}</updated>
+                {% endif %}
+                {% if «objName».createdDate|default %}
+                    <published>{{ «objName».createdDate|date('Y-m-dTH:M:SZ') }}</published>
+                {% endif %}
+            «ENDIF»
+            «IF !standardFields»
+                «IF metaData»
+                    {% if «objName».metadata is defined and «objName».metadata.author is defined %}
+                        <author>{{ «objName».metadata.author }}</author>
+                    {/if}
+                «ENDIF»
+            «ELSE»
+                {% if «objName».createdUserId is defined %}
+                    {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
+                    {% set cr_name = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
+                    <author>
+                       <name>{{ cr_name|default(cr_uname) }}</name>
+                       <uri>{{ «appName.toLowerCase»_userVar('_UYOURHOMEPAGE', «objName».createdUserId, '-') }}</uri>
+                       <email>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }}</email>
+                    </author>
+                    «IF metaData»
+                        {% elseif «objName».metadata is defined and «objName».metadata.author is defined %}
+                        <author>{{ «objName».metadata.author }}</author>
+                    «ENDIF»
+                    #}
+                {% endif %}
+            «ENDIF»
+            «description(objName)»
+        {% endblock %}
     '''
 
     def private descriptionLegacy(Entity it, String objName) '''

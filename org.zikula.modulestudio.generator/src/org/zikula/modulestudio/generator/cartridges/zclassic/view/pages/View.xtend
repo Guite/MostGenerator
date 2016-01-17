@@ -71,10 +71,8 @@ class View {
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
-            {% block title %}
-                {{ __('«name.formatForDisplayCapital» list') }}
-            {% endblock %}
-            {% block adminPageIcon %}list{% endblock %}
+            {% block title __('«name.formatForDisplayCapital» list') %}
+            {% block admin_page_icon 'list' %}
             {% block content %}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
@@ -92,24 +90,38 @@ class View {
                 «ENDIF»
             «ENDIF»
 
-            «pageNavLinks(appName)»
-
             «IF application.targets('1.3.x')»
+                «pageNavLinks(appName)»
+
                 {include file='«name.formatForCode»/viewQuickNav.tpl' all=$all own=$own«IF !hasVisibleWorkflow» workflowStateFilter=false«ENDIF»}{* see template file for available options *}
             «ELSE»
+                {{ block('page_nav_links') }}
+
                 {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', { all: all, own: own«IF !hasVisibleWorkflow», workflowStateFilter: false«ENDIF» }) }}{# see template file for available options #}
             «ENDIF»
 
             «viewForm(appName)»
             «IF !skipHookSubscribers»
 
-                «callDisplayHooks(appName)»
+                «IF application.targets('1.3.x')»
+                    «callDisplayHooks(appName)»
+                «ELSE»
+                    {{ block('display_hooks') }}
+                «ENDIF»
             «ENDIF»
         </div>
         «IF application.targets('1.3.x')»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {% endblock %}
+            {% block page_nav_links %}
+                «pageNavLinks(appName)»
+            {% endblock %}
+            «IF !skipHookSubscribers && !application.targets('1.3.x')»
+                {% block display_hooks %}
+                    «callDisplayHooks(appName)»
+                {% endblock %}
+            «ENDIF»
         «ENDIF»
         «ajaxToggle»
     '''

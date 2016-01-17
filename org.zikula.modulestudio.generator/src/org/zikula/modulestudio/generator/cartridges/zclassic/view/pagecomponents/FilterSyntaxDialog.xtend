@@ -2,9 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponent
 
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class FilterSyntaxDialog {
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
@@ -86,23 +88,25 @@ class FilterSyntaxDialog {
             </ul>
             <hr />
             <h4>{{ __('Special field types') }}</h4>
-            <h5>{{ __('Categories') }}</h5>
-            <p>{{ __('If a "Person" has Categories support then you can also filter by category id or name.') }}</p>
-            <ul>
-                <li><code>categories:eq:4</code> {{ __('Person is assigned to category with id "4".') }}</li>
-                <li><code>categories:eq:Sports</code> {{ __('Person is assigned to category with name "Sports".') }}</li>
-                <li><code>categories:ne:4</code> {{ __('Person is not assigned to category with id "4".') }}</li>
-                <li><code>categories:sub:Sports</code> {{ __('Person is assigned to category with name "Sports" or one of it\'s sub categories.') }}</li>
-            </ul>
-            <p>{{ __('The field name "categories" is the default name for category fields. However, in practice we need to define different field names for possibly several registries.') }}</p>
-            <p>{{ __('Therefore we create a virtual fields for each registry property.') }} {{ __('So instead of "categories" use "categoriesFoo" whereby "Foo" is the property name for the desired registry, for example "Main".') }}</p>
+            «IF hasCategorisableEntities»
+                <h5>{{ __('Categories') }}</h5>
+                <p>{{ __('If a "Person" has Categories support then you can also filter by category id or name.') }}</p>
+                <ul>
+                    <li><code>categories:eq:4</code> {{ __('Person is assigned to category with id "4".') }}</li>
+                    <li><code>categories:eq:Sports</code> {{ __('Person is assigned to category with name "Sports".') }}</li>
+                    <li><code>categories:ne:4</code> {{ __('Person is not assigned to category with id "4".') }}</li>
+                    <li><code>categories:sub:Sports</code> {{ __('Person is assigned to category with name "Sports" or one of it\'s sub categories.') }}</li>
+                </ul>
+                <p>{{ __('The field name "categories" is the default name for category fields. However, in practice we need to define different field names for possibly several registries.') }}</p>
+                <p>{{ __('Therefore we create a virtual fields for each registry property.') }} {{ __('So instead of "categories" use "categoriesFoo" whereby "Foo" is the property name for the desired registry, for example "Main".') }}</p>
+            «ENDIF»
             <h5>{{ __('Dates') }}</h5>
             <p>{{ __('When filtering for dates you can use convenient extensions and even time periods.') }}</p>
             <ul>
                 <li>{{ __('Prepend one of the keywords "year", "month", "week", "day", "hour", "min" followed by a colon to search for a time period.') }}
                     <ul>
-                        <li><code>date:eq:year:15.07.2013</code> {{ __('All items with a date in year 2013.') }}</li>
-                        <li><code>date:eq:month:15.07.2013</code> {{ __('All items with a date in July 2013.') }}</li>
+                        <li><code>date:eq:year:15.07.2016</code> {{ __('All items with a date in year 2016.') }}</li>
+                        <li><code>date:eq:month:15.07.2016</code> {{ __('All items with a date in July 2016.') }}</li>
                     </ul>
                 </li>
                 <li>{{ __('You can use relative time information according to the GNU Date Input Formats syntax.') }}

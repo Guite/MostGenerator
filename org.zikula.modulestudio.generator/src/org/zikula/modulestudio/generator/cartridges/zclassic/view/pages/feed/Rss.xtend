@@ -121,40 +121,43 @@ class Rss {
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
                 <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ homePath|e }}</copyright>
                 <webMaster>{{ pageGetVar('adminmail)|e }} ({{ «appName.toLowerCase»_userVar('name', 2, 'admin') }})</webMaster>
-
         «val objName = name.formatForCode»
         {% for «objName» in items %}
-            <item>
-                <title><![CDATA[{% if «objName».updatedDate|default %}{{ «objName».updatedDate|localizeddate('medium', 'short') }} - {% endif %}{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}]]></title>
-                <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</link>
-                <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</guid>
-                «IF !standardFields»
-                    «IF metaData»
-                        {% if «objName».metadata|default and «objName».metadata.author|default %}
-                            <author>{{ «objName».metadata.author }}</author>
-                        {% endif %}
-                    «ENDIF»
-                «ELSE»
-                    {% if «objName».createdUserId is defined %}
-                        {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
-                        {% set cr_name = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
-                        <author>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }} ({{ cr_name|default(cr_uname) }})</author>
-                        «IF metaData»
-                            {% elseif «objName».metadata|default and «objName».metadata.author|default %}
-                                <author>{{ «objName».metadata.author }}</author>
-                        «ENDIF»
-                    {% endif %}
-                «ENDIF»
-                «IF categorisable»
-
-                    <category><![CDATA[{{ __('Categories') }}: {% for propName, catMapping in «objName».categories %}{{ catMapping.category.display_name[lang] }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
-                «ENDIF»
-
-                «description(objName)»
-            </item>
+            {{ block('entry') }}
         {% endfor %}
             </channel>
         </rss>
+        {% block entry %}
+            <item>
+                {{ block('entry_content') }}
+            </item>
+        {% endblock %}
+        {% block entry_content %}
+            <title><![CDATA[{% if «objName».updatedDate|default %}{{ «objName».updatedDate|localizeddate('medium', 'short') }} - {% endif %}{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}]]></title>
+            <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</link>
+            <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</guid>
+            «IF !standardFields»
+                «IF metaData»
+                    {% if «objName».metadata|default and «objName».metadata.author|default %}
+                        <author>{{ «objName».metadata.author }}</author>
+                    {% endif %}
+                «ENDIF»
+            «ELSE»
+                {% if «objName».createdUserId is defined %}
+                    {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
+                    {% set cr_name = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
+                    <author>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }} ({{ cr_name|default(cr_uname) }})</author>
+                    «IF metaData»
+                        {% elseif «objName».metadata|default and «objName».metadata.author|default %}
+                            <author>{{ «objName».metadata.author }}</author>
+                    «ENDIF»
+                {% endif %}
+            «ENDIF»
+            «IF categorisable»
+                <category><![CDATA[{{ __('Categories') }}: {% for propName, catMapping in «objName».categories %}{{ catMapping.category.display_name[lang] }}{% if not loop.last %}, {% endif %}{% endfor %}]]></category>
+            «ENDIF»
+            «description(objName)»
+        {% endblock %}
     '''
 
     def private descriptionLegacy(Entity it, String objName) '''

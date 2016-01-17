@@ -71,7 +71,7 @@ class Display {
                 «templateHeading(appName)»
                 «new ItemActionsView().generateDisplay(it)»
             {% endblock %}
-            {% block adminPageIcon %}eye{% endblock %}
+            {% block admin_page_icon 'eye' %}
             {% block content %}
                 <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display">
         «ENDIF»
@@ -134,7 +134,12 @@ class Display {
 
             «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
                 «IF !skipHookSubscribers»
-                    «callDisplayHooks(appName)»
+                    «IF isLegacyApp»
+                        «callDisplayHooks(appName)»
+                    «ELSE»
+                        {# include display hooks #}
+                        {{ block('display_hooks') }}
+                    «ENDIF»
                 «ENDIF»
                 «IF isLegacyApp»
                     «new ItemActionsView().generateDisplay(it)»
@@ -148,11 +153,11 @@ class Display {
                     «ELSE»
                             </div>
                             <div class="col-sm-3">
-                                «val relationHelper = new Relations»
                                 «IF isLegacyApp»
+                                    «val relationHelper = new Relations»
                                     «FOR elem : refedElems»«relationHelper.displayRelatedItemsLegacy(elem, appName, it)»«ENDFOR»
                                 «ELSE»
-                                    «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                                    {{ block('related_items') }}
                                 «ENDIF»
                             </div>
                         </div>
@@ -164,6 +169,17 @@ class Display {
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {% endblock %}
+            «IF !refedElems.empty»
+                {% block related_items %}
+                    «val relationHelper = new Relations»
+                    «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, it)»«ENDFOR»
+                {% endblock %}
+            «ENDIF»
+            «IF !skipHookSubscribers»
+                {% block display_hooks %}
+                    «callDisplayHooks(appName)»
+                {% endblock %}
+            «ENDIF»
             {% block footer %}
                 {{ parent() }}
 
@@ -500,7 +516,6 @@ class Display {
                 {/if}
             {/foreach}
         «ELSE»
-            {# include display hooks #}
             {% set hooks = notifyDisplayHooks(eventName='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view', id=«displayHookId», urlObject=currentUrlObject) %}
             {% for providerArea, hook in hooks %}
                 {% if providerArea != 'provider.scribite.ui_hooks.editor' %}{# fix for #664 #}
@@ -595,7 +610,7 @@ class Display {
                     {% set allParents = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allParents') %}
                     {% if allParents is not null and allParents is iterable and allParents|length > 0 %}
                         <h4>{{ __('All parents') }}</h4>
-                        «nodeLoop(appName, 'allParents')»
+                        {{ list_relatives(allParents) }}
                     {% endif %}
                 {% endif %}
                 {% is directParent is not defined or directParent == true %}
@@ -612,14 +627,14 @@ class Display {
                 {% set allChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='allChildren') %}
                 {% if allChildren is not null and allChildren is iterable and allChildren|length > 0 %}
                     <h4>{{ __('All children') }}</h4>
-                    «nodeLoop(appName, 'allChildren')»
+                    {{ list_relatives(allChildren) }}
                 {% endif %}
             {% endif %}
             {% if directChildren is not defined or directChildren == true %}
                 {% set directChildren = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='directChildren') %}
                 {% if directChildren is not null and directChildren is iterable and directChildren|length > 0 %}
                     <h4>{{ __('Direct children') }}</h4>
-                    «nodeLoop(appName, 'directChildren')»
+                    {{ list_relatives(directChildren) }}
                 {% endif %}
             {% endif %}
             {% if «objName».lvl > 0 %}
@@ -627,24 +642,28 @@ class Display {
                     {% set predecessors = «pluginPrefix»_treeSelection('«objName»', node=«objName», target='predecessors') %}
                     {% if predecessors is not null and predecessors is iterable and predecessors|length > 0 %}
                         <h4>{{ __('Predecessors') }}</h4>
-                        «nodeLoop(appName, 'predecessors')»
+                        {{ list_relatives(predecessors) }}
                     {% endif %}
                 {% endif %}
                 {% if successors is not defined or successors == true %}
                     {% set successors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='successors') %}
                     {% if successors is not null and successors is iterable and successors|length > 0 %}
                         <h4>{{ __('Successors') }}</h4>
-                        «nodeLoop(appName, 'successors')»
+                        {{ list_relatives(successors) }}
                     {% endif %}
                 {% endif %}
                 {% if preandsuccessors is not defined or preandsuccessors == true %}
                     {% set preandsuccessors = «pluginPrefix»_treeSelection(objectType='«objName»', node=«objName», target='preandsuccessors') %}
                     {% if preandsuccessors is not null and preandsuccessors is iterable and preandsuccessors|length > 0 %}
                         <h4>{{ __('Siblings') }}</h4>
-                        «nodeLoop(appName, 'preandsuccessors')»
+                        {{ list_relatives(preandsuccessors) }}
                     {% endif %}
                 {% endif %}
             {% endif %}
+            {% macro input(name, value, type, size) %}
+            {% block list_relatives(items) %}
+                «nodeLoop(appName, 'items')»
+            {% endmacro %}
         «ENDIF»
     '''
 

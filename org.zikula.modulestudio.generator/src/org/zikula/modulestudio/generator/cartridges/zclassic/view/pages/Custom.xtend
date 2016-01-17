@@ -67,11 +67,9 @@ class Custom {
         «ELSE»
             {# purpose of this template: show output of «name.formatForDisplay» action in «controller.formattedName» area #}
             {% extends '«app.appName»::«IF controller instanceof AdminController»adminBase«ELSE»base«ENDIF».html.twig' %}
-            {% block title %}
-                {{ __('«name.formatForDisplayCapital»') }}
-            {% endblock %}
+            {% block title __('«name.formatForDisplayCapital»') %}
             «IF controller instanceof AdminController»
-                {% block adminPageIcon %}square{% endblock %}
+                {% block admin_page_icon 'square' %}
             «ENDIF»
             {% block content %}
                 <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">

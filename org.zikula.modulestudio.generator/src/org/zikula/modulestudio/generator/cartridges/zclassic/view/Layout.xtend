@@ -104,21 +104,10 @@ class Layout {
         {% endblock %}
         {{ pageSetVar('title', block('title')) }}
 
-        {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
-            «IF generateModerationPanel && needsApproval»
-                {% set moderationObjects = «appName.formatForDB»_moderationObjects() %}
-                {% if moderationObjects|length > 0 %}
-                    {% for modItem in moderationObjects %}
-                        <p class="alert alert-info alert-dismissable text-center">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            {% set itemObjectType = modItem.objectType|lower %}
-                            <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', { workflowState: modItem.state }) }}" class="bold alert-link">{{ modItem.message }}</a>
-                        </p>
-                    {% endfor %}
-                {% endif %}
-            «ENDIF»
-        {% endif %}
+        «IF generateModerationPanel && needsApproval»
+            {{ block('moderation_panel') }}
 
+        «ENDIF»
         {{ showflashes() }}
 
         {% block content %}{% endblock %}
@@ -145,6 +134,23 @@ class Layout {
             «ENDIF»
             {% endif %}
         {% endblock %}
+        «IF generateModerationPanel && needsApproval»
+
+            {% block moderation_panel %}
+                {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
+                    {% set moderationObjects = «appName.formatForDB»_moderationObjects() %}
+                    {% if moderationObjects|length > 0 %}
+                        {% for modItem in moderationObjects %}
+                            <p class="alert alert-info alert-dismissable text-center">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {% set itemObjectType = modItem.objectType|lower %}
+                                <a href="{{ path('«appName.formatForDB»_' ~ itemObjectType ~ '_adminview', { workflowState: modItem.state }) }}" class="bold alert-link">{{ modItem.message }}</a>
+                            </p>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            {% endblock %}
+        «ENDIF»
     '''
 
     // 1.4.x only
@@ -159,7 +165,7 @@ class Layout {
         {% endblock %}
         {% block appTitle %}{# empty on purpose #}{% endblock %}
         {% block titleArea %}
-            <h3><span class="fa fa-{% block adminPageIcon %}{% endblock %}"></span>{% block title %}{% endblock %}</h3>
+            <h3><span class="fa fa-{% block admin_page_icon %}{% endblock %}"></span>{% block title %}{% endblock %}</h3>
         {% endblock %}
         {% block footer %}
             {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}

@@ -81,10 +81,8 @@ class Config {
         «ELSE»
             {# purpose of this template: module configuration page #}
             {% extends '«appName»::«IF configController.formatForDB == 'admin'»adminBase«ELSE»base«ENDIF».html.twig' %}
-            {% block title %}
-                {{ __('Settings') }}
-            {% endblock %}
-            {% block adminPageIcon %}wrench{% endblock %}
+            {% block title __('Settings') %}
+            {% block admin_page_icon 'wrench' %}
             {% block content %}
                 <div class="«appName.toLowerCase»-config">
                     {% form_theme form with [

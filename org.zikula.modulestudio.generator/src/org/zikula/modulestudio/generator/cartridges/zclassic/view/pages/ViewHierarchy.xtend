@@ -82,10 +82,8 @@ class ViewHierarchy {
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
             {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
-            {% block title %}
-                {{ __('«name.formatForDisplayCapital» hierarchy') }}
-            {% endblock %}
-            {% block adminPageIcon %}list{% endblock %}
+            {% block title __('«name.formatForDisplayCapital» hierarchy') %}
+            {% block adminPageIcon 'list' %}
             {% block content %}
                 <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
                     «IF null !== documentation && documentation != ''»
@@ -94,7 +92,7 @@ class ViewHierarchy {
                     «ENDIF»
 
                     <p>
-                    «IF hasActions('edit')»
+                        «IF hasActions('edit')»
                         {% if hasPermission('«appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»') %}
                             {% set addRootTitle = __('Add root node') %}
                             <a id="treeAddRoot" href="javascript:void(0)" title="{{ addRootTitle|e('html_attr') }}" class="fa fa-plus hidden">{{ addRootTitle }}</a>
@@ -113,7 +111,7 @@ class ViewHierarchy {
                             </script>
                             <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                         {% endif %}
-                    «ENDIF»
+                        «ENDIF»
                         {% set switchTitle = __('Switch to table view') %}
                         <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ switchTitle|e('html_attr') }}" class="fa fa-table">{{ switchTitle }}</a>
                     </p>
@@ -215,7 +213,7 @@ class ViewHierarchy {
                                         var inst = node.inst;
                                         var level = inst.get_path().length;
 
-                                        return (level > 1) ? true : false;
+                                        return level > 1 ? true : false;
                                     }
                                 },
                                 'state': {

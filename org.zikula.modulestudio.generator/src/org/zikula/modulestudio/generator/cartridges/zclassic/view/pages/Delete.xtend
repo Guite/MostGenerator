@@ -63,10 +63,8 @@ class Delete {
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view #}
             {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
-            {% block title %}
-                {{ __('Delete «name.formatForDisplay»') }}
-            {% endblock %}
-            {% block adminPageIcon %}trash-o{% endblock %}
+            {% block title __('Delete «name.formatForDisplay»') %}
+            {% block admin_page_icon 'trash-o' %}
             {% block content %}
                 <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
                     <p class="alert alert-warning">{{ __f('Do you really want to delete this «name.formatForDisplay»: "%name%" ?', {'%name%': «name.formatForCode».getTitleFromDisplayPattern()}) }}</p>
@@ -89,11 +87,16 @@ class Delete {
                     </fieldset>
                     «IF !skipHookSubscribers»
 
-                        «callDisplayHooks(appName)»
+                        {{ block('display_hooks') }}
                     «ENDIF»
                     {{ form_end(form) }}
                 </div>
             {% endblock %}
+            «IF !skipHookSubscribers»
+                {% block display_hooks %}
+                    «callDisplayHooks(appName)»
+                {% endblock %}
+            «ENDIF»
         «ENDIF»
     '''
 

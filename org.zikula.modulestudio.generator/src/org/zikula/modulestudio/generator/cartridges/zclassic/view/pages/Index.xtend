@@ -47,10 +47,8 @@ class Index {
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» «pageName» view #}
             {% extends routeArea == 'admin' ? '«app.appName»::adminBase.html.twig' : '«app.appName»::base.html.twig' %}
-            {% block title %}
-                {{ __('«nameMultiple.formatForDisplay»') }}
-            {% endblock %}
-            {% block adminPageIcon %}home{% endblock %}
+            {% block title __('«nameMultiple.formatForDisplay»') %}
+            {% block admin_page_icon 'home' %}
             {% block content %}
                 <p>{{ __('Welcome to the «name.formatForDisplay» section of the «app.name.formatForDisplayCapital» application.') }}</p>
             {% endblock %}

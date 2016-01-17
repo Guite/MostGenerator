@@ -113,15 +113,11 @@ class Forms {
             {/if}
         «ELSE»
             {% if mode != 'create' %}
-                {% block title %}
-                    {{ __('Edit «name.formatForDisplay»') }}
-                {% endblock %}
-                {% block adminPageIcon %}pencil-square-o{% endblock %}
+                {% block title __('Edit «name.formatForDisplay»') %}
+                {% block admin_page_icon 'pencil-square-o' %}
             {% elseif mode == 'create' %}
-                {% block title %}
-                    {{ __('Create «name.formatForDisplay»') }}
-                {% endblock %}
-                {% block adminPageIcon %}plus{% endblock %}
+                {% block title __('Create «name.formatForDisplay»') %}
+                {% block admin_page_icon 'plus' %}
             {% endif %}
         «ENDIF»
         «IF app.targets('1.3.x')»

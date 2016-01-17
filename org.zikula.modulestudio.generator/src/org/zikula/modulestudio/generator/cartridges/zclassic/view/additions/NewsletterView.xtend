@@ -12,6 +12,7 @@ class NewsletterView {
     def generate(Application it, IFileSystemAccess fsa) {
         val pluginClassSuffix = if (!targets('1.3.x')) 'Plugin' else ''
         val templatePath = getViewPath + 'plugin_config/'
+        // not ready for Twig yet
         var fileName = 'ItemList' + pluginClassSuffix + '.tpl'
         if (!shouldBeSkipped(templatePath + fileName)) {
             if (shouldBeMarked(templatePath + fileName)) {
