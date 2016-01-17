@@ -35,9 +35,9 @@ class ModelFileCopier implements IWorkflowComponent {
 
     /**
      * Path to the source diagram model file.
-     */
+     * /
     @Accessors
-    String sourceDiagramFile = '' //$NON-NLS-1$
+    String sourceDiagramFile = '' //$NON-NLS-1$*/
 
     /**
      * Path to the target application model file.
@@ -53,9 +53,9 @@ class ModelFileCopier implements IWorkflowComponent {
 
     /**
      * Path to the target diagram model file.
-     */
+     * /
     @Accessors
-    String targetDiagramFile = '' //$NON-NLS-1$
+    String targetDiagramFile = '' //$NON-NLS-1$*/
 
     /**
      * Invokes the workflow component from the outside.
@@ -86,7 +86,7 @@ class ModelFileCopier implements IWorkflowComponent {
 
         copy(sourceModelFile, targetModelFile)
         copy(sourceModelFileEnriched, targetModelFileEnriched)
-        copy(sourceDiagramFile, targetDiagramFile)
+        //copy(sourceDiagramFile, targetDiagramFile)
     }
 
     /**

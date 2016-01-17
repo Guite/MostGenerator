@@ -40,10 +40,10 @@ var targetDirCartridge = '${targetDir}${cartridgeName}'
 
 // calculated from input vars
 var modelFile = '${modelPath}/${modelName}.mostapp'
-var diagramFile = '${modelPath}/${modelName}.mostdiagram'
+//var diagramFile = '${modelPath}/${modelName}.mostdiagram'
 // note: this does not consider the writeModelToDocs generator setting (yet)
 var modelFileCopy = '${targetDir}/model/${modelName}.mostapp'
-var diagramFileCopy = '${targetDir}/model/${modelName}.mostdiagram'
+//var diagramFileCopy = '${targetDir}/model/${modelName}.mostdiagram'
 var modelFileEnriched = '${modelPath}/${modelName}_enriched.mostapp'
 var modelFileEnrichedCopy = '${targetDir}/model/${modelName}_enriched.mostapp'
 
@@ -119,8 +119,8 @@ Workflow {
         sourceModelFileEnriched = modelFileEnriched
         targetModelFileEnriched = modelFileEnrichedCopy
         // diagram model
-        sourceDiagramFile = diagramFile
-        targetDiagramFile = diagramFileCopy
+        //sourceDiagramFile = diagramFile
+        //targetDiagramFile = diagramFileCopy
     }
 
     // output required generation time
