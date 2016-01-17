@@ -660,8 +660,7 @@ class Display {
                     {% endif %}
                 {% endif %}
             {% endif %}
-            {% macro input(name, value, type, size) %}
-            {% block list_relatives(items) %}
+            {% macro list_relatives(items) %}
                 «nodeLoop(appName, 'items')»
             {% endmacro %}
         «ENDIF»
