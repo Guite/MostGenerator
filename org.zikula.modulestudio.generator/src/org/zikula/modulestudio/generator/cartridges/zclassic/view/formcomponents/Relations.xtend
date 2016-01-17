@@ -25,8 +25,6 @@ class Relations {
     extension ViewExtensions = new ViewExtensions
     extension Utils = new Utils
 
-    /* TODO migrate to Symfony forms #416 */
-
     /**
      * This method creates the templates to be included into the edit forms.
      */
