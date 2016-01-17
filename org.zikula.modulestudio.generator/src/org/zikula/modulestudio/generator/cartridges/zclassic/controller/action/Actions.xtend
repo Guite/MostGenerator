@@ -19,15 +19,16 @@ import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelperFunctions
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Actions {
-
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -570,17 +571,19 @@ class Actions {
             $showAllEntries = $request->query->getInt('all', 0);
         «ENDIF»
 
-        if (!$showAllEntries) {
-            «IF isLegacy»
-                $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
-            «ELSE»
-                $csv = $request->getRequestFormat() == 'csv' ? 1 : 0;
-            «ENDIF»
-            if ($csv == 1) {
-                $showAllEntries = 1;
+        «IF app.generateCsvTemplates»
+            if (!$showAllEntries) {
+                «IF isLegacy»
+                    $csv = (int) $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
+                «ELSE»
+                    $csv = $request->getRequestFormat() == 'csv' ? 1 : 0;
+                «ENDIF»
+                if ($csv == 1) {
+                    $showAllEntries = 1;
+                }
             }
-        }
 
+        «ENDIF»
         «IF hasView»
             «IF isLegacy»
                 $this->view->assign('showOwnEntries', $showOwnEntries)
@@ -664,7 +667,7 @@ class Actions {
             «ENDIF»
 
             $listObjectTypes = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
-            $hasListFields = (in_array($objectType, $listObjectTypes));
+            $hasListFields = in_array($objectType, $listObjectTypes);
 
             foreach ($entities as $item) {
                 $currItem = $item->toArray();
@@ -730,9 +733,9 @@ class Actions {
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $idValues«IF isLegacy»)«ELSE»]«ENDIF»);
         «IF isLegacy»
-            $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+            $this->throwNotFoundUnless(null !== $entity, $this->__('No such item.'));
         «ELSE»
-            if ($entity === null) {
+            if (null === $entity) {
                 throw new NotFoundHttpException($this->__('No such item.'));
             }
         «ENDIF»
@@ -895,9 +898,9 @@ class Actions {
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $idValues«IF isLegacy»)«ELSE»]«ENDIF»);
         «IF isLegacy»
-            $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+            $this->throwNotFoundUnless(null !== $entity, $this->__('No such item.'));
         «ELSE»
-            if ($entity === null) {
+            if (null === $entity) {
                 throw new NotFoundHttpException($this->__('No such item.'));
             }
         «ENDIF»
@@ -1037,6 +1040,10 @@ class Actions {
             $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         «ELSE»
             $entity = $«name.formatForCode»;
+
+            $flashBag = $this->request->getSession()->getFlashBag();
+            $logger = $this->get('logger');
+            $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
         «ENDIF»
 
         $entity->initWorkflow();
@@ -1046,9 +1053,6 @@ class Actions {
             $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
         «ELSE»
             $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
-            $flashBag = $this->request->getSession()->getFlashBag();
-            $logger = $this->get('logger');
-            $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
         «ENDIF»
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {

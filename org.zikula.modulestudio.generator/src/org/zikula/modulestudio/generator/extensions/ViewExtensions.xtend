@@ -68,7 +68,7 @@ class ViewExtensions {
      * Returns a list of view formats supported by an application.
      */
     def getListOfViewFormats(Application it) {
-        var formats = newArrayList()
+        var formats = newArrayList
         if (generateCsvTemplates) {
             formats.add('csv')
         }
@@ -97,7 +97,7 @@ class ViewExtensions {
      * Returns a list of display formats supported by an application.
      */
     def getListOfDisplayFormats(Application it) {
-        var formats = newArrayList()
+        var formats = newArrayList
         if (generateXmlTemplates) {
             formats.add('xml')
         }
