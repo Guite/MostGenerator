@@ -29,6 +29,7 @@ import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -39,6 +40,7 @@ class ExampleData {
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
@@ -51,11 +53,13 @@ class ExampleData {
         /**
          * Create the default data for «appName».
          *
-         * @param array $categoryRegistryIdsPerEntity List of category registry ids.
-         *
+        «IF hasCategorisableEntities»
+            «' '»* @param array $categoryRegistryIdsPerEntity List of category registry ids.
+            «' '»*
+        «ENDIF»
          * @return void
          */
-        protected function createDefaultData($categoryRegistryIdsPerEntity)
+        protected function createDefaultData(«IF hasCategorisableEntities»$categoryRegistryIdsPerEntity«ENDIF»)
         {
             «exampleRows»
         }

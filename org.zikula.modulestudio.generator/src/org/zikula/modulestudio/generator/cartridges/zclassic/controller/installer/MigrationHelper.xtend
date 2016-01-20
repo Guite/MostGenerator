@@ -2,33 +2,43 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.install
 
 import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class MigrationHelper {
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension Utils = new Utils
 
     def generateUsageExample(Application it) '''
-        // rename module for all modvars
-        $this->updateModVarsTo140();
+        «IF !variables.empty»
+            // rename module for all modvars
+            $this->updateModVarsTo140();
 
+        «ENDIF»
         // update extension information about this app
         $this->updateExtensionInfoFor140();
 
         // rename existing permission rules
         $this->renamePermissionsFor140();
+        «IF hasCategorisableEntities»
 
-        // rename existing category registries
-        $this->renameCategoryRegistriesFor140();
+            // rename existing category registries
+            $this->renameCategoryRegistriesFor140();
+        «ENDIF»
 
         // rename all tables
         $this->renameTablesFor140();
 
         // remove event handler definitions from database
         $this->dropEventHandlersFromDatabase();
+        «IF hasHookSubscribers»
 
-        // update module name in the hook tables
-        $this->updateHookNamesFor140();
+            // update module name in the hook tables
+            $this->updateHookNamesFor140();
+        «ENDIF»
 
         // update module name in the workflows table
         $this->updateWorkflowsFor140();

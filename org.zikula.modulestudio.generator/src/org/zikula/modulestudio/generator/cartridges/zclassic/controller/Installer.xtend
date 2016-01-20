@@ -146,9 +146,9 @@ class Installer {
                     $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
                 «ENDFOR»
             «ENDIF»
-
-            $categoryRegistryIdsPerEntity = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF hasCategorisableEntities»
+
+                $categoryRegistryIdsPerEntity = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
                 // add default entry for category registry (property named Main)
                 «IF targets('1.3.x')»
@@ -196,7 +196,7 @@ class Installer {
             «ENDIF»
 
             // create the default data
-            $this->createDefaultData($categoryRegistryIdsPerEntity);
+            $this->createDefaultData(«IF hasCategorisableEntities»$categoryRegistryIdsPerEntity«ENDIF»);
 
             «IF targets('1.3.x')»
                 // register persistent event handlers
