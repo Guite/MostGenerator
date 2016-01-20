@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.workflow.components
 
 import java.io.IOException
+import java.util.Collections
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.common.util.WrappedException
 import org.eclipse.emf.ecore.resource.Resource
@@ -31,7 +32,7 @@ class ModelWriter extends WorkflowComponentWithSlot {
         fileUri = resource.resourceSet.URIConverter.normalize(fileUri)
         resource.URI = fileUri
         try {
-            resource.save(null)
+            resource.save(Collections.EMPTY_MAP)
         } catch (IOException e) {
             throw new WrappedException(e)
         }
