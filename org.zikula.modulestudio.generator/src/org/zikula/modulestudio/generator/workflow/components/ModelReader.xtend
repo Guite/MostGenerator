@@ -68,7 +68,7 @@ class ModelReader extends WorkflowComponentWithSlot {
 
         val uri = getUri
         val fileURI = if ('file'.equals(uri.substring(0, 4))) URI //$NON-NLS-1$
-                .createURI(uri) else URI.createFileURI(uri)
+            .createURI(uri) else URI.createFileURI(uri)
         val resource = resourceSet.getResource(fileURI, true)
 
         resource
@@ -80,7 +80,7 @@ class ModelReader extends WorkflowComponentWithSlot {
      * @return The injector.
      */
     def protected getInjector() {
-        if (injector !== null) {
+        if (null !== injector) {
             // injector given by MOST
             return this.injector
         }
@@ -89,11 +89,10 @@ class ModelReader extends WorkflowComponentWithSlot {
             // create injector for WebGen
             val Module runtimeModule = new MostDslRuntimeModule
             this.injector = Guice.createInjector(runtimeModule)
-        }
-        else {
+        } else {
             // standalone setup for mwe files
             injector = new MostDslStandaloneSetup()
-                    .createInjectorAndDoEMFRegistration
+                .createInjectorAndDoEMFRegistration
         }
 
         injector
