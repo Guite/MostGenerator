@@ -45,20 +45,26 @@ class MigrationHelper {
     '''
 
     def generate(Application it) '''
-        «updateModVarsTo140»
+        «IF !variables.empty»
+            «updateModVarsTo140»
 
+        «ENDIF»
         «updateExtensionInfoFor140»
 
         «renamePermissionsFor140»
 
-        «renameCategoryRegistriesFor140»
+        «IF hasCategorisableEntities»
+            «renameCategoryRegistriesFor140»
 
+        «ENDIF»
         «renameTablesFor140»
 
         «dropEventHandlersFromDatabase»
 
-        «updateHookNamesFor140»
+        «IF hasHookSubscribers»
+            «updateHookNamesFor140»
 
+        «ENDIF»
         «updateWorkflowsFor140»
 
         «getConnection»
