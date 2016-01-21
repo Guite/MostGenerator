@@ -60,11 +60,8 @@ class ModelReader extends WorkflowComponentWithSlot {
      * @return The created Resource instance.
      */
     def protected getResource() {
-        val injector = getInjector
-        val XtextResourceSet resourceSet = injector
-                .getInstance(XtextResourceSet)
-        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL,
-                Boolean.TRUE)
+        val resourceSet = getInjector.getInstance(XtextResourceSet)
+        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
 
         val uri = getUri
         val fileURI = if ('file'.equals(uri.substring(0, 4))) URI //$NON-NLS-1$
