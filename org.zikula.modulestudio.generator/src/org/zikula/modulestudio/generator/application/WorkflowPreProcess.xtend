@@ -38,6 +38,10 @@ class WorkflowPreProcess {
         var hasErrors = false
         val files = dir.listFiles
 
+        if (null === files) {
+            return hasErrors
+        }
+
         for (file : files) {
             if (file.isDirectory) {
                 emptyDir(file)

@@ -34,7 +34,14 @@ class ReportingServices {
 
         var reports = newArrayList
         val reportDir = new File(FileLocator.toFileURL(resources.head).toURI)
-        for (file : reportDir.list(new ReportFilenameFilter)) {
+
+        val files = reportDir.list(new ReportFilenameFilter)
+
+        if (null === files) {
+            return reports
+        }
+
+        for (file : files) {
             reports += file.replace('.rptdesign', '') //$NON-NLS-1$ //$NON-NLS-2$
         }
 
