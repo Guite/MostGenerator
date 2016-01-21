@@ -121,11 +121,15 @@ class ModelFileCopier implements IWorkflowComponent {
             var FileChannel sourceChannel = null
             var FileChannel destinationChannel = null
             try {
-                sourceChannel = new FileInputStream(source).channel
-                destinationChannel = new FileOutputStream(target).channel
+                val inputStream = new FileInputStream(source)
+                val outputStream = new FileOutputStream(target)
+                sourceChannel = inputStream.channel
+                destinationChannel = outputStream.channel
                 destinationChannel.transferFrom(sourceChannel, 0, sourceChannel.size)
                 sourceChannel.close
                 destinationChannel.close
+                inputStream.close
+                outputStream.close
             } finally {
                 sourceChannel?.close
                 destinationChannel?.close
