@@ -1,5 +1,4 @@
-ModuleStudio Generator - MDSD for Zikula
-========================================
+# ModuleStudio Generator - MDSD for Zikula
 
 ModuleStudio is an IDE for modeling and generating applications
 for the [Zikula application framework][].

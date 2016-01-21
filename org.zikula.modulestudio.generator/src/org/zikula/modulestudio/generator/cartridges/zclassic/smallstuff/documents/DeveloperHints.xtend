@@ -5,8 +5,8 @@ import de.guite.modulestudio.metamodel.Application
 class DeveloperHints {
 
     def generate(Application it) '''
-CUSTOMISATION
--------------
+# CUSTOMISATION
+
 Here are a few short hints which become helpful for customising your generated application:
 
     * Your model is the real software so do all important changes (like adding or moving table columns) on model level.
