@@ -98,7 +98,7 @@ class ModelFileCopier implements IWorkflowComponent {
      *            The target file path.
      */
     def protected void copy(String sourceFile, String targetFile) {
-        if (sourceFile.isEmpty || targetFile.isEmpty) {
+        if (sourceFile.empty || targetFile.empty) {
             return
         }
 
