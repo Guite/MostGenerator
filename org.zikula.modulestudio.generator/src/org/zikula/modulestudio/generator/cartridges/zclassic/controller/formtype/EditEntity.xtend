@@ -327,52 +327,56 @@ class EditEntity {
          */
         public function addEntityFields(FormBuilderInterface $builder, array $options)
         {
-            «val hasTranslatable = extensions.contains('translatable')»
-            «IF it instanceof Entity»
-                «IF hasTranslatable»
-                    $useOnlyCurrentLanguage = true;
-                    if ($this->variableApi->get('ZConfig', 'multilingual')) {
-                        $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
-                        if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
-                            $useOnlyCurrentLanguage = false;
-                            $currentLanguage = ZLanguage::getLanguageCode();
-                            foreach ($supportedLanguages as $language) {
-                                if ($language == $currentLanguage) {
-                                    «translatableFieldSet('', '')»
-                                }
-                            }
-                            foreach ($supportedLanguages as $language) {
-                                if ($language != $currentLanguage) {
-                                    «translatableFieldSet('$language', '$language')»
-                                }
-                            }
-                        }
-                    }
-                    if ($useOnlyCurrentLanguage === true) {
-                        $language = ZLanguage::getLanguageCode();
+            «val isTranslatable = extensions.contains('translatable')»
+            «IF it instanceof Entity && isTranslatable»
+                «translatableFields(it as Entity)»
+            «ENDIF»
+            «fieldAdditions(isTranslatable)»
+        }
+    '''
+
+    def private translatableFields(Entity it) '''
+        $useOnlyCurrentLanguage = true;
+        if ($this->variableApi->get('ZConfig', 'multilingual')) {
+            $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
+            if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
+                $useOnlyCurrentLanguage = false;
+                $currentLanguage = ZLanguage::getLanguageCode();
+                foreach ($supportedLanguages as $language) {
+                    if ($language == $currentLanguage) {
                         «translatableFieldSet('', '')»
                     }
-                «ENDIF»
-            «ENDIF»
-            «IF !hasTranslatable
-                || (hasTranslatable && (!getEditableNonTranslatableFields.empty || (it instanceof Entity && (it as Entity).hasSluggableFields && !(it as Entity).hasTranslatableSlug)))
-                || (it instanceof Entity) && (it as Entity).geographical»
-                «IF hasTranslatable»
-                    «FOR field : getEditableNonTranslatableFields»«field.fieldImpl('', '')»«ENDFOR»
-                «ELSE»
-                    «FOR field : getEditableFields»«field.fieldImpl('', '')»«ENDFOR»
-                «ENDIF»
-                «IF it instanceof Entity»
-                    «IF !hasTranslatable || (hasSluggableFields && !hasTranslatableSlug)»
-
-                        «slugField('', '')»
-                    «ENDIF»
-                    «IF geographical»
-                        $this->addGeographicalFields($builder, $options);
-                    «ENDIF»
-                «ENDIF»
-            «ENDIF»
+                }
+                foreach ($supportedLanguages as $language) {
+                    if ($language != $currentLanguage) {
+                        «translatableFieldSet('$language', '$language')»
+                    }
+                }
+            }
         }
+        if ($useOnlyCurrentLanguage === true) {
+            $language = ZLanguage::getLanguageCode();
+            «translatableFieldSet('', '')»
+        }
+    '''
+
+    def private fieldAdditions(DataObject it, Boolean isTranslatable) '''
+        «IF !isTranslatable || !getEditableNonTranslatableFields.empty»
+            «IF isTranslatable»
+                «FOR field : getEditableNonTranslatableFields»«field.fieldImpl('', '')»«ENDFOR»
+            «ELSE»
+                «FOR field : getEditableFields»«field.fieldImpl('', '')»«ENDFOR»
+            «ENDIF»
+        «ENDIF»
+        «IF it instanceof Entity»
+            «IF hasSluggableFields && (!isTranslatable || !hasTranslatableSlug)»
+
+                «slugField('', '')»
+            «ENDIF»
+            «IF geographical»
+                $this->addGeographicalFields($builder, $options);
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
