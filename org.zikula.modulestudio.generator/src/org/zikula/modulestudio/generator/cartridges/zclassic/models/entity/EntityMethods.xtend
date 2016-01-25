@@ -527,7 +527,6 @@ class EntityMethods {
          * (1) http://docs.doctrine-project.org/en/latest/cookbook/implementing-wakeup-or-clone.html
          * (2) http://www.php.net/manual/en/language.oop5.cloning.php
          * (3) http://stackoverflow.com/questions/185934/how-do-i-create-a-copy-of-an-object-in-php
-         * (4) http://www.pantovic.com/article/26/doctrine2-entity-cloning
          */
         public function __clone()
         {
