@@ -475,15 +475,11 @@ class BlockList {
             /**
              * Returns the template used for rendering the editing form.
              *
-             * Use double colon name style, as this is requested by documentation
-             * of this method in BlockHandlerInterface.
-             *
              * @return string Template path.
              */
             public function getFormTemplate()
             {
-                return '«appName»:Block:itemlist_modify«templateExtension»';
-                //return '@«appName»/Block/itemlist_modify«templateExtension»';
+                return '@«appName»/Block/itemlist_modify«templateExtension»';
             }
         «ENDIF»
     '''

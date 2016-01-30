@@ -61,7 +61,6 @@ class BlocksView {
             «editTemplateJs»
         «ELSE»
             {# Purpose of this template: Edit block for generic item list #}
-            {% form_theme form '@«appName»/Form/bootstrap_3.html.twig' %}
             {{ form_row(form.objectType) }}
             «IF hasCategorisableEntities»
                 {% if isCategorisable %}
