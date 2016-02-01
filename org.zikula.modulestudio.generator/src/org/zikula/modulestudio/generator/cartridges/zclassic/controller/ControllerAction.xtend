@@ -92,7 +92,7 @@ class ControllerAction {
          «IF !isLegacy»
          * @param Request  $request      Current request instance
          «ENDIF»
-        «IF entity !== null»
+        «IF null !== entity»
             «actionDocMethodParams(entity, it)»
         «ELSE»
             «actionDocMethodParams»

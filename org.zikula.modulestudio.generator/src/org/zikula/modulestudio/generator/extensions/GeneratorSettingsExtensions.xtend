@@ -188,7 +188,7 @@ class GeneratorSettingsExtensions {
      * Determines a blacklist with each entry representing a file which should not be generated.
      */
     def getListOfFilesToBeSkipped(Application it) {
-        if (hasSettings && getSettings.skipFiles !== null) {
+        if (hasSettings && null !== getSettings.skipFiles) {
             getListOfAffectedFiles(getSettings.skipFiles)
         } else {
             newArrayList('')
@@ -199,7 +199,7 @@ class GeneratorSettingsExtensions {
      * Determines a list with file pathes which should be marked by special file names.
      */
     def getListOfFilesToBeMarked(Application it) {
-        if (hasSettings && getSettings.markFiles !== null) {
+        if (hasSettings && null !== getSettings.markFiles) {
             getListOfAffectedFiles(getSettings.markFiles)
         } else {
             newArrayList('')

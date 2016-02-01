@@ -149,10 +149,10 @@ class WorkflowStart {
     
     def private getModel() {
         // do not read in the model again after validation did it already
-        if (model === null) {
+        if (null === model) {
             val reader = new ModelReader
             reader.uri = settings.modelPath
-            if (injector !== null) {
+            if (null !== injector) {
                reader.injector = injector
             }
             model = reader.invoke
@@ -165,7 +165,7 @@ class WorkflowStart {
         val app = model.contents.head as Application
         settings.appName = app.name?.formatForCodeCapital ?: 'Module' //$NON-NLS-1$
         settings.appVendor = app.vendor?.formatForCodeCapital ?: 'Vendor' //$NON-NLS-1$
-        settings.appVersion = if (app.version !== null) app.version else '1.0.0' //$NON-NLS-1$
+        settings.appVersion = if (null !== app.version) app.version else '1.0.0' //$NON-NLS-1$
 
         // compute destination path for model files
         var modelDestinationPath = File.separator + 'model' + File.separator //$NON-NLS-1$

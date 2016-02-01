@@ -36,9 +36,9 @@ class ControllerExtensions {
      * Returns name of container (controller or entity). 
      */
     def controllerName(Action it) {
-        if (controller !== null) {
+        if (null !== controller) {
             controller.formattedName
-        } else if (entity !== null) {
+        } else if (null !== entity) {
             entity.name.formatForCode
         }
         name.formatForDB

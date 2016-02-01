@@ -35,7 +35,7 @@ class Annotations {
         «IF !isBase»
             «actionRoute(entity, isAdmin)»
         «ELSE»
-            «IF entity !== null»
+            «IF null !== entity»
                 «IF isAdmin»
                     «' '»* @Theme("admin")
                 «ENDIF»
@@ -66,7 +66,7 @@ class Annotations {
 
     def private dispatch actionRoute(MainAction it, Entity entity, Boolean isAdmin) '''
          «' '»*
-         «' '»* @Route("/«IF entity !== null»«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»",
+         «' '»* @Route("/«IF null !== entity»«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»",
          «' '»*        methods = {"GET"}
          «' '»* )
     '''
@@ -143,7 +143,7 @@ class Annotations {
 
     def private dispatch actionRoute(CustomAction it, Entity entity, Boolean isAdmin) '''
          «' '»*
-         «' '»* @Route("/«IF entity !== null»«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»/«name.formatForCode»",
+         «' '»* @Route("/«IF null !== entity»«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»«ELSE»«controller.formattedName»«ENDIF»/«name.formatForCode»",
          «' '»*        methods = {"GET", "POST"}
          «' '»* )
     '''

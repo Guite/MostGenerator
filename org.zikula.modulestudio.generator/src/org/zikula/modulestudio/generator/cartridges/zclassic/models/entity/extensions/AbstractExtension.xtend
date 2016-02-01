@@ -191,7 +191,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
     }
 
     def protected repositoryClass(Entity it, String classType) {
-        if (app === null) {
+        if (null === app) {
             app = application
         }
         (if (app.targets('1.3.x')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital

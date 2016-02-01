@@ -220,7 +220,7 @@ class Repository {
             «intGetQueryFromBuilder»
 
             «new Joins().generate(it, app)»
-            «IF hasArchive && getEndDateField !== null»
+            «IF hasArchive && null !== getEndDateField»
 
                 «archiveObjects(it)»
             «ENDIF»
@@ -272,7 +272,7 @@ class Repository {
             use ServiceUtil;
             use System;
             use UserUtil;
-            «IF hasArchive && getEndDateField !== null»
+            «IF hasArchive && null !== getEndDateField»
                 use ZLanguage;
                 use Zikula\Core\RouteUrl;
             «ENDIF»
@@ -356,7 +356,7 @@ class Repository {
          */
         public function getStartDateFieldName()
         {
-            $fieldName = '«IF getStartDateField !== null»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
+            $fieldName = '«IF null !== getStartDateField»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
 
             return $fieldName;
         }
@@ -1008,12 +1008,12 @@ class Repository {
     def private applyDefaultDateRangeFilter(Entity it) '''
         «val startDateField = getStartDateField»
         «val endDateField = getEndDateField»
-        «IF startDateField !== null»
+        «IF null !== startDateField»
             $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
         «ENDIF»
-        «IF endDateField !== null»
+        «IF null !== endDateField»
             $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);

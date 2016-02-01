@@ -13,11 +13,12 @@ class GitRevision {
         val bundle = ModuleStudioGeneratorActivator.getDefault.bundle
         var url = FileLocator.find(bundle, new Path('gitrevision.txt'), null)
         
-        if (url === null) {
+        if (null === url) {
             url = FileLocator.find(bundle, new Path('src/gitrevision.txt'), null)
-            if (url === null) {
-                return 'error reading data.'
-            }
+        }
+
+        if (null === url) {
+            return 'error reading data.'
         }
 
         var BufferedReader br
@@ -26,7 +27,7 @@ class GitRevision {
             val file = new File(fileUrl.path)
             br = new BufferedReader(new FileReader(file))
             val commit = br.readLine
-            if (commit === null) {
+            if (null === commit) {
                 return 'error reading data.'
             }
             commit

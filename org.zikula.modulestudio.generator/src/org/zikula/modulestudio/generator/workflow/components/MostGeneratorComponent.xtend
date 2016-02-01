@@ -70,7 +70,7 @@ class MostGeneratorComponent extends GeneratorComponent implements
         if (slotNames.empty) {
             throw new IllegalStateException("no 'slot' has been configured.")
         }
-        if (injector === null) {
+        if (null === injector) {
             throw new IllegalStateException(
                     "no Injector has been configured. Use 'register' with an ISetup or 'injector' directly.")
         }
@@ -79,10 +79,10 @@ class MostGeneratorComponent extends GeneratorComponent implements
         }
 
         for (outlet : outlets.entrySet) {
-            if (outlet.key === null) {
+            if (null === outlet.key) {
                 throw new IllegalStateException('One of the outlets was configured without a name')
             }
-            if (outlet.value === null) {
+            if (null === outlet.value) {
                 throw new IllegalStateException("The path of outlet '" + outlet.key + "' was null.")
             }
         }
@@ -111,7 +111,7 @@ class MostGeneratorComponent extends GeneratorComponent implements
         val fileSystemAccess = configuredFileSystemAccess
         for (slot : slotNames) {
             val object = ctx.get(slot)
-            if (object === null) {
+            if (null === object) {
                 throw new IllegalStateException("Slot '" + slot + "' was empty!")
             }
             if (object instanceof Iterable<?>) {

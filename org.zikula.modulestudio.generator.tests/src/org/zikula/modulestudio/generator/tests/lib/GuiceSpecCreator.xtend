@@ -35,7 +35,7 @@ class GuiceSpecCreator extends AbstractSpecCreator {
     var static MostDslInjectorProvider injectorProvider = new MostDslInjectorProvider
 
     override <T> T create(Class<T> klass) {
-        if (injector == null) {
+        if (null === injector) {
             beforeSpecRun
         }
         injector.getInstance(klass)
