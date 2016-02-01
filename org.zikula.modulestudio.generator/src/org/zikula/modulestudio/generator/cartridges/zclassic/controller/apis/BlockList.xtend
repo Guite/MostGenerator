@@ -37,7 +37,7 @@ class BlockList {
             namespace «appNamespace»\Block\Base;
 
             use ModUtil;
-            use Zikula\Core\AbstractBlockHandler;
+            use Zikula\BlocksModule\AbstractBlockHandler;
 
         «ENDIF»
         /**

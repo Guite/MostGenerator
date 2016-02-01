@@ -29,7 +29,7 @@ class BlockModeration {
             namespace «appNamespace»\Block\Base;
 
             use UserUtil;
-            use Zikula\Core\AbstractBlockHandler;
+            use Zikula\BlocksModule\AbstractBlockHandler;
 
         «ENDIF»
         /**
