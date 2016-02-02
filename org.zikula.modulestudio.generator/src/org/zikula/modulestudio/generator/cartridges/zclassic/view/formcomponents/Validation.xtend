@@ -104,8 +104,8 @@ class Validation {
         «ENDIF»
     '''
 
-    def fieldValidationCssClass(DerivedField it) '''«IF !isLegacyApp» cssClass='«ENDIF»«IF isLegacyApp && mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
-    def fieldValidationCssClassOptional(UploadField it)'''«IF !isLegacyApp» cssClass='«ENDIF»«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF !isLegacyApp»'«ENDIF»'''
+    def fieldValidationCssClass(DerivedField it) '''«IF isLegacyApp» cssClass='«ENDIF»«IF isLegacyApp && mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF isLegacyApp»'«ENDIF»'''
+    def fieldValidationCssClassOptional(UploadField it)'''«IF isLegacyApp» cssClass='«ENDIF»«IF unique»validate-unique«ENDIF»«IF null !== cssClass && !cssClass.equals('')» «cssClass»«ENDIF»«fieldValidationCssClassAdditions»«IF isLegacyApp»'«ENDIF»'''
     def private fieldValidationCssClassAdditions(DerivedField it) {
         switch it {
             AbstractIntegerField: ' validate-digits'
