@@ -83,7 +83,7 @@ class ViewHierarchy {
             {# purpose of this template: «nameMultiple.formatForDisplay» tree view #}
             {% extends routeArea == 'admin' ? '«appName»::adminBase.html.twig' : '«appName»::base.html.twig' %}
             {% block title __('«name.formatForDisplayCapital» hierarchy') %}
-            {% block adminPageIcon 'list' %}
+            {% block adminPageIcon 'list-alt' %}
             {% block content %}
                 <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
                     «IF null !== documentation && documentation != ''»

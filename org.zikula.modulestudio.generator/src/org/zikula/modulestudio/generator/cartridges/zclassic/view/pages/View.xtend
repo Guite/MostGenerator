@@ -72,7 +72,7 @@ class View {
             {# purpose of this template: «nameMultiple.formatForDisplay» list view #}
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
             {% block title __('«name.formatForDisplayCapital» list') %}
-            {% block admin_page_icon 'list' %}
+            {% block admin_page_icon 'list-alt' %}
             {% block content %}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">

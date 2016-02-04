@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Account {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
@@ -18,26 +19,22 @@ class Account {
 
     FileHelper fh = new FileHelper
 
+    // 1.3.x only
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Account' + (if (targets('1.3.x')) '' else 'Api') + '.php',
+        if (!targets('1.3.x')) {
+            return
+        }
+        println('Generating account api')
+        generateClassPair(fsa, getAppSourceLibPath + 'Api/Account.php',
             fh.phpFileContent(it, accountApiBaseClass), fh.phpFileContent(it, accountApiImpl)
         )
     }
 
     def private accountApiBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api\Base;
-
-            use ModUtil;
-            use ServiceUtil;
-            use UserUtil;
-            use Zikula_AbstractBase;
-
-        «ENDIF»
         /**
          * Account api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Account extends Zikula_AbstractApi«ELSE»AccountApi extends Zikula_AbstractBase«ENDIF»
+        class «appName»_Api_Base_Account extends Zikula_AbstractApi
         {
             «accountApiBaseImpl»
         }
@@ -51,16 +48,12 @@ class Account {
          *
          * @return array List of collected account items
          */
-        public function getall(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getall(array $args = array())
         {
             // collect items in an array
-            $items = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $items = array();
 
-            «IF targets('1.3.x')»
-                $useAccountPage = $this->getVar('useAccountPage', true);
-            «ELSE»
-                $useAccountPage = $this->get('zikula_extensions_module.api.variable')->get('«appName»', 'useAccountPage', true);
-            «ENDIF»
+            $useAccountPage = $this->getVar('useAccountPage', true);
             if ($useAccountPage === false) {
                 return $items;
             }
@@ -72,10 +65,7 @@ class Account {
                 return $items;
             }
 
-            «IF !targets('1.3.x')»
-                $permissionHelper = $this->get('zikula_permissions_module.api.permission');
-            «ENDIF»
-            if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . '::', '::', ACCESS_OVERVIEW)) {
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
                 return $items;
             }
 
@@ -83,34 +73,26 @@ class Account {
             «IF !getAllUserControllers.empty && getMainUserController.hasActions('view')»
                 «FOR entity : getAllEntities.filter[standardFields && ownerPermission]»
                     $objectType = '«entity.name.formatForCode»';
-                    if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
-                        $items[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-                            «IF targets('1.3.x')»
-                                'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
-                            «ELSE»
-                                'url' => $this->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
-                            «ENDIF»
-                            'title'   => $this->«IF !targets('1.3.x')»get('translator')->«ENDIF»__('My «entity.nameMultiple.formatForDisplay»'),
+                    if (SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                        $items[] = array(
+                            'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
+                            'title'   => $this->__('My «entity.nameMultiple.formatForDisplay»'),
                             'icon'    => 'windowlist.png',
                             'module'  => 'core',
                             'set'     => 'icons/large'
-                        «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                        );
                     }
                 «ENDFOR»
             «ENDIF»
             «IF !getAllAdminControllers.empty»
-                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    $items[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-                        «IF targets('1.3.x')»
-                            'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.x')»main«ELSE»index«ENDIF»'),
-                        «ELSE»
-                            'url'   => $this->get('router')->generate('«appName.formatForDB»_admin_index'),
-                        «ENDIF»
-                        'title'  => $this->«IF !targets('1.3.x')»get('translator')->«ENDIF»__('«name.formatForDisplayCapital» Backend'),
+                if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                    $items[] = array(
+                        'url'   => ModUtil::url($this->name, 'admin', 'main'),
+                        'title'  => $this->__('«name.formatForDisplayCapital» Backend'),
                         'icon'   => 'configure.png',
                         'module' => 'core',
                         'set'    => 'icons/large'
-                    «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                    );
                 }
             «ENDIF»
 
@@ -120,20 +102,10 @@ class Account {
     '''
 
     def private accountApiImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api;
-
-            use «appNamespace»\Api\Base\AccountApi as BaseAccountApi;
-
-        «ENDIF»
         /**
          * Account api implementation class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Api_Account extends «appName»_Api_Base_Account
-        «ELSE»
-        class AccountApi extends BaseAccountApi
-        «ENDIF»
         {
             // feel free to extend the account api here
         }

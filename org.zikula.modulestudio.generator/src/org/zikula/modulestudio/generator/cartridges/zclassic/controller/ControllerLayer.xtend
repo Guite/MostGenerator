@@ -728,6 +728,9 @@ class ControllerLayer {
         use ModUtil;
         use ServiceUtil;
         use Symfony\Component\Routing\RouterInterface;
+        «IF app.generateAccountApi»
+            use UserUtil;
+        «ENDIF»
         use Zikula\Common\Translator\Translator;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
 
@@ -766,7 +769,6 @@ class ControllerLayer {
              */
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
-                $links = [];
                 $serviceManager = ServiceUtil::getManager();
                 $request = $serviceManager->get('request_stack')->getCurrentRequest();
 
@@ -778,10 +780,57 @@ class ControllerLayer {
 
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
 
-                «/* legacy, see #715 */»
+                // Create an array of links to return
+                $links = [];
+
+                «IF app.generateAccountApi»
+                    if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
+                        $useAccountPage = $serviceManager->get('zikula_extensions_module.api.variable')->get('«app.appName»', 'useAccountPage', true);
+                        if ($useAccountPage === false) {
+                            return $links;
+                        }
+
+                        $userName = (isset($args['uname'])) ? $args['uname'] : UserUtil::getVar('uname');
+                        // does this user exist?
+                        if (UserUtil::getIdFromName($userName) === false) {
+                            // user does not exist
+                            return $links;
+                        }
+
+                        if (!$permissionHelper->hasPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
+                            return $links;
+                        }
+
+                        «IF !app.getAllUserControllers.empty && app.getMainUserController.hasActions('view')»
+                            «FOR entity : app.getAllEntities.filter[standardFields && ownerPermission]»
+                                $objectType = '«entity.name.formatForCode»';
+                                if ($permissionHelper->hasPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                                    $links[] = [
+                                        'url' => $this->router->generate('«app.appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
+                                        'text' => $this->translator->__('My «entity.nameMultiple.formatForDisplay»'),
+                                        'icon' => 'list-alt'
+                                    ];
+                                }
+                            «ENDFOR»
+                        «ENDIF»
+                        «IF !app.getAllAdminControllers.empty»
+                            if ($permissionHelper->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                                $links[] = [
+                                    'url' => $this->router->generate('«app.appName.formatForDB»_admin_index'),
+                                    'text' => $this->translator->__('«name.formatForDisplayCapital» Backend'),
+                                    'icon' => 'wrench'
+                                ];
+                            }
+                        «ENDIF»
+
+                        return $links;
+                    }
+
+                «ENDIF»
+                «/* TODO legacy, see #715 */»
                 «var linkControllers = application.controllers.filter(AdminController) + application.controllers.filter(UserController)»
                 «FOR linkController : linkControllers»
-                    if ('«linkController.name.formatForCode»' == $type) {
+                    if («IF linkController instanceof AdminController»LinkContainerInterface::TYPE_ADMIN«ELSEIF linkController instanceof UserController»LinkContainerInterface::TYPE_USER«ELSE»'«linkController.name.formatForCode»'«ENDIF» == $type) {
                         «getLinksBody(linkController)»
                     }
                 «ENDFOR»

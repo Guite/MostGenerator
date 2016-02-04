@@ -206,13 +206,13 @@ class ZclassicGenerator implements IGenerator {
     }
 
     def private generateIntegrationApis(Application it) {
-        if (generateAccountApi) {
-            pm?.subTask('Integration: Account api')
-            println('Generating account api')
-            new Account().generate(it, fsa)
-        }
-
         if (targets('1.3.x')) {
+            if (generateAccountApi) {
+                pm?.subTask('Integration: Account api')
+                println('Generating account api')
+                new Account().generate(it, fsa)
+            }
+
             pm?.subTask('Integration: Cache api')
             println('Generating cache api')
             new Cache().generate(it, fsa)
