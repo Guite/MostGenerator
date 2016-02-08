@@ -145,7 +145,7 @@ class HookHelper {
             {
                 $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('zikula.hookmanager')->notify($hook);
+                return $serviceManager->getService('zikula.hookmanager')->notify($hook);
             }
         «ELSE»
             /**
