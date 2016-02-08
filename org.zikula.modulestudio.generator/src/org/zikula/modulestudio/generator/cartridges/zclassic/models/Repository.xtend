@@ -938,7 +938,7 @@ class Repository {
                         $qb->andWhere('tbl.' . $k . ' = 1');
                     }
                 «ENDIF»
-                } else {
+                } else if (!is_array($v)) {
                     // field filter
                     if ((!is_numeric($v) && $v != '') || (is_numeric($v) && $v > 0)) {
                         if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
