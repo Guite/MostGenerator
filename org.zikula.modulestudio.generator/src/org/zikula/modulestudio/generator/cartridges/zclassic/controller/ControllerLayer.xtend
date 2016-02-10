@@ -258,7 +258,7 @@ class ControllerLayer {
             use Zikula\Core\ModUrl;
             use Zikula\Core\RouteUrl;
             «entityControllerBaseImportsResponse»
-            use Zikula\Core\Theme\Annotation\Theme;
+            use Zikula\ThemeModule\Engine\Annotation\Theme;
 
         «ENDIF»
     '''
