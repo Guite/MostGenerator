@@ -202,6 +202,16 @@ class NamingExtensions {
     }
 
     /**
+     * Returns the base path for the licence file.
+     */
+    def getAppLicencePath(Application it) {
+        if (targets('1.3.x'))
+            getAppDocPath
+        else
+            getResourcesPath + 'meta/'
+    }
+
+    /**
      * Returns the base path for the locale artifacts.
      */
     def getAppLocalePath(Application it) {

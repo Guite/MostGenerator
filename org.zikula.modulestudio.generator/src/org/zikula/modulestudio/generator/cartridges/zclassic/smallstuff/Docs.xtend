@@ -71,12 +71,12 @@ class Docs {
             }
             fsa.generateFile(docPath + fileName, Install)
         }
-        fileName = 'license.md'
-        if (!shouldBeSkipped(docPath + fileName)) {
-            if (shouldBeMarked(docPath + fileName)) {
-                fileName = 'license.generated.md'
+        fileName = 'LICENSE'
+        if (!shouldBeSkipped(getAppLicencePath + fileName)) {
+            if (shouldBeMarked(getAppLicencePath + fileName)) {
+                fileName = 'LICENSE.generated'
             }
-            fsa.generateFile(docPath + fileName, License)
+            fsa.generateFile(getAppLicencePath + fileName, License)
         }
     }
 
