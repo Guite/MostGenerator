@@ -528,25 +528,27 @@ class Actions {
         «val listItemsFields = getDisplayFieldsForView»
         «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
         «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
-        «FOR field : listItemsFields»
-            «addSortColumn(field.name)»
-        «ENDFOR»
-        «FOR relation : listItemsIn»
-            «addSortColumn(relation.getRelationAliasName(false))»
-        «ENDFOR»
-        «FOR relation : listItemsOut»
-            «addSortColumn(relation.getRelationAliasName(true))»
-        «ENDFOR»
-        «IF geographical»
-            «addSortColumn('latitude')»
-            «addSortColumn('longitude')»
-        «ENDIF»
-        «IF standardFields»
-            «addSortColumn('createdUserId')»
-            «addSortColumn('createdDate')»
-            «addSortColumn('updatedUserId')»
-            «addSortColumn('updatedDate')»
-        «ENDIF»
+        $sortableColumns->addColumns([
+            «FOR field : listItemsFields»
+                «addSortColumn(field.name)»
+            «ENDFOR»
+            «FOR relation : listItemsIn»
+                «addSortColumn(relation.getRelationAliasName(false))»
+            «ENDFOR»
+            «FOR relation : listItemsOut»
+                «addSortColumn(relation.getRelationAliasName(true))»
+            «ENDFOR»
+            «IF geographical»
+                «addSortColumn('latitude')»
+                «addSortColumn('longitude')»
+            «ENDIF»
+            «IF standardFields»
+                «addSortColumn('createdUserId')»
+                «addSortColumn('createdDate')»
+                «addSortColumn('updatedUserId')»
+                «addSortColumn('updatedDate')»
+            «ENDIF»
+        ]);
         $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
 
         $additionalUrlParameters = [
@@ -559,7 +561,7 @@ class Actions {
     '''
 
     def private addSortColumn(Entity it, String columnName) '''
-        $sortableColumns->addColumn(new Column('«columnName.formatForCode»'));
+        new Column('«columnName.formatForCode»'),
     '''
 
     def private prepareViewUrlArgs(NamedObject it, Boolean hasView) '''
