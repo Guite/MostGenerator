@@ -722,7 +722,7 @@ class Actions {
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
 
         // retrieve identifier of the object we wish to view
-        $idValues = $controllerHelper->retrieveIdentifier($this->request, «IF isLegacy»array()«ELSE»[]«ENDIF», $objectType, $idFields);
+        $idValues = $controllerHelper->retrieveIdentifier($«IF isLegacy»this->«ENDIF»request, «IF isLegacy»array()«ELSE»[]«ENDIF», $objectType, $idFields);
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
         «IF isLegacy»
