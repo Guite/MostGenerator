@@ -59,7 +59,7 @@ class OverrideTemplates {
         «IF isLegacy»
             «{sourcePath = sourcePath.replace('src/', '');''}»
         «ELSE»
-            «{sourcePath = rootFolder + '/' + (if (systemModule) name.formatForCodeCapital else vendorAndName) + '/' + sourcePath;''}»
+            «{sourcePath = rootFolder + '/' + (if (systemModule) name.formatForCodeCapital else vendor.formatForCode + '/' + name.formatForCode + 'Module') + '/' + sourcePath;''}»
         «ENDIF»
         «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (isLegacy) 'templates/modules/' + appName else 'Resources/' + appName + '/views') + '/'»
         «var templateFolder = ''»
