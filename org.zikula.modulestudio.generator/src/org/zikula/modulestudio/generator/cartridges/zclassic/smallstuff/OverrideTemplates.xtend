@@ -61,7 +61,7 @@ class OverrideTemplates {
         «ELSE»
             «{sourcePath = rootFolder + '/' + (if (systemModule) name.formatForCodeCapital else vendorAndName) + '/' + sourcePath;''}»
         «ENDIF»
-        «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (isLegacy) 'templates' else 'Resources/views') + '/modules/' + appName + '/'»
+        «val destinationPath = if (mapType == 'config') 'config/templates/' + appName + '/' else 'themes/YourTheme/' + (if (isLegacy) 'templates/modules/' + appName else 'Resources/' + appName + '/views') + '/'»
         «var templateFolder = ''»
         «IF !isLegacy»
             «sourcePath»«templateFolder»base«templateExtension('html')»: «destinationPath»«templateFolder»base«templateExtension('html')»
