@@ -269,7 +269,7 @@ class Plugins {
                 return $result;
             }
 
-            if (\ModUtil::getVar('ZConfig, 'profilemodule') != '') {
+            if (\ModUtil::getVar('ZConfig', 'profilemodule') != '') {
                 include_once 'lib/legacy/viewplugins/modifier.profilelinkbyuid.php';
                 $result = smarty_modifier_profilelinkbyuid($uid, $class, $image, $maxLength);
             } else {
