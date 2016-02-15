@@ -770,7 +770,6 @@ class ControllerLayer {
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
                 $serviceManager = ServiceUtil::getManager();
-                $request = $serviceManager->get('request_stack')->getCurrentRequest();
 
                 $controllerHelper = $serviceManager->get('«app.appName.formatForDB».controller_helper');
                 $utilArgs = ['api' => '«it.formattedName»', 'action' => 'getLinks'];
