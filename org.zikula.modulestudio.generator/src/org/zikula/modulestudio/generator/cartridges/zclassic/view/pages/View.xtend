@@ -300,9 +300,9 @@ class View {
                         {% endif %}
                     «ENDIF»
             «ENDIF»
-                «FOR field : listItemsFields»«field.displayEntry(false)»«ENDFOR»
-                «FOR relation : listItemsIn»«relation.displayEntry(false)»«ENDFOR»
-                «FOR relation : listItemsOut»«relation.displayEntry(true)»«ENDFOR»
+                «FOR field : listItemsFields»«field.displayEntry(false, application.targets('1.3.x'))»«ENDFOR»
+                «FOR relation : listItemsIn»«relation.displayEntry(false, application.targets('1.3.x'))»«ENDFOR»
+                «FOR relation : listItemsOut»«relation.displayEntry(true, application.targets('1.3.x'))»«ENDFOR»
                 «itemActions(appName)»
             «IF listType < 2»
                 </ul></li>
@@ -587,12 +587,12 @@ class View {
     // 1.3.x only
     def private sortParamsForBooleanFields(DataObject it) '''«IF hasBooleanFieldsEntity»«FOR field : getBooleanFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
 
-    def private displayEntry(Object it, Boolean useTarget) '''
+    def private displayEntry(Object it, Boolean useTarget, Boolean useLegacy) '''
         «val cssClass = entryContainerCssClass»
         «IF listType != 3»
             <«listType.asItemTag»«IF cssClass != ''» class="«cssClass»"«ENDIF»>
         «ELSE»
-            <td headers="h«markupIdCode(useTarget)»" class="z-«alignment»«IF cssClass != ''» «cssClass»«ENDIF»">
+            <td headers="h«markupIdCode(useTarget)»" class="«IF useLegacy»z«ELSE»text«ENDIF»-«alignment»«IF cssClass != ''» «cssClass»«ENDIF»">
         «ENDIF»
             «displayEntryInner(useTarget)»
         </«listType.asItemTag»>
