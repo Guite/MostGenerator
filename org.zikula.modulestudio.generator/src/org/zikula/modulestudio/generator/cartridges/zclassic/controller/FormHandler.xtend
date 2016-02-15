@@ -1041,7 +1041,7 @@ class FormHandler {
             $entity = $this->entityRef;
             «IF (isLegacy && (hasUserFields || hasListFields)) || hasUploads || (!isLegacy && hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
 
-                if («IF isLegacy»$args['commandName'] != 'cancel'«ELSE»!in_array($args['commandName, ['reset', 'cancel'])«ENDIF») {
+                if («IF isLegacy»$args['commandName'] != 'cancel'«ELSE»!in_array($args['commandName'], ['reset', 'cancel'])«ENDIF») {
                     «IF isLegacy»
                         «legacyParts.processSpecialFields(it)»
 
