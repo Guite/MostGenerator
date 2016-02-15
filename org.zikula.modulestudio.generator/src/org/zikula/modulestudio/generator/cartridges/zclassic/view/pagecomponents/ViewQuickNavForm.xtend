@@ -142,10 +142,7 @@ class ViewQuickNavForm {
                 {/if}
             «ELSE»
                 {% if searchFilter is not defined or searchFilter == true %}
-                    <div class="form-group">
-                        <label for="searchTerm">{{ __('Search') }}</label>
-                        <input type="text" id="searchTerm" name="q" value="{{ q }}" class="form-control input-sm" />
-                    </div>
+                    {{ form_row(quickNavForm.searchTerm) }}
                 {% endif %}
             «ENDIF»
         «ENDIF»
