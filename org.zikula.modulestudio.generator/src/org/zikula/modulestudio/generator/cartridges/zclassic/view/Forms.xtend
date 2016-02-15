@@ -293,7 +293,11 @@ class Forms {
 
     def private fieldDetailsFurtherOptions(Entity it, Application app) '''
         <fieldset>
-            <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
+            «IF app.targets('1.3.x')»
+                <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
+            «ELSE»
+                <legend>{{ __('«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»') }}</legend>
+            «ENDIF»
             «IF hasTranslatableFields»
                 «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper('', '')»«ENDFOR»
             «ELSE»
