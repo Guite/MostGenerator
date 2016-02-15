@@ -319,7 +319,7 @@ class EntityMethods {
                 if (count($errors) > 0) {
                     $session = $serviceManager->get('session');
                     foreach ($errors as $error) {
-                        $session->getFlashBag()->add('error', $error->getMessage());
+                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $error->getMessage());
                     }
                     return false;
                 }
@@ -444,7 +444,7 @@ class EntityMethods {
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
                     $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add('error', $serviceManager->get('translator')->__('Error! Could not load the associated workflow.'));
+                    $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator')->__('Error! Could not load the associated workflow.'));
                 «ENDIF»
             }
         }
