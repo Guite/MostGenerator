@@ -630,7 +630,7 @@ class Actions {
                 'all' => $templateParameters['showAllEntries'],
                 'own' => $templateParameters['showOwnEntries']
             ];
-            $form = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\' . ucfirst($objectType) . 'QuickNavType', $templateParameters, $formOptions)
+            $form = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters, $formOptions)
                 ->setMethod('GET');
 
             $templateParameters['quickNavForm'] = $form;
