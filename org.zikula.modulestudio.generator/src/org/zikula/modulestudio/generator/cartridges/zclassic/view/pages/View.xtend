@@ -507,24 +507,27 @@ class View {
     '''
 
     def private initMassToggle(Entity it) '''
-        {{if «IF application.targets('1.3.x')»$lct«ELSE»$routeArea«ENDIF» eq 'admin'}}
-            {{* init the "toggle all" functionality *}}
-            «IF application.targets('1.3.x')»
+        «IF application.targets('1.3.x')»
+            {{if $lct eq 'admin'}}
+                {{* init the "toggle all" functionality *}}
                 if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
                     $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
                         Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
                         e.stop();
                     });
                 }
-            «ELSE»
+            {{/if}}
+        «ELSE»
+            {% if routeArea == 'admin' %}
+                {# init the "toggle all" functionality #}
                 if ($('#toggle«nameMultiple.formatForCodeCapital»').length > 0) {
                     $('#toggle«nameMultiple.formatForCodeCapital»').on('click', function (e) {
                         Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
                         e.preventDefault();
                     });
                 }
-            «ENDIF»
-        {{/if}}
+            {% endif %}
+        «ENDIF»
     '''
 
     // 1.3.x only
