@@ -50,7 +50,7 @@ class ControllerHelper {
                 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             «ENDIF»
             use Symfony\Component\HttpFoundation\Session\Session;
-            use Symfony\Component\Translation\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
             use Zikula_Request_Http;
             «IF hasGeographical»
                 use ZLanguage;

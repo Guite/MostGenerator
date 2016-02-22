@@ -87,7 +87,7 @@ class Uploads {
 
             use Symfony\Component\Filesystem\Filesystem;
             use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-            use Symfony\Component\Translation\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
             use DataUtil;
             use FileUtil;
             use ModUtil;

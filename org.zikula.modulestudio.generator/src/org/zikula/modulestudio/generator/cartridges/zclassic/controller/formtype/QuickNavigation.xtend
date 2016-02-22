@@ -55,7 +55,7 @@ class QuickNavigation {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;

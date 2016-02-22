@@ -49,7 +49,7 @@ class Config {
         «ENDIF»
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
-        use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\VariableApi;
 

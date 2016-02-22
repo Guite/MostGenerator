@@ -33,7 +33,7 @@ class ListEntriesHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper\Base;
 
-            use Symfony\Component\Translation\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
 
         «ENDIF»
         /**

@@ -26,8 +26,7 @@ class UploadTypeExtension {
         use Symfony\Component\Form\FormView;
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Symfony\Component\Translation\TranslatorInterface;
-        use Zikula_View;
+        use Zikula\Common\Translator\TranslatorInterface;
 
         /**
          * File field type extension base class.

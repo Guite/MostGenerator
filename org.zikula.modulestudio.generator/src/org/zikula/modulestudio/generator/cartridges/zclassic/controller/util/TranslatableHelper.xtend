@@ -46,7 +46,7 @@ class TranslatableHelper {
             use ServiceUtil;
             use System;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
-            use Symfony\Component\Translation\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Core\Doctrine\EntityAccess;
             use ZLanguage;
 

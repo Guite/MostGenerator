@@ -149,7 +149,7 @@ class FormHandler {
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             use Symfony\Component\Routing\RouterInterface;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-            use Symfony\Component\Translation\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
             «IF hasUploads»
                 use «appNamespace»\UploadHandler;

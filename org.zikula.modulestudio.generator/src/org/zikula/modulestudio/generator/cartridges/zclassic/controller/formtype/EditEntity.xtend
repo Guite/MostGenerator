@@ -85,7 +85,7 @@ class EditEntity {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorInterface;
         «IF extensions.contains('metadata')»
             use Symfony\Component\Validator\Constraints\Valid;
         «ENDIF»

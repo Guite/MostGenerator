@@ -93,14 +93,14 @@ class ServiceDefinitions {
         # Upload handler class
         «modPrefix».upload_handler:
             class: «appNamespace»\UploadHandler
-            arguments: ["@translator"]
+            arguments: ["@translator.default"]
     '''
 
     def private linkContainer(Application it) '''
         services:
             «modPrefix».link_container:
                 class: «appNamespace»\Container\LinkContainer
-                arguments: ["@translator", "@router"]
+                arguments: ["@translator.default", "@router"]
                 tags:
                     - { name: zikula.link_container }
     '''
@@ -204,7 +204,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.upload_type_extension:
                 class: «nsBase.replace('Type\\', '')»Extension\UploadTypeExtension
-                arguments: ["@translator"]
+                arguments: ["@translator.default"]
                 tags:
                     - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FileType }
         «ENDIF»
@@ -219,7 +219,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.autocompletionrelation:
                 class: «nsBase»Field\AutoCompletionRelationType
-                arguments: ["@translator", "@doctrine.orm.entity_manager"]
+                arguments: ["@translator.default", "@doctrine.orm.entity_manager"]
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -238,7 +238,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
-                    arguments: ["@translator", "@request_stack"«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»]
+                    arguments: ["@translator.default", "@request_stack"«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -249,14 +249,14 @@ class ServiceDefinitions {
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:
                         class: «nsBase.replace('Type\\', '')»\Handler\«entity.name.formatForCodeCapital»\EditHandler
-                        arguments: ["@service_container", "@translator", "@request_stack", "@router"«IF hasUploads», "@«modPrefix».upload_handler"«ENDIF»]
+                        arguments: ["@service_container", "@translator.default", "@request_stack", "@router"«IF hasUploads», "@«modPrefix».upload_handler"«ENDIF»]
                         tags:
                             - { name: form.type }
                 «ENDIF»
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: «nsBase»«entity.name.formatForCodeCapital»Type
-                    arguments: ["@translator", "@«modPrefix».«entity.name.formatForCode»_factory"«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», "@zikula_extensions_module.api.variable", "@«modPrefix».translatable_helper"«ENDIF»«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»]
+                    arguments: ["@translator.default", "@«modPrefix».«entity.name.formatForCode»_factory"«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», "@zikula_extensions_module.api.variable", "@«modPrefix».translatable_helper"«ENDIF»«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -264,7 +264,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.entitymetadata:
                     class: «nsBase»EntityMetaDataType
-                    arguments: ["@translator"]
+                    arguments: ["@translator.default"]
                     tags:
                         - { name: form.type }
             «ENDIF»
@@ -273,7 +273,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.deleteentity:
                 class: «nsBase.replace('Type\\', '')»DeleteEntityType
-                arguments: ["@translator"]
+                arguments: ["@translator.default"]
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -281,7 +281,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.block.itemlist:
                 class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ListBlockType
-                arguments: ["@translator"]
+                arguments: ["@translator.default"]
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -290,7 +290,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»finder:
                     class: «nsBase»Finder\«entity.name.formatForCodeCapital»FinderType
-                    arguments: ["@translator"]
+                    arguments: ["@translator.default"]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -299,7 +299,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.appsettings:
                 class: «nsBase.replace('Type\\', '')»AppSettingsType
-                arguments: ["@translator", "@zikula_extensions_module.api.variable"]
+                arguments: ["@translator.default", "@zikula_extensions_module.api.variable"]
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -319,15 +319,15 @@ class ServiceDefinitions {
 
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
-            arguments: ["@service_container", "@translator", "@session", "@logger"]
+            arguments: ["@service_container", "@translator.default", "@session", "@logger"]
 
         «modPrefix».view_helper:
             class: «nsBase»ViewHelper
-            arguments: ["@service_container", "@translator"]
+            arguments: ["@service_container", "@translator.default"]
 
         «modPrefix».workflow_helper:
             class: «nsBase»WorkflowHelper
-            arguments: ["@service_container", "@translator"]
+            arguments: ["@service_container", "@translator.default"]
         «IF hasHookSubscribers»
 
             «modPrefix».hook_helper:
@@ -343,13 +343,13 @@ class ServiceDefinitions {
 
             «modPrefix».listentries_helper:
                 class: «nsBase»ListEntriesHelper
-                arguments: ["@translator"]
+                arguments: ["@translator.default"]
         «ENDIF»
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
-                arguments: ["@service_container", "@translator"]
+                arguments: ["@service_container", "@translator.default"]
         «ENDIF»
     '''
 

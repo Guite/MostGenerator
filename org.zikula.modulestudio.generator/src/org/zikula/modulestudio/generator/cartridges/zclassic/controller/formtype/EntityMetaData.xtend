@@ -36,7 +36,7 @@ class EntityMetaData {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Symfony\Component\Translation\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorInterface;
 
         /**
          * Entity meta data form type base class.
