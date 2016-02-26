@@ -186,13 +186,13 @@ class HookHelper {
     def private hookContainerBaseImpl(Application it) '''
         namespace «appNamespace»\Container\Base;
 
-        use Zikula\Component\HookDispatcher\AbstractContainer;
-        use Zikula\Component\HookDispatcher\SubscriberBundle;
+        use Zikula\Bundle\HookBundle\AbstractHookContainer;
+        use Zikula\Bundle\HookBundle\Bundle\SubscriberBundle;
 
         /**
          * Base class for hook container methods.
          */
-        class HookContainer extends AbstractContainer
+        class HookContainer extends AbstractHookContainer
         {
             «setup»
         }

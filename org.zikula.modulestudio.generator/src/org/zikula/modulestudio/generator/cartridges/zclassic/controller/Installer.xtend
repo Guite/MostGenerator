@@ -46,9 +46,6 @@ class Installer {
             «ENDIF»
             use Doctrine\DBAL\Connection;
             use EventUtil;
-            «IF hasHookSubscribers/* || hasHookProviders*/»
-                use HookUtil;
-            «ENDIF»
             «IF hasCategorisableEntities»
                 use ModUtil;
             «ENDIF»
@@ -210,7 +207,7 @@ class Installer {
                     HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
                 «ELSE»
                     $subscriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
-                    HookUtil::registerSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
+                    $this->hookApi->registerSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
                 «ENDIF»
             «ENDIF»
             «/*TODO see #15
@@ -220,7 +217,7 @@ class Installer {
                     HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
                 «ELSE»
                     $providerHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::PROVIDER_TYPE);
-                    HookUtil::registerProviderBundles($providerHookContainer->getHookProviderBundles());
+                    $this->hookApi->registerProviderBundles($providerHookContainer->getHookProviderBundles());
                 «ENDIF»
             «ENDIF»*/»
 
@@ -392,7 +389,7 @@ class Installer {
                 HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
                 «/*TODO see #15
                     // unregister hook provider bundles
-                    HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
+                    $this->hookApi->unregisterProviderBundles($this->version->getHookProviderBundles());
                 */»
             «ELSE»
                 $subscriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
@@ -400,7 +397,7 @@ class Installer {
                 «/*TODO see #15
                     // unregister hook provider bundles
                     $providerHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::PROVIDER_TYPE);
-                    HookUtil::unregisterProviderBundles($providerHookContainer->getHookProviderBundles());
+                    $this->hookApi->unregisterProviderBundles($providerHookContainer->getHookProviderBundles());
                 */»
             «ENDIF»
             «IF !getAllVariables.empty»
