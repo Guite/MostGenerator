@@ -229,7 +229,7 @@ class Plugins {
             include_once 'lib/legacy/viewplugins/function.useravatar.php';
 
             $view = \Zikula_View::getInstance('«appName»');
-            $result = smarty_function_useravatar($params, $view)
+            $result = smarty_function_useravatar($params, $view);
 
             return $result;
         }
@@ -246,7 +246,7 @@ class Plugins {
             include_once 'plugins/Imagine/templates/plugins/function.thumb.php';
 
             $view = \Zikula_View::getInstance('«appName»');
-            $result = smarty_function_thumb($params, $view)
+            $result = smarty_function_thumb($params, $view);
 
             return $result;
         }

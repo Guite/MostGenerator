@@ -52,8 +52,6 @@ class ListEntriesHelper {
                  * Initialises member vars.
                  *
                  * @param TranslatorInterface $translator Translator service instance.
-                 *
-                 * @return void
                  */
                 public function __construct(TranslatorInterface $translator)
                 {

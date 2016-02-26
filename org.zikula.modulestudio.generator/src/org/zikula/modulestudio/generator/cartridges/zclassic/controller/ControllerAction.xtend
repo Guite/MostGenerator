@@ -90,7 +90,7 @@ class ControllerAction {
         «ENDIF»
          *
          «IF !isLegacy»
-         * @param Request  $request      Current request instance
+         * @param Request  $request      Current request instance.
          «ENDIF»
         «IF null !== entity»
             «actionDocMethodParams(entity, it)»
@@ -137,11 +137,11 @@ class ControllerAction {
 
     def private actionDocMethodParams(Action it) {
         if (!isLegacy && it instanceof MainAction) {
-            ' * @param string  $ot           Treated object type.\n'
+            ''
         } else if (!(it instanceof MainAction || it instanceof CustomAction)) {
             ' * @param string  $ot           Treated object type.\n'
             + '''«actionDocAdditionalParams(null)»'''
-            + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
+            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n' else '')
             + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
@@ -149,7 +149,7 @@ class ControllerAction {
     def private actionDocMethodParams(Entity it, Action action) {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
-            + ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n'
+            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n' else '')
             + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
         }
     }
@@ -167,7 +167,7 @@ class ControllerAction {
             DeleteAction:
                 (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
                  else ' * @param int     $id           Identifier of entity to be shown.\n')
-               + ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n'
+               + (if (isLegacy) ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n' else '')
             default: ''
         }
     }

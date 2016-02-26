@@ -232,6 +232,7 @@ class Repository {
             namespace «app.appNamespace»\Entity\Repository\Base;
 
         «ENDIF»
+        use Doctrine\Common\Collections\ArrayCollection;
         «IF tree != EntityTreeType.NONE»
             «IF app.targets('1.3.x')»
                 use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
@@ -249,14 +250,13 @@ class Repository {
         «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
             use Doctrine\DBAL\LockMode;
         «ENDIF»
-
         «IF app.targets('1.3.x')»
         use DoctrineExtensions\Paginate\Paginate;
         «ELSE»
         use Doctrine\ORM\Tools\Pagination\Paginator;
         «ENDIF»
-
         «IF !app.targets('1.3.x')»
+            use InvalidArgumentException;
             use Symfony\Component\HttpFoundation\Request;
             use Zikula\Component\FilterUtil\FilterUtil;
             use Zikula\Component\FilterUtil\Config as FilterConfig;
@@ -267,7 +267,6 @@ class Repository {
             «IF !fields.filter(AbstractDateField).empty»
                 use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
             «ENDIF»
-            use FormUtil;
             use ModUtil;
             use ServiceUtil;
             use System;
@@ -276,6 +275,7 @@ class Repository {
                 use ZLanguage;
                 use Zikula\Core\RouteUrl;
             «ENDIF»
+            use «app.appNamespace»\Entity\«name.formatForCode»Entity;
 
         «ENDIF»
     '''
@@ -384,7 +384,11 @@ class Repository {
                     $serviceManager = ServiceUtil::getManager();
                 «ENDIF»
                 if (!isset($args['action'])) {
-                    $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST');
+                    «IF app.targets('1.3.x')»
+                        $args['action'] = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+                    «ELSE»
+                        $args['action'] = $this->request->query->getAlpha('func', 'index');
+                    «ENDIF»
                 }
                 if (in_array($args['action'], «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
@@ -589,10 +593,10 @@ class Repository {
         /**
          * Adds id filters to given query instance.
          *
-         * @param mixed                     $id The id (or array of ids) to use to retrieve the object.
-         * @param Doctrine\ORM\QueryBuilder $qb Query builder to be enhanced.
+         * @param mixed        $id The id (or array of ids) to use to retrieve the object.
+         * @param QueryBuilder $qb Query builder to be enhanced.
          *
-         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance.
          */
         protected function addIdFilter($id, QueryBuilder $qb)
         {
@@ -602,10 +606,10 @@ class Repository {
         /**
          * Adds an array of id filters to given query instance.
          *
-         * @param mixed                     $id The array of ids to use to retrieve the object.
-         * @param Doctrine\ORM\QueryBuilder $qb Query builder to be enhanced.
+         * @param mixed        $idList The array of ids to use to retrieve the object.
+         * @param QueryBuilder $qb     Query builder to be enhanced.
          *
-         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance.
          */
         protected function addIdListFilter($idList, QueryBuilder $qb)
         {
@@ -619,7 +623,7 @@ class Repository {
                         throw new \InvalidArgumentException(__('Invalid identifier received.', $dom));
                     «ELSE»
                         $serviceManager = ServiceUtil::getManager();
-                        throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid identifier received.'));
+                        throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid identifier received.'));
                     «ENDIF»
                 }
 
@@ -647,7 +651,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return array|«entityClassName('', false)» retrieved data array or «entityClassName('', false)» instance
+         * @return array|«name.formatForCode»Entity retrieved data array or «name.formatForCode»Entity instance
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
@@ -661,11 +665,11 @@ class Repository {
         /**
          * Selects a list of objects with an array of ids
          *
-         * @param mixed   $id       The array of ids to use to retrieve the objects (optional) (default=0).
+         * @param mixed   $idList   The array of ids to use to retrieve the objects (optional) (default=0).
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return ArrayCollection collection containing retrieved «entityClassName('', false)» instances
+         * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
@@ -704,7 +708,7 @@ class Repository {
                     throw new \InvalidArgumentException(__('Invalid slug title received.', $dom));
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid slug title received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid slug title received.'));
                 «ENDIF»
             }
 
@@ -727,10 +731,10 @@ class Repository {
         /**
          * Adds where clauses excluding desired identifiers from selection.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb        Query builder to be enhanced.
-         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»                   $excludeId The id (or array of ids) to be excluded from selection.
+         * @param QueryBuilder $qb        Query builder to be enhanced.
+         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»      $excludeId The id (or array of ids) to be excluded from selection.
          *
-         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance.
          */
         protected function addExclusion(QueryBuilder $qb, $excludeId)
         {
@@ -761,7 +765,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return ArrayCollection collection containing retrieved «entityClassName('', false)» instances
+         * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
          */
         public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
@@ -780,9 +784,9 @@ class Repository {
         /**
          * Returns query builder instance for retrieving a list of objects with a given where clause and pagination parameters.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb             Query builder to be enhanced.
-         * @param integer                   $currentPage    Where to start selection
-         * @param integer                   $resultsPerPage Amount of items to select
+         * @param QueryBuilder $qb             Query builder to be enhanced.
+         * @param integer      $currentPage    Where to start selection
+         * @param integer      $resultsPerPage Amount of items to select
          *
          * @return array Created query instance and amount of affected items.
          */
@@ -830,7 +834,7 @@ class Repository {
          * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode       If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return Array with retrieved collection and amount of total records affected by this query.
+         * @return array with retrieved collection and amount of total records affected by this query.
          */
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
@@ -891,13 +895,17 @@ class Repository {
         /**
          * Adds quick navigation related filter options as where clauses.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb Query builder to be enhanced.
+         * @param QueryBuilder $qb Query builder to be enhanced.
          *
-         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance.
          */
         public function addCommonViewFilters(QueryBuilder $qb)
         {
-            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST');
+            «IF app.targets('1.3.x')»
+                $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+            «ELSE»
+                $currentFunc = $this->request->query->getAlpha('func', 'index');
+            «ENDIF»
             if ($currentFunc == 'edit') {«/* fix for #547 */»
                 return $qb;
             }
@@ -963,14 +971,14 @@ class Repository {
         /**
          * Adds default filters as where clauses.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb         Query builder to be enhanced.
-         * @param array                     $parameters List of determined filter options.
+         * @param QueryBuilder $qb         Query builder to be enhanced.
+         * @param array        $parameters List of determined filter options.
          *
-         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance.
          */
         protected function applyDefaultFilters(QueryBuilder $qb, $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            $currentModule = ModUtil::getName();//FormUtil::getPassedValue('module', '', 'GETPOST');
+            $currentModule = ModUtil::getName();
             «IF app.targets('1.3.x')»
                 $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             «ELSE»
@@ -989,7 +997,7 @@ class Repository {
                     «ELSE»
                         $serviceManager = ServiceUtil::getManager();
                         $varHelper = $serviceManager->get('zikula_extensions_module.api.variable');
-                        $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                        $showOnlyOwnEntries = $this->request->query->getDigits('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0));
                     «ENDIF»
                     if ($showOnlyOwnEntries == 1) {
                         // allow the owner to see his deferred «nameMultiple.formatForDisplay»
@@ -1009,12 +1017,20 @@ class Repository {
         «val startDateField = getStartDateField»
         «val endDateField = getEndDateField»
         «IF null !== startDateField»
-            $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
+            «IF application.targets('1.3.x')»
+                $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
+            «ELSE»
+                $startDate = $this->request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
+            «ENDIF»
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
         «ENDIF»
         «IF null !== endDateField»
-            $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
+            «IF application.targets('1.3.x')»
+                $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
+            «ELSE»
+                $endDate = $this->request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
+            «ENDIF»
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);
         «ENDIF»
@@ -1045,7 +1061,7 @@ class Repository {
          * @param integer $resultsPerPage Amount of items to select
          * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
          *
-         * @return Array with retrieved collection and amount of total records affected by this query.
+         * @return array with retrieved collection and amount of total records affected by this query.
          */
         public function selectSearch($fragment = '', $exclude = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF», $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
@@ -1071,10 +1087,10 @@ class Repository {
         /**
          * Adds where clause for search query.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb       Query builder to be enhanced.
-         * @param string                    $fragment The fragment to search for.
+         * @param QueryBuilder $qb       Query builder to be enhanced.
+         * @param string       $fragment The fragment to search for.
          *
-         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance.
          */
         protected function addSearchFilter(QueryBuilder $qb, $fragment = '')
         {
@@ -1111,11 +1127,11 @@ class Repository {
         /**
          * Performs a given database selection and post-processed the results.
          *
-         * @param Doctrine\ORM\Query $query       The Query instance to be executed.
-         * @param string             $orderBy     The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param boolean            $isPaginated Whether the given query uses a paginator or not (optional) (default=false).
+         * @param Query   $query       The Query instance to be executed.
+         * @param string  $orderBy     The order-by clause to use when retrieving the collection (optional) (default='').
+         * @param boolean $isPaginated Whether the given query uses a paginator or not (optional) (default=false).
          *
-         * @return Array with retrieved collection«IF !app.targets('1.3.x')» and (for paginated queries) the amount of total records affected«ENDIF».
+         * @return array with retrieved collection«IF !app.targets('1.3.x')» and (for paginated queries) the amount of total records affected«ENDIF».
          */
         public function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
         {
@@ -1134,6 +1150,7 @@ class Repository {
                     }
                 }
             «ELSE»
+                $count = 0;
                 if (!$isPaginated) {
                     $result = $query->getResult();
                 } else {
@@ -1176,7 +1193,7 @@ class Repository {
          * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          *
-         * @return Doctrine\ORM\QueryBuilder Created query builder instance.
+         * @return QueryBuilder Created query builder instance.
          * @TODO fix usage of joins; please remove the first line and test.
          */
         protected function getCountQuery($where = '', $useJoins = true)
@@ -1263,7 +1280,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
+         * @return QueryBuilder query builder instance to be further processed
          */
         public function genericBaseQuery($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
@@ -1315,10 +1332,10 @@ class Repository {
         /**
          * Adds WHERE clause to given query builder.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb    Given query builder instance.
-         * @param string                    $where The where clause to use when retrieving the collection (optional) (default='').
+         * @param QueryBuilder $qb    Given query builder instance.
+         * @param string       $where The where clause to use when retrieving the collection (optional) (default='').
          *
-         * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
+         * @return QueryBuilder query builder instance to be further processed
          */
         protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
@@ -1391,7 +1408,7 @@ class Repository {
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
                     $varHelper = $serviceManager->get('zikula_extensions_module.api.variable');
-                    $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                    $showOnlyOwnEntries = $this->request->query->getDigits('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0));
                 «ENDIF»
                 if ($showOnlyOwnEntries == 1) {
                     $uid = UserUtil::getVar('uid');
@@ -1408,10 +1425,10 @@ class Repository {
         /**
          * Adds ORDER BY clause to given query builder.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb      Given query builder instance.
-         * @param string                    $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
+         * @param QueryBuilder $qb      Given query builder instance.
+         * @param string       $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
          *
-         * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
+         * @return QueryBuilder query builder instance to be further processed
          */
         protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = '')
         {
@@ -1440,9 +1457,9 @@ class Repository {
         /**
          * Retrieves Doctrine query from query builder, applying FilterUtil and other common actions.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb Query builder instance
+         * @param QueryBuilder $qb Query builder instance
          *
-         * @return Doctrine\ORM\Query query instance to be further processed
+         * @return Query query instance to be further processed
          */
         public function getQueryFromBuilder(QueryBuilder $qb)
         {

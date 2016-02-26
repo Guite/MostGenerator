@@ -65,7 +65,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -112,7 +112,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -157,7 +157,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -200,7 +200,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -245,7 +245,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user field name received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user field name received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user field name received.'));
                 «ENDIF»
             }
             // check id parameter
@@ -254,7 +254,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -300,7 +300,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user field name received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user field name received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user field name received.'));
                 «ENDIF»
             }
             // check id parameter
@@ -308,7 +308,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 

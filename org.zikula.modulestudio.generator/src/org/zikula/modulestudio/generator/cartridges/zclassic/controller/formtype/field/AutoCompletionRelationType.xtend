@@ -106,6 +106,14 @@ class AutoCompletionRelationType {
             {
                 return '«appName.formatForDB»_field_autocompletionrelation';
             }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function getName()
+            {
+                return $this->getBlockPrefix();
+            }
         }
     '''
 

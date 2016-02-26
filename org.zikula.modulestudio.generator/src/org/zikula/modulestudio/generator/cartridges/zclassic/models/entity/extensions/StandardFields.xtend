@@ -55,7 +55,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
-         * @var datetime $createdDate.
+         * @var \DateTime $createdDate.
          */
         protected $createdDate;
 
@@ -68,7 +68,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
-         * @var datetime $updatedDate.
+         * @var \DateTime $updatedDate.
          */
         protected $updatedDate;
     '''

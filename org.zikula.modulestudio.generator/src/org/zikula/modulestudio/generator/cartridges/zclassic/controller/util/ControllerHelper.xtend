@@ -37,6 +37,7 @@ class ControllerHelper {
             namespace «appNamespace»\Helper\Base;
 
             use DataUtil;
+            use Exception;
             «IF hasUploads»
                 use FileUtil;
             «ENDIF»
@@ -49,12 +50,14 @@ class ControllerHelper {
                 use Symfony\Component\Filesystem\Filesystem;
                 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             «ENDIF»
+            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\Session\Session;
             use Zikula\Common\Translator\TranslatorInterface;
-            use Zikula_Request_Http;
             «IF hasGeographical»
                 use ZLanguage;
             «ENDIF»
+        «ELSE»
+            use Exception;
 
         «ENDIF»
         /**
@@ -91,8 +94,6 @@ class ControllerHelper {
                  * @param TranslatorInterface    $translator     Translator service instance.
                  * @param Session                $session        Session service instance.
                  * @param Logger                 $logger         Logger service instance.
-                 *
-                 * @return void
                  */
                 public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, Session $session, Logger $logger)
                 {
@@ -199,14 +200,14 @@ class ControllerHelper {
         /**
          * Retrieve identifier parameters for a given object type.
          *
-         * @param Zikula_Request_Http $request    Instance of Zikula_Request_Http.
-         * @param array               $args       List of arguments used as fallback if request does not contain a field.
-         * @param string              $objectType Name of treated entity type.
-         * @param array               $idFields   List of identifier field names.
+         * @param «IF targets('1.3.x')»Zikula_Request_Http«ELSE»Request«ENDIF» $request    The current request.
+         * @param array   $args       List of arguments used as fallback if request does not contain a field.
+         * @param string  $objectType Name of treated entity type.
+         * @param array   $idFields   List of identifier field names.
          *
          * @return array List of fetched identifiers.
          */
-        public function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
+        public function retrieveIdentifier(«IF targets('1.3.x')»Zikula_Request_Http«ELSE»Request«ENDIF» $request, array $args, $objectType = '', array $idFields)
         {
             $idValues = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF !targets('1.3.x')»
@@ -322,7 +323,8 @@ class ControllerHelper {
          * @param boolean $ignoreCreate Whether to ignore the creation of upload folders on demand or not.
          *
          * @return mixed Output.
-         * @throws Exception if invalid object type is given.
+         *
+         * @throws Exception If an invalid object type is used.
          */
         public function getFileBaseFolder($objectType, $fieldName, $ignoreCreate = false)
         {

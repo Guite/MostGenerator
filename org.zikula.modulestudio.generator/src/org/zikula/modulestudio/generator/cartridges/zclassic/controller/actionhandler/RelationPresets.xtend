@@ -64,7 +64,11 @@ class RelationPresets {
 
     def private initSinglePreset(JoinRelationship it, Boolean useTarget) '''
         «val alias = getRelationAliasName(useTarget)»
-        $this->relationPresets['«alias»'] = FormUtil::getPassedValue('«alias»', '', 'GET');
+        «IF source.application.targets('1.3.x')»
+            $this->relationPresets['«alias»'] = FormUtil::getPassedValue('«alias»', '', 'GET');
+        «ELSE»
+            $this->relationPresets['«alias»'] = $this->request->get('«alias»', '');
+        «ENDIF»
     '''
 
     def private getOwningAssociations(Entity it, Application refApp) {
@@ -103,7 +107,7 @@ class RelationPresets {
                 «IF app.targets('1.3.x')»
                     $this->entityManager->flush();
                 «ELSE»
-                    $this->container->get('doctrine.orm.entity_manager').flush();
+                    $this->container->get('doctrine.orm.entity_manager')->flush();
                 «ENDIF»
             }
         «ENDIF»

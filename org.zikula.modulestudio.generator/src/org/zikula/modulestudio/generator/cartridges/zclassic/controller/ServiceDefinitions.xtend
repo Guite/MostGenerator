@@ -100,7 +100,7 @@ class ServiceDefinitions {
         services:
             «modPrefix».link_container:
                 class: «appNamespace»\Container\LinkContainer
-                arguments: ["@translator.default", "@router"]
+                arguments: ["@translator.default", "@router", "@zikula_permissions_module.api.permission", "@«modPrefix».controller_helper"]
                 tags:
                     - { name: zikula.link_container }
     '''

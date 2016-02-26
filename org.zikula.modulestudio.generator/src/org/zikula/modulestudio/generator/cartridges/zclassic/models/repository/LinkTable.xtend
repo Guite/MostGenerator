@@ -28,6 +28,8 @@ class LinkTable {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository\Base;
 
+            use Doctrine\ORM\EntityRepository;
+            use ServiceUtil;
             use UserUtil;
 
         «ENDIF»
@@ -40,7 +42,7 @@ class LinkTable {
         «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_Base_«refClass.formatForCodeCapital» extends EntityRepository
         «ELSE»
-        class «refClass.formatForCodeCapital» extends \EntityRepository
+        class «refClass.formatForCodeCapital» extends EntityRepository
         «ENDIF»
         {
             public function truncateTable()

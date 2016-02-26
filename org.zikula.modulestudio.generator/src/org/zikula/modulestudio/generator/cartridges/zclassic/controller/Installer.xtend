@@ -44,14 +44,15 @@ class Installer {
                 use CategoryUtil;
                 use DBUtil;
             «ENDIF»
+            use Doctrine\DBAL\Connection;
             use EventUtil;
-            «IF hasUploads»
-                use FileUtil;
-            «ENDIF»
             «IF hasHookSubscribers/* || hasHookProviders*/»
                 use HookUtil;
             «ENDIF»
-            use ModUtil;
+            «IF hasCategorisableEntities»
+                use ModUtil;
+            «ENDIF»
+            use RuntimeException;
             use System;
             use UserUtil;
             use Zikula\Core\AbstractExtensionInstaller;
@@ -99,10 +100,10 @@ class Installer {
          */
         public function install()
         {
-            «processUploadFolders»
             «IF !targets('1.3.x')»
                 $logger = $this->container->get('logger');
             «ENDIF»
+            «processUploadFolders»
             // create all tables from according entity definitions
             try {
                 «IF targets('1.3.x')»
@@ -235,7 +236,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
                 «ELSE»
-                    $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper')
+                    $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
                 «ENDIF»
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
@@ -410,7 +411,7 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                ModUtil::dbInfoLoad('Categories');
+                ModUtil::dbInfoLoad('«IF targets('1.3.x')»Categories«ELSE»ZikulaCategoriesModule«ENDIF»');
                 DBUtil::deleteWhere('categories_registry', 'modname = \'«IF targets('1.3.x')»' . $this->getName() . '«ELSE»«appName»«ENDIF»\'');
             «ENDIF»
             «IF hasUploads»

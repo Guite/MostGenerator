@@ -46,7 +46,7 @@ class UploadProcessing {
                 // check if an existing file must be deleted
                 $hasOldFile = !empty($existingObjectData[$uploadField]);
                 $hasBeenDeleted = !$hasOldFile;
-                if ($this->mode != 'create') {
+                if («IF targets('1.3.x')»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» != 'create') {
                     if (isset($formData[$uploadField . 'DeleteFile'])) {
                         if ($hasOldFile && $formData[$uploadField . 'DeleteFile'] === true) {
                             // remove upload file (and image thumbnails)

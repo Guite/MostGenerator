@@ -152,13 +152,13 @@ class Entities {
 
             use DataUtil;
             use FormUtil;
-            use ModUtil;
+            use RuntimeException;
             use ServiceUtil;
-            use System;
+            «IF hasUploadFieldsEntity»
+                use System;
+            «ENDIF»
             use UserUtil;
-            use Zikula_Exception;
             use Zikula_Workflow_Util;
-            use ZLanguage;
             use Zikula\Core\Doctrine\EntityAccess;
         «ENDIF»
 

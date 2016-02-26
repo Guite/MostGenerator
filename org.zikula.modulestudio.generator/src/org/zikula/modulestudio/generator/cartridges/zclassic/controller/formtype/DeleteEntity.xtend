@@ -79,6 +79,14 @@ class DeleteEntity {
             {
                 return '«appName.formatForDB»_deleteentity';
             }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function getName()
+            {
+                return $this->getBlockPrefix();
+            }
         }
     '''
 

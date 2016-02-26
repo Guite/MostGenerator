@@ -1043,7 +1043,7 @@ class Actions {
         «ELSE»
             $entity = $«name.formatForCode»;
 
-            $flashBag = $this->request->getSession()->getFlashBag();
+            $flashBag = $request->getSession()->getFlashBag();
             $logger = $this->get('logger');
             $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
         «ENDIF»

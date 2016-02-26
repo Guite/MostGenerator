@@ -284,10 +284,12 @@ class EntityMethods {
         /**
          * Start validation and raise exception if invalid data is found.
          *
-         * @return void.
         «IF application.targets('1.3.x')»
+            «' '»* @return void.
             «' '»*
             «' '»* @throws Zikula_Exception Thrown if a validation error occurs
+        «ELSE»
+            «' '»* @return boolean Whether everything is valid or not.
         «ENDIF»
          */
         public function validate()
@@ -346,7 +348,7 @@ class EntityMethods {
         /**
          * Creates url arguments array for easy creation of display urls.
          *
-         * @return Array The resulting arguments list.
+         * @return array The resulting arguments list.
          */
         public function createUrlArgs()
         {

@@ -211,9 +211,7 @@ class Listeners {
             «IF !isBase»
                 use «appNamespace»\Listener\Base\ModuleDispatchListener as BaseModuleDispatchListener;
             «ELSE»
-                use ModUtil;
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -265,7 +263,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\PageListener as BasePageListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -302,7 +299,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\ThemeListener as BaseThemeListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -328,7 +324,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\ViewListener as BaseViewListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -354,7 +349,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\UserLoginListener as BaseUserLoginListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -380,7 +374,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\UserLogoutListener as BaseUserLogoutListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -406,7 +399,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\UserListener as BaseUserListener;
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
-                    use ModUtil;
                     use ServiceUtil;
                 «ENDIF»
                 use UserUtil;
@@ -437,7 +429,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\UserRegistrationListener as BaseUserRegistrationListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -463,7 +454,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\UsersListener as BaseUsersListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -489,7 +479,6 @@ class Listeners {
                 use «appNamespace»\Listener\Base\GroupListener as BaseGroupListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-                use Symfony\Component\HttpKernel\HttpKernelInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 

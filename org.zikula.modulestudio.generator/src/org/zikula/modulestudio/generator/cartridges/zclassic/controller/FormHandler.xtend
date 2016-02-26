@@ -145,21 +145,22 @@ class FormHandler {
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Symfony\Component\Form\AbstractType;
             use Symfony\Component\HttpFoundation\RedirectResponse;
+            use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
             use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             use Symfony\Component\Routing\RouterInterface;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
+            use Zikula\Core\Doctrine\EntityAccess;
+            use Zikula\Core\RouteUrl;
+            use ModUtil;
+            use RuntimeException;
+            use System;
+            use UserUtil;
             «IF hasUploads»
                 use «appNamespace»\UploadHandler;
             «ENDIF»
-
-            use ModUtil;
-            use System;
-            use UserUtil;
-            use Zikula\Core\Doctrine\EntityAccess;
-            use Zikula\Core\RouteUrl;
 
         «ENDIF»
         /**
@@ -377,7 +378,7 @@ class FormHandler {
                  *
                  * @param TranslatorInterface $translator Translator service instance.
                  */
-                public function setTranslator(TranslatorInterface $translator)
+                public function setTranslator(/*TranslatorInterface */$translator)
                 {
                     $this->translator = $translator;
                 }
@@ -471,7 +472,7 @@ class FormHandler {
                 $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
-            if ($this->mode == 'edit') {
+            if («IF isLegacy»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» == 'edit') {
                 if (!«IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
                     «IF isLegacy»
                         return LogUtil::registerPermissionError();
@@ -513,10 +514,10 @@ class FormHandler {
                 «IF isLegacy»
                     return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
                 «ELSE»
-                    $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->trans('Error! Could not determine workflow actions.', [], '«appName.formatForDB»'));
+                    $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not determine workflow actions.'));
                     $logger = $this->container->get('logger');
                     $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()]);
-                    throw new \RuntimeException($this->translator->trans('Error! Could not determine workflow actions.', [], '«appName.formatForDB»'));
+                    throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
                 «ENDIF»
             }
 
@@ -625,7 +626,7 @@ class FormHandler {
                 «IF isLegacy»
                     return LogUtil::registerError($this->__('No such item.'));
                 «ELSE»
-                    throw new NotFoundHttpException($this->translator->trans('No such item.', [], '«appName.formatForDB»'));
+                    throw new NotFoundHttpException($this->__('No such item.'));
                 «ENDIF»
             }
 
@@ -649,10 +650,13 @@ class FormHandler {
         {
             $this->hasTemplateId = false;
             $templateId = $this->request->query->get('astemplate', '');
-            if (!empty($templateId)) {
-                $templateIdValueParts = explode('_', $templateId);
-                $this->hasTemplateId = count($templateIdValueParts) == count($this->idFields);
+            if (empty($templateId)) {
+                return null;
             }
+
+            $entity = null;
+            $templateIdValueParts = explode('_', $templateId);
+            $this->hasTemplateId = count($templateIdValueParts) == count($this->idFields);
 
             if (true === $this->hasTemplateId) {
                 $templateIdValues = «IF isLegacy»array()«ELSE»[]«ENDIF»;
@@ -667,7 +671,7 @@ class FormHandler {
                     «IF isLegacy»
                         return LogUtil::registerError($this->__('No such item.'));
                     «ELSE»
-                        throw new NotFoundHttpException($this->translator->trans('No such item.', [], '«appName.formatForDB»'));
+                        throw new NotFoundHttpException($this->__('No such item.'));
                     «ENDIF»
                 }
                 $entity = clone $entityT;
@@ -766,15 +770,16 @@ class FormHandler {
          *
         «IF isLegacy»
             «legacyParts.handleCommandDescription(it)»
-            «' '»*
+        «ELSE»
+            «' '»* @param array $args List of arguments.
         «ENDIF»
+         *
          * @return mixed Redirect or false on errors.
          */
-        public function handleCommand(«IF isLegacy»Zikula_Form_View $view, &$args«ENDIF»)
+        public function handleCommand(«IF isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
         {
             «IF !isLegacy»
                 // build $args for BC (e.g. used by redirect handling)
-                $args = [];
                 foreach ($this->templateParameters['actions'] as $action) {
                     if ($this->form->get($action['id'])->isClicked()) {
                         $args['commandName'] = $action['id'];
@@ -805,6 +810,7 @@ class FormHandler {
             $entity = $this->entityRef;
             «IF hasHookSubscribers»
 
+                $hookHelper = null;
                 if ($entity->supportsHookSubscribers() && «IF isLegacy»$action != 'cancel'«ELSE»!in_array($action, ['reset', 'cancel'])«ENDIF») {
                     «IF isLegacy»
                         $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
@@ -846,7 +852,9 @@ class FormHandler {
                                 $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
                             «ENDIF»
                         }
-                        $hookHelper->callProcessHooks($entity, $hookType, $url);
+                        if (!is_null($hookHelper)) {
+                            $hookHelper->callProcessHooks($entity, $hookType, $url);
+                        }
                     }
                 «ENDIF»
                 «IF isLegacy»
@@ -942,7 +950,7 @@ class FormHandler {
         /**
          * Get success or error message for default operations.
          *
-         * @param Array   $args    arguments from handleCommand method.
+         * @param array   $args    arguments from handleCommand method.
          * @param Boolean $success true if this is a success, false for default error.
          *
          * @return String desired status or error message.
@@ -952,26 +960,26 @@ class FormHandler {
             $message = '';
             switch ($args['commandName']) {
                 case 'create':
-                        if (true === $success) {
-                            $message = «IF isLegacy»$this->__('Done! Item created.')«ELSE»$this->translator->trans('Done! Item created.', [], '«appName.formatForDB»')«ENDIF»;
-                        } else {
-                            $message = «IF isLegacy»$this->__('Error! Creation attempt failed.')«ELSE»$this->translator->trans('Error! Creation attempt failed.', [], '«appName.formatForDB»')«ENDIF»;
-                        }
-                        break;
+                    if (true === $success) {
+                        $message = $this->__('Done! Item created.');
+                    } else {
+                        $message = $this->__('Error! Creation attempt failed.');
+                    }
+                    break;
                 case 'update':
-                        if (true === $success) {
-                            $message = «IF isLegacy»$this->__('Done! Item updated.')«ELSE»$this->translator->trans('Done! Item updated.', [], '«appName.formatForDB»')«ENDIF»;
-                        } else {
-                            $message = «IF isLegacy»$this->__('Error! Update attempt failed.')«ELSE»$this->translator->trans('Error! Update attempt failed.', [], '«appName.formatForDB»')«ENDIF»;
-                        }
-                        break;
+                    if (true === $success) {
+                        $message = $this->__('Done! Item updated.');
+                    } else {
+                        $message = $this->__('Error! Update attempt failed.');
+                    }
+                    break;
                 case 'delete':
-                        if (true === $success) {
-                            $message = «IF isLegacy»$this->__('Done! Item deleted.')«ELSE»$this->translator->trans('Done! Item deleted.', [], '«appName.formatForDB»')«ENDIF»;
-                        } else {
-                            $message = «IF isLegacy»$this->__('Error! Deletion attempt failed.')«ELSE»$this->translator->trans('Error! Deletion attempt failed.', [], '«appName.formatForDB»')«ENDIF»;
-                        }
-                        break;
+                    if (true === $success) {
+                        $message = $this->__('Done! Item deleted.');
+                    } else {
+                        $message = $this->__('Error! Deletion attempt failed.');
+                    }
+                    break;
             }
 
             return $message;
@@ -980,7 +988,7 @@ class FormHandler {
         /**
          * Add success or error message to session.
          *
-         * @param Array   $args    arguments from handleCommand method.
+         * @param array   $args    arguments from handleCommand method.
          * @param Boolean $success true if this is a success, false for default error.
          «IF !isLegacy»
          *
@@ -1048,7 +1056,7 @@ class FormHandler {
                     «ENDIF»
                     «IF hasUploads»
                         if (count($this->uploadFields) > 0) {
-                            $entityData = $this->handleUploads($entityData, $entity);
+                            $entityData = $this->handleUploads(«IF isLegacy»$entityData«ELSE»$formData«ENDIF», $entity);
                             if ($entityData == false) {
                                 return false;
                             }
@@ -1092,7 +1100,7 @@ class FormHandler {
                 }
             «ELSE»
                 if (isset($formData['additionalNotificationRemarks']) && $formData['additionalNotificationRemarks'] != '') {
-                    $this->request->getSession()->set($this->name . 'AdditionalNotificationRemarks', $formData['additionalNotificationRemarks']);
+                    $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $formData['additionalNotificationRemarks']);
                 }
             «ENDIF»
             «IF hasAttributableEntities»
@@ -1129,7 +1137,7 @@ class FormHandler {
         /**
          * This method executes a certain workflow action.
          *
-         * @param Array $args Arguments from handleCommand method.
+         * @param array $args Arguments from handleCommand method.
          *
          * @return bool Whether everything worked well or not.
          */
@@ -1252,8 +1260,9 @@ class FormHandler {
         «locking.imports(it)»
         «IF !app.isLegacy»
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
+            use Symfony\Component\HttpFoundation\RedirectResponse;
             use ModUtil;
+            use RuntimeException;
             use System;
             use UserUtil;
         «ENDIF»
@@ -1385,7 +1394,7 @@ class FormHandler {
 
                         return $this->view->redirect($this->getRedirectUrl(array('commandName' => '')));
                     «ELSE»
-                        $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->trans('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!', [], '«app.appName.formatForDB»'));
+                        $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
                         $logger = $this->container->get('logger');
                         $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType]);
 
@@ -1467,17 +1476,19 @@ class FormHandler {
          * Command event handler.
          *
          * This event handler is called when a command is issued by the user.
+         *
         «IF app.isLegacy»
-            «' '»*
             «' '»* @param Zikula_Form_View $view The form view instance.
             «' '»* @param array            $args Additional arguments.
+        «ELSE»
+            «' '»* @param array $args List of arguments.
         «ENDIF»
          *
          * @return mixed Redirect or false on errors.
          */
-        public function handleCommand(«IF app.isLegacy»Zikula_Form_View $view, &$args«ENDIF»)
+        public function handleCommand(«IF app.isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
         {
-            $result = parent::handleCommand(«IF app.isLegacy»$view, $args«ENDIF»);
+            $result = parent::handleCommand(«IF app.isLegacy»$view, «ENDIF»$args);
             if (false === $result) {
                 return $result;
             }
@@ -1492,7 +1503,7 @@ class FormHandler {
         /**
          * Get success or error message for default operations.
          *
-         * @param Array   $args    Arguments from handleCommand method.
+         * @param array   $args    Arguments from handleCommand method.
          * @param Boolean $success Becomes true if this is a success, false for default error.
          *
          * @return String desired status or error message.
@@ -1509,18 +1520,18 @@ class FormHandler {
                     case 'defer':
                 «ENDIF»
                 case 'submit':
-                            if ($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create') {
-                                $message = «IF app.isLegacy»$this->__('Done! «name.formatForDisplayCapital» created.')«ELSE»$this->translator->trans('Done! «name.formatForDisplayCapital» created.', [], '«app.appName.formatForDB»')«ENDIF»;
-                            } else {
-                                $message = «IF app.isLegacy»$this->__('Done! «name.formatForDisplayCapital» updated.')«ELSE»$this->translator->trans('Done! «name.formatForDisplayCapital» updated.', [], '«app.appName.formatForDB»')«ENDIF»;
-                            }
-                            break;
+                    if ($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create') {
+                        $message = $this->__('Done! «name.formatForDisplayCapital» created.');
+                    } else {
+                        $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
+                    }
+                    break;
                 case 'delete':
-                            $message = «IF app.isLegacy»$this->__('Done! «name.formatForDisplayCapital» deleted.')«ELSE»$this->translator->trans('Done! «name.formatForDisplayCapital» deleted.', [], '«app.appName.formatForDB»')«ENDIF»;
-                            break;
+                    $message = $this->__('Done! «name.formatForDisplayCapital» deleted.');
+                    break;
                 default:
-                            $message = «IF app.isLegacy»$this->__('Done! «name.formatForDisplayCapital» updated.')«ELSE»$this->translator->trans('Done! «name.formatForDisplayCapital» updated.', [], '«app.appName.formatForDB»')«ENDIF»;
-                            break;
+                    $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
+                    break;
             }
 
             return $message;
@@ -1531,7 +1542,7 @@ class FormHandler {
         /**
          * This method executes a certain workflow action.
          *
-         * @param Array $args Arguments from handleCommand method.
+         * @param array $args Arguments from handleCommand method.
          *
          * @return bool Whether everything worked well or not.
          «IF !app.isLegacy»
@@ -1554,6 +1565,8 @@ class FormHandler {
             «locking.getVersion(it)»
 
             $success = false;
+            $flashBag = $this->request->getSession()->getFlashBag();
+            $logger = $this->container->get('logger');
             try {
                 «locking.applyLock(it)»
                 // execute the workflow action
@@ -1561,8 +1574,6 @@ class FormHandler {
                     $workflowHelper = new «app.appName»_Util_Workflow($this->view->getServiceManager());
                 «ELSE»
                     $workflowHelper = $this->container->get('«app.appName.formatForDB».workflow_helper');
-                    $flashBag = $this->request->getSession()->getFlashBag();
-                    $logger = $this->container->get('logger');
                 «ENDIF»
                 $success = $workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»
@@ -1570,7 +1581,7 @@ class FormHandler {
                 «IF app.isLegacy»
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->trans('Sorry, but an unknown error occured during the %action% action. Please apply the changes again!', ['%action%' => $action], '«app.appName.formatForDB»'));
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]));
                     $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }

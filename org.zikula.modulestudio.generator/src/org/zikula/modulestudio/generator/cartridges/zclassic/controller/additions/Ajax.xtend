@@ -326,9 +326,13 @@ class Ajax {
         «/*' '»* @Method("POST")*/»
         «ENDIF»
          *
-         * @param string $ot       Treated object type.
-         * @param string $fragment The fragment of the entered item name.
-         * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
+        «IF application.isLegacy»
+            «' '»* @param string $ot       Treated object type.
+            «' '»* @param string $fragment The fragment of the entered item name.
+            «' '»* @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
+        «ELSE»
+            «' '»* @param Request $request Current request instance.
+        «ENDIF»
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax_Plain«ELSE»JsonResponse«ENDIF»
          */
@@ -387,7 +391,7 @@ class Ajax {
         $exclude = !empty($exclude) ? explode(',', $exclude) : «IF app.isLegacy»array()«ELSE»[]«ENDIF»;
 
         // parameter for used sorting field
-        $sort = $this->request->query->get('sort', '');
+        $sort = $«IF app.isLegacy»this->«ENDIF»request->query->get('sort', '');
         «new ControllerHelperFunctions().defaultSorting(it, app)»
         $sortParam = $sort . ' asc';
 
@@ -454,7 +458,7 @@ class Ajax {
 
                         // check for preview image
                         if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
-                            $fullObjectId = $objectType . '-' . $itemId;
+                            $fullObjectId = $objectType . '-' . $resultItem['id'];
                             $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
                             $preview = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';
                             $resultItem['image'] = $preview;
@@ -473,18 +477,16 @@ class Ajax {
         $descriptionFieldName = $repository->getDescriptionFieldName();
         $previewFieldName = $repository->getPreviewFieldName();
         «IF app.hasImageFields»
-            if (!empty($previewFieldName)) {
-                «/* TODO use custom image helper instead of pure imagine plugin */»
-                «IF app.isLegacy»
-                    //$imageHelper = new «app.appName»_Util_Image($this->serviceManager);
-                    //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
-                    $imagineManager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
-                «ELSE»
-                    //$imageHelper = $this->get('«app.appName.formatForDB».image_helper');
-                    //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
-                    $imagineManager = $this->get('systemplugin.imagine.manager');
-                «ENDIF»
-            }
+            «/* TODO use custom image helper instead of pure imagine plugin */»
+            «IF app.isLegacy»
+                //$imageHelper = new «app.appName»_Util_Image($this->serviceManager);
+                //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+                $imagineManager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
+            «ELSE»
+                //$imageHelper = $this->get('«app.appName.formatForDB».image_helper');
+                //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+                $imagineManager = $this->get('systemplugin.imagine.manager');
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -505,10 +507,14 @@ class Ajax {
         «' '»* @Method("POST")
         «ENDIF»
          *
-         * @param string $ot Treated object type.
-         * @param string $fn Name of field to be checked.
-         * @param string $v  The value to be checked for uniqueness.
-         * @param string $ex Optional identifier to be excluded from search.
+        «IF application.isLegacy»
+            «' '»* @param string $ot Treated object type.
+            «' '»* @param string $fn Name of field to be checked.
+            «' '»* @param string $v  The value to be checked for uniqueness.
+            «' '»* @param string $ex Optional identifier to be excluded from search.
+        «ELSE»
+            «' '»* @param Request $request Current request instance.
+        «ENDIF»
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          «IF !application.isLegacy»
@@ -647,9 +653,13 @@ class Ajax {
         «' '»* @Method("POST")
         «ENDIF»
          *
-         * @param string $ot    Treated object type.
-         * @param string $field The field to be toggled.
-         * @param int    $id    Identifier of treated entity.
+        «IF application.isLegacy»
+            «' '»* @param string $ot    Treated object type.
+            «' '»* @param string $field The field to be toggled.
+            «' '»* @param int    $id    Identifier of treated entity.
+        «ELSE»
+            «' '»* @param Request $request Current request instance.
+        «ENDIF»
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          «IF !application.isLegacy»
@@ -704,7 +714,12 @@ class Ajax {
         $entity[$field] = !$entity[$field];
 
         // save entity back to database
-        $this->entityManager->flush();
+        «IF app.isLegacy»
+            $this->entityManager->flush();
+        «ELSE»
+            $entityManager = $this->get('doctrine.entitymanager');
+            $entityManager->flush();
+        «ENDIF»
 
         // return response
         $result = «IF app.isLegacy»array(«ELSE»[«ENDIF»

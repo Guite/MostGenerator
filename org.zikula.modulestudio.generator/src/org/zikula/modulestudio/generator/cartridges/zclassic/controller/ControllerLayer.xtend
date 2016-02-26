@@ -206,10 +206,11 @@ class ControllerLayer {
                 «ENDIF»
                 use DataUtil;
             «ENDIF»
-            «IF hasActions('edit')»
+            «IF hasActions('edit') && app.needsAutoCompletion»
                 use JCSSUtil;
             «ENDIF»
             use ModUtil;
+            use RuntimeException;
             «IF (hasActions('view') && isAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
@@ -241,10 +242,11 @@ class ControllerLayer {
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
             use FormUtil;
-            «IF hasActions('edit')»
+            «IF hasActions('edit') && app.needsAutoCompletion»
                 use JCSSUtil;
             «ENDIF»
             use ModUtil;
+            use RuntimeException;
             «IF (hasActions('view') && app.hasAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
@@ -303,8 +305,7 @@ class ControllerLayer {
          * )
          «ENDIF»
          *
-         * @param string $action The action to be executed.
-         * @param array  $items  Identifier list of the items to be processed.
+         * @param Request $request Current request instance.
          *
          * @return bool true on sucess, false on failure.
          «IF !isLegacy»
@@ -337,7 +338,7 @@ class ControllerLayer {
             «IF !skipHookSubscribers»
                 $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
             «ENDIF»
-            $flashBag = $this->request->getSession()->getFlashBag();
+            $flashBag = $request->getSession()->getFlashBag();
             $logger = $this->get('logger');
         «ENDIF»
 
@@ -415,7 +416,7 @@ class ControllerLayer {
                     «IF isLegacy»
                         $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                     «ELSE»
-                        $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
+                        $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $urlArgs);
                     «ENDIF»
                 }
                 $hookHelper->callProcessHooks($entity, $hookType, $url);
@@ -527,6 +528,10 @@ class ControllerLayer {
          *        methods = {"GET", "POST"}
          * )
          «ENDIF»
+         «IF !isLegacy»
+         *
+         * @param Request $request Current request instance.
+         «ENDIF»
          *
          * @return string Output
          «IF !isLegacy»
@@ -610,7 +615,7 @@ class ControllerLayer {
                     «actionHelper.generate(action, false)»
 
                 «ENDFOR»
-                «IF hasActions('edit')»
+                «IF hasActions('edit') && app.needsAutoCompletion»
 
                     «handleInlineRedirect(false)»
                 «ENDIF»
@@ -668,7 +673,7 @@ class ControllerLayer {
 
                     «handleSelectedObjects(false)»
                 «ENDIF»
-                «IF hasActions('edit')»
+                «IF hasActions('edit') && app.needsAutoCompletion»
 
                     «handleInlineRedirect(false)»
                 «ENDIF»
@@ -725,22 +730,25 @@ class ControllerLayer {
     def private linkContainerBaseImpl(Controller it) '''
         namespace «app.appNamespace»\Container\Base;
 
-        use ModUtil;
-        use ServiceUtil;
         use Symfony\Component\Routing\RouterInterface;
         «IF app.generateAccountApi»
             use UserUtil;
         «ENDIF»
-        use Zikula\Common\Translator\Translator;
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
+        use Zikula\PermissionsModule\Api\PermissionApi;
+        use «app.appNamespace»\Helper\ControllerHelper;
 
         /**
          * This is the link container service implementation class.
          */
         class LinkContainer implements LinkContainerInterface
         {
+            use TranslatorTrait;
+
             /**
-             * @var Translator
+             * @var TranslatorInterface
              */
             protected $translator;
 
@@ -750,34 +758,55 @@ class ControllerLayer {
             protected $router;
 
             /**
+             * @var PermissionApi
+             */
+            protected $permissionApi;
+
+            /**
+             * @var ControllerHelper
+             */
+            protected $controllerHelper;
+
+            /**
              * Constructor.
              * Initialises member vars.
              *
-             * @param Translator      $translator Translator service instance.
-             * @param Routerinterface $router     The router service.
+             * @param TranslatorInterface $translator       Translator service instance.
+             * @param Routerinterface     $router           Router service instance.
+             * @param PermissionApi       $permissionApi    PermissionApi service instance.
+             * @param ControllerHelper    $controllerHelper ControllerHelper service instance.
              */
-            public function __construct($translator, RouterInterface $router)
+            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper)
+            {
+                $this->setTranslator($translator);
+                $this->router = $router;
+                $this->permissionApi = $permissionApi;
+                $this->controllerHelper = $controllerHelper;
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(/*TranslatorInterface */$translator)
             {
                 $this->translator = $translator;
-                $this->router = $router;
             }
 
             /**
              * Returns available header links.
              *
+             * @param string $type The type to collect links for.
+             *
              * @return array Array of header links.
              */
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {
-                $serviceManager = ServiceUtil::getManager();
-
-                $controllerHelper = $serviceManager->get('«app.appName.formatForDB».controller_helper');
-                $utilArgs = ['api' => '«it.formattedName»', 'action' => 'getLinks'];
-                $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
+                $utilArgs = ['api' => 'linkContainer', 'action' => 'getLinks'];
+                $allowedObjectTypes = $this->controllerHelper->getObjectTypes('api', $utilArgs);
         
                 $permLevel = LinkContainerInterface::TYPE_ADMIN == $type ? ACCESS_ADMIN : ACCESS_READ;
-
-                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
 
                 // Create an array of links to return
                 $links = [];
@@ -796,14 +825,14 @@ class ControllerLayer {
                             return $links;
                         }
 
-                        if (!$permissionHelper->hasPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
+                        if (!$this->permissionApi->hasPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
                             return $links;
                         }
 
                         «IF !app.getAllUserControllers.empty && app.getMainUserController.hasActions('view')»
                             «FOR entity : app.getAllEntities.filter[standardFields && ownerPermission]»
                                 $objectType = '«entity.name.formatForCode»';
-                                if ($permissionHelper->hasPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                                if ($this->permissionApi->hasPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                                     $links[] = [
                                         'url' => $this->router->generate('«app.appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
                                         'text' => $this->translator->__('My «entity.nameMultiple.formatForDisplay»'),
@@ -813,7 +842,7 @@ class ControllerLayer {
                             «ENDFOR»
                         «ENDIF»
                         «IF !app.getAllAdminControllers.empty»
-                            if ($permissionHelper->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                            if ($this->permissionApi->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                                 $links[] = [
                                     'url' => $this->router->generate('«app.appName.formatForDB»_admin_index'),
                                     'text' => $this->translator->__('«name.formatForDisplayCapital» Backend'),
@@ -852,7 +881,7 @@ class ControllerLayer {
                 «entity.menuLinkToViewAction(it)»
             «ENDFOR»
             «IF app.needsConfig && isConfigController»
-                if («IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
+                if («IF isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                     «IF isLegacy»
                         $links[] = array(
                             'url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
@@ -871,7 +900,7 @@ class ControllerLayer {
 
     def private menuLinkToViewAction(Entity it, Controller controller) '''
         if (in_array('«name.formatForCode»', $allowedObjectTypes)
-            && «IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
+            && «IF isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . ':«name.formatForCodeCapital»:', '::', $permLevel)) {
             «IF isLegacy»
                 $links[] = array(
                     'url' => ModUtil::url($this->name, '«controller.formattedName»', 'view', array('ot' => '«name.formatForCode»'«IF tree != EntityTreeType.NONE», 'tpl' => 'tree'«ENDIF»)),
@@ -889,7 +918,7 @@ class ControllerLayer {
         switch it {
             AdminController case !application.getAllUserControllers.empty: '''
                     «val userController = application.getAllUserControllers.head»
-                    if («IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_READ)) {
+                    if («IF isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_READ)) {
                         «IF isLegacy»
                             $links[] = array(
                                 'url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails13»),
@@ -905,7 +934,7 @@ class ControllerLayer {
                     '''
             UserController case !application.getAllAdminControllers.empty: '''
                     «val adminController = application.getAllAdminControllers.head»
-                    if («IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
+                    if («IF isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission(«IF isLegacy»$this->name«ELSE»$this->getBundleName()«ENDIF» . '::', '::', ACCESS_ADMIN)) {
                         «IF isLegacy»
                             $links[] = array(
                                 'url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails13»),

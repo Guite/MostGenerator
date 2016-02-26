@@ -32,7 +32,7 @@ class Locking {
     '''
 
     def releasePageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && $this->mode == 'edit' && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
+        if (true === $this->hasPageLockSupport && «IF isLegacy»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» == 'edit' && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
             ModUtil::apiFunc('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'releaseLock', «IF isLegacy»array(«ELSE»[«ENDIF»
                                  'lockName' => «IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF» . $this->objectTypeCapital . $this->createCompositeIdentifier()
             «IF isLegacy»)«ELSE»]«ENDIF»);
@@ -101,7 +101,7 @@ class Locking {
                 «IF application.isLegacy»
                     LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->trans('Sorry, but someone else has already changed this record. Please apply the changes again!', [], '«application.appName.formatForDB»'));
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                     $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()]);
                 «ENDIF»
         «ENDIF»

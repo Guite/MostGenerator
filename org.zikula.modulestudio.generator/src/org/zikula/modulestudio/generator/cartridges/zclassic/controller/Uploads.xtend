@@ -90,7 +90,7 @@ class Uploads {
             use Zikula\Common\Translator\TranslatorInterface;
             use DataUtil;
             use FileUtil;
-            use ModUtil;
+            use RuntimeException;
             use ServiceUtil;
             use UserUtil;
 
@@ -195,12 +195,16 @@ class Uploads {
                 return $result;
             }
 
+            «IF !targets('1.3.x')»
+                $file = $fileData[$fieldName];
+            «ENDIF»
+
             // perform validation
             «IF targets('1.3.x')»
             if (!$this->validateFileUpload($objectType, $fileData[$fieldName], $fieldName)) {
             «ELSE»
             try {
-                $this->validateFileUpload($objectType, $fileData[$fieldName], $fieldName);
+                $this->validateFileUpload($objectType, $file, $fieldName);
             } catch (\Exception $e) {
             «ENDIF»
                 // skip this upload field
@@ -208,7 +212,7 @@ class Uploads {
             }
 
             // retrieve the final file name
-            $fileName = $fileData[$fieldName]«IF targets('1.3.x')»['name']«ELSE»->getClientOriginalName()«ENDIF»;
+            $fileName = «IF targets('1.3.x')»$fileData[$fieldName]['name']«ELSE»$file->getClientOriginalName()«ENDIF»;
             $fileNameParts = explode('.', $fileName);
             «IF targets('1.3.x')»
                 $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
@@ -258,7 +262,7 @@ class Uploads {
                     «ENDIF»
                 }
             «ELSE»
-                $targetFile = $fileData[$fieldName]->move($basePath, $fileName);
+                $targetFile = $file->move($basePath, $fileName);
 
                 «doFileValidation('$basePath . $fileName')»
             «ENDIF»
@@ -428,7 +432,7 @@ class Uploads {
             $extensionarr = explode('.', $fileName);
             $meta['extension'] = strtolower($extensionarr[count($extensionarr) - 1]);
             $meta['size'] = filesize($filePath);
-            $meta['isImage'] = in_array($meta['extension'], $this->imageFileTypes ? true : false);
+            $meta['isImage'] = in_array($meta['extension'], $this->imageFileTypes) ? true : false;
 
             if (!$meta['isImage']) {
                 return $meta;
@@ -684,6 +688,8 @@ class Uploads {
                 «ELSE»
                     $logger = $serviceManager->get('logger');
                     $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName]);
+
+                    return false;
                 «ENDIF»
             }
             $fileName = $objectData[$fieldName];

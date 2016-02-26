@@ -88,7 +88,7 @@ class Config {
              *
              * @param TranslatorInterface $translator Translator service instance.
              */
-            public function setTranslator(TranslatorInterface $translator)
+            public function setTranslator(/*TranslatorInterface */$translator)
             {
                 $this->translator = $translator;
             }
@@ -123,6 +123,14 @@ class Config {
             {
                 return '«appName.formatForDB»_appsettings';
             }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function getName()
+            {
+                return $this->getBlockPrefix();
+            }
         }
     '''
 
@@ -130,8 +138,8 @@ class Config {
         /**
          * Adds fields for «name.formatForDisplay» fields.
          *
-         * @param FormBuilderInterface The form builder.
-         * @param array                The options.
+         * @param FormBuilderInterface $builder The form builder.
+         * @param array                $options The options.
          */
         public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options)
         {

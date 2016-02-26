@@ -39,7 +39,7 @@ class SoftDeleteable extends AbstractExtension implements EntityExtensionInterfa
          «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
-         * @var datetime $deletedAt.
+         * @var \DateTime $deletedAt.
          */
         protected $deletedAt;
     '''

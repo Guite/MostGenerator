@@ -78,7 +78,7 @@ class Association {
                 «' '»* @Assert\Valid()
             «ENDIF»
         «ENDIF»
-         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
+         * @var \«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -130,7 +130,7 @@ class Association {
             «' '»* @Assert\Type(type="«/*\*/»«entityClass»")
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass» $«sourceName».
+         * @var \«entityClass» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -156,7 +156,7 @@ class Association {
                     «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
                 «ENDIF»
             «ENDIF»
-             * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»[] $«sourceName».
+             * @var \«entityClass»[] $«sourceName».
              */
             protected $«sourceName» = null;
         «ENDIF»
@@ -187,7 +187,7 @@ class Association {
                 «' '»* @Assert\Valid()
             «ENDIF»
         «ENDIF»
-         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass» $«targetName».
+         * @var \«entityClass» $«targetName».
          */
         protected $«targetName»;
         «/* this last line is on purpose */»
@@ -235,7 +235,7 @@ class Association {
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»
-         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»[] $«targetName».
+         * @var \«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
         «/* this last line is on purpose */»
@@ -261,7 +261,7 @@ class Association {
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»
-         * @var «/*IF !application.targets('1.3.x')»\«ENDIF*/»«entityClass»[] $«targetName».
+         * @var \«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
     '''

@@ -96,10 +96,16 @@ class EntityMetaData {
             /**
              * {@inheritdoc}
              */
+            public function getName()
+            {
+                return $this->getBlockPrefix();
+            }
+
+            /**
+             * {@inheritdoc}
+             */
             public function configureOptions(OptionsResolver $resolver)
             {
-                parent::configureOptions($resolver);
-
                 $resolver->setDefaults([
                     // define class for underlying data (required for embedding forms)
                     'data_class' => 'Zikula\Core\Doctrine\Entity\AbstractEntityMetadata'

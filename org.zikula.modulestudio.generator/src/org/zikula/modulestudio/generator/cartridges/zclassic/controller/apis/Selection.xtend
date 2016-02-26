@@ -146,7 +146,7 @@ class Selection {
          * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
          * @param boolean $args['slimMode'] If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return Array with retrieved collection.
+         * @return array with retrieved collection.
          */
         public function getEntities(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -177,7 +177,7 @@ class Selection {
          * @param boolean $args['useJoins']       Whether to include joining related objects (optional) (default=true).
          * @param boolean $args['slimMode']       If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return Array with retrieved collection and amount of total records affected by this query.
+         * @return array with retrieved collection and amount of total records affected by this query.
          */
         public function getEntitiesPaginated(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {

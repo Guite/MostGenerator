@@ -37,10 +37,12 @@ class ModelHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper\Base;
 
-            use ModUtil;
+            use Exception;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
-
+        «ELSE»
+            use Exception;
         «ENDIF»
+
         /**
          * Utility base class for model helper methods.
          */
@@ -86,6 +88,8 @@ class ModelHelper {
          * @param string $objectType Name of treated entity type.
          *
          * @return boolean Whether a new instance can be created or not.
+         *
+         * @throws Exception If an invalid object type is used.
          */
         public function canBeCreated($objectType)
         {
@@ -95,7 +99,7 @@ class ModelHelper {
                 $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'canBeCreated'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
-                throw new \Exception('Error! Invalid object type received.');
+                throw new Exception('Error! Invalid object type received.');
             }
 
             $result = false;
@@ -149,6 +153,8 @@ class ModelHelper {
          * @param string $objectType Name of treated entity type.
          *
          * @return boolean Whether at least one instance exists or not.
+         *
+         * @throws Exception If an invalid object type is used.
          */
         protected function hasExistingInstances($objectType)
         {
@@ -158,7 +164,7 @@ class ModelHelper {
                 $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
             «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'hasExistingInstances'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
-                throw new \Exception('Error! Invalid object type received.');
+                throw new Exception('Error! Invalid object type received.');
             }
 
             «IF targets('1.3.x')»

@@ -129,7 +129,7 @@ class Property {
         «IF !entity.application.targets('1.3.x')»
             «thVal.fieldAnnotations(it)»
         «ENDIF»
-         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSE»«type»«ENDIF» $«name.formatForCode».
+         * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode».
          */
         «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE» = «defaultFieldData»«ENDIF»;
         «/* this last line is on purpose */»

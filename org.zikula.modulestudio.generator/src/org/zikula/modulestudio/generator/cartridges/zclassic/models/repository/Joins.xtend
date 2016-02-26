@@ -42,7 +42,7 @@ class Joins {
         /**
          * Helper method to add joins to from clause.
          *
-         * @param Doctrine\ORM\QueryBuilder $qb query builder instance used to create the query.
+         * @param QueryBuilder $qb query builder instance used to create the query.
          *
          * @return String Enhancement for from clause.
          */

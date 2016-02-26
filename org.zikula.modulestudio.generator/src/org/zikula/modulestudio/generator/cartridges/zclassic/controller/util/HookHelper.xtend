@@ -41,11 +41,14 @@ class HookHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper\Base;
 
+            use Zikula\Component\HookDispatcher\Hook;
+            use Zikula\Component\HookDispatcher\HookDispatcher;
             use Zikula\Core\Doctrine\EntityAccess;
             use Zikula\Core\Hook\ProcessHook;
             use Zikula\Core\Hook\ValidationHook;
             use Zikula\Core\Hook\ValidationProviders;
-            use Zikula_HookDispatcher
+            use Zikula\Core\RouteUrl;
+
         «ENDIF»
         /**
          * Utility base class for hook related helper methods.
@@ -54,7 +57,7 @@ class HookHelper {
         {
             «IF !targets('1.3.x')»
                 /**
-                 * @var Zikula_HookDispatcher
+                 * @var HookDispatcher
                  */
                 protected $hookDispatcher;
 
@@ -62,9 +65,7 @@ class HookHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param Zikula_HookDispatcher $hookDispatcher Hook dispatcher service instance.
-                 *
-                 * @return void
+                 * @param HookDispatcher $hookDispatcher Hook dispatcher service instance.
                  */
                 public function __construct($hookDispatcher)
                 {
@@ -91,7 +92,6 @@ class HookHelper {
          */
         public function callValidationHooks($entity, $hookType)
         {
-            $isValid = true;
             $hookAreaPrefix = $entity->getHookAreaPrefix();
 
             «IF targets('1.3.x')»
@@ -115,7 +115,7 @@ class HookHelper {
         «IF targets('1.3.x')»
             «' '»* @param Zikula_ModUrl       $url      The url object.
         «ELSE»
-            «' '»* @param RouteUrl            $url      The url object.
+            «' '»* @param RouteUrl     $url      The url object.
         «ENDIF»
          */
         public function callProcessHooks($entity, $hookType, $url)
@@ -151,9 +151,10 @@ class HookHelper {
             /**
              * Dispatch hooks.
              *
-             * @param Hook $hook Hook interface.
+             * @param string $name Hook event name.
+             * @param Hook   $hook Hook interface.
              *
-             * @return Zikula\Component\HookDispatcher\Hook
+             * @return Hook
              */
             public function dispatchHooks($name, Hook $hook)
             {

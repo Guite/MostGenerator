@@ -106,6 +106,14 @@ class EntityTreeType {
             }
 
             /**
+             * {@inheritdoc}
+             */
+            public function getName()
+            {
+                return $this->getBlockPrefix();
+            }
+
+            /**
              * Performs the actual data selection.
              *
              * @param array $options The options.

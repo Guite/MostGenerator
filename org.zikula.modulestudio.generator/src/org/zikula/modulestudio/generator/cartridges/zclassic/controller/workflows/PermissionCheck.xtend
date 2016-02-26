@@ -302,5 +302,5 @@ class PermissionCheck {
         «app.gettextCall»('«title»') => «app.gettextCall»('«getWorkflowActionDescription(wfType, title)»')«IF title != 'Delete'»,«ENDIF»
     '''
 
-    def private gettextCall(Application it) '''«IF targets('1.3.x')»no__«ELSE»$translator->«ENDIF»'''
+    def private gettextCall(Application it) '''«IF targets('1.3.x')»no«ELSE»$translator->__«ENDIF»'''
 }

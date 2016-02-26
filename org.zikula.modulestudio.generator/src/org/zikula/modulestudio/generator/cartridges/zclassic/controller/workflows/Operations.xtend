@@ -76,15 +76,14 @@ class Operations {
          */
         function «app.appName»_operation_«opName»(&$entity, $params)
         {
-            $dom = «IF !app.targets('1.3.x')»\«ENDIF»ZLanguage::getModuleDomain('«app.appName»');
+            «IF app.targets('1.3.x')»
+                $dom = ZLanguage::getModuleDomain('«app.appName»');
+
+            «ENDIF»
 «/*
             // handling of additional parameters
             // $params['foobar'] = isset($params['foobar']) ? (bool)$params['foobar'] : false;
 */»
-
-            // initialise the result flag
-            $result = false;
-
             «operationImpl(opName)»
 
             // return result of this operation
@@ -100,9 +99,6 @@ class Operations {
     '''
 
     def private updateImpl() '''
-        $objectType = $entity['_objectType'];
-        $currentState = $entity['workflowState'];
-
         // get attributes read from the workflow
         if (isset($params['nextstate']) && !empty($params['nextstate'])) {
             // assign value to the data object

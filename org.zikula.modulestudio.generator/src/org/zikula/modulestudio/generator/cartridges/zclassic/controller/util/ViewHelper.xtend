@@ -35,13 +35,12 @@ class ViewHelper {
             namespace «appNamespace»\Helper\Base;
 
             use DataUtil;
-            use FormUtil;
-            use ModUtil;
             use PageUtil;
             use System;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\Response;
+            use Twig_Environment;
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Core\Response\PlainResponse;
 
@@ -113,7 +112,7 @@ class ViewHelper {
          *
          * @return string name of template file.
          */
-        public function getViewTemplate(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
+        public function getViewTemplate(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
             // create the base template name
             $template = «IF isLegacy»$type«ELSE»'@«appName»/' . ucfirst($type)«ENDIF» . '/' . $func;
@@ -177,7 +176,7 @@ class ViewHelper {
          *
          * @return mixed Output.
          */
-        public function processTemplate(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request, $templateParameters = []«ENDIF», $template = '')
+        public function processTemplate(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request, $templateParameters = []«ENDIF», $template = '')
         {
             $templateExtension = $this->determineExtension(«IF isLegacy»$view«ELSE»$twig«ENDIF», $type, $func, «IF isLegacy»$args«ELSE»$request«ENDIF»);
             if (empty($template)) {
@@ -190,9 +189,9 @@ class ViewHelper {
             «ELSE»
                 $raw = false;
                 if ($request->isMethod('POST')) {
-                    $raw = $request->request->getBoolean('raw', false);
+                    $raw = (bool) $request->request->get('raw', false);
                 } elseif ($request->isMethod('GET')) {
-                    $raw = $request->query->getBoolean('raw', false);
+                    $raw = (bool) $request->query->get('raw', false);
                 }
             «ENDIF»
             if (!$raw && $templateExtension != '«IF isLegacy»tpl«ELSE»html.twig«ENDIF»') {
@@ -254,7 +253,7 @@ class ViewHelper {
          *
          * @return array List of allowed template extensions.
          */
-        protected function determineExtension(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
+        protected function determineExtension(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
             $templateExtension = '«IF isLegacy»tpl«ELSE»html.twig«ENDIF»';
             if (!in_array($func, «IF isLegacy»array(«ELSE»[«ENDIF»'view', 'display'«IF isLegacy»)«ELSE»]«ENDIF»)) {
@@ -336,7 +335,7 @@ class ViewHelper {
          *
          * @return mixed Output.
          */
-        protected function processPdf(«IF isLegacy»Zikula_View $view«ELSE»\Twig_Environment $twig, Request $request, $templateParameters = []«ENDIF», $template)
+        protected function processPdf(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig, Request $request, $templateParameters = []«ENDIF», $template)
         {
             // first the content, to set page vars
             «IF isLegacy»
