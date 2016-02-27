@@ -57,7 +57,6 @@ class Installer {
             «IF hasCategorisableEntities»
                 use Zikula\CategoriesModule\Entity\CategoryRegistryEntity;
             «ENDIF»
-            use Zikula\ExtensionsModule\Api\HookApi;
 
         «ENDIF»
         /**
@@ -202,22 +201,22 @@ class Installer {
 
             «ENDIF»
             «IF hasHookSubscribers»
-                // register hook subscriber bundles
                 «IF targets('1.3.x')»
+                    // register hook subscriber bundles
                     HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
                 «ELSE»
-                    $subscriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
-                    $this->hookApi->registerSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
+                    // install subscriber hooks
+                    $this->hookApi->installSubscriberHooks($this->bundle->getMetaData());
                 «ENDIF»
             «ENDIF»
             «/*TODO see #15
             «IF hasHookProviders»
-                // register hook provider bundles
                 «IF targets('1.3.x')»
+                    // register hook provider bundles
                     HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
                 «ELSE»
-                    $providerHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::PROVIDER_TYPE);
-                    $this->hookApi->registerProviderBundles($providerHookContainer->getHookProviderBundles());
+                    // install provider hooks
+                    $this->hookApi->installProviderHooks($this->bundle->getMetaData());
                 «ENDIF»
             «ENDIF»*/»
 
@@ -384,22 +383,21 @@ class Installer {
                 EventUtil::unregisterPersistentModuleHandlers($this->name);
 
             «ENDIF»
-            // unregister hook subscriber bundles
             «IF targets('1.3.x')»
+                // unregister hook subscriber bundles
                 HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
-                «/*TODO see #15
-                    // unregister hook provider bundles
-                    $this->hookApi->unregisterProviderBundles($this->version->getHookProviderBundles());
-                */»
             «ELSE»
-                $subscriberHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::SUBSCRIBER_TYPE);
-                HookUtil::unregisterSubscriberBundles($subscriberHookContainer->getHookSubscriberBundles());
-                «/*TODO see #15
-                    // unregister hook provider bundles
-                    $providerHookContainer = $this->hookApi->getHookContainerInstance($this->bundle->getMetaData(), HookApi::PROVIDER_TYPE);
-                    $this->hookApi->unregisterProviderBundles($providerHookContainer->getHookProviderBundles());
-                */»
+                // uninstall subscriber hooks
+                $this->hookApi->uninstallSubscriberHooks($this->bundle->getMetaData());
             «ENDIF»
+            «/*TODO see #15
+            «IF targets('1.3.x')»
+                // unregister hook provider bundles
+                $this->hookApi->unregisterProviderBundles($this->version->getHookProviderBundles());
+            «ELSE»
+                // uninstall provider hooks
+                $this->hookApi->uninstallProviderHooks($this->bundle->getMetaData());
+            «ENDIF»*/»
             «IF !getAllVariables.empty»
 
                 // remove all module vars
