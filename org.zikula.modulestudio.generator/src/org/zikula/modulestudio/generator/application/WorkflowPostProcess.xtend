@@ -7,8 +7,6 @@ import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.emf.mwe.utils.FileCopy
-import org.zikula.modulestudio.generator.cartridges.reporting.Activator
-import org.zikula.modulestudio.generator.cartridges.reporting.ReportingFacade
 import org.zikula.modulestudio.generator.workflow.components.ModelFileCopier
 
 /**
@@ -27,13 +25,7 @@ class WorkflowPostProcess {
      */
     def run() {
         copyModelFiles
-        if (settings.getSelectedCartridges.contains('zclassic')) { //$NON-NLS-1$
-            copyAdminImage
-        }
-
-        if (settings.getSelectedCartridges.contains('reporting')) { //$NON-NLS-1$
-            exportBirtReports
-        }
+        copyAdminImage
     }
 
     /**
@@ -86,34 +78,6 @@ class WorkflowPostProcess {
             } catch (IOException e) {
                 ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
             }
-        }
-    }
-
-    /**
-     * Exports the BIRT reports for reporting cartridge.
-     */
-    def private void exportBirtReports() {
-        try {
-            val reportingBundle = Platform.getBundle(Activator.PLUGIN_ID)
-            var resources = FileLocator.findEntries(reportingBundle, new Path(settings.getReportPath))
-            val resourcesExported = FileLocator.findEntries(reportingBundle, new Path('src/' + settings.getReportPath)) //$NON-NLS-1$
-            if (resources.size < 1) {
-                resources = resourcesExported
-            }
-            var File dir = new File(FileLocator.toFileURL(resources.head).toURI)
-
-            val reportingFacade = new ReportingFacade
-            reportingFacade.outputPath = settings.getOutputPath
-            reportingFacade.modelPath = settings.getModelPath.replaceFirst('file:', '') //$NON-NLS-1$ //$NON-NLS-2$
-            reportingFacade.setUp
-            for (report : settings.getSelectedReports) {
-                settings.getProgressMonitor.subTask('Reporting: ' + report.toString) //$NON-NLS-1$
-                reportingFacade.startExport(dir.toString + File.separator + report.toString + '.rptdesign', report.toString) //$NON-NLS-1$
-                settings.getProgressMonitor.subTask('')
-            }
-            reportingFacade.shutDown
-        } catch (Exception e) {
-            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
         }
     }
 }

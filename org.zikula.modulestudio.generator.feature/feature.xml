@@ -24,15 +24,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.datatools.connectivity.oda.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.emf.query"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.birt"
          version="0.0.0"/>
 
    <includes
@@ -53,52 +45,10 @@
       <import plugin="org.eclipse.xtext" version="2.9.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.builder" version="2.9.1" match="greaterOrEqual"/>
       <import plugin="org.objectweb.asm" version="5.0.1" match="greaterOrEqual"/>
-      <import plugin="org.zikula.modulestudio.generator.reporting" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.10.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.datatools.connectivity.oda" version="3.4.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.datatools.connectivity.oda.consumer" version="3.2.6" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.datatools.connectivity.oda.design" version="3.3.6" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.datatools.connectivity.oda.profile" version="3.2.9" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.query.ocl" version="2.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ocl.ecore" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.icu"/>
-      <import plugin="org.eclipse.birt.chart.engine" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.extension" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.pdf" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.svg" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.device.swt" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.engine.extension" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.chart.reportitem" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.config" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.config.html" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.config.pdf" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.html" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.pdf" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.script.javascript" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.item.crosstab.core" version="4.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.10.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.107.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.11.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore.xmi" version="2.11.1" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="org.zikula.modulestudio.generator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.datatools.enablement.oda.ecore"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.zikula.modulestudio.generator.reporting"
          download-size="0"
          install-size="0"
          version="0.0.0"

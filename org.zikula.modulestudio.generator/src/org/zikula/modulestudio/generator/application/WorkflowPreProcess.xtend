@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.application
 import java.io.File
 import org.zikula.modulestudio.generator.exceptions.DirectoryNotEmptyException
 import org.zikula.modulestudio.generator.exceptions.ExceptionBase
-import org.zikula.modulestudio.generator.exceptions.NoCartridgesSelected
 
 /**
  * Pre processing providing convenience methods for single cartridges.
@@ -13,14 +12,7 @@ class WorkflowPreProcess {
 
     def run(WorkflowSettings settings) throws ExceptionBase {
         this.settings = settings
-        cartridgeTasks
         directoryTasks
-    }
-
-    def private cartridgeTasks() throws NoCartridgesSelected {
-        if (settings.getSelectedCartridges.empty) {
-            throw new NoCartridgesSelected
-        }
     }
 
     def private directoryTasks() throws DirectoryNotEmptyException {

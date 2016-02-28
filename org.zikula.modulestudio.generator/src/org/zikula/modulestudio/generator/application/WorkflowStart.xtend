@@ -98,18 +98,14 @@ class WorkflowStart {
      * Workflow facade executing the actual model-to-text workflows.
      */
     def private performM2T() throws ExceptionBase {
-        if (settings.selectedCartridges.size == 1 && 'reporting'.equals(settings.selectedCartridges.head)) {
-            return false
-        }
-
         var success = false
 
         try {
             val progressMonitor = settings.progressMonitor
             progressMonitor.beginTask('Generating "' + settings.appVendor + File.separator + settings.appName + ' ' + settings.appVersion + '" ...', -1)
 
-            for (singleCartridge : settings.getSelectedCartridges) {
-                // The generator cartridge to execute (zclassic, reporting)
+            for (singleCartridge : #['zclassic']) { //$NON-NLS-1$
+                // The generator cartridge to execute
                 currentCartridge = singleCartridge.toString
 
                 if (!'reporting'.equals(currentCartridge)) {
