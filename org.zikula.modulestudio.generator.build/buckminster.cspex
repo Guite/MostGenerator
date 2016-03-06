@@ -12,7 +12,7 @@
         <!-- Selective signing, see https://www.eclipse.org/forums/index.php/t/171734/ -->
         <public name="site.signed" actor="ant">
             <actorProperties>
-                <property key="buildFile" value="signing.ant" />
+                <property key="buildFile" value="${workspace.root}/refProduct/de.guite.modulestudio.build/signing/signing.ant" />
                 <property key="targets" value="sign.jars" />
             </actorProperties>
             <prerequisites alias="action.requirements">
@@ -97,7 +97,4 @@
             </products>
         </public>
     </actions>
-    <alterActions>
-        <remove name="site.signed" />
-    </alterActions>
 </cspecExtension>
