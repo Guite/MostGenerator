@@ -1,0 +1,33 @@
+<project>
+    <property name="output.folder" location="${sp:action.output}" />
+
+    <target name="sign.jars">
+        <property name="local.keystore.path" value=""/>
+        <property name="local.keystore.alias" value=""/>
+        <property name="local.keystore.password" value=""/>
+        <buckminster.contextProperty name="local.keystore.path"/>
+        <buckminster.contextProperty name="local.keystore.alias"/>
+        <buckminster.contextProperty name="local.keystore.password"/>
+        <fail message="The properties 'local.keystore.path', 'local.keystore.alias', and 'local.keystore.password' must be set in order to do local jar signing">
+            <condition>
+                <not>
+                    <and>
+                        <length string="${local.keystore.path}" when="greater" length="0"/>
+                        <length string="${local.keystore.alias}" when="greater" length="0"/>
+                        <length string="${local.keystore.password}" when="greater" length="0"/>
+                    </and>
+                </not>
+            </condition>
+        </fail>
+        <delete dir="${output.folder}" />
+        <mkdir dir="${output.folder}" />
+        <copy todir="${output.folder}">
+            <buckminster.valuefileset value="${fs:action.requirements}" />
+        </copy>
+        <signjar keystore="${local.keystore.path}" alias="${local.keystore.alias}" storepass="${local.keystore.password}">
+            <fileset dir="${output.folder}">
+                <include name="**/org.zikula.*.jar"/>
+            </fileset>
+        </signjar>
+    </target>
+</project>
