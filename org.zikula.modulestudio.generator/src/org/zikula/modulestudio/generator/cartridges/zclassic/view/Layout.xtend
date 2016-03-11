@@ -159,7 +159,7 @@ class Layout {
         {% extends '«appName»::base.html.twig' %}
         {% block header %}
             {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
-                {{ render(controller('ZikulaAdminModule:Admin:adminheader')) }}
+                {{ adminHeader() }}
             {% endif %}
             {{ parent() }}
         {% endblock %}
@@ -169,7 +169,7 @@ class Layout {
         {% endblock %}
         {% block footer %}
             {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
-                {{ render(controller('ZikulaAdminModule:Admin:adminfooter')) }}
+                {{ adminFooter() }}
             {% endif %}
             {{ parent() }}
         {% endblock %}
