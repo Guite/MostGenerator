@@ -49,7 +49,7 @@ class ObjectTypeSelector {
                 $result = array();
             «ELSE»
                 $serviceManager = \ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator');
+                $translator = $serviceManager->get('translator.default');
                 $result = [];
             «ENDIF»
 

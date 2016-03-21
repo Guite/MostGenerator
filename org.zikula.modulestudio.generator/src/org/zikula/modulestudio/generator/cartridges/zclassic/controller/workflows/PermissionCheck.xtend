@@ -121,7 +121,7 @@ class PermissionCheck {
             «val wfDefinition = new Definition»
             «IF !app.targets('1.3.x')»
                 $serviceManager = \ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator');
+                $translator = $serviceManager->get('translator.default');
             «ENDIF»
             return «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'title' => «app.gettextCall»('«wfType.textualName.formatForDisplayCapital» workflow («wfType.approvalType.formatForDisplay» approval)'),

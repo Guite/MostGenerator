@@ -88,7 +88,7 @@ class ContentTypeSingle {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator')->__('«appName» detail view');
+                return $serviceManager->get('translator.default')->__('«appName» detail view');
             «ENDIF»
         }
 
@@ -106,7 +106,7 @@ class ContentTypeSingle {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator')->__('Display or link a single «appName» object.');
+                return $serviceManager->get('translator.default')->__('Display or link a single «appName» object.');
             «ENDIF»
         }
 
@@ -172,7 +172,7 @@ class ContentTypeSingle {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 
-                return $serviceManager->get('translator')->__('No item selected.');
+                return $serviceManager->get('translator.default')->__('No item selected.');
             «ENDIF»
         }
 

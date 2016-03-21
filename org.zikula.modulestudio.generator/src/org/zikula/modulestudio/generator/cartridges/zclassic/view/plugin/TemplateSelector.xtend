@@ -52,7 +52,7 @@ class TemplateSelector {
                 $result[] = array('text' => __('Custom template', $dom), 'value' => 'custom');
             «ELSE»
                 $serviceManager = \ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator');
+                $translator = $serviceManager->get('translator.default');
                 $result = [];
 
                 $result[] = ['text' => $translator->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];

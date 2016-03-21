@@ -43,7 +43,7 @@ class ItemActions {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
-                $translator = $serviceManager->get('translator');
+                $translator = $serviceManager->get('translator.default');
             «ENDIF»
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentLegacyControllerType == '«controller.formattedName»') {

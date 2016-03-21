@@ -446,7 +446,7 @@ class EntityMethods {
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
                     $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator')->__('Error! Could not load the associated workflow.'));
+                    $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator.default')->__('Error! Could not load the associated workflow.'));
                 «ENDIF»
             }
         }

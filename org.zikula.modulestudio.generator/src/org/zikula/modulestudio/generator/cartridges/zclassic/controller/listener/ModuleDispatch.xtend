@@ -140,7 +140,7 @@ class ModuleDispatch {
                     // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', 'main'), 'text' => __('Link text', $dom));
                 «ELSE»
                     // $serviceManager = \ServiceUtil::getManager();
-                    // $event->data[] = ['url' => $serviceManager->get('router')->generate('«appName.formatForDB»_user_index'), 'text' => $serviceManager->get('translator')->__('Link text')];
+                    // $event->data[] = ['url' => $serviceManager->get('router')->generate('«appName.formatForDB»_user_index'), 'text' => $serviceManager->get('translator.default')->__('Link text')];
                 «ENDIF»
 
                 «commonExample.generalEventProperties(it)»

@@ -162,7 +162,7 @@ class ContentTypeList {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator')->__('«appName» list view');
+                return $serviceManager->get('translator.default')->__('«appName» list view');
             «ENDIF»
         }
 
@@ -180,7 +180,7 @@ class ContentTypeList {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator')->__('Display list of «appName» objects.');
+                return $serviceManager->get('translator.default')->__('Display list of «appName» objects.');
             «ENDIF»
         }
 
@@ -497,7 +497,7 @@ class ContentTypeList {
                     $dom = ZLanguage::getModuleDomain('«appName»');
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
-                    $translator = $serviceManager->get('translator');
+                    $translator = $serviceManager->get('translator.default');
                 «ENDIF»
                 $locale = ZLanguage::getLanguageCode();
                 $categories = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;

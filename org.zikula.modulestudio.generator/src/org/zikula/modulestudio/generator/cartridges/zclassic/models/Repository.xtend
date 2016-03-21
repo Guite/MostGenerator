@@ -623,7 +623,7 @@ class Repository {
                         throw new \InvalidArgumentException(__('Invalid identifier received.', $dom));
                     «ELSE»
                         $serviceManager = ServiceUtil::getManager();
-                        throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid identifier received.'));
+                        throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid identifier received.'));
                     «ENDIF»
                 }
 
@@ -708,7 +708,7 @@ class Repository {
                     throw new \InvalidArgumentException(__('Invalid slug title received.', $dom));
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
-                    throw new InvalidArgumentException($serviceManager->get('translator')->__('Invalid slug title received.'));
+                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid slug title received.'));
                 «ENDIF»
             }
 
@@ -1625,7 +1625,7 @@ class Repository {
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
                         $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator')->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
+                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator.default')->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
                     «ENDIF»
                 }
 

@@ -67,7 +67,7 @@ class Newsletter {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+                return $serviceManager->get('translator.default')->__('Latest «IF entities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
             «ENDIF»
         }
 
@@ -83,7 +83,7 @@ class Newsletter {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
 
-                return $serviceManager->get('translator')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
+                return $serviceManager->get('translator.default')->__('List of «itemDesc»«IF entities.size > 1» and other «appName» items«ENDIF»');
             «ENDIF»
         }
 
@@ -99,7 +99,7 @@ class Newsletter {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
             
-                return $serviceManager->get('translator')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
+                return $serviceManager->get('translator.default')->__('This plugin shows a list of «itemDesc»«IF entities.size > 1» and other items«ENDIF» of the «appName» module.');
             «ENDIF»
         }
 
@@ -123,7 +123,7 @@ class Newsletter {
         {
             «IF !targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator');
+                $translator = $serviceManager->get('translator.default');
 
             «ENDIF»
             $objectTypes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;

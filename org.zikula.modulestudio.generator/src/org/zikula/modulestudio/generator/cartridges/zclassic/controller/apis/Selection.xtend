@@ -109,7 +109,7 @@ class Selection {
                     $dom = ZLanguage::getModuleDomain('«appName»');
                     throw new \InvalidArgumentException(__('Invalid identifier received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($this->get('translator')->__('Invalid identifier received.'));
+                    throw new \InvalidArgumentException($this->get('translator.default')->__('Invalid identifier received.'));
                 «ENDIF»
             }
             $objectType = $this->determineObjectType($args, 'getEntity');
@@ -232,7 +232,7 @@ class Selection {
                     $dom = ZLanguage::getModuleDomain('«appName»');
                     throw new \InvalidArgumentException(__('Invalid object type received.', $dom));
                 «ELSE»
-                    throw new \InvalidArgumentException($this->get('translator')->__('Invalid object type received.'));
+                    throw new \InvalidArgumentException($this->get('translator.default')->__('Invalid object type received.'));
                 «ENDIF»
             }
 
@@ -263,7 +263,7 @@ class Selection {
                         $dom = ZLanguage::getModuleDomain('«appName»');
                         throw new \InvalidArgumentException(__('Invalid root identifier received.', $dom));
                     «ELSE»
-                        throw new \InvalidArgumentException($this->get('translator')->__('Invalid root identifier received.'));
+                        throw new \InvalidArgumentException($this->get('translator.default')->__('Invalid root identifier received.'));
                     «ENDIF»
                 }
                 $rootId = $args['rootId'];

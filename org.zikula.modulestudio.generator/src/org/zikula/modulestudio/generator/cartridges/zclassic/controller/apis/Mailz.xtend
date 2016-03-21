@@ -53,7 +53,7 @@ class Mailz {
         public function getPlugins(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             «IF !targets('1.3.x')»
-                $translator = $this->get('translator');
+                $translator = $this->get('translator.default');
 
             «ENDIF»
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
