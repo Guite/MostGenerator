@@ -297,7 +297,7 @@ class Category {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»«/* we can not use the container here, because it is not available yet during installation */»
-                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->serviceManager, $this->serviceManager->get('translator'), $this->serviceManager->get('session'), $this->serviceManager->get('logger'));
+                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->serviceManager, $this->serviceManager->get('translator.default'), $this->serviceManager->get('session'), $this->serviceManager->get('logger'));
             «ENDIF»
             $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'api' => 'category', 'action' => $methodName«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
