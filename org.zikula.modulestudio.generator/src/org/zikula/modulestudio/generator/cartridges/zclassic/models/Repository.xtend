@@ -657,7 +657,7 @@ class Repository {
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
-            $results = $this->selectByIdList(«IF app.targets('1.3.x')»array($id)«ELSE»[$id]«ENDIF»);
+            $results = $this->selectByIdList(«IF app.targets('1.3.x')»array($id)«ELSE»[$id]«ENDIF», $useJoins, $slimMode);
 
             return (count($results) > 0) ? $results[0] : null;
         }
