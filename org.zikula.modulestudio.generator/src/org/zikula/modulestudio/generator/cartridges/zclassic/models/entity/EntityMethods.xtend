@@ -15,6 +15,7 @@ import de.guite.modulestudio.metamodel.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.TimeField
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.business.ValidationConstraints
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
@@ -24,6 +25,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class EntityMethods {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
@@ -423,7 +425,11 @@ class EntityMethods {
         «IF application.targets('1.3.x')»
             $workflowHelper = new «application.appName»_Util_Workflow($serviceManager);
         «ELSE»
-            $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
+            «IF application.amountOfExampleRows > 0»
+                $workflowHelper = new \«application.appNamespace»\Helper\WorkflowHelper($serviceManager, $serviceManager->get('translator.default'));
+            «ELSE»
+                $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
+            «ENDIF»
         «ENDIF»
 
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
@@ -444,7 +450,6 @@ class EntityMethods {
                     $dom = ZLanguage::getModuleDomain('«application.appName»');
                     LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
                 «ELSE»
-                    $serviceManager = ServiceUtil::getManager();
                     $session = $serviceManager->get('session');
                     $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator.default')->__('Error! Could not load the associated workflow.'));
                 «ENDIF»
