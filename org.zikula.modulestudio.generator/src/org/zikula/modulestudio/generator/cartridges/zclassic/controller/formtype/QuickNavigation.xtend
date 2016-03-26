@@ -162,7 +162,8 @@ class QuickNavigation {
                 $builder->add('updateview', '«nsSymfonyFormType»SubmitType', [
                     'label' => $this->__('OK'),
                     'attr' => [
-                        'id' => 'quicknavSubmit'
+                        'id' => 'quicknavSubmit',
+                        'class' => 'btn btn-default btn-sm'
                     ]
                 ]);
             }
@@ -267,7 +268,7 @@ class QuickNavigation {
                 'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»'),
                 'empty_data' => [],
                 'attr' => [
-                    'class' => 'category-selector',
+                    'class' => 'input-sm category-selector',
                     'title' => $this->__('This is an optional filter.')
                 ],
                 'required' => false,
@@ -432,7 +433,8 @@ class QuickNavigation {
             $builder->add('q', '«nsSymfonyFormType»SearchType', [
                 'label' => $this->__('Search'),
                 'attr' => [
-                    'id' => 'searchTerm'
+                    'id' => 'searchTerm',
+                    'class' => 'input-sm'
                 ],
                 'required' => false,
                 'max_length' => 255
@@ -453,8 +455,10 @@ class QuickNavigation {
                 ->add('sort', '«nsSymfonyFormType»ChoiceType', [
                     'label' => $this->__('Sort by'),
                     'attr' => [
-                        'id' => '«app.appName.toFirstLower»Sort'
+                        'id' => '«app.appName.toFirstLower»Sort',
+                        'class' => 'input-sm'
                     ],
+                    'required' => false,
                     'choices' => [
                         «FOR field : getDerivedFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
@@ -473,8 +477,10 @@ class QuickNavigation {
                     'label' => $this->__('Sort direction'),
                     'empty_data' => 'asc',
                     'attr' => [
-                        'id' => '«app.appName.toFirstLower»SortDir'
+                        'id' => '«app.appName.toFirstLower»SortDir',
+                        'class' => 'input-sm'
                     ],
+                    'required' => false,
                     'choices' => [
                         $this->__('Ascending') => 'asc',
                         $this->__('Descending') => 'desc'
@@ -499,8 +505,9 @@ class QuickNavigation {
                 'empty_data' => 20,
                 'attr' => [
                     'id' => '«app.appName.toFirstLower»PageSize',
-                    'class' => 'text-right'
+                    'class' => 'input-sm text-right'
                 ],
+                'required' => false,
                 'choices' => [
                     5 => 5,
                     10 => 10,
@@ -533,6 +540,9 @@ class QuickNavigation {
     def private dispatch fieldImpl(DerivedField it) '''
         $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
             'label' => $this->__('«name.formatForDisplayCapital»'),
+            'attr' => [
+                'class' => 'input-sm'
+            ],
             'required' => false,
             «additionalOptions»
         ]);
@@ -584,7 +594,8 @@ class QuickNavigation {
             'required' => false,
             'label' => $this->__('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»'),
             'attr' => [
-                'id' => '«sourceAliasName.formatForCode»'
+                'id' => '«sourceAliasName.formatForCode»',
+                'class' => 'input-sm'
             ]
         ]);
     '''

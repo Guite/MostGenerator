@@ -78,7 +78,7 @@ class ViewQuickNavForm {
             <fieldset>
                 <h3>{{ __('Quick navigation') }}</h3>
                 «formFields»
-                {{ form_widget(quickNavForm.updateview, {attr: {class: 'btn btn-default btn-sm'}}) }}
+                {{ form_widget(quickNavForm.updateview) }}
             </fieldset>
             {{ form_end(quickNavForm) }}
             <script type="text/javascript">
