@@ -179,7 +179,7 @@ class Forms {
         «ELSE»
             {% form_theme form with [
                 '@«application.appName»/Form/bootstrap_3.html.twig',
-                '@ZikulaFormExtensionBundle/Form/form_div_layout.html.twig'
+                'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
             ] %}
             {{ form_start(form, {attr: {id: '«name.formatForCode»EditForm'}}) }}
             {{ form_errors(form) }}

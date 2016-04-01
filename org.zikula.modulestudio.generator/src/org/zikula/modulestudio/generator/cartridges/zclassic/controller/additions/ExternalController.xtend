@@ -352,7 +352,6 @@ class ExternalController {
             $templateParameters = [
                 'editorName' => $editor,
                 'objectType' => $objectType,
-                'finderForm' => $form->createView(),
                 'items' => $entities,
                 'sort' => $sort,
                 'sortdir' => $sdir,
@@ -364,10 +363,9 @@ class ExternalController {
                 'objectType' => $objectType,
                 'editorName' => $editor
             ];
-            $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions)
-                ->setMethod('GET');
+            $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions);
 
-            $templateParameters['finderForm'] = $form;
+            $templateParameters['finderForm'] = $form->createView();
 
             «/* shouldn't be necessary
             if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {

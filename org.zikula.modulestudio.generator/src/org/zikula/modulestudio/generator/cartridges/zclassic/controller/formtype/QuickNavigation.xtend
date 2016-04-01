@@ -114,6 +114,7 @@ class QuickNavigation {
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $builder
+                    ->setMethod('GET')
                     ->add('all', '«nsSymfonyFormType»HiddenType', [
                         'data' => $options['all'],
                         'empty_data' => 0
@@ -323,7 +324,7 @@ class QuickNavigation {
                 $choiceAttributes = [];
                 foreach ($listEntries as $entry) {
                     $choices[$entry['text']] = $entry['value'];
-                    $choiceAttributes[$entry['text']] = $entry['title'];
+                    $choiceAttributes[$entry['text']] = ['title' => $entry['title']];
                 }
                 «field.fieldImpl»
             «ENDFOR»

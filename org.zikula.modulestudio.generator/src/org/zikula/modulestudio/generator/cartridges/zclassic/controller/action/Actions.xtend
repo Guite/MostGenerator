@@ -620,7 +620,7 @@ class Actions {
                        ->assign($additionalParameters);
         «ELSE»
             $templateParameters['items'] = $entities;
-            $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
+            $templateParameters['sort'] = $sort;
             $templateParameters['sdir'] = $sortdir;
             $templateParameters['pagesize'] = $resultsPerPage;
             $templateParameters['currentUrlObject'] = $currentUrlObject;
@@ -630,10 +630,10 @@ class Actions {
                 'all' => $templateParameters['showAllEntries'],
                 'own' => $templateParameters['showOwnEntries']
             ];
-            $form = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters, $formOptions)
-                ->setMethod('GET');
+            $form = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters, $formOptions);
 
-            $templateParameters['quickNavForm'] = $form;
+            $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
+            $templateParameters['quickNavForm'] = $form->createView();
 
             «/* shouldn't be necessary
             if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {

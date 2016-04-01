@@ -97,7 +97,7 @@ class View {
             «ELSE»
                 {{ block('page_nav_links') }}
 
-                {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', { all: all, own: own«IF !hasVisibleWorkflow», workflowStateFilter: false«ENDIF» }) }}{# see template file for available options #}
+                {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', { all: showAllEntries, own: showOwnEntries«IF !hasVisibleWorkflow», workflowStateFilter: false«ENDIF» }) }}{# see template file for available options #}
             «ENDIF»
 
             «viewForm(appName)»
@@ -165,7 +165,7 @@ class View {
             «ENDIF»
             {% set own = showOwnEntries is defined and showOwnEntries == 1 ? 1 : 0 %}
             {% set all = showAllEntries is defined and showAllEntries == 1 ? 1 : 0 %}
-            {% all == 1 %}
+            {% if all == 1 %}
                 {% set linkTitle = __('Back to paginated view') %}
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
             {% else %}
@@ -191,7 +191,7 @@ class View {
                 {% if routeArea == 'admin' %}
                 <form action="{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'handleselectedentries') }}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="form-horizontal" role="form">
                     <div>
-                {/if}
+                {% endif %}
             «ENDIF»
         «ENDIF»
             «viewItemList(appName)»

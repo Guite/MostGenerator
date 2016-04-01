@@ -87,7 +87,7 @@ class Config {
                 <div class="«appName.toLowerCase»-config">
                     {% form_theme form with [
                         '@«appName»/Form/bootstrap_3.html.twig',
-                        '@ZikulaFormExtensionBundle/Form/form_div_layout.html.twig'
+                        'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                     ] %}
                     {{ form_start(form) }}
                     «IF hasMultipleConfigSections»

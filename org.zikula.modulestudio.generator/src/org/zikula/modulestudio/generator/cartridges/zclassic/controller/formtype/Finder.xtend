@@ -80,6 +80,7 @@ class Finder {
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $builder
+                    ->setMethod('GET')
                     ->add('objectType', '«nsSymfonyFormType»HiddenType', [
                         'data' => $options['objectType']
                     ])

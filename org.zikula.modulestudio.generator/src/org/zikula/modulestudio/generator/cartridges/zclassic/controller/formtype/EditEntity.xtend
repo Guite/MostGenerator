@@ -547,7 +547,7 @@ class EditEntity {
         $choiceAttributes = [];
         foreach ($listEntries as $entry) {
             $choices[$entry['text']] = $entry['value'];
-            $choiceAttributes[$entry['text']] = $entry['title'];
+            $choiceAttributes[$entry['text']] = ['title' => $entry['title']];
         }
     '''
 

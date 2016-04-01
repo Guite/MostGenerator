@@ -83,7 +83,7 @@ class Layout {
                 {{ pageAddAsset('javascript', 'web/bootstrap-jqueryui/bootstrap-jqueryui.min.js') }}
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
-            {{ polyfill(«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext') }}
+            {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
 
             {# initialise additional gettext domain for translations within javascript #}
             {# blocked by https://github.com/zikula/core/issues/2601 #}
@@ -178,7 +178,7 @@ class Layout {
     // 1.4.x only
     def formBaseTemplate(Application it) '''
         {# purpose of this template: apply some general form extensions #}
-        {% extends '@ZikulaFormExtensionBundle/Form/bootstrap_3_zikula_admin_layout.html.twig' %}
+        {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
 
         {# add required asterisk to labels, see http://symfony.com/doc/current/cookbook/form/form_customization.html#adding-a-required-asterisk-to-field-labels #}
         {% block form_label %}
