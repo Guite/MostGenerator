@@ -142,7 +142,7 @@ class ViewQuickNavForm {
                 {/if}
             «ELSE»
                 {% if searchFilter is not defined or searchFilter == true %}
-                    {{ form_row(quickNavForm.searchTerm) }}
+                    {{ form_row(quickNavForm.q) }}
                 {% endif %}
             «ENDIF»
         «ENDIF»

@@ -355,7 +355,7 @@ class View {
                 {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}
             {/if}
         «ELSE»
-            {% if all != 1 %}
+            {% if showAllEntries != 1 %}
                 {{ pager({ rowcount: pager.numitems, limit: pager.itemsperpage, display: 'page', route: '«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view'}) }}
             {% endif %}
         «ENDIF»
@@ -568,7 +568,7 @@ class View {
         «IF entity.application.targets('1.3.x')»
             {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=$lct func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)» ot='«entity.name.formatForCode»'}
         «ELSE»
-            <a href="{{ sort.«fieldName».url }}" title="{{ __f('Sort by %s', '«label.formatForDisplay»') }}" class="{{ sort.«fieldName».class }}">{{ __('«label.formatForDisplayCapital»') }}</a>
+            <a href="{{ sort.«fieldName».url }}" title="{{ __f('Sort by %s', {'%s': '«label.formatForDisplay»'}) }}" class="{{ sort.«fieldName».class }}">{{ __('«label.formatForDisplayCapital»') }}</a>
         «ENDIF»
     '''
 

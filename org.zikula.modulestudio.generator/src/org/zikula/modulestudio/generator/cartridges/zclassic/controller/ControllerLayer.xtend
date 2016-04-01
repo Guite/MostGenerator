@@ -177,7 +177,8 @@ class ControllerLayer {
             «ENDFOR»
             «IF hasActions('view')»
 
-                «handleSelectedObjects(true)»
+                «handleSelectedObjects(true, true)»
+                «handleSelectedObjects(true, false)»
             «ENDIF»
             «IF hasActions('edit') && app.needsAutoCompletion»
 
@@ -280,16 +281,30 @@ class ControllerLayer {
         use Zikula\Core\Response\PlainResponse;
     '''
 
-    def private handleSelectedObjects(Entity it, Boolean isBase) '''
+    def private handleSelectedObjects(Entity it, Boolean isBase, Boolean isAdmin) '''
         «handleSelectedObjectsDocBlock(isBase)»
-        public function handleSelectedEntries«IF isLegacy»()«ELSE»Action(Request $request)«ENDIF»
+        public function «IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntries«IF isLegacy»()«ELSE»Action(Request $request)«ENDIF»
         {
             «IF isBase»
-                «handleSelectedObjectsBaseImpl»
+                «IF isLegacy»
+                    «handleSelectedObjectsBaseImpl»
+                «ELSE»
+                    return $this->handleSelectedEntriesActionInternal($request, «isAdmin.displayBool»);
+                «ENDIF»
             «ELSE»
-                return parent::handleSelectedEntriesAction($request);
+                return parent::«IF isAdmin»adminH«ELSE»h«ENDIF»andleSelectedEntriesAction($request);
             «ENDIF»
         }
+        «IF !isLegacy && isBase && !isAdmin»
+
+            /**
+             * This method includes the common implementation code for adminHandleSelectedEntriesAction() and handleSelectedEntriesAction().
+             */
+            protected function handleSelectedEntriesActionInternal(Request $request, $isAdmin = false)
+            {
+                «handleSelectedObjectsBaseImpl»
+            }
+        «ENDIF»
     '''
 
     def private handleSelectedObjectsDocBlock(Entity it, Boolean isBase) '''
@@ -437,7 +452,7 @@ class ControllerLayer {
 
             return $this->redirect($redirectUrl);
         «ELSE»
-            return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_adminindex');
+            return $this->redirectToRoute('«app.appName.formatForDB»_«name.formatForDB»_' . ($isAdmin ? 'admin' : '') . 'index');
         «ENDIF»
     '''
 
@@ -514,7 +529,7 @@ class ControllerLayer {
             «IF isBase»
                 «configBaseImpl»
             «ELSE»
-                return parent::configAction();
+                return parent::configAction(«IF !isLegacy»$request«ENDIF»);
             «ENDIF»
         }
     '''
@@ -671,7 +686,8 @@ class ControllerLayer {
                 «ENDIF»
                 «IF hasActions('view') && app.hasAdminController»
 
-                    «handleSelectedObjects(false)»
+                    «handleSelectedObjects(false, true)»
+                    «handleSelectedObjects(false, false)»
                 «ENDIF»
                 «IF hasActions('edit') && app.needsAutoCompletion»
 
