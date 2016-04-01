@@ -748,11 +748,6 @@ class ControllerLayer {
             use TranslatorTrait;
 
             /**
-             * @var TranslatorInterface
-             */
-            protected $translator;
-
-            /**
              * @var RouterInterface
              */
             protected $router;
