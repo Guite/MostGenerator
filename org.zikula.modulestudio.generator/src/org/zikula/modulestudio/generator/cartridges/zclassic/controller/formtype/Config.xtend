@@ -163,10 +163,7 @@ class Config {
             'empty_data' => '«value»',
             'attr' => [
                 'title' => $this->__('«titleAttribute»')
-            ],
-            «IF null !== documentation && documentation != ''»
-                'help' => $this->__('«documentation.replace("'", '"')»'),
-            «ENDIF»«additionalOptions»
+            ],«additionalOptions»
         ])
     '''
 

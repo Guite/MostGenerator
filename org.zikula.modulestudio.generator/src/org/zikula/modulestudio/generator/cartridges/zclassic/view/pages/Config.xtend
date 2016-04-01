@@ -195,7 +195,7 @@ class Config {
                 «inputFieldLegacy»
             </div>
         «ELSE»
-            {{ form_row(form.«name.formatForCode») }}
+            {{ form_row(form.«name.formatForCode»«IF null !== documentation && documentation != ''», {help: __('«documentation.replace("'", '"')»')}«ENDIF») }}
         «ENDIF»
     '''
 

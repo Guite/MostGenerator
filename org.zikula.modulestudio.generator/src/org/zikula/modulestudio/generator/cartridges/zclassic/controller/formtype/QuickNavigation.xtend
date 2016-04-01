@@ -275,8 +275,7 @@ class QuickNavigation {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($objectType) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity',
-                'help' => $this->__('This is an optional filter.')
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($objectType) . 'CategoryEntity'
             ]);
         }
     '''

@@ -168,8 +168,7 @@ class ListBlock {
                         $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
                     «ENDFOR»
                 ],
-                'choices_as_values' => true,
-                'help' => $this->__('If you change this please save the block once to reload the parameters below.')
+                'choices_as_values' => true
             ]);
         }
     '''
@@ -199,8 +198,7 @@ class ListBlock {
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
                 'entity' => ucfirst($options['objectType']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['objectType']) . 'CategoryEntity',
-                'help' => $this->__('This is an optional filter.')
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['objectType']) . 'CategoryEntity'
             ]);
         }
     '''
@@ -243,8 +241,7 @@ class ListBlock {
                 ],
                 'empty_data' => 5,
                 'max_length' => 2,
-                'scale' => 0,
-                'help' => $this->__('The maximum amount of items to be shown. Only digits are allowed.')
+                'scale' => 0
             ]);
         }
     '''
@@ -273,10 +270,9 @@ class ListBlock {
                     'label' => $this->__('Custom template') . ':',
                     'required' => false,
                     'attr' => [
-                        'title' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>'
+                        'title' => $this->__('Example') . ': itemlist_[objectType]_display.html.twig'
                     ],
-                    'max_length' => 80,
-                    'help' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>'
+                    'max_length' => 80
                 ])
             ;
         }
@@ -294,8 +290,7 @@ class ListBlock {
             $builder->add('filter', '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Filter (expert option)') . ':',
                 'required' => false,
-                'max_length' => 255,
-                'help' => '<a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">' . $this->__('Show syntax examples') . '</a>'
+                'max_length' => 255
             ]);
         }
     '''

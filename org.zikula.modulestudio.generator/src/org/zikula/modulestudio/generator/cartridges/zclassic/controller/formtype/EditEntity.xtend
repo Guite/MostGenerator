@@ -25,7 +25,6 @@ import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
-import java.math.BigInteger
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -406,7 +405,6 @@ class EditEntity {
                     «ENDIF»
                     'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»')
                 ],
-                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'),
                 'max_length' => 255
             ]);
         «ENDIF»
@@ -438,10 +436,7 @@ class EditEntity {
                     'max' => «(it as IntegerField).maxValue»,
                 «ENDIF»
                 'title' => $this->__('«titleAttribute»')
-            ],
-            «IF null !== documentation && documentation != ''»
-                'help' => $this->__('«documentation.replace("'", '"')»'),
-            «ENDIF»«additionalOptions»
+            ],«additionalOptions»
         ]);
     '''
 
@@ -461,33 +456,16 @@ class EditEntity {
     def private dispatch formType(IntegerField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF range»Range«ELSE»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntegerField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay». Only digits are allowed.'''
     def private dispatch additionalOptions(IntegerField it) '''
-        «val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0»
-        «val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0»
         'required' => «mandatory.displayBool»,
         'max_length' => «length»,
         «IF percentage»
             'type' => 'integer',
-        «ENDIF»
-        «IF !range && (hasMin || hasMax)»
-            «IF hasMin && hasMax»
-                «IF minValue == maxValue»
-                    'help' => $this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»]),
-                «ELSE»
-                    'help' => $this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»]),
-                «ENDIF»
-            «ELSEIF hasMin»
-                'help' => $this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»]),
-            «ELSEIF hasMax»
-                'help' => $this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]'),
-            «ENDIF»
         «ENDIF»
         'scale' => 0
     '''
 
     def private dispatch formType(DecimalField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(DecimalField it) '''
-        «val hasMin = minValue > 0»
-        «val hasMax = maxValue > 0»
         'required' => «mandatory.displayBool»,
         'max_length' => «(length+3+scale)»,
         «/* not required since these are the default values IF currency»
@@ -497,26 +475,11 @@ class EditEntity {
         «/* not required since these are the default values IF percentage»
             'type' => 'fractional',
         «ENDIF*/»
-        «IF hasMin || hasMax»
-            «IF hasMin && hasMax»
-                «IF minValue == maxValue»
-                    'help' => $this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»]),
-                «ELSE»
-                    'help' => $this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»]),
-                «ENDIF»
-            «ELSEIF hasMin»
-                'help' => $this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»]),
-            «ELSEIF hasMax»
-                'help' => $this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]),
-            «ENDIF»
-        «ENDIF»
         'scale' => «scale»
     '''
 
     def private dispatch formType(FloatField it) '''«nsSymfonyFormType»«IF percentage»Percent«ELSEIF currency»Money«ELSE»Number«ENDIF»'''
     def private dispatch additionalOptions(FloatField it) '''
-        «val hasMin = minValue > 0»
-        «val hasMax = maxValue > 0»
         'required' => «mandatory.displayBool»,
         'max_length' => «(length+3+2)»,
         «/* not required since these are the default values IF currency»
@@ -526,19 +489,6 @@ class EditEntity {
         «/* not required since these are the default values IF percentage»
             'type' => 'fractional',
         «ENDIF*/»
-        «IF hasMin || hasMax»
-            «IF hasMin && hasMax»
-                «IF minValue == maxValue»
-                    'help' => $this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»]),
-                «ELSE»
-                    'help' => $this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»]),
-                «ENDIF»
-            «ELSEIF hasMin»
-                'help' => $this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»]),
-            «ELSEIF hasMax»
-                'help' => $this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]),
-            «ENDIF»
-        «ENDIF»
         'scale' => 2
     '''
 
@@ -554,7 +504,6 @@ class EditEntity {
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
-            'help' => $this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])
         «ENDIF»
     '''
 
@@ -566,7 +515,6 @@ class EditEntity {
             «IF !regexpOpposite»
                 'pattern' => '«regexp.replace('\'', '')»',
             «ENDIF»
-            'help' => $this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])
         «ENDIF»
     '''
 
@@ -616,13 +564,6 @@ class EditEntity {
         'choices' => $choices,
         'choices_as_values' => true,
         'choice_attr' => $choiceAttributes,
-        «IF multiple && min > 0 && max > 0»
-            «IF min == max»
-                'help' => $this->__f('Note: you must select exactly %min% choices.', ['%min%' => «min»]),
-            «ELSE»
-                'help' => $this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»]),
-            «ENDIF»
-        «ENDIF»
         «IF !multiple»
             'multiple' => «multiple.displayBool»,
         «ENDIF»
@@ -643,11 +584,6 @@ class EditEntity {
     def private dispatch additionalOptions(AbstractDateField it) '''
         'empty_data' => «defaultData»,
         'required' => «mandatory.displayBool»,
-        «IF past»
-            'help' => $this->__('Note: this value must be in the past.'),
-        «ELSEIF future»
-            'help' => $this->__('Note: this value must be in the future.'),
-        «ENDIF»
         'widget' => 'single_text'
     '''
     def private dispatch defaultData(DatetimeField it) '''«IF null !== defaultValue && defaultValue != '' && defaultValue != 'now'»'«defaultValue»'«ELSEIF mandatory || !nullable»date('Y-m-d H:i')«ELSE»''«ENDIF»'''
@@ -655,11 +591,6 @@ class EditEntity {
     def private dispatch additionalOptions(TimeField it) '''
         'empty_data' => '«defaultValue»',
         'required' => «mandatory.displayBool»,
-        «IF past»
-            'help' => $this->__('Note: this value must be in the past.'),
-        «ELSEIF future»
-            'help' => $this->__('Note: this value must be in the future.'),
-        «ENDIF»
         'widget' => 'single_text',
         'max_length' => 8
     '''
@@ -866,8 +797,8 @@ class EditEntity {
                     'id' => 'additionalNotificationRemarks',
                     'title' => $options['mode'] == 'create' ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
                 ],
-                'required' => false,
-                'help' => $helpText
+                'required' => false«/* TODO: apply help attribute in template (Section class)
+                'help' => $helpText*/»
             ]);
         }
     '''

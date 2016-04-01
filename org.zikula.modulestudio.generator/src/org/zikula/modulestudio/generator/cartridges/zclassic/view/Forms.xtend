@@ -324,7 +324,7 @@ class Forms {
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
         «IF hasSluggableFields && slugUpdatable && !application.targets('1.3.x')»
-            {{ form_row(form.«IF groupSuffix != ''»«groupSuffix».«ENDIF»slug«idSuffix») }}
+            {{ form_row(form.«IF groupSuffix != ''»«groupSuffix».«ENDIF»slug«idSuffix», {help: __('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»')}) }}
         «ENDIF»
     '''
 

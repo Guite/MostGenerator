@@ -182,7 +182,7 @@ class ViewQuickNavForm {
             {/if}
         «ELSE»
             {% if categoryFilter is not defined or categoryFilter == true %}
-                {{ form_row(quickNavForm.categories) }}
+                {{ form_row(quickNavForm.categories, {help: __('This is an optional filter.')}) }}
             {% endif %}
         «ENDIF»
     '''

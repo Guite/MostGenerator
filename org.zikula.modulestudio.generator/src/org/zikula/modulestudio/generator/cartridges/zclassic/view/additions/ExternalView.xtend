@@ -336,7 +336,7 @@ class ExternalView {
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
                     «IF categorisable»
-                        {{ form_row(finderForm.categories) }}
+                        {{ form_row(finderForm.categories, {help: __('This is an optional filter.')}) }}
                     «ENDIF»
                     {{ form_row(finderForm.pasteas) }}
                     <br />
