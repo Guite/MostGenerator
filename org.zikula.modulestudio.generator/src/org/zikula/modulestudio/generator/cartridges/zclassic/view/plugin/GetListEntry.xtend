@@ -47,7 +47,7 @@ class GetListEntry {
             «IF targets('1.3.x')»
                 $helper = new «appName»_Util_ListEntries($serviceManager);
             «ELSE»
-                $helper = $serviceManager->get('«appName.formatForDB».listentries_helper');
+                $helper = $serviceManager->get('«appService».listentries_helper');
             «ENDIF»
 
             return $helper->resolve($value, $objectType, $fieldName, $delimiter);

@@ -83,7 +83,7 @@ class Selection {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appService».controller_helper');
             «ENDIF»
 
             return $controllerHelper->hasCompositeKeys($objectType);
@@ -208,7 +208,7 @@ class Selection {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appService».controller_helper');
             «ENDIF»
             $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'api' => 'selection', 'action' => $methodName«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
@@ -240,7 +240,7 @@ class Selection {
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             return $repository;

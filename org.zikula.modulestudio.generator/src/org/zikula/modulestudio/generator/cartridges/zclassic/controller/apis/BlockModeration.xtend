@@ -4,13 +4,11 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlockModerationView
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockModeration {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -139,7 +137,7 @@ class BlockModeration {
             «ELSE»
                 $template = $this->getDisplayTemplate();
 
-                $workflowHelper = $this->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $this->get('«appService».workflow_helper');
             «ENDIF»
             $amounts = $workflowHelper->collectAmountOfModerationItems();
 

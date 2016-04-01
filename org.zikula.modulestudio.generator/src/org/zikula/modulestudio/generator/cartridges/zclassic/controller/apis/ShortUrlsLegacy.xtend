@@ -4,13 +4,12 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.UserController
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 // 1.3.x only
 class ShortUrlsLegacy {
+
     extension ControllerExtensions = new ControllerExtensions
-    extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
 
     Application app
@@ -67,7 +66,7 @@ class ShortUrlsLegacy {
             «IF app.targets('1.3.x')»
                 $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->serviceManager->get('«app.appName.formatForDB».controller_helper');
+                $controllerHelper = $this->serviceManager->get('«app.appService».controller_helper');
             «ENDIF»
             $utilArgs = array('controller' => 'user', 'action' => 'encodeurl');
             $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);

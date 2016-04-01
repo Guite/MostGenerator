@@ -459,7 +459,7 @@ class FormHandler {
             «IF isLegacy»
                 $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
             «ELSE»
-                $controllerHelper = $this->container->get('«app.appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«app.appService».controller_helper');
             «ENDIF»
 
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, «IF isLegacy»array()«ELSE»[]«ENDIF», $this->objectType, $this->idFields);
@@ -507,7 +507,7 @@ class FormHandler {
             «IF isLegacy»
                 $workflowHelper = new «appName»_Util_Workflow($this->view->getServiceManager());
             «ELSE»
-                $workflowHelper = $this->container->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $this->container->get('«appService».workflow_helper');
             «ENDIF»
             $actions = $workflowHelper->getActionsForObject($entity);
             if (false === $actions || !is_array($actions)) {
@@ -650,36 +650,41 @@ class FormHandler {
         {
             $this->hasTemplateId = false;
             $templateId = $this->request->query->get('astemplate', '');
-            if (empty($templateId)) {
-                return null;
+            $entity = null;
+
+            if (!empty($templateId)) {
+                $templateIdValueParts = explode('_', $templateId);
+                $this->hasTemplateId = count($templateIdValueParts) == count($this->idFields);
+
+                if (true === $this->hasTemplateId) {
+                    $templateIdValues = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                    $i = 0;
+                    foreach ($this->idFields as $idField) {
+                        $templateIdValues[$idField] = $templateIdValueParts[$i];
+                        $i++;
+                    }
+                    // reuse existing entity
+                    $entityT = ModUtil::apiFunc(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'id' => $templateIdValues«IF isLegacy»)«ELSE»]«ENDIF»);
+                    if (null === $entityT) {
+                        «IF isLegacy»
+                            return LogUtil::registerError($this->__('No such item.'));
+                        «ELSE»
+                            throw new NotFoundHttpException($this->__('No such item.'));
+                        «ENDIF»
+                    }
+                    $entity = clone $entityT;
+                }
             }
 
-            $entity = null;
-            $templateIdValueParts = explode('_', $templateId);
-            $this->hasTemplateId = count($templateIdValueParts) == count($this->idFields);
-
-            if (true === $this->hasTemplateId) {
-                $templateIdValues = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-                $i = 0;
-                foreach ($this->idFields as $idField) {
-                    $templateIdValues[$idField] = $templateIdValueParts[$i];
-                    $i++;
-                }
-                // reuse existing entity
-                $entityT = ModUtil::apiFunc(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'id' => $templateIdValues«IF isLegacy»)«ELSE»]«ENDIF»);
-                if (null === $entityT) {
-                    «IF isLegacy»
-                        return LogUtil::registerError($this->__('No such item.'));
-                    «ELSE»
-                        throw new NotFoundHttpException($this->__('No such item.'));
-                    «ENDIF»
-                }
-                $entity = clone $entityT;
-            «IF isLegacy»
-            } else {
-                $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
-                $entity = new $entityClass(«/* TODO constructor arguments if required */»);
-            «ENDIF»
+            if (is_null($entity)) {
+                «IF isLegacy»
+                    $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
+                    $entity = new $entityClass(«/* TODO constructor arguments if required */»);
+                «ELSE»
+                    $factory = $this->container->get('«appService».' . $this->objectType . '_factory');
+                    $createMethod = 'create' . ucfirst($this->objectType);
+                    $entity = $factory->$createMethod();
+                «ENDIF»
             }
 
             return $entity;
@@ -700,7 +705,7 @@ class FormHandler {
                 «IF isLegacy»
                     $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
                 «ELSE»
-                    $translatableHelper = $this->container->get('«app.appName.formatForDB».translatable_helper');
+                    $translatableHelper = $this->container->get('«app.appService».translatable_helper');
                 «ENDIF»
                 $translations = $translatableHelper->prepareEntityForEditing($this->objectType, $entity);
 
@@ -815,7 +820,7 @@ class FormHandler {
                     «IF isLegacy»
                         $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
                     «ELSE»
-                        $hookHelper = $this->container->get('«app.appName.formatForDB».hook_helper');
+                        $hookHelper = $this->container->get('«app.appService».hook_helper');
                     «ENDIF»
                     // Let any hooks perform additional validation actions
                     $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
@@ -932,7 +937,7 @@ class FormHandler {
                 «IF isLegacy»
                     $translatableHelper = new «appName»_Util_Translatable($this->view->getServiceManager());
                 «ELSE»
-                    $translatableHelper = $this->container->get('«app.appName.formatForDB».translatable_helper');
+                    $translatableHelper = $this->container->get('«app.appService».translatable_helper');
                 «ENDIF»
                 $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $formData);
 
@@ -1068,7 +1073,7 @@ class FormHandler {
                             «IF app.isLegacy»
                                 $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
                             «ELSE»
-                                $controllerHelper = $this->container->get('«app.appName.formatForDB».controller_helper');
+                                $controllerHelper = $this->container->get('«app.appService».controller_helper');
                             «ENDIF»
                             $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                         }
@@ -1386,7 +1391,7 @@ class FormHandler {
                 «IF app.isLegacy»
                     $modelHelper = new «app.appName»_Util_Model($this->view->getServiceManager());
                 «ELSE»
-                    $modelHelper = $this->container->get('«app.appName.formatForDB».model_helper');
+                    $modelHelper = $this->container->get('«app.appService».model_helper');
                 «ENDIF»
                 if (!$modelHelper->canBeCreated($this->objectType)) {
                     «IF app.isLegacy»
@@ -1573,7 +1578,7 @@ class FormHandler {
                 «IF app.isLegacy»
                     $workflowHelper = new «app.appName»_Util_Workflow($this->view->getServiceManager());
                 «ELSE»
-                    $workflowHelper = $this->container->get('«app.appName.formatForDB».workflow_helper');
+                    $workflowHelper = $this->container->get('«app.appService».workflow_helper');
                 «ENDIF»
                 $success = $workflowHelper->executeAction($entity, $action);
             «locking.catchException(it)»

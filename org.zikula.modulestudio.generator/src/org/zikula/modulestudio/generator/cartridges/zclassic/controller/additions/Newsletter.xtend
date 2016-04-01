@@ -255,7 +255,7 @@ class Newsletter {
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             // create query

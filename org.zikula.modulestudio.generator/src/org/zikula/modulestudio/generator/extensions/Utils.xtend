@@ -72,6 +72,18 @@ class Utils {
     }
 
     /**
+     * Returns prefix for service names for this application.
+     *
+     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     *
+     * @return String The formatted service prefix.
+     */
+    def String appService(Application it) {
+        if (targets('1.3.x')) ''
+        else vendor.formatForDB + '_' + name.formatForDB + '_module'
+    }
+
+    /**
      * Returns the lowercase application-specific prefix.
      *
      * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.

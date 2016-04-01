@@ -160,7 +160,7 @@ class ItemSelector {
                     $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                     $repository = $entityManager->getRepository($entityClass);
                 «ELSE»
-                    $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
+                    $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
                 «ENDIF»
 
                 $sort = $repository->getDefaultSortingField();

@@ -102,7 +102,7 @@ class Mailz {
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);

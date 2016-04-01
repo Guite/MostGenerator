@@ -221,7 +221,7 @@ class Ajax {
         «IF app.isLegacy»
             $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«app.appService».controller_helper');
         «ENDIF»
         $utilArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»'controller' => '«formattedName»', 'action' => 'getItemListFinder'«IF app.isLegacy»)«ELSE»]«ENDIF»;
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
@@ -233,7 +233,7 @@ class Ajax {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
         «ENDIF»
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF app.isLegacy»)«ELSE»]«ENDIF»);
@@ -364,7 +364,7 @@ class Ajax {
         «IF app.isLegacy»
             $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«app.appService».controller_helper');
         «ENDIF»
         $utilArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»'controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion'«IF app.isLegacy»)«ELSE»]«ENDIF»;
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
@@ -375,7 +375,7 @@ class Ajax {
             $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
         «ENDIF»
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF app.isLegacy»)«ELSE»]«ENDIF»);
 
@@ -483,7 +483,7 @@ class Ajax {
                 //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
                 $imagineManager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
             «ELSE»
-                //$imageHelper = $this->get('«app.appName.formatForDB».image_helper');
+                //$imageHelper = $this->get('«app.appService».image_helper');
                 //$imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
                 $imagineManager = $this->get('systemplugin.imagine.manager');
             «ENDIF»
@@ -560,7 +560,7 @@ class Ajax {
                     «IF app.isLegacy»
                         $repository = $this->entityManager->getRepository($entityClass);
                     «ELSE»
-                        $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                        $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
                     «ENDIF»
                     switch ($fieldName) {
                     «FOR uniqueField : uniqueFields»
@@ -594,7 +594,7 @@ class Ajax {
             $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
         «ELSE»
             $objectType = $postData->getAlnum('ot', '«app.getLeadingEntity.name.formatForCode»');
-            $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«app.appService».controller_helper');
         «ENDIF»
         $utilArgs = «IF app.isLegacy»array(«ELSE»[«ENDIF»'controller' => '«formattedName»', 'action' => 'checkForDuplicate'«IF app.isLegacy»)«ELSE»]«ENDIF»;
         if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
@@ -810,7 +810,7 @@ class Ajax {
             $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
             $createMethod = 'create' . ucfirst($objectType);
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
         «ENDIF»
 
         $rootId = 1;
@@ -977,7 +977,7 @@ class Ajax {
                     «IF app.isLegacy»
                         $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
                     «ELSE»
-                        $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+                        $workflowHelper = $this->get('«app.appService».workflow_helper');
                     «ENDIF»
                     $success = $workflowHelper->executeAction($entity, $action);
                 }
@@ -1018,7 +1018,7 @@ class Ajax {
                     «IF app.isLegacy»
                         $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
                     «ELSE»
-                        $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+                        $workflowHelper = $this->get('«app.appService».workflow_helper');
                     «ENDIF»
                     $success = $workflowHelper->executeAction($childEntity, $action);
                 }
@@ -1053,7 +1053,7 @@ class Ajax {
                 «IF app.isLegacy»
                     $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
                 «ELSE»
-                    $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+                    $workflowHelper = $this->get('«app.appService».workflow_helper');
                 «ENDIF»
                 $success = $workflowHelper->executeAction($entity, $action);
             }

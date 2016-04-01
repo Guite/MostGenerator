@@ -121,7 +121,7 @@ class ContentTypeSingle {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
-                $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $serviceManager->get('«appService».controller_helper');
             «ENDIF»
 
             $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'detail'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;

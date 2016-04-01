@@ -262,7 +262,7 @@ class WorkflowHelper {
             «IF targets('1.3.x')»
                 $listHelper = new «appName»_Util_ListEntries($this->serviceManager);
             «ELSE»
-                $listHelper = $this->container->get('«appName.formatForDB».listentries_helper');
+                $listHelper = $this->container->get('«appService».listentries_helper');
             «ENDIF»
             $states = $listHelper->getEntries($objectType, 'workflowState');
             $allowedStates = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
@@ -533,7 +533,7 @@ class WorkflowHelper {
                 $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->container->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             $where = 'tbl.workflowState = \'' . $state . '\'';

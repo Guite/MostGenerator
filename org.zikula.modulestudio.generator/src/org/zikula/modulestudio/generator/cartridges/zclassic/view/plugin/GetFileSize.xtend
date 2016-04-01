@@ -55,7 +55,7 @@ class GetFileSize {
             «IF targets('1.3.x')»
                 $viewHelper = new «appName»_Util_View($serviceManager);
             «ELSE»
-                $viewHelper = $serviceManager->get('«appName.formatForDB».view_helper');
+                $viewHelper = $serviceManager->get('«appService».view_helper');
             «ENDIF»
 
             $result = $viewHelper->getReadableFileSize($size, $nodesc, $onlydesc);

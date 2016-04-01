@@ -230,7 +230,7 @@ class Uploads {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
-                $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $serviceManager->get('«appService».controller_helper');
                 $flashBag = $serviceManager->get('session')->getFlashBag();
                 $logger = $serviceManager->get('logger');
             «ENDIF»
@@ -676,7 +676,7 @@ class Uploads {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
-                $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $serviceManager->get('«appService».controller_helper');
             «ENDIF»
 
             // determine file system information

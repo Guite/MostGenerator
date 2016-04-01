@@ -67,7 +67,8 @@ class Plugins {
     }
 
     def generateInternal(Application it) {
-        viewPlugins
+        val result = newArrayList
+        result += viewPlugins
         if (targets('1.3.x')) {
             if (hasEditActions || needsConfig) {
                 new Frame().generate(it, fsa)
@@ -84,13 +85,12 @@ class Plugins {
                 new ItemSelector().generate(it, fsa)
             }
         }
-        if (hasEditActions) {
+        if (hasEditActions && targets('1.3.x')) {
             editPlugins
-            if (targets('1.3.x')) {
-                new ValidationError().generate(it, fsa)
-            }
+            new ValidationError().generate(it, fsa)
         }
-        otherPlugins
+        result += otherPlugins
+        result.join("\n\n")
     }
 
     // 1.4.x only
@@ -210,19 +210,19 @@ class Plugins {
          *
          * @return string
          */
-        public function getUserAvatar($uid, $width, $height, $size, $rating)
+        public function getUserAvatar($uid, $width = 0, $height = 0, $size = 0, $rating = '')
         {
             $params = ['uid' => $uid];
-            if ($width) {
+            if ($width > 0) {
                 $params['width'] = $width;
             }
-            if ($height) {
+            if ($height > 0) {
                 $params['height'] = $height;
             }
-            if ($size) {
+            if ($size > 0) {
                 $params['size'] = $size;
             }
-            if ($rating) {
+            if ($rating != '') {
                 $params['rating'] = $rating;
             }
 
@@ -296,74 +296,79 @@ class Plugins {
     '''
 
     def private viewPlugins(Application it) {
-        new ActionUrl().generate(it, fsa)
-        new ObjectState().generate(it, fsa)
-        new TemplateHeaders().generate(it, fsa)
+        val result = newArrayList
+        result += new ActionUrl().generate(it, fsa)
+        result += new ObjectState().generate(it, fsa)
+        result += new TemplateHeaders().generate(it, fsa)
         if (hasCountryFields) {
-            new GetCountryName().generate(it, fsa)
+            result += new GetCountryName().generate(it, fsa)
         }
         if (hasUploads) {
-            new GetFileSize().generate(it, fsa)
+            result += new GetFileSize().generate(it, fsa)
         }
         if (hasListFields) {
-            new GetListEntry().generate(it, fsa)
+            result += new GetListEntry().generate(it, fsa)
         }
         if (hasGeographical) {
-            new FormatGeoData().generate(it, fsa)
+            result += new FormatGeoData().generate(it, fsa)
         }
         if (hasTrees) {
-            new TreeData().generate(it, fsa)
-            new TreeSelection().generate(it, fsa)
+            result += new TreeData().generate(it, fsa)
+            result += new TreeSelection().generate(it, fsa)
         }
         if (generateModerationPanel && needsApproval) {
-            new ModerationObjects().generate(it, fsa)
+            result += new ModerationObjects().generate(it, fsa)
         }
         if (generateIcsTemplates && !entities.filter[null !== startDateField && null !== endDateField].empty) {
-            new FormatIcalText().generate(it, fsa)
+            result += new FormatIcalText().generate(it, fsa)
         }
+        result.join("\n\n")
     }
 
     def private editPlugins(Application it) {
-        if (targets('1.3.x')) {
-            if (hasColourFields) {
-                new ColourInput().generate(it, fsa)
-            }
-            if (hasCountryFields) {
-                new CountrySelector().generate(it, fsa)
-            }
-            if (hasGeographical) {
-                new GeoInput().generate(it, fsa)
-            }
-            if (!entities.filter[!fields.filter(DateField).empty].empty) {
-                new DateInput().generate(it, fsa)
-            }
-            if (!entities.filter[!fields.filter(TimeField).empty].empty) {
-                new TimeInput().generate(it, fsa)
-            }
+        if (!targets('1.3.x')) {
+            return
         }
-        if (targets('1.3.x')) {
-            val hasRelations = !relations.empty
-            if (hasTrees || hasRelations) {
-                new AbstractObjectSelector().generate(it, fsa)
-            }
-            if (hasTrees) {
-                new TreeSelector().generate(it, fsa)
-            }
-            if (hasRelations) {
-                new RelationSelectorList().generate(it, fsa)
-                new RelationSelectorAutoComplete().generate(it, fsa)
-            }
-            if (hasUserFields) {
-                new UserInput().generate(it, fsa)
-            }
+
+        if (hasColourFields) {
+            new ColourInput().generate(it, fsa)
+        }
+        if (hasCountryFields) {
+            new CountrySelector().generate(it, fsa)
+        }
+        if (hasGeographical) {
+            new GeoInput().generate(it, fsa)
+        }
+        if (!entities.filter[!fields.filter(DateField).empty].empty) {
+            new DateInput().generate(it, fsa)
+        }
+        if (!entities.filter[!fields.filter(TimeField).empty].empty) {
+            new TimeInput().generate(it, fsa)
+        }
+
+        val hasRelations = !relations.empty
+        if (hasTrees || hasRelations) {
+            new AbstractObjectSelector().generate(it, fsa)
+        }
+        if (hasTrees) {
+            new TreeSelector().generate(it, fsa)
+        }
+        if (hasRelations) {
+            new RelationSelectorList().generate(it, fsa)
+            new RelationSelectorAutoComplete().generate(it, fsa)
+        }
+        if (hasUserFields) {
+            new UserInput().generate(it, fsa)
         }
     }
 
     def private otherPlugins(Application it) {
+        val result = newArrayList
         if (generateDetailContentType) {
             new ItemSelector().generate(it, fsa)
         }
-        new ObjectTypeSelector().generate(it, fsa, false)
-        new TemplateSelector().generate(it, fsa, false)
+        result += new ObjectTypeSelector().generate(it, fsa, false)
+        result += new TemplateSelector().generate(it, fsa, false)
+        result.join("\n\n")
     }
 }

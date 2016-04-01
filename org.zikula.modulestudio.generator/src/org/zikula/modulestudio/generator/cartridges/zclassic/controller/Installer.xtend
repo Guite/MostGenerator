@@ -232,7 +232,7 @@ class Installer {
                 «IF targets('1.3.x')»
                     $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
                 «ELSE»
-                    $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
+                    $controllerHelper = $this->container->get('«appService».controller_helper');
                 «ENDIF»
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {

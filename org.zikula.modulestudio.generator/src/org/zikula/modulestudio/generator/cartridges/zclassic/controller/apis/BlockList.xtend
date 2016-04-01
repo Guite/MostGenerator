@@ -236,7 +236,7 @@ class BlockList {
 
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appService».controller_helper');
             «ENDIF»
             $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'list'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!isset($properties['objectType']) || !in_array($properties['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
@@ -250,7 +250,7 @@ class BlockList {
                 $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             «IF targets('1.3.x')»

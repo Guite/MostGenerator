@@ -150,7 +150,7 @@ class EntityMethods {
                 «IF app.targets('1.3.x')»
                     $listHelper = new «app.appName»_Util_ListEntries(ServiceUtil::getManager());
                 «ELSE»
-                    $listHelper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+                    $listHelper = $serviceManager->get('«app.appService».listentries_helper');
                 «ENDIF»
 
             «ENDIF»
@@ -264,7 +264,7 @@ class EntityMethods {
             «IF app.targets('1.3.x')»
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
             «ELSE»
-                $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«app.appService».workflow_helper');
             «ENDIF»
 
             $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
@@ -428,7 +428,7 @@ class EntityMethods {
             «IF application.amountOfExampleRows > 0»
                 $workflowHelper = new \«application.appNamespace»\Helper\WorkflowHelper($serviceManager, $serviceManager->get('translator.default'));
             «ELSE»
-                $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«application.appService».workflow_helper');
             «ENDIF»
         «ENDIF»
 

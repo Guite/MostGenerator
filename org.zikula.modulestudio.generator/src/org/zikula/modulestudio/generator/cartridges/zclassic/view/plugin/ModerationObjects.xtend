@@ -52,7 +52,7 @@ class ModerationObjects {
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
             «ELSE»
                 $serviceManager = \ServiceUtil::getManager();
-                $workflowHelper = $serviceManager->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«appService».workflow_helper');
             «ENDIF»
 
             $result = $workflowHelper->collectAmountOfModerationItems();

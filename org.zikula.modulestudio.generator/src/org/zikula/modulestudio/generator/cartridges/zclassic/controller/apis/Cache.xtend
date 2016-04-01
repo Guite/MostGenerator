@@ -71,7 +71,7 @@ class Cache {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«appService».controller_helper');
             «ENDIF»
             $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'api' => 'cache', 'action' => 'clearItemCache'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {

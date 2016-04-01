@@ -169,7 +169,7 @@ class TranslatableHelper {
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType) . 'Translation';
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->container->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
             $entityTranslations = $repository->findTranslations($entity);
 

@@ -115,15 +115,15 @@ class StandardFields {
             <dt>{{ __('Creation') }}</dt>
             {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
             {% set profileLink = obj.createdUserId|«appName.toLowerCase»_profileLink %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId, rating='g') }}</dd>
-            <dd>{{ __f('Created by %1$s on %2$s', [profileLink, obj.createdDate|localizeddate('medium', 'short')]) }}</dd>
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId, rating='g')|raw }}</dd>
+            <dd>{{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')}) }}</dd>
         {% endif %}
         {% if obj.updatedUserId|default %}
             <dt>{{ __('Last update') }}</dt>
             {% set lu_uname = «appName.toLowerCase»_userVar('uname', obj.updatedUserId) %}
             {% set profileLink = obj.updatedUserId|«appName.toLowerCase»_profileLink %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId, rating='g') }}</dd>
-            <dd>{{ __f('Updated by %1$s on %2$s', [profileLink, obj.updatedDate|localizeddate('medium', 'short')]) }}</dd>
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId, rating='g')|raw }}</dd>
+            <dd>{{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</dd>
         {% endif %}
         </dl>
     '''
@@ -191,13 +191,13 @@ class StandardFields {
         <ul>
         {% if obj.createdUserId|default %}
             {% set username = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
-            <li>{{ __f('Created by %s', username) }}</li>
-            <li>{{ __f('Created on %s', obj.createdDate|localizeddate('medium', 'short')) }}</li>
+            <li>{{ __f('Created by %user', {'%user': username}) }}</li>
+            <li>{{ __f('Created on %date', {'%date': obj.createdDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
         {% if obj.updatedUserId|default %}
             {% set username = «appName.toLowerCase»_userVar('uname', obj.updatedUserId) %}
-            <li>{{ __f('Updated by %s', username) }}</li>
-            <li>{{ __f('Updated on %s', obj.updatedDate|localizeddate('medium', 'short')) }}</li>
+            <li>{{ __f('Updated by %user', {'%user': username}) }}</li>
+            <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
         </ul>
     '''

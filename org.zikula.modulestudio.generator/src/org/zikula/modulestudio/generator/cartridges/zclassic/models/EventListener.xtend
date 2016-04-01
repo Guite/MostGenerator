@@ -243,7 +243,7 @@ class EventListener {
             // delete workflow for this entity
             «IF !application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
-                $workflowHelper = $serviceManager->get('«application.appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«application.appService».workflow_helper');
                 $workflowHelper->normaliseWorkflowData($this);
             «ENDIF»
             $workflow = $this['__WORKFLOW__'];
@@ -306,7 +306,7 @@ class EventListener {
                     $uploadManager = new «application.appName»_UploadHandler();
                 «ELSE»
                     // retrieve the upload handler
-                    $uploadManager = $serviceManager->get('«application.appName.formatForDB».upload_handler');
+                    $uploadManager = $serviceManager->get('«application.appService».upload_handler');
                 «ENDIF»
 
                 $uploadFields = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
@@ -575,13 +575,13 @@ class EventListener {
             «IF application.targets('1.3.x')»
                 $uploadManager = new «application.appName»_UploadHandler();
             «ELSE»
-                $uploadManager = $serviceManager->get('«application.appName.formatForDB».upload_handler');
+                $uploadManager = $serviceManager->get('«application.appService».upload_handler');
             «ENDIF»
             «IF application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $controllerHelper = new «application.appName»_Util_Controller($serviceManager);
             «ELSE»
-                $controllerHelper = $serviceManager->get('«application.appName.formatForDB».controller_helper');
+                $controllerHelper = $serviceManager->get('«application.appService».controller_helper');
             «ENDIF»
         «ENDIF»
 

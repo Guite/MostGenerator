@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -11,7 +10,6 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class ViewHelper {
 
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -364,7 +362,7 @@ class ViewHelper {
             «IF isLegacy»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«appService».controller_helper');
             «ENDIF»
             // create name of the pdf output file
             $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))

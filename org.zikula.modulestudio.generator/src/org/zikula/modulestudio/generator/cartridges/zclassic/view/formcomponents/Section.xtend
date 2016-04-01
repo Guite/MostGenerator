@@ -83,18 +83,18 @@ class Section {
             «ENDIF»
         «ELSE»
             «IF attributable»
-                {{ include('Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
             «ENDIF»
             «IF categorisable»
-                {{ include('Helper/includeCategoriesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {{ include('@«app.appName»/Helper/includeCategoriesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
             «ENDIF»
             «relationHelper.generateIncludeStatement(it, app, fsa)»
             «IF metaData»
-                {{ include('Helper/includeMetaDataEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {{ include('@«app.appName»/Helper/includeMetaDataEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
             «ENDIF»
             «IF standardFields»
                 {% if mode != 'create' %}
-                    {{ include('Helper/includeStandardFieldsEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                    {{ include('@«app.appName»/Helper/includeStandardFieldsEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
         «ENDIF»
@@ -205,7 +205,7 @@ class Section {
                     <legend>{{ __('Return control') }}</legend>
                     {{ form_row(form.repeatCreation) }}
                 </fieldset>
-            {/if}
+            {% endif %}
         «ENDIF»
     '''
 
@@ -240,7 +240,7 @@ class Section {
             {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='z-bt-cancel' formnovalidate='formnovalidate'}
         «ELSE»
             {% for action in actions %}
-                {{ form_widget(attribute(form, action.id), {attr: {class: action.buttonClass}, icon: action.id == 'delete' ? 'fa-trash-o' : '') }}
+                {{ form_widget(attribute(form, action.id), {attr: {class: action.buttonClass}, icon: action.id == 'delete' ? 'fa-trash-o' : ''}) }}
             {% endfor %}
             {{ form_widget(form.reset, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-refresh'}) }}
             {{ form_widget(form.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}

@@ -320,7 +320,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : (array) FormUtil::getPassedValue('«appName.toFirstLower»SearchTypes', [], 'GETPOST');
 
-            $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+            $controllerHelper = $serviceManager->get('«appService».controller_helper');
             $utilArgs = ['helper' => 'search', 'action' => 'getResults'];
             $allowedTypes = $controllerHelper->getObjectTypes('helper', $utilArgs);
 
@@ -344,7 +344,7 @@ class Search {
                     «ENDFOR»
                 }
 
-                $repository = $serviceManager->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
 
                 // build the search query without any joins
                 $qb = $repository->genericBaseQuery('', '', false);

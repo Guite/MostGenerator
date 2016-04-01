@@ -195,7 +195,7 @@ class ContentTypeList {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
-                $controllerHelper = $serviceManager->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $serviceManager->get('«appService».controller_helper');
             «ENDIF»
 
             $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'list'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
@@ -292,7 +292,7 @@ class ContentTypeList {
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $serviceManager->get('«appName.formatForDB».' . $this->objectType . '_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
             «ENDIF»
 
             «IF targets('1.3.x')»

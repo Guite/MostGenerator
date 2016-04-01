@@ -41,7 +41,7 @@ class ObjectState {
             «IF targets('1.3.x')»
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
             «ELSE»
-                $workflowHelper = $serviceManager->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«appService».workflow_helper');
             «ENDIF»
 
             $stateInfo = $workflowHelper->getStateInfo($state);

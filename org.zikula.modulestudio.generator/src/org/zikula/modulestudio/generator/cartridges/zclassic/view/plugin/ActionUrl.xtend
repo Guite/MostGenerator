@@ -25,7 +25,7 @@ class ActionUrl {
 
     def private actionUrlImpl(Application it) '''
         /**
-         * The «appName.formatForDB»«IF targets('1.3.x')»ActionUrl modifier«ELSE»_acionUrl filter«ENDIF» creates the URL for a given action.
+         * The «appName.formatForDB»«IF targets('1.3.x')»ActionUrl modifier«ELSE»_actionUrl filter«ENDIF» creates the URL for a given action.
          *
          * @param string $urlType      The url type (admin, user, etc.)
          * @param string $urlFunc      The url func (view, display, edit, etc.)

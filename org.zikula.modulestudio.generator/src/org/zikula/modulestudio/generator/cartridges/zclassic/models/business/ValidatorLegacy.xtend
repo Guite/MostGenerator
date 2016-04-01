@@ -839,7 +839,7 @@ class ValidatorLegacy {
             «IF app.targets('1.3.x')»
                 $helper = new «app.appName»_Util_ListEntries($serviceManager);
             «ELSE»
-                $helper = $serviceManager->get('«app.appName.formatForDB».listentries_helper');
+                $helper = $serviceManager->get('«app.appService».listentries_helper');
             «ENDIF»
             $listValues = $helper->extractMultiList($this->entity['«name.formatForCode»']);
             $amountOfValues = count($listValues);

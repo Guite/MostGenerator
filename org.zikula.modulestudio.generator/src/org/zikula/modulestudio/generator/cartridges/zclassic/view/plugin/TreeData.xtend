@@ -83,7 +83,7 @@ class TreeData {
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $serviceManager->get('«appName.formatForDB».«name.formatForCode»_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».«name.formatForCode»_factory')->getRepository();
             «ENDIF»
             $descriptionFieldName = $repository->getDescriptionFieldName();
 

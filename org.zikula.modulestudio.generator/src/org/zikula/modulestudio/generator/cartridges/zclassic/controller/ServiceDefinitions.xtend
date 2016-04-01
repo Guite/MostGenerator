@@ -49,7 +49,7 @@ class ServiceDefinitions {
         if (targets('1.3.x')) {
             return
         }
-        modPrefix = vendor.formatForDB + '_' + name.formatForDB + '_module'
+        modPrefix = appService
 
         generateServiceFile(fsa, 'services', mainServiceFile)
         if (hasUploads) {

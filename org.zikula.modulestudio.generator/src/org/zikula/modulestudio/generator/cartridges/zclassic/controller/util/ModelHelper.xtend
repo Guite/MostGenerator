@@ -96,7 +96,7 @@ class ModelHelper {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«appService».controller_helper');
             «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'canBeCreated'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
                 throw new Exception('Error! Invalid object type received.');
@@ -161,7 +161,7 @@ class ModelHelper {
             «IF targets('1.3.x')»
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->container->get('«appName.formatForDB».controller_helper');
+                $controllerHelper = $this->container->get('«appService».controller_helper');
             «ENDIF»
             if (!in_array($objectType, $controllerHelper->getObjectTypes('util', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'util' => 'model', 'action' => 'hasExistingInstances'«IF targets('1.3.x')»)«ELSE»]«ENDIF»))) {
                 throw new Exception('Error! Invalid object type received.');
@@ -171,7 +171,7 @@ class ModelHelper {
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $repository = $this->entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $this->container->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+                $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
 
             return ($repository->selectCount() > 0);

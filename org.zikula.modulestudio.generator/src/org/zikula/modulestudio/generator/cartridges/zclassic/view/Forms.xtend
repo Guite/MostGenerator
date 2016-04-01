@@ -96,11 +96,15 @@ class Forms {
             {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_editFunctions.js'}
             {pageaddvar name='javascript' value='«app.rootFolder»/«app.appName»/javascript/«app.appName»_validation.js'}
         «ELSE»
-            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js')) }}
-            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js')) }}
-            «IF (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
-                {{ pageAddAsset('javascript', 'web/typeahead.js/dist/typeahead.bundle.min.js') }}
-            «ENDIF»
+
+            {% block header %}
+                {{ parent() }}
+                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js')) }}
+                {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js')) }}
+                «IF (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
+                    {{ pageAddAsset('javascript', 'web/typeahead.js/dist/typeahead.bundle.min.js') }}
+                «ENDIF»
+            {% endblock %}
         «ENDIF»
 
         «IF app.targets('1.3.x')»
@@ -112,13 +116,8 @@ class Forms {
                 «pageIcon('new')»
             {/if}
         «ELSE»
-            {% if mode != 'create' %}
-                {% block title __('Edit «name.formatForDisplay»') %}
-                {% block admin_page_icon 'pencil-square-o' %}
-            {% elseif mode == 'create' %}
-                {% block title __('Create «name.formatForDisplay»') %}
-                {% block admin_page_icon 'plus' %}
-            {% endif %}
+            {% block title mode == 'create' ? __('Create «name.formatForDisplay»') : __('Edit «name.formatForDisplay»') %}
+            {% block admin_page_icon mode == 'create' ? 'plus' : 'pencil-square-o' %}
         «ENDIF»
         «IF app.targets('1.3.x')»
             <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-edit">

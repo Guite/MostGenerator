@@ -266,7 +266,7 @@ class Layout {
                 </div>
                 {% if value and not inlineUsage %}
                     <span class="help-block avatar">
-                        {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
+                        {{ «appName.formatForDB»_userAvatar(uid=value, rating='g')|raw }}
                     </span>
                     {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
                         <span class="help-block"><a href="{{ path('zikulausersmodule_admin_modify', { 'userid': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>

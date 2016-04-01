@@ -106,7 +106,7 @@ class ThirdParty {
             «IF targets('1.3.x')»
                 $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
             «ELSE»
-                $workflowHelper = $serviceManager->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«appService».workflow_helper');
             «ENDIF»
 
             $modname = '«appName»';

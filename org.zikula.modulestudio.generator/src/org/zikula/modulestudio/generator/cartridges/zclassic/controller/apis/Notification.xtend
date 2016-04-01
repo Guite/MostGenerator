@@ -256,7 +256,7 @@ class Notification {
                 $serviceManager = ServiceUtil::getManager();
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
             «ELSE»
-                $workflowHelper = $this->get('«appName.formatForDB».workflow_helper');
+                $workflowHelper = $this->get('«appService».workflow_helper');
             «ENDIF»
 
             $objectType = $this->entity['_objectType'];

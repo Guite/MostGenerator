@@ -349,9 +349,9 @@ class ControllerLayer {
                 $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
             «ENDIF»
         «ELSE»
-            $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+            $workflowHelper = $this->get('«app.appService».workflow_helper');
             «IF !skipHookSubscribers»
-                $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
+                $hookHelper = $this->get('«app.appService».hook_helper');
             «ENDIF»
             $flashBag = $request->getSession()->getFlashBag();
             $logger = $this->get('logger');

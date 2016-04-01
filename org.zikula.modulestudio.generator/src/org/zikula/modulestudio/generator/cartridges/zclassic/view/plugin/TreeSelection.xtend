@@ -76,7 +76,7 @@ class TreeSelection {
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $serviceManager->get('«appName.formatForDB».' . $params['objectType'] . '_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».' . $params['objectType'] . '_factory')->getRepository();
             «ENDIF»
             $titleFieldName = $repository->getTitleFieldName();
 

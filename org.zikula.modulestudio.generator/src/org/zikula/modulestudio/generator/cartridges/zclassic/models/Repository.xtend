@@ -418,7 +418,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $imageHelper = new «app.appName»_Util_Image($serviceManager);
                     «ELSE»
-                        $imageHelper = $serviceManager->get('«app.appName.formatForDB».image_helper');
+                        $imageHelper = $serviceManager->get('«app.appService».image_helper');
                     «ENDIF»
                     «IF hasUploadFieldsEntity»
 
@@ -1408,7 +1408,7 @@ class Repository {
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
                     $varHelper = $serviceManager->get('zikula_extensions_module.api.variable');
-                    $showOnlyOwnEntries = $this->request->query->getDigits('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0));
+                    $showOnlyOwnEntries = /*$request->query->getDigits('own', */$varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0)/*)*/;
                 «ENDIF»
                 if ($showOnlyOwnEntries == 1) {
                     $uid = UserUtil::getVar('uid');
@@ -1594,9 +1594,9 @@ class Repository {
                     $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
                 «ENDIF»
             «ELSE»
-                $workflowHelper = $serviceManager->get('«app.appName.formatForDB».workflow_helper');
+                $workflowHelper = $serviceManager->get('«app.appService».workflow_helper');
                 «IF !skipHookSubscribers»
-                    $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
+                    $hookHelper = $this->get('«app.appService».hook_helper');
                 «ENDIF»
             «ENDIF»
 

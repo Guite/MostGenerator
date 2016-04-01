@@ -116,7 +116,7 @@ class ExternalController {
             $getData = $this->request->query;
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«appService».controller_helper');
         «ENDIF»
 
         $objectType = «IF isLegacy»isset($args['objectType']) ? $args['objectType'] : $getData->filter('ot', '', FILTER_SANITIZE_STRING)«ELSE»$ot«ENDIF»;
@@ -149,7 +149,7 @@ class ExternalController {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->get('request_stack')->getCurrentRequest());
         «ENDIF»
         $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
@@ -253,7 +253,7 @@ class ExternalController {
         «IF isLegacy»
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
-            $controllerHelper = $this->get('«appName.formatForDB».controller_helper');
+            $controllerHelper = $this->get('«appService».controller_helper');
         «ENDIF»
 
         «IF isLegacy»
@@ -277,7 +277,7 @@ class ExternalController {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->get('«appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->get('request_stack')->getCurrentRequest());
         «ENDIF»
 

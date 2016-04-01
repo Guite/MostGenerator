@@ -55,7 +55,7 @@ class Actions {
             «IF isLegacy»
                 $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«app.appService».controller_helper');
             «ENDIF»
 
             // parameter specifying which type of objects we are treating
@@ -122,7 +122,7 @@ class Actions {
             «IF isLegacy»
                 $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
             «ELSE»
-                $controllerHelper = $this->get('«app.appName.formatForDB».controller_helper');
+                $controllerHelper = $this->get('«app.appService».controller_helper');
             «ENDIF»
 
             // parameter specifying which type of objects we are treating
@@ -266,7 +266,7 @@ class Actions {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
         «ENDIF»
 
@@ -373,13 +373,13 @@ class Actions {
             // let entities know if we are in admin or user area
             System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
 
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
         «ENDIF»
         «IF isLegacy»
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
         «ELSE»
-            $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
+            $viewHelper = $this->get('«app.appService».view_helper');
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
@@ -647,7 +647,7 @@ class Actions {
             $modelHelper = new «app.appName»_Util_Model($this->serviceManager);
             $this->view->assign('canBeCreated', $modelHelper->canBeCreated($objectType));
         «ELSE»
-            $modelHelper = $this->get('«app.appName.formatForDB».model_helper');
+            $modelHelper = $this->get('«app.appService».model_helper');
             $templateParameters['canBeCreated'] = $modelHelper->canBeCreated($objectType);
         «ENDIF»
 
@@ -665,7 +665,7 @@ class Actions {
             «IF isLegacy»
                 $listHelper = new «app.appName»_Util_ListEntries($this->serviceManager);
             «ELSE»
-                $listHelper = $this->get('«app.appName.formatForDB».listentries_helper');
+                $listHelper = $this->get('«app.appService».listentries_helper');
             «ENDIF»
 
             $listObjectTypes = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
@@ -715,7 +715,7 @@ class Actions {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
         «ENDIF»
 
@@ -802,7 +802,7 @@ class Actions {
             // let entities know if we are in admin or user area
             System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
 
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
 
             $entity = $«name.formatForCode»;
@@ -834,7 +834,7 @@ class Actions {
         «IF isLegacy»
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
         «ELSE»
-            $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
+            $viewHelper = $this->get('«app.appService».view_helper');
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
@@ -923,7 +923,7 @@ class Actions {
                 «IF isLegacy»
                     $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
                 «ELSE»
-                    $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
+                    $hookHelper = $this->get('«app.appService».hook_helper');
                 «ENDIF»
                 // Let any hooks perform additional validation actions
                 $hookType = 'validate_edit';
@@ -998,7 +998,7 @@ class Actions {
             // let entities know if we are in admin or user area
             System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
 
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
 
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
@@ -1006,10 +1006,10 @@ class Actions {
             $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
             // delegate form processing to the form handler
-            $formHandler = $this->get('«app.appName.formatForDB».form.handler.«name.formatForDB»');
+            $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
             $formHandler->processForm($templateParameters);
 
-            $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
+            $viewHelper = $this->get('«app.appService».view_helper');
             $templateParameters = $formHandler->getTemplateParameters();
 
             // fetch and return the appropriate template
@@ -1054,7 +1054,7 @@ class Actions {
         «IF isLegacy»
             $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
         «ELSE»
-            $workflowHelper = $this->get('«app.appName.formatForDB».workflow_helper');
+            $workflowHelper = $this->get('«app.appService».workflow_helper');
         «ENDIF»
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {
@@ -1123,13 +1123,13 @@ class Actions {
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
         «ELSE»
-            $repository = $this->get('«app.appName.formatForDB».' . $objectType . '_factory')->getRepository();
+            $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
         «ENDIF»
 
         «IF isLegacy»
             $viewHelper = new «app.appName»_Util_View($this->serviceManager);
         «ELSE»
-            $viewHelper = $this->get('«app.appName.formatForDB».view_helper');
+            $viewHelper = $this->get('«app.appService».view_helper');
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : '',
                 'deleteForm' => $form->createView()
@@ -1165,7 +1165,7 @@ class Actions {
             «IF isLegacy»
                 $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
             «ELSE»
-                $hookHelper = $this->get('«app.appName.formatForDB».hook_helper');
+                $hookHelper = $this->get('«app.appService».hook_helper');
             «ENDIF»
             // Let any hooks perform additional validation actions
             $hookType = 'validate_delete';
