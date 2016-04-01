@@ -218,7 +218,7 @@ class ExampleData {
         «IF targets('1.3.x')»
             $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
         «ELSE»
-            $workflowHelper = $this->container->get('«appName.formatForDB».workflow_helper');
+            $workflowHelper = new \«appNamespace»\Helper\WorkflowHelper($this->container, $this->container->get('translator.default'));
         «ENDIF»
         try {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
