@@ -364,7 +364,7 @@ class ExternalController {
                 'objectType' => $objectType,
                 'editorName' => $editor
             ];
-            $form = $this->createForm('«appNamespace»\Form\Type\Finder\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions)
+            $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions)
                 ->setMethod('GET');
 
             $templateParameters['finderForm'] = $form;

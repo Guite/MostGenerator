@@ -187,7 +187,7 @@ class ListBlock {
                 return;
             }
 
-            $hasMultiSelection = \ModUtil::apiFunc('«appName», 'category', 'hasMultipleSelection', ['ot' => $options['objectType']]);
+            $hasMultiSelection = \ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', ['ot' => $options['objectType']]);
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
                 'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
                 'empty_data' => [],
@@ -199,7 +199,7 @@ class ListBlock {
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
                 'entity' => ucfirst($options['objectType']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['objectType']) . 'CategoryEntity',
                 'help' => $this->__('This is an optional filter.')
             ]);
         }

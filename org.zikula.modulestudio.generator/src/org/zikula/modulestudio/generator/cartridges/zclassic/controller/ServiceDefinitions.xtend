@@ -248,7 +248,7 @@ class ServiceDefinitions {
                 «IF entity instanceof Entity»
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:
-                        class: «nsBase.replace('Type\\', '')»\Handler\«entity.name.formatForCodeCapital»\EditHandler
+                        class: «nsBase.replace('Type\\', '')»Handler\«entity.name.formatForCodeCapital»\EditHandler
                         arguments: ["@service_container", "@translator.default", "@request_stack", "@router"«IF hasUploads», "@«modPrefix».upload_handler"«ENDIF»]
                         tags:
                             - { name: form.type }
@@ -280,7 +280,7 @@ class ServiceDefinitions {
         «IF generateListBlock»
 
             «modPrefix».form.type.block.itemlist:
-                class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ListBlockType
+                class: «nsBase.replace('Form\\Type\\', '')»Block\Form\Type\ItemListBlockType
                 arguments: ["@translator.default"]
                 tags:
                     - { name: form.type }

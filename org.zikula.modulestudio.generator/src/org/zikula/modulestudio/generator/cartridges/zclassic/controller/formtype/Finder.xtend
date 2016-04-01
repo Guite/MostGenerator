@@ -183,7 +183,7 @@ class Finder {
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
                 'entity' => ucfirst($options['objectType']) . 'Entity',
-                'entityCategoryClass' => '«app.appNamespace»\Entity\' . ucfirst($options['objectType']) . 'CategoryEntity',
+                'entityCategoryClass' => '«app.appNamespace»\Entity\\' . ucfirst($options['objectType']) . 'CategoryEntity',
                 'help' => $this->__('This is an optional filter.')
             ]);
         }
