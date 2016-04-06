@@ -67,20 +67,19 @@ class Layout {
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
-            {{ pageAddAsset('stylesheet', 'web/bootstrap/css/bootstrap.min.css') }}
-            {{ pageAddAsset('stylesheet', 'web/bootstrap/css/bootstrap-theme.min.css') }}
-            {{ pageAddAsset('javascript', 'jquery') }}
+            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
+            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
             {{ pageAddAsset('javascript', 'jquery-ui') }}
-            {{ pageAddAsset('stylesheet', 'web/jquery-ui/themes/base/jquery-ui.min.css') }}
-            {{ pageAddAsset('javascript', 'web/bootstrap/js/bootstrap.min.js') }}
+            {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
+            {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
             {{ pageAddAsset('javascript', 'zikula') }}{# still required for Gettext #}
             «IF hasUploads»
-                {{ pageAddAsset('javascript', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.min.js') }}
-                {{ pageAddAsset('stylesheet', 'web/bootstrap-media-lightbox/bootstrap-media-lightbox.css') }}
+                {{ pageAddAsset('javascript', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js')) }}
+                {{ pageAddAsset('stylesheet', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css')) }}
             «ENDIF»
             «IF hasViewActions || hasDisplayActions || hasEditActions»
-                {{ pageAddAsset('stylesheet', 'web/bootstrap-jqueryui/bootstrap-jqueryui.min.css') }}
-                {{ pageAddAsset('javascript', 'web/bootstrap-jqueryui/bootstrap-jqueryui.min.js') }}
+                {{ pageAddAsset('stylesheet', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.css')) }}
+                {{ pageAddAsset('javascript', asset('bootstrap-jqueryui/bootstrap-jqueryui.min.js')) }}
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
             {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}

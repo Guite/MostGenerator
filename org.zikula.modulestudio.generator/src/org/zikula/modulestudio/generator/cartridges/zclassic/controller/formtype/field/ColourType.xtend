@@ -52,7 +52,6 @@ class ColourType {
 
                 if ($firstTime) {
                     PageUtil::addVar('stylesheet', 'web/jquery-minicolors/jquery.minicolors.css');
-                    PageUtil::addVar('javascript', 'jquery');
                     PageUtil::addVar('javascript', 'web/jquery-minicolors/jquery.minicolors.min.js');
                 }
                 $firstTime = false;

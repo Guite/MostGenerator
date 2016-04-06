@@ -176,10 +176,9 @@ class BlocksView {
         «IF targets('1.3.x')»
             {pageaddvar name='javascript' value='prototype'}
         «ELSE»
-            {{ pageAddAsset('stylesheet', 'web/bootstrap/css/bootstrap.min.css') }}
-            {{ pageAddAsset('stylesheet', 'web/bootstrap/css/bootstrap-theme.min.css') }}
-            {{ pageAddAsset('javascript', 'jquery') }}
-            {{ pageAddAsset('javascript', 'web/bootstrap/js/bootstrap.min.js') }}
+            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
+            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
+            {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
         «ENDIF»
         «IF targets('1.3.x')»
             <script type="text/javascript">

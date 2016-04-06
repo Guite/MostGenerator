@@ -193,8 +193,8 @@ class ViewHierarchy {
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».Tree.js')) }}
 
             {% if hasNodes %}
-                {{ pageAddAsset('javascript', 'web/jstree/dist/jstree.min.js') }}
-                {{ pageAddAsset('stylesheet', 'web/jstree/dist/themes/default/style.min.css') }}
+                {{ pageAddAsset('javascript', asset('jstree/dist/jstree.min.js')) }}
+                {{ pageAddAsset('stylesheet', asset('jstree/dist/themes/default/style.min.css')) }}
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     ( function($) {

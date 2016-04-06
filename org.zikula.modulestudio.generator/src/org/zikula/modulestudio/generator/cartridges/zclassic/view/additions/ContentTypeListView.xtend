@@ -297,7 +297,6 @@ class ContentTypeListView {
         «ELSE»
             {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap.min.css'}
             {pageaddvar name='stylesheet' value='web/bootstrap/css/bootstrap-theme.min.css'}
-            {pageaddvar name='javascript' value='jquery'}
             {pageaddvar name='javascript' value='web/bootstrap/js/bootstrap.min.js'}
         «ENDIF»
         «IF targets('1.3.x')»
