@@ -18,36 +18,83 @@ class Notification {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Notification' + (if (targets('1.3.x')) '' else 'Api') + '.php',
-            fh.phpFileContent(it, notificationApiBaseClass), fh.phpFileContent(it, notificationApiImpl)
-        )
+        if (targets('1.3.x')) {
+            generateClassPair(fsa, getAppSourceLibPath + 'Api/Notification.php',
+                fh.phpFileContent(it, notificationApiBaseClass), fh.phpFileContent(it, notificationApiImpl)
+            )
+        } else {
+            generateClassPair(fsa, getAppSourceLibPath + 'Helper/NotificationHelper.php',
+                fh.phpFileContent(it, notificationHelperBaseClass), fh.phpFileContent(it, notificationHelperImpl)
+            )
+        }
     }
 
     def private notificationApiBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api\Base;
-
-            use LogUtil;
-            use ModUtil;
-            use ServiceUtil;
-            use System;
-            use UserUtil;
-
-            use Zikula_AbstractBase;
-            use Zikula\Core\Doctrine\EntityAccess;
-
-        «ENDIF»
         /**
          * Notification api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Notification extends Zikula_AbstractApi«ELSE»NotificationApi extends Zikula_AbstractBase«ENDIF»
+        class «appName»_Api_Base_Notification extends Zikula_AbstractApi
+        {
+            «notificationApiBaseImpl»
+        }
+    '''
+
+    def private notificationHelperBaseClass(Application it) '''
+        namespace «appNamespace»\Helper\Base;
+
+        use LogUtil;
+        use ModUtil;
+        use ServiceUtil;
+        use System;
+        use UserUtil;
+
+        use Symfony\Component\HttpFoundation\Session\Session;
+        use Symfony\Component\Routing\RouterInterface;
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
+        use Zikula\Core\Doctrine\EntityAccess;
+        use Zikula\ExtensionsModule\Api\VariableApi;
+        use «appNamespace»\Helper\WorkflowHelper;
+
+        /**
+         * Notification helper base class.
+         */
+        class NotificationHelper
         {
             «notificationApiBaseImpl»
         }
     '''
 
     def private notificationApiBaseImpl(Application it) '''
+        «IF !targets('1.3.x')»
+            use TranslatorTrait;
 
+            /**
+             * @var Session
+             */
+            protected $session;
+
+            /**
+             * @var RouterInterface
+             */
+            protected $router;
+
+            /**
+             * @var VariableApi
+             */
+            protected $variableApi;
+
+            /**
+             * @var \Twig_Environment
+             */
+            protected $templating;
+
+            /**
+             * @var WorkflowHelper
+             */
+            protected $workflowHelper;
+
+        «ENDIF»
         /**
          * List of notification recipients.
          *
@@ -75,6 +122,39 @@ class Notification {
          * @var string action.
          */
         private $action = '';
+
+        «IF !targets('1.3.x')»
+            /**
+             * Constructor.
+             * Initialises member vars.
+             *
+             * @param TranslatorInterface $translator     Translator service instance.
+             * @param Session             $session        Session service instance.
+             * @param Routerinterface     $router         Router service instance.
+             * @param VariableApi         $variableApi    VariableApi service instance.
+             * @param \Twig_Environment   $twig           Twig service instance.
+             * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance.
+             */
+            public function __construct(TranslatorInterface $translator, Session $session, RouterInterface $router, VariableApi $variableApi, \Twig_Environment $twig, WorkflowHelper $workflowHelper)
+            {
+                $this->setTranslator($translator);
+                $this->session = $session;
+                $this->router = $router;
+                $this->variableApi = $variableApi;
+                $this->templating = $twig;
+                $this->workflowHelper = $workflowHelper;
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(/*TranslatorInterface */$translator)
+            {
+                $this->translator = $translator;
+            }
+        «ENDIF»
 
         /**
          * Sends a mail to either an item's creator or a group of moderators.
@@ -106,7 +186,7 @@ class Notification {
             }
 
             if (!ModUtil::available('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»') || !ModUtil::loadApi('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»', 'user')) {
-                return LogUtil::registerError($this->«IF targets('1.3.x')»get('translator.default')->«ENDIF»__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+                return LogUtil::registerError($this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
             }
 
             $result = $this->sendMails();
@@ -114,7 +194,7 @@ class Notification {
             «IF targets('1.3.x')»
                 SessionUtil::delVar($this->name . 'AdditionalNotificationRemarks');
             «ELSE»
-                $this->get('session')->del($this->name . 'AdditionalNotificationRemarks');
+                $this->session->del($this->name . 'AdditionalNotificationRemarks');
             «ENDIF»
 
             return $result;
@@ -135,10 +215,9 @@ class Notification {
                         $moderatorGroupId = $this->getVar('superModerationGroupFor' . $objectType, 2);
                     }
                 «ELSE»
-                    $varHelper = $this->get('zikula_extensions_module.api.variable');
-                    $moderatorGroupId = $varHelper->get('«appName»', 'moderationGroupFor' . $objectType, 2);
+                    $moderatorGroupId = $this->variableApi->get('«appName»', 'moderationGroupFor' . $objectType, 2);
                     if ($this->recipientType == 'superModerator') {
-                        $moderatorGroupId = $varHelper->get('«appName»', 'superModerationGroupFor' . $objectType, 2);
+                        $moderatorGroupId = $this->variableApi->get('«appName»', 'superModerationGroupFor' . $objectType, 2);
                     }
                 «ENDIF»
 
@@ -189,9 +268,6 @@ class Notification {
             «ENDIF»
             $templateType = $this->recipientType == 'creator' ? 'Creator' : 'Moderator';
             $template = '«IF targets('1.3.x')»email«ELSE»Email«ENDIF»/notify' . ucfirst($objectType) . $templateType .  '.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
-            «IF !targets('1.3.x')»
-                $templating = $this->get('twig');
-            «ENDIF»
 
             $mailData = $this->prepareEmailData();
 
@@ -220,7 +296,7 @@ class Notification {
                     'toname' => $recipient['name'],
                     'toaddress' => $recipient['email'],
                     'subject' => $this->getMailSubject(),
-                    'body' => «IF targets('1.3.x')»$view->fetch($template)«ELSE»$templating->render('@«appName»/' . $template, $templateParameters)«ENDIF»,
+                    'body' => «IF targets('1.3.x')»$view->fetch($template)«ELSE»$this->templating->render('@«appName»/' . $template, $templateParameters)«ENDIF»,
                     'html' => true
                 «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
 
@@ -232,19 +308,15 @@ class Notification {
 
         protected function getMailSubject()
         {
-            «IF !targets('1.3.x')»
-                $translator = $this->get('translator.default');
-
-            «ENDIF»
             $mailSubject = '';
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
                 if ($this->action == 'submit') {
-                    $mailSubject = «IF targets('1.3.x')»$this«ELSE»$translator«ENDIF»->__('New content has been submitted');
+                    $mailSubject = $this->__('New content has been submitted');
                 } else {
-                    $mailSubject = «IF targets('1.3.x')»$this«ELSE»$translator«ENDIF»->__('Content has been updated');
+                    $mailSubject = $this->__('Content has been updated');
                 }
             } elseif ($this->recipientType == 'creator') {
-                $mailSubject = «IF targets('1.3.x')»$this«ELSE»$translator«ENDIF»->__('Your submission has been updated');
+                $mailSubject = $this->__('Your submission has been updated');
             }
 
             return $mailSubject;
@@ -255,20 +327,16 @@ class Notification {
             «IF targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
-            «ELSE»
-                $workflowHelper = $this->get('«appService».workflow_helper');
-            «ENDIF»
 
+            «ENDIF»
             $objectType = $this->entity['_objectType'];
             $state = $this->entity['workflowState'];
-            $stateInfo = $workflowHelper->getStateInfo($state);
+            $stateInfo = $«IF !targets('1.3.x')»this->«ENDIF»workflowHelper->getStateInfo($state);
 
             «IF targets('1.3.x')»
                 $remarks = SessionUtil::getVar($this->name . 'AdditionalNotificationRemarks', '');
             «ELSE»
-                $remarks = $this->get('session')->get($this->name . 'AdditionalNotificationRemarks', '');
-
-                $router = $this->get('router');
+                $remarks = $this->session->get($this->name . 'AdditionalNotificationRemarks', '');
             «ENDIF»
 
             $urlArgs = $this->entity->createUrlArgs();
@@ -287,7 +355,7 @@ class Notification {
                     «IF targets('1.3.x')»
                         $displayUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'display', $urlArgs, null, null, true); // absolute
                     «ELSE»
-                        $displayUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'display', $urlArgs, true);
+                        $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'display', $urlArgs, true);
                     «ENDIF»
                 «ENDIF»
                 «IF hasAdminController && getAllAdminControllers.head.hasActions('edit')
@@ -295,7 +363,7 @@ class Notification {
                     «IF targets('1.3.x')»
                         $editUrl = ModUtil::url($this->name, '«IF hasAdminController && getAllAdminControllers.head.hasActions('display')»admin«ELSE»user«ENDIF»', 'edit', $urlArgs, null, null, true); // absolute
                     «ELSE»
-                        $editUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs, true);
+                        $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs, true);
                     «ENDIF»
                 «ENDIF»
             } elseif ($this->recipientType == 'creator') {
@@ -304,14 +372,14 @@ class Notification {
                         «IF targets('1.3.x')»
                             $displayUrl = ModUtil::url($this->name, 'user', 'display', $urlArgs, null, null, true); // absolute
                         «ELSE»
-                            $displayUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
+                            $displayUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_display', $urlArgs, true);
                         «ENDIF»
                     «ENDIF»
                     «IF getMainUserController.hasActions('edit')»
                         «IF targets('1.3.x')»
                             $editUrl = ModUtil::url($this->name, 'user', 'edit', $urlArgs, null, null, true); // absolute
                         «ELSE»
-                            $editUrl = $router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
+                            $editUrl = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_edit', $urlArgs, true);
                         «ENDIF»
                     «ENDIF»
                 «ELSE»
@@ -332,22 +400,26 @@ class Notification {
     '''
 
     def private notificationApiImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api;
-
-            use «appNamespace»\Api\Base\NotificationApi as BaseNotificationApi;
-
-        «ENDIF»
         /**
          * Notification api implementation class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Api_Notification extends «appName»_Api_Base_Notification
-        «ELSE»
-        class NotificationApi extends BaseNotificationApi
-        «ENDIF»
         {
             // feel free to extend the notification api here
+        }
+    '''
+
+    def private notificationHelperImpl(Application it) '''
+        namespace «appNamespace»\Helper;
+
+        use «appNamespace»\Helper\Base\NotificationHelper as BaseNotificationHelper;
+
+        /**
+         * Notification helper implementation class.
+         */
+        class NotificationHelper extends BaseNotificationHelper
+        {
+            // feel free to extend the notification helper here
         }
     '''
 }

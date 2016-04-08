@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 /**
  * Service definitions in YAML format.
@@ -28,6 +29,7 @@ class ServiceDefinitions {
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     String modPrefix = ''
 
@@ -344,6 +346,12 @@ class ServiceDefinitions {
             «modPrefix».listentries_helper:
                 class: «nsBase»ListEntriesHelper
                 arguments: ["@translator.default"]
+        «ENDIF»
+        «IF needsApproval»
+
+            «modPrefix».notification_helper:
+                class: «nsBase»NotificationHelper
+                arguments: ["@translator.default", "@session", "@router", ""@zikula_extensions_module.api.variable", "@ŧwig", "@«modPrefix».workflow_helper"]
         «ENDIF»
         «IF hasTranslatable»
 

@@ -168,6 +168,11 @@ class Operations {
             'entity' => $entity
         «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
 
-        «IF !app.targets('1.3.x')»\«ENDIF»ModUtil::apiFunc('«app.appName»', 'notification', 'process', $notifyArgs);
+        «IF app.targets('1.3.x')»
+            ModUtil::apiFunc('«app.appName»', 'notification', 'process', $notifyArgs);
+        «ELSE»
+            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager->get('«app.appService».notification_helper')->process($notifyArgs);
+        «ENDIF»
     '''
 }
