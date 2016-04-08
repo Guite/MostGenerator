@@ -48,8 +48,6 @@ class ObjectTypeSelector {
                 $dom = ZLanguage::getModuleDomain('«appName»');
                 $result = array();
             «ELSE»
-                $serviceManager = \ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator.default');
                 $result = [];
             «ENDIF»
 
@@ -72,7 +70,7 @@ class ObjectTypeSelector {
             «IF targets('1.3.x')»
                 $result[] = array('text' => __('«entity.nameMultiple.formatForDisplayCapital»', $dom), 'value' => '«entity.name.formatForCode»');
             «ELSE»
-                $result[] = ['text' => $translator->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
+                $result[] = ['text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'), 'value' => '«entity.name.formatForCode»'];
             «ENDIF»
         «ENDFOR»
     '''

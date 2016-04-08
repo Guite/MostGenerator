@@ -37,14 +37,12 @@ class ObjectState {
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»«ELSE»get«ENDIF»ObjectState($state = 'initial', $uiFeedback = true)
         {
-            $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
             «IF targets('1.3.x')»
+                $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
                 $workflowHelper = new «appName»_Util_Workflow($serviceManager);
-            «ELSE»
-                $workflowHelper = $serviceManager->get('«appService».workflow_helper');
-            «ENDIF»
 
-            $stateInfo = $workflowHelper->getStateInfo($state);
+            «ENDIF»
+            $stateInfo = $«IF !targets('1.3.x')»this->«ENDIF»workflowHelper->getStateInfo($state);
 
             $result = $stateInfo['text'];
             if ($uiFeedback === true) {

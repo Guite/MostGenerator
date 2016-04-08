@@ -97,6 +97,19 @@ class Plugins {
     def private twigExtensionBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
+        «IF hasTrees»
+            use Symfony\Component\Routing\RouterInterface;
+        «ENDIF»
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\Common\Translator\TranslatorTrait;
+        use «appNamespace»\Helper\WorkflowHelper;
+        «IF hasUploads»
+            use «appNamespace»\Helper\ViewHelper;
+        «ENDIF»
+        «IF hasListFields»
+            use «appNamespace»\Helper\ListEntriesHelper;
+        «ENDIF»
+
         /**
          * Twig extension base class.
          */
@@ -109,6 +122,76 @@ class Plugins {
     // 1.4.x only
     def private twigExtensionBody(Application it) '''
         «val appNameLower = appName.toLowerCase»
+        use TranslatorTrait;
+
+        «IF hasTrees»
+            /**
+             * @var RouterInterface
+             */
+            protected $router;
+
+        «ENDIF»
+        /**
+         * @var WorkflowHelper
+         */
+        protected $workflowHelper;
+
+        «IF hasUploads»
+            /**
+             * @var ViewHelper
+             */
+            protected $viewHelper;
+
+        «ENDIF»
+        «IF hasListFields»
+            /**
+             * @var ListEntriesHelper
+             */
+            protected $listHelper;
+
+        «ENDIF»
+
+        /**
+         * Constructor.
+         * Initialises member vars.
+         *
+         * @param TranslatorInterface $translator     Translator service instance.
+        «IF hasTrees»
+            «' '»* @param Routerinterface     $router         Router service instance.
+        «ENDIF»
+         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance.
+        «IF hasUploads»
+            «' '»* @param ViewHelper          $viewHelper     ViewHelper service instance.
+        «ENDIF»
+        «IF hasListFields»
+            «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance.
+        «ENDIF»
+         */
+        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF», WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
+        {
+            $this->setTranslator($translator);
+            «IF hasTrees»
+                $this->router = $router;
+            «ENDIF»
+            $this->workflowHelper = $workflowHelper;
+            «IF hasUploads»
+                $this->viewHelper = $viewHelper;
+            «ENDIF»
+            «IF hasListFields»
+                $this->listHelper = $listHelper;
+            «ENDIF»
+        }
+
+        /**
+         * Sets the translator.
+         *
+         * @param TranslatorInterface $translator Translator service instance.
+         */
+        public function setTranslator(/*TranslatorInterface */$translator)
+        {
+            $this->translator = $translator;
+        }
+
         /**
          * Returns a list of custom Twig functions.
          *

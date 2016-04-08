@@ -43,14 +43,12 @@ class GetListEntry {
                 return $value;
             }
 
-            $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
             «IF targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
                 $helper = new «appName»_Util_ListEntries($serviceManager);
-            «ELSE»
-                $helper = $serviceManager->get('«appService».listentries_helper');
-            «ENDIF»
 
-            return $helper->resolve($value, $objectType, $fieldName, $delimiter);
+            «ENDIF»
+            return «IF targets('1.3.x')»$helper«ELSE»$this->listHelper«ENDIF»->resolve($value, $objectType, $fieldName, $delimiter);
         }
     '''
 }

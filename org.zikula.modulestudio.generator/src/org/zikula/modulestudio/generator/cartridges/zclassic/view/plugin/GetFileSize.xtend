@@ -51,16 +51,12 @@ class GetFileSize {
                 return '';
             }
 
-            $serviceManager = «IF !targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
             «IF targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
                 $viewHelper = new «appName»_Util_View($serviceManager);
-            «ELSE»
-                $viewHelper = $serviceManager->get('«appService».view_helper');
+
             «ENDIF»
-
-            $result = $viewHelper->getReadableFileSize($size, $nodesc, $onlydesc);
-
-            return $result;
+            return $«IF !targets('1.3.x')»this->«ENDIF»viewHelper->getReadableFileSize($size, $nodesc, $onlydesc);
         }
     '''
 }

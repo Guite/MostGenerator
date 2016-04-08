@@ -51,13 +51,11 @@ class TemplateSelector {
                 $result[] = array('text' => __('With description', $dom), 'value' => 'itemlist_display_description«templateExtension»');
                 $result[] = array('text' => __('Custom template', $dom), 'value' => 'custom');
             «ELSE»
-                $serviceManager = \ServiceUtil::getManager();
-                $translator = $serviceManager->get('translator.default');
                 $result = [];
 
-                $result[] = ['text' => $translator->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
-                $result[] = ['text' => $translator->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
-                $result[] = ['text' => $translator->__('Custom template'), 'value' => 'custom'];
+                $result[] = ['text' => $this->__('Only item titles'), 'value' => 'itemlist_display«templateExtension»'];
+                $result[] = ['text' => $this->__('With description'), 'value' => 'itemlist_display_description«templateExtension»'];
+                $result[] = ['text' => $this->__('Custom template'), 'value' => 'custom'];
             «ENDIF»
 
             «IF generateSmartyPlugin»

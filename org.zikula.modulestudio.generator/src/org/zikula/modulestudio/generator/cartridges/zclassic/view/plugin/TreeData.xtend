@@ -83,7 +83,7 @@ class TreeData {
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $serviceManager->get('«appService».«name.formatForCode»_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».' . $params['objectType'] . '_factory')->getRepository();
             «ENDIF»
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
@@ -151,7 +151,7 @@ class TreeData {
                 if ($controllerHasEditAction) {
                     $urlArgs = $item->createUrlArgs();
                     $routeArea = $controller == 'admin' ? 'admin' : '';
-                    $url = $serviceManager->get('router')->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs);
+                    $url = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs);
 
                     $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
 
