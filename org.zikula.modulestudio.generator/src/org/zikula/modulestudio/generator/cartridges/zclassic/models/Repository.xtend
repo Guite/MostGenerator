@@ -412,8 +412,8 @@ class Repository {
                         «ENDIF»
                     «ENDIF»
                 }
-
                 «IF app.hasUploads»
+
                     // initialise Imagine preset instances
                     «IF app.targets('1.3.x')»
                         $imageHelper = new «app.appName»_Util_Image($serviceManager);
