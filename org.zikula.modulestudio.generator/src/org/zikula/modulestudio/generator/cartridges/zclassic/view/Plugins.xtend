@@ -150,7 +150,6 @@ class Plugins {
             protected $listHelper;
 
         «ENDIF»
-
         /**
          * Constructor.
          * Initialises member vars.

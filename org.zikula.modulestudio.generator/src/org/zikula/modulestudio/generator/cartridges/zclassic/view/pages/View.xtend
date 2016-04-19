@@ -641,7 +641,7 @@ class View {
 
     def private displayLeadingEntry(DerivedField it) {
         if (entity.application.targets('1.3.x')) '''{$«entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyfilters:'«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»'«ENDIF»}'''
-        else '''{{ «entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyFilters(«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»')«ENDIF» }}'''
+        else '''{{ «entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyFilters('«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»')«ENDIF» }}'''
     }
 
     def private dispatch displayEntryInner(JoinRelationship it, Boolean useTarget) '''
