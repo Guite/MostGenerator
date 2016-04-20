@@ -93,8 +93,9 @@ class ItemActions {
                 «IF controller.hasActions('edit')»
                     if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                         «IF ownerPermission && standardFields»
+                            $uid = «IF app.targets('1.3.x')»UserUtil::getVar('uid')«ELSE»$serviceManager->get('zikula_users_module.current_user')->get('uid')«ENDIF»;
                             // only allow editing for the owner or people with higher permissions
-                            if ($this['createdUserId'] == UserUtil::getVar('uid') || «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
+                            if ($this['createdUserId'] == $uid || «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
                                 «itemActionsForEditAction(controller)»
                             }
                         «ELSE»
@@ -148,7 +149,7 @@ class ItemActions {
             «/* TODO review the permission levels and maybe define them for each related entity
               * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
               */»
-            $uid = UserUtil::getVar('uid');
+            $uid = «IF app.targets('1.3.x')»UserUtil::getVar('uid')«ELSE»$serviceManager->get('zikula_users_module.current_user')->get('uid')«ENDIF»;
             if ($authAdmin || (isset($uid) && isset($this->createdUserId) && $this->createdUserId == $uid)) {
                 «FOR elem : refedElems»
 

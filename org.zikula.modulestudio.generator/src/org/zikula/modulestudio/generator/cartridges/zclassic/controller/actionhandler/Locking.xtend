@@ -102,7 +102,8 @@ class Locking {
                     LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
-                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()]);
+                    $logArgs = ['app' => '«application.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()]
+                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed as someone else has already changed it.', $logArgs);
                 «ENDIF»
         «ENDIF»
     '''

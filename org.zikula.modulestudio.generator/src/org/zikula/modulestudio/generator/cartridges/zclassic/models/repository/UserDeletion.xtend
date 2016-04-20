@@ -82,7 +82,8 @@ class UserDeletion {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -129,7 +130,8 @@ class UserDeletion {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -172,7 +174,8 @@ class UserDeletion {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -215,7 +218,8 @@ class UserDeletion {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -271,7 +275,8 @@ class UserDeletion {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId];
+                $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -323,7 +328,8 @@ class UserDeletion {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''

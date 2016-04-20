@@ -960,7 +960,8 @@ class Actions {
             «IF !isLegacy»
 
                 $logger = $this->get('logger');
-                $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'id' => $instanceId]);
+                $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType, 'id' => $instanceId];
+                $logger->notice('{app}: User {user} updated the {entity} with id {id} using ajax.', $logArgs);
             «ENDIF»
         }
 
@@ -1045,7 +1046,7 @@ class Actions {
 
             $flashBag = $request->getSession()->getFlashBag();
             $logger = $this->get('logger');
-            $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
+            $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier()];
         «ENDIF»
 
         $entity->initWorkflow();

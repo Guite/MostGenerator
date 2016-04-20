@@ -23,11 +23,11 @@ class ColourType {
     def private colourTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
-        use PageUtil;
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        use Zikula\ThemeModule\Engine\AssetBag;
 
         /**
          * Colour field type base class.
@@ -36,6 +36,35 @@ class ColourType {
          */
         class ColourType extends AbstractType
         {
+            /**
+             * @var AssetBag
+             */
+            protected $jsAssetHelper;
+
+            /**
+             * @var AssetBag
+             */
+            protected $cssAssetHelper;
+
+            /**
+             * @var AssetBag
+             */
+            protected $footerAssetHelper;
+
+            /**
+             * ColourType constructor.
+             *
+             * @param AssetBag $jsAssetBag     AssetBag service instance for JS files.
+             * @param AssetBag $cssAssetBag    AssetBag service instance for CSS files.
+             * @param AssetBag $footerAssetBag AssetBag service instance for footer code.
+             */
+            public function __construct(AssetBag $jsAssetBag, AssetBag $cssAssetBag, AssetBag $footerAssetBag)
+            {
+                $this->jsAssetBag = $jsAssetBag;
+                $this->cssAssetBag = $cssAssetBag;
+                $this->footerAssetBag = $footerAssetBag;
+            }
+
             /**
              * {@inheritdoc}
              */
@@ -51,8 +80,8 @@ class ColourType {
                 }
 
                 if ($firstTime) {
-                    PageUtil::addVar('stylesheet', 'web/jquery-minicolors/jquery.minicolors.css');
-                    PageUtil::addVar('javascript', 'web/jquery-minicolors/jquery.minicolors.min.js');
+                    $this->jsAssetBag->add('web/jquery-minicolors/jquery.minicolors.min.js');
+                    $this->cssAssetBag->add('web/jquery-minicolors/jquery.minicolors.css');
                 }
                 $firstTime = false;
 
@@ -66,7 +95,7 @@ class ColourType {
                     /* ]]> */
                     </script>";
 
-                PageUtil::addVar('footer', $customScript);
+                $this->footerAssetBag->add($customScript);
             }
 
             /**

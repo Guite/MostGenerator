@@ -59,7 +59,8 @@ class LinkTable {
 
                     $serviceManager = ServiceUtil::getManager();
                     $logger = $serviceManager->get('logger');
-                    $logger->debug('{app}: User {user} truncated the {entity} entity table.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«refClass.formatForDisplay»']);
+                    $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«refClass.formatForDisplay»'];
+                    $logger->debug('{app}: User {user} truncated the {entity} entity table.', $logArgs);
                 «ENDIF»
             }
         }

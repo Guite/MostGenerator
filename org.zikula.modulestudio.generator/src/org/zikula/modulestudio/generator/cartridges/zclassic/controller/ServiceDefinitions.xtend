@@ -95,7 +95,7 @@ class ServiceDefinitions {
         # Upload handler class
         «modPrefix».upload_handler:
             class: «appNamespace»\UploadHandler
-            arguments: ["@translator.default"]
+            arguments: ["@translator.default", "@zikula_users_module.current_user"]
     '''
 
     def private linkContainer(Application it) '''
@@ -163,6 +163,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.colour:
                 class: «nsBase»Field\ColourType
+                arguments: ["@zikula_core.common.theme.assets_js", "@zikula_core.common.theme.assets_css", "@zikula_core.common.theme.assets_footer"]
                 tags:
                     - { name: form.type }
         «ENDIF»
@@ -184,6 +185,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.time_type_extension:
                 class: «nsBase.replace('Type\\', '')»Extension\TimeTypeExtension
+                arguments: ["@zikula_core.common.theme.assets_footer"]
                 tags:
                     - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\TimeType }
         «ENDIF»

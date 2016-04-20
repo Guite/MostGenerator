@@ -27,12 +27,28 @@ class TimeTypeExtension {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use ZI18n;
         use Zikula_View;
+        use Zikula\ThemeModule\Engine\AssetBag;
 
         /**
          * Time field type extension base class.
          */
         class TimeTypeExtension extends AbstractTypeExtension
         {
+            /**
+             * @var AssetBag
+             */
+            protected $footerAssetHelper;
+
+            /**
+             * ColourType constructor.
+             *
+             * @param AssetBag $footerAssetBag AssetBag service instance for footer code.
+             */
+            public function __construct(AssetBag $footerAssetBag)
+            {
+                $this->footerAssetBag = $footerAssetBag;
+            }
+
             /**
              * {@inheritdoc}
              */
@@ -74,7 +90,7 @@ class TimeTypeExtension {
                     /* ]]> */
                     </script>";
 
-                PageUtil::addVar('footer', $customScript);
+                $this->footerAssetBag->add($customScript);
             }
 
             /**

@@ -50,10 +50,12 @@ class Notification {
 
         use Symfony\Component\HttpFoundation\Session\Session;
         use Symfony\Component\Routing\RouterInterface;
+        use Twig_Environment;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\UsersModule\Api\CurrentUserApi;
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -85,7 +87,12 @@ class Notification {
             protected $variableApi;
 
             /**
-             * @var \Twig_Environment
+             * @var CurrentUserApi
+             */
+            private $currentUserApi;
+
+            /**
+             * @var Twig_Environment
              */
             protected $templating;
 
@@ -132,10 +139,18 @@ class Notification {
              * @param Session             $session        Session service instance.
              * @param Routerinterface     $router         Router service instance.
              * @param VariableApi         $variableApi    VariableApi service instance.
-             * @param \Twig_Environment   $twig           Twig service instance.
+             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance.
+             * @param Twig_Environment    $twig           Twig service instance.
              * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance.
              */
-            public function __construct(TranslatorInterface $translator, Session $session, RouterInterface $router, VariableApi $variableApi, \Twig_Environment $twig, WorkflowHelper $workflowHelper)
+            public function __construct(
+                TranslatorInterface $translator,
+                Session $session,
+                RouterInterface $router,
+                VariableApi $variableApi,
+                CurrentUserApi $currentUserApi,
+                Twig_Environment $twig,
+                WorkflowHelper $workflowHelper)
             {
                 $this->setTranslator($translator);
                 $this->session = $session;
@@ -177,7 +192,11 @@ class Notification {
             $this->action = $args['action'];
             $this->entity = $args['entity'];
 
-            $uid = UserUtil::getVar('uid');
+            «IF targets('1.3.x')»
+                $uid = UserUtil::getVar('uid');
+            «ELSE»
+                $uid = $this->currentUserApi->get('uid');
+            «ENDIF»
 
             $this->collectRecipients();
 

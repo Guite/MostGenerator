@@ -516,7 +516,8 @@ class FormHandler {
                 «ELSE»
                     $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not determine workflow actions.'));
                     $logger = $this->container->get('logger');
-                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()]);
+                    $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $entity->createCompositeIdentifier()];
+                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
                     throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
                 «ENDIF»
             }
@@ -1017,7 +1018,7 @@ class FormHandler {
                 $flashType = true === $success ? \Zikula_Session::MESSAGE_STATUS : \Zikula_Session::MESSAGE_ERROR;
                 $this->request->getSession()->getFlashBag()->add($flashType, $message);
                 $logger = $this->container->get('logger');
-                $logArgs = ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
+                $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType, 'id' => $this->entityRef->createCompositeIdentifier()];
                 if (true === $success) {
                     $logger->notice('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
                 } else {
@@ -1167,7 +1168,11 @@ class FormHandler {
         {
             $roles = «IF isLegacy»array()«ELSE»[]«ENDIF»;
 
-            $uid = UserUtil::getVar('uid');
+            «IF isLegacy»
+                $uid = UserUtil::getVar('uid');
+            «ELSE»
+                $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
+            «ENDIF»
             $roles['isCreator'] = $this->entityRef['createdUserId'] == $uid;
             «IF !isLegacy»
                 $varHelper = $this->container->get('zikula_extensions_module.api.variable');
@@ -1322,7 +1327,12 @@ class FormHandler {
             $entity = parent::initEntityForEditing();
 
             // only allow editing for the owner or people with higher permissions
-            if (isset($entity['createdUserId']) && $entity['createdUserId'] != UserUtil::getVar('uid')) {
+            «IF app.isLegacy»
+                $uid = UserUtil::getVar('uid');
+            «ELSE»
+                $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
+            «ENDIF»
+            if (isset($entity['createdUserId']) && $entity['createdUserId'] != $uid) {
                 «IF !app.isLegacy»
                     $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
                 «ENDIF»
@@ -1401,7 +1411,8 @@ class FormHandler {
                     «ELSE»
                         $this->request->getSession()->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Sorry, but you can not create the «name.formatForDisplay» yet as other items are required which must be created before!'));
                         $logger = $this->container->get('logger');
-                        $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $this->objectType]);
+                        $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => $this->objectType];
+                        $logger->notice('{app}: User {user} tried to create a new {entity}, but failed as it other items are required which must be created before.', $logArgs);
 
                         return new RedirectResponse($this->getRedirectUrl(['commandName' => '']), 302);
                     «ENDIF»
@@ -1587,7 +1598,8 @@ class FormHandler {
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]));
-                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()]);
+                    $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()];
+                    $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
                 «ENDIF»
             }
 

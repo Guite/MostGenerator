@@ -79,11 +79,19 @@ class EntityConstructor {
             «ENDFOR»
         «ENDIF»
         «val mandatoryFields = getDerivedFields.filter[mandatory && !primaryKey]»
+        «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty
+        	|| !mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0'].empty»
+            $serviceManager = ServiceUtil::getManager();
+    	«ENDIF»
         «FOR mandatoryField : mandatoryFields.filter(IntegerField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(UserField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
-            $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uid');
+            «IF application.targets('1.3.x')»
+                $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uname');
+            «ELSE»
+                $this->«mandatoryField.name.formatForCode» = $serviceManager->get('zikula_users_module.current_user')->get('uname');
+            «ENDIF»
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
@@ -96,7 +104,6 @@ class EntityConstructor {
         «ENDFOR»
         «IF !getListFieldsEntity.filter[name != 'workflowState' && (null === defaultValue || defaultValue.length == 0)].empty»
 
-            $serviceManager = ServiceUtil::getManager();
             «IF application.targets('1.3.x')»
                 $listHelper = new «application.appName»_Util_ListEntries(ServiceUtil::getManager());
             «ELSE»

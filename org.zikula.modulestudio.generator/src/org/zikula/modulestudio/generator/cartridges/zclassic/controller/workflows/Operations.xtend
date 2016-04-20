@@ -114,6 +114,7 @@ class Operations {
         $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
         «IF !app.targets('1.3.x')»
             $logger = $serviceManager->get('logger');
+            $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
 
         «ENDIF»
         // save entity data
@@ -124,11 +125,11 @@ class Operations {
             //});
             $result = true;
             «IF !app.targets('1.3.x')»
-                $logger->notice('{app}: User {user} updated an entity.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
+                $logger->notice('{app}: User {user} updated an entity.', $logArgs);
             «ENDIF»
         } catch (\Exception $e) {
             «IF !app.targets('1.3.x')»
-                $logger->error('{app}: User {user} tried to update an entity, but failed.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
+                $logger->error('{app}: User {user} tried to update an entity, but failed.', $logArgs);
             «ENDIF»
             «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
         }
@@ -140,6 +141,7 @@ class Operations {
         $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
         «IF !app.targets('1.3.x')»
             $logger = $serviceManager->get('logger');
+            $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
 
         «ENDIF»
         // delete entity
@@ -148,11 +150,11 @@ class Operations {
             $entityManager->flush();
             $result = true;
             «IF !app.targets('1.3.x')»
-                $logger->notice('{app}: User {user} deleted an entity.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
+                $logger->notice('{app}: User {user} deleted an entity.', $logArgs);
             «ENDIF»
         } catch (\Exception $e) {
             «IF !app.targets('1.3.x')»
-                $logger->error('{app}: User {user} tried to delete an entity, but failed.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
+                $logger->error('{app}: User {user} tried to delete an entity, but failed.', $logArgs);
             «ENDIF»
             «IF app.targets('1.3.x')»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($e->getMessage());
         }

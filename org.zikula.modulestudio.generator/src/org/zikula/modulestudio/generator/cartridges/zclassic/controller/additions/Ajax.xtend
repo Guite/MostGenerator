@@ -729,7 +729,8 @@ class Ajax {
         «IF !app.isLegacy»
 
             $logger = $this->get('logger');
-            $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id]);
+            $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'entity' => $objectType, 'id' => $id];
+            $logger->notice('{app}: User {user} toggled the {field} flag the {entity} with id {id}.', $logArgs);
         «ENDIF»
 
         return new «IF app.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
@@ -904,7 +905,7 @@ class Ajax {
     def private treeOperationSwitch(AjaxController it, Application app) '''
         «IF !app.isLegacy»
             $logger = $this->get('logger');
-            $logArgs = ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType];
+            $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType];
 
         «ENDIF»
         switch ($op) {

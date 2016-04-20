@@ -270,7 +270,6 @@ class Repository {
             use ModUtil;
             use ServiceUtil;
             use System;
-            use UserUtil;
             «IF hasArchive && null !== getEndDateField»
                 use ZLanguage;
                 use Zikula\Core\RouteUrl;
@@ -584,7 +583,8 @@ class Repository {
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} truncated the {entity} entity table.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»']);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»'];
+                $logger->debug('{app}: User {user} truncated the {entity} entity table.', $logArgs);
             «ENDIF»
         }
     '''
@@ -1411,7 +1411,11 @@ class Repository {
                     $showOnlyOwnEntries = /*$request->query->getDigits('own', */$varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0)/*)*/;
                 «ENDIF»
                 if ($showOnlyOwnEntries == 1) {
-                    $uid = UserUtil::getVar('uid');
+                    «IF app.targets('1.3.x')»
+                        $uid = UserUtil::getVar('uid');
+                    «ELSE»
+                        $uid = $serviceManager->get('zikula_users_module.current_user')->get('uid');
+                    «ENDIF»
                     $qb->andWhere('tbl.createdUserId = :creator')
                        ->setParameter('creator', $uid);
                 }

@@ -215,7 +215,6 @@ class ControllerLayer {
             «IF (hasActions('view') && isAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
-            use UserUtil;
             use ZLanguage;
             use Zikula\Core\Controller\AbstractController;
             use Zikula\Core\RouteUrl;
@@ -251,7 +250,6 @@ class ControllerLayer {
             «IF (hasActions('view') && app.hasAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
-            use UserUtil;
             use ZLanguage;
             «IF hasActions('view')»
                 use Zikula\Component\SortableColumns\Column;
@@ -355,6 +353,7 @@ class ControllerLayer {
             «ENDIF»
             $flashBag = $request->getSession()->getFlashBag();
             $logger = $this->get('logger');
+            $userName = $this->get('zikula_users_module.current_user')->get('uname');
         «ENDIF»
 
         // process each item
@@ -398,7 +397,7 @@ class ControllerLayer {
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
-                    $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()]);
+                    $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }
 
@@ -411,14 +410,14 @@ class ControllerLayer {
                     LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item deleted.'));
-                    $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
+                    $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => $userName, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             } else {
                 «IF isLegacy»
                     LogUtil::registerStatus($this->__('Done! Item updated.'));
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item updated.'));
-                    $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => UserUtil::getVar('uname'), 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
+                    $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             }
             «IF !skipHookSubscribers»
@@ -581,7 +580,8 @@ class ControllerLayer {
                     $this->setVars($form->getData());
 
                     $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Module configuration updated.'));
-                    $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«app.appName»', 'user' => \UserUtil::getVar('uname')]);
+                    $userName = $this->get('zikula_users_module.current_user')->get('uname');
+                    $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«app.appName»', 'user' => $userName]);
                 } elseif ($form->get('cancel')->isClicked()) {
                     $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Operation cancelled.'));
                 }
@@ -829,7 +829,7 @@ class ControllerLayer {
                             return $links;
                         }
 
-                        $userName = (isset($args['uname'])) ? $args['uname'] : UserUtil::getVar('uname');
+                        $userName = (isset($args['uname'])) ? $args['uname'] : $serviceManager->get('zikula_users_module.current_user')->get('uname');
                         // does this user exist?
                         if (UserUtil::getIdFromName($userName) === false) {
                             // user does not exist

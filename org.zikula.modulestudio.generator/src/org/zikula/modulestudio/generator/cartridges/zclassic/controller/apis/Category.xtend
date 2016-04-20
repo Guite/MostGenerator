@@ -30,7 +30,6 @@ class Category {
 
             use CategoryRegistryUtil;
             use ModUtil;
-            use UserUtil;
             use Zikula_AbstractBase;
 
         «ENDIF»
@@ -63,7 +62,8 @@ class Category {
             $objectType = $this->determineObjectType($args, 'getMainCat');
             «IF !targets('1.3.x')»
 
-                $this->get('logger')->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
+                $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname')];
+                $this->get('logger')->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', $logArgs);
             «ENDIF»
 
             return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucfirst($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global

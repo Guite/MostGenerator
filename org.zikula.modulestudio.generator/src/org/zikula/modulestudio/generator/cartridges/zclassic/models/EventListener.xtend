@@ -199,7 +199,8 @@ class EventListener {
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} created the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId];
+                $logger->debug('{app}: User {user} created the {entity} with id {id}.', $logArgs);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -322,7 +323,8 @@ class EventListener {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} removed the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId];
+                $logger->debug('{app}: User {user} removed the {entity} with id {id}.', $logArgs);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -382,7 +384,8 @@ class EventListener {
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} updated the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId];
+                $logger->debug('{app}: User {user} updated the {entity} with id {id}.', $logArgs);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 
@@ -433,7 +436,8 @@ class EventListener {
                 $serviceManager = ServiceUtil::getManager();
                 $objectId = $this->createCompositeIdentifier();
                 $logger = $serviceManager->get('logger');
-                $logger->debug('{app}: User {user} saved the {entity} with id {id}.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId]);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $objectId];
+                $logger->debug('{app}: User {user} saved the {entity} with id {id}.', $logArgs);
 
                 $dispatcher = $serviceManager->get('event_dispatcher');
 

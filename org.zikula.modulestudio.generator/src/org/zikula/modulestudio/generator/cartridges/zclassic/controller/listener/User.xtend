@@ -159,7 +159,8 @@ class User {
             «IF !application.targets('1.3.x')»
 
                 $logger = $serviceManager->get('logger');
-                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', ['app' => '«application.appName»', 'user' => UserUtil::getVar('uname'), 'entities' => '«nameMultiple.formatForDisplay»']);
+                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»'];
+                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', $logArgs);
             «ENDIF»
         «ENDIF»
     '''

@@ -88,11 +88,12 @@ class Uploads {
             use Symfony\Component\Filesystem\Filesystem;
             use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\Common\Translator\TranslatorTrait;
+            use Zikula\UsersModule\Api\CurrentUserApi;
             use DataUtil;
             use FileUtil;
             use RuntimeException;
             use ServiceUtil;
-            use UserUtil;
 
         «ENDIF»
         /**
@@ -105,10 +106,12 @@ class Uploads {
         «ENDIF»
         {
             «IF !targets('1.3.x')»
+                use TranslatorTrait;
+
                 /**
-                 * @var TranslatorInterface
+                 * @var CurrentUserApi
                  */
-                protected $translator;
+                protected $currentUserApi;
 
             «ENDIF»
             /**
@@ -138,15 +141,26 @@ class Uploads {
                 «' '»* @param TranslatorInterface $translator Translator service instance.
             «ENDIF»
              */
-            public function __construct(«IF !targets('1.3.x')»TranslatorInterface $translator«ENDIF»)
+            public function __construct(«IF !targets('1.3.x')»TranslatorInterface $translator, CurrentUserApi $currentUserApi«ENDIF»)
             {
                 «IF !targets('1.3.x')»
-                    $this->translator = $translator;
+                    $this->setTranslator($translator);
+                    $this->currentUserApi = $currentUserApi;
                 «ENDIF»
                 $this->allowedObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $this->imageFileTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'gif', 'jpeg', 'jpg', 'png', 'swf'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $this->forbiddenFileTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $this->allowedFileSizes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»' => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR field : entity.getUploadFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»' => «field.allowedFileSize»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            }
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance.
+             */
+            public function setTranslator(/*TranslatorInterface */$translator)
+            {
+                $this->translator = $translator;
             }
 
             «performFileUpload»
@@ -243,7 +257,7 @@ class Uploads {
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $e->getMessage());
-                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName]);
+                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
 
                     return false;
                 «ENDIF»
@@ -255,8 +269,8 @@ class Uploads {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
                     «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__('Error! Could not move your file to the destination folder.'));
-                        $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName]);
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not move your file to the destination folder.'));
+                        $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName]);
 
                         return false;
                     «ENDIF»
@@ -309,8 +323,8 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! No file found.', $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__('Error! No file found.'));
-                    $logger->error('{app}: User {user} tried to upload a file which could not be found.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! No file found.'));
+                    $logger->error('{app}: User {user} tried to upload a file which could not be found.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
                     return false;
                 «ENDIF»
@@ -336,8 +350,8 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__('Error! This file type is not allowed. Please choose another file format.'));
-                    $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'extension' => $extension]);
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! This file type is not allowed. Please choose another file format.'));
+                    $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'extension' => $extension]);
 
                     return false;
                 «ENDIF»
@@ -363,8 +377,8 @@ class Uploads {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
                     «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB]));
-                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeKB]);
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB]));
+                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeKB]);
 
                         $fs = new Filesystem();
                         try {
@@ -381,8 +395,8 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB]));
-                    $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'size' => $maxSizeMB]);
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB]));
+                    $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeMB]);
 
                     $fs = new Filesystem();
                     try {
@@ -404,8 +418,8 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__('Error! This file type seems not to be a valid image.'));
-                    $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname')]);
+                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! This file type seems not to be a valid image.'));
+                    $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
                     return false;
                 «ENDIF»
@@ -614,25 +628,25 @@ class Uploads {
             $errorMessage = '';
             switch ($file['error']) {
                 case UPLOAD_ERR_OK: //no error; possible file attack!
-                    $errorMessage = «IF !targets('1.3.x')»$this->translator->«ENDIF»__('Unknown error'«IF targets('1.3.x')», $dom«ENDIF»);
+                    $errorMessage = «IF !targets('1.3.x')»$this->«ENDIF»__('Unknown error'«IF targets('1.3.x')», $dom«ENDIF»);
                     break;
                 case UPLOAD_ERR_INI_SIZE: //uploaded file exceeds the upload_max_filesize directive in php.ini
-                    $errorMessage = «IF !targets('1.3.x')»$this->translator->«ENDIF»__('File too big'«IF targets('1.3.x')», $dom«ENDIF»);
+                    $errorMessage = «IF !targets('1.3.x')»$this->«ENDIF»__('File too big'«IF targets('1.3.x')», $dom«ENDIF»);
                     break;
                 case UPLOAD_ERR_FORM_SIZE: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-                    $errorMessage = «IF !targets('1.3.x')»$this->translator->«ENDIF»__('File too big'«IF targets('1.3.x')», $dom«ENDIF»);
+                    $errorMessage = «IF !targets('1.3.x')»$this->«ENDIF»__('File too big'«IF targets('1.3.x')», $dom«ENDIF»);
                     break;
                 case UPLOAD_ERR_PARTIAL: //uploaded file was only partially uploaded
-                    $errorMessage = «IF !targets('1.3.x')»$this->translator->«ENDIF»__('File uploaded partially'«IF targets('1.3.x')», $dom«ENDIF»);
+                    $errorMessage = «IF !targets('1.3.x')»$this->«ENDIF»__('File uploaded partially'«IF targets('1.3.x')», $dom«ENDIF»);
                     break;
                 case UPLOAD_ERR_NO_FILE: //no file was uploaded
-                    $errorMessage = «IF !targets('1.3.x')»$this->translator->«ENDIF»__('No file uploaded'«IF targets('1.3.x')», $dom«ENDIF»);
+                    $errorMessage = «IF !targets('1.3.x')»$this->«ENDIF»__('No file uploaded'«IF targets('1.3.x')», $dom«ENDIF»);
                     break;
                 case UPLOAD_ERR_NO_TMP_DIR: //missing a temporary folder
-                    $errorMessage = «IF !targets('1.3.x')»$this->translator->«ENDIF»__('No tmp folder'«IF targets('1.3.x')», $dom«ENDIF»);
+                    $errorMessage = «IF !targets('1.3.x')»$this->«ENDIF»__('No tmp folder'«IF targets('1.3.x')», $dom«ENDIF»);
                     break;
                 default: //a default (error, just in case!  :)
-                    $errorMessage = «IF !targets('1.3.x')»$this->translator->«ENDIF»__('Unknown error'«IF targets('1.3.x')», $dom«ENDIF»);
+                    $errorMessage = «IF !targets('1.3.x')»$this->«ENDIF»__('Unknown error'«IF targets('1.3.x')», $dom«ENDIF»);
                     break;
             }
 
@@ -641,9 +655,9 @@ class Uploads {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 $session = $serviceManager->get('session');
-                $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__('Error with upload') . ': ' . $errorMessage);
+                $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error with upload') . ': ' . $errorMessage);
                 $logger = $serviceManager->get('logger');
-                $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'errorMessage' => $errorMessage]);
+                $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'errorMessage' => $errorMessage]);
 
                 return false;
             «ENDIF»
@@ -687,7 +701,7 @@ class Uploads {
                     LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $logger = $serviceManager->get('logger');
-                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'entity' => $objectType, 'field' => $fieldName]);
+                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
 
                     return false;
                 «ENDIF»

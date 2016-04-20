@@ -26,7 +26,6 @@ class BlockModeration {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            use UserUtil;
             use Zikula\BlocksModule\AbstractBlockHandler;
 
         «ENDIF»
@@ -118,10 +117,10 @@ class BlockModeration {
                 }
             «ENDIF»
 
-            if (!UserUtil::isLoggedIn()) {
-                return false;
-            }
             «IF targets('1.3.x')»
+                if (!UserUtil::isLoggedIn()) {
+                    return false;
+                }
 
                 // check if the module is available at all
                 if (!ModUtil::available('«appName»')) {
@@ -135,6 +134,11 @@ class BlockModeration {
 
                 $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
             «ELSE»
+                $currentUserApi = ServiceUtil::get('zikula_users_module.current_user');
+                if (!$currentUserApi->isLoggedIn()) {
+                    return false;
+                }
+
                 $template = $this->getDisplayTemplate();
 
                 $workflowHelper = $this->get('«appService».workflow_helper');

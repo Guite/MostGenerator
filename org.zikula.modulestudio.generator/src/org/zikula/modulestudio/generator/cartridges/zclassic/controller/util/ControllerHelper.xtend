@@ -525,7 +525,8 @@ class ControllerHelper {
                     $result['longitude'] = str_replace(',', '.', $location->lng);
                 } else {
                     «IF !targets('1.3.x')»
-                        $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', ['app' => '«appName»', 'user' => UserUtil::getVar('uname'), 'field' => $field, 'address' => $address]);
+                        $logArgs = ['app' => '«appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'field' => $field, 'address' => $address];
+                        $this->logger->warning('{app}: User {user} tried geocoding for address "{address}", but failed.', $logArgs);
                     «ENDIF»
                 }
             }

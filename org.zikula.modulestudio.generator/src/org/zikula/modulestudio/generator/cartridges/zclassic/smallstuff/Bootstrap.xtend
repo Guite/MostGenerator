@@ -95,10 +95,12 @@ class Bootstrap {
             // set current user name to loggable listener
             «IF targets('1.3.x')»
                 $loggableListener = $helper->getListener('loggable');
+                $userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
             «ELSE»
                 $loggableListener = ServiceUtil::get('stof_doctrine_extensions.listener.loggable');
+                $currentUserApi = ServiceUtil::get('zikula_users_module.current_user');
+                $userName = $currentUserApi->isLoggedIn() ? $currentUserApi->get('uname') : __('Guest');
             «ENDIF»
-            $userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
             $loggableListener->setUsername($userName);
         «ENDIF»
     '''
