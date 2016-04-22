@@ -1581,8 +1581,10 @@ class FormHandler {
             «locking.getVersion(it)»
 
             $success = false;
-            $flashBag = $this->request->getSession()->getFlashBag();
-            $logger = $this->container->get('logger');
+            «IF !app.isLegacy»
+                $flashBag = $this->request->getSession()->getFlashBag();
+                $logger = $this->container->get('logger');
+            «ENDIF»
             try {
                 «locking.applyLock(it)»
                 // execute the workflow action
