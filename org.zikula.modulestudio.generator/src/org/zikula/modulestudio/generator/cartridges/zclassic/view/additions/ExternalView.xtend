@@ -336,7 +336,7 @@ class ExternalView {
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
                     «IF categorisable»
-                        {{ form_row(finderForm.categories, {help: __('This is an optional filter.')}) }}
+                        {{ form_row(finderForm.categories) }}
                     «ENDIF»
                     {{ form_row(finderForm.pasteas) }}
                     <br />
@@ -353,8 +353,8 @@ class ExternalView {
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-9">
-                            {{ form_widget(finderForm.update, {attr: {class: 'btn btn-success'}, icon: 'fa-check'}) }}
-                            {{ form_widget(finderForm.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
+                            {{ form_widget(finderForm.update) }}
+                            {{ form_widget(finderForm.cancel) }}
                         </div>
                     </div>
                 </fieldset>

@@ -61,21 +61,21 @@ class BlocksView {
             «editTemplateJs»
         «ELSE»
             {# Purpose of this template: Edit block for generic item list #}
-            {{ form_row(form.objectType, {help: __('If you change this please save the block once to reload the parameters below.')}) }}
+            {{ form_row(form.objectType) }}
             «IF hasCategorisableEntities»
                 {% if isCategorisable %}
-                    {{ form_row(form.categories, {help: __('This is an optional filter.')}) }}
+                    {{ form_row(form.categories) }}
                 {% endif %}
             «ENDIF»
             {{ form_row(form.sorting) }}
-            {{ form_row(form.amount, {help: __('The maximum amount of items to be shown. Only digits are allowed.')}) }}
+            {{ form_row(form.amount) }}
 
             {{ form_row(form.template) }}
             <div id="customTemplateArea" class="hidden" data-switch="template" data-switch-value="custom">
-                {{ form_row(form.customTemplate, {help: __('Example') ~ ': <em>itemlist_[objectType]_display.html.twig</em>'}) }}
+                {{ form_row(form.customTemplate) }}
             </div>
 
-            {{ form_row(form.filter, {help: '<a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">' ~ __('Show syntax examples') ~ '</a>'}) }}
+            {{ form_row(form.filter) }}
 
             {{ include('@«appName»/includeFilterSyntaxDialog.html.twig') }}
             «editTemplateJs»

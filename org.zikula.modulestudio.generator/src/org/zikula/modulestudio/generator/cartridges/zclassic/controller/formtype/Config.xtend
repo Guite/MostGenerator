@@ -104,10 +104,19 @@ class Config {
 
                 $builder
                     ->add('save', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->__('Update configuration')
+                        'label' => $this->__('Update configuration'),
+                        'icon' => 'fa-check',
+                        'attr' => [
+                            'class' => 'btn btn-success'
+                        ]
                     ])
                     ->add('cancel', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->__('Cancel')
+                        'label' => $this->__('Cancel'),
+                        'icon' => 'fa-times',
+                        'attr' => [
+                            'class' => 'btn btn-default',
+                            'formnovalidate' => 'formnovalidate'
+                        ]
                     ])
                 ;
             }
@@ -157,6 +166,7 @@ class Config {
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
                     'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
+                'help' => $this->__('«documentation.replace("'", '"')»'),
             «ENDIF»
             'required' => false,
             'data' => $this->modVars['«name.formatForCode»'],

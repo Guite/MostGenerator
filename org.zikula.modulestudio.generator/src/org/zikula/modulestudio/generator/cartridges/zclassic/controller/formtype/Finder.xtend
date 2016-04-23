@@ -100,14 +100,19 @@ class Finder {
                 $builder
                     ->add('update', '«nsSymfonyFormType»SubmitType', [
                         'label' => $this->__('Change selection'),
+                        'icon' => 'fa-check',
                         'attr' => [
-                            'id' => '«app.appName.toFirstLower»Submit'
+                            'id' => '«app.appName.toFirstLower»Submit',
+                            'class' => 'btn btn-success'
                         ]
                     ])
                     ->add('cancel', '«nsSymfonyFormType»SubmitType', [
                         'label' => $this->__('Cancel'),
+                        'icon' => 'fa-times',
                         'attr' => [
-                            'id' => '«app.appName.toFirstLower»Cancel'
+                            'id' => '«app.appName.toFirstLower»Cancel',
+                            'class' => 'btn btn-default',
+                            'formnovalidate' => 'formnovalidate'
                         ]
                     ])
                 ;
@@ -180,6 +185,7 @@ class Finder {
                     'class' => 'category-selector',
                     'title' => $this->__('This is an optional filter.')
                 ],
+                'help' => $this->__('This is an optional filter.'),
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',

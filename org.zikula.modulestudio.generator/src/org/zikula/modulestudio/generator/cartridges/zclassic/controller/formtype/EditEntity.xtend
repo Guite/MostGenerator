@@ -25,6 +25,7 @@ import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
 import de.guite.modulestudio.metamodel.UserField
+import java.math.BigInteger
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -345,7 +346,7 @@ class EditEntity {
 
     def private translatableFields(Entity it) '''
         $useOnlyCurrentLanguage = true;
-        if ($this->variableApi->get('ZConfig', 'multilingual')) {
+        if ($this->variableApi->get(VariableApi::CONFIG, 'multilingual')) {
             $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
             if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
                 $useOnlyCurrentLanguage = false;
@@ -405,6 +406,7 @@ class EditEntity {
                     «ENDIF»
                     'title' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»')
                 ],
+                'help' => $this->__('You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»'),
                 'max_length' => 255
             ]);
         «ENDIF»
@@ -421,6 +423,7 @@ class EditEntity {
                     'class' => '«app.appName.toLowerCase»-form-tooltips',
                     'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
+                «helpAttribute»
             «ENDIF»
             «IF readonly»
                 'disabled' => true,
@@ -439,6 +442,130 @@ class EditEntity {
             ],«additionalOptions»
         ]);
     '''
+
+    def private helpAttribute(DerivedField it) '''«IF !helpMessages.empty»'help' => «IF helpMessages.length > 1»[«ENDIF»«helpMessages.join(', ')»«IF helpMessages.length > 1»]«ENDIF»,«ENDIF»'''
+
+    def private helpDocumentation(DerivedField it) {
+        val messages = newArrayList
+        if (null !== documentation && documentation != '') {
+            messages += '$this->__(\'' + documentation.replace("'", '"') + '\')'
+        }
+        messages
+    }
+
+    def private dispatch helpMessages(DerivedField it) {
+        val messages = helpDocumentation
+        messages
+    }
+
+    def private dispatch helpMessages(IntegerField it) {
+        val messages = helpDocumentation
+
+        val hasMin = minValue.compareTo(BigInteger.valueOf(0)) > 0
+        val hasMax = maxValue.compareTo(BigInteger.valueOf(0)) > 0
+        if (!range && (hasMin || hasMax)) {
+            if (hasMin && hasMax) {
+                if (minValue == maxValue) {
+                    messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+                } else {
+                    messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
+                }
+            } else if (hasMin) {
+                messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
+            } else if (hasMax) {
+                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]')'''
+            }
+        }
+        messages
+    }
+
+    def private dispatch helpMessages(DecimalField it) {
+        val messages = helpDocumentation
+
+        val hasMin = minValue > 0
+        val hasMax = maxValue > 0
+        if (hasMin || hasMax) {
+            if (hasMin && hasMax) {
+                if (minValue == maxValue) {
+                    messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+                } else {
+                    messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
+                }
+            } else if (hasMin) {
+                messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
+            } else if (hasMax) {
+                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]')'''
+            }
+        }
+        messages
+    }
+
+    def private dispatch helpMessages(FloatField it) {
+        val messages = helpDocumentation
+
+        val hasMin = minValue > 0
+        val hasMax = maxValue > 0
+        if (hasMin || hasMax) {
+            if (hasMin && hasMax) {
+                if (minValue == maxValue) {
+                    messages += '''$this->__f('Note: this value must exactly be %value%.', ['%value%' => «minValue»])'''
+                } else {
+                    messages += '''$this->__f('Note: this value must be between %minValue% and %maxValue%.', ['%minValue%' => «minValue», '%maxValue%' => «maxValue»])'''
+                }
+            } else if (hasMin) {
+                messages += '''$this->__f('Note: this value must be greater than %minValue%.', ['%minValue%' => «minValue»])'''
+            } else if (hasMax) {
+                messages += '''$this->__f('Note: this value must be less than %maxValue%.', ['%maxValue%' => «maxValue»]')'''
+            }
+        }
+        messages
+    }
+
+    def private dispatch helpMessages(StringField it) {
+        val messages = helpDocumentation
+
+        if (null !== regexp && regexp != '') {
+            messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessages(TextField it) {
+        val messages = helpDocumentation
+
+        if (null !== regexp && regexp != '') {
+            messages += '''$this->__f('Note: this value must«IF regexpOpposite» not«ENDIF» conform to the regular expression "%pattern%".', ['%pattern%' => '«regexp.replace('\'', '')»'])'''
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessages(ListField it) {
+        val messages = helpDocumentation
+
+        if (multiple && min > 0 && max > 0) {
+            if (min == max) {
+                messages += '''$this->__f('Note: you must select exactly %min% choices.', ['%min%' => «min»])'''
+            } else {
+                messages += '''$this->__f('Note: you must select between %min% and %max% choices.', ['%min%' => «min», '%max%' => «max»])'''
+            }
+        }
+
+        messages
+    }
+
+    def private dispatch helpMessages(AbstractDateField it) {
+        val messages = helpDocumentation
+
+        if (past) {
+            messages += '''$this->__('Note: this value must be in the past.')'''
+        } else if (future) {
+            messages += '''$this->__('Note: this value must be in the future.')'''
+        }
+
+        messages
+    }
 
     def private dispatch formType(DerivedField it) '''«nsSymfonyFormType»Text'''
     def private dispatch titleAttribute(DerivedField it) '''Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»'''
@@ -815,6 +942,7 @@ class EditEntity {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], '«nsSymfonyFormType»SubmitType', [
                     'label' => $this->__($action['title']),
+                    'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
                     'attr' => [
                         'id' => 'btn' . ucfirst($action['id']),
                         'class' => $action['buttonClass'],
@@ -824,14 +952,20 @@ class EditEntity {
             }
             $builder->add('reset', '«nsSymfonyFormType»ResetType', [
                 'label' => $this->__('Reset'),
+                'icon' => 'fa-times',
                 'attr' => [
                     'id' => 'btnReset'
+                    'class' => 'btn btn-default',
+                    'formnovalidate' => 'formnovalidate'
                 ]
             ]);
             $builder->add('cancel', '«nsSymfonyFormType»SubmitType', [
                 'label' => $this->__('Cancel'),
+                'icon' => 'fa-times',
                 'attr' => [
                     'id' => 'btnCancel'
+                    'class' => 'btn btn-default',
+                    'formnovalidate' => 'formnovalidate'
                 ]
             ]);
         }

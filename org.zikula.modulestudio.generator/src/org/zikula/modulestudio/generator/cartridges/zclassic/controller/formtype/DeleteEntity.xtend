@@ -64,10 +64,19 @@ class DeleteEntity {
             {
                 $builder
                     ->add('delete', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->__('Delete')
+                        'label' => $this->translator->__('Delete'),
+                        'icon' => 'fa-trash-o',
+                        'attr' => [
+                            'class' => 'btn btn-success'
+                        ]
                     ])
                     ->add('cancel', '«nsSymfonyFormType»SubmitType', [
-                        'label' => $this->translator->__('Cancel')
+                        'label' => $this->translator->__('Cancel'),
+                        'icon' => 'fa-times',
+                        'attr' => [
+                            'class' => 'btn btn-default',
+                            'formnovalidate' => 'formnovalidate'
+                        ]
                     ])
                 ;
             }

@@ -80,8 +80,8 @@ class Delete {
                         <legend>{{ __('Confirmation prompt') }}</legend>
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
-                                {{ form_widget(deleteForm.delete, {attr: {class: 'btn btn-success'}, icon: 'fa-trash-o'}) }}
-                                {{ form_widget(deleteForm.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
+                                {{ form_widget(deleteForm.delete) }}
+                                {{ form_widget(deleteForm.cancel) }}
                             </div>
                         </div>
                     </fieldset>

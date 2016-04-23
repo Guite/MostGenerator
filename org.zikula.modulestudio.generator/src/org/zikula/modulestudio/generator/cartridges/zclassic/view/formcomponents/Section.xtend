@@ -240,10 +240,10 @@ class Section {
             {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='z-bt-cancel' formnovalidate='formnovalidate'}
         «ELSE»
             {% for action in actions %}
-                {{ form_widget(attribute(form, action.id), {attr: {class: action.buttonClass}, icon: action.id == 'delete' ? 'fa-trash-o' : ''}) }}
+                {{ form_widget(attribute(form, action.id)) }}
             {% endfor %}
-            {{ form_widget(form.reset, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-refresh'}) }}
-            {{ form_widget(form.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
+            {{ form_widget(form.reset) }}
+            {{ form_widget(form.cancel) }}
         «ENDIF»
     '''
 

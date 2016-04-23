@@ -373,7 +373,7 @@ class ServiceDefinitions {
         «val nsBase = appNamespace + '\\Twig\\'»
         «modPrefix».twig_extension:
             class: «nsBase»TwigExtension
-            arguments: ["@translator.default"«IF hasTrees», "@router"«ENDIF», "@«modPrefix».workflow_helper"«IF hasUploads», "@«modPrefix».view_helper"«ENDIF»«IF hasListFields», "@«modPrefix».listentries_helper"«ENDIF»]
+            arguments: ["@translator.default"«IF hasTrees», "@router"«ENDIF», "@zikula_extensions_module.api.variable", "@«modPrefix».workflow_helper"«IF hasUploads», "@«modPrefix».view_helper"«ENDIF»«IF hasListFields», "@«modPrefix».listentries_helper"«ENDIF»]
             public: false
             tags:
                 - { name: twig.extension }

@@ -109,8 +109,8 @@ class Config {
 
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-9">
-                            {{ form_widget(form.save, {attr: {class: 'btn btn-success'}, icon: 'fa-check'}) }}
-                            {{ form_widget(form.cancel, {attr: {class: 'btn btn-default', formnovalidate: 'formnovalidate'}, icon: 'fa-times'}) }}
+                            {{ form_widget(form.save) }}
+                            {{ form_widget(form.cancel) }}
                         </div>
                     </div>
                     {{ form_end(form) }}
@@ -195,7 +195,7 @@ class Config {
                 «inputFieldLegacy»
             </div>
         «ELSE»
-            {{ form_row(form.«name.formatForCode»«IF null !== documentation && documentation != ''», {help: __('«documentation.replace("'", '"')»')}«ENDIF») }}
+            {{ form_row(form.«name.formatForCode») }}
         «ENDIF»
     '''
 

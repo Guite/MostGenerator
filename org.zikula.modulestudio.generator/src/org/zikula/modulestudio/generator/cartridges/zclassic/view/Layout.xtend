@@ -187,21 +187,6 @@ class Layout {
                 <span class="required" title="{{ __('This field is required') }}">*</span>
             {% endif %}
         {% endblock %}
-
-        {# add support for help messages, see http://symfony.com/doc/current/cookbook/form/form_customization.html#adding-help-messages #}
-        {% block form_widget_simple %}
-            {{ parent() }}
-
-            {% if help is defined %}
-                {% if help is iterable %}
-                    {% for helpText in help %}
-                        <span class="help-block z-sub">{{ helpText }}</span>
-                    {% endfor %}
-                {% else %}
-                    <span class="help-block z-sub">{{ help }}</span>
-                {% endif %}
-            {% endif %}
-        {% endblock %}
         «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
 
             {% block date_widget %}

@@ -163,6 +163,7 @@ class ListBlock {
                 'attr' => [
                     'title' => $this->__('If you change this please save the block once to reload the parameters below.')
                 ],
+                'help' => $this->__('If you change this please save the block once to reload the parameters below.'),
                 'choices' => [
                     «FOR entity : getAllEntities»
                         $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
@@ -194,6 +195,7 @@ class ListBlock {
                     'class' => 'category-selector',
                     'title' => $this->__('This is an optional filter.')
                 ],
+                'help' => $this->__('This is an optional filter.'),
                 'required' => false,
                 'multiple' => $hasMultiSelection,
                 'module' => '«appName»',
@@ -239,6 +241,7 @@ class ListBlock {
                 'attr' => [
                     'title' => $this->__('The maximum amount of items to be shown. Only digits are allowed.')
                 ],
+                'help' => $this->__('The maximum amount of items to be shown. Only digits are allowed.'),
                 'empty_data' => 5,
                 'max_length' => 2,
                 'scale' => 0
@@ -272,6 +275,7 @@ class ListBlock {
                     'attr' => [
                         'title' => $this->__('Example') . ': itemlist_[objectType]_display.html.twig'
                     ],
+                    'help' => $this->__('Example') . ': <em>itemlist_[objectType]_display.html.twig</em>',
                     'max_length' => 80
                 ])
             ;
@@ -290,6 +294,7 @@ class ListBlock {
             $builder->add('filter', '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Filter (expert option)') . ':',
                 'required' => false,
+                'help' => '<a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">' . $this->__('Show syntax examples') . '</a>',
                 'max_length' => 255
             ]);
         }

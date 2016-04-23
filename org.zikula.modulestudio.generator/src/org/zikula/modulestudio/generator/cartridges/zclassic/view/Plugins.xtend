@@ -102,6 +102,7 @@ class Plugins {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        use Zikula\ExtensionsModule\Api\VariableApi;
         use «appNamespace»\Helper\WorkflowHelper;
         «IF hasUploads»
             use «appNamespace»\Helper\ViewHelper;
@@ -132,6 +133,11 @@ class Plugins {
 
         «ENDIF»
         /**
+         * @var VariableApi
+         */
+        protected $variableApi;
+
+        /**
          * @var WorkflowHelper
          */
         protected $workflowHelper;
@@ -158,6 +164,7 @@ class Plugins {
         «IF hasTrees»
             «' '»* @param Routerinterface     $router         Router service instance.
         «ENDIF»
+         * @param VariableApi         $variableApi    VariableApi service instance.
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance.
         «IF hasUploads»
             «' '»* @param ViewHelper          $viewHelper     ViewHelper service instance.
@@ -351,7 +358,7 @@ class Plugins {
                 return $result;
             }
 
-            if (\ModUtil::getVar('ZConfig', 'profilemodule') != '') {
+            if ($this->variableApi->get(VariableApi::CONFIG, 'profilemodule') != '') {
                 include_once 'lib/legacy/viewplugins/modifier.profilelinkbyuid.php';
                 $result = smarty_modifier_profilelinkbyuid($uid, $class, $image, $maxLength);
             } else {

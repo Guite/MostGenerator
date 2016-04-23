@@ -272,6 +272,7 @@ class QuickNavigation {
                     'class' => 'input-sm category-selector',
                     'title' => $this->__('This is an optional filter.')
                 ],
+                'help' => $this->__('This is an optional filter.'),
                 'required' => false,
                 'multiple' => «categorisableMultiSelection.displayBool»,
                 'module' => '«app.appName»',
