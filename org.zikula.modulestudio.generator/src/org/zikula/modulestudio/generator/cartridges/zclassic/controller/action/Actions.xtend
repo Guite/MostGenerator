@@ -1107,7 +1107,7 @@ class Actions {
                 «deletionProcess(action)»
             }
         «ELSE»
-            $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType');
+            $form = $this->createForm('«app.appNamespace»\Form\DeleteEntityType', $entity);
 
             if ($form->handleRequest($request)->isValid()) {
                 if ($form->get('delete')->isClicked()) {
