@@ -63,19 +63,6 @@ class Bootstrap {
                 «initTranslatable»
             «ENDIF»
         «ELSE»
-            // initialise Twig extensions
-            $container = \ServiceUtil::getManager();
-            $twig = $container->get('twig');
-            if (!$twig->hasExtension('Text')) {
-                $twig->addExtension(new Twig_Extensions_Extension_Text());
-            }
-            if (!$twig->hasExtension('Array')) {
-                $twig->addExtension(new Twig_Extensions_Extension_Array());
-            }
-            if (!$twig->hasExtension('Intl')) {
-                $twig->addExtension(new Twig_Extensions_Extension_Intl());
-            }
-
             «initLoggable»
         «ENDIF»
     '''
