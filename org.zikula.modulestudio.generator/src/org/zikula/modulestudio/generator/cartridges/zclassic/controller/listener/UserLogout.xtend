@@ -31,8 +31,13 @@ class UserLogout {
          * Occurs right after a successful logout.
          * All handlers are notified.
          * The event's subject contains the user's user record.
-         * Args contain array of `array('authentication_method' => $authenticationMethod,
-         *                              'uid'                   => $uid));`
+        «IF targets('1.3.x')»
+            «' '»* Args contain array of `array('authentication_method' => $authenticationMethod,
+            «' '»*                              'uid'                   => $uid);`
+        «ELSE»
+            «' '»* Args contain array of `['authentication_method' => $authenticationMethod,
+            «' '»*                         'uid'                   => $uid];`
+        «ENDIF»
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
