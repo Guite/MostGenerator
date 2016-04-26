@@ -93,8 +93,7 @@ class Layout {
         {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
             {% block appTitle %}
                 <h2 class="userheader">{{ __('«name.formatForDisplayCapital»') }}</h2>
-            «/* TODO replace modulelinks, blocked by https://github.com/zikula/core/pull/2648 * /»
-            {# modulelinks modname='«appName»' type='«controller.formattedName»' #}*/»
+                {{ moduleLinks(type='user«/* TODO controller.formattedName */»', modname='«appName»') }}
             {% endblock %}
         {% endif %}
 

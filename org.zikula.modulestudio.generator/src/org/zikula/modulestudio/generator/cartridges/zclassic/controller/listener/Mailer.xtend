@@ -17,7 +17,10 @@ class Mailer {
             {
                 «IF isBase»
                     return [
-                        'module.mailer.api.sendmessage' => ['sendMessage', 5]
+                        MailerEvents::SEND_MESSAGE_START => ['sendMessageStart', 5],
+                        MailerEvents::SEND_MESSAGE_PERFORM => ['sendMessagePerform', 5],
+                        MailerEvents::SEND_MESSAGE_SUCCESS => ['sendMessageSuccess', 5],
+                        MailerEvents::SEND_MESSAGE_FAILURE => ['sendMessageFailure', 5]
                     ];
                 «ELSE»
                     return parent::getSubscribedEvents();
@@ -27,21 +30,83 @@ class Mailer {
         «ENDIF»
         /**
          * Listener for the `module.mailer.api.sendmessage` event.
+         * Occurs when a new message should be sent.
          *
-         * Invoked from `Mailer_Api_User#sendmessage`.
-         * Subject is `Mailer_Api_User` with `$args`.
+        «IF targets('1.3.x')»
+            «' '»* Invoked from `Mailer_Api_User#sendmessage`.
+            «' '»* Subject is `Mailer_Api_User` with `$args`.
+        «ELSE»
+            «' '»* Invoked from `Zikula\MailerModule\Api\MailerApi#sendMessage`.
+            «' '»* Subject is `Zikula\MailerModule\Api\MailerApi` with `SwiftMessage $message` object.
+        «ENDIF»
          * This is a notifyUntil event so the event must `$event->stop«IF !targets('1.3.x')»Propagation«ENDIF»()` and set any
          * return data into `$event->data`, or `$event->setData()`.
          *
          * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public «IF targets('1.3.x')»static «ENDIF»function sendMessage(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function sendMessage«IF !targets('1.3.x')»Start«ENDIF»(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
-                parent::sendMessage($event);
+                parent::sendMessage«IF !targets('1.3.x')»Start«ENDIF»($event);
 
                 «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
+        «IF !targets('1.3.x')»
+
+            /**
+             * Listener for the `module.mailer.api.perform` event.
+             * Occurs right before a message is sent.
+             *
+             * Invoked from `Zikula\MailerModule\Api\MailerApi#sendMessage`.
+             * Subject is `Zikula\MailerModule\Api\MailerApi` with `SwiftMessage $message` object.
+             * This is a notifyUntil event so the event must `$event->stopPropagation()` and set any
+             * return data into `$event->data`, or `$event->setData()`.
+             *
+             * @param GenericEvent $event The event instance.
+             */
+            public function sendMessagePerform(GenericEvent $event)
+            {
+                «IF !isBase»
+                    parent::sendMessagePerform($event);
+
+                    «commonExample.generalEventProperties(it)»
+                «ENDIF»
+            }
+
+            /**
+             * Listener for the `module.mailer.api.success` event.
+             * Occurs after a message has been sent successfully.
+             *
+             * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
+             *
+             * @param GenericEvent $event The event instance.
+             */
+            public function sendMessageSuccess(GenericEvent $event)
+            {
+                «IF !isBase»
+                    parent::sendMessageSuccess($event);
+
+                    «commonExample.generalEventProperties(it)»
+                «ENDIF»
+            }
+
+            /**
+             * Listener for the `module.mailer.api.failure` event.
+             * Occurs when a message could not be sent.
+             *
+             * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
+             *
+             * @param GenericEvent $event The event instance.
+             */
+            public function sendMessageFailure(GenericEvent $event)
+            {
+                «IF !isBase»
+                    parent::sendMessageFailure($event);
+
+                    «commonExample.generalEventProperties(it)»
+                «ENDIF»
+            }
+        «ENDIF»
     '''
 }

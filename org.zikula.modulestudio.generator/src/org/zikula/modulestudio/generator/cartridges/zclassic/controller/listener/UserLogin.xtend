@@ -148,13 +148,13 @@ class UserLogin {
          *             'type'      => 'user',
          *             'func'      => 'changePassword',
          *             'args'      => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-         *                 'login'     => true,
+         *                 'login'     => true
          *             «IF targets('1.3.x')»)«ELSE»]«ENDIF»,
          *             'session'   => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
          *                 'var'       => 'Users_Controller_User_changePassword',
-         *                 'namespace' => 'Zikula_Users',
+         *                 'namespace' => 'Zikula_Users'
          *             «IF targets('1.3.x')»)«ELSE»]«ENDIF»
-         *         «IF targets('1.3.x')»)«ELSE»]«ENDIF»,
+         *         «IF targets('1.3.x')»)«ELSE»]«ENDIF»
          *     «IF targets('1.3.x')»)«ELSE»]«ENDIF»);
          *
          «IF targets('1.3.x')»

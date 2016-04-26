@@ -24,18 +24,30 @@ class Locking {
     def addPageLock(Application it) '''
         if (true === $this->hasPageLockSupport && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
             // try to guarantee that only one person at a time can be editing this entity
-            ModUtil::apiFunc('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'pageLock', «IF isLegacy»array(«ELSE»[«ENDIF»
-                                 'lockName' => «IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF» . $this->objectTypeCapital . $this->createCompositeIdentifier(),
-                                 'returnUrl' => $this->getRedirectUrl(null)
-            «IF isLegacy»)«ELSE»]«ENDIF»);
+            «IF isLegacy»
+                ModUtil::apiFunc('PageLock', 'user', 'pageLock', array(
+                    'lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
+                    'returnUrl' => $this->getRedirectUrl(null)
+                ));
+            «ELSE»
+                $lockingApi = $this->container->get('zikula_pagelock_module.api.locking');
+                $lockName = '«appName»' . $this->objectTypeCapital . $this->createCompositeIdentifier();
+                $lockingApi->addLock($lockName, $this->getRedirectUrl(null));
+            «ENDIF»
         }
     '''
 
     def releasePageLock(Application it) '''
         if (true === $this->hasPageLockSupport && «IF isLegacy»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» == 'edit' && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
-            ModUtil::apiFunc('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»', 'user', 'releaseLock', «IF isLegacy»array(«ELSE»[«ENDIF»
-                                 'lockName' => «IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF» . $this->objectTypeCapital . $this->createCompositeIdentifier()
-            «IF isLegacy»)«ELSE»]«ENDIF»);
+            «IF isLegacy»
+                ModUtil::apiFunc('PageLock', 'user', 'releaseLock', array(
+                    'lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()
+                ));
+            «ELSE»
+                $lockingApi = $this->container->get('zikula_pagelock_module.api.locking');
+                $lockName = '«appName»' . $this->objectTypeCapital . $this->createCompositeIdentifier();
+                $lockingApi->releaseLock($lockName);
+            «ENDIF»
         }
     '''
 

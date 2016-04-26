@@ -55,12 +55,12 @@ class SimpleFields {
                 «IF isLegacyApp»
                     {$«objName».«name.formatForCode»|yesno:true}
                 «ELSE»
-                    {{ «objName».«name.formatForCode»|yesno(true) }}
+                    {{ «objName».«name.formatForCode»|yesNo(true) }}
                 «ENDIF»
             </div></noscript>
         '''
         else '''
-            «IF isLegacyApp»{$«objName».«name.formatForCode»|yesno:true}«ELSE»{{ «objName».«name.formatForCode»|yesno(true) }}«ENDIF»'''
+            «IF isLegacyApp»{$«objName».«name.formatForCode»|yesno:true}«ELSE»{{ «objName».«name.formatForCode»|yesNo(true) }}«ENDIF»'''
     }
 
     def dispatch displayField(IntegerField it, String objName, String page) '''
