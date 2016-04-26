@@ -47,7 +47,9 @@ class Notification {
         use ServiceUtil;
         use System;
         use UserUtil;
+        use ZLanguage;
 
+        use Swift_Message;
         use Symfony\Component\HttpFoundation\Session\Session;
         use Symfony\Component\Routing\RouterInterface;
         use Twig_Environment;
@@ -55,6 +57,7 @@ class Notification {
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
+        use Zikula\MailerModule\Api\MailerApi;
         use Zikula\UsersModule\Api\CurrentUserApi;
         use «appNamespace»\Helper\WorkflowHelper;
 
@@ -95,6 +98,11 @@ class Notification {
              * @var Twig_Environment
              */
             protected $templating;
+
+            /**
+             * @var MailerApi
+             */
+            protected $mailer;
 
             /**
              * @var WorkflowHelper
@@ -141,6 +149,7 @@ class Notification {
              * @param VariableApi         $variableApi    VariableApi service instance.
              * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance.
              * @param Twig_Environment    $twig           Twig service instance.
+             * @param MailerApi           $mailerApi      MailerApi service instance.
              * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance.
              */
             public function __construct(
@@ -150,6 +159,7 @@ class Notification {
                 VariableApi $variableApi,
                 CurrentUserApi $currentUserApi,
                 Twig_Environment $twig,
+                MailerApi $mailerApi,
                 WorkflowHelper $workflowHelper)
             {
                 $this->setTranslator($translator);
@@ -157,6 +167,7 @@ class Notification {
                 $this->router = $router;
                 $this->variableApi = $variableApi;
                 $this->templating = $twig;
+                $this->mailerApi = $mailerApi;
                 $this->workflowHelper = $workflowHelper;
             }
 
@@ -280,7 +291,12 @@ class Notification {
         protected function sendMails()
         {
             $objectType = $this->entity['_objectType'];
-            $siteName = System::getVar('sitename');
+            «IF targets('1.3.x')»
+                $siteName = System::getVar('sitename');
+            «ELSE»
+                $siteName = $this->variableApi->get(VariableApi::CONFIG, 'sitename_' . ZLanguage::getLanguageCode(), $this->variableApi->get(VariableApi::CONFIG, 'sitename_en'));
+                $adminMail = $this->variableApi->get(VariableApi::CONFIG, 'adminmail');
+            «ENDIF»
 
             «IF targets('1.3.x')»
                 $view = Zikula_View::getInstance('«appName»');
@@ -289,6 +305,7 @@ class Notification {
             $template = '«IF targets('1.3.x')»email«ELSE»Email«ENDIF»/notify' . ucfirst($objectType) . $templateType .  '.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
 
             $mailData = $this->prepareEmailData();
+            $subject = $this->getMailSubject();
 
             // send one mail per recipient
             $totalResult = true;
@@ -310,16 +327,31 @@ class Notification {
                     ];
                 «ENDIF»
 
-                $mailArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-                    'fromname' => $siteName,
-                    'toname' => $recipient['name'],
-                    'toaddress' => $recipient['email'],
-                    'subject' => $this->getMailSubject(),
-                    'body' => «IF targets('1.3.x')»$view->fetch($template)«ELSE»$this->templating->render('@«appName»/' . $template, $templateParameters)«ENDIF»,
-                    'html' => true
-                «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                «IF targets('1.3.x')»
+                    $mailArgs = array(
+                        'fromname' => $siteName,
+                        'toname' => $recipient['name'],
+                        'toaddress' => $recipient['email'],
+                        'subject' => $this->getMailSubject(),
+                        'body' => $view->fetch($template),
+                        'html' => true
+                    );
 
-                $totalResult &= ModUtil::apiFunc('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»', 'user', 'sendmessage', $mailArgs);
+                    $totalResult &= ModUtil::apiFunc('Mailer', 'user', 'sendmessage', $mailArgs);
+                «ELSE»
+                    $body = $this->templating->render('@«appName»/' . $template, $templateParameters);
+                    $altBody = '';
+                    $html = true;
+
+                    // create new message instance
+                    /** @var Swift_Message */
+                    $message = Swift_Message::newInstance();
+
+                    $message->setFrom([$adminMail => $siteName]);
+                    $message->setTo([$recipient['email'] => $recipient['name']]);
+
+                    $totalResult &= $this->mailerApi->sendMessage($message, $subject, $msgBody, $altBody, $html);
+                «ENDIF»
             }
 
             return $totalResult;

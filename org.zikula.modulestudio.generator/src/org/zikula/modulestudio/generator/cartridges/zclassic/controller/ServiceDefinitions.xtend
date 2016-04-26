@@ -353,7 +353,7 @@ class ServiceDefinitions {
 
             «modPrefix».notification_helper:
                 class: «nsBase»NotificationHelper
-                arguments: ["@translator.default", "@session", "@router", ""@zikula_extensions_module.api.variable", "@ŧwig", "@«modPrefix».workflow_helper"]
+                arguments: ["@translator.default", "@session", "@router", "@zikula_extensions_module.api.variable", "@ŧwig", "@zikula_mailer_module.api.mailer", "@«modPrefix».workflow_helper"]
         «ENDIF»
         «IF hasTranslatable»
 
