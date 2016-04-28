@@ -89,7 +89,7 @@ class StandardFields {
                 {assign var='profileLink' value=$cr_uname}
             {/if}
             <dd class="avatar">{useravatar uid=$obj.createdUserId rating='g'}</dd>
-            <dd>{gt text='Created by %1$s on %2$s' tag1=$profileLink tag2=$obj.createdDate|dateformat html=true}</dd>
+            <dd>{gt text='Created by %1$s on %2$s' tag1=$profileLink tag2=$obj.createdDate|dateformat:'datetimebrief' html=true}</dd>
         {/if}
         {if isset($obj.updatedUserId) && $obj.updatedUserId}
             <dt>{gt text='Last update'}</dt>
@@ -104,7 +104,7 @@ class StandardFields {
                 {assign var='profileLink' value=$lu_uname}
             {/if}
             <dd class="avatar">{useravatar uid=$obj.updatedUserId rating='g'}</dd>
-            <dd>{gt text='Updated by %1$s on %2$s' tag1=$profileLink tag2=$obj.updatedDate|dateformat html=true}</dd>
+            <dd>{gt text='Updated by %1$s on %2$s' tag1=$profileLink tag2=$obj.updatedDate|dateformat:'datetimebrief' html=true}</dd>
         {/if}
         </dl>
     '''
