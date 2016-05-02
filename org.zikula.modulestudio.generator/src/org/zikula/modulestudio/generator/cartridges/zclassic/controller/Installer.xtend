@@ -234,7 +234,8 @@ class Installer {
                 «IF targets('1.3.x')»
                     $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
                 «ELSE»
-                    $controllerHelper = $this->container->get('«appService».controller_helper');
+                    $sm = $this->serviceManager;
+                    $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($sm, $sm->get('translator.default'), $sm->get('session'), $sm->get('logger'));
                 «ENDIF»
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
