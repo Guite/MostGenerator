@@ -431,35 +431,44 @@ class ControllerHelper {
                 }
             «ELSE»
                 $fs = new Filesystem();
+                $flashBag = $this->session->getFlashBag();
 
-                try {
-                    // Check if directory exist and try to create it if needed
-                    if (!$fs->exists($uploadPath) && !$fs->mkdir($uploadPath, 0777)) {
-                        $this->session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', [$uploadPath]));
+                // Check if directory exist and try to create it if needed
+                if (!$fs->exists($uploadPath)) {
+                    try {
+                        $fs->mkdir($uploadPath, 0777);
+                    } catch (IOExceptionInterface $e) {
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', ['%s' => $e->getPath()]));
                         $this->logger->error('{app}: The upload directory {directory} does not exist and could not be created.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                         return false;
                     }
+                }
 
-                    // Check if directory is writable and change permissions if needed
-                    if (!is_writable($uploadPath) && !$fs->chmod($uploadPath, 0777)) {
-                        $this->session->getFlashBag()->add(\Zikula_Session::MESSAGE_WARNING, $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', [$uploadPath]));
+                // Check if directory is writable and change permissions if needed
+                if (!is_writable($uploadPath)) {
+                    try {
+                        $fs->chmod($uploadPath, 0777);
+                    } catch (IOExceptionInterface $e) {
+                        $flashBag->add(\Zikula_Session::MESSAGE_WARNING, $this->translator->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', ['%s' => $e->getPath()]));
                         $this->logger->error('{app}: The upload directory {directory} exists but is not writable by the webserver.', ['app' => '«appName»', 'directory' => $uploadPath]);
 
                         return false;
                     }
+                }
 
-                    // Write a htaccess file into the upload directory
-                    $htaccessFilePath = $uploadPath . '/.htaccess';
-                    $htaccessFileTemplate = '«rootFolder»/«IF !targets('1.3.x')»«if (systemModule) name.formatForCode else appName»/«ENDIF»«getAppDocPath»htaccessTemplate';
-                    if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
+                // Write a htaccess file into the upload directory
+                $htaccessFilePath = $uploadPath . '/.htaccess';
+                $htaccessFileTemplate = '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppDocPath»htaccessTemplate';
+                if (!$fs->exists($htaccessFilePath) && $fs->exists($htaccessFileTemplate)) {
+                    try {
                         $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                         $htaccessContent = str_replace('__EXTENSIONS__', $extensions, file_get_contents($htaccessFileTemplate, false));
                         $fs->dumpFile($htaccessFilePath, $htaccessContent);
+                    } catch (IOExceptionInterface $e) {
+                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', ['%s' => $e->getPath()]));
+                        $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
                     }
-                } catch (IOExceptionInterface $e) {
-                    $this->session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->translator->__f('An error occured during creation of the .htaccess file in directory "%s".', [$e->getPath()]));
-                    $this->logger->error('{app}: An error occured during creation of the .htaccess file in directory {directory}.', ['app' => '«appName»', 'directory' => $uploadPath]);
                 }
             «ENDIF»
 
