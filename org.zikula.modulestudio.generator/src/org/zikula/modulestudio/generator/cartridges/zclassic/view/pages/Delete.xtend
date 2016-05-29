@@ -89,7 +89,7 @@ class Delete {
 
                         {{ block('display_hooks') }}
                     «ENDIF»
-                    {{ form_end(form) }}
+                    {{ form_end(deleteForm) }}
                 </div>
             {% endblock %}
             «IF !skipHookSubscribers»
