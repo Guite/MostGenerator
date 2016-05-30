@@ -263,7 +263,7 @@ class View {
                             {% set catIdListMainString = catIdList.Main|join(',') %}
                         «ENDIF»
                         {% if routeArea == 'admin' %}
-                            <th id="hSelect" scope="col" align="center" valign="middle">
+                            <th id="hSelect" scope="col" class="text-center">
                                 <input type="checkbox" id="toggle«nameMultiple.formatForCodeCapital»" />
                             </th>
                         {% endif %}
@@ -288,13 +288,13 @@ class View {
                 <tr«IF application.targets('1.3.x')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
                     «IF application.targets('1.3.x')»
                         {if $lct eq 'admin'}
-                            <td headers="hselect" align="center" valign="top">
+                            <td headers="hSelect" align="center" valign="top">
                                 <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
                             </td>
                         {/if}
                     «ELSE»
                         {% if routeArea == 'admin' %}
-                            <td headers="hselect" align="center" valign="top">
+                            <td headers="hSelect" class="text-center">
                                 <input type="checkbox" name="items[]" value="{{ «name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode» }}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
                             </td>
                         {% endif %}
