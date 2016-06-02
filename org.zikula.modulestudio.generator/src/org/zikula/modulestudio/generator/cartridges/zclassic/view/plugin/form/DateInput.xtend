@@ -154,7 +154,7 @@ class DateInput {
              */
             protected function getDateFormat()
             {
-                $dateFormat = str_replace('%', '', DATEONLYFORMAT_FIXED);
+                $dateFormat = str_replace('%', '', $this->ifFormat);
                 $dateFormatJs = str_replace(array('Y', 'm', 'd'), array('yy', 'mm', 'dd'), $dateFormat);
 
                 return array($dateFormat, $dateFormatJs);
