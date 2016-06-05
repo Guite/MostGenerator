@@ -37,7 +37,6 @@ class ControllerHelper {
             namespace «appNamespace»\Helper\Base;
 
             use DataUtil;
-            use Exception;
             «IF hasUploads»
                 use FileUtil;
             «ENDIF»
@@ -56,8 +55,6 @@ class ControllerHelper {
             «IF hasGeographical»
                 use ZLanguage;
             «ENDIF»
-        «ELSE»
-            use Exception;
 
         «ENDIF»
         /**

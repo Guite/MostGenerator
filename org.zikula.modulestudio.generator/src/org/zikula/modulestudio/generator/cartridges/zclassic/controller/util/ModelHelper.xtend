@@ -37,12 +37,9 @@ class ModelHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper\Base;
 
-            use Exception;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
-        «ELSE»
-            use Exception;
-        «ENDIF»
 
+        «ENDIF»
         /**
          * Utility base class for model helper methods.
          */
