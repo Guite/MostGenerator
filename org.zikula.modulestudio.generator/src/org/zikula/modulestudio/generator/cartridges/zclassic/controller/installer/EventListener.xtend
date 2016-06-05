@@ -4,11 +4,13 @@ import de.guite.modulestudio.metamodel.Application
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 // 1.3.x only
 class EventListener {
     extension ControllerExtensions = new ControllerExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension WorkflowExtensions = new WorkflowExtensions
     extension Utils = new Utils
 
     /**
@@ -102,9 +104,9 @@ class EventListener {
             EventUtil::registerPersistentModuleHandler('«appName»', 'group.removeuser', array('«callableClass»', 'removeUser'));
 
             «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
-            «IF generatePendingContentSupport || generateListContentType || needsDetailContentType»
+            «IF (needsApproval && generatePendingContentSupport) || generateListContentType || needsDetailContentType»
                 // special purposes and 3rd party api support -> «callableClass = listenerBase + 'ThirdParty'»
-                «IF generatePendingContentSupport»
+                «IF needsApproval && generatePendingContentSupport»
                     EventUtil::registerPersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
                 «ENDIF»
                 «IF generateListContentType || needsDetailContentType»
