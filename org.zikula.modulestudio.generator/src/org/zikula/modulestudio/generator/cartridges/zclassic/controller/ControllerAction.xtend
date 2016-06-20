@@ -117,12 +117,12 @@ class ControllerAction {
 
     def private actionDocMethodDescription(Action it, Boolean isAdmin) {
         switch it {
-            MainAction: 'This is the default action handling the ' + controllerName + (if (isAdmin) ' admin') + ' area called without defining arguments.'
-            ViewAction: 'This action provides an item list overview' + (if (isAdmin) ' in the admin area') + '.'
-            DisplayAction: 'This action provides a item detail view' + (if (isAdmin) ' in the admin area') + '.'
-            EditAction: 'This action provides a handling of edit requests' + (if (isAdmin) ' in the admin area') + '.'
-            DeleteAction: 'This action provides a handling of simple delete requests' + (if (isAdmin) ' in the admin area') + '.'
-            CustomAction: 'This is a custom action' + (if (isAdmin) ' in the admin area') + '.'
+            MainAction: 'This is the default action handling the ' + controllerName + (if (isAdmin) ' admin' else '') + ' area called without defining arguments.'
+            ViewAction: 'This action provides an item list overview' + (if (isAdmin) ' in the admin area' else '') + '.'
+            DisplayAction: 'This action provides a item detail view' + (if (isAdmin) ' in the admin area' else '') + '.'
+            EditAction: 'This action provides a handling of edit requests' + (if (isAdmin) ' in the admin area' else '') + '.'
+            DeleteAction: 'This action provides a handling of simple delete requests' + (if (isAdmin) ' in the admin area' else '') + '.'
+            CustomAction: 'This is a custom action' + (if (isAdmin) ' in the admin area' else '') + '.'
             default: ''
         }
     }
