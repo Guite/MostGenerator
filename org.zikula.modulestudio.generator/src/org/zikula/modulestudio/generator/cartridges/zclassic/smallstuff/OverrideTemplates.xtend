@@ -174,7 +174,7 @@ class OverrideTemplates {
             «ENDFOR»
             «FOR relation : entity.getOutgoingJoinRelations.filter[target.application == it && getEditStageCode(false) > 0]»
                 «val useTarget = true»
-                «IF (useTarget || relation instanceof ManyToManyRelationship)»
+                «IF useTarget/* dead code || relation instanceof ManyToManyRelationship)*/»
                     «val editSnippet = if (relation.getEditStageCode(false) > 1) 'Edit' else ''»
                     «var templateName = 'includeSelect' + editSnippet + relation.getTargetMultiplicity(useTarget)»
                     «var templateNameItemList = 'includeSelect' + editSnippet + 'ItemList' + relation.getTargetMultiplicity(useTarget)»
