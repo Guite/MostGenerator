@@ -216,7 +216,7 @@ class SimpleFields {
     }
 
     def dispatch displayField(ListField it, String objName, String page) '''
-        «IF isLegacyApp»{$«objName».«name.formatForCode»|«entity.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext}«ELSE»{{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_listEntry('«entity.name.formatForCode»':'«name.formatForCode»') }}«ENDIF»'''
+        «IF isLegacyApp»{$«objName».«name.formatForCode»|«entity.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext}«ELSE»{{ «objName».«name.formatForCode»|«entity.application.appName.formatForDB»_listEntry('«entity.name.formatForCode»', '«name.formatForCode»') }}«ENDIF»'''
 
     def dispatch displayField(DateField it, String objName, String page) '''
         «IF isLegacyApp»{$«objName».«name.formatForCode»|dateformat:'datebrief'}«ELSE»{{ «objName».«name.formatForCode»|localizeddate('medium', 'none') }}«ENDIF»'''
