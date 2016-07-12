@@ -129,7 +129,7 @@ class ComposerFile {
                         "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                     «ENDFOR»
                 ]
-            },
+            }«IF null !== capabilities && capabilities != ''»,«ENDIF»
         «ENDIF»
         «IF null !== capabilities && capabilities != ''»
             «val capabilitiesArray = capabilities.replaceAll(', ', '').split(',')»
