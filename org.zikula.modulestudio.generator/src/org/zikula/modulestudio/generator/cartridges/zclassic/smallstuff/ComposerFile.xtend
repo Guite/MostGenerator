@@ -132,12 +132,13 @@ class ComposerFile {
             },
         «ENDIF»
         «IF null !== capabilities && capabilities != ''»
-            «FOR capability : capabilities.replaceAll(', ', '').split(',')»
-                "«capability.formatForDisplay»": {"version": "1.0"},
+            «val capabilitiesArray = capabilities.replaceAll(', ', '').split(',')»
+            «FOR capability : capabilitiesArray»
+                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last»,«ENDIF»
             «ENDFOR»
         «ENDIF»
         «IF hasHookSubscribers»
-            "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
+            , "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
         «ENDIF»«/* TODO: see #15 ,
         "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
     '''
