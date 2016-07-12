@@ -954,7 +954,7 @@ class EditEntity {
                 'label' => $this->__('Reset'),
                 'icon' => 'fa-times',
                 'attr' => [
-                    'id' => 'btnReset'
+                    'id' => 'btnReset',
                     'class' => 'btn btn-default',
                     'formnovalidate' => 'formnovalidate'
                 ]
@@ -963,7 +963,7 @@ class EditEntity {
                 'label' => $this->__('Cancel'),
                 'icon' => 'fa-times',
                 'attr' => [
-                    'id' => 'btnCancel'
+                    'id' => 'btnCancel',
                     'class' => 'btn btn-default',
                     'formnovalidate' => 'formnovalidate'
                 ]
