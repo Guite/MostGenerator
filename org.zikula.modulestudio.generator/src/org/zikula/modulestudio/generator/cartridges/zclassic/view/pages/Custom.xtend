@@ -73,7 +73,7 @@ class Custom {
             «ENDIF»
             {% block content %}
                 <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                    <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getViewPath»«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/Resources/views/modules/«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+                    <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getViewPath»«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em> to either your <em>/themes/YourTheme/Resources/views/modules/«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/config/templates/«app.appName»/«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
                 </div>
             {% endblock %}
         «ENDIF»
