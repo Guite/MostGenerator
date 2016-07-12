@@ -28,7 +28,7 @@ class MultiListType {
     }
 
     def private multiListTypeBaseImpl(Application it) '''
-        namespace «appNamespace»\Form\Base;
+        namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
@@ -91,9 +91,9 @@ class MultiListType {
     '''
 
     def private multiListTypeImpl(Application it) '''
-        namespace «appNamespace»\Form\Field;
+        namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Field\Base\MultiListType as BaseMultiListType;
+        use «appNamespace»\Form\Type\Field\Base\MultiListType as BaseMultiListType;
 
         /**
          * Multi list field type implementation class.
