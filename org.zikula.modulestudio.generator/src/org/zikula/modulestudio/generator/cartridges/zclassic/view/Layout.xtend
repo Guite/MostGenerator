@@ -93,7 +93,7 @@ class Layout {
         {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
             {% block appTitle %}
                 <h2 class="userheader">{{ __('«name.formatForDisplayCapital»') }}</h2>
-                {{ moduleLinks(type='user«/* TODO controller.formattedName */»', modname='«appName»') }}
+                {{ moduleLinks(type='user«/* TODO controller.formattedName */»', modName='«appName»') }}
             {% endblock %}
         {% endif %}
 
