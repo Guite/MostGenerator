@@ -173,12 +173,13 @@ class Plugins {
             «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance.
         «ENDIF»
          */
-        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF», WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
+        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF», VariableApi $variableApi, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
         {
             $this->setTranslator($translator);
             «IF hasTrees»
                 $this->router = $router;
             «ENDIF»
+            $this->variableApi = $variableApi;
             $this->workflowHelper = $workflowHelper;
             «IF hasUploads»
                 $this->viewHelper = $viewHelper;
