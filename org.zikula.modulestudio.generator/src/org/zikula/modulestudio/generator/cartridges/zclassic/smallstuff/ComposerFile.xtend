@@ -136,7 +136,9 @@ class ComposerFile {
                 "«capability.formatForDisplay»": {"version": "1.0"},
             «ENDFOR»
         «ENDIF»
-        "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}«/* TODO: see #15 ,
+        «IF hasHookSubscribers»
+            "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
+        «ENDIF»«/* TODO: see #15 ,
         "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
     '''
 
