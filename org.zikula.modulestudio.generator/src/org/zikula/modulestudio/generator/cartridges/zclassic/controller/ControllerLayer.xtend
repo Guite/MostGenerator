@@ -846,7 +846,7 @@ class ControllerLayer {
                                 if ($this->permissionApi->hasPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                                     $links[] = [
                                         'url' => $this->router->generate('«app.appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
-                                        'text' => $this->translator->__('My «entity.nameMultiple.formatForDisplay»'),
+                                        'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'),
                                         'icon' => 'list-alt'
                                     ];
                                 }
@@ -856,7 +856,7 @@ class ControllerLayer {
                             if ($this->permissionApi->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                                 $links[] = [
                                     'url' => $this->router->generate('«app.appName.formatForDB»_admin_index'),
-                                    'text' => $this->translator->__('«name.formatForDisplayCapital» Backend'),
+                                    'text' => $this->__('«name.formatForDisplayCapital» Backend'),
                                     'icon' => 'wrench'
                                 ];
                             }
@@ -900,8 +900,8 @@ class ControllerLayer {
                         $links[] = [
                             'url' => $this->router->generate('«app.appName.formatForDB»_«app.configController.formatForDB»_config'),
                     «ENDIF»
-                         'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Configuration'),
-                         'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Manage settings for this application')«IF !isLegacy»,
+                         'text' => $this->__('Configuration'),
+                         'title' => $this->__('Manage settings for this application')«IF !isLegacy»,
                          'icon' => 'wrench'«ENDIF»
                      «IF isLegacy»)«ELSE»]«ENDIF»;
                 }
@@ -919,8 +919,8 @@ class ControllerLayer {
                 $links[] = [
                     'url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»view'«IF tree != EntityTreeType.NONE», array('tpl' => 'tree')«ENDIF»),
             «ENDIF»
-                 'text' => $this->«IF !isLegacy»translator->«ENDIF»__('«nameMultiple.formatForDisplayCapital»'),
-                 'title' => $this->«IF !isLegacy»translator->«ENDIF»__('«name.formatForDisplayCapital» list')
+                 'text' => $this->__('«nameMultiple.formatForDisplayCapital»'),
+                 'title' => $this->__('«name.formatForDisplayCapital» list')
              «IF isLegacy»)«ELSE»]«ENDIF»;
         }
     '''
@@ -937,8 +937,8 @@ class ControllerLayer {
                             $links[] = [
                                 'url' => $this->router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                             'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Frontend'),
-                             'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Switch to user area.'),
+                             'text' => $this->__('Frontend'),
+                             'title' => $this->__('Switch to user area.'),
                              «IF isLegacy»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»
                          «IF isLegacy»)«ELSE»]«ENDIF»;
                     }
@@ -953,8 +953,8 @@ class ControllerLayer {
                             $links[] = [
                                 'url' => $this->router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                             'text' => $this->«IF !isLegacy»translator->«ENDIF»__('Backend'),
-                             'title' => $this->«IF !isLegacy»translator->«ENDIF»__('Switch to administration area.'),
+                             'text' => $this->__('Backend'),
+                             'title' => $this->__('Switch to administration area.'),
                              «IF isLegacy»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»
                          «IF isLegacy»)«ELSE»]«ENDIF»;
                     }
