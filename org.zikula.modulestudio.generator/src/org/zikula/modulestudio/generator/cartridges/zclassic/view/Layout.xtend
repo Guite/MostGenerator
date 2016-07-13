@@ -69,10 +69,10 @@ class Layout {
         {% block header %}
             {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
             {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
-            {{ pageAddAsset('javascript', 'jquery-ui') }}
+            «/*{{ pageAddAsset('javascript', 'jquery-ui') }}*/»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
             {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-            {{ pageAddAsset('javascript', 'zikula') }}{# still required for Gettext #}
+            {#{ pageAddAsset('javascript', 'zikula') }}{# still required for Gettext #}
             «IF hasUploads»
                 {{ pageAddAsset('javascript', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css')) }}
