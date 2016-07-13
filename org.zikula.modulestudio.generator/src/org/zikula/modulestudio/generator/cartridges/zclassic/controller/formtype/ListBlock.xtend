@@ -169,7 +169,9 @@ class ListBlock {
                         $this->__('«entity.nameMultiple.formatForDisplayCapital»') => '«entity.name.formatForCode»'«IF entity != getAllEntities.last»,«ENDIF»
                     «ENDFOR»
                 ],
-                'choices_as_values' => true
+                'choices_as_values' => true,
+                'multiple' => false,
+                'expanded' => false
             ]);
         }
     '''
@@ -222,7 +224,9 @@ class ListBlock {
                     $this->__('Newest') => 'newest',
                     $this->__('Default') => 'default'
                 ],
-                'choices_as_values' => true
+                'choices_as_values' => true,
+                'multiple' => false,
+                'expanded' => false
             ]);
         }
     '''
@@ -267,7 +271,9 @@ class ListBlock {
                         $this->__('With description') => 'itemlist_display_description.html.twig',
                         $this->__('Custom template') => 'custom'
                     ],
-                    'choices_as_values' => true
+                    'choices_as_values' => true,
+                    'multiple' => false,
+                    'expanded' => false
                 ])
                 ->add('customTemplate', '«nsSymfonyFormType»TextType', [
                     'label' => $this->__('Custom template') . ':',

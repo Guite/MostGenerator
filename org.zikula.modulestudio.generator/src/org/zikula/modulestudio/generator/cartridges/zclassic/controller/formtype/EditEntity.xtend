@@ -137,14 +137,14 @@ class EditEntity {
             /**
              * «name.formatForCodeCapital»Type constructor.
              *
-             * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»Translator service instance.
-             * @param «name.formatForCodeCapital»Factory $entityFactory Entity factory service instance.
+             * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»   Translator service instance.
+             * @param «name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance.
             «IF extensions.contains('translatable')»
                 «' '»* @param VariableApi         $variableApi VariableApi service instance.
                 «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance.
             «ENDIF»
             «IF hasListFieldsEntity»
-                «' '»* @param ListEntriesHelper   $listHelper   «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance.
+                «' '»* @param ListEntriesHelper   $listHelper    «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance.
             «ENDIF»
              */
             public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
@@ -691,9 +691,7 @@ class EditEntity {
         'choices' => $choices,
         'choices_as_values' => true,
         'choice_attr' => $choiceAttributes,
-        «IF !multiple»
-            'multiple' => «multiple.displayBool»,
-        «ENDIF»
+        'multiple' => «multiple.displayBool»,
         'expanded' => «expanded.displayBool»
     '''
 
@@ -952,7 +950,7 @@ class EditEntity {
             }
             $builder->add('reset', '«nsSymfonyFormType»ResetType', [
                 'label' => $this->__('Reset'),
-                'icon' => 'fa-times',
+                'icon' => 'fa-refresh',
                 'attr' => [
                     'id' => 'btnReset',
                     'class' => 'btn btn-default',

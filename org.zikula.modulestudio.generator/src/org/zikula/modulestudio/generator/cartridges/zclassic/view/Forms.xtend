@@ -332,8 +332,8 @@ class Forms {
             {icon type='edit' size='extrasmall' assign='editImageArray'}
             {icon type='delete' size='extrasmall' assign='removeImageArray'}
         «ELSE»
-            % set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
-            % set deleteImage = '<span class="fa fa-trash-o"></span>' %}
+            {% set editImage = '<span class="fa fa-pencil-square-o"></span>' %}
+            {% set deleteImage = '<span class="fa fa-trash-o"></span>' %}
         «ENDIF»
 
         «IF geographical»

@@ -459,7 +459,6 @@ class QuickNavigation {
                         'id' => '«app.appName.toFirstLower»Sort',
                         'class' => 'input-sm'
                     ],
-                    'required' => false,
                     'choices' => [
                         «FOR field : getDerivedFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
@@ -472,7 +471,9 @@ class QuickNavigation {
                             $this->__('Update date') => 'updatedDate'
                         «ENDIF»
                     ],
-                    'choices_as_values' => true
+                    'choices_as_values' => true,
+                    'required' => false,
+                    'expanded' => false
                 ])
                 ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
                     'label' => $this->__('Sort direction'),
@@ -481,12 +482,13 @@ class QuickNavigation {
                         'id' => '«app.appName.toFirstLower»SortDir',
                         'class' => 'input-sm'
                     ],
-                    'required' => false,
                     'choices' => [
                         $this->__('Ascending') => 'asc',
                         $this->__('Descending') => 'desc'
                     ],
-                    'choices_as_values' => true
+                    'choices_as_values' => true,
+                    'required' => false,
+                    'expanded' => false
                 ])
             ;
         }
@@ -508,7 +510,6 @@ class QuickNavigation {
                     'id' => '«app.appName.toFirstLower»PageSize',
                     'class' => 'input-sm text-right'
                 ],
-                'required' => false,
                 'choices' => [
                     5 => 5,
                     10 => 10,
@@ -518,7 +519,9 @@ class QuickNavigation {
                     50 => 50,
                     100 => 100
                 ],
-                'choices_as_values' => true
+                'choices_as_values' => true,
+                'required' => false,
+                'expanded' => false
             ]);
         }
     '''
@@ -570,10 +573,9 @@ class QuickNavigation {
         'placeholder' => $this->__('All'),
         'choices' => $choices,
         'choices_as_values' => true,
-        'choice_attr' => $choiceAttributes«IF !multiple»,«ENDIF»
-        «IF !multiple»
-            'multiple' => «multiple.displayBool»
-        «ENDIF»
+        'choice_attr' => $choiceAttributes,
+        'multiple' => «multiple.displayBool»,
+        'expanded' => false
     '''
 
     def private dispatch fieldType(BooleanField it) '''Choice'''

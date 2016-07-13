@@ -214,7 +214,9 @@ class Finder {
                     $this->__('Link to the «name.formatForDisplay»') => 1,
                     $this->__('ID of «name.formatForDisplay»') => 2
                 ],
-                'choices_as_values' => true
+                'choices_as_values' => true,
+                'multiple' => false,
+                'expanded' => false
             ]);
         }
     '''
@@ -247,7 +249,9 @@ class Finder {
                             $this->__('Update date') => 'updatedDate'
                         «ENDIF»
                     ],
-                    'choices_as_values' => true
+                    'choices_as_values' => true,
+                    'multiple' => false,
+                    'expanded' => false
                 ])
                 ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
                     'label' => $this->__('Sort direction') . ':',
@@ -259,7 +263,9 @@ class Finder {
                         $this->__('Ascending') => 'asc',
                         $this->__('Descending') => 'desc'
                     ],
-                    'choices_as_values' => true
+                    'choices_as_values' => true,
+                    'multiple' => false,
+                    'expanded' => false
                 ])
             ;
         }
@@ -290,7 +296,9 @@ class Finder {
                     50 => 50,
                     100 => 100
                 ],
-                'choices_as_values' => true
+                'choices_as_values' => true,
+                'multiple' => false,
+                'expanded' => false
             ]);
         }
     '''
