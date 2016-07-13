@@ -283,13 +283,11 @@ class BlockList {
             $qb = $repository->genericBaseQuery($where, $orderBy);
             «IF hasCategorisableEntities»
 
-                $properties = null;
-                if (in_array($properties['objectType'], $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                }
-
-                // apply category filters
+                // fetch category registries
+                $catProperties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
+                    $catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    // apply category filters
                     if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
                         $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => $objectType, 'catids' => $properties['catIds']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
                     }
@@ -310,8 +308,8 @@ class BlockList {
                            ->assign($repository->getAdditionalTemplateParameters('block'));
                 «IF hasCategorisableEntities»
 
-                    // assign category properties
-                    $this->view->assign('properties', $properties);
+                    // assign category registries
+                    $this->view->assign('properties', $catProperties);
                 «ENDIF»
 
                 // set a block title
