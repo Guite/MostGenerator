@@ -67,8 +67,6 @@ class Layout {
     def baseTemplate(Application it) '''
         {# purpose of this template: general base layout #}
         {% block header %}
-            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
-            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
             «/*{{ pageAddAsset('javascript', 'jquery-ui') }}*/»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
             {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
