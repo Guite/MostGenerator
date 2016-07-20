@@ -10,14 +10,20 @@ class UserLogout {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
                     return [
-                        'module.users.ui.logout.succeeded' => ['succeeded', 5]
+                        AccessEvents::LOGOUT_SUCCESS => ['succeeded', 5]
                     ];
                 «ELSE»
                     return parent::getSubscribedEvents();
@@ -25,12 +31,12 @@ class UserLogout {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `module.users.ui.logout.succeeded` event.
          *
-         * Occurs right after a successful logout.
-         * All handlers are notified.
-         * The event's subject contains the user's user record.
+         * Occurs right after a successful logout. All handlers are notified.
+         * The event's subject contains the user's UserEntity.
         «IF targets('1.3.x')»
             «' '»* Args contain array of `array('authentication_method' => $authenticationMethod,
             «' '»*                              'uid'                   => $uid);`
@@ -39,8 +45,13 @@ class UserLogout {
             «' '»*                         'uid'                   => $uid];`
         «ENDIF»
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function succeeded(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»

@@ -10,9 +10,15 @@ class View {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
@@ -26,6 +32,7 @@ class View {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `view.init` event.
          *
@@ -36,8 +43,13 @@ class View {
             «' '»* Note that Zikula_View is deprecated and being replaced by Twig.
         «ENDIF»
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function init(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -47,6 +59,7 @@ class View {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `view.postfetch` event.
          *
@@ -59,8 +72,13 @@ class View {
             «' '»* Note that Zikula_View is deprecated and being replaced by Twig.
         «ENDIF»
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function postFetch(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»

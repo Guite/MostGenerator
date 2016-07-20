@@ -10,14 +10,20 @@ class Users {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
                     return [
-                        'module.users.config.updated' => ['configUpdated', 5]
+                        UserEvents::CONFIG_UPDATED => ['configUpdated', 5]
                     ];
                 «ELSE»
                     return parent::getSubscribedEvents();
@@ -25,14 +31,22 @@ class Users {
             }
 
         «ENDIF»
-        /**
-         * Listener for the `module.users.config.updated` event.
-         *
-         * Occurs after the Users module configuration has been
-         * updated via the administration interface.
-         *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
-         */
+        «IF isBase»
+            /**
+             * Listener for the `module.users.config.updated` event.
+             *
+             * Occurs after the Users module configuration has been
+             * updated via the administration interface.
+             *
+             * Event data is populated by the new values.
+             *
+             * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+             */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function configUpdated(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»

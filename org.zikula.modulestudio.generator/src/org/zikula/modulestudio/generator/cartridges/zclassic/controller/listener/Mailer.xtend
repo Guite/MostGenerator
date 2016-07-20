@@ -10,9 +10,15 @@ class Mailer {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
@@ -28,6 +34,7 @@ class Mailer {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `module.mailer.api.sendmessage` event.
          * Occurs when a new message should be sent.
@@ -42,8 +49,13 @@ class Mailer {
          * This is a notifyUntil event so the event must `$event->stop«IF !targets('1.3.x')»Propagation«ENDIF»()` and set any
          * return data into `$event->data`, or `$event->setData()`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function sendMessage«IF !targets('1.3.x')»Start«ENDIF»(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -54,6 +66,7 @@ class Mailer {
         }
         «IF !targets('1.3.x')»
 
+            «IF isBase»
             /**
              * Listener for the `module.mailer.api.perform` event.
              * Occurs right before a message is sent.
@@ -63,8 +76,13 @@ class Mailer {
              * This is a notifyUntil event so the event must `$event->stopPropagation()` and set any
              * return data into `$event->data`, or `$event->setData()`.
              *
-             * @param GenericEvent $event The event instance.
+             * @param GenericEvent $event The event instance
              */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public function sendMessagePerform(GenericEvent $event)
             {
                 «IF !isBase»
@@ -74,14 +92,20 @@ class Mailer {
                 «ENDIF»
             }
 
+            «IF isBase»
             /**
              * Listener for the `module.mailer.api.success` event.
              * Occurs after a message has been sent successfully.
              *
              * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
              *
-             * @param GenericEvent $event The event instance.
+             * @param GenericEvent $event The event instance
              */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public function sendMessageSuccess(GenericEvent $event)
             {
                 «IF !isBase»
@@ -91,14 +115,20 @@ class Mailer {
                 «ENDIF»
             }
 
+            «IF isBase»
             /**
              * Listener for the `module.mailer.api.failure` event.
              * Occurs when a message could not be sent.
              *
              * Invoked from `Zikula\MailerModule\Api\MailerApi#performSending`.
              *
-             * @param GenericEvent $event The event instance.
+             * @param GenericEvent $event The event instance
              */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public function sendMessageFailure(GenericEvent $event)
             {
                 «IF !isBase»

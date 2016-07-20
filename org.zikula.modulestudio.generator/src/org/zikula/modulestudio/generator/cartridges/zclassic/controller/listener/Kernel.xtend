@@ -12,10 +12,15 @@ class Kernel {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
@@ -34,6 +39,7 @@ class Kernel {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `kernel.request` event.
          *
@@ -45,8 +51,13 @@ class Kernel {
          *
          * Example from Symfony: the RouterListener determines controller and information about arguments.
          *
-         * @param GetResponseEvent $event The event instance.
+         * @param GetResponseEvent $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public function onRequest(GetResponseEvent $event)
         {
             «IF !isBase»
@@ -64,6 +75,7 @@ class Kernel {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `kernel.controller` event.
          *
@@ -74,8 +86,13 @@ class Kernel {
          *
          * Example from Symfony: the ParamConverterListener performs reflection and type conversion.
          *
-         * @param FilterControllerEvent $event The event instance.
+         * @param FilterControllerEvent $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public function onController(FilterControllerEvent $event)
         {
             «IF !isBase»
@@ -105,6 +122,7 @@ class Kernel {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `kernel.view` event.
          *
@@ -116,8 +134,13 @@ class Kernel {
          *
          * Example from Symfony: TemplateListener renders Twig templates with returned arrays.
          *
-         * @param GetResponseForControllerResultEvent $event The event instance.
+         * @param GetResponseForControllerResultEvent $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public function onView(GetResponseForControllerResultEvent $event)
         {
             «IF !isBase»
@@ -135,6 +158,7 @@ class Kernel {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `kernel.response` event.
          *
@@ -151,8 +175,13 @@ class Kernel {
          *    - WebDebugToolbarListener: injects the web debug toolbar
          *    - ResponseListener: updates the content type according to the request format
          *
-         * @param FilterResponseEvent $event The event instance.
+         * @param FilterResponseEvent $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public function onResponse(FilterResponseEvent $event)
         {
             «IF !isBase»
@@ -169,6 +198,7 @@ class Kernel {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `kernel.finish_request` event.
          *
@@ -177,8 +207,13 @@ class Kernel {
          *
          * You can cleanup things here which are not directly related to the response.
          *
-         * @param FinishRequestEvent $event The event instance.
+         * @param FinishRequestEvent $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public function onFinishRequest(FinishRequestEvent $event)
         {
             «IF !isBase»
@@ -188,6 +223,7 @@ class Kernel {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `kernel.terminate` event.
          *
@@ -199,8 +235,13 @@ class Kernel {
          * Example from Symfony: SwiftmailerBundle with memory spooling activates an
          * EmailSenderListener which delivers emails created during the request.
          *
-         * @param PostResponseEvent $event The event instance.
+         * @param PostResponseEvent $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public function onTerminate(PostResponseEvent $event)
         {
             «IF !isBase»
@@ -210,6 +251,7 @@ class Kernel {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `kernel.exception` event.
          *
@@ -218,8 +260,13 @@ class Kernel {
          *
          * You can inject custom error handling for specific error types.
          *
-         * @param GetResponseForExceptionEvent $event The event instance.
+         * @param GetResponseForExceptionEvent $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public function onException(GetResponseForExceptionEvent $event)
         {
             «IF !isBase»

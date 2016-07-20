@@ -8,6 +8,7 @@ class ErrorsLegacy {
     CommonExample commonExample = new CommonExample()
 
     def generate(Application it, Boolean isBase) '''
+        «IF isBase»
         /**
          * Listener for the `setup.errorreporting` event.
          *
@@ -15,8 +16,13 @@ class ErrorsLegacy {
          * Used to activate `set_error_handler()`.
          * Event must `stop()`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param Zikula_Event $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public static function setupErrorReporting(Zikula_Event $event)
         {
             «IF !isBase»
@@ -26,14 +32,20 @@ class ErrorsLegacy {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `systemerror` event.
          *
          * Invoked on any system error.
          * args gets `array('errorno' => $errno, 'errstr' => $errstr, 'errfile' => $errfile, 'errline' => $errline, 'errcontext' => $errcontext)`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param Zikula_Event $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public static function systemError(Zikula_Event $event)
         {
             «IF !isBase»

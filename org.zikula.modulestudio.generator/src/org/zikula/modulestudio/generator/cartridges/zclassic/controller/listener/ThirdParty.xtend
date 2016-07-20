@@ -22,9 +22,15 @@ class ThirdParty {
     def generate(Application it, Boolean isBase) '''
         «val needsDetailContentType = generateDetailContentType && hasUserController && getMainUserController.hasActions('display')»
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
@@ -59,6 +65,7 @@ class ThirdParty {
     '''
 
     def private pendingContentListener(Application it, Boolean isBase) '''
+        «IF isBase»
         /**
          * Listener for the 'get.pending_content' event with registration requests and
          * other submitted data pending approval.
@@ -80,8 +87,13 @@ class ThirdParty {
          * assemped as a {@link Zikula_Provider_AggregateItem} and added to the event
          * subject's collection.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function pendingContentListener(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -136,6 +148,7 @@ class ThirdParty {
     '''
 
     def private contentGetTypes(Application it, Boolean isBase) '''
+        «IF isBase»
         /**
          * Listener for the `module.content.gettypes` event.
          *
@@ -143,8 +156,13 @@ class ThirdParty {
          * The subject is an instance of Content_Types.
          * You can register custom content types as well as custom layout types.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function contentGetTypes(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -174,14 +192,20 @@ class ThirdParty {
     '''
 
     def private getEditorHelpers(Application it, Boolean isBase) '''
+        «IF isBase»
         /**
          * Listener for the `module.scribite.editorhelpers` event.
          *
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function getEditorHelpers(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -208,13 +232,19 @@ class ThirdParty {
     '''
 
     def private getTinyMcePlugins(Application it, Boolean isBase) '''
+        «IF isBase»
         /**
          * Listener for the `moduleplugin.tinymce.externalplugins` event.
          *
          * Adds external plugin to TinyMCE.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function getTinyMcePlugins(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -240,13 +270,19 @@ class ThirdParty {
     '''
 
     def private getCKEditorPlugins(Application it, Boolean isBase) '''
+        «IF isBase»
         /**
          * Listener for the `moduleplugin.ckeditor.externalplugins` event.
          *
          * Adds external plugin to CKEditor.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function getCKEditorPlugins(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»

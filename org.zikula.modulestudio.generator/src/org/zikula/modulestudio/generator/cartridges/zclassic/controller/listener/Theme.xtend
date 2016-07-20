@@ -10,9 +10,15 @@ class Theme {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
@@ -29,6 +35,7 @@ class Theme {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `theme.preinit` event.
          *
@@ -40,8 +47,13 @@ class Theme {
             «' '»* Note that Zikula_View_Theme is deprecated and being replaced by Twig.
         «ENDIF»
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function preInit(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -51,6 +63,7 @@ class Theme {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `theme.init` event.
          *
@@ -61,8 +74,13 @@ class Theme {
             «' '»* Note that Zikula_View_Theme is deprecated and being replaced by Twig.
         «ENDIF»
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function init(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -72,14 +90,20 @@ class Theme {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `theme.load_config` event.
          *
          * Runs just before `Theme#load_config()` completed.
          * Subject is the Theme instance.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function loadConfig(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -89,6 +113,7 @@ class Theme {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `theme.prefetch` event.
          *
@@ -96,8 +121,13 @@ class Theme {
          * The event subject is `$this` (Theme instance) and has $maincontent as the event data
          * which you can modify with `$event->setData()` in the event handler.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function preFetch(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -107,6 +137,7 @@ class Theme {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `theme.postfetch` event.
          *
@@ -114,8 +145,13 @@ class Theme {
          * The event subject is `$this` (Theme instance) and the event data is the rendered
          * output which you can modify with `$event->setData()` in the event handler.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function postFetch(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»

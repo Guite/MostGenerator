@@ -10,9 +10,15 @@ class Group {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
@@ -29,15 +35,20 @@ class Group {
             }
 
         «ENDIF»
-
+        «IF isBase»
         /**
          * Listener for the `group.create` event.
          *
          * Occurs after a group is created. All handlers are notified.
          * The full group record created is available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function create(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -47,14 +58,20 @@ class Group {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `group.update` event.
          *
          * Occurs after a group is updated. All handlers are notified.
          * The full updated group record is available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function update(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -64,15 +81,20 @@ class Group {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `group.delete` event.
          *
-         * Occurs after a group is deleted from the system.
-         * All handlers are notified.
+         * Occurs after a group is deleted from the system. All handlers are notified.
          * The full group record deleted is available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function delete(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -82,16 +104,21 @@ class Group {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `group.adduser` event.
          *
-         * Occurs after a user is added to a group.
-         * All handlers are notified.
+         * Occurs after a user is added to a group. All handlers are notified.
          * It does not apply to pending membership requests.
          * The uid and gid are available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function addUser(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -101,15 +128,20 @@ class Group {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `group.removeuser` event.
          *
-         * Occurs after a user is removed from a group.
-         * All handlers are notified.
+         * Occurs after a user is removed from a group. All handlers are notified.
          * The uid and gid are available as the subject.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function removeUser(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»

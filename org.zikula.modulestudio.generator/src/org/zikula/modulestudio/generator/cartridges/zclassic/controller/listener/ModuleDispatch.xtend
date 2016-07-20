@@ -31,14 +31,20 @@ class ModuleDispatch {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `module_dispatch.postloadgeneric` event.
          *
          * Called after a module api or controller has been loaded.
          * Receives the args `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api«IF targets('1.3.x')»)«ELSE»]«ENDIF»`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function postLoadGeneric(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -48,6 +54,7 @@ class ModuleDispatch {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `module_dispatch.preexecute` event.
          *
@@ -62,8 +69,13 @@ class ModuleDispatch {
          *      «IF targets('1.3.x')»)«ELSE»]«ENDIF»`
          * .
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function preExecute(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -73,6 +85,7 @@ class ModuleDispatch {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `module_dispatch.postexecute` event.
          *
@@ -89,8 +102,13 @@ class ModuleDispatch {
          * Receives the modules output with `$event->getData();`.
          * Can modify this output with `$event->setData($data);`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function postExecute(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -100,6 +118,7 @@ class ModuleDispatch {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `module_dispatch.custom_classname` event.
          *
@@ -109,8 +128,13 @@ class ModuleDispatch {
          * Receives no subject, args of `«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api«IF targets('1.3.x')»)«ELSE»]«ENDIF»`
          * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stop«IF !targets('1.3.x')»Propagation«ENDIF»()`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function customClassname(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -120,6 +144,7 @@ class ModuleDispatch {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `module_dispatch.service_links` event.
          *
@@ -127,8 +152,13 @@ class ModuleDispatch {
          * Adds sublinks to a Services menu that is appended to all modules if populated.
          * Triggered by module_dispatch.postexecute in bootstrap.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function serviceLinks(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»

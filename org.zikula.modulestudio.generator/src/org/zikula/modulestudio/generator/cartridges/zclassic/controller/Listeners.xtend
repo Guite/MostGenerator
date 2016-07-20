@@ -352,6 +352,9 @@ class Listeners {
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            «IF isBase»
+                use Zikula\UsersModule\AccessEvents;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -377,6 +380,9 @@ class Listeners {
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            «IF isBase»
+                use Zikula\UsersModule\AccessEvents;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -402,11 +408,14 @@ class Listeners {
                 «IF hasStandardFieldEntities || hasUserFields»
                     use ServiceUtil;
                 «ENDIF»
-                use UserUtil;
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Symfony\Component\HttpKernel\HttpKernelInterface;
+                use UserUtil;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            «IF isBase»
+                use Zikula\UsersModule\UserEvents;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -432,6 +441,9 @@ class Listeners {
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            «IF isBase»
+                use Zikula\UsersModule\RegistrationEvents;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -457,6 +469,9 @@ class Listeners {
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            «IF isBase»
+                use Zikula\UsersModule\UserEvents;
+            «ENDIF»
 
         «ENDIF»
         /**

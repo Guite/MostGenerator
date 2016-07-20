@@ -21,17 +21,23 @@ class User {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
                     return [
-                        'user.gettheme'       => ['getTheme', 5],
-                        'user.account.create' => ['create', 5],
-                        'user.account.update' => ['update', 5],
-                        'user.account.delete' => ['delete', 5]
+                        'user.gettheme'            => ['getTheme', 5],
+                        UserEvents::CREATE_ACCOUNT => ['create', 5],
+                        UserEvents::UPDATE_ACCOUNT => ['update', 5],
+                        UserEvents::DELETE_ACCOUNT => ['delete', 5]
                     ];
                 «ELSE»
                     return parent::getSubscribedEvents();
@@ -39,6 +45,7 @@ class User {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `user.gettheme` event.
          *
@@ -47,8 +54,13 @@ class User {
          * and the $themeName in the $event->data which can be modified.
          * Must $event->stop«IF !targets('1.3.x')»Propagation«ENDIF»() if handler performs filter.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function getTheme(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -58,6 +70,7 @@ class User {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `user.account.create` event.
          *
@@ -67,8 +80,13 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function create(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -78,6 +96,7 @@ class User {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `user.account.update` event.
          *
@@ -86,8 +105,13 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record, with the updated values.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function update(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -97,17 +121,25 @@ class User {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `user.account.delete` event.
          *
-         * Occurs after a user is deleted from the system.
-         * All handlers are notified.
-         * The full user record deleted is available as the subject.
+        «IF targets('1.3.x')»
+            «' '»* Occurs after a user is deleted from the system. All handlers are notified.
+            «' '»* The full user record deleted is available as the subject.
+        «ELSE»
+            «' '»* Occurs after the deletion of a user account. Subject is $uid.
+        «ENDIF»
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
-         * The subject of the event is set to the user record that is being deleted.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function delete(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -119,9 +151,12 @@ class User {
                     «IF targets('1.3.x')»
                         ModUtil::initOOModule('«appName»');
 
+                        $userRecord = $event->getSubject();
+                        $uid = $userRecord['uid'];
+                    «ELSE»
+                        $uid = $event->getSubject();
                     «ENDIF»
-                    $userRecord = $event->getSubject();
-                    $uid = $userRecord['uid'];
+
                     $serviceManager = ServiceUtil::getManager();
                     $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»

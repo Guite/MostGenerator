@@ -10,10 +10,15 @@ class Core {
 
     def generate(Application it, Boolean isBase) '''
         «IF !targets('1.3.x')»
-
-            /**
-             * Makes our handlers known to the event system.
-             */
+            «IF isBase»
+                /**
+                 * Makes our handlers known to the event system.
+                 */
+            «ELSE»
+                /**
+                 * {@inheritdoc}
+                 */
+            «ENDIF»
             public static function getSubscribedEvents()
             {
                 «IF isBase»
@@ -30,6 +35,7 @@ class Core {
             }
 
         «ENDIF»
+        «IF isBase»
         /**
          * Listener for the `api.method_not_found` event.
          *
@@ -41,8 +47,13 @@ class Core {
          * Must exit if $event['method'] does not match whatever the handler expects.
          * Modify $event->data and $event->stop«IF !targets('1.3.x')»Propagation«ENDIF»().
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function apiMethodNotFound(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -52,13 +63,19 @@ class Core {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `core.preinit` event.
          *
          * Occurs after the config.php is loaded.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function preInit(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -68,14 +85,20 @@ class Core {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `core.init` event.
          *
          * Occurs after each `System::init()` stage, `$event['stage']` contains the stage.
          * To check if the handler should execute, do `if($event['stage'] & System::CORE_STAGES_*)`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function init(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -85,13 +108,19 @@ class Core {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `core.postinit` event.
          *
          * Occurs just before System::init() exits from normal execution.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function postInit(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
@@ -101,6 +130,7 @@ class Core {
             «ENDIF»
         }
 
+        «IF isBase»
         /**
          * Listener for the `controller.method_not_found` event.
          *
@@ -112,8 +142,13 @@ class Core {
          * Must exit if `$event['method']` does not match whatever the handler expects.
          * Modify `$event->data` and `$event->stop«IF !targets('1.3.x')»Propagation«ENDIF»()`.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
          */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
         public «IF targets('1.3.x')»static «ENDIF»function controllerMethodNotFound(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
