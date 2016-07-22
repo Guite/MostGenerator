@@ -709,11 +709,8 @@ class ModelExtensions {
             BooleanField: 'boolean'
             AbstractIntegerField: {
                     // choose mapping type depending on length
-                    // a SMALLINT ranges up to 32767 and is therefore not appropriate for 5 digits
-                    // an INT ranges up to 2147483647 and is therefore good for up to 9 digits
-                    // maximal length of 18 is enforced in model validation
                     if (it.length < 5) 'smallint'
-                    else if (it.length < 10) 'integer'
+                    else if (it.length < 11) 'integer'
                     else 'bigint'
             }
             DecimalField: 'decimal'
