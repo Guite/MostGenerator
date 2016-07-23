@@ -710,7 +710,7 @@ class ModelExtensions {
             AbstractIntegerField: {
                     // choose mapping type depending on length
                     if (it.length < 5) 'smallint'
-                    else if (it.length < 11) 'integer'
+                    else if (it.length < 12) 'integer'
                     else 'bigint'
             }
             DecimalField: 'decimal'
