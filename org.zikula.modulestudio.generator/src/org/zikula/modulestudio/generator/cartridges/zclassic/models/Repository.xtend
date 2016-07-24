@@ -901,22 +901,22 @@ class Repository {
          */
         public function addCommonViewFilters(QueryBuilder $qb)
         {
-            «IF app.targets('1.3.x')»
-                $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
-            «ELSE»
-                $currentFunc = $this->request->query->getAlpha('func', 'index');
-            «ENDIF»
-            if ($currentFunc == 'edit') {«/* fix for #547 */»
-                return $qb;
-            }
-
             «IF !app.targets('1.3.x')»
-                if ($this->getRequest() === null) {
+                if (null === $this->getRequest()) {
                     // if no request is set we return (#433)
                     return $qb;
                 }
 
             «ENDIF»
+            «IF app.targets('1.3.x')»
+                $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+            «ELSE»
+                $currentFunc = $this->getRequest()->query->getAlpha('func', 'index');
+            «ENDIF»
+            if ($currentFunc == 'edit') {«/* fix for #547 */»
+                return $qb;
+            }
+
             $parameters = $this->getViewQuickNavParameters('', «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»);
             foreach ($parameters as $k => $v) {
                 if ($k == 'catId') {

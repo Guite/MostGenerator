@@ -114,8 +114,7 @@ class UploadTypeExtension {
                         'allowed_size' => 0
                     ])
                     ->setAllowedTypes([
-                        'file_meta' => 'array',
-                        'file_path' => 'string',
+                        «/* disabled because of #753 'file_meta' => 'array', */»'file_path' => 'string',
                         'file_url' => 'string',
                         'allowed_extensions' => 'string',
                         'allowed_size' => 'int'
