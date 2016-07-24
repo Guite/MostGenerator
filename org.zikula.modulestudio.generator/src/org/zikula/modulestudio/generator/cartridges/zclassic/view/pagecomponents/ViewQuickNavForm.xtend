@@ -278,7 +278,7 @@ class ViewQuickNavForm {
                 {/php}
             {/if}
         «ELSE»
-            {% if «sourceName»Filter not defined or «sourceName»Filter == true %}
+            {% if «sourceName»Filter is not defined or «sourceName»Filter == true %}
                 {{ form_row(quickNavForm.«sourceName») }}
             {% endif %}
         «ENDIF»

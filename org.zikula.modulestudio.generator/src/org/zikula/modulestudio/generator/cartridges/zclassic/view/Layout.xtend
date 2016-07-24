@@ -211,7 +211,7 @@ class Layout {
                         {{ __('Current file') }}:
                         <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="lightbox"{% endif %}>
                         {% if file_meta.isImage %}
-                            {{ «appName.formatForDB»_thumb({ image: file_path, objectid: object_type ~ object_id, preset: template_from_string("{{ object_type }}ThumbPreset{{ id|capitalize }}"), tag: true, img_alt: formattedEntityTitle, img_class: 'img-thumbnail' }) }}
+                            {{ «appName.formatForDB»_thumb({ image: file_path, objectid: object_type ~ object_id, preset: object_type ~ 'ThumbPreset' ~ id|capitalize, tag: true, img_alt: formattedEntityTitle, img_class: 'img-thumbnail' }) }}
                         {% else %}
                             {{ __('Download') }} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
                         {% endif %}
