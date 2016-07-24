@@ -217,9 +217,9 @@ class Layout {
                         {% endif %}
                         </a>
                     </span>
-                {% endif %}
-                {% if not mandatory %}
-                    {{ form_row(attribute(form, id ~ 'DeleteFile')) }}
+                    {% if not mandatory %}
+                        {{ form_row(attribute(form, id ~ 'DeleteFile')) }}
+                    {% endif %}
                 {% endif %}
 
                 {% endspaceless %}
