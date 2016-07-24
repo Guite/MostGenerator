@@ -279,7 +279,7 @@ class ViewQuickNavForm {
             {/if}
         «ELSE»
             {% if «sourceName»Filter is not defined or «sourceName»Filter == true %}
-                {{ form_row(quickNavForm.«sourceName») }}
+                {{ form_row(quickNavForm.«sourceAliasName») }}
             {% endif %}
         «ENDIF»
     '''
