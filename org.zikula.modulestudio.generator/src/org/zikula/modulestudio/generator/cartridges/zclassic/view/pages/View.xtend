@@ -645,7 +645,7 @@ class View {
     }
 
     def private dispatch displayEntryInner(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (!useTarget) target else source) as Entity»
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»

@@ -157,7 +157,7 @@ class Xml {
     '''
 
     def private displayRelatedEntry(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val relObjName = (if (useTarget) source else target).name.formatForCode + '.' + relationAliasName»
         «IF application.targets('1.3.x')»
             <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName»->getTitleFromDisplayPattern()|default:''}{/if}</«relationAliasName.toFirstLower»>
@@ -167,7 +167,7 @@ class Xml {
     '''
 
     def private displayRelatedEntries(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val relObjName = (if (useTarget) source else target).name.formatForCode + '.' + relationAliasName»
         «val linkEntity = (if (useTarget) target else source)»
         <«relationAliasName.toFirstLower»>

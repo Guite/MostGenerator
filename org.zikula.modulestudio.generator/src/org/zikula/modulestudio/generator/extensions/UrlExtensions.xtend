@@ -125,9 +125,9 @@ class UrlExtensions {
         if (hasSluggableFields) {
             if (template) {
                 if (application.targets('1.3.x')) {
-                    ''', 'slug': «objName».slug'''
-                } else {
                     ''' slug=$«objName».slug'''
+                } else {
+                    ''', 'slug': «objName».slug'''
                 }
             } else {
                 ''', 'slug' => $«objName»['slug']'''
@@ -163,7 +163,7 @@ class UrlExtensions {
                     + tail.routeParamsForTemplate(objName)
             } else {
                 '\'' + head.name.formatForCode + '\': ' + objName + '.' + head.name.formatForCode
-                    + (if (!empty) ', ' else '')
+                    + (if (size > 1) ', ' else '')
                     + tail.routeParamsForTemplate(objName)
             }
         }

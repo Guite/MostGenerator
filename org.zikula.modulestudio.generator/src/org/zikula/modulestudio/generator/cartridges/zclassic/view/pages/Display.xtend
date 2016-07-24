@@ -287,7 +287,7 @@ class Display {
     }
 
     def private displayEntry(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (useTarget) source else target) as Entity»
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»

@@ -87,13 +87,13 @@ class Csv {
         "«IF entity.application.targets('1.3.x')»{if !$«entity.name.formatForCode».«name.formatForCode»}0{else}1{/if}«ELSE»{% if not «entity.name.formatForCode».«name.formatForCode» %}0{% else %}1{% endif %}«ENDIF»"'''
 
     def private displayRelatedEntry(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (!useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         ;"«IF application.targets('1.3.x')»{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName»->getTitleFromDisplayPattern()|default:''}{/if}«ELSE»{% if «relObjName»|default %}{{ «relObjName».getTitleFromDisplayPattern() }}{% endif %}«ENDIF»"'''
 
     def private displayRelatedEntries(JoinRelationship it, Boolean useTarget) '''
-        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCode»
         «val mainEntity = (if (!useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         ;"
