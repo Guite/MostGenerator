@@ -38,6 +38,7 @@ class BlockList {
 
             use ModUtil;
             use Zikula\BlocksModule\AbstractBlockHandler;
+            use Zikula\Core\AbstractBundle;
 
         «ENDIF»
         /**
