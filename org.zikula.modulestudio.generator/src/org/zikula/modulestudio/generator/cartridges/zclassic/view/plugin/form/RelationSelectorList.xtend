@@ -47,8 +47,8 @@ class RelationSelectorList {
             /**
              * Load event handler.
              *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
+             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+             * @param array            &$params Parameters passed from the Smarty plugin function
              *
              * @return void
              */
@@ -74,7 +74,7 @@ class RelationSelectorList {
             /**
              * Decode event handler.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
              *
              * @return void
              */
@@ -102,10 +102,10 @@ class RelationSelectorList {
         /**
          * The «appName.formatForDB»RelationSelectorList plugin provides a dropdown selector for related items.
          *
-         * @param  array            $params All attributes passed to this function from the template.
-         * @param  Zikula_Form_View $view   Reference to the view object.
+         * @param  array            $params All attributes passed to this function from the template
+         * @param  Zikula_Form_View $view   Reference to the view object
          *
-         * @return string The output of the plugin.
+         * @return string The output of the plugin
          */
         function smarty_function_«appName.formatForDB»RelationSelectorList($params, $view)
         {

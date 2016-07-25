@@ -58,7 +58,7 @@ class Newsletter {
         /**
          * Returns a title being used in the newsletter. Should be short.
          *
-         * @return string Title in newsletter.
+         * @return string Title in newsletter
          */
         public function getTitle()
         {
@@ -74,7 +74,7 @@ class Newsletter {
         /**
          * Returns a display name for the admin interface.
          *
-         * @return string Display name in admin area.
+         * @return string Display name in admin area
          */
         public function getDisplayName()
         {
@@ -90,7 +90,7 @@ class Newsletter {
         /**
          * Returns a description for the admin interface.
          *
-         * @return string Description in admin area.
+         * @return string Description in admin area
          */
         public function getDescription()
         {
@@ -107,7 +107,7 @@ class Newsletter {
          * Determines whether this plugin is active or not.
          * An inactive plugin is not shown in the newsletter.
          *
-         * @return boolean Whether the plugin is available or not.
+         * @return boolean Whether the plugin is available or not
          */
         public function pluginAvailable()
         {
@@ -117,7 +117,7 @@ class Newsletter {
         /**
          * Returns custom plugin variables.
          *
-         * @return array List of variables.
+         * @return array List of variables
          */
         public function getParameters()
         {
@@ -174,7 +174,7 @@ class Newsletter {
          *
          * @param datetime $filtAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
-         * @return array List of affected content items.
+         * @return array List of affected content items
          */
         public function getPluginData($filtAfterDate = null)
         {
@@ -206,7 +206,7 @@ class Newsletter {
          *
          * @param datetime $filtAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
-         * @return array Data grouped by object type.
+         * @return array Data grouped by object type
          */
         protected function getItemsPerObjectType($filtAfterDate = null)
         {
@@ -239,10 +239,10 @@ class Newsletter {
         /**
          * Performs the internal data selection.
          *
-         * @param array    $args          Arguments array (contains object type).
+         * @param array    $args          Arguments array (contains object type)
          * @param datetime $filtAfterDate Optional date filter (items should be newer), format yyyy-mm-dd hh:mm:ss or null if not set
          *
-         * @return array List of selected items.
+         * @return array List of selected items
          */
         protected function selectPluginData($args, $filtAfterDate = null)
         {
@@ -323,10 +323,10 @@ class Newsletter {
         /**
          * Determines the order by parameter for item selection.
          *
-         * @param array               $args       List of plugin variables.
-         * @param Doctrine_Repository $repository The repository used for data fetching.
+         * @param array               $args       List of plugin variables
+         * @param Doctrine_Repository $repository The repository used for data fetching
          *
-         * @return string the sorting clause.
+         * @return string the sorting clause
          */
         protected function getSortParam($args, $repository)
         {

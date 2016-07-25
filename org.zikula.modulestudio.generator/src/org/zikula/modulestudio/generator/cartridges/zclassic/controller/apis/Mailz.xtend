@@ -46,9 +46,9 @@ class Mailz {
         /**
          * Returns existing Mailz plugins with type / title.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
-         * @return array List of provided plugin functions.
+         * @return array List of provided plugin functions
          */
         public function getPlugins(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -77,14 +77,14 @@ class Mailz {
         /**
          * Returns the content for a given Mailz plugin.
          *
-         * @param array    $args                List of arguments.
-         * @param int      $args['pluginid']    id number of plugin (internal id for this module, see getPlugins method).
-         * @param string   $args['params']      optional, show specific one or all otherwise.
-         * @param int      $args['uid']         optional, user id for user specific content.
-         * @param string   $args['contenttype'] h or t for html or text.
-         * @param datetime $args['last']        timestamp of last newsletter.
+         * @param array    $args                List of arguments
+         * @param int      $args['pluginid']    id number of plugin (internal id for this module, see getPlugins method)
+         * @param string   $args['params']      optional, show specific one or all otherwise
+         * @param int      $args['uid']         optional, user id for user specific content
+         * @param string   $args['contenttype'] h or t for html or text
+         * @param datetime $args['last']        timestamp of last newsletter
          *
-         * @return string output of plugin template.
+         * @return string output of plugin template
          */
         public function getContent(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {

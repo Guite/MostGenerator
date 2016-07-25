@@ -70,7 +70,7 @@ class FormLegacy {
              */
             protected $hasMetaData = false;
         «ENDIF»
-         «IF hasUserFields»
+        «IF hasUserFields»
 
              /**
               * Array with user field names and mandatory flags.
@@ -78,8 +78,8 @@ class FormLegacy {
               * @var array
               */
              protected $userFields = array();
-         «ENDIF»
-         «IF hasListFields»
+        «ENDIF»
+        «IF hasListFields»
 
              /**
               * Array with list field names and multiple flags.
@@ -87,7 +87,7 @@ class FormLegacy {
               * @var array
               */
              protected $listFields = array();
-         «ENDIF»
+        «ENDIF»
     '''
 
     def stubs() '''
@@ -223,8 +223,8 @@ class FormLegacy {
         «' '»* value indicating the name of the command. The command name is normally specified by the plugin
         «' '»* that initiated the command.
         «' '»*
-        «' '»* @param Zikula_Form_View $view The form view instance.
-        «' '»* @param array            $args Additional arguments.
+        «' '»* @param Zikula_Form_View $view The form view instance
+        «' '»* @param array            $args Additional arguments
         «' '»*
         «' '»* @see Zikula_Form_Plugin_Button
         «' '»* @see Zikula_Form_Plugin_ImageButton
@@ -271,11 +271,11 @@ class FormLegacy {
         /**
          * Updates the entity with new relationship data.
          *
-         * @param Zikula_Form_View    $view       The form view instance.
-         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
-         * @param array               $entityData Entity related form data.
+         * @param Zikula_Form_View    $view       The form view instance
+         * @param Zikula_EntityAccess $entity     Reference to the updated entity
+         * @param array               $entityData Entity related form data
          *
-         * @return array form data after processing.
+         * @return array Form data after processing
          */
         protected function writeRelationDataToEntity(Zikula_Form_View $view, $entity, $entityData)
         {
@@ -288,11 +288,11 @@ class FormLegacy {
          * Searches for relationship plugins to write their updated values
          * back to the given entity.
          *
-         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
-         * @param array               $entityData Entity related form data.
-         * @param array               $plugins    List of form plugin which are searched.
+         * @param Zikula_EntityAccess $entity     Reference to the updated entity
+         * @param array               $entityData Entity related form data
+         * @param array               $plugins    List of form plugin which are searched
          *
-         * @return array form data after processing.
+         * @return array Form data after processing
          */
         protected function writeRelationDataToEntity_rec($entity, $entityData, $plugins)
         {
@@ -311,7 +311,7 @@ class FormLegacy {
         /**
          * Persists any related items.
          *
-         * @param Zikula_Form_View $view The form view instance.
+         * @param Zikula_Form_View $view The form view instance
          */
         protected function persistRelationData(Zikula_Form_View $view)
         {
@@ -336,8 +336,8 @@ class FormLegacy {
         /**
          * Prepare update of meta data.
          *
-         * @param Zikula_EntityAccess $entity   currently treated entity instance.
-         * @param Array               $formData form data to be merged.
+         * @param Zikula_EntityAccess $entity   currently treated entity instance
+         * @param Array               $formData form data to be merged
          */
         protected function processMetaDataForUpdate($entity, $formData)
         {

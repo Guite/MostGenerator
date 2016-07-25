@@ -51,7 +51,7 @@ class EntityMetaData {
             /**
              * EntityMetaDataType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function __construct(TranslatorInterface $translator)
             {

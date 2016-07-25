@@ -48,7 +48,7 @@ class MultiListType {
             /**
              * MultiListType constructor.
              *
-             * @param ListEntriesHelper $listHelper ListEntriesHelper service instance.
+             * @param ListEntriesHelper $listHelper ListEntriesHelper service instance
              */
             public function __construct(ListEntriesHelper $listHelper)
             {

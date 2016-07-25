@@ -57,7 +57,7 @@ class Finder {
             /**
              * «name.formatForCodeCapital»FinderType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function __construct(TranslatorInterface $translator)
             {
@@ -67,7 +67,7 @@ class Finder {
             /**
              * Sets the translator.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function setTranslator(/*TranslatorInterface */$translator)
             {
@@ -173,8 +173,8 @@ class Finder {
         /**
          * Adds a categories field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
@@ -199,8 +199,8 @@ class Finder {
         /**
          * Adds a "paste as" field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addPasteAsField(FormBuilderInterface $builder, array $options)
         {
@@ -225,8 +225,8 @@ class Finder {
         /**
          * Adds sorting fields.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addSortingFields(FormBuilderInterface $builder, array $options)
         {
@@ -275,8 +275,8 @@ class Finder {
         /**
          * Adds a page size field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
@@ -307,8 +307,8 @@ class Finder {
         /**
          * Adds a search field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addSearchField(FormBuilderInterface $builder, array $options)
         {

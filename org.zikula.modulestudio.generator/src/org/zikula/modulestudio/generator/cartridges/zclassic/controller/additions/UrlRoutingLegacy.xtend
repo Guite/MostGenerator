@@ -170,8 +170,8 @@ class UrlRoutingLegacy {
         /**
          * Get name of grouping folder for given object type and function.
          *
-         * @param string $objectType Name of treated entity type.
-         * @param string $func       Name of function.
+         * @param string $objectType Name of treated entity type
+         * @param string $func       Name of function
          *
          * @return string Name of the group folder
          */
@@ -200,10 +200,10 @@ class UrlRoutingLegacy {
         /**
          * Get name of object type based on given grouping folder.
          *
-         * @param string $groupFolder Name of group folder.
-         * @param string $func        Name of function.
+         * @param string $groupFolder Name of group folder
+         * @param string $func        Name of function
          *
-         * @return string Name of the object type.
+         * @return string Name of the object type
          */
         public function getObjectTypeFromGroupingFolder($groupFolder, $func)
         {
@@ -242,12 +242,12 @@ class UrlRoutingLegacy {
         /**
          * Get permalink value based on slug properties.
          *
-         * @param string  $objectType Name of treated entity type.
-         * @param string  $func       Name of function.
-         * @param array   $args       Additional parameters.
-         * @param integer $itemid     Identifier of treated item.
+         * @param string  $objectType Name of treated entity type
+         * @param string  $func       Name of function
+         * @param array   $args       Additional parameters
+         * @param integer $itemid     Identifier of treated item
          *
-         * @return string The resulting url ending.
+         * @return string The resulting url ending
          */
         public function getFormattedSlug($objectType, $func, $args, $itemid)
         {

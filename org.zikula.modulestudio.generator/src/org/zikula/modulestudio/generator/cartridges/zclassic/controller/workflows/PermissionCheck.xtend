@@ -73,12 +73,12 @@ class PermissionCheck {
          * This function allows to calculate complex permission checks.
          * It receives the object the workflow engine is being asked to process and the permission level the action requires.
          *
-         * @param array  $obj         The currently treated object.
-         * @param int    $permLevel   The required workflow permission level.
-         * @param int    $currentUser Id of current user.
-         * @param string $actionId    Id of the workflow action to be executed.
+         * @param array  $obj         The currently treated object
+         * @param int    $permLevel   The required workflow permission level
+         * @param int    $currentUser Id of current user
+         * @param string $actionId    Id of the workflow action to be executed
          *
-         * @return bool Whether the current user is allowed to execute the action or not.
+         * @return bool Whether the current user is allowed to execute the action or not
          */
         function «app.appName»_workflow_«wfType.textualName»_permissioncheck($obj, $permLevel, $currentUser, $actionId)
         {

@@ -29,9 +29,9 @@ class GetCountryName {
          * Example:
          *     «IF targets('1.3.x')»{'de'|«appName.formatForDB»GetCountryName}«ELSE»{{ 'de'|«appName.formatForDB»_countryName }}«ENDIF»
          *
-         * @param string $countryCode The country code to process.
+         * @param string $countryCode The country code to process
          *
-         * @return string Country name.
+         * @return string Country name
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»G«ELSE»g«ENDIF»etCountryName($countryCode)
         {

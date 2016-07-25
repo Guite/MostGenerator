@@ -44,9 +44,9 @@ class Selection {
         /**
          * Gets the list of identifier fields for a given object type.
          *
-         * @param string $args['ot'] The object type to be treated (optional).
+         * @param string $args['ot'] The object type to be treated (optional)
          *
-         * @return array List of identifier field names.
+         * @return array List of identifier field names
          */
         public function getIdFields(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -74,9 +74,9 @@ class Selection {
         /**
          * Checks whether a certain entity type uses composite keys or not.
          *
-         * @param string $objectType The object type to retrieve.
+         * @param string $objectType The object type to retrieve
          *
-         * @return boolean Whether composite keys are used or not.
+         * @return boolean Whether composite keys are used or not
          */
         protected function hasCompositeKeys($objectType)
         {
@@ -92,15 +92,15 @@ class Selection {
         /**
          * Selects a single entity.
          *
-         * @param string  $args['ot']       The object type to retrieve (optional).
-         * @param mixed   $args['id']       The id (or array of ids) to use to retrieve the object (default=null).
+         * @param string  $args['ot']       The object type to retrieve (optional)
+         * @param mixed   $args['id']       The id (or array of ids) to use to retrieve the object (default=null)
          «IF hasSluggable»
-          * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null).
+          * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null)
          «ENDIF»
-         * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
-         * @param boolean $args['slimMode'] If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true)
+         * @param boolean $args['slimMode'] If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return mixed Desired entity object or null.
+         * @return mixed Desired entity object or null
          */
         public function getEntity(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -139,14 +139,14 @@ class Selection {
         /**
          * Selects a list of entities by different criteria.
          *
-         * @param string  $args['ot']       The object type to retrieve (optional).
-         * @param string  $args['idList']   A list of ids to select (optional) (default=«IF targets('1.3.x')»array()«ELSE»[]«ENDIF»).
-         * @param string  $args['where']    The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $args['orderBy']  The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
-         * @param boolean $args['slimMode'] If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param string  $args['ot']       The object type to retrieve (optional)
+         * @param string  $args['idList']   A list of ids to select (optional) (default=«IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+         * @param string  $args['where']    The where clause to use when retrieving the collection (optional) (default='')
+         * @param string  $args['orderBy']  The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true)
+         * @param boolean $args['slimMode'] If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return array with retrieved collection.
+         * @return array with retrieved collection
          */
         public function getEntities(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -169,15 +169,15 @@ class Selection {
         /**
          * Selects a list of entities by different criteria.
          *
-         * @param string  $args['ot']             The object type to retrieve (optional).
-         * @param string  $args['where']          The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $args['orderBy']        The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param integer $args['currentPage']    Where to start selection.
-         * @param integer $args['resultsPerPage'] Amount of items to select.
-         * @param boolean $args['useJoins']       Whether to include joining related objects (optional) (default=true).
-         * @param boolean $args['slimMode']       If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param string  $args['ot']             The object type to retrieve (optional)
+         * @param string  $args['where']          The where clause to use when retrieving the collection (optional) (default='')
+         * @param string  $args['orderBy']        The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param integer $args['currentPage']    Where to start selection
+         * @param integer $args['resultsPerPage'] Amount of items to select
+         * @param boolean $args['useJoins']       Whether to include joining related objects (optional) (default=true)
+         * @param boolean $args['slimMode']       If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return array with retrieved collection and amount of total records affected by this query.
+         * @return array with retrieved collection and amount of total records affected by this query
          */
         public function getEntitiesPaginated(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -197,10 +197,10 @@ class Selection {
         /**
          * Determines object type using controller util methods.
          *
-         * @param string $args['ot'] The object type to retrieve (optional).
-         * @param string $methodName Name of calling method.
+         * @param string $args['ot'] The object type to retrieve (optional)
+         * @param string $methodName Name of calling method
          *
-         * @return string the object type.
+         * @return string the object type
          */
         protected function determineObjectType(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», $methodName = '')
         {
@@ -221,9 +221,9 @@ class Selection {
         /**
          * Returns repository instance for a certain object type.
          *
-         * @param string $objectType The desired object type.
+         * @param string $objectType The desired object type
          *
-         * @return mixed Repository class instance or null.
+         * @return mixed Repository class instance or null
          */
         protected function getRepository($objectType = '')
         {
@@ -250,11 +250,11 @@ class Selection {
             /**
              * Selects tree of given object type.
              *
-             * @param string  $args['ot']       The object type to retrieve (optional).
-             * @param integer $args['rootId']   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
-             * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
+             * @param string  $args['ot']       The object type to retrieve (optional)
+             * @param integer $args['rootId']   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree
+             * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true)
              *
-             * @return array|ArrayCollection retrieved data array or tree node objects.
+             * @return array|ArrayCollection retrieved data array or tree node objects
              */
             public function getTree(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
             {
@@ -279,10 +279,10 @@ class Selection {
             /**
              * Gets all trees at once.
              *
-             * @param string  $args['ot']       The object type to retrieve (optional).
-             * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
+             * @param string  $args['ot']       The object type to retrieve (optional)
+             * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true)
              *
-             * @return array|ArrayCollection retrieved data array or tree node objects.
+             * @return array|ArrayCollection retrieved data array or tree node objects
              */
             public function getAllTrees(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
             {

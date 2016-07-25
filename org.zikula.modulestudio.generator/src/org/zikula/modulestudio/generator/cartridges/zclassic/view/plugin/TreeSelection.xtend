@@ -35,9 +35,11 @@ class TreeSelection {
         «IF targets('1.3.x')»
             «' '»*   - assign:       Variable where the results are assigned to.
             «' '»*
-            «' '»* @param  array       $params All attributes passed to this function from the template.
-            «' '»* @param  Zikula_View $view   Reference to the view object.
+            «' '»* @param  array       $params All attributes passed to this function from the template
+            «' '»* @param  Zikula_View $view   Reference to the view object
         «ENDIF»
+         *
+         * @return string The output of the plugin
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TreeSelection(«IF targets('1.3.x')»$params, $view«ELSE»$objectType, $node, $target, $skipRootNode = true«ENDIF»)
         {

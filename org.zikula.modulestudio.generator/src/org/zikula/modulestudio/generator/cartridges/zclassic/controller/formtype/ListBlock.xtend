@@ -57,7 +57,7 @@ class ListBlock {
             /**
              * ItemListBlockType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function __construct(TranslatorInterface $translator)
             {
@@ -67,7 +67,7 @@ class ListBlock {
             /**
              * Sets the translator.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function setTranslator(/*TranslatorInterface */$translator)
             {
@@ -152,8 +152,8 @@ class ListBlock {
         /**
          * Adds an object type field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addObjectTypeField(FormBuilderInterface $builder, array $options)
         {
@@ -180,8 +180,8 @@ class ListBlock {
         /**
          * Adds a categories field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
@@ -211,8 +211,8 @@ class ListBlock {
         /**
          * Adds a sorting field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addSortingField(FormBuilderInterface $builder, array $options)
         {
@@ -235,8 +235,8 @@ class ListBlock {
         /**
          * Adds a page size field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addAmountField(FormBuilderInterface $builder, array $options)
         {
@@ -257,8 +257,8 @@ class ListBlock {
         /**
          * Adds template fields.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addTemplateFields(FormBuilderInterface $builder, array $options)
         {
@@ -292,8 +292,8 @@ class ListBlock {
         /**
          * Adds a filter field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addFilterField(FormBuilderInterface $builder, array $options)
         {

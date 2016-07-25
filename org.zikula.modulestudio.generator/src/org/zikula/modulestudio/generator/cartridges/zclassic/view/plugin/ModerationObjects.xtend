@@ -35,9 +35,11 @@ class ModerationObjects {
             «' '»* Available parameters:
             «' '»*   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
             «' '»*
-            «' '»* @param  array       $params All attributes passed to this function from the template.
-            «' '»* @param  Zikula_View $view   Reference to the view object.
+            «' '»* @param  array       $params All attributes passed to this function from the template
+            «' '»* @param  Zikula_View $view   Reference to the view object
         «ENDIF»
+         *
+         * @return string The output of the plugin
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ModerationObjects(«IF targets('1.3.x')»$params, $view«ENDIF»)
         {

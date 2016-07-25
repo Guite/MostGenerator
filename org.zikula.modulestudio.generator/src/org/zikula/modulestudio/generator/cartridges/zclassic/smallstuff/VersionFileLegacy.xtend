@@ -50,7 +50,7 @@ class VersionFileLegacy {
             /**
              * Retrieves meta data information for this application.
              *
-             * @return array List of meta data.
+             * @return array List of meta data
              */
             public function getMetaData()
             {
@@ -94,7 +94,7 @@ class VersionFileLegacy {
             }
 
             /**
-             * Define hook subscriber«/* and provider (TODO see #15) */» bundles.
+             * Defines hook subscriber«/* and provider (TODO see #15) */» bundles.
              */
             protected function setupHookBundles()
             {

@@ -115,22 +115,22 @@ class Uploads {
 
             «ENDIF»
             /**
-             * @var array List of object types with upload fields.
+             * @var array List of object types with upload fields
              */
             protected $allowedObjectTypes;
 
             /**
-             * @var array List of file types to be considered as images.
+             * @var array List of file types to be considered as images
              */
             protected $imageFileTypes;
 
             /**
-             * @var array List of dangerous file types to be rejected.
+             * @var array List of dangerous file types to be rejected
              */
             protected $forbiddenFileTypes;
 
             /**
-             * @var array List of allowed file sizes per field.
+             * @var array List of allowed file sizes per field
              */
             protected $allowedFileSizes;
 
@@ -138,7 +138,7 @@ class Uploads {
              * Constructor initialising the supported object types.
             «IF !targets('1.3.x')»
                 «' '»*
-                «' '»* @param TranslatorInterface $translator Translator service instance.
+                «' '»* @param TranslatorInterface $translator Translator service instance
             «ENDIF»
              */
             public function __construct(«IF !targets('1.3.x')»TranslatorInterface $translator, CurrentUserApi $currentUserApi«ENDIF»)
@@ -156,7 +156,7 @@ class Uploads {
             /**
              * Sets the translator.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function setTranslator(/*TranslatorInterface */$translator)
             {
@@ -183,11 +183,11 @@ class Uploads {
         /**
          * Process a file upload.
          *
-         * @param string $objectType Currently treated entity type.
-         * @param string $fileData   Form data array.
-         * @param string $fieldName  Name of upload field.
+         * @param string $objectType Currently treated entity type
+         * @param string $fileData   Form data array
+         * @param string $fieldName  Name of upload field
          *
-         * @return array Resulting file name and collected meta data.
+         * @return array Resulting file name and collected meta data
          «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if upload file base path retrieval fails or the file can not be moved to it's destination folder
@@ -293,9 +293,9 @@ class Uploads {
         /**
          * Check if an upload file meets all validation criteria.
          *
-         * @param string $objectType Currently treated entity type.
-         * @param array $file Reference to data of uploaded file.
-         * @param string $fieldName  Name of upload field.
+         * @param string $objectType Currently treated entity type
+         * @param array $file Reference to data of uploaded file
+         * @param string $fieldName  Name of upload field
          *
          * @return boolean true if file is valid else false
          «IF !targets('1.3.x')»
@@ -431,8 +431,8 @@ class Uploads {
         /**
          * Read meta data from a certain file.
          *
-         * @param string $fileName  Name of file to be processed.
-         * @param string $filePath  Path to file to be processed.
+         * @param string $fileName  Name of file to be processed
+         * @param string $filePath  Path to file to be processed
          *
          * @return array collected meta data
          */
@@ -480,9 +480,9 @@ class Uploads {
         /**
          * Determines the allowed file extensions for a given object type.
          *
-         * @param string $objectType Currently treated entity type.
-         * @param string $fieldName  Name of upload field.
-         * @param string $extension  Input file extension.
+         * @param string $objectType Currently treated entity type
+         * @param string $fieldName  Name of upload field
+         * @param string $extension  Input file extension
          *
          * @return array the list of allowed file extensions
          */
@@ -533,11 +533,11 @@ class Uploads {
          *
          * It considers different strategies for computing the result.
          *
-         * @param string $objectType Currently treated entity type.
-         * @param string $fieldName  Name of upload field.
-         * @param string $basePath   Base path for file storage.
-         * @param string $fileName   Input file name.
-         * @param string $extension  Input file extension.
+         * @param string $objectType Currently treated entity type
+         * @param string $fieldName  Name of upload field
+         * @param string $basePath   Base path for file storage
+         * @param string $fileName   Input file name
+         * @param string $extension  Input file extension
          *
          * @return string the resulting file name
          */
@@ -611,7 +611,7 @@ class Uploads {
         /**
          * Error handling helper method.
          *
-         * @param array $file File array from $_FILES.
+         * @param array $file File array from $_FILES
          *
          * @return boolean false
          «IF !targets('1.3.x')»
@@ -669,12 +669,12 @@ class Uploads {
          * Deletes an existing upload file.
          * For images the thumbnails are removed, too.
          *
-         * @param string  $objectType Currently treated entity type.
-         * @param string  $objectData Object data array.
-         * @param string  $fieldName  Name of upload field.
-         * @param integer $objectId   Primary identifier of the given object.
+         * @param string  $objectType Currently treated entity type
+         * @param string  $objectData Object data array
+         * @param string  $fieldName  Name of upload field
+         * @param integer $objectId   Primary identifier of the given object
          *
-         * @return mixed Array with updated object data on success, else false.
+         * @return mixed Array with updated object data on success, else false
          */
         public function deleteUploadFile($objectType, $objectData, $fieldName, $objectId)
         {

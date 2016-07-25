@@ -50,11 +50,11 @@ class Tag {
         /**
          * Constructor.
          *
-         * @param integer             $objectId  Identifier of treated object.
-         * @param integer             $areaId    Name of hook area.
-         * @param string              $module    Name of the owning module.
+         * @param integer             $objectId  Identifier of treated object
+         * @param integer             $areaId    Name of hook area
+         * @param string              $module    Name of the owning module
          * @param string              $urlString **deprecated**
-         * @param «IF targets('1.3.x')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject Object carrying url arguments.
+         * @param «IF targets('1.3.x')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject Object carrying url arguments
          */
         function __construct($objectId, $areaId, $module, $urlString = null, «IF targets('1.3.x')»Zikula_ModUrl«ELSE»UrlInterface«ENDIF» $urlObject = null)
         {

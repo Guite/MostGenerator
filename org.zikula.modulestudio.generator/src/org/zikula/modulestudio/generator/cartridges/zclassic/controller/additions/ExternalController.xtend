@@ -98,12 +98,12 @@ class ExternalController {
          * )
          «ENDIF»
          *
-         * @param string $ot          The currently treated object type.
-         * @param int    $id          Identifier of the entity to be shown.
-         * @param string $source      Source of this call (contentType or scribite).
-         * @param string $displayMode Display mode (link or embed).
+         * @param string $ot          The currently treated object type
+         * @param int    $id          Identifier of the entity to be shown
+         * @param string $source      Source of this call (contentType or scribite)
+         * @param string $displayMode Display mode (link or embed)
          *
-         * @return string Desired data output.
+         * @return string Desired data output
          */
     '''
 
@@ -223,12 +223,12 @@ class ExternalController {
          * )
          «ENDIF»
          *
-         * @param string $objectType The object type.
-         * @param string $editor     Name of used Scribite editor.
-         * @param string $sort       Sorting field.
-         * @param string $sortdir    Sorting direction.
-         * @param int    $pos        Current pager position.
-         * @param int    $num        Amount of entries to display.
+         * @param string $objectType The object type
+         * @param string $editor     Name of used Scribite editor
+         * @param string $sort       Sorting field
+         * @param string $sortdir    Sorting direction
+         * @param int    $pos        Current pager position
+         * @param int    $num        Amount of entries to display
          *
          * @return output The external item finder page
          «IF !isLegacy»

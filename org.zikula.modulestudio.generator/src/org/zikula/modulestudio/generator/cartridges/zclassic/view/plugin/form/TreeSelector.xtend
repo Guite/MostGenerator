@@ -79,10 +79,11 @@ class TreeSelector {
             /**
              * Create event handler.
              *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
+             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+             * @param array            &$params Parameters passed from the Smarty plugin function
              *
              * @see    Zikula_Form_Plugin
+             *
              * @return void
              */
             public function create($view, &$params)
@@ -110,9 +111,9 @@ class TreeSelector {
             /**
              * Performs the actual data selection.
              *
-             * @param array &$params Parameters passed from the Smarty plugin function.
+             * @param array &$params Parameters passed from the Smarty plugin function
              *
-             * @return array List of selected objects.
+             * @return array List of selected objects
              */
             protected function loadItems(&$params)
             {
@@ -132,9 +133,9 @@ class TreeSelector {
              * Determines whether a certain list item should be included or not.
              * Allows to exclude undesired items after the selection has happened.
              *
-             * @param Doctrine\ORM\Entity $item The treated entity.
+             * @param Doctrine\ORM\Entity $item The treated entity
              *
-             * @return boolean Whether this entity should be included into the list.
+             * @return boolean Whether this entity should be included into the list
              */
             protected function isIncluded($item)
             {
@@ -156,9 +157,9 @@ class TreeSelector {
             /**
              * Calculates the label for a certain list item.
              *
-             * @param Doctrine\ORM\Entity $item The treated entity.
+             * @param Doctrine\ORM\Entity $item The treated entity
              *
-             * @return string The created label string.
+             * @return string The created label string
              */
             protected function createItemLabel($item)
             {
@@ -194,10 +195,10 @@ class TreeSelector {
          * The «appName.formatForDB»TreeSelector plugin cares for handling a dropdown list
          * for an entity with tree structure.
          *
-         * @param array            $params Parameters passed to this function from the template.
-         * @param Zikula_Form_View $view   Reference to Form render object.
+         * @param array            $params Parameters passed to this function from the template
+         * @param Zikula_Form_View $view   Reference to Form render object
          *
-         * @return string The rendered output.
+         * @return string The rendered output
          */
         function smarty_function_«appName.formatForDB»TreeSelector($params, $view)
         {

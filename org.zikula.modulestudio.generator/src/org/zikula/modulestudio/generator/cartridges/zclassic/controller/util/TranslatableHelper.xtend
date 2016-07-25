@@ -71,8 +71,8 @@ class TranslatableHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
-                 * @param TranslatorInterface    $translator     Translator service instance.
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
+                 * @param TranslatorInterface    $translator     Translator service instance
                  */
                 public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator)
                 {
@@ -97,9 +97,9 @@ class TranslatableHelper {
          * These are required to be determined to recognize
          * that they have to be selected from according translation tables.
          *
-         * @param string $objectType The currently treated object type.
+         * @param string $objectType The currently treated object type
          *
-         * @return array list of translatable fields.
+         * @return array list of translatable fields
          */
         public function getTranslatableFields($objectType)
         {
@@ -118,9 +118,9 @@ class TranslatableHelper {
         /**
          * Return list of supported languages on the current system.
          *
-         * @param string $objectType The currently treated object type.
+         * @param string $objectType The currently treated object type
          *
-         * @return array list of language codes.
+         * @return array list of language codes
          */
         public function getSupportedLanguages($objectType)
         {
@@ -134,10 +134,10 @@ class TranslatableHelper {
          * This ensures easy compatibility to the Forms plugins where it
          * it is not possible yet to define sub arrays in the group attribute.
          *
-         * @param string«IF targets('1.3.x')»       «ENDIF»       $objectType The currently treated object type.
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity     The entity being edited.
+         * @param string«IF targets('1.3.x')»       «ENDIF»       $objectType The currently treated object type
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity     The entity being edited
          *
-         * @return array collected translations having the language codes as keys.
+         * @return array collected translations having the language codes as keys
          */
         public function prepareEntityForEditing($objectType, $entity)
         {
@@ -198,10 +198,10 @@ class TranslatableHelper {
          * This ensures easy compatibility to the Forms plugins where it
          * it is not possible yet to define sub arrays in the group attribute.
          *
-         * @param string $objectType The currently treated object type.
-         * @param array  $formData   Form data containing translations.
+         * @param string $objectType The currently treated object type
+         * @param array  $formData   Form data containing translations
          *
-         * @return array collected translations having the language codes as keys.
+         * @return array collected translations having the language codes as keys
          */
         public function processEntityAfterEditing($objectType, $formData)
         {

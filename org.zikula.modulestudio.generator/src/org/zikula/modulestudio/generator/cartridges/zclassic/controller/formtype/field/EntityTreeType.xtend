@@ -52,7 +52,7 @@ class EntityTreeType {
             /**
              * Sets dynamic option for retrieving the choices.
              *
-             * @param array $options The options.
+             * @param array $options The options
              */
             $choices = function(Options $options) {
                 return $this->loadChoices($options);
@@ -116,9 +116,9 @@ class EntityTreeType {
             /**
              * Performs the actual data selection.
              *
-             * @param array $options The options.
+             * @param array $options The options
              *
-             * @return array List of selected objects.
+             * @return array List of selected objects
              */
             protected function loadChoices(array $options)
             {
@@ -142,9 +142,9 @@ class EntityTreeType {
              * Determines whether a certain list item should be included or not.
              * Allows to exclude undesired items after the selection has happened.
              *
-             * @param Doctrine\ORM\Entity $item The treated entity.
+             * @param Doctrine\ORM\Entity $item The treated entity
              *
-             * @return boolean Whether this entity should be included into the list.
+             * @return boolean Whether this entity should be included into the list
              */
             protected function isIncluded($item)
             {

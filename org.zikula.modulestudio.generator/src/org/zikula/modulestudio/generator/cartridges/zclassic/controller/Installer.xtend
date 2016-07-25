@@ -88,7 +88,7 @@ class Installer {
         /**
          * Install the «appName» application.
          *
-         * @return boolean True on success, or false.
+         * @return boolean True on success, or false
          «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables can not be created or another error occurs
@@ -257,9 +257,9 @@ class Installer {
          *
          * If the upgrade fails at some point, it returns the last upgraded version.
          *
-         * @param integer $oldVersion Version to upgrade from.
+         * @param integer $oldVersion Version to upgrade from
          *
-         * @return boolean True on success, false otherwise.
+         * @return boolean True on success, false otherwise
          «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables can not be updated
@@ -332,7 +332,7 @@ class Installer {
         /**
          * Uninstall «appName».
          *
-         * @return boolean True on success, false otherwise.
+         * @return boolean True on success, false otherwise
          «IF !targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if database tables or stored workflows can not be removed
@@ -441,7 +441,7 @@ class Installer {
         /**
          * Build array with all entity classes for «appName».
          *
-         * @return array list of class names.
+         * @return array list of class names
          */
         protected function listEntityClasses()
         {

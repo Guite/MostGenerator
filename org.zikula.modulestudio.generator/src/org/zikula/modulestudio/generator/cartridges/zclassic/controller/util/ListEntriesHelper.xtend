@@ -51,7 +51,7 @@ class ListEntriesHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param TranslatorInterface $translator Translator service instance.
+                 * @param TranslatorInterface $translator Translator service instance
                  */
                 public function __construct(TranslatorInterface $translator)
                 {
@@ -75,12 +75,12 @@ class ListEntriesHelper {
         /**
          * Return the name or names for a given list item.
          *
-         * @param string $value      The dropdown value to process.
-         * @param string $objectType The treated object type.
-         * @param string $fieldName  The list field's name.
-         * @param string $delimiter  String used as separator for multiple selections.
+         * @param string $value      The dropdown value to process
+         * @param string $objectType The treated object type
+         * @param string $fieldName  The list field's name
+         * @param string $delimiter  String used as separator for multiple selections
          *
-         * @return string List item name.
+         * @return string List item name
          */
         public function resolve($value, $objectType = '', $fieldName = '', $delimiter = ', ')
         {
@@ -125,9 +125,9 @@ class ListEntriesHelper {
         /**
          * Extract concatenated multi selection.
          *
-         * @param string  $value The dropdown value to process.
+         * @param string  $value The dropdown value to process
          *
-         * @return array List of single values.
+         * @return array List of single values
          */
         public function extractMultiList($value)
         {
@@ -151,10 +151,10 @@ class ListEntriesHelper {
         /**
          * Determine whether a certain dropdown field has a multi selection or not.
          *
-         * @param string $objectType The treated object type.
-         * @param string $fieldName  The list field's name.
+         * @param string $objectType The treated object type
+         * @param string $fieldName  The list field's name
          *
-         * @return boolean True if this is a multi list false otherwise.
+         * @return boolean True if this is a multi list false otherwise
          */
         public function hasMultipleSelection($objectType, $fieldName)
         {
@@ -186,10 +186,10 @@ class ListEntriesHelper {
         /**
          * Get entries for a certain dropdown field.
          *
-         * @param string  $objectType The treated object type.
-         * @param string  $fieldName  The list field's name.
+         * @param string  $objectType The treated object type
+         * @param string  $fieldName  The list field's name
          *
-         * @return array Array with desired list entries.
+         * @return array Array with desired list entries
          */
         public function getEntries($objectType, $fieldName)
         {
@@ -227,7 +227,7 @@ class ListEntriesHelper {
         /**
          * Get '«name.formatForDisplay»' list entries.
          *
-         * @return array Array with desired list entries.
+         * @return array Array with desired list entries
          */
         public function get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»()
         {

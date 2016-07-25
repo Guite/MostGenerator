@@ -113,28 +113,28 @@ class Notification {
         /**
          * List of notification recipients.
          *
-         * @var array $recipients.
+         * @var array $recipients
          */
         private $recipients = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         /**
          * Which type of recipient is used ("creator", "moderator" or "superModerator").
          *
-         * @var string recipientType.
+         * @var string recipientType
          */
         private $recipientType = '';
 
         /**
          * The entity which has been changed before.
          *
-         * @var «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess entity.
+         * @var «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess entity
          */
         private $entity = '';
 
         /**
          * Name of workflow action which is being performed.
          *
-         * @var string action.
+         * @var string action
          */
         private $action = '';
 
@@ -143,14 +143,14 @@ class Notification {
              * Constructor.
              * Initialises member vars.
              *
-             * @param TranslatorInterface $translator     Translator service instance.
-             * @param Session             $session        Session service instance.
-             * @param Routerinterface     $router         Router service instance.
-             * @param VariableApi         $variableApi    VariableApi service instance.
-             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance.
-             * @param Twig_Environment    $twig           Twig service instance.
-             * @param MailerApi           $mailerApi      MailerApi service instance.
-             * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance.
+             * @param TranslatorInterface $translator     Translator service instance
+             * @param Session             $session        Session service instance
+             * @param Routerinterface     $router         Router service instance
+             * @param VariableApi         $variableApi    VariableApi service instance
+             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             * @param Twig_Environment    $twig           Twig service instance
+             * @param MailerApi           $mailerApi      MailerApi service instance
+             * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
              */
             public function __construct(
                 TranslatorInterface $translator,
@@ -174,7 +174,7 @@ class Notification {
             /**
              * Sets the translator.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function setTranslator(/*TranslatorInterface */$translator)
             {
@@ -270,7 +270,7 @@ class Notification {
         /**
          * Collects data for building the recipients array.
          *
-         * @param $userId Id of treated user.
+         * @param $userId Id of treated user
          */
         protected function addRecipient($userId)
         {

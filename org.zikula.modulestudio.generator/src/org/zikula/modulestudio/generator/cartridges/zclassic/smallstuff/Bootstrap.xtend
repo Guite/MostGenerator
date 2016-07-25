@@ -128,7 +128,7 @@ class Bootstrap {
             //$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
             $currentLanguage = preg_replace('#[^a-z-].#', '', FormUtil::getPassedValue('lang', System::getVar('language_i18n', 'en'), 'GET'));
             $translatableListener->setTranslatableLocale($currentLanguage);
-            /**
+            /*
              * Sometimes it is desired to set a default translation as a fallback if record does not have a translation
              * on used locale. In that case Translation Listener takes the current value of Entity.
              * But there is a way to specify a default locale which would force Entity to not update it`s field
@@ -142,7 +142,10 @@ class Bootstrap {
         «val entitiesWithArchive = getAllEntities.filter[hasArchive && null !== getEndDateField]»
         «IF !entitiesWithArchive.empty»
             «prefix()»PerformRegularAmendments();
-            
+
+            /**
+             * Performs regular amendments, like archiving obsolete data.
+             */
             function «prefix()»PerformRegularAmendments()
             {
                 $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);

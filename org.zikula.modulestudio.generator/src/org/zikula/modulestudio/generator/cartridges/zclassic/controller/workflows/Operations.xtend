@@ -65,10 +65,11 @@ class Operations {
     def private operationFile(String opName) '''
         /**
          * «opName.formatForDisplayCapital» operation.
-         * @param object $entity The treated object.
-         * @param array  $params Additional arguments.
          *
-         * @return bool False on failure or true if everything worked well.
+         * @param object $entity The treated object
+         * @param array  $params Additional arguments
+         *
+         * @return bool False on failure or true if everything worked well
          «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails

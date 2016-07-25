@@ -73,8 +73,8 @@ class Config {
             /**
              * AppSettingsType constructor.
              *
-             * @param TranslatorInterface $translator  Translator service instance.
-             * @param VariableApi         $variableApi VariableApi service instance.
+             * @param TranslatorInterface $translator  Translator service instance
+             * @param VariableApi         $variableApi VariableApi service instance
              */
             public function __construct(TranslatorInterface $translator, VariableApi $variableApi)
             {
@@ -86,7 +86,7 @@ class Config {
             /**
              * Sets the translator.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function setTranslator(/*TranslatorInterface */$translator)
             {
@@ -147,8 +147,8 @@ class Config {
         /**
          * Adds fields for «name.formatForDisplay» fields.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function add«name.formatForCodeCapital»Fields(FormBuilderInterface $builder, array $options)
         {

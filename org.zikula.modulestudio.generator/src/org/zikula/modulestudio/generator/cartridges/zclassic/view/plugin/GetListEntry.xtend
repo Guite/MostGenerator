@@ -30,12 +30,12 @@ class GetListEntry {
          * Example:
          *     «IF targets('1.3.x')»{$entity.listField|«appName.formatForDB»GetListEntry:'entityName':'fieldName'}«ELSE»{{ entity.listField|«appName.formatForDB»_listEntry('entityName', 'fieldName') }}«ENDIF»
          *
-         * @param string $value      The dropdown value to process.
-         * @param string $objectType The treated object type.
-         * @param string $fieldName  The list field's name.
-         * @param string $delimiter  String used as separator for multiple selections.
+         * @param string $value      The dropdown value to process
+         * @param string $objectType The treated object type
+         * @param string $fieldName  The list field's name
+         * @param string $delimiter  String used as separator for multiple selections
          *
-         * @return string List item name.
+         * @return string List item name
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»G«ELSE»g«ENDIF»etListEntry($value, $objectType = '', $fieldName = '', $delimiter = ', ')
         {

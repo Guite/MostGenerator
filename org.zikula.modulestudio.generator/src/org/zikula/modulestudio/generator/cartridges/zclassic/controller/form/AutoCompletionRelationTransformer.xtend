@@ -36,7 +36,7 @@ class AutoCompletionRelationTransformer {
         class AutoCompletionRelationTransformer implements DataTransformerInterface
         {
             /**
-             * @var ObjectManager The object manager to be used for determining the repository.
+             * @var ObjectManager The object manager to be used for determining the repository
              */
             protected $objectManager;
 
@@ -53,9 +53,9 @@ class AutoCompletionRelationTransformer {
             /**
              * AutoCompletionRelationTransformer constructor.
              *
-             * @param ObjectManager $objectManager Doctrine object manager.
-             * @param String        $objectType    The type of entities being processed.
-             * @param Boolean       $isMultiple    Whether a single object or a collection of object is processed.
+             * @param ObjectManager $objectManager Doctrine object manager
+             * @param String        $objectType    The type of entities being processed
+             * @param Boolean       $isMultiple    Whether a single object or a collection of object is processed
              */
             public function __construct(ObjectManager $objectManager, $objectType, $isMultiple)
             {
@@ -100,7 +100,7 @@ class AutoCompletionRelationTransformer {
              *
              * @return EntityAccess|ArrayCollection
              *
-             * @throws TransformationFailedException if object (issue) is not found.
+             * @throws TransformationFailedException if object (issue) is not found
              */
             public function reverseTransform($value)
             {
@@ -145,6 +145,14 @@ class AutoCompletionRelationTransformer {
     '''
 
     def private buildWhereClause(Application it) '''
+        /**
+         * Builds the where clause for selecting matches for the current search.
+         *
+         * @param string       $inputValue The input string
+         * @param QueryBuilder $qb         The query builder to be enriched
+         *
+         * @return Querybuilder The enriched query builder
+         */
         protected function buildWhereClause($inputValue, QueryBuilder $qb)
         {
             if (!$this->mandatory) {

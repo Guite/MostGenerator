@@ -50,10 +50,11 @@ class UserInput {
             /**
              * Create event handler.
              *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
+             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+             * @param array            &$params Parameters passed from the Smarty plugin function
              *
-             * @see    Zikula_Form_AbstractPlugin
+             * @see Zikula_Form_AbstractPlugin
+             *
              * @return void
              */
             public function create(Zikula_Form_View $view, &$params)
@@ -81,7 +82,7 @@ class UserInput {
             /**
              * Render event handler.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
              *
              * @return string The rendered output
              */
@@ -134,10 +135,10 @@ class UserInput {
             /**
              * Parses a value.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
-             * @param string           $text Text.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
+             * @param string           $text Text
              *
-             * @return string Parsed Text.
+             * @return string Parsed text
              */
             public function parseValue(Zikula_Form_View $view, $text)
             {
@@ -151,7 +152,7 @@ class UserInput {
             /**
              * Validates the input string.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
              *
              * @return boolean
              */
@@ -193,10 +194,10 @@ class UserInput {
          * The «appName.formatForDB»UserInput plugin handles fields carrying user ids.
          * It provides an autocomplete for user names.
          *
-         * @param array            $params  All attributes passed to this function from the template.
-         * @param Zikula_Form_View $view    Reference to the view object.
+         * @param array            $params  All attributes passed to this function from the template
+         * @param Zikula_Form_View $view    Reference to the view object
          *
-         * @return string The output of the plugin.
+         * @return string The output of the plugin
          */
         function smarty_function_«appName.formatForDB»UserInput($params, $view)
         {

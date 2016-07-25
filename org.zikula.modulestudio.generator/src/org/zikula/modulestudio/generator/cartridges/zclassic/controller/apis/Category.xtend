@@ -47,11 +47,11 @@ class Category {
         /**
          * Retrieves the main/default category of «appName».
          *
-         * @param string $args['ot']       The object type to be treated (optional).
-         * @param string $args['registry'] Name of category registry to be used (optional).
-         * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead.
+         * @param string $args['ot']       The object type to be treated (optional)
+         * @param string $args['registry'] Name of category registry to be used (optional)
+         * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead
          *
-         * @return mixed Category array on success, false on failure.
+         * @return mixed Category array on success, false on failure
          */
         public function getMainCat(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -74,10 +74,10 @@ class Category {
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
          *
-         * @param string $args['ot']       The object type to be treated (optional).
-         * @param string $args['registry'] Name of category registry to be used (optional).
+         * @param string $args['ot']       The object type to be treated (optional)
+         * @param string $args['registry'] Name of category registry to be used (optional)
          *
-         * @return boolean true if multiple selection is allowed, else false.
+         * @return boolean true if multiple selection is allowed, else false
          */
         public function hasMultipleSelection(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -106,10 +106,10 @@ class Category {
         /**
          * Retrieves input data from POST for all registries.
          *
-         * @param string $args['ot']     The object type to be treated (optional).
-         * @param string $args['source'] Where to retrieve the data from (defaults to POST).
+         * @param string $args['ot']     The object type to be treated (optional)
+         * @param string $args['source'] Where to retrieve the data from (defaults to POST)
          *
-         * @return array The fetched data indexed by the registry id.
+         * @return array The fetched data indexed by the registry id
          */
         public function retrieveCategoriesFromRequest(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -167,11 +167,11 @@ class Category {
         /**
          * Adds a list of where clauses for a certain list of categories to a given query builder.
          *
-         * @param Doctrine\ORM\QueryBuilder $args['qb']     Query builder instance to be enhanced.
-         * @param string                    $args['ot']     The object type to be treated (optional).
-         * @param string                    $args['catids'] Category ids grouped by property name.
+         * @param Doctrine\ORM\QueryBuilder $args['qb']     Query builder instance to be enhanced
+         * @param string                    $args['ot']     The object type to be treated (optional)
+         * @param string                    $args['catids'] Category ids grouped by property name
          *
-         * @return Doctrine\ORM\QueryBuilder The enriched query builder instance.
+         * @return Doctrine\ORM\QueryBuilder The enriched query builder instance
          */
         public function buildFilterClauses(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -216,9 +216,9 @@ class Category {
         /**
          * Returns a list of all registries / properties for a given object type.
          *
-         * @param string $args['ot'] The object type to retrieve (optional).
+         * @param string $args['ot'] The object type to retrieve (optional)
          *
-         * @return array list of the registries (property name as key, id as value).
+         * @return array list of the registries (property name as key, id as value)
          */
         public function getAllProperties(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -235,7 +235,7 @@ class Category {
          * @param string $args['ot']       The object type to retrieve (optional)
          * @param string $args['arraykey'] Key for the result array (optional)
          *
-         * @return array list of the registries (registry id as key, main category id as value).
+         * @return array list of the registries (registry id as key, main category id as value)
          */
         public function getAllPropertiesWithMainCat(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -256,7 +256,7 @@ class Category {
          * @param string $args['ot']       The object type to retrieve (optional)
          * @param string $args['property'] The property name (optional)
          *
-         * @return integer The main category id of desired tree.
+         * @return integer The main category id of desired tree
          */
         public function getMainCatForProperty(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -272,7 +272,7 @@ class Category {
          *
          * @param string $args['ot'] The object type to retrieve (optional)
          *
-         * @return string name of the main registry.
+         * @return string name of the main registry
          */
         public function getPrimaryProperty(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {

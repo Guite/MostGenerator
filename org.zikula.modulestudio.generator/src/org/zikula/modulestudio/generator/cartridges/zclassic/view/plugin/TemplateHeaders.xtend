@@ -34,11 +34,11 @@ class TemplateHeaders {
          *   - fileName:     Name of download file.
         «IF targets('1.3.x')»
             «' '»*
-            «' '»* @param  array       $params All attributes passed to this function from the template.
-            «' '»* @param  Zikula_View $view   Reference to the view object.
+            «' '»* @param  array       $params All attributes passed to this function from the template
+            «' '»* @param  Zikula_View $view   Reference to the view object
         «ENDIF»
          *
-         * @return boolean false.
+         * @return boolean false
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»T«ELSE»t«ENDIF»emplateHeaders(«IF targets('1.3.x')»$params, $view«ELSE»$contentType, $asAttachment = false, $fileName = ''«ENDIF»)
         {

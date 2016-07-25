@@ -29,12 +29,12 @@ class GetFileSize {
          * Example:
          *     «IF targets('1.3.x')»{12345|«appName.formatForDB»GetFileSize}«ELSE»{{ 12345|«appName.formatForDB»_fileSize }}«ENDIF»
          *
-         * @param integer $size     File size in bytes.
-         * @param string  $filepath The input file path including file name (if file size is not known).
-         * @param boolean $nodesc   If set to true the description will not be appended.
-         * @param boolean $onlydesc If set to true only the description will be returned.
+         * @param integer $size     File size in bytes
+         * @param string  $filepath The input file path including file name (if file size is not known)
+         * @param boolean $nodesc   If set to true the description will not be appended
+         * @param boolean $onlydesc If set to true only the description will be returned
          *
-         * @return string File size in a readable form.
+         * @return string File size in a readable form
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»G«ELSE»g«ENDIF»etFileSize($size = 0, $filepath = '', $nodesc = false, $onlydesc = false)
         {

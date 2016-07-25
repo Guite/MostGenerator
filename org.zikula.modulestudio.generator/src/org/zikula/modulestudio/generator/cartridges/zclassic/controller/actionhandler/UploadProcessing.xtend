@@ -22,10 +22,10 @@ class UploadProcessing {
         /**
          * Helper method to process upload fields.
          *
-         * @param «IF targets('1.3.x')»       «ENDIF»array        $formData The form input data.
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   Existing entity object.
+         * @param «IF targets('1.3.x')»       «ENDIF»array        $formData The form input data
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   Existing entity object
          *
-         * @return array form data after processing.
+         * @return array Form data after processing
          */
         protected function handleUploads($formData, $entity)
         {

@@ -65,7 +65,7 @@ class HookHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param HookDispatcher $hookDispatcher Hook dispatcher service instance.
+                 * @param HookDispatcher $hookDispatcher Hook dispatcher service instance
                  */
                 public function __construct($hookDispatcher)
                 {
@@ -85,10 +85,10 @@ class HookHelper {
         /**
          * Calls validation hooks.
          *
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   The currently processed entity.
-         * @param string«IF targets('1.3.x')»       «ENDIF»       $hookType Name of hook type to be called.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   The currently processed entity
+         * @param string«IF targets('1.3.x')»       «ENDIF»       $hookType Name of hook type to be called
          *
-         * @return boolean Whether validation is passed or not.
+         * @return boolean Whether validation is passed or not
          */
         public function callValidationHooks($entity, $hookType)
         {
@@ -110,12 +110,12 @@ class HookHelper {
         /**
          * Calls process hooks.
          *
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity The currently processed entity.
-         * @param string«IF targets('1.3.x')»       «ENDIF»       $hookType Name of hook type to be called.
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity The currently processed entity
+         * @param string«IF targets('1.3.x')»       «ENDIF»       $hookType Name of hook type to be called
         «IF targets('1.3.x')»
-            «' '»* @param Zikula_ModUrl       $url      The url object.
+            «' '»* @param Zikula_ModUrl       $url      The url object
         «ELSE»
-            «' '»* @param RouteUrl     $url      The url object.
+            «' '»* @param RouteUrl     $url      The url object
         «ENDIF»
          */
         public function callProcessHooks($entity, $hookType, $url)
@@ -137,7 +137,7 @@ class HookHelper {
             /**
              * Notify any hookable events.
              *
-             * @param Zikula_HookInterface $hook Hook interface.
+             * @param Zikula_HookInterface $hook Hook interface
              *
              * @return Zikula_HookInterface
              */
@@ -151,8 +151,8 @@ class HookHelper {
             /**
              * Dispatch hooks.
              *
-             * @param string $name Hook event name.
-             * @param Hook   $hook Hook interface.
+             * @param string $name Hook event name
+             * @param Hook   $hook Hook interface
              *
              * @return Hook
              */

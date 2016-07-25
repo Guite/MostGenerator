@@ -32,7 +32,7 @@ class ShortUrlsLegacy {
         /**
          * Forms custom url string.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
          * @return string custom url string
          */
@@ -180,7 +180,7 @@ class ShortUrlsLegacy {
         /**
          * Decodes the custom url string.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
          * @return bool true if successful, false otherwise
          */

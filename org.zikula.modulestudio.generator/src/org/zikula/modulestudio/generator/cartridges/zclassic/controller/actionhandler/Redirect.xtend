@@ -91,9 +91,9 @@ class Redirect {
          * Get the default redirect url. Required if no returnTo parameter has been supplied.
          * This method is called in handleCommand so we know which command has been performed.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
-         * @return string The default redirect url.
+         * @return string The default redirect url
          */
         protected function getDefaultReturnUrl($args)
         {
@@ -150,9 +150,9 @@ class Redirect {
         /**
          * Get url to redirect to.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
-         * @return string The redirect url.
+         * @return string The redirect url
          */
         protected function getRedirectUrl($args)
         {

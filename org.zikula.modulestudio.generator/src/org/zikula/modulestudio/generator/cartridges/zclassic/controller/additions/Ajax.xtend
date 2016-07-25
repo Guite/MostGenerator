@@ -84,7 +84,7 @@ class Ajax {
         «/*' '»* @Method("POST")*/»
         «ENDIF»
          *
-         * @param string $fragment The search fragment.
+         * @param string $fragment The search fragment
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax_Plain«ELSE»PlainResponse«ENDIF»
          */ 
@@ -187,9 +187,9 @@ class Ajax {
         «/*' '»* @Method("POST")*/»
         «ENDIF»
          *
-         * @param string $ot      Name of currently used object type.
-         * @param string $sort    Sorting field.
-         * @param string $sortdir Sorting direction.
+         * @param string $ot      Name of currently used object type
+         * @param string $sort    Sorting field
+         * @param string $sortdir Sorting direction
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          */
@@ -284,12 +284,12 @@ class Ajax {
         /**
          * Builds and returns a slim data array from a given entity.
          *
-         * @param string $objectType       The currently treated object type.
-         * @param object $item             The currently treated entity.
-         * @param string $itemid           Data item identifier(s).
-         * @param string $descriptionField Name of item description field.
+         * @param string $objectType       The currently treated object type
+         * @param object $item             The currently treated entity
+         * @param string $itemid           Data item identifier(s)
+         * @param string $descriptionField Name of item description field
          *
-         * @return array The slim data representation.
+         * @return array The slim data representation
          */
         protected function prepareSlimItem($objectType, $item, $itemId, $descriptionField)
         {
@@ -327,11 +327,11 @@ class Ajax {
         «ENDIF»
          *
         «IF application.isLegacy»
-            «' '»* @param string $ot       Treated object type.
-            «' '»* @param string $fragment The fragment of the entered item name.
-            «' '»* @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
+            «' '»* @param string $ot       Treated object type
+            «' '»* @param string $fragment The fragment of the entered item name
+            «' '»* @param string $exclude  Comma separated list with ids of other items (to be excluded from search)
         «ELSE»
-            «' '»* @param Request $request Current request instance.
+            «' '»* @param Request $request Current request instance
         «ENDIF»
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax_Plain«ELSE»JsonResponse«ENDIF»
@@ -508,12 +508,12 @@ class Ajax {
         «ENDIF»
          *
         «IF application.isLegacy»
-            «' '»* @param string $ot Treated object type.
-            «' '»* @param string $fn Name of field to be checked.
-            «' '»* @param string $v  The value to be checked for uniqueness.
-            «' '»* @param string $ex Optional identifier to be excluded from search.
+            «' '»* @param string $ot Treated object type
+            «' '»* @param string $fn Name of field to be checked
+            «' '»* @param string $v  The value to be checked for uniqueness
+            «' '»* @param string $ex Optional identifier to be excluded from search
         «ELSE»
-            «' '»* @param Request $request Current request instance.
+            «' '»* @param Request $request Current request instance
         «ENDIF»
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
@@ -654,11 +654,11 @@ class Ajax {
         «ENDIF»
          *
         «IF application.isLegacy»
-            «' '»* @param string $ot    Treated object type.
-            «' '»* @param string $field The field to be toggled.
-            «' '»* @param int    $id    Identifier of treated entity.
+            «' '»* @param string $ot    Treated object type
+            «' '»* @param string $field The field to be toggled
+            «' '»* @param int    $id    Identifier of treated entity
         «ELSE»
-            «' '»* @param Request $request Current request instance.
+            «' '»* @param Request $request Current request instance
         «ENDIF»
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
@@ -753,12 +753,12 @@ class Ajax {
         «' '»* @Method("POST")
         «ENDIF»
          *
-         * @param string $ot        Treated object type.
-         * @param string $op        The operation which should be performed (addRootNode, addChildNode, deleteNode, moveNode, moveNodeTo).
-         * @param int    $id        Identifier of treated node (not for addRootNode and addChildNode).
-         * @param int    $pid       Identifier of parent node (only for addChildNode).
-         * @param string $direction The target direction for a move action (only for moveNode [up, down] and moveNodeTo [after, before, bottom]).
-         * @param int    $destid    Identifier of destination node for (only for moveNodeTo).
+         * @param string $ot        Treated object type
+         * @param string $op        The operation which should be performed (addRootNode, addChildNode, deleteNode, moveNode, moveNodeTo)
+         * @param int    $id        Identifier of treated node (not for addRootNode and addChildNode)
+         * @param int    $pid       Identifier of parent node (only for addChildNode)
+         * @param string $direction The target direction for a move action (only for moveNode [up, down] and moveNodeTo [after, before, bottom])
+         * @param int    $destid    Identifier of destination node for (only for moveNodeTo)
          *
          * @return «IF application.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          *

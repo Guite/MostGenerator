@@ -250,7 +250,7 @@ class MigrationHelper {
         /**
          * Returns connection to the database.
          *
-         * @return Connection the current connection.
+         * @return Connection the current connection
          */
         protected function getConnection()
         {
@@ -265,7 +265,7 @@ class MigrationHelper {
         /**
          * Returns the name of the default system database.
          *
-         * @return string the database name.
+         * @return string the database name
          */
         protected function getDbName()
         {

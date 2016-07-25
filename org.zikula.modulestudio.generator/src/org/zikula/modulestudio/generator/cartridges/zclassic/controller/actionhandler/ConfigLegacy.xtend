@@ -53,9 +53,9 @@ class ConfigLegacy {
              *
              * This method takes care of all necessary initialisation of our data and form states.
              *
-             * @param Zikula_Form_View $view The form view instance.
+             * @param Zikula_Form_View $view The form view instance
              *
-             * @return boolean False in case of initialization errors, otherwise true.
+             * @return boolean False in case of initialization errors, otherwise true
              */
             public function initialize(Zikula_Form_View $view)
             {
@@ -115,13 +115,13 @@ class ConfigLegacy {
              * value indicating the name of the command. The command name is normally specified by the plugin
              * that initiated the command.
              *
-             * @param Zikula_Form_View $view The form view instance.
-             * @param array            $args Additional arguments.
+             * @param Zikula_Form_View $view The form view instance
+             * @param array            $args Additional arguments
              *
              * @see Zikula_Form_Plugin_Button
              * @see Zikula_Form_Plugin_ImageButton
              *
-             * @return mixed Redirect or false on errors.
+             * @return mixed Redirect or false on errors
              */
             public function handleCommand(Zikula_Form_View $view, &$args)
             {

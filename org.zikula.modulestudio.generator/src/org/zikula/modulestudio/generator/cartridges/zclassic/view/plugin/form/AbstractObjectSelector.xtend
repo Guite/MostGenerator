@@ -152,10 +152,11 @@ class AbstractObjectSelector {
         /**
          * Create event handler.
          *
-         * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-         * @param array            &$params Parameters passed from the Smarty plugin function.
+         * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+         * @param array            &$params Parameters passed from the Smarty plugin function
          *
          * @see    Zikula_Form_AbstractPlugin
+         *
          * @return void
          */
         public function create(Zikula_Form_View $view, &$params)
@@ -219,8 +220,8 @@ class AbstractObjectSelector {
         /**
          * Load event handler.
          *
-         * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-         * @param array            &$params Parameters passed from the Smarty plugin function.
+         * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+         * @param array            &$params Parameters passed from the Smarty plugin function
          *
          * @return void
          */
@@ -257,7 +258,7 @@ class AbstractObjectSelector {
         /**
          * Render attributes.
          *
-         * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+         * @param Zikula_Form_View $view Reference to Zikula_Form_View object
          *
          * @return string
          */
@@ -274,9 +275,9 @@ class AbstractObjectSelector {
         /**
          * Performs the actual data selection.
          *
-         * @param array &$params Parameters passed from the Smarty plugin function.
+         * @param array &$params Parameters passed from the Smarty plugin function
          *
-         * @return array List of selected objects.
+         * @return array List of selected objects
          */
         protected function loadItems(&$params)
         {
@@ -308,7 +309,7 @@ class AbstractObjectSelector {
         /**
          * Validates the input.
          *
-         * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+         * @param Zikula_Form_View $view Reference to Zikula_Form_View object
          *
          * @return void
          */
@@ -322,7 +323,7 @@ class AbstractObjectSelector {
         /**
          * Set the selected value.
          *
-         * @param mixed $value Selected value.
+         * @param mixed $value Selected value
          *
          * @return void
          */
@@ -363,8 +364,8 @@ class AbstractObjectSelector {
         /**
          * Pre-process relationship identifiers.
          *
-         * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-         * @param array            &$params Parameters passed from the Smarty plugin function.
+         * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+         * @param array            &$params Parameters passed from the Smarty plugin function
          *
          * @return void
          */
@@ -406,8 +407,8 @@ class AbstractObjectSelector {
         /**
          * Post-process submitted data.
          *
-         * @param Zikula_Form_View $view   Reference to Zikula_Form_View object.
-         * @param string           $source The data source used (GET or POST).
+         * @param Zikula_Form_View $view   Reference to Zikula_Form_View object
+         * @param string           $source The data source used (GET or POST)
          *
          * @return void
          */
@@ -445,8 +446,8 @@ class AbstractObjectSelector {
         /**
          * Reassign related items to the edited entity.
          *
-         * @param Zikula_Form_View $view       Reference to Zikula_Form_View object.
-         * @param array|string     $inputValue The input data fetched in processRequestData().
+         * @param Zikula_Form_View $view       Reference to Zikula_Form_View object
+         * @param array|string     $inputValue The input data fetched in processRequestData()
          *
          * @return void
          */
@@ -471,10 +472,10 @@ class AbstractObjectSelector {
         /**
          * Reassign related items to the edited entity.
          *
-         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
-         * @param array               $entityData Entity related form data.
+         * @param Zikula_EntityAccess $entity     Reference to the updated entity
+         * @param array               $entityData Entity related form data
          *
-         * @return array form data after processing.
+         * @return array Form data after processing
          */
         public function assignRelatedItemsToEntity($entity, $entityData)
         {
@@ -579,9 +580,9 @@ class AbstractObjectSelector {
          * Determines whether a certain list item should be included or not.
          * Allows to exclude undesired items after the selection has happened.
          *
-         * @param Doctrine\ORM\Entity $item The treated entity.
+         * @param Doctrine\ORM\Entity $item The treated entity
          *
-         * @return boolean Whether this entity should be included into the list.
+         * @return boolean Whether this entity should be included into the list
          */
         protected function isIncluded($item)
         {
@@ -591,9 +592,9 @@ class AbstractObjectSelector {
         /**
          * Calculates the label for a certain list item.
          *
-         * @param Doctrine\ORM\Entity $item The treated entity.
+         * @param Doctrine\ORM\Entity $item The treated entity
          *
-         * @return string The created label string.
+         * @return string The created label string
          */
         protected function createItemLabel($item)
         {
@@ -603,9 +604,9 @@ class AbstractObjectSelector {
         /**
          * Calculates the identifier for a certain list item.
          *
-         * @param Doctrine\ORM\Entity $item The treated entity.
+         * @param Doctrine\ORM\Entity $item The treated entity
          *
-         * @return string The created identifier string.
+         * @return string The created identifier string
          */
         protected function createItemIdentifier($item)
         {
@@ -616,9 +617,9 @@ class AbstractObjectSelector {
          * Decode a list of concatenated identifier strings (for composite keys).
          * This method is used for reading selected relationships.
          *
-         * @param Array $itemIds List of concatenated identifiers.
+         * @param Array $itemIds List of concatenated identifiers
          *
-         * @return Array with list of single identifiers.
+         * @return Array with list of single identifiers
          */
         protected function decodeCompositeIdentifier($itemIds)
         {

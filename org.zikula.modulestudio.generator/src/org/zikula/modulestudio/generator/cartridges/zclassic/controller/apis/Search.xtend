@@ -99,7 +99,7 @@ class Search {
         /**
          * Display the search form.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
          * @return string Template output
          */
@@ -155,7 +155,7 @@ class Search {
         /**
          * Executes the actual search process.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
          * @return boolean
          *
@@ -268,7 +268,7 @@ class Search {
         /**
          * Assign URL to items.
          *
-         * @param array $args List of arguments.
+         * @param array $args List of arguments
          *
          * @return boolean
          */
@@ -296,7 +296,7 @@ class Search {
          * @param string     $searchType AND|OR|EXACT (defaults to AND)
          * @param array|null $modVars    Module form vars passed though
          *
-         * @return array List of fetched results.
+         * @return array List of fetched results
          */
         public function getResults(array $words, $searchType = 'AND', $modVars = null)
         {

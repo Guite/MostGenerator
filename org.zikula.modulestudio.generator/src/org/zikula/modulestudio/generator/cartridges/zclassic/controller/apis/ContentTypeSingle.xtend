@@ -57,7 +57,7 @@ class ContentTypeSingle {
         /**
          * Returns the module providing this content type.
          *
-         * @return string The module name.
+         * @return string The module name
          */
         public function getModule()
         {
@@ -67,7 +67,7 @@ class ContentTypeSingle {
         /**
          * Returns the name of this content type.
          *
-         * @return string The content type name.
+         * @return string The content type name
          */
         public function getName()
         {
@@ -77,7 +77,7 @@ class ContentTypeSingle {
         /**
          * Returns the title of this content type.
          *
-         * @return string The content type title.
+         * @return string The content type title
          */
         public function getTitle()
         {
@@ -95,7 +95,7 @@ class ContentTypeSingle {
         /**
          * Returns the description of this content type.
          *
-         * @return string The content type description.
+         * @return string The content type description
          */
         public function getDescription()
         {
@@ -113,7 +113,7 @@ class ContentTypeSingle {
         /**
          * Loads the data.
          *
-         * @param array $data Data array with parameters.
+         * @param array $data Data array with parameters
          */
         public function loadData(&$data)
         {
@@ -145,7 +145,7 @@ class ContentTypeSingle {
         /**
          * Displays the data.
          *
-         * @return string The returned output.
+         * @return string The returned output
          */
         public function display()
         {
@@ -179,7 +179,7 @@ class ContentTypeSingle {
         /**
          * Returns common arguments for display data selection with the external api.
          *
-         * @return array Display arguments.
+         * @return array Display arguments
          */
         protected function getDisplayArguments()
         {
@@ -194,7 +194,7 @@ class ContentTypeSingle {
         /**
          * Returns the default data.
          *
-         * @return array Default data and parameters.
+         * @return array Default data and parameters
          */
         public function getDefaultData()
         {

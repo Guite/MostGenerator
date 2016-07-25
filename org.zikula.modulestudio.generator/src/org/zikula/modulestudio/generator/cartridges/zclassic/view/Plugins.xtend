@@ -160,17 +160,17 @@ class Plugins {
          * Constructor.
          * Initialises member vars.
          *
-         * @param TranslatorInterface $translator     Translator service instance.
+         * @param TranslatorInterface $translator     Translator service instance
         «IF hasTrees»
-            «' '»* @param Routerinterface     $router         Router service instance.
+            «' '»* @param Routerinterface     $router         Router service instance
         «ENDIF»
-         * @param VariableApi         $variableApi    VariableApi service instance.
-         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance.
+         * @param VariableApi         $variableApi    VariableApi service instance
+         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
         «IF hasUploads»
-            «' '»* @param ViewHelper          $viewHelper     ViewHelper service instance.
+            «' '»* @param ViewHelper          $viewHelper     ViewHelper service instance
         «ENDIF»
         «IF hasListFields»
-            «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance.
+            «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
         «ENDIF»
          */
         public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF», VariableApi $variableApi, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
@@ -192,7 +192,7 @@ class Plugins {
         /**
          * Sets the translator.
          *
-         * @param TranslatorInterface $translator Translator service instance.
+         * @param TranslatorInterface $translator Translator service instance
          */
         public function setTranslator(/*TranslatorInterface */$translator)
         {
@@ -272,9 +272,9 @@ class Plugins {
         /**
          * Returns the value of a user variable.
          *
-         * @param string     $name    Name of desired property.
-         * @param int        $uid     The user's id.
-         * @param string|int $default The default value.
+         * @param string     $name    Name of desired property
+         * @param int        $uid     The user's id
+         * @param string|int $default The default value
          *
          * @return string
          */
@@ -292,11 +292,11 @@ class Plugins {
         /**
          * Display the avatar of a user.
          *
-         * @param int    $uid    The user's id.
-         * @param int    $width  Image width (optional).
-         * @param int    $height Image height (optional).
-         * @param int    $size   Gravatar size (optional).
-         * @param string $rating Gravatar self-rating [g|pg|r|x] see: http://en.gravatar.com/site/implement/images/ (optional).
+         * @param int    $uid    The user's id
+         * @param int    $width  Image width (optional)
+         * @param int    $height Image height (optional)
+         * @param int    $size   Gravatar size (optional)
+         * @param string $rating Gravatar self-rating [g|pg|r|x] see: http://en.gravatar.com/site/implement/images/ (optional)
          *
          * @return string
          */
@@ -327,9 +327,9 @@ class Plugins {
         /**
          * Display an image thumbnail using Imagine system plugin.
          *
-         * @param array $params Parameters assigned to bridged Smarty plugin.
+         * @param array $params Parameters assigned to bridged Smarty plugin
          *
-         * @return string Thumb path.
+         * @return string Thumb path
          */
         public function getImageThumb($params)
         {
@@ -344,9 +344,9 @@ class Plugins {
         /**
          * Returns a link to the user's profile.
          *
-         * @param int     $uid       The user's id (optional).
-         * @param string  $class     The class name for the link (optional).
-         * @param integer $maxLength If set then user names are truncated to x chars.
+         * @param int     $uid       The user's id (optional)
+         * @param string  $class     The class name for the link (optional)
+         * @param integer $maxLength If set then user names are truncated to x chars
          *
          * @return string
          */

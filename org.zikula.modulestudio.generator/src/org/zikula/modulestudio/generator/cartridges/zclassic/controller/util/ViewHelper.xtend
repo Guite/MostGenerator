@@ -63,8 +63,8 @@ class ViewHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
-                 * @param TranslatorInterface    $translator     Translator service instance.
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
+                 * @param TranslatorInterface    $translator     Translator service instance
                  *
                  * @return void
                  */
@@ -96,19 +96,19 @@ class ViewHelper {
          * Determines the view template for a certain method with given parameters.
          *
         «IF isLegacy»
-            «' '»* @param Zikula_View $view     Reference to view object.
+            «' '»* @param Zikula_View $view     Reference to view object
         «ELSE»
-            «' '»* @param Twig_Environment $twig     Reference to view object.
+            «' '»* @param Twig_Environment $twig     Reference to view object
         «ENDIF»
-         * @param string      «IF !isLegacy»     «ENDIF»$type    Current controller (name of currently treated entity).
-         * @param string      «IF !isLegacy»     «ENDIF»$func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+         * @param string      «IF !isLegacy»     «ENDIF»$type    Current controller (name of currently treated entity)
+         * @param string      «IF !isLegacy»     «ENDIF»$func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...)
          «IF isLegacy»
-         * @param array       $args    Additional arguments.
+         * @param array       $args    Additional arguments
          «ELSE»
-         * @param Request          $request Current request.
+         * @param Request          $request Current request
          «ENDIF»
          *
-         * @return string name of template file.
+         * @return string name of template file
          */
         public function getViewTemplate(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
@@ -158,21 +158,21 @@ class ViewHelper {
          * Utility method for managing view templates.
          *
         «IF isLegacy»
-            «' '»* @param Zikula_View $view     Reference to view object.
+            «' '»* @param Zikula_View $view     Reference to view object
         «ELSE»
-            «' '»* @param Twig_Environment $twig     Reference to view object.
+            «' '»* @param Twig_Environment $twig     Reference to view object
         «ENDIF»
-         * @param string      «IF !isLegacy»     «ENDIF»$type     Current controller (name of currently treated entity).
-         * @param string      «IF !isLegacy»     «ENDIF»$func     Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+         * @param string      «IF !isLegacy»     «ENDIF»$type     Current controller (name of currently treated entity)
+         * @param string      «IF !isLegacy»     «ENDIF»$func     Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...)
          «IF isLegacy»
-         * @param array       $args     Additional arguments.
+         * @param array       $args     Additional arguments
          «ELSE»
-         * @param Request          $request            Current request.
-         * @param array            $templateParameters Template data.
+         * @param Request          $request            Current request
+         * @param array            $templateParameters Template data
          «ENDIF»
-         * @param string      «IF !isLegacy»     «ENDIF»$template Optional assignment of precalculated template file.
+         * @param string      «IF !isLegacy»     «ENDIF»$template Optional assignment of precalculated template file
          *
-         * @return mixed Output.
+         * @return mixed Output
          */
         public function processTemplate(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request, $templateParameters = []«ENDIF», $template = '')
         {
@@ -237,19 +237,19 @@ class ViewHelper {
          * Get extension of the currently treated template.
          *
         «IF isLegacy»
-            «' '»* @param Zikula_View $view     Reference to view object.
+            «' '»* @param Zikula_View $view     Reference to view object
         «ELSE»
-            «' '»* @param Twig_Environment $twig     Reference to view object.
+            «' '»* @param Twig_Environment $twig     Reference to view object
         «ENDIF»
-         * @param string      «IF !isLegacy»     «ENDIF»$type    Current controller (name of currently treated entity).
-         * @param string      «IF !isLegacy»     «ENDIF»$func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+         * @param string      «IF !isLegacy»     «ENDIF»$type    Current controller (name of currently treated entity)
+         * @param string      «IF !isLegacy»     «ENDIF»$func    Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...)
          «IF isLegacy»
-         * @param array       $args    Additional arguments.
+         * @param array       $args    Additional arguments
          «ELSE»
-         * @param Request          $request Current request.
+         * @param Request          $request Current request
          «ENDIF»
          *
-         * @return array List of allowed template extensions.
+         * @return array List of allowed template extensions
          */
         protected function determineExtension(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig«ENDIF», $type, $func, «IF isLegacy»$args = array()«ELSE»Request $request«ENDIF»)
         {
@@ -286,10 +286,10 @@ class ViewHelper {
         /**
          * Get list of available template extensions.
          *
-         * @param string $type Current controller (name of currently treated entity).
-         * @param string $func Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...).
+         * @param string $type Current controller (name of currently treated entity)
+         * @param string $func Current function («IF isLegacy»main«ELSE»index«ENDIF», view, ...)
          *
-         * @return array List of allowed template extensions.
+         * @return array List of allowed template extensions
          */
         public function availableExtensions($type, $func)
         {
@@ -321,17 +321,17 @@ class ViewHelper {
          * Processes a template file using dompdf (LGPL).
          *
         «IF isLegacy»
-            «' '»* @param Zikula_View $view     Reference to view object.
+            «' '»* @param Zikula_View $view     Reference to view object
         «ELSE»
-            «' '»* @param Twig_Environment $twig     Reference to view object.
+            «' '»* @param Twig_Environment $twig     Reference to view object
         «ENDIF»
          «IF !isLegacy»
-         * @param Request          $request            Current request.
-         * @param array            $templateParameters Template data.
+         * @param Request          $request            Current request
+         * @param array            $templateParameters Template data
          «ENDIF»
-         * @param string      «IF !isLegacy»     «ENDIF»$template Name of template to use.
+         * @param string      «IF !isLegacy»     «ENDIF»$template Name of template to use
          *
-         * @return mixed Output.
+         * @return mixed Output
          */
         protected function processPdf(«IF isLegacy»Zikula_View $view«ELSE»Twig_Environment $twig, Request $request, $templateParameters = []«ENDIF», $template)
         {
@@ -394,11 +394,11 @@ class ViewHelper {
         /**
          * Display a given file size in a readable format
          *
-         * @param string  $size     File size in bytes.
-         * @param boolean $nodesc   If set to true the description will not be appended.
-         * @param boolean $onlydesc If set to true only the description will be returned.
+         * @param string  $size     File size in bytes
+         * @param boolean $nodesc   If set to true the description will not be appended
+         * @param boolean $onlydesc If set to true only the description will be returned
          *
-         * @return string File size in a readable form.
+         * @return string File size in a readable form
          */
         public function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
         {

@@ -95,11 +95,11 @@ class BlockModeration {
          * Display the block content.
          *
         «IF targets('1.3.x')»
-            «' '»* @param array $blockinfo the blockinfo structure.
+            «' '»* @param array $blockinfo the blockinfo structure
             «' '»*
             «' '»* @return string output of the rendered block
         «ELSE»
-            «' '»* @param array $properties The block properties array.
+            «' '»* @param array $properties The block properties array
 
             «' '»* @return array|string
         «ENDIF»
@@ -173,7 +173,7 @@ class BlockModeration {
         /**
          * Returns the template used for output.
          *
-         * @return string the template path.
+         * @return string the template path
          */
         protected function getDisplayTemplate()
         {

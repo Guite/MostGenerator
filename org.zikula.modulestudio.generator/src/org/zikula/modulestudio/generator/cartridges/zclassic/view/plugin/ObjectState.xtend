@@ -30,10 +30,10 @@ class ObjectState {
          *    «IF targets('1.3.x')»{$item.workflowState|«appName.formatForDB»ObjectState}       {* with visual feedback *}«ELSE»{{ item.workflowState|«appName.formatForDB»_objectState }}        {# with visual feedback #}«ENDIF»
          *    «IF targets('1.3.x')»{$item.workflowState|«appName.formatForDB»ObjectState:false} {* no ui feedback *}«ELSE»{{ item.workflowState|«appName.formatForDB»_objectState(false) }} {# no ui feedback #}«ENDIF»
          *
-         * @param string  $state      Name of given workflow state.
-         * @param boolean $uiFeedback Whether the output should include some visual feedback about the state.
+         * @param string  $state      Name of given workflow state
+         * @param boolean $uiFeedback Whether the output should include some visual feedback about the state
          *
-         * @return string Enriched and translated workflow state ready for display.
+         * @return string Enriched and translated workflow state ready for display
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»«ELSE»get«ENDIF»ObjectState($state = 'initial', $uiFeedback = true)
         {

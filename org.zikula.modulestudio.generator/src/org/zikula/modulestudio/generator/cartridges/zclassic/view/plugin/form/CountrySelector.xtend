@@ -63,8 +63,8 @@ class CountrySelector {
             /**
              * Load event handler.
              *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
+             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+             * @param array            &$params Parameters passed from the Smarty plugin function
              *
              * @return void
              */
@@ -126,10 +126,10 @@ class CountrySelector {
          * The «appName.formatForDB»CountrySelector plugin creates a country dropdown list.
          * It understands an optional argument to limit the select options to a given set of allowed countries.
          *
-         * @param array            $params All attributes passed to this function from the template.
-         * @param Zikula_Form_View $view   Reference to the view object.
+         * @param array            $params All attributes passed to this function from the template
+         * @param Zikula_Form_View $view   Reference to the view object
          *
-         * @return string The output of the plugin.
+         * @return string The output of the plugin
          */
         function smarty_function_«appName.formatForDB»CountrySelector($params, $view)
         {

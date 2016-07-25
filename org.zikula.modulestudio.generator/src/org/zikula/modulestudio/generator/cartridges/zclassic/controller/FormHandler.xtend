@@ -354,12 +354,12 @@ class FormHandler {
                 /**
                  * Constructor.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
-                 * @param TranslatorInterface    $translator     Translator service instance.
-                 * @param RequestStack           $requestStack   RequestStack service instance.
-                 * @param RouterInterface        $router         Router service instance.
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
+                 * @param TranslatorInterface    $translator     Translator service instance
+                 * @param RequestStack           $requestStack   RequestStack service instance
+                 * @param RouterInterface        $router         Router service instance
                 «IF hasUploads»
-                    «' '»* @param UploadHandler          $uploadHandler  UploadHandler service instance.
+                    «' '»* @param UploadHandler          $uploadHandler  UploadHandler service instance
                 «ENDIF»
                  */
                 public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router«IF hasUploads», UploadHandler $uploadHandler«ENDIF»)
@@ -376,7 +376,7 @@ class FormHandler {
                 /**
                  * Sets the translator.
                  *
-                 * @param TranslatorInterface $translator Translator service instance.
+                 * @param TranslatorInterface $translator Translator service instance
                  */
                 public function setTranslator(/*TranslatorInterface */$translator)
                 {
@@ -413,12 +413,12 @@ class FormHandler {
          * This method takes care of all necessary initialisation of our data and form states.
          *
         «IF isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance.
+            «' '»* @param Zikula_Form_View $view The form view instance
         «ELSE»
-            «' '»* @param array $templateParameters List of preassigned template variables.
+            «' '»* @param array $templateParameters List of preassigned template variables
         «ENDIF»
          *
-         * @return boolean False in case of initialisation errors, otherwise true.
+         * @return boolean False in case of initialisation errors, otherwise true
          «IF !isLegacy»
          *
          * @throws NotFoundHttpException Thrown if item to be edited isn't found
@@ -594,7 +594,7 @@ class FormHandler {
         /**
          * Create concatenated identifier string (for composite keys).
          *
-         * @return String concatenated identifiers. 
+         * @return String concatenated identifiers
          */
         protected function createCompositeIdentifier()
         {
@@ -614,7 +614,7 @@ class FormHandler {
         /**
          * Initialise existing entity for editing.
          *
-         * @return «IF isLegacy»Zikula_«ENDIF»EntityAccess|null Desired entity instance or null.
+         * @return «IF isLegacy»Zikula_«ENDIF»EntityAccess|null Desired entity instance or null
          «IF !isLegacy»
          *
          * @throws NotFoundHttpException Thrown if item to be edited isn't found
@@ -641,7 +641,7 @@ class FormHandler {
         /**
          * Initialise new entity for creation.
          *
-         * @return «IF isLegacy»Zikula_«ENDIF»EntityAccess|null Desired entity instance or null.
+         * @return «IF isLegacy»Zikula_«ENDIF»EntityAccess|null Desired entity instance or null
          «IF !isLegacy»
          *
          * @throws NotFoundHttpException Thrown if item to be cloned isn't found
@@ -759,7 +759,7 @@ class FormHandler {
              * Return list of attribute field names.
              * To be customised in sub classes as needed.
              *
-             * @return array list of attribute names.
+             * @return array list of attribute names
              */
             protected function getAttributeFieldNames()
             {
@@ -777,10 +777,10 @@ class FormHandler {
         «IF isLegacy»
             «legacyParts.handleCommandDescription(it)»
         «ELSE»
-            «' '»* @param array $args List of arguments.
+            «' '»* @param array $args List of arguments
         «ENDIF»
          *
-         * @return mixed Redirect or false on errors.
+         * @return mixed Redirect or false on errors
          */
         public function handleCommand(«IF isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
         {
@@ -882,8 +882,8 @@ class FormHandler {
             /**
              * Prepare update of attributes.
              *
-             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity   currently treated entity instance.
-             * @param Array«IF isLegacy»       «ENDIF»        $formData form data to be merged.
+             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity   currently treated entity instance
+             * @param Array«IF isLegacy»       «ENDIF»        $formData form data to be merged
              */
             protected function processAttributesForUpdate($entity, $formData)
             {
@@ -922,8 +922,8 @@ class FormHandler {
             /**
              * Prepare update of translations.
              *
-             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity   currently treated entity instance.
-             * @param Array«IF isLegacy»       «ENDIF»        $formData unmapped form data outside the entity scope.
+             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity   currently treated entity instance
+             * @param Array«IF isLegacy»       «ENDIF»        $formData unmapped form data outside the entity scope
              */
             protected function processTranslationsForUpdate($entity, $formData)
             {
@@ -956,10 +956,10 @@ class FormHandler {
         /**
          * Get success or error message for default operations.
          *
-         * @param array   $args    arguments from handleCommand method.
-         * @param Boolean $success true if this is a success, false for default error.
+         * @param array   $args    arguments from handleCommand method
+         * @param Boolean $success true if this is a success, false for default error
          *
-         * @return String desired status or error message.
+         * @return String desired status or error message
          */
         protected function getDefaultMessage($args, $success = false)
         {
@@ -994,8 +994,8 @@ class FormHandler {
         /**
          * Add success or error message to session.
          *
-         * @param array   $args    arguments from handleCommand method.
-         * @param Boolean $success true if this is a success, false for default error.
+         * @param array   $args    arguments from handleCommand method
+         * @param Boolean $success true if this is a success, false for default error
          «IF !isLegacy»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
@@ -1033,11 +1033,11 @@ class FormHandler {
          * Input data processing called by handleCommand method.
          *
         «IF isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance.
+            «' '»* @param Zikula_Form_View $view The form view instance
         «ENDIF»
-         * @param array «IF isLegacy»           «ENDIF»$args Additional arguments.
+         * @param array «IF isLegacy»           «ENDIF»$args Additional arguments
          *
-         * @return array form data after processing.
+         * @return array form data after processing
          */
         public function fetchInputData(«IF isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
         {
@@ -1143,9 +1143,9 @@ class FormHandler {
         /**
          * This method executes a certain workflow action.
          *
-         * @param array $args Arguments from handleCommand method.
+         * @param array $args Arguments from handleCommand method
          *
-         * @return bool Whether everything worked well or not.
+         * @return bool Whether everything worked well or not
          */
         public function applyAction(array $args = «IF isLegacy»array()«ELSE»[]«ENDIF»)
         {
@@ -1158,10 +1158,10 @@ class FormHandler {
         /**
          * Prepares properties related to advanced workflow.
          *
-         * @param bool $enterprise Whether the enterprise workflow is used instead of the standard workflow.
+         * @param bool $enterprise Whether the enterprise workflow is used instead of the standard workflow
         «IF !isLegacy»
             «' '»*
-            «' '»* @return array List of additional form options.
+            «' '»* @return array List of additional form options
         «ENDIF»
          */
         protected function prepareWorkflowAdditions($enterprise = false)
@@ -1379,12 +1379,12 @@ class FormHandler {
          * This method takes care of all necessary initialisation of our data and form states.
          *
         «IF app.isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance.
+            «' '»* @param Zikula_Form_View $view The form view instance
         «ELSE»
-            «' '»* @param array $templateParameters List of preassigned template variables.
+            «' '»* @param array $templateParameters List of preassigned template variables
         «ENDIF»
          *
-         * @return boolean False in case of initialisation errors, otherwise true.
+         * @return boolean False in case of initialisation errors, otherwise true
          */
         public function «IF app.isLegacy»initialize«ELSE»processForm«ENDIF»(«IF app.isLegacy»Zikula_Form_View $view«ELSE»array $templateParameters«ENDIF»)
         {
@@ -1494,13 +1494,13 @@ class FormHandler {
          * This event handler is called when a command is issued by the user.
          *
         «IF app.isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance.
-            «' '»* @param array            $args Additional arguments.
+            «' '»* @param Zikula_Form_View $view The form view instance
+            «' '»* @param array            $args Additional arguments
         «ELSE»
-            «' '»* @param array $args List of arguments.
+            «' '»* @param array $args List of arguments
         «ENDIF»
          *
-         * @return mixed Redirect or false on errors.
+         * @return mixed Redirect or false on errors
          */
         public function handleCommand(«IF app.isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
         {
@@ -1519,10 +1519,10 @@ class FormHandler {
         /**
          * Get success or error message for default operations.
          *
-         * @param array   $args    Arguments from handleCommand method.
-         * @param Boolean $success Becomes true if this is a success, false for default error.
+         * @param array   $args    Arguments from handleCommand method
+         * @param Boolean $success Becomes true if this is a success, false for default error
          *
-         * @return String desired status or error message.
+         * @return String desired status or error message
          */
         protected function getDefaultMessage($args, $success = false)
         {
@@ -1558,9 +1558,9 @@ class FormHandler {
         /**
          * This method executes a certain workflow action.
          *
-         * @param array $args Arguments from handleCommand method.
+         * @param array $args Arguments from handleCommand method
          *
-         * @return bool Whether everything worked well or not.
+         * @return bool Whether everything worked well or not
          «IF !app.isLegacy»
          *
          * @throws RuntimeException Thrown if concurrent editing is recognised or another error occurs

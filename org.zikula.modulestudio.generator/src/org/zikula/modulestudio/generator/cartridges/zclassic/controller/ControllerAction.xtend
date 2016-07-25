@@ -90,7 +90,7 @@ class ControllerAction {
         «ENDIF»
          *
          «IF !isLegacy»
-         * @param Request  $request      Current request instance.
+         * @param Request  $request      Current request instance
          «ENDIF»
         «IF null !== entity»
             «actionDocMethodParams(entity, it)»
@@ -98,18 +98,18 @@ class ControllerAction {
             «actionDocMethodParams»
         «ENDIF»
          *
-         * @return mixed Output.
+         * @return mixed Output
          «IF !isLegacy»
          *
-         * @throws AccessDeniedException Thrown if the user doesn't have required permissions.
+         * @throws AccessDeniedException Thrown if the user doesn't have required permissions
          «IF it instanceof DisplayAction»
-         * @throws NotFoundHttpException Thrown by param converter if item to be displayed isn't found.
+         * @throws NotFoundHttpException Thrown by param converter if item to be displayed isn't found
          «ELSEIF it instanceof EditAction»
-         * @throws NotFoundHttpException Thrown by form handler if item to be edited isn't found.
-         * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available).
+         * @throws NotFoundHttpException Thrown by form handler if item to be edited isn't found
+         * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
          «ELSEIF it instanceof DeleteAction»
-         * @throws NotFoundHttpException Thrown by param converter if item to be deleted isn't found.
-         * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available).
+         * @throws NotFoundHttpException Thrown by param converter if item to be deleted isn't found
+         * @throws RuntimeException      Thrown if another critical error occurs (e.g. workflow actions not available)
          «ENDIF»
          «ENDIF»
          */
@@ -139,35 +139,35 @@ class ControllerAction {
         if (!isLegacy && it instanceof MainAction) {
             ''
         } else if (!(it instanceof MainAction || it instanceof CustomAction)) {
-            ' * @param string  $ot           Treated object type.\n'
+            ' * @param string  $ot           Treated object type\n'
             + '''«actionDocAdditionalParams(null)»'''
-            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n' else '')
-            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template)\n' else '')
+            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output)\n' else '')
         }
     }
 
     def private actionDocMethodParams(Entity it, Action action) {
         if (!(action instanceof MainAction || action instanceof CustomAction)) {
             '''«actionDocAdditionalParams(action, it)»'''
-            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template).\n' else '')
-            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output).\n' else '')
+            + (if (isLegacy) ' * @param string  $tpl          Name of alternative template (to be used instead of the default template)\n' else '')
+            + (if (isLegacy) ' * @param boolean $raw          Optional way to display a template instead of fetching it (required for standalone output)\n' else '')
         }
     }
 
     def private actionDocAdditionalParams(Action it, Entity refEntity) {
         switch it {
             ViewAction:
-                 ' * @param string  $sort         Sorting field.\n'
-               + ' * @param string  $sortdir      Sorting direction.\n'
-               + ' * @param int     $pos          Current pager position.\n'
-               + ' * @param int     $num          Amount of entries to display.\n'
+                 ' * @param string  $sort         Sorting field\n'
+               + ' * @param string  $sortdir      Sorting direction\n'
+               + ' * @param int     $pos          Current pager position\n'
+               + ' * @param int     $num          Amount of entries to display\n'
             DisplayAction:
-                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
-                 else ' * @param int     $id           Identifier of entity to be shown.\n')
+                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                 else ' * @param int     $id           Identifier of entity to be shown\n')
             DeleteAction:
-                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance.\n'
-                 else ' * @param int     $id           Identifier of entity to be shown.\n')
-               + (if (isLegacy) ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.\n' else '')
+                (if (null !== refEntity && !isLegacy) ' * @param ' + refEntity.name.formatForCodeCapital + 'Entity $' + refEntity.name.formatForCode + '      Treated ' + refEntity.name.formatForDisplay + ' instance\n'
+                 else ' * @param int     $id           Identifier of entity to be deleted\n')
+               + (if (isLegacy) ' * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed\n' else '')
             default: ''
         }
     }

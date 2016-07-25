@@ -42,7 +42,7 @@ class TimeTypeExtension {
             /**
              * ColourType constructor.
              *
-             * @param AssetBag $footerAssetBag AssetBag service instance for footer code.
+             * @param AssetBag $footerAssetBag AssetBag service instance for footer code
              */
             public function __construct(AssetBag $footerAssetBag)
             {
@@ -125,9 +125,9 @@ class TimeTypeExtension {
             /**
              * Returns required time format.
              *
-             * @param array The options.
+             * @param array The options
              *
-             * @return string Time format.
+             * @return string Time format
              */
             protected function getTimeFormat(array $options)
             {

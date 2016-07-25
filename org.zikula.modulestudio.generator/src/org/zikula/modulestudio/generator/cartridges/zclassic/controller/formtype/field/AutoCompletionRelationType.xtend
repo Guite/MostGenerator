@@ -49,8 +49,8 @@ class AutoCompletionRelationType {
             /**
              * AutoCompletionRelationType constructor.
              *
-             * @param TranslatorInterface $translator Translator service instance.
-             * @param ObjectManager $objectManager Doctrine object manager.
+             * @param TranslatorInterface $translator Translator service instance
+             * @param ObjectManager $objectManager Doctrine object manager
              */
             public function __construct(TranslatorInterface $translator, ObjectManager $objectManager)
             {

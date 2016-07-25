@@ -95,7 +95,7 @@ class BlockList {
         /**
          * Returns default settings for this block.
          *
-         * @return array The default settings.
+         * @return array The default settings
          */
         protected function getDefaults()
         {
@@ -116,9 +116,9 @@ class BlockList {
             /**
              * Resolves category filter ids.
              *
-             * @param array $properties The block properties array.
+             * @param array $properties The block properties array
              *
-             * @return array The updated block properties.
+             * @return array The updated block properties
              */
             protected function resolveCategoryIds(array $properties)
             {
@@ -190,11 +190,11 @@ class BlockList {
          * Display the block content.
          *
         «IF targets('1.3.x')»
-            «' '»* @param array $blockinfo the blockinfo structure.
+            «' '»* @param array $blockinfo the blockinfo structure
             «' '»*
             «' '»* @return string output of the rendered block
         «ELSE»
-            «' '»* @param array $properties The block properties array.
+            «' '»* @param array $properties The block properties array
 
             «' '»* @return array|string
         «ENDIF»
@@ -346,9 +346,9 @@ class BlockList {
         /**
          * Returns the template used for output.
          *
-         * @param array $properties The block properties array.
+         * @param array $properties The block properties array
          *
-         * @return string the template path.
+         * @return string the template path
          */
         protected function getDisplayTemplate(array $properties)
         {
@@ -383,10 +383,10 @@ class BlockList {
         /**
          * Determines the order by parameter for item selection.
          *
-         * @param array               $properties The block properties array.
-         * @param Doctrine_Repository $repository The repository used for data fetching.
+         * @param array               $properties The block properties array
+         * @param Doctrine_Repository $repository The repository used for data fetching
          *
-         * @return string the sorting clause.
+         * @return string the sorting clause
          */
         protected function getSortParam(array $properties, $repository)
         {
@@ -423,7 +423,7 @@ class BlockList {
              *
              * @param array $blockinfo the blockinfo structure
              *
-             * @return string output of the block editing form.
+             * @return string output of the block editing form
              */
             public function modify($blockinfo)
             {
@@ -450,7 +450,7 @@ class BlockList {
             /**
              * Returns the fully qualified class name of the block's form class.
              *
-             * @return string Template path.
+             * @return string Template path
              */
             public function getFormClassName()
             {
@@ -460,7 +460,7 @@ class BlockList {
             /**
              * Returns any array of form options.
              *
-             * @return array Options array.
+             * @return array Options array
              */
             public function getFormOptions()
             {
@@ -473,7 +473,7 @@ class BlockList {
             /**
              * Returns the template used for rendering the editing form.
              *
-             * @return string Template path.
+             * @return string Template path
              */
             public function getFormTemplate()
             {
@@ -489,7 +489,7 @@ class BlockList {
          *
          * @param array $blockinfo the blockinfo structure
          *
-         * @return array the modified blockinfo structure.
+         * @return array the modified blockinfo structure
          */
         public function update($blockinfo)
         {

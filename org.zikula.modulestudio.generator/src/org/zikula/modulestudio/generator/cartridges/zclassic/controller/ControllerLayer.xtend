@@ -318,9 +318,9 @@ class ControllerLayer {
          * )
          «ENDIF»
          *
-         * @param Request $request Current request instance.
+         * @param Request $request Current request instance
          *
-         * @return bool true on sucess, false on failure.
+         * @return bool true on sucess, false on failure
          «IF !isLegacy»
          *
          * @throws RuntimeException Thrown if executing the workflow action fails
@@ -479,11 +479,11 @@ class ControllerLayer {
          * )
          «ENDIF»
          *
-         * @param string  $idPrefix    Prefix for inline window element identifier.
-         * @param string  $commandName Name of action to be performed (create or edit).
-         * @param integer $id          Id of created item (used for activating auto completion after closing the modal window).
+         * @param string  $idPrefix    Prefix for inline window element identifier
+         * @param string  $commandName Name of action to be performed (create or edit)
+         * @param integer $id          Id of created item (used for activating auto completion after closing the modal window)
          *
-         * @return boolean Whether the inline redirect has been performed or not.
+         * @return boolean Whether the inline redirect has been performed or not
          */
     '''
 
@@ -544,7 +544,7 @@ class ControllerLayer {
          «ENDIF»
          «IF !isLegacy»
          *
-         * @param Request $request Current request instance.
+         * @param Request $request Current request instance
          «ENDIF»
          *
          * @return string Output
@@ -719,7 +719,7 @@ class ControllerLayer {
             /**
              * Returns available «name.formatForDB» panel links.
              *
-             * @return array Array of «name.formatForDB» links.
+             * @return array Array of «name.formatForDB» links
              */
             public function getLinks()
             {
@@ -782,10 +782,10 @@ class ControllerLayer {
              * Constructor.
              * Initialises member vars.
              *
-             * @param TranslatorInterface $translator       Translator service instance.
-             * @param Routerinterface     $router           Router service instance.
-             * @param PermissionApi       $permissionApi    PermissionApi service instance.
-             * @param ControllerHelper    $controllerHelper ControllerHelper service instance.
+             * @param TranslatorInterface $translator       Translator service instance
+             * @param Routerinterface     $router           Router service instance
+             * @param PermissionApi       $permissionApi    PermissionApi service instance
+             * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              */
             public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper)
             {
@@ -798,7 +798,7 @@ class ControllerLayer {
             /**
              * Sets the translator.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function setTranslator(/*TranslatorInterface */$translator)
             {
@@ -808,9 +808,9 @@ class ControllerLayer {
             /**
              * Returns available header links.
              *
-             * @param string $type The type to collect links for.
+             * @param string $type The type to collect links for
              *
-             * @return array Array of header links.
+             * @return array Array of header links
              */
             public function getLinks($type = LinkContainerInterface::TYPE_ADMIN)
             {

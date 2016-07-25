@@ -36,11 +36,11 @@ class ObjectTypeSelector {
             «' '»* Available parameters:
             «' '»*   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
             «' '»*
-            «' '»* @param  array            $params All attributes passed to this function from the template.
-            «' '»* @param  Zikula_Form_View $view   Reference to the view object.
+            «' '»* @param  array            $params All attributes passed to this function from the template
+            «' '»* @param  Zikula_Form_View $view   Reference to the view object
         «ENDIF»
          *
-         * @return string The output of the plugin.
+         * @return string The output of the plugin
          */
         «IF !generateSmartyPlugin»public «ENDIF»function «IF generateSmartyPlugin»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»ObjectTypeSelector(«IF generateSmartyPlugin»$params, $view«ENDIF»)
         {

@@ -63,12 +63,12 @@ class ImageHelper {
         /**
          * This method returns an Imagine preset for the given arguments.
          *
-         * @param string $objectType Currently treated entity type.
-         * @param string $fieldName  Name of upload field.
-         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
-         * @param array  $args       Additional arguments.
+         * @param string $objectType Currently treated entity type
+         * @param string $fieldName  Name of upload field
+         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array  $args       Additional arguments
          *
-         * @return SystemPlugin_Imagine_Preset The selected preset.
+         * @return SystemPlugin_Imagine_Preset The selected preset
          */
         public function getPreset($objectType = '', $fieldName = '', $context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -105,13 +105,13 @@ class ImageHelper {
         /**
          * This method returns an Imagine preset for the given arguments.
          *
-         * @param string $objectType Currently treated entity type.
-         * @param string $fieldName  Name of upload field.
-         * @param string $presetName Name of desired preset.
-         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
-         * @param array  $args       Additional arguments.
+         * @param string $objectType Currently treated entity type
+         * @param string $fieldName  Name of upload field
+         * @param string $presetName Name of desired preset
+         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array  $args       Additional arguments
          *
-         * @return SystemPlugin_Imagine_Preset The selected preset.
+         * @return SystemPlugin_Imagine_Preset The selected preset
          */
         public function getCustomPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {

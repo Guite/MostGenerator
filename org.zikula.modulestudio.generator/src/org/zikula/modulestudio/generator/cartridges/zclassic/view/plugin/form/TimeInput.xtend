@@ -64,10 +64,11 @@ class TimeInput {
             /**
              * Create event handler.
              *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
+             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+             * @param array            &$params Parameters passed from the Smarty plugin function
              *
              * @see    Zikula_Form_AbstractPlugin
+             *
              * @return void
              */
             public function create(Zikula_Form_View $view, &$params)
@@ -104,7 +105,7 @@ class TimeInput {
             /**
              * Render event handler.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
              *
              * @return string The rendered output
              */
@@ -145,7 +146,7 @@ class TimeInput {
             /**
              * Returns required time format.
              *
-             * @return string Time format.
+             * @return string Time format
              */
             protected function getTimeFormat()
             {
@@ -161,7 +162,7 @@ class TimeInput {
             /**
              * Validates the input.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
              *
              * @return void
              */
@@ -185,10 +186,10 @@ class TimeInput {
             /**
              * Parses a value.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
-             * @param string           $text Text.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
+             * @param string           $text Text
              *
-             * @return string Parsed Text.
+             * @return string Parsed text
              */
             public function parseValue(Zikula_Form_View $view, $text)
             {
@@ -237,10 +238,10 @@ class TimeInput {
         /**
          * The «appName.formatForDB»TimeInput plugin handles fields carrying time data.
          *
-         * @param  array            $params All attributes passed to this function from the template.
-         * @param  Zikula_Form_View $view   Reference to the view object.
+         * @param  array            $params All attributes passed to this function from the template
+         * @param  Zikula_Form_View $view   Reference to the view object
          *
-         * @return string The output of the plugin.
+         * @return string The output of the plugin
          */
         function smarty_function_«appName.formatForDB»TimeInput($params, $view)
         {

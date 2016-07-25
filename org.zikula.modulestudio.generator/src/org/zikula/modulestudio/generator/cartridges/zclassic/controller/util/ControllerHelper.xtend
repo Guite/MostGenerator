@@ -87,10 +87,10 @@ class ControllerHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance.
-                 * @param TranslatorInterface    $translator     Translator service instance.
-                 * @param Session                $session        Session service instance.
-                 * @param Logger                 $logger         Logger service instance.
+                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
+                 * @param TranslatorInterface    $translator     Translator service instance
+                 * @param Session                $session        Session service instance
+                 * @param Logger                 $logger         Logger service instance
                  */
                 public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, Session $session, Logger $logger)
                 {
@@ -131,10 +131,10 @@ class ControllerHelper {
         /**
          * Returns an array of all allowed object types in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util).
-         * @param array  $args    Additional arguments.
+         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util)
+         * @param array  $args    Additional arguments
          *
-         * @return array List of allowed object types.
+         * @return array List of allowed object types
          */
         public function getObjectTypes($context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -155,10 +155,10 @@ class ControllerHelper {
         /**
          * Returns the default object type in «appName».
          *
-         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util).
-         * @param array  $args    Additional arguments.
+         * @param string $context Usage context (allowed values: controllerAction, api«IF !targets('1.3.x')», helper«ENDIF», actionHandler, block, contentType, util)
+         * @param array  $args    Additional arguments
          *
-         * @return string The name of the default object type.
+         * @return string The name of the default object type
          */
         public function getDefaultObjectType($context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -176,9 +176,9 @@ class ControllerHelper {
         /**
          * Checks whether a certain entity type uses composite keys or not.
          *
-         * @param string $objectType The object type to retrieve.
+         * @param string $objectType The object type to retrieve
          *
-         * @return boolean Whether composite keys are used or not.
+         * @return Boolean Whether composite keys are used or not
          */
         public function hasCompositeKeys($objectType)
         {
@@ -197,12 +197,12 @@ class ControllerHelper {
         /**
          * Retrieve identifier parameters for a given object type.
          *
-         * @param «IF targets('1.3.x')»Zikula_Request_Http«ELSE»Request«ENDIF» $request    The current request.
-         * @param array   $args       List of arguments used as fallback if request does not contain a field.
-         * @param string  $objectType Name of treated entity type.
-         * @param array   $idFields   List of identifier field names.
+         * @param «IF targets('1.3.x')»Zikula_Request_Http«ELSE»Request«ENDIF» $request    The current request
+         * @param array   $args       List of arguments used as fallback if request does not contain a field
+         * @param string  $objectType Name of treated entity type
+         * @param array   $idFields   List of identifier field names
          *
-         * @return array List of fetched identifiers.
+         * @return array List of fetched identifiers
          */
         public function retrieveIdentifier(«IF targets('1.3.x')»Zikula_Request_Http«ELSE»Request«ENDIF» $request, array $args, $objectType = '', array $idFields)
         {
@@ -269,9 +269,9 @@ class ControllerHelper {
         /**
          * Checks if all identifiers are set properly.
          *
-         * @param array  $idValues List of identifier field values.
+         * @param array  $idValues List of identifier field values
          *
-         * @return boolean Whether all identifiers are set or not.
+         * @return boolean Whether all identifiers are set or not
          */
         public function isValidIdentifier(array $idValues)
         {
@@ -293,10 +293,10 @@ class ControllerHelper {
         /**
          * Create nice permalinks.
          *
-         * @param string $name The given object title.
+         * @param string $name The given object title
          *
-         * @return string processed permalink.
-         * @deprecated made obsolete by Doctrine extensions.
+         * @return string processed permalink
+         * @deprecated made obsolete by Doctrine extensions
          */
         public function formatPermalink($name)
         {
@@ -315,13 +315,13 @@ class ControllerHelper {
         /**
          * Retrieve the base path for given object type and upload field combination.
          *
-         * @param string  $objectType   Name of treated entity type.
-         * @param string  $fieldName    Name of upload field.
-         * @param boolean $ignoreCreate Whether to ignore the creation of upload folders on demand or not.
+         * @param string  $objectType   Name of treated entity type
+         * @param string  $fieldName    Name of upload field
+         * @param boolean $ignoreCreate Whether to ignore the creation of upload folders on demand or not
          *
-         * @return mixed Output.
+         * @return mixed Output
          *
-         * @throws Exception If an invalid object type is used.
+         * @throws Exception If an invalid object type is used
          */
         public function getFileBaseFolder($objectType, $fieldName, $ignoreCreate = false)
         {
@@ -369,7 +369,7 @@ class ControllerHelper {
         /**
          * Creates all required upload folders for this application.
          *
-         * @return Boolean whether everything went okay or not.
+         * @return Boolean Whether everything went okay or not
          */
         public function checkAndCreateAllUploadFolders()
         {
@@ -389,11 +389,11 @@ class ControllerHelper {
         /**
          * Creates upload folder including a subfolder for thumbnail and an .htaccess file within it.
          *
-         * @param string $objectType        Name of treated entity type.
-         * @param string $fieldName         Name of upload field.
-         * @param string $allowedExtensions String with list of allowed file extensions (separated by ", ").
+         * @param string $objectType        Name of treated entity type
+         * @param string $fieldName         Name of upload field
+         * @param string $allowedExtensions String with list of allowed file extensions (separated by ", ")
          *
-         * @return Boolean whether everything went okay or not.
+         * @return Boolean Whether everything went okay or not
          */
         protected function checkAndCreateUploadFolder($objectType, $fieldName, $allowedExtensions = '')
         {
@@ -481,9 +481,9 @@ class ControllerHelper {
          * corresponding entity class.
          * There is also a method on JS level available in «getAppJsPath»«appName»«IF targets('1.3.x')»_e«ELSE».E«ENDIF»ditFunctions.js.
          *
-         * @param string $address The address input string.
+         * @param string $address The address input string
          *
-         * @return Array The determined coordinates.
+         * @return Array The determined coordinates
          */
         public function performGeoCoding($address)
         {

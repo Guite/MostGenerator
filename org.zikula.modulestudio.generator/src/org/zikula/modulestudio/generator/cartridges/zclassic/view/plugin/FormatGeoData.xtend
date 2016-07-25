@@ -29,9 +29,9 @@ class FormatGeoData {
          * Example:
          *     «IF targets('1.3.x')»{$latitude|«appName.formatForDB»FormatGeoData}«ELSE»{{ latitude|«appName.formatForDB»_geoData }}«ENDIF»
          *
-         * @param string $string The data to be formatted.
+         * @param string $string The data to be formatted
          *
-         * @return string The formatted output.
+         * @return string The formatted output
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»F«ELSE»f«ENDIF»ormatGeoData($string)
         {

@@ -31,7 +31,7 @@ class ActionUrl {
          * @param string $urlFunc      The url func (view, display, edit, etc.)
          * @param array  $urlArguments The argument array containing ids and other additional parameters
          *
-         * @return string Desired url in encoded form.
+         * @return string Desired url in encoded form
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»«ELSE»build«ENDIF»ActionUrl($urlType, $urlFunc, $urlArguments)
         {

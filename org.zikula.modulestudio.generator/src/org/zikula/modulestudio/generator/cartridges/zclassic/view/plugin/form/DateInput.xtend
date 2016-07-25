@@ -50,10 +50,11 @@ class DateInput {
             /**
              * Create event handler.
              *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
+             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object
+             * @param array            &$params Parameters passed from the Smarty plugin function
              *
              * @see    Zikula_Form_AbstractPlugin
+             *
              * @return void
              */
             public function create(Zikula_Form_View $view, &$params)
@@ -81,7 +82,7 @@ class DateInput {
             /**
              * Render event handler.
              *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object
              *
              * @return string The rendered output
              */
@@ -150,7 +151,7 @@ class DateInput {
             /**
              * Returns required date formats for PHP date and JavaScript.
              *
-             * @return array List of date formats.
+             * @return array List of date formats
              */
             protected function getDateFormat()
             {
@@ -179,10 +180,10 @@ class DateInput {
         /**
          * The «appName.formatForDB»DateInput plugin handles fields carrying date data.
          *
-         * @param  array            $params All attributes passed to this function from the template.
-         * @param  Zikula_Form_View $view   Reference to the view object.
+         * @param  array            $params All attributes passed to this function from the template
+         * @param  Zikula_Form_View $view   Reference to the view object
          *
-         * @return string The output of the plugin.
+         * @return string The output of the plugin
          */
         function smarty_function_«appName.formatForDB»DateInput($params, $view)
         {

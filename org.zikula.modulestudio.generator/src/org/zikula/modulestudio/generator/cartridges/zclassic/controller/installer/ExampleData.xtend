@@ -54,7 +54,7 @@ class ExampleData {
          * Create the default data for «appName».
          *
         «IF hasCategorisableEntities»
-            «' '»* @param array $categoryRegistryIdsPerEntity List of category registry ids.
+            «' '»* @param array $categoryRegistryIdsPerEntity List of category registry ids
             «' '»*
         «ENDIF»
          * @return void

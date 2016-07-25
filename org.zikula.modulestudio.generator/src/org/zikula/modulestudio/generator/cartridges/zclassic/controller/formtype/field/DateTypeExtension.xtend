@@ -87,9 +87,9 @@ class DateTypeExtension {
             /**
              * Returns required date formats for PHP date and JavaScript.
              *
-             * @param array The options.
+             * @param array The options
              *
-             * @return array List of date formats.
+             * @return array List of date formats
              */
             protected function getDateFormat(array $options)
             {

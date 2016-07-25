@@ -137,14 +137,14 @@ class EditEntity {
             /**
              * «name.formatForCodeCapital»Type constructor.
              *
-             * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»   Translator service instance.
-             * @param «name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance.
+             * @param TranslatorInterface $translator «IF extensions.contains('translatable')» «ENDIF»   Translator service instance
+             * @param «name.formatForCodeCapital»Factory        $entityFactory Entity factory service instance
             «IF extensions.contains('translatable')»
-                «' '»* @param VariableApi         $variableApi VariableApi service instance.
-                «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance.
+                «' '»* @param VariableApi         $variableApi VariableApi service instance
+                «' '»* @param TranslatableHelper  $listHelper  TranslatableHelper service instance
             «ENDIF»
             «IF hasListFieldsEntity»
-                «' '»* @param ListEntriesHelper   $listHelper    «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance.
+                «' '»* @param ListEntriesHelper   $listHelper    «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance
             «ENDIF»
              */
             public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
@@ -163,7 +163,7 @@ class EditEntity {
             /**
              * Sets the translator.
              *
-             * @param TranslatorInterface $translator Translator service instance.
+             * @param TranslatorInterface $translator Translator service instance
              */
             public function setTranslator(/*TranslatorInterface */$translator)
             {
@@ -331,8 +331,8 @@ class EditEntity {
         /**
          * Adds basic entity fields.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addEntityFields(FormBuilderInterface $builder, array $options)
         {
@@ -724,8 +724,8 @@ class EditEntity {
         /**
          * Adds fields for coordinates.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addGeographicalFields(FormBuilderInterface $builder, array $options)
         {
@@ -745,8 +745,8 @@ class EditEntity {
         /**
          * Adds fields for attributes.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addAttributeFields(FormBuilderInterface $builder, array $options)
         {
@@ -766,8 +766,8 @@ class EditEntity {
         /**
          * Adds a categories field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
@@ -790,8 +790,8 @@ class EditEntity {
         /**
          * Adds fields for incoming relationships.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addIncomingRelationshipFields(FormBuilderInterface $builder, array $options)
         {
@@ -806,8 +806,8 @@ class EditEntity {
         /**
          * Adds fields for outgoing relationships.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addOutgoingRelationshipFields(FormBuilderInterface $builder, array $options)
         {
@@ -866,8 +866,8 @@ class EditEntity {
         /**
          * Adds a meta data fields.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addMetaDataFields(FormBuilderInterface $builder, array $options)
         {
@@ -882,8 +882,8 @@ class EditEntity {
         /**
          * Adds the return control field.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addReturnControlField(FormBuilderInterface $builder, array $options)
         {
@@ -899,8 +899,8 @@ class EditEntity {
         /**
          * Adds a field for additional notification remarks.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addAdditionalNotificationRemarksField(FormBuilderInterface $builder, array $options)
         {
@@ -932,8 +932,8 @@ class EditEntity {
         /**
          * Adds submit buttons.
          *
-         * @param FormBuilderInterface $builder The form builder.
-         * @param array                $options The options.
+         * @param FormBuilderInterface $builder The form builder
+         * @param array                $options The options
          */
         public function addSubmitButtons(FormBuilderInterface $builder, array $options)
         {

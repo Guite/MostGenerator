@@ -29,9 +29,9 @@ class FormatIcalText {
          * Example:
          *     «IF targets('1.3.x')»{'someString'|«appName.formatForDB»FormatIcalText}«ELSE»{{ 'someString'|«appName.formatForDB»_icalText }}«ENDIF»
          *
-         * @param string $string The given output string.
+         * @param string $string The given output string
          *
-         * @return string Processed string for ics.
+         * @return string Processed string for ics output
          */
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»F«ELSE»f«ENDIF»ormatIcalText($string)
         {
