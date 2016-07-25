@@ -78,7 +78,7 @@ class Association {
                 «' '»* @Assert\Valid()
             «ENDIF»
         «ENDIF»
-         * @var \«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName».
+         * @var \«entityClass»«IF isManySide(false)»[]«ENDIF» $«sourceName»
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -130,7 +130,7 @@ class Association {
             «' '»* @Assert\Type(type="«/*\*/»«entityClass»")
             «' '»* @Assert\Valid()
         «ENDIF»
-         * @var \«entityClass» $«sourceName».
+         * @var \«entityClass» $«sourceName»
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -156,7 +156,7 @@ class Association {
                     «' '»* @Assert\Count(min="«minSource»", max="«maxSource»")
                 «ENDIF»
             «ENDIF»
-             * @var \«entityClass»[] $«sourceName».
+             * @var \«entityClass»[] $«sourceName»
              */
             protected $«sourceName» = null;
         «ENDIF»
@@ -187,7 +187,7 @@ class Association {
                 «' '»* @Assert\Valid()
             «ENDIF»
         «ENDIF»
-         * @var \«entityClass» $«targetName».
+         * @var \«entityClass» $«targetName»
          */
         protected $«targetName»;
         «/* this last line is on purpose */»
@@ -235,7 +235,7 @@ class Association {
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»
-         * @var \«entityClass»[] $«targetName».
+         * @var \«entityClass»[] $«targetName»
          */
         protected $«targetName» = null;
         «/* this last line is on purpose */»
@@ -261,7 +261,7 @@ class Association {
                 «' '»* @Assert\Count(min="«minTarget»", max="«maxTarget»")
             «ENDIF»
         «ENDIF»
-         * @var \«entityClass»[] $«targetName».
+         * @var \«entityClass»[] $«targetName»
          */
         protected $«targetName» = null;
     '''
@@ -404,7 +404,11 @@ class Association {
             /**
              * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
-             * @param «source.entityClassName('', false)» $«indexBy.formatForCode».
+             * @param «source.entityClassName('', false)» $«indexBy.formatForCode»
+             *
+             * @return The desired «source.entityClassName('', false)» instance
+             * 
+             * @throws \InvalidArgumentException If desired index does not exist
              */
             public function get«singleName.formatForCodeCapital»($«indexBy.formatForCode»)
             {
@@ -422,7 +426,7 @@ class Association {
         /**
          * Adds an instance of «IF !application.targets('1.3.x')»\«ENDIF»«type» to the list of «name.formatForDisplay».
          *
-         * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection.
+         * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection
          *
          * @return void
          */
@@ -480,7 +484,7 @@ class Association {
             /**
              * Additional add function for internal use.
              *
-             * @param «targetField.fieldTypeAsString» $«targetField.name.formatForCode» Given instance to be used for aggregation.
+             * @param «targetField.fieldTypeAsString» $«targetField.name.formatForCode» Given instance to be used for aggregation
              */
             protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»($«targetField.name.formatForCode»)
             {
@@ -519,7 +523,7 @@ class Association {
         /**
          * Removes an instance of «IF !application.targets('1.3.x')»\«ENDIF»«type» from the list of «name.formatForDisplay».
          *
-         * @param «IF !application.targets('1.3.x')»\«ENDIF»«type» $«nameSingle» The instance to be removed from the collection.
+         * @param «IF !application.targets('1.3.x')»\«ENDIF»«type» $«nameSingle» The instance to be removed from the collection
          *
          * @return void
          */

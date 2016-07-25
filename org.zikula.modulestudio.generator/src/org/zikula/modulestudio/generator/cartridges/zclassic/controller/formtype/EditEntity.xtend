@@ -835,7 +835,7 @@ class EditEntity {
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'expanded' => «(if (outgoing) expandedTarget else expandedSource).displayBool»,
                 'query_builder' => function(EntityRepository $er) {
-                    return $er->selectWhere('', '', false, true);
+                    return $er->getListQueryBuilder('', '', false, true);
                 },
                 «IF outgoing && !nullable»
                     'placeholder' => $this->__('Please choose an option'),

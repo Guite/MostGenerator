@@ -16,7 +16,7 @@ class Joins {
         /**
          * Helper method to add join selections.
          *
-         * @return String Enhancement for select clause.
+         * @return String Enhancement for select clause
          */
         protected function addJoinsToSelection()
         {
@@ -42,9 +42,9 @@ class Joins {
         /**
          * Helper method to add joins to from clause.
          *
-         * @param QueryBuilder $qb query builder instance used to create the query.
+         * @param QueryBuilder $qb query builder instance used to create the query
          *
-         * @return String Enhancement for from clause.
+         * @return String Enhancement for from clause
          */
         protected function addJoinsToFrom(QueryBuilder $qb)
         {

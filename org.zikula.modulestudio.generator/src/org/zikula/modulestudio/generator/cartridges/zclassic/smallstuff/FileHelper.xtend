@@ -91,7 +91,7 @@ class FileHelper {
         /**
          * Sets the «name.formatForDisplay».
          *
-         * @param «IF type == 'smallint' || type == 'bigint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF» $«name».
+         * @param «IF type == 'smallint' || type == 'bigint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF» $«name»
          *
          * @return void
          */

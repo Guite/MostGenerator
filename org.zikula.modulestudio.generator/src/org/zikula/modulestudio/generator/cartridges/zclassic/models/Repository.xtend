@@ -109,18 +109,18 @@ class Repository {
             «ENDIF»
             «val stringFields = fields.filter(StringField).filter[!password]»
             /**
-             * @var string The default sorting field/expression.
+             * @var string The default sorting field/expression
              */
             protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else getDerivedFields.head).name.formatForCode»';
 
             «IF app.targets('1.3.x')»
                 /**
-                 * @var array Additional arguments given by the calling controller.
+                 * @var array Additional arguments given by the calling controller
                  */
                 protected $controllerArguments = array();
             «ELSE»
                 /**
-                 * @var Request The request object given by the calling controller.
+                 * @var Request The request object given by the calling controller
                  */
                 protected $request;
             «ENDIF»
@@ -129,8 +129,8 @@ class Repository {
                 /**
                  * Constructor.
                  *
-                 * @param EntityManager $em
-                 * @param ClassMetadata $class
+                 * @param EntityManager $em    The entity manager
+                 * @param ClassMetadata $class The class meta data
                  */
                 public function __construct(EntityManager $em, ClassMetadata $class)
                 {
@@ -143,8 +143,8 @@ class Repository {
                     /**
                      * Call interceptor.
                      *
-                     * @param string $method
-                     * @param array  $args
+                     * @param string $method Name of called method
+                     * @param array  $args   Additional arguments
                      *
                      * @return mixed $result
                      */
@@ -164,7 +164,7 @@ class Repository {
             /**
              * Retrieves an array with all fields which can be used for sorting instances.
              *
-             * @return array
+             * @return array Sorting fields array
              */
             public function getAllowedSortingFields()
             {
@@ -293,7 +293,7 @@ class Repository {
         /**
          * Returns name of the field used as title / name for entities of this repository.
          *
-         * @return string Name of field to be used as title.
+         * @return string Name of field to be used as title
          */
         public function getTitleFieldName()
         {
@@ -311,7 +311,7 @@ class Repository {
         /**
          * Returns name of the field used for describing entities of this repository.
          *
-         * @return string Name of field to be used as description.
+         * @return string Name of field to be used as description
          */
         public function getDescriptionFieldName()
         {
@@ -336,7 +336,7 @@ class Repository {
         /**
          * Returns name of first upload field which is capable for handling images.
          *
-         * @return string Name of field to be used for preview images.
+         * @return string Name of field to be used for preview images
          */
         public function getPreviewFieldName()
         {
@@ -351,7 +351,7 @@ class Repository {
          * Returns name of the date(time) field to be used for representing the start
          * of this object. Used for providing meta data to the tag module.
          *
-         * @return string Name of field to be used as date.
+         * @return string Name of field to be used as date
          */
         public function getStartDateFieldName()
         {
@@ -365,10 +365,10 @@ class Repository {
         /**
          * Returns an array of additional template variables which are specific to the object type treated by this repository.
          *
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
-         * @param array  $args    Additional arguments.
+         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array  $args    Additional arguments
          *
-         * @return array List of template variables to be assigned.
+         * @return array List of template variables to be assigned
          */
         public function getAdditionalTemplateParameters($context = '', $args = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -446,10 +446,10 @@ class Repository {
         /**
          * Returns an array of additional template variables for view quick navigation forms.
          *
-         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
-         * @param array  $args    Additional arguments.
+         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array  $args    Additional arguments
          *
-         * @return array List of template variables to be assigned.
+         * @return array List of template variables to be assigned
          */
         protected function getViewQuickNavParameters($context = '', $args = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -593,10 +593,10 @@ class Repository {
         /**
          * Adds id filters to given query instance.
          *
-         * @param mixed        $id The id (or array of ids) to use to retrieve the object.
-         * @param QueryBuilder $qb Query builder to be enhanced.
+         * @param mixed        $id The id (or array of ids) to use to retrieve the object
+         * @param QueryBuilder $qb Query builder to be enhanced
          *
-         * @return QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance
          */
         protected function addIdFilter($id, QueryBuilder $qb)
         {
@@ -606,10 +606,10 @@ class Repository {
         /**
          * Adds an array of id filters to given query instance.
          *
-         * @param mixed        $idList The array of ids to use to retrieve the object.
-         * @param QueryBuilder $qb     Query builder to be enhanced.
+         * @param mixed        $idList The array of ids to use to retrieve the object
+         * @param QueryBuilder $qb     Query builder to be enhanced
          *
-         * @return QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance
          */
         protected function addIdListFilter($idList, QueryBuilder $qb)
         {
@@ -647,9 +647,9 @@ class Repository {
         /**
          * Selects an object from the database.
          *
-         * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=0).
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=0)
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
          * @return array|«name.formatForCode»Entity retrieved data array or «name.formatForCode»Entity instance
          *
@@ -665,9 +665,9 @@ class Repository {
         /**
          * Selects a list of objects with an array of ids
          *
-         * @param mixed   $idList   The array of ids to use to retrieve the objects (optional) (default=0).
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param mixed   $idList   The array of ids to use to retrieve the objects (optional) (default=0)
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
          * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
          *
@@ -691,9 +691,9 @@ class Repository {
          * Selects an object by slug field.
          *
          * @param string  $slugTitle The slug value
-         * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true).
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
-         * @param integer $excludeId Optional id to be excluded (used for unique validation).
+         * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true)
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         * @param integer $excludeId Optional id to be excluded (used for unique validation)
          *
          * @return «entityClassName('', false)» retrieved instance of «entityClassName('', false)»
          *
@@ -731,10 +731,10 @@ class Repository {
         /**
          * Adds where clauses excluding desired identifiers from selection.
          *
-         * @param QueryBuilder $qb        Query builder to be enhanced.
-         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»      $excludeId The id (or array of ids) to be excluded from selection.
+         * @param QueryBuilder $qb        Query builder to be enhanced
+         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»      $excludeId The id (or array of ids) to be excluded from selection
          *
-         * @return QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance
          */
         protected function addExclusion(QueryBuilder $qb, $excludeId)
         {
@@ -758,21 +758,38 @@ class Repository {
 
     def private selectWhere(Entity it) '''
         /**
-         * Selects a list of objects with a given where clause.
+         * Returns query builder for selecting a list of objects with a given where clause.
          *
-         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='')
+         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
+         * @return QueryBuilder query builder for the given arguments
          */
-        public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
+        public function getListQueryBuilder($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
             if (!$useJoins || !$slimMode) {
                 $qb = $this->addCommonViewFilters($qb);
             }
+
+            return $qb;
+        }
+
+        /**
+         * Selects a list of objects with a given where clause.
+         *
+         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='')
+         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
+         *
+         * @return ArrayCollection collection containing retrieved «name.formatForCode»Entity instances
+         */
+        public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
+        {
+            $qb = $this->getListQueryBuilder($where, $orderBy, $useJoins, $slimMode);
 
             $query = $this->getQueryFromBuilder($qb);
 
@@ -784,11 +801,11 @@ class Repository {
         /**
          * Returns query builder instance for retrieving a list of objects with a given where clause and pagination parameters.
          *
-         * @param QueryBuilder $qb             Query builder to be enhanced.
+         * @param QueryBuilder $qb             Query builder to be enhanced
          * @param integer      $currentPage    Where to start selection
          * @param integer      $resultsPerPage Amount of items to select
          *
-         * @return array Created query instance and amount of affected items.
+         * @return array Created query instance and amount of affected items
          */
         public function getSelectWherePaginatedQuery(QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
         {
@@ -827,14 +844,14 @@ class Repository {
         /**
          * Selects a list of objects with a given where clause and pagination parameters.
          *
-         * @param string  $where          The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
+         * @param string  $where          The where clause to use when retrieving the collection (optional) (default='')
+         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='')
          * @param integer $currentPage    Where to start selection
          * @param integer $resultsPerPage Amount of items to select
-         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
-         * @param boolean $slimMode       If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true)
+         * @param boolean $slimMode       If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
-         * @return array with retrieved collection and amount of total records affected by this query.
+         * @return array with retrieved collection and amount of total records affected by this query
          */
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
@@ -895,9 +912,9 @@ class Repository {
         /**
          * Adds quick navigation related filter options as where clauses.
          *
-         * @param QueryBuilder $qb Query builder to be enhanced.
+         * @param QueryBuilder $qb Query builder to be enhanced
          *
-         * @return QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance
          */
         public function addCommonViewFilters(QueryBuilder $qb)
         {
@@ -971,10 +988,10 @@ class Repository {
         /**
          * Adds default filters as where clauses.
          *
-         * @param QueryBuilder $qb         Query builder to be enhanced.
-         * @param array        $parameters List of determined filter options.
+         * @param QueryBuilder $qb         Query builder to be enhanced
+         * @param array        $parameters List of determined filter options
          *
-         * @return QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance
          */
         protected function applyDefaultFilters(QueryBuilder $qb, $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
@@ -1054,14 +1071,14 @@ class Repository {
         /**
          * Selects entities by a given search fragment.
          *
-         * @param string  $fragment       The fragment to search for.
-         * @param array   $exclude        Comma separated list with ids to be excluded from search.
-         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
+         * @param string  $fragment       The fragment to search for
+         * @param array   $exclude        Comma separated list with ids to be excluded from search
+         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='')
          * @param integer $currentPage    Where to start selection
          * @param integer $resultsPerPage Amount of items to select
-         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true)
          *
-         * @return array with retrieved collection and amount of total records affected by this query.
+         * @return array with retrieved collection and amount of total records affected by this query
          */
         public function selectSearch($fragment = '', $exclude = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF», $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
@@ -1087,10 +1104,10 @@ class Repository {
         /**
          * Adds where clause for search query.
          *
-         * @param QueryBuilder $qb       Query builder to be enhanced.
-         * @param string       $fragment The fragment to search for.
+         * @param QueryBuilder $qb       Query builder to be enhanced
+         * @param string       $fragment The fragment to search for
          *
-         * @return QueryBuilder Enriched query builder instance.
+         * @return QueryBuilder Enriched query builder instance
          */
         protected function addSearchFilter(QueryBuilder $qb, $fragment = '')
         {
@@ -1127,11 +1144,11 @@ class Repository {
         /**
          * Performs a given database selection and post-processed the results.
          *
-         * @param Query   $query       The Query instance to be executed.
-         * @param string  $orderBy     The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param boolean $isPaginated Whether the given query uses a paginator or not (optional) (default=false).
+         * @param Query   $query       The Query instance to be executed
+         * @param string  $orderBy     The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param boolean $isPaginated Whether the given query uses a paginator or not (optional) (default=false)
          *
-         * @return array with retrieved collection«IF !app.targets('1.3.x')» and (for paginated queries) the amount of total records affected«ENDIF».
+         * @return array with retrieved collection«IF !app.targets('1.3.x')» and (for paginated queries) the amount of total records affected«ENDIF»
          */
         public function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
         {
@@ -1190,11 +1207,11 @@ class Repository {
         /**
          * Returns query builder instance for a count query.
          *
-         * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+         * @param string  $where    The where clause to use when retrieving the object count (optional) (default='')
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
          *
-         * @return QueryBuilder Created query builder instance.
-         * @TODO fix usage of joins; please remove the first line and test.
+         * @return QueryBuilder Created query builder instance
+         * @TODO fix usage of joins; please remove the first line and test
          */
         protected function getCountQuery($where = '', $useJoins = true)
         {
@@ -1221,9 +1238,9 @@ class Repository {
         /**
          * Selects entity count with a given where clause.
          *
-         * @param string  $where      The where clause to use when retrieving the object count (optional) (default='').
-         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=true).
-         * @param array   $parameters List of determined filter options.
+         * @param string  $where      The where clause to use when retrieving the object count (optional) (default='')
+         * @param boolean $useJoins   Whether to include joining related objects (optional) (default=true)
+         * @param array   $parameters List of determined filter options
          *
          * @return integer amount of affected records
          */
@@ -1248,7 +1265,7 @@ class Repository {
          *
          * @param string $fieldName  The name of the property to be checked
          * @param string $fieldValue The value of the property to be checked
-         * @param int    $excludeId  Id of «nameMultiple.formatForDisplay» to exclude (optional).
+         * @param int    $excludeId  Id of «nameMultiple.formatForDisplay» to exclude (optional)
          *
          * @return boolean result of this check, true if the given «name.formatForDisplay» does not already exist
          */
@@ -1275,10 +1292,10 @@ class Repository {
         /**
          * Builds a generic Doctrine query supporting WHERE and ORDER BY.
          *
-         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
-         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
+         * @param string  $where    The where clause to use when retrieving the collection (optional) (default='')
+         * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='')
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true)
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false)
          *
          * @return QueryBuilder query builder instance to be further processed
          */
@@ -1332,8 +1349,8 @@ class Repository {
         /**
          * Adds WHERE clause to given query builder.
          *
-         * @param QueryBuilder $qb    Given query builder instance.
-         * @param string       $where The where clause to use when retrieving the collection (optional) (default='').
+         * @param QueryBuilder $qb    Given query builder instance
+         * @param string       $where The where clause to use when retrieving the collection (optional) (default='')
          *
          * @return QueryBuilder query builder instance to be further processed
          */
@@ -1429,8 +1446,8 @@ class Repository {
         /**
          * Adds ORDER BY clause to given query builder.
          *
-         * @param QueryBuilder $qb      Given query builder instance.
-         * @param string       $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
+         * @param QueryBuilder $qb      Given query builder instance
+         * @param string       $orderBy The order-by clause to use when retrieving the collection (optional) (default='')
          *
          * @return QueryBuilder query builder instance to be further processed
          */
@@ -1551,7 +1568,7 @@ class Repository {
         /**
          * Update for «nameMultiple.formatForDisplay» becoming archived.
          *
-         * @return bool If everything went right or not.
+         * @return bool If everything went right or not
          «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if workflow action execution fails

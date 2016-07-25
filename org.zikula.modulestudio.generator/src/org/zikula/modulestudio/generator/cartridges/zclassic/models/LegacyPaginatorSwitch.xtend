@@ -39,20 +39,20 @@ class LegacyPaginatorSwitch {
         abstract class «appName»_Paginator_Base_Paginator
         {
             /**
-             * @var Query The query instance.
+             * @var Query The query instance
              */
             private $query;
 
             /**
-             * @var boolean Whether the currently queries entity has relationships or not.
+             * @var boolean Whether the currently queries entity has relationships or not
              */
             private $hasRelationships;
 
             /**
              * The constructor.
              *
-             * @param Query   $query            The query instance.
-             * @param boolean $hasRelationships Whether the currently queries entity has relationships or not.
+             * @param Query   $query            The query instance
+             * @param boolean $hasRelationships Whether the currently queries entity has relationships or not
              */
             public function __construct(Query $query, $hasRelationships)
             {
@@ -63,7 +63,7 @@ class LegacyPaginatorSwitch {
             /**
              * Retrieves the paginated results.
              *
-             * @return array Paginator object and total amount of rows affected by the query.
+             * @return array Paginator object and total amount of rows affected by the query
              */
             public function getResults()
             {
@@ -96,20 +96,20 @@ class LegacyPaginatorSwitch {
         abstract class «appName»_Paginator_Base_LegacyPaginator
         {
             /**
-             * @var Query The query instance.
+             * @var Query The query instance
              */
             private $query;
 
             /**
-             * @var boolean Whether the currently queries entity has relationships or not.
+             * @var boolean Whether the currently queries entity has relationships or not
              */
             private $hasRelationships;
 
             /**
              * The constructor.
              *
-             * @param Query   $query            The query instance.
-             * @param boolean $hasRelationships Whether the currently queries entity has relationships or not.
+             * @param Query   $query            The query instance
+             * @param boolean $hasRelationships Whether the currently queries entity has relationships or not
              */
             public function __construct(Query $query, $hasRelationships)
             {
@@ -120,10 +120,10 @@ class LegacyPaginatorSwitch {
             /**
              * Retrieves the paginated results.
              *
-             * @param integer $offset         The query offset.
-             * @param integer $resultsPerPage The amount of records per page.
+             * @param integer $offset         The query offset
+             * @param integer $resultsPerPage The amount of records per page
              *
-             * @return array Query object and total amount of rows affected by the query.
+             * @return array Query object and total amount of rows affected by the query
              */
             public function getResults($offset, $resultsPerPage)
             {

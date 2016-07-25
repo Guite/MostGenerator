@@ -142,6 +142,8 @@ class EntityMethods {
         /**
          * Returns the formatted title conforming to the display pattern
          * specified for this entity.
+         *
+         * @return string The display title
          */
         public function getTitleFromDisplayPattern()
         {
@@ -219,7 +221,7 @@ class EntityMethods {
         /**
          * Initialises the validator and return it's instance.
          *
-         * @return «validatorClassLegacy» The validator for this entity.
+         * @return «validatorClassLegacy» The validator for this entity
          */
         public function initValidator()
         {
@@ -236,7 +238,7 @@ class EntityMethods {
         /**
          * Sets/retrieves the workflow details.
          *
-         * @param boolean $forceLoading load the workflow record.
+         * @param boolean $forceLoading load the workflow record
          «IF !app.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if retrieving the workflow object fails
@@ -287,11 +289,11 @@ class EntityMethods {
          * Start validation and raise exception if invalid data is found.
          *
         «IF application.targets('1.3.x')»
-            «' '»* @return void.
+            «' '»* @return void
             «' '»*
             «' '»* @throws Zikula_Exception Thrown if a validation error occurs
         «ELSE»
-            «' '»* @return boolean Whether everything is valid or not.
+            «' '»* @return boolean Whether everything is valid or not
         «ENDIF»
          */
         public function validate()
@@ -337,7 +339,7 @@ class EntityMethods {
         /**
          * Return entity data in JSON format.
          *
-         * @return string JSON-encoded data.
+         * @return string JSON-encoded data
          */
         public function toJson()
         {
@@ -350,7 +352,7 @@ class EntityMethods {
         /**
          * Creates url arguments array for easy creation of display urls.
          *
-         * @return array The resulting arguments list.
+         * @return array The resulting arguments list
          */
         public function createUrlArgs()
         {
@@ -376,7 +378,7 @@ class EntityMethods {
         /**
          * Create concatenated identifier string (for composite keys).
          *
-         * @return String concatenated identifiers.
+         * @return String concatenated identifiers
          */
         public function createCompositeIdentifier()
         {
@@ -467,6 +469,8 @@ class EntityMethods {
         /**
          * ToString interceptor implementation.
          * This method is useful for debugging purposes.
+         *
+         * @return string The output string for this entity
          */
         public function __toString()
         {
@@ -492,7 +496,7 @@ class EntityMethods {
          * 
          * @param array $objects The objects are added to this array. Default: «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»
          * 
-         * @return array of entity objects.
+         * @return array of entity objects
          */
         public function getRelatedObjectsToPersist(&$objects = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF») 
         {

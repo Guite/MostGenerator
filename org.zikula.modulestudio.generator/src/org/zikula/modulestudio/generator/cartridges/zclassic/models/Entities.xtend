@@ -206,13 +206,13 @@ class Entities {
 
     def private memberVars(DataObject it, String validatorClassLegacy) '''
         /**
-         * @var string The tablename this object maps to.
+         * @var string The tablename this object maps to
          */
         protected $_objectType = '«name.formatForCode»';
         «IF application.targets('1.3.x')»
 
             /**
-             * @var «validatorClassLegacy» The validator for this entity.
+             * @var «validatorClassLegacy» The validator for this entity
              */
             protected $_validator = null;
         «ENDIF»
@@ -221,7 +221,7 @@ class Entities {
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="bool")
          «ENDIF»
-         * @var boolean Option to bypass validation if needed.
+         * @var boolean Option to bypass validation if needed
          */
         protected $_bypassValidation = false;
         «IF it instanceof Entity && (it as Entity).hasNotifyPolicy»
@@ -230,7 +230,7 @@ class Entities {
              «IF !application.targets('1.3.x')»
              * @Assert\Type(type="array")
              «ENDIF»
-             * @var array List of change notification listeners.
+             * @var array List of change notification listeners
              */
             protected $_propertyChangedListeners = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
         «ENDIF»
@@ -239,12 +239,12 @@ class Entities {
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="array")
          «ENDIF»
-         * @var array List of available item actions.
+         * @var array List of available item actions
          */
         protected $_actions = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         /**
-         * @var array The current workflow data of this object.
+         * @var array The current workflow data of this object
          */
         protected $__WORKFLOW__ = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 

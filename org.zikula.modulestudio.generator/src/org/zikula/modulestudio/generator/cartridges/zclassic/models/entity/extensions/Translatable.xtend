@@ -46,7 +46,7 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
              * Assert\Locale()
          «ENDIF»
          * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
-         * @var string $locale.
+         * @var string $locale
          */
         protected $locale;
     '''

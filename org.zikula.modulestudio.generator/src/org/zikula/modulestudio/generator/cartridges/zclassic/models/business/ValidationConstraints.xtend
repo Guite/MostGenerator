@@ -246,6 +246,8 @@ class ValidationConstraints {
             /**
              * Returns a list of possible choices for the «name.formatForCode» list field.
              * This method is used for validation.
+             *
+             * @return array List of allowed choices
              */
             public static function get«name.formatForCodeCapital»AllowedValues()
             {
@@ -305,6 +307,8 @@ class ValidationConstraints {
          * This method is used for validation.
          *
          * @Assert\IsTrue(message="This value must be a valid user id.")
+         *
+         * @return boolean True if data is valid else false
          */
         public function is«name.formatForCodeCapital»UserValid()
         {
@@ -329,6 +333,8 @@ class ValidationConstraints {
                  * This method is used for validation.
                  *
                  * @Assert\IsTrue(message="The start date must be before the end date.")
+                 *
+                 * @return boolean True if data is valid else false
                  */
                 public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
                 {
@@ -347,6 +353,8 @@ class ValidationConstraints {
                  * This method is used for validation.
                  *
                  * @Assert\IsTrue(message="The start date must be before the end date.")
+                 *
+                 * @return boolean True if data is valid else false
                  */
                 public function is«name.formatForCodeCapital»Before«endDateField.name.formatForCodeCapital»()
                 {
@@ -364,6 +372,8 @@ class ValidationConstraints {
                  * This method is used for validation.
                  *
                  * @Assert\IsTrue(message="This value must be a time in the past.")
+                 *
+                 * @return boolean True if data is valid else false
                  */
                 public function is«name.formatForCodeCapital»TimeValidPast()
                 {
@@ -376,6 +386,8 @@ class ValidationConstraints {
                  * This method is used for validation.
                  *
                  * @Assert\IsTrue(message="This value must be a time in the future.")
+                 *
+                 * @return boolean True if data is valid else false
                  */
                 public function is«name.formatForCodeCapital»TimeValidFuture()
                 {

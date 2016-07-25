@@ -32,7 +32,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
-         * @var integer $createdUserId.
+         * @var integer $createdUserId
          */
         protected $createdUserId;
 
@@ -45,7 +45,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
-         * @var integer $updatedUserId.
+         * @var integer $updatedUserId
          */
         protected $updatedUserId;
 
@@ -55,7 +55,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
-         * @var \DateTime $createdDate.
+         * @var \DateTime $createdDate
          */
         protected $createdDate;
 
@@ -68,7 +68,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF !application.targets('1.3.x')»
          * @Assert\DateTime()
          «ENDIF»
-         * @var \DateTime $updatedDate.
+         * @var \DateTime $updatedDate
          */
         protected $updatedDate;
     '''

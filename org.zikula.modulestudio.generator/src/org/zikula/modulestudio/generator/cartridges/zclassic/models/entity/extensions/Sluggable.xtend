@@ -50,7 +50,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
          * @Assert\NotBlank()
          * @Assert\Length(min="1", max="«slugLength»")
          «ENDIF»
-         * @var string $slug.
+         * @var string $slug
          */
         protected $slug;
     '''

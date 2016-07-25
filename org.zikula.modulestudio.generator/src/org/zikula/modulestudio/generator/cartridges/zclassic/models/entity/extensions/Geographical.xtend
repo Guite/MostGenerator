@@ -36,7 +36,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
          «ENDIF»
-         * @var decimal $latitude.
+         * @var decimal $latitude
          */
         protected $latitude = 0.00;
 
@@ -50,7 +50,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
          «ENDIF»
-         * @var decimal $longitude.
+         * @var decimal $longitude
          */
         protected $longitude = 0.00;
     '''

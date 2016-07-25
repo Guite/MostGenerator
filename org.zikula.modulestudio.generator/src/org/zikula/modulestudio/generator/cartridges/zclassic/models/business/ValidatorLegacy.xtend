@@ -80,14 +80,14 @@ class ValidatorLegacy {
         abstract class «IF targets('1.3.x')»«appName»_Base_Validator«ELSE»AbstractValidator«ENDIF» extends Zikula_AbstractBase
         {
             /**
-             * @var Zikula_EntityAccess The entity instance which is treated by this validator.
+             * @var Zikula_EntityAccess The entity instance which is treated by this validator
              */
             protected $entity = null;
 
             /**
              * Constructor.
              *
-             * @param Zikula_EntityAccess $entity The entity to be validated.
+             * @param Zikula_EntityAccess $entity The entity to be validated
              */
             public function __construct(Zikula_EntityAccess $entity)
             {
@@ -98,6 +98,7 @@ class ValidatorLegacy {
              * Checks if field value is a valid boolean.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidBoolean($fieldName)
@@ -109,6 +110,7 @@ class ValidatorLegacy {
              * Checks if field value is a valid number.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidNumber($fieldName)
@@ -120,6 +122,7 @@ class ValidatorLegacy {
              * Checks if field value is a valid integer.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidInteger($fieldName)
@@ -134,6 +137,7 @@ class ValidatorLegacy {
              *
              * @param string $fieldName The name of the property to be checked
              * @param int    $value     The maximum allowed value
+             *
              * @return boolean result of this check
              */
             public function isIntegerNotLowerThan($fieldName, $value)
@@ -146,6 +150,7 @@ class ValidatorLegacy {
              *
              * @param string $fieldName The name of the property to be checked
              * @param int    $value     The maximum allowed value
+             *
              * @return boolean result of this check
              */
             public function isIntegerNotHigherThan($fieldName, $value)
@@ -157,6 +162,7 @@ class ValidatorLegacy {
              * Checks if field value is a valid user id.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidUser($fieldName)
@@ -173,6 +179,7 @@ class ValidatorLegacy {
              * Checks if numeric field value has a value other than 0.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isNumberNotEmpty($fieldName)
@@ -184,6 +191,7 @@ class ValidatorLegacy {
              * Checks if string field value has a value other than ''.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isStringNotEmpty($fieldName)
@@ -196,6 +204,7 @@ class ValidatorLegacy {
              *
              * @param string $fieldName The name of the property to be checked
              * @param int    $length    The minimum length
+             *
              * @return boolean result of this check
              */
             public function isNumberNotShorterThan($fieldName, $length)
@@ -210,6 +219,7 @@ class ValidatorLegacy {
              *
              * @param string $fieldName The name of the property to be checked
              * @param int    $length    The maximum allowed length
+             *
              * @return boolean result of this check
              */
             public function isNumberNotLongerThan($fieldName, $length)
@@ -224,6 +234,7 @@ class ValidatorLegacy {
              *
              * @param string $fieldName The name of the property to be checked
              * @param int    $length    The minimum length
+             *
              * @return boolean result of this check
              */
             public function isStringNotShorterThan($fieldName, $length)
@@ -236,6 +247,7 @@ class ValidatorLegacy {
              *
              * @param string $fieldName The name of the property to be checked
              * @param int    $length    The maximum allowed length
+             *
              * @return boolean result of this check
              */
             public function isStringNotLongerThan($fieldName, $length)
@@ -248,6 +260,7 @@ class ValidatorLegacy {
              *
              * @param string $fieldName The name of the property to be checked
              * @param int    $length    The fixed length
+             *
              * @return boolean result of this check
              */
             public function isStringWithFixedLength($fieldName, $length)
@@ -261,6 +274,7 @@ class ValidatorLegacy {
              * @param string  $fieldName The name of the property to be checked
              * @param string  $keyword   The char or string to search for
              * @param boolean $caseSensitive Whether the search should be case sensitive or not (default false)
+             *
              * @return boolean result of this check
              */
             public function isStringNotContaining($fieldName, $keyword, $caseSensitive = false)
@@ -277,6 +291,7 @@ class ValidatorLegacy {
              *
              * @param string  $fieldName  The name of the property to be checked
              * @param string  $expression Regular expression string
+             *
              * @return boolean result of this check
              */
             public function isValidRegExp($fieldName, $expression)
@@ -289,12 +304,13 @@ class ValidatorLegacy {
              *
              * @param string  $fieldName     The name of the property to be checked
              * @param boolean $onlyInstalled Whether to accept only installed languages (default false)
+             *
              * @return boolean result of this check
              */
             public function isValidLanguage($fieldName, $onlyInstalled = false)
             {
                 $languageMap = ZLanguage::languagemap();
-                $result = in_array($this->entity[$fieldName], array_keys($languageMap));        
+                $result = in_array($this->entity[$fieldName], array_keys($languageMap));
                 if (!$result || !$onlyInstalled) {
                     return $result;
                 } 
@@ -307,6 +323,7 @@ class ValidatorLegacy {
              * Checks if string field value is a valid country code.
              *
              * @param string  $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidCountry($fieldName)
@@ -320,6 +337,7 @@ class ValidatorLegacy {
              * Checks if string field value is a valid html colour.
              *
              * @param string  $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidHtmlColour($fieldName)
@@ -333,6 +351,7 @@ class ValidatorLegacy {
              * Checks if field value is a valid email address.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidEmail($fieldName)
@@ -344,6 +363,7 @@ class ValidatorLegacy {
              * Checks if field value is a valid url.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidUrl($fieldName)
@@ -355,6 +375,7 @@ class ValidatorLegacy {
              * Checks if field value is a valid DateTime instance.
              *
              * @param string $fieldName The name of the property to be checked
+             *
              * @return boolean result of this check
              */
             public function isValidDateTime($fieldName)
@@ -367,7 +388,8 @@ class ValidatorLegacy {
              *
              * @param string  $fieldName The name of the property to be checked
              * @param string  $format    The date format used for comparison
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             protected function isDateTimeValueInPast($fieldName, $format, $mandatory = true)
@@ -384,7 +406,8 @@ class ValidatorLegacy {
              *
              * @param string  $fieldName The name of the property to be checked
              * @param string  $format    The date format used for comparison
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             protected function isDateTimeValueInFuture($fieldName, $format, $mandatory = true)
@@ -400,7 +423,8 @@ class ValidatorLegacy {
              * Checks if field value is a datetime in the past.
              *
              * @param string  $fieldName The name of the property to be checked
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             public function isDateTimeInPast($fieldName, $mandatory = true)
@@ -412,7 +436,8 @@ class ValidatorLegacy {
              * Checks if field value is a datetime in the future.
              *
              * @param string  $fieldName The name of the property to be checked
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             public function isDateTimeInFuture($fieldName, $mandatory = true)
@@ -424,7 +449,8 @@ class ValidatorLegacy {
              * Checks if field value is a date in the past.
              *
              * @param string  $fieldName The name of the property to be checked
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             public function isDateInPast($fieldName, $mandatory = true)
@@ -436,7 +462,8 @@ class ValidatorLegacy {
              * Checks if field value is a date in the future.
              *
              * @param string  $fieldName The name of the property to be checked
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             public function isDateInFuture($fieldName, $mandatory = true)
@@ -448,7 +475,8 @@ class ValidatorLegacy {
              * Checks if field value is a time in the past.
              *
              * @param string  $fieldName The name of the property to be checked
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             public function isTimeInPast($fieldName, $mandatory = true)
@@ -460,7 +488,8 @@ class ValidatorLegacy {
              * Checks if field value is a time in the future.
              *
              * @param string  $fieldName The name of the property to be checked
-             * @param boolean $mandatory Whether the property is mandatory or not.
+             * @param boolean $mandatory Whether the property is mandatory or not
+             *
              * @return boolean result of this check
              */
             public function isTimeInFuture($fieldName, $mandatory = true)
@@ -586,7 +615,11 @@ class ValidatorLegacy {
          */
         public function validateAll()
         {
-            $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array());
+            $errorInfo = array(
+                'message' => '',
+                'code' => 0,
+                'debugArray' => array()
+            );
             $dom = ZLanguage::getModuleDomain('«app.appName»');
             «IF isInheriting»
                 parent::validateAll();
@@ -610,11 +643,12 @@ class ValidatorLegacy {
 
     def private checkForUniqueValues(Entity it) '''
         /**
-         * Check for unique values.
+         * Checks for unique values.
          *
          * This method determines if there already exist «nameMultiple.formatForDisplay» with the same «name.formatForDisplay».
          *
          * @param string $fieldName The name of the property to be checked
+         *
          * @return boolean result of this check, true if the given «name.formatForDisplay» does not already exist
          */
         public function isUniqueValue($fieldName)

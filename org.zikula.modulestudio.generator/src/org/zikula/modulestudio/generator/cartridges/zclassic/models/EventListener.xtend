@@ -41,7 +41,7 @@ class EventListener {
          *     - no access to associations (not initialised yet)
          *
          * @see «entityClassName('', false)»::postLoadCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          «IF !application.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if upload file base path retrieval fails
@@ -76,10 +76,10 @@ class EventListener {
             /**
              * Formats a given textual field depending on it's actual kind of content.
              *
-             * @param string  $fieldName     Name of field to be formatted.
-             * @param string  $currentFunc   Name of current controller action.
-             * @param string  $usesCsvOutput Whether the output is CSV or not (defaults to false).
-             * @param boolean $allowZero     Whether 0 values are allowed or not (defaults to false).
+             * @param string  $fieldName     Name of field to be formatted
+             * @param string  $currentFunc   Name of current controller action
+             * @param string  $usesCsvOutput Whether the output is CSV or not (defaults to false)
+             * @param boolean $allowZero     Whether 0 values are allowed or not (defaults to false)
              */
             protected function formatTextualField($fieldName, $currentFunc, $usesCsvOutput = false, $allowZero = false)
             {
@@ -116,9 +116,9 @@ class EventListener {
              * Checks whether any html tags are contained in the given string.
              * See http://stackoverflow.com/questions/10778035/how-to-check-if-string-contents-have-any-html-in-it for implementation details.
              *
-             * @param $string string The given input string.
+             * @param $string string The given input string
              *
-             * @return boolean Whether any html tags are found or not.
+             * @return boolean Whether any html tags are found or not
              */
             protected function containsHtml($string)
             {
@@ -162,7 +162,7 @@ class EventListener {
          *     - no creation of other entities allowed
          *
          * @see «entityClassName('', false)»::prePersistCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          */
         protected function performPrePersistCallback()
         {
@@ -191,7 +191,7 @@ class EventListener {
          *     - no access to entity manager or unit of work apis
          *
          * @see «entityClassName('', false)»::postPersistCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          */
         protected function performPostPersistCallback()
         {
@@ -221,7 +221,7 @@ class EventListener {
          *     - will not be called for a DQL DELETE statement
          *
          * @see «entityClassName('', false)»::preRemoveCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          «IF !application.targets('1.3.x')»
          *
          * @throws RuntimeException Thrown if workflow deletion fails
@@ -289,7 +289,7 @@ class EventListener {
          *     - will not be called for a DQL DELETE statement
          *
          * @see «entityClassName('', false)»::postRemoveCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          */
         protected function performPostRemoveCallback()
         {
@@ -348,7 +348,7 @@ class EventListener {
          *     - no creation of other entities allowed
          *
          * @see «entityClassName('', false)»::preUpdateCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          */
         protected function performPreUpdateCallback()
         {
@@ -376,7 +376,7 @@ class EventListener {
          *     - will not be called for a DQL UPDATE statement
          *
          * @see «entityClassName('', false)»::postUpdateCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          */
         protected function performPostUpdateCallback()
         {
@@ -403,7 +403,7 @@ class EventListener {
          * For more information see corresponding callback handlers.
          *
          * @see «entityClassName('', false)»::preSaveCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          */
         protected function performPreSaveCallback()
         {
@@ -428,7 +428,7 @@ class EventListener {
          * For more information see corresponding callback handlers.
          *
          * @see «entityClassName('', false)»::postSaveCallback()
-         * @return boolean true if completed successfully else false.
+         * @return boolean true if completed successfully else false
          */
         protected function performPostSaveCallback()
         {
@@ -457,7 +457,7 @@ class EventListener {
          *
          * @ORM\PostLoad
          * @see «entityClassName('', false)»::performPostLoadCallback()
-         * @return void.
+         * @return void
          */
         public function postLoadCallback()
         {
@@ -469,7 +469,7 @@ class EventListener {
          *
          * @ORM\PrePersist
          * @see «entityClassName('', false)»::performPrePersistCallback()
-         * @return void.
+         * @return void
          */
         public function prePersistCallback()
         {
@@ -481,7 +481,7 @@ class EventListener {
          *
          * @ORM\PostPersist
          * @see «entityClassName('', false)»::performPostPersistCallback()
-         * @return void.
+         * @return void
          */
         public function postPersistCallback()
         {
@@ -493,7 +493,7 @@ class EventListener {
          *
          * @ORM\PreRemove
          * @see «entityClassName('', false)»::performPreRemoveCallback()
-         * @return void.
+         * @return void
          */
         public function preRemoveCallback()
         {
@@ -517,7 +517,7 @@ class EventListener {
          *
          * @ORM\PreUpdate
          * @see «entityClassName('', false)»::performPreUpdateCallback()
-         * @return void.
+         * @return void
          */
         public function preUpdateCallback()
         {
@@ -529,7 +529,7 @@ class EventListener {
          *
          * @ORM\PostUpdate
          * @see «entityClassName('', false)»::performPostUpdateCallback()
-         * @return void.
+         * @return void
          */
         public function postUpdateCallback()
         {
@@ -542,7 +542,7 @@ class EventListener {
          * @ORM\PrePersist
          * @ORM\PreUpdate
          * @see «entityClassName('', false)»::performPreSaveCallback()
-         * @return void.
+         * @return void
          */
         public function preSaveCallback()
         {
@@ -555,7 +555,7 @@ class EventListener {
          * @ORM\PostPersist
          * @ORM\PostUpdate
          * @see «entityClassName('', false)»::performPostSaveCallback()
-         * @return void.
+         * @return void
          */
         public function postSaveCallback()
         {

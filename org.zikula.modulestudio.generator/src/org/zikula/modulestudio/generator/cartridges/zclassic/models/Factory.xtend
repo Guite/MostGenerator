@@ -79,20 +79,20 @@ class Factory {
             protected $className;
 
             /**
-             * @var ObjectManager The object manager to be used for determining the repository.
+             * @var ObjectManager The object manager to be used for determining the repository
              */
             protected $objectManager;
 
             /**
-             * @var EntityRepository The currently used repository.
+             * @var EntityRepository The currently used repository
              */
             protected $repository;
 
             /**
              * Constructor.
              *
-             * @param ObjectManager $om        The object manager to be used for determining the repository.
-             * @param String        $className Full qualified class name to be used for «nameMultiple.formatForDisplay».
+             * @param ObjectManager $om        The object manager to be used for determining the repository
+             * @param String        $className Full qualified class name to be used for «nameMultiple.formatForDisplay»
              */
             public function __construct(ObjectManager $om, $className)
             {

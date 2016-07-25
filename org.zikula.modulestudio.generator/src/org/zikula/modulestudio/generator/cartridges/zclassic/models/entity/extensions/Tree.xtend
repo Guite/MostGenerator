@@ -46,7 +46,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
-         * @var integer $lft.
+         * @var integer $lft
          */
         protected $lft;
 
@@ -59,7 +59,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
-         * @var integer $lvl.
+         * @var integer $lvl
          */
         protected $lvl;
 
@@ -72,7 +72,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
-         * @var integer $rgt.
+         * @var integer $rgt
          */
         protected $rgt;
 
@@ -82,7 +82,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          «ENDIF»
          * @Gedmo\TreeRoot
          * @ORM\Column(type="integer", nullable=true)
-         * @var integer $root.
+         * @var integer $root
          */
         protected $root;
 
@@ -92,7 +92,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          * @Gedmo\TreeParent
          * @ORM\ManyToOne(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)»", inversedBy="children")
          * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKeyFields.head.name.formatForDisplay»", onDelete="SET NULL")
-         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)» $parent.
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)» $parent
          */
         protected $parent;
 
@@ -101,7 +101,7 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
          *
          * @ORM\OneToMany(targetEntity="«IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)»", mappedBy="parent")
          * @ORM\OrderBy({"lft" = "ASC"})
-         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)» $children.
+         * @var «IF !application.targets('1.3.x')»\«ENDIF»«entityClassName('', false)» $children
          */
         protected $children;
     '''

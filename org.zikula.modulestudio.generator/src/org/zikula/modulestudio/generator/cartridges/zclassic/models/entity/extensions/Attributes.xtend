@@ -50,8 +50,8 @@ class Attributes extends AbstractExtension implements EntityExtensionInterface {
         /**
          * Set attribute.
          *
-         * @param string $name.
-         * @param string $value.
+         * @param string $name  Attribute name
+         * @param string $value Attribute value
          *
          * @return void
          */
