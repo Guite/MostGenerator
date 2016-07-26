@@ -132,7 +132,7 @@ class Relations {
             {/if}
         «ELSE»
             {# purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» #}
-            {% displayMode is not defined or displayMode is empty %}
+            {% if displayMode is not defined or displayMode is empty %}
                 {% set displayMode = 'choices' %}
             {% endif %}
             {% if allowEditing is not defined or allowEditing is empty %}
