@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cq:componentQuery xmlns:cq="http://www.eclipse.org/buckminster/CQuery-1.0" resourceMap="project.rmap">
-    <cq:rootRequest name="org.zikula.modulestudio.generator.build.applications" componentType="eclipse.feature" />
-    <cq:advisorNode namePattern="^org\.zikula\.modulestudio\.generator\.applications$" componentType="eclipse.feature" useTargetPlatform="false">
-        <cq:documentation xmlns="http://www.w3.org/1999/xhtml">Force bundle to be fetched from the workspace</cq:documentation>
-    </cq:advisorNode>
-</cq:componentQuery>

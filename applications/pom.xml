@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.zikula.modulestudio.generator</groupId>
+    <artifactId>org.zikula.modulestudio.generator.applications</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.zikula.modulestudio.generator</groupId>
+        <artifactId>org.zikula.modulestudio.generator.root</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+        <module>org.zikula.modulestudio.generator.build.applications</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>most-dsl</id>
+            <url>file:////var/lib/jenkins/jobs/MOST-1_Prepare-3_TextualEditor/lastSuccessful/archive/site.p2.artifact</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>most-generator</id>
+            <url>file:////var/lib/jenkins/jobs/MOST-1_Prepare-4_Generator/lastSuccessful/archive/site.p2.artifact</url>
+            <layout>p2</layout>
+        </repository>
+    </repositories>
+</project>

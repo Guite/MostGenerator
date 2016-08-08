@@ -1,0 +1,4 @@
+/bin
+*.java._trace
+*.xtendbin
+target/
