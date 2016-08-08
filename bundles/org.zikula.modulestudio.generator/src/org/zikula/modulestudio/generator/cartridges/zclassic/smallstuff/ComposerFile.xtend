@@ -129,16 +129,16 @@ class ComposerFile {
                         "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\«entity.name.formatForCodeCapital»Entity"«IF entity != getCategorisableEntities.last»,«ENDIF»
                     «ENDFOR»
                 ]
-            }«IF null !== capabilities && capabilities != ''»,«ENDIF»
+            }«IF (null !== capabilities && capabilities != '') || hasHookSubscribers»,«ENDIF»
         «ENDIF»
         «IF null !== capabilities && capabilities != ''»
             «val capabilitiesArray = capabilities.replaceAll(', ', '').split(',')»
             «FOR capability : capabilitiesArray»
-                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last»,«ENDIF»
+                "«capability.formatForDisplay»": {"version": "1.0"}«IF capability != capabilitiesArray.last || hasHookSubscribers»,«ENDIF»
             «ENDFOR»
         «ENDIF»
         «IF hasHookSubscribers»
-            , "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
+            "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
         «ENDIF»«/* TODO: see #15 ,
         "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
     '''
