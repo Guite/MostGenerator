@@ -59,7 +59,6 @@ class Notification {
         use Zikula\ExtensionsModule\Api\VariableApi;
         use Zikula\MailerModule\Api\MailerApi;
         use Zikula\UsersModule\Api\CurrentUserApi;
-        use «appNamespace»\Helper\WorkflowHelper;
 
         /**
          * Notification helper base class.
