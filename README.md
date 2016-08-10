@@ -14,4 +14,4 @@ To regenerate your application with the latest Git version of the
 generator you can use [the WebGen service][].
 [the WebGen service]: https://github.com/Guite/MostWebGen
 
-![Build Status](http://guite.info:8080/buildStatus/icon?job=MOST-1_Prepare-4_Generator)
+![Build Status](http://guite.info:8080/buildStatus/icon?job=MOST-1_Prepare-4_Generator/master)
