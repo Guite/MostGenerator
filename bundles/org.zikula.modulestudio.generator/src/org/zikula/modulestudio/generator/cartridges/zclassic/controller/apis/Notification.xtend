@@ -165,6 +165,7 @@ class Notification {
                 $this->session = $session;
                 $this->router = $router;
                 $this->variableApi = $variableApi;
+                $this->currentUserApi = $currentUserApi;
                 $this->templating = $twig;
                 $this->mailerApi = $mailerApi;
                 $this->workflowHelper = $workflowHelper;
