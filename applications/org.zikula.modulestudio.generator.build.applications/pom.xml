@@ -7,16 +7,16 @@
     <packaging>eclipse-plugin</packaging>
 
     <properties>
-        <generator.modelName>KongProjects</generator.modelName>
-        <generator.modelPath>$WORKSPACE/refApplications/models/customers</generator.modelPath>
-        <generator.cartridge>zclassic</generator.cartridge>
+        <modelName>KongProjects</modelName>
+        <modelPath>models/customers</modelPath>
+        <cartridge>zclassic</cartridge>
     </properties>
 
-    <parent>
+    <!-- parent>
         <groupId>org.zikula.modulestudio.generator</groupId>
         <artifactId>org.zikula.modulestudio.generator.applications</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-    </parent>
+    </parent-->
 
     <build>
         <plugins>
@@ -48,13 +48,13 @@
                             -p
                         </argument>
                         <argument>
-                            modelPath=${modelPath}
+                            modelPath=${WORKSPACE}/refApplications/${modelPath}
                         </argument>
                         <argument>
                             -p
                         </argument>
                         <argument>
-                            cartridgeName=zclassic
+                            cartridgeName=${cartridge}
                         </argument>
                         <argument>
                             -p
