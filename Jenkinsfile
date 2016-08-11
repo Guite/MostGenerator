@@ -5,7 +5,7 @@ node {
     def repoBase = 'https://github.com/Guite/'
     def projectName = 'MostGenerator'
     def repoUrl = repoBase + projectName + '/'
-    def downstreamJobs = ['MOST-3_Build-Products']
+    def downstreamJobs = ['MOST-1_Prepare-7_WebGen']
     def artifacts = '**/releng/**/target/repository/**'
 
     def builder, postProcessor
