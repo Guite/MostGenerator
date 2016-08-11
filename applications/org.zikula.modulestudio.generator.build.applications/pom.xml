@@ -37,24 +37,24 @@
                     <includePluginDependencies>true</includePluginDependencies>
                     <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
                     <arguments>
-                        <argument>file://${project.basedir}/../../bundles/org.zikula.modulestudio.generator/src/org/zikula/modulestudio/generator/workflow/msManualWorkflow.mwe2</argument>
+                        <argument>file://${project.basedir}/../../bundles/org.zikula.modulestudio.generator/src/org/zikula/modulestudio/generator/workflow/msManualTesting.mwe2</argument>
                         <argument>
                             -p
                         </argument>
                         <argument>
-                            modelName=${generator.modelName}
-                        </argument>
-                        <argument>
-                            -p
-                        </argument>
-                        <argument>
-                            modelPath=${generator.modelPath}
+                            modelName=${modelName}
                         </argument>
                         <argument>
                             -p
                         </argument>
                         <argument>
-                            cartridgeName=${generator.cartridge}
+                            modelPath=${modelPath}
+                        </argument>
+                        <argument>
+                            -p
+                        </argument>
+                        <argument>
+                            cartridgeName=zclassic
                         </argument>
                         <argument>
                             -p
