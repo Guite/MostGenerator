@@ -7,6 +7,9 @@
     <packaging>eclipse-plugin</packaging>
 
     <properties>
+        <xtext.version>2.10.0</xtext.version>
+        <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
+
         <modelName>KongProjects</modelName>
         <modelPath>models/customers</modelPath>
         <cartridge>zclassic</cartridge>
