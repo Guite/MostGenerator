@@ -19,12 +19,12 @@
     <repositories>
         <repository>
             <id>most-dsl</id>
-            <url>file:////var/lib/jenkins/jobs/MOST-1_Prepare-3_TextualEditor/lastSuccessful/archive/site.p2.artifact</url>
+            <url>${dsl.repository}</url>
             <layout>p2</layout>
         </repository>
         <repository>
             <id>most-generator</id>
-            <url>file:////var/lib/jenkins/jobs/MOST-1_Prepare-4_Generator/lastSuccessful/archive/site.p2.artifact</url>
+            <url>${generator.repository}</url>
             <layout>p2</layout>
         </repository>
     </repositories>
