@@ -19,9 +19,6 @@ node {
         builder.init(projectName, repoUrl, linkProductRepo)
 
         postProcessor.finish(repoUrl, artifacts, downstreamJobs);
-
-        stage 'Deploy'
-        sh('MostProduct/releng/de.guite.modulestudio.configuration/deploy/headless-deploy-webgen.sh')
     } catch (exception) {
         builder.handleError(repoUrl, exception)
         throw exception
