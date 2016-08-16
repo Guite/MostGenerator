@@ -922,7 +922,7 @@ class EditEntity {
                     'id' => 'additionalNotificationRemarks',
                     'title' => $options['mode'] == 'create' ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
                 ],
-                'required' => false«/* TODO: apply help attribute in template (Section class)
+                'required' => false«/* TODO apply help attribute in template (Section class)
                 'help' => $helpText*/»
             ]);
         }

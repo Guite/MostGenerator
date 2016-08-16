@@ -139,7 +139,7 @@ class ComposerFile {
         «ENDIF»
         «IF hasHookSubscribers»
             "hook_subscriber": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"}
-        «ENDIF»«/* TODO: see #15 ,
+        «ENDIF»«/* TODO see #15 ,
         "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
     '''
 

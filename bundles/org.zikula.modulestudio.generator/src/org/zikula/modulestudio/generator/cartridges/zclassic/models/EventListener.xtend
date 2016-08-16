@@ -649,7 +649,7 @@ class EventListener {
             $this['«realName»FullPath'] = $fullPath;
             $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
 
-            // just some backwards compatibility stuff«/*TODO: remove somewhen*/»
+            // just some backwards compatibility stuff«/*TODO remove on demand handling of upload meta data */»
             /*if (!isset($this['«realName»Meta']) || !is_array($this['«realName»Meta']) || !count($this['«realName»Meta'])) {
                 // assign new meta data
                 $this['«realName»Meta'] = $uploadManager->readMetaDataForFile($this['«realName»'], $fullPath);

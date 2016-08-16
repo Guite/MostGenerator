@@ -555,7 +555,7 @@ class EditFunctions {
                 // create a new one
                 newItem = new Object();
                 newItem.ot = objectType;
-                newItem.alias = '«/*TODO*/»';
+                newItem.alias = '«/* TODO provide alias for relation window instance handler */»';
                 newItem.prefix = containerID;
                 newItem.acInstance = null;
                 newItem.windowInstance«IF !targets('1.3.x')»Id«ENDIF» = «vendorAndName»CreateRelationWindowInstance(«IF !targets('1.3.x')»jQuery('#' + «ELSE»$(«ENDIF»containerID), true);

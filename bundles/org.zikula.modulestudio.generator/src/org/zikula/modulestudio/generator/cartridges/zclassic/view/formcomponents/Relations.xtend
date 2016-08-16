@@ -206,7 +206,7 @@ class Relations {
         «/*just a reminder for the parent view which is not tested yet (see #10)
             Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
             Problem: address must know the customerid.
-            TODO: only for $mode != create: 
+            TODO only for $mode != create: 
                 <p>ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
                 <p>EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
         */»
