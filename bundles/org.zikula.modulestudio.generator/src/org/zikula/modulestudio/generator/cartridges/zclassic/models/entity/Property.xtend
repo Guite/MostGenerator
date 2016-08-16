@@ -171,7 +171,7 @@ class Property {
     def defaultFieldData(EntityField it) {
         switch it {
             BooleanField:
-                if (it.defaultValue == true || it.defaultValue == 'true') 'true' else 'false'
+                if (it.defaultValue == 'true') 'true' else 'false'
             AbstractIntegerField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             DecimalField:

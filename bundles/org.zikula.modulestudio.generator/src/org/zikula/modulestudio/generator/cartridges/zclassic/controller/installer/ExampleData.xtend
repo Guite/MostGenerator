@@ -319,7 +319,7 @@ class ExampleData {
     }
     def private exampleRowValue(DerivedField it, Entity dataEntity, Integer number) {
         switch it {
-            BooleanField: if (defaultValue == true || defaultValue == 'true') 'true' else 'false'
+            BooleanField: if (defaultValue == 'true') 'true' else 'false'
             IntegerField: exampleRowValueNumber(dataEntity, number)
             DecimalField: exampleRowValueNumber(dataEntity, number)
             StringField: if (it.country || it.language || it.locale) 'ZLanguage::getLanguageCode()' else if (it.currency) 'EUR' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)

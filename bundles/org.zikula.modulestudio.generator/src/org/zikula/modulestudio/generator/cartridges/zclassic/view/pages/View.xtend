@@ -724,6 +724,7 @@ class View {
             case 1: 'ol'
             case 2: 'dl'
             case 3: 'table'
+            default: 'table'
         }
     }
 
@@ -733,6 +734,7 @@ class View {
             case 1: 'li' // ol
             case 2: 'dd' // dl
             case 3: 'td' // table
+            default: 'td'
         }
     }
 }
