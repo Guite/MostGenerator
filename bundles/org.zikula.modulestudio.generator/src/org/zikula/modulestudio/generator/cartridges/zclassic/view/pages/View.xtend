@@ -413,10 +413,10 @@ class View {
                     <option value="publish" title="{{ __('«getWorkflowActionDescription(workflow, 'Publish')»') }}">{{ __('Publish') }}</option>
                 «ENDIF»
                 «IF hasArchive»
-                    <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive' comment='this is the verb, not the noun') }}</option>
+                    <option value="archive" title="{{ __('«getWorkflowActionDescription(workflow, 'Archive')»') }}">{{ __('Archive') }}</option>
                 «ENDIF»
                 «IF softDeleteable»
-                    <option value="trash" title="{{ __('«getWorkflowActionDescription(workflow, 'Trash')»') }}">{{ __('Trash' comment='this is the verb, not the noun') }}</option>
+                    <option value="trash" title="{{ __('«getWorkflowActionDescription(workflow, 'Trash')»') }}">{{ __('Trash') }}</option>
                     <option value="recover" title="{{ __('«getWorkflowActionDescription(workflow, 'Recover')»') }}">{{ __('Recover') }}</option>
                 «ENDIF»
                     <option value="delete" title="{{ __('«getWorkflowActionDescription(workflow, 'Delete')»') }}">{{ __('Delete') }}</option>
