@@ -495,7 +495,7 @@ class WorkflowHelper {
             $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
         «ENDIF»
         «val permissionLevel = if (requiredAction == 'approval') 'ADD' else if (requiredAction == 'acceptance') 'EDIT' else 'MODERATE'»
-        if («IF application.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
+        if («IF application.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«application.appName»:' . ucfirst($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if ($amount > 0) {
                 $amounts[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
