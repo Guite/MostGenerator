@@ -746,9 +746,6 @@ class ControllerLayer {
     def private linkContainerBaseImpl(Controller it) '''
         namespace «app.appNamespace»\Container\Base;
 
-        «IF app.generateAccountApi»
-            use ServiceUtil;
-        «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         «IF app.generateAccountApi»
             use UserUtil;
@@ -757,6 +754,10 @@ class ControllerLayer {
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
         use Zikula\PermissionsModule\Api\PermissionApi;
+        «IF app.generateAccountApi»
+            use Zikula\ExtensionsModule\Api\VariableApi;
+            use Zikula\UsersModule\Api\CurrentUserApi;
+        «ENDIF»
         use «app.appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -781,6 +782,18 @@ class ControllerLayer {
              */
             protected $controllerHelper;
 
+            «IF app.generateAccountApi»
+                /**
+                 * @var VariableApi
+                 */
+                protected $variableApi;
+
+                /**
+                 * @var CurrentUserApi
+                 */
+                private $currentUserApi;
+
+            «ENDIF»
             /**
              * Constructor.
              * Initialises member vars.
@@ -789,13 +802,21 @@ class ControllerLayer {
              * @param Routerinterface     $router           Router service instance
              * @param PermissionApi       $permissionApi    PermissionApi service instance
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
+             «IF app.generateAccountApi»
+             * @param VariableApi         $variableApi    VariableApi service instance
+             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper)
+            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper«IF app.generateAccountApi», VariableApi $variableApi, CurrentUserApi $currentUserApi«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->router = $router;
                 $this->permissionApi = $permissionApi;
                 $this->controllerHelper = $controllerHelper;
+                «IF app.generateAccountApi»
+                    $this->variableApi = $variableApi;
+                    $this->currentUserApi = $currentUserApi;
+                «ENDIF»
             }
 
             /**
@@ -827,13 +848,12 @@ class ControllerLayer {
 
                 «IF app.generateAccountApi»
                     if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
-                        $serviceManager = ServiceUtil::getManager();
-                        $useAccountPage = $serviceManager->get('zikula_extensions_module.api.variable')->get('«app.appName»', 'useAccountPage', true);
+                        $useAccountPage = $this->variableApi->get('«app.appName»', 'useAccountPage', true);
                         if ($useAccountPage === false) {
                             return $links;
                         }
 
-                        $userName = (isset($args['uname'])) ? $args['uname'] : $serviceManager->get('zikula_users_module.current_user')->get('uname');
+                        $userName = isset($args['uname']) ? $args['uname'] : $this->currentUserApi->get('uname');
                         // does this user exist?
                         if (UserUtil::getIdFromName($userName) === false) {
                             // user does not exist
