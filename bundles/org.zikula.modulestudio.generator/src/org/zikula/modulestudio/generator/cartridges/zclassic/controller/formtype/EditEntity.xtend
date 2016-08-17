@@ -437,6 +437,12 @@ class EditEntity {
                 «IF it instanceof IntegerField && (it as IntegerField).range»
                     'min' => «(it as IntegerField).minValue»,
                     'max' => «(it as IntegerField).maxValue»,
+                «ELSEIF it instanceof StringField && (it as StringField).htmlcolour»
+                    'id' => '«name.formatForDisplay»'«/* required by ColourType */»
+                «ELSEIF it instanceof UploadField»
+                    'id' => '«name.formatForDisplay»'«/* required by UploadTypeExtension */»
+                «ELSEIF it instanceof AbstractDateField»
+                    'id' => '«name.formatForDisplay»'«/* required by DateTypeExtension and TimeTypeExtension */»
                 «ENDIF»
                 'title' => $this->__('«titleAttribute»')
             ],«additionalOptions»
