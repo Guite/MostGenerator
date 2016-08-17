@@ -102,7 +102,6 @@ class Finder {
                         'label' => $this->__('Change selection'),
                         'icon' => 'fa-check',
                         'attr' => [
-                            'id' => '«app.appName.toFirstLower»Submit',
                             'class' => 'btn btn-success'
                         ]
                     ])
@@ -110,7 +109,6 @@ class Finder {
                         'label' => $this->__('Cancel'),
                         'icon' => 'fa-times',
                         'attr' => [
-                            'id' => '«app.appName.toFirstLower»Cancel',
                             'class' => 'btn btn-default',
                             'formnovalidate' => 'formnovalidate'
                         ]
@@ -207,9 +205,6 @@ class Finder {
             $builder->add('pasteas', '«nsSymfonyFormType»ChoiceType', [
                 'label' => $this->__('Paste as') . ':',
                 'empty_data' => 1,
-                'attr' => [
-                    'id' => '«app.appName.toFirstLower»PasteAs'
-                ],
                 'choices' => [
                     $this->__('Link to the «name.formatForDisplay»') => 1,
                     $this->__('ID of «name.formatForDisplay»') => 2
@@ -234,9 +229,6 @@ class Finder {
                 ->add('sort', '«nsSymfonyFormType»ChoiceType', [
                     'label' => $this->__('Sort by') . ':',
                     'empty_data' => '',
-                    'attr' => [
-                        'id' => '«app.appName.toFirstLower»Sort'
-                    ],
                     'choices' => [
                         «FOR field : getDerivedFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
@@ -256,9 +248,6 @@ class Finder {
                 ->add('sortdir', '«nsSymfonyFormType»ChoiceType', [
                     'label' => $this->__('Sort direction') . ':',
                     'empty_data' => 'asc',
-                    'attr' => [
-                        'id' => '«app.appName.toFirstLower»SortDir'
-                    ],
                     'choices' => [
                         $this->__('Ascending') => 'asc',
                         $this->__('Descending') => 'desc'
@@ -284,7 +273,6 @@ class Finder {
                 'label' => $this->__('Page size') . ':',
                 'empty_data' => 20,
                 'attr' => [
-                    'id' => '«app.appName.toFirstLower»PageSize',
                     'class' => 'text-right'
                 ],
                 'choices' => [
@@ -314,9 +302,6 @@ class Finder {
         {
             $builder->add('q', '«nsSymfonyFormType»SearchType', [
                 'label' => $this->__('Search for') . ':',
-                'attr' => [
-                    'id' => '«app.appName.toFirstLower»SearchTerm'
-                ],
                 'required' => false,
                 'max_length' => 255
             ]);

@@ -47,7 +47,7 @@ class ViewQuickNavForm {
                 <input type="hidden" name="own" value="{$own|default:0}" />
                 {gt text='All' assign='lblDefault'}
                 «formFields»
-                <input type="submit" name="updateview" id="quicknavSubmit" value="{gt text='OK'}" />
+                <input type="submit" name="updateview" id="«application.appName.formatForDB»_«name.formatForDB»quicknav_updateview" value="{gt text='OK'}" />
             </fieldset>
         </form>
         <script type="text/javascript">
@@ -57,7 +57,7 @@ class ViewQuickNavForm {
                 «IF hasAbstractStringFieldsEntity»
                     {{if isset($searchFilter) && $searchFilter eq false}}
                         {{* we can hide the submit button if we have no quick search field *}}
-                        $('quicknavSubmit').addClassName('z-hide');
+                        $('«application.appName.formatForDB»_«name.formatForDB»quicknav_updateview').addClassName('z-hide');
                     {{/if}}
                 «ENDIF»
             });
@@ -89,7 +89,7 @@ class ViewQuickNavForm {
                         «IF hasAbstractStringFieldsEntity»
                             {% if searchFilter|default and searchFilter == false %}
                                 {# we can hide the submit button if we have no quick search field #}
-                                $('#quicknavSubmit').addClass('hidden');
+                                $('#«application.appName.formatForDB»_«name.formatForDB»quicknav_updateview').addClass('hidden');
                             {% endif %}
                         «ENDIF»
                     });

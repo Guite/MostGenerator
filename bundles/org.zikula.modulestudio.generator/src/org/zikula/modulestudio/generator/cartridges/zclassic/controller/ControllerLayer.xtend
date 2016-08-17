@@ -803,8 +803,8 @@ class ControllerLayer {
              * @param PermissionApi       $permissionApi    PermissionApi service instance
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              «IF app.generateAccountApi»
-             * @param VariableApi         $variableApi    VariableApi service instance
-             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             * @param VariableApi         $variableApi      VariableApi service instance
+             * @param CurrentUserApi      $currentUserApi   CurrentUserApi service instance
              «ENDIF»
              */
             public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper«IF app.generateAccountApi», VariableApi $variableApi, CurrentUserApi $currentUserApi«ENDIF»)

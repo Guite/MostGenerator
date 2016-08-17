@@ -163,7 +163,6 @@ class QuickNavigation {
                 $builder->add('updateview', '«nsSymfonyFormType»SubmitType', [
                     'label' => $this->__('OK'),
                     'attr' => [
-                        'id' => 'quicknavSubmit',
                         'class' => 'btn btn-default btn-sm'
                     ]
                 ]);
@@ -434,7 +433,6 @@ class QuickNavigation {
             $builder->add('q', '«nsSymfonyFormType»SearchType', [
                 'label' => $this->__('Search'),
                 'attr' => [
-                    'id' => 'searchTerm',
                     'class' => 'input-sm'
                 ],
                 'required' => false,
@@ -456,7 +454,6 @@ class QuickNavigation {
                 ->add('sort', '«nsSymfonyFormType»ChoiceType', [
                     'label' => $this->__('Sort by'),
                     'attr' => [
-                        'id' => '«app.appName.toFirstLower»Sort',
                         'class' => 'input-sm'
                     ],
                     'choices' => [
@@ -479,7 +476,6 @@ class QuickNavigation {
                     'label' => $this->__('Sort direction'),
                     'empty_data' => 'asc',
                     'attr' => [
-                        'id' => '«app.appName.toFirstLower»SortDir',
                         'class' => 'input-sm'
                     ],
                     'choices' => [
@@ -507,7 +503,6 @@ class QuickNavigation {
                 'label' => $this->__('Page size'),
                 'empty_data' => 20,
                 'attr' => [
-                    'id' => '«app.appName.toFirstLower»PageSize',
                     'class' => 'input-sm text-right'
                 ],
                 'choices' => [
@@ -597,7 +592,6 @@ class QuickNavigation {
             'required' => false,
             'label' => $this->__('«/*(source as Entity).nameMultiple*/sourceAliasName.formatForDisplayCapital»'),
             'attr' => [
-                'id' => '«sourceAliasName.formatForCode»',
                 'class' => 'input-sm'
             ]
         ]);

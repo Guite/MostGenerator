@@ -933,15 +933,15 @@ class EditFunctions {
                     elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
                     «IF targets('1.3.x')»
                         $(elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
-                        $(elemPrefix).observe('click', function (e) {
+                        $(elemPrefix).observe('click', function (event) {
                             «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
-                            e.stop();
+                            event.stop();
                         });
                     «ELSE»
                         jQuery('#' + elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
-                        jQuery('#' + elemPrefix).click( function (e) {
+                        jQuery('#' + elemPrefix).click( function (event) {
                             «vendorAndName»InitInlineRelationWindow(objectType, elemPrefix);
-                            e.stopPropagation();
+                            event.stopPropagation();
                         });
                     «ENDIF»
                 }

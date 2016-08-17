@@ -50,9 +50,11 @@ class DateTypeExtension {
 
                 list ($dateFormat, $dateFormatJs) = $this->getDateFormat($options);
 
+                $domId = $form->getParent()->getConfig()->getName() . '_' . $form->getConfig()->getName();
+
                 $params = [
                     'defaultdate' => $options['empty_data'],
-                    'displayelement' => $options['attr']['id'],
+                    'displayelement' => $domId,
                     'readonly' => $readOnly,
                     'displayformat_datetime' => $dateFormat,
                     'displayformat_javascript' => $dateFormatJs
@@ -72,7 +74,8 @@ class DateTypeExtension {
                     'max_length' => 10,
                     'attr' => [
                         'class' => 'date-picker'
-                    ]
+                    ],
+                    'formName' => ''
                 ]);
             }
 

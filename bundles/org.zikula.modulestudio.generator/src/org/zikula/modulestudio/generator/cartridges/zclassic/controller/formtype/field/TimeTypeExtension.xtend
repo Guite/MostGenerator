@@ -65,9 +65,11 @@ class TimeTypeExtension {
                     || (isset($options['attr']) && isset($options['attr']['readonly']))
                 );
 
+                $domId = $form->getParent()->getConfig()->getName() . '_' . $form->getConfig()->getName();
+
                 $params = [
                     'defaultdate' => $options['empty_data'],
-                    'displayelement' => $options['attr']['id'],
+                    'displayelement' => $domId,
                     'readonly' => $readOnly,
                     'use24hour' => $options['use24Hour']
                 ];
@@ -81,14 +83,14 @@ class TimeTypeExtension {
                     /* <![CDATA[ */
                         ( function($) {
                             $(document).ready(function() {
-                                $('#" . $options['attr']['id'] . "').timepicker({
+                                $('#" . $domId . "').timepicker({
                                     timeFormat: '" . $this->getTimeFormat($options) . "',
                                     ampm: false
                                 });
                             });
                         })(jQuery);
                     /* ]]> */
-                    </script>";
+                </script>";
 
                 $this->footerAssetBag->add($customScript);
             }
@@ -106,7 +108,8 @@ class TimeTypeExtension {
                         'attr' => [
                             'class' => 'time-picker'
                         ],
-                        'use24Hour' => $i18n->locale->getTimeformat() == 24;
+                        'formName' => '',
+                        'use24Hour' => $i18n->locale->getTimeformat() == 24
                     ])
                     ->setAllowedTypes([
                         'use24Hour' => 'bool'

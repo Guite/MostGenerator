@@ -437,12 +437,6 @@ class EditEntity {
                 «IF it instanceof IntegerField && (it as IntegerField).range»
                     'min' => «(it as IntegerField).minValue»,
                     'max' => «(it as IntegerField).maxValue»,
-                «ELSEIF it instanceof StringField && (it as StringField).htmlcolour»
-                    'id' => '«name.formatForDisplay»'«/* required by ColourType */»
-                «ELSEIF it instanceof UploadField»
-                    'id' => '«name.formatForDisplay»'«/* required by UploadTypeExtension */»
-                «ELSEIF it instanceof AbstractDateField»
-                    'id' => '«name.formatForDisplay»'«/* required by DateTypeExtension and TimeTypeExtension */»
                 «ENDIF»
                 'title' => $this->__('«titleAttribute»')
             ],«additionalOptions»
@@ -850,7 +844,6 @@ class EditEntity {
             «ENDIF»
             'label' => $this->__('«aliasName.formatForDisplayCapital»'),
             'attr' => [
-                'id' => '«aliasName.formatForCode»',
                 'title' => $this->__('Choose the «aliasName.formatForDisplay»')
             ]
         ]);
@@ -925,7 +918,6 @@ class EditEntity {
                     'title' => $helpText
                 ],
                 'attr' => [
-                    'id' => 'additionalNotificationRemarks',
                     'title' => $options['mode'] == 'create' ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
                 ],
                 'required' => false«/* TODO apply help attribute in template (Section class)
@@ -948,7 +940,6 @@ class EditEntity {
                     'label' => $this->__($action['title']),
                     'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
                     'attr' => [
-                        'id' => 'btn' . ucfirst($action['id']),
                         'class' => $action['buttonClass'],
                         'title' => $this->__($action['description'])
                     ]
@@ -958,7 +949,6 @@ class EditEntity {
                 'label' => $this->__('Reset'),
                 'icon' => 'fa-refresh',
                 'attr' => [
-                    'id' => 'btnReset',
                     'class' => 'btn btn-default',
                     'formnovalidate' => 'formnovalidate'
                 ]
@@ -967,7 +957,6 @@ class EditEntity {
                 'label' => $this->__('Cancel'),
                 'icon' => 'fa-times',
                 'attr' => [
-                    'id' => 'btnCancel',
                     'class' => 'btn btn-default',
                     'formnovalidate' => 'formnovalidate'
                 ]

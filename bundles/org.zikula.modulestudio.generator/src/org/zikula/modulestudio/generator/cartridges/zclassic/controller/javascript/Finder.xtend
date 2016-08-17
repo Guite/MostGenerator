@@ -106,11 +106,9 @@ class Finder {
                 $('«elemPrefix»Submit').addClassName('z-hide');
                 $('«elemPrefix»Cancel').observe('click', «objName».finder.handleCancel);
             «ELSE»
-                jQuery('div.category-selector select').change(«objName».finder.onParamChanged);
-                jQuery('#«elemPrefix»Sort').change(«objName».finder.onParamChanged);
-                jQuery('#«elemPrefix»SortDir').change(«objName».finder.onParamChanged);
-                jQuery('#«elemPrefix»PageSize').change(«objName».finder.onParamChanged);
-                jQuery('#«elemPrefix»Cancel').click(«objName».finder.handleCancel);
+                jQuery('select').change(«objName».finder.onParamChanged);
+                jQuery('.btn-success').addClass('hidden');
+                jQuery('.btn-default').click(«objName».finder.handleCancel);
 
                 var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
                 selectedItems.bind('click keypress', function (e) {
@@ -132,7 +130,7 @@ class Finder {
             «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
-                editor = jQuery('#editorName').val();
+                editor = jQuery("[id$='editorName']").first().val();
             «ENDIF»
             if ('xinha' === editor) {
                 w = parent.window;
@@ -162,7 +160,7 @@ class Finder {
                 itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
                 itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '');
                 itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '');
-                pasteMode = jQuery('#«elemPrefix»PasteAs').val();
+                pasteMode = jQuery("[id$='pasteAs']").first().val();
             «ENDIF»
 
             if (pasteMode === '2' || pasteMode !== '1') {
@@ -188,7 +186,7 @@ class Finder {
             «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
-                editor = jQuery('#editorName').val();
+                editor = jQuery("[id$='editorName']").first().val();
             «ENDIF»
             if ('xinha' === editor) {
                 if (null !== window.opener.current«appName»Editor) {

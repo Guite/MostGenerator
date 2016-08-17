@@ -82,20 +82,20 @@ class ColourType {
                 if ($firstTime) {
                     $this->jsAssetBag->add('web/jquery-minicolors/jquery.minicolors.min.js');
                     $this->cssAssetBag->add('web/jquery-minicolors/jquery.minicolors.css');
+
+                    $customScript = "<script type=\"text/javascript\">
+                        /* <![CDATA[ */
+                            ( function($) {
+                                $(document).ready(function() {
+                                    $('.colour-selector').minicolors({theme: 'bootstrap'});
+                                });
+                            })(jQuery);
+                        /* ]]> */
+                        </script>";
+
+                    $this->footerAssetBag->add($customScript);
                 }
                 $firstTime = false;
-
-                $customScript = "<script type=\"text/javascript\">
-                    /* <![CDATA[ */
-                        ( function($) {
-                            $(document).ready(function() {
-                                $('#" . $options['attr']['id'] . "').minicolors({theme: 'bootstrap'});
-                            });
-                        })(jQuery);
-                    /* ]]> */
-                    </script>";
-
-                $this->footerAssetBag->add($customScript);
             }
 
             /**

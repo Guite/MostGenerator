@@ -222,17 +222,18 @@ class DisplayFunctions {
                     $('num').observe('change', «initQuickNavigationSubmitCall»);
                 }
             «ELSE»
-                if (jQuery('#catid').length > 0) {
-                    jQuery('#catid').change(«initQuickNavigationSubmitCall»);
+                var fieldPrefix = '«appName.formatForDB»_' + objectType.toLowerCase() + 'quicknav_';
+                if (jQuery('#' + fieldPrefix + 'catid').length > 0) {
+                    jQuery('#' + fieldPrefix + 'catid').change(«initQuickNavigationSubmitCall»);
                 }
-                if (jQuery('#sortBy').length > 0) {
-                    jQuery('#sortBy').change(«initQuickNavigationSubmitCall»);
+                if (jQuery('#' + fieldPrefix + 'sortBy').length > 0) {
+                    jQuery('#' + fieldPrefix + 'sortBy').change(«initQuickNavigationSubmitCall»);
                 }
-                if (jQuery('#sortDir').length > 0) {
-                    jQuery('#sortDir').change(«initQuickNavigationSubmitCall»);
+                if (jQuery('#' + fieldPrefix + 'sortDir').length > 0) {
+                    jQuery('#' + fieldPrefix + 'sortDir').change(«initQuickNavigationSubmitCall»);
                 }
-                if (jQuery('#num').length > 0) {
-                    jQuery('#num').change(«initQuickNavigationSubmitCall»);
+                if (jQuery('#' + fieldPrefix + 'num').length > 0) {
+                    jQuery('#' + fieldPrefix + 'num').change(«initQuickNavigationSubmitCall»);
                 }
             «ENDIF»
 
@@ -294,8 +295,8 @@ class DisplayFunctions {
                 $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.application)»);
             }
         «ELSE»
-            if (jQuery('#«name.formatForCode»').length > 0) {
-                jQuery('#«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application)»);
+            if (jQuery('#' + fieldPrefix + '«name.formatForCode»').length > 0) {
+                jQuery('#' + fieldPrefix + '«name.formatForCode»').change(«initQuickNavigationSubmitCall(entity.application)»);
             }
         «ENDIF»
     '''
@@ -307,8 +308,8 @@ class DisplayFunctions {
                 $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(application)»);
             }
         «ELSE»
-            if (jQuery('#«sourceAliasName»').length > 0) {
-                jQuery('#«sourceAliasName»').change(«initQuickNavigationSubmitCall(application)»);
+            if (jQuery('#' + fieldPrefix + '«sourceAliasName.formatForDB»').length > 0) {
+                jQuery('#' + fieldPrefix + '«sourceAliasName.formatForDB»').change(«initQuickNavigationSubmitCall(application)»);
             }
         «ENDIF»
     '''

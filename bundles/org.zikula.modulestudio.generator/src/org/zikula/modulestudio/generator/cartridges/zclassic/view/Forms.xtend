@@ -466,7 +466,7 @@ class Forms {
                 if (!document.getElementById('«name.formatForCode»EditForm').checkValidity()) {
                     // This does not really submit the form,
                     // but causes the browser to display the error message
-                    jQuery('#«name.formatForCode»EditForm').find(':submit').not(jQuery('#btnDelete')).first().click();
+                    jQuery('#«name.formatForCode»EditForm').find(':submit').first().click();
                 }
             }
 
@@ -501,7 +501,7 @@ class Forms {
                     allFormFields.change(executeCustomValidationConstraints);
 
                     formButtons = $('#«name.formatForCode»EditForm .form-buttons input');
-                    $('#btnDelete').bind('click keypress', function (e) {
+                    $('.btn-danger').first().bind('click keypress', function (e) {
                         if (!window.confirm('{{ __('Really delete this «name.formatForDisplay»?') }}')) {
                             e.preventDefault();
                         }
