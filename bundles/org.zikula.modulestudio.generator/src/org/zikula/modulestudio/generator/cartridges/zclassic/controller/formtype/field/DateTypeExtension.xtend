@@ -74,8 +74,7 @@ class DateTypeExtension {
                     'max_length' => 10,
                     'attr' => [
                         'class' => 'date-picker'
-                    ],
-                    'formName' => ''
+                    ]
                 ]);
             }
 

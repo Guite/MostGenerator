@@ -108,7 +108,6 @@ class TimeTypeExtension {
                         'attr' => [
                             'class' => 'time-picker'
                         ],
-                        'formName' => '',
                         'use24Hour' => $i18n->locale->getTimeformat() == 24
                     ])
                     ->setAllowedTypes([
