@@ -746,6 +746,9 @@ class ControllerLayer {
     def private linkContainerBaseImpl(Controller it) '''
         namespace «app.appNamespace»\Container\Base;
 
+        «IF app.generateAccountApi»
+            use ServiceUtil;
+        «ENDIF»
         use Symfony\Component\Routing\RouterInterface;
         «IF app.generateAccountApi»
             use UserUtil;
@@ -824,6 +827,7 @@ class ControllerLayer {
 
                 «IF app.generateAccountApi»
                     if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
+                        $serviceManager = ServiceUtil::getManager();
                         $useAccountPage = $serviceManager->get('zikula_extensions_module.api.variable')->get('«app.appName»', 'useAccountPage', true);
                         if ($useAccountPage === false) {
                             return $links;
@@ -843,7 +847,7 @@ class ControllerLayer {
                         «IF !app.getAllUserControllers.empty && app.getMainUserController.hasActions('view')»
                             «FOR entity : app.getAllEntities.filter[standardFields && ownerPermission]»
                                 $objectType = '«entity.name.formatForCode»';
-                                if ($this->permissionApi->hasPermission($this->name . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
+                                if ($this->permissionApi->hasPermission($this->getBundleName() . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ)) {
                                     $links[] = [
                                         'url' => $this->router->generate('«app.appName.formatForDB»_' . strtolower($objectType) . '_view', ['own' => 1]),
                                         'text' => $this->__('My «entity.nameMultiple.formatForDisplay»'),
@@ -853,10 +857,10 @@ class ControllerLayer {
                             «ENDFOR»
                         «ENDIF»
                         «IF !app.getAllAdminControllers.empty»
-                            if ($this->permissionApi->hasPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                            if ($this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_ADMIN)) {
                                 $links[] = [
                                     'url' => $this->router->generate('«app.appName.formatForDB»_admin_index'),
-                                    'text' => $this->__('«name.formatForDisplayCapital» Backend'),
+                                    'text' => $this->__('«app.name.formatForDisplayCapital» Backend'),
                                     'icon' => 'wrench'
                                 ];
                             }
