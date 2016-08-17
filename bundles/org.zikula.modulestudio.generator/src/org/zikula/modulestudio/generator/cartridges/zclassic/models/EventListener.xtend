@@ -565,31 +565,35 @@ class EventListener {
 
 
     def private postLoadImpl(Entity it) '''
-        $currentFunc = FormUtil::getPassedValue('func', '«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
         «IF application.targets('1.3.x')»
-            $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
-        «ELSE»
-            $serviceManager = ServiceUtil::getManager();
-            $requestStack = $serviceManager->get('request_stack');
-            $usesCsvOutput = $requestStack->getCurrentRequest()->getRequestFormat() == 'csv' ? true : false;
-        «ENDIF»
-        «IF hasUploadFieldsEntity»
-
-            // initialise the upload handler
+            $currentFunc = FormUtil::getPassedValue('func', '«IF application.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             «IF application.targets('1.3.x')»
-                $uploadManager = new «application.appName»_UploadHandler();
+                $usesCsvOutput = FormUtil::getPassedValue('usecsvext', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
             «ELSE»
-                $uploadManager = $serviceManager->get('«application.appService».upload_handler');
-            «ENDIF»
-            «IF application.targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
-                $controllerHelper = new «application.appName»_Util_Controller($serviceManager);
-            «ELSE»
-                $controllerHelper = $serviceManager->get('«application.appService».controller_helper');
+                $requestStack = $serviceManager->get('request_stack');
+                $usesCsvOutput = $requestStack->getCurrentRequest()->getRequestFormat() == 'csv' ? true : false;
             «ENDIF»
-        «ENDIF»
+            «IF hasUploadFieldsEntity»
 
-        «FOR field : fields»«IF !(field instanceof ArrayField)»«field.sanitizeForOutput»«ENDIF»«ENDFOR»
+                // initialise the upload handler
+                «IF application.targets('1.3.x')»
+                    $uploadManager = new «application.appName»_UploadHandler();
+                «ELSE»
+                    $uploadManager = $serviceManager->get('«application.appService».upload_handler');
+                «ENDIF»
+                «IF application.targets('1.3.x')»
+                    $serviceManager = ServiceUtil::getManager();
+                    $controllerHelper = new «application.appName»_Util_Controller($serviceManager);
+                «ELSE»
+                    $controllerHelper = $serviceManager->get('«application.appService».controller_helper');
+                «ENDIF»
+            «ENDIF»
+
+            «FOR field : fields»«IF !(field instanceof ArrayField)»«field.sanitizeForOutput»«ENDIF»«ENDFOR»
+        «ELSE»
+            «/* disabled due to #692 */»
+        «ENDIF»
     '''
 
     def private sanitizeForOutput(EntityField it) {
