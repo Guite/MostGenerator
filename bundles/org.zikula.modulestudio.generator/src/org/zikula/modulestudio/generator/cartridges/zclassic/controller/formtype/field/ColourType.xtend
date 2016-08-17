@@ -74,7 +74,7 @@ class ColourType {
 
                 if (
                     (isset($options['disabled']) && $options['disabled'])
-                    || (isset($options['attr']) && isset(isset($options['attr']['readonly'])))
+                    || (isset($options['attr']) && isset($options['attr']['readonly']))
                 ) {
                     return;
                 }

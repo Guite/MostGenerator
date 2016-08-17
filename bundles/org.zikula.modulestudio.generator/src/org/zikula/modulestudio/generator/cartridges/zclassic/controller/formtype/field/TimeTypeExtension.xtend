@@ -62,7 +62,7 @@ class TimeTypeExtension {
 
                 $readOnly = (
                     (isset($options['disabled']) && $options['disabled'])
-                    || (isset($options['attr']) && isset(isset($options['attr']['readonly'])))
+                    || (isset($options['attr']) && isset($options['attr']['readonly']))
                 );
 
                 $params = [
