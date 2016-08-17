@@ -153,9 +153,9 @@ class Bootstrap {
                 if ($currentType == 'admin' || $currentFunc == 'edit' || $currentFunc == 'initialize') {
                     return;
                 }
-            
+
                 $randProbability = mt_rand(1, 1000);
-            
+
                 if ($randProbability < 750) {
                     return;
                 }
@@ -168,6 +168,10 @@ class Bootstrap {
                     $logger = $serviceManager->get('logger');
                 «ENDIF»
                 «FOR entity : entitiesWithArchive»
+                    // check if service exists (does not if module is uninstalled, see #770)
+                    if (!$serviceManager->has('«appService».«entity.name.formatForCode»_factory')) {
+                        return;
+                    }
 
                     // perform update for «entity.nameMultiple.formatForDisplay» becoming archived
                     «IF !targets('1.3.x')»
