@@ -1576,8 +1576,8 @@ class Repository {
          */
         public function archiveObjects()
         {
+            $serviceManager = ServiceUtil::getManager();
             «IF !app.targets('1.3.x')»
-                $serviceManager = ServiceUtil::getManager();
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
             «ENDIF»
             if (\PageUtil::getVar('«app.appName»AutomaticArchiving', false) !== true && !«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«app.appName»', '.*', ACCESS_EDIT)) {
@@ -1606,8 +1606,6 @@ class Repository {
 
             $affectedEntities = $query->getResult();
 
-            $serviceManager = ServiceUtil::getManager();
-
             $action = 'archive';
             «IF app.targets('1.3.x')»
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
@@ -1617,7 +1615,7 @@ class Repository {
             «ELSE»
                 $workflowHelper = $serviceManager->get('«app.appService».workflow_helper');
                 «IF !skipHookSubscribers»
-                    $hookHelper = $this->get('«app.appService».hook_helper');
+                    $hookHelper = $serviceManager->get('«app.appService».hook_helper');
                 «ENDIF»
             «ENDIF»
 
