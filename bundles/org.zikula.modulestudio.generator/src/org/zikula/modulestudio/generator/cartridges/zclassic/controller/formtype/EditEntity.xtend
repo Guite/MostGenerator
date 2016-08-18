@@ -661,9 +661,6 @@ class EditEntity {
     def private dispatch formType(UploadField it) '''«app.appNamespace»\Form\Type\Field\Upload'''
     def private dispatch additionalOptions(UploadField it) '''
         'required' => «mandatory.displayBool»«IF mandatory» && $options['mode'] == 'create'«ENDIF»,
-        'file_meta' => 'get«name.formatForCodeCapital»Meta',
-        'file_path' => 'get«name.formatForCodeCapital»FullPath',
-        'file_url' => 'get«name.formatForCodeCapital»FullPathUrl',
         'allowed_extensions' => '«allowedExtensions»',
         'allowed_size' => «allowedFileSize»
     '''

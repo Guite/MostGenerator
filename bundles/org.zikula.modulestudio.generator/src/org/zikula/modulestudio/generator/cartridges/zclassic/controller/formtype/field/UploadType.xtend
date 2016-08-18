@@ -24,6 +24,7 @@ class UploadType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
+        use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
         use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -57,7 +58,16 @@ class UploadType {
             {
                 $fieldName = $builder->getForm()->getConfig()->getName();
 
-                $builder->add($fieldName, 'Symfony\Component\Form\Extension\Core\Type\FileType', $options);
+                $fileOptions = [];
+                foreach ($options as $k => $v) {
+                    if (in_array($k, ['allowed_extensions', 'allowed_size'])) {
+                        continue;
+                    }
+                    $fileOptions[$k] = $v;
+                }
+                $fileOptions['attr']['class'] = 'validate-upload';
+
+                $builder->add($fieldName, 'Symfony\Component\Form\Extension\Core\Type\FileType', $fileOptions);
 
                 if ($options['required']) {
                     return;
@@ -85,19 +95,12 @@ class UploadType {
 
                 $parentData = $form->getParent()->getData();
                 $accessor = PropertyAccess::createPropertyAccessor();
+                $fieldNameGetter = 'get' . ucfirst($form->getConfig()->getName());
 
                 // assign basic file properties
-                if (array_key_exists('file_meta', $options)) {
-                    $view->vars['file_meta'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_meta']) : ['isImage' => false, 'size' => 0];
-                }
-
-                if (array_key_exists('file_path', $options)) {
-                    $view->vars['file_path'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_path']) : null;
-                }
-
-                if (array_key_exists('file_url', $options)) {
-                    $view->vars['file_url'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_url']) : null;
-                }
+                $view->vars['file_meta'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : ['isImage' => false, 'size' => 0];
+                $view->vars['file_path'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'FullPath') : null;
+                $view->vars['file_url'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'FullPathUrl') : null;
 
                 // assign other custom options
                 $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options) ? $options['allowed_extensions'] : '';
@@ -110,9 +113,8 @@ class UploadType {
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
-                    ->setOptional(['file_meta', 'file_path', 'file_url', 'allowed_extensions', 'allowed_size'])
+                    ->setOptional(['allowed_extensions', 'allowed_size'])
                     ->setDefaults([
-                        'data_class' => null,«/* expect not a File instance */»
                         'attr' => [
                             'class' => 'file-selector'
                         ],
@@ -120,8 +122,6 @@ class UploadType {
                         'allowed_size' => 0
                     ])
                     ->setAllowedTypes([
-                        «/* disabled because of #753 'file_meta' => 'array', */»'file_path' => 'string',
-                        'file_url' => 'string',
                         'allowed_extensions' => 'string',
                         'allowed_size' => 'int'
                     ])

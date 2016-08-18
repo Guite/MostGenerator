@@ -178,7 +178,7 @@ class Layout {
         «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
 
             {% block date_widget %}
-                {{ block('form_widget') }}
+                {{ block('date_widget') }}
                 {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
@@ -187,7 +187,7 @@ class Layout {
         «IF !getAllEntities.filter[e|!e.fields.filter(DatetimeField).empty].empty»
 
             {% block datetime_widget %}
-                {{ block('form_widget') }}
+                {{ block('datetime_widget') }}
                 {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
@@ -198,7 +198,7 @@ class Layout {
             {% block «appName.formatForDB»_field_upload_widget %}
                 {% spaceless %}
 
-                {{ block('form_widget') }}
+                {{ block('file_widget') }}
                 {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}

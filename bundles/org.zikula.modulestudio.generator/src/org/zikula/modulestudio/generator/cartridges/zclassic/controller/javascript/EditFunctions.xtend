@@ -195,10 +195,10 @@ class EditFunctions {
                     $(fieldName).setAttribute('type', 'file');
                 }
             «ELSE»
-                if (jQuery('#' + fieldName).length > 0) {
-                    jQuery('#' + fieldName).attr('type', 'input');
-                    jQuery('#' + fieldName).attr('type', 'file');
-                }
+                jQuery("input[id$='" + fieldName.toLowerCase() + "']").attr({
+                    type: 'input',
+                    type: 'file'
+                });
             «ENDIF»
         }
     '''
@@ -209,10 +209,10 @@ class EditFunctions {
          */
         function «vendorAndName»InitUploadField(fieldName)
         {
-            var fieldNameCapitalised;
-
-            fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
             «IF targets('1.3.x')»
+                var fieldNameCapitalised;
+
+                fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
                 if (null != $('reset' + fieldNameCapitalised + 'Val')) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
@@ -220,12 +220,10 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                if (jQuery('#reset' + fieldNameCapitalised + 'Val').length > 0) {
-                    jQuery('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
-                        event.stopPropagation();
-                        «vendorAndName»ResetUploadField(fieldName);
-                    }).removeClass('hidden');
-                }
+                jQuery("a[id$='" + fieldName.toLowerCase() + "Val']").click( function (event) {
+                    event.stopPropagation();
+                    «vendorAndName»ResetUploadField(fieldName);
+                }).removeClass('hidden');
             «ENDIF»
         }
     '''
@@ -244,12 +242,8 @@ class EditFunctions {
                     $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
                 }
             «ELSE»
-                if (jQuery('#' + fieldName).length > 0) {
-                    jQuery('#' + fieldName).val('');
-                }
-                if (jQuery('#' + fieldName + 'cal').length > 0) {
-                    jQuery('#' + fieldName + 'cal').html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
-                }
+                jQuery("input[id$='" + fieldName.toLowerCase() + "']").val('');
+                jQuery([id$='" + fieldName.toLowerCase() + "cal']".html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
             «ENDIF»
         }
     '''
@@ -260,10 +254,10 @@ class EditFunctions {
          */
         function «vendorAndName»InitDateField(fieldName)
         {
-            var fieldNameCapitalised;
-
-            fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
             «IF targets('1.3.x')»
+                var fieldNameCapitalised;
+
+                fieldNameCapitalised = fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
                 if (null != $('reset' + fieldNameCapitalised + 'Val')) {
                     $('reset' + fieldNameCapitalised + 'Val').observe('click', function (evt) {
                         evt.preventDefault();
@@ -271,12 +265,10 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                if (jQuery('#reset' + fieldNameCapitalised + 'Val').length > 0) {
-                    jQuery('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
-                        event.stopPropagation();
-                        «vendorAndName»ResetDateField(fieldName);
-                    }).removeClass('hidden');
-                }
+                jQuery("a[id$='" + fieldName.toLowerCase() + "Val']").click( function (event) {
+                    event.stopPropagation();
+                    «vendorAndName»ResetDateField(fieldName);
+                }).removeClass('hidden');
             «ENDIF»
         }
     '''
