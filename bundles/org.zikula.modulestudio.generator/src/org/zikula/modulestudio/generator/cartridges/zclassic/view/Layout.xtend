@@ -195,7 +195,7 @@ class Layout {
         «ENDIF»
         «IF hasUploads»
 
-            {% block file_widget %}
+            {% block «appName.formatForDB»_field_upload_widget %}
                 {% spaceless %}
 
                 {{ block('form_widget') }}

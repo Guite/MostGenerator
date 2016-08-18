@@ -3,10 +3,12 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtyp
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UploadType {
+    extension FormattingExtensions = new FormattingExtensions()
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
@@ -27,7 +29,6 @@ class UploadType {
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
-        use «appNamespace»\Form\DataTransformer\UploadFieldTransformer;
 
         /**
          * Upload field type extension base class.
@@ -111,7 +112,6 @@ class UploadType {
                 $resolver
                     ->setOptional(['file_meta', 'file_path', 'file_url', 'allowed_extensions', 'allowed_size'])
                     ->setDefaults([
-                        'compound' => true,
                         'data_class' => null,«/* expect not a File instance */»
                         'attr' => [
                             'class' => 'file-selector'
@@ -131,9 +131,17 @@ class UploadType {
             /**
              * {@inheritdoc}
              */
-            public function getExtendedType()
+            public function getBlockPrefix()
             {
-                return 'Symfony\Component\Form\Extension\Core\Type\FileType';
+                return '«appName.formatForDB»_field_upload';
+            }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function getName()
+            {
+                return $this->getBlockPrefix();
             }
         }
     '''
