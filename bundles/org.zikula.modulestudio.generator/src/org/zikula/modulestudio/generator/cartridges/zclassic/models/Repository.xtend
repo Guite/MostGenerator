@@ -999,8 +999,7 @@ class Repository {
             «IF app.targets('1.3.x')»
                 $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             «ELSE»
-                // request may not be set (e.g. for queries from moderation blocks), see #775
-                $currentLegacyControllerType = null !== $this->request ? $this->request->get('lct', 'user') : 'user';
+                $currentLegacyControllerType = $this->request->get('lct', 'user');
             «ENDIF»
             if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
                 return $qb;
@@ -1585,6 +1584,12 @@ class Repository {
                 // current user has no permission for executing the archive workflow action
                 return true;
             }
+
+            if (null == $this->request) {
+                // return as no request is given
+                return true;
+            }
+
 
             «val endField = getEndDateField»
             «IF endField instanceof DatetimeField»
