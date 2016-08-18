@@ -195,7 +195,7 @@ class EditFunctions {
                     $(fieldName).setAttribute('type', 'file');
                 }
             «ELSE»
-                if (jQuery('#' + fieldName).size() > 0) {
+                if (jQuery('#' + fieldName).length > 0) {
                     jQuery('#' + fieldName).attr('type', 'input');
                     jQuery('#' + fieldName).attr('type', 'file');
                 }
@@ -220,7 +220,7 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                if (jQuery('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
+                if (jQuery('#reset' + fieldNameCapitalised + 'Val').length > 0) {
                     jQuery('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
                         «vendorAndName»ResetUploadField(fieldName);
@@ -244,10 +244,10 @@ class EditFunctions {
                     $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
                 }
             «ELSE»
-                if (jQuery('#' + fieldName).size() > 0) {
+                if (jQuery('#' + fieldName).length > 0) {
                     jQuery('#' + fieldName).val('');
                 }
-                if (jQuery('#' + fieldName + 'cal').size() > 0) {
+                if (jQuery('#' + fieldName + 'cal').length > 0) {
                     jQuery('#' + fieldName + 'cal').html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
                 }
             «ENDIF»
@@ -271,7 +271,7 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                if (jQuery('#reset' + fieldNameCapitalised + 'Val').size() > 0) {
+                if (jQuery('#reset' + fieldNameCapitalised + 'Val').length > 0) {
                     jQuery('#reset' + fieldNameCapitalised + 'Val').click( function (evt) {
                         event.stopPropagation();
                         «vendorAndName»ResetDateField(fieldName);
@@ -434,7 +434,7 @@ class EditFunctions {
                 $(idPrefix + 'AddFields').toggleClassName('z-hide');
             «ELSE»
                 // if we don't have a toggle link do nothing
-                if (jQuery('#' + idPrefix + 'AddLink').size() < 1) {
+                if (jQuery('#' + idPrefix + 'AddLink').length < 1) {
                     return;
                 }
 
@@ -753,13 +753,13 @@ class EditFunctions {
                 }
             «ELSE»
                 // add handling for the toggle link if existing
-                if (jQuery('#' + idPrefix + 'AddLink').size() > 0) {
+                if (jQuery('#' + idPrefix + 'AddLink').length > 0) {
                     jQuery('#' + idPrefix + 'AddLink').click( function (e) {
                         «vendorAndName»ToggleRelatedItemForm(idPrefix);
                     });
                 }
                 // add handling for the cancel button
-                if (jQuery('#' + idPrefix + 'SelectorDoCancel').size() > 0) {
+                if (jQuery('#' + idPrefix + 'SelectorDoCancel').length > 0) {
                     jQuery('#' + idPrefix + 'SelectorDoCancel').click( function (e) {
                         «vendorAndName»ResetRelatedItemForm(idPrefix);
                     });
@@ -879,7 +879,7 @@ class EditFunctions {
 
                         acUrl = Routing.generate(relationHandler.moduleName.toLowerCase() + '_ajax_getitemlistautocompletion');
                         acUrl += '&ot=' + objectType;
-                        if (jQuery('#' + idPrefix).size() > 0) {
+                        if (jQuery('#' + idPrefix).length > 0) {
                             acUrl += '&exclude=' + jQuery('#' + idPrefix).val();
                         }
 
@@ -900,7 +900,7 @@ class EditFunctions {
                     return;
                 }
             «ELSE»
-                if (!includeEditing || jQuery('#' + idPrefix + 'SelectorDoNew').size() < 1) {
+                if (!includeEditing || jQuery('#' + idPrefix + 'SelectorDoNew').length < 1) {
                     return;
                 }
             «ENDIF»

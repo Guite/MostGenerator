@@ -27,7 +27,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TimeTypeExtension
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadTypeExtension
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UserType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -92,7 +92,7 @@ class FormHandler {
                     new EntityTreeType().generate(it, fsa)
                 }
                 if (hasUploads) {
-                    new UploadTypeExtension().generate(it, fsa)
+                    new UploadType().generate(it, fsa)
                 }
                 if (hasUserFields) {
                     new UserType().generate(it, fsa)

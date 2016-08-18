@@ -390,7 +390,7 @@ class TreeFunctions {
                     return false;
                 }
             «ELSE»
-                if (node.parents.find('li').size() < 1) {
+                if (node.parents.find('li').length < 1) {
                     return false;
                 }
             «ENDIF»

@@ -27,7 +27,7 @@ class ListFieldTransformer {
         /**
          * List fields transformer base class.
          *
-         * This data transformer treats mult-valued list fields.
+         * This data transformer treats multi-valued list fields.
          */
         class ListFieldTransformer implements DataTransformerInterface
         {
@@ -88,7 +88,7 @@ class ListFieldTransformer {
         /**
          * List fields transformer implementation class.
          *
-         * This data transformer treats mult-valued list fields.
+         * This data transformer treats multi-valued list fields.
          */
         class ListFieldTransformer extends BaseTransformer
         {

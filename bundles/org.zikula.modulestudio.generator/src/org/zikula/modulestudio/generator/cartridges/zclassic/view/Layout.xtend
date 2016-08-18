@@ -178,7 +178,7 @@ class Layout {
         «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
 
             {% block date_widget %}
-                {{ parent() }}
+                {{ block('form_widget') }}
                 {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
@@ -187,7 +187,7 @@ class Layout {
         «IF !getAllEntities.filter[e|!e.fields.filter(DatetimeField).empty].empty»
 
             {% block datetime_widget %}
-                {{ parent() }}
+                {{ block('form_widget') }}
                 {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
@@ -198,15 +198,15 @@ class Layout {
             {% block file_widget %}
                 {% spaceless %}
 
-                {{ parent() }}
+                {{ block('form_widget') }}
                 {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
                 <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
-                {% if allowed_size is not null and allowed_size > 0 %}
+                {% if allowed_size|default is not null and allowed_size > 0 %}
                     <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size|«appName.formatForDB»_fileSize('', false, false) }}</span>
                 {% endif %}
-                {% if file_path is not null %}
+                {% if file_path|default %}
                     <span class="help-block">
                         {{ __('Current file') }}:
                         <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="lightbox"{% endif %}>

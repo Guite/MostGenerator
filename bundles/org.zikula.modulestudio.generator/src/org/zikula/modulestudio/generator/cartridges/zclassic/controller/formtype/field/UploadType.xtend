@@ -6,33 +6,33 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class UploadTypeExtension {
+class UploadType {
     extension NamingExtensions = new NamingExtensions()
     extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Extension/UploadTypeExtension.php',
-            fh.phpFileContent(it, uploadTypeExtensionBaseImpl), fh.phpFileContent(it, uploadTypeExtensionImpl)
+        generateClassPair(fsa, getAppSourceLibPath + 'Form/Type/Field/UploadType.php',
+            fh.phpFileContent(it, uploadTypeBaseImpl), fh.phpFileContent(it, uploadTypeImpl)
         )
     }
 
-    def private uploadTypeExtensionBaseImpl(Application it) '''
-        namespace «appNamespace»\Form\Extension\Base;
+    def private uploadTypeBaseImpl(Application it) '''
+        namespace «appNamespace»\Form\Type\Field\Base;
 
-        use Symfony\Component\Form\AbstractTypeExtension;
-        use Symfony\Component\Form\FormBuilderInterface;
+        use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
+        use «appNamespace»\Form\DataTransformer\UploadFieldTransformer;
 
         /**
-         * File field type extension base class.
+         * Upload field type extension base class.
          */
-        class UploadTypeExtension extends AbstractTypeExtension
+        class UploadType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -54,11 +54,14 @@ class UploadTypeExtension {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
+                $fieldName = $builder->getForm()->getConfig()->getName();
+
+                $builder->add($fieldName, 'Symfony\Component\Form\Extension\Core\Type\FileType', $options);
+
                 if ($options['required']) {
                     return;
                 }
 
-                $fieldName = $builder->getForm()->getConfig()->getName();
                 $builder->add($fieldName . 'DeleteFile', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', [
                     'mapped' => false,
                     'label' => $this->translator->__('Delete existing file'),
@@ -84,7 +87,7 @@ class UploadTypeExtension {
 
                 // assign basic file properties
                 if (array_key_exists('file_meta', $options)) {
-                    $view->vars['file_meta'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_meta']) : null;
+                    $view->vars['file_meta'] = null !== $parentData ? $accessor->getValue($parentData, $options['file_meta']) : ['isImage' => false, 'size' => 0];
                 }
 
                 if (array_key_exists('file_path', $options)) {
@@ -108,6 +111,8 @@ class UploadTypeExtension {
                 $resolver
                     ->setOptional(['file_meta', 'file_path', 'file_url', 'allowed_extensions', 'allowed_size'])
                     ->setDefaults([
+                        'compound' => true,
+                        'data_class' => null,«/* expect not a File instance */»
                         'attr' => [
                             'class' => 'file-selector'
                         ],
@@ -133,15 +138,15 @@ class UploadTypeExtension {
         }
     '''
 
-    def private uploadTypeExtensionImpl(Application it) '''
-        namespace «appNamespace»\Form\Extension;
+    def private uploadTypeImpl(Application it) '''
+        namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Extension\Base\UploadTypeExtension as BaseUploadTypeExtension;
+        use «appNamespace»\Form\Type\Field\Base\UploadType as BaseUploadType;
 
         /**
-         * File field type extension implementation class.
+         * Upload field type implementation class.
          */
-        class UploadTypeExtension extends BaseUploadTypeExtension
+        class UploadType extends BaseUploadType
         {
             // feel free to add your customisation here
         }
