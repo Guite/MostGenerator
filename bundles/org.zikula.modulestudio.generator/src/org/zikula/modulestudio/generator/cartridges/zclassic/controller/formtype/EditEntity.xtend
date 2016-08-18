@@ -658,7 +658,7 @@ class EditEntity {
         'default_protocol' => 'http'*/»
     '''
 
-    def private dispatch formType(UploadField it) '''«nsSymfonyFormType»File'''
+    def private dispatch formType(UploadField it) '''«app.appNamespace»\Form\Type\Field\Upload'''
     def private dispatch additionalOptions(UploadField it) '''
         'required' => «mandatory.displayBool»«IF mandatory» && $options['mode'] == 'create'«ENDIF»,
         'file_meta' => 'get«name.formatForCodeCapital»Meta',
