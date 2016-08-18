@@ -230,7 +230,6 @@ class Plugins {
         public function getFilters()
         {
             return [
-                new \Twig_SimpleFilter('«appNameLower»_actionUrl', [$this, 'buildActionUrl']),
                 new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState']),
                 «IF hasCountryFields»
                     new \Twig_SimpleFilter('«appNameLower»_countryName', [$this, 'getCountryName']),
@@ -386,7 +385,9 @@ class Plugins {
 
     def private viewPlugins(Application it) {
         val result = newArrayList
-        result += new ActionUrl().generate(it, fsa)
+        if (targets('1.3.x')) {
+            result += new ActionUrl().generate(it, fsa)
+        }
         result += new ObjectState().generate(it, fsa)
         if (targets('1.3.x')) {
             result += new TemplateHeaders().generate(it, fsa)

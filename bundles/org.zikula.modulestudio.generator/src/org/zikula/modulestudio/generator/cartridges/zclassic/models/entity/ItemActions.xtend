@@ -44,6 +44,7 @@ class ItemActions {
                 $serviceManager = ServiceUtil::getManager();
                 $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
                 $translator = $serviceManager->get('translator.default');
+                $router = $serviceManager->get('router');
             «ENDIF»
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentLegacyControllerType == '«controller.formattedName»') {
@@ -62,9 +63,13 @@ class ItemActions {
                 «IF controller.tempIsAdminController && application.hasUserController && application.getMainUserController.hasActions('display')»
                     $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         «IF app.targets('1.3.x')»
-                            'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)),
+                            'url' => array(
+                                'type' => 'user',
+                                'func' => 'display',
+                                'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)
+                            ),
                         «ELSE»
-                            'url' => ['type' => '«name.formatForCode»', 'func' => 'display', 'arguments' => [«routeParams('this', false)»]],
+                            'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_display', [«routeParams('this', false)»]),
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»preview«ELSE»search-plus«ENDIF»',
                         'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Open preview page'«IF app.targets('1.3.x')», $dom«ENDIF»),
@@ -74,9 +79,13 @@ class ItemActions {
                 «IF controller.hasActions('display')»
                     $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         «IF app.targets('1.3.x')»
-                            'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)),
+                            'url' => array(
+                                'type' => '«controller.formattedName»',
+                                'func' => 'display',
+                                'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)
+                            ),
                         «ELSE»
-                            'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»display', 'arguments' => [«routeParams('this', false)»]],
+                            'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»display', [«routeParams('this', false)»]),
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»display«ELSE»eye«ENDIF»',
                         'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern()),
@@ -107,9 +116,13 @@ class ItemActions {
                     if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_DELETE)) {
                         $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                             «IF app.targets('1.3.x')»
-                                'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)),
+                                'url' => array(
+                                    'type' => '«controller.formattedName»',
+                                    'func' => 'delete',
+                                    'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)
+                                ),
                             «ELSE»
-                                'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»delete', 'arguments' => [«routeParams('this', false)»]],
+                                'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»delete', [«routeParams('this', false)»]),
                             «ENDIF»
                             'icon' => '«IF app.targets('1.3.x')»delete«ELSE»trash-o«ENDIF»',
                             'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Delete'«IF app.targets('1.3.x')», $dom«ENDIF»),
@@ -127,9 +140,13 @@ class ItemActions {
                 «IF controller.hasActions('view')»
                     $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                         «IF app.targets('1.3.x')»
-                            'url' => array('type' => '«controller.formattedName»', 'func' => 'view', 'arguments' => array('ot' => '«name.formatForCode»')),
+                            'url' => array(
+                                'type' => '«controller.formattedName»',
+                                'func' => 'view',
+                                'arguments' => array('ot' => '«name.formatForCode»')
+                            ),
                         «ELSE»
-                            'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»view', 'arguments' => []],
+                            'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»view'),
                         «ENDIF»
                         'icon' => '«IF app.targets('1.3.x')»back«ELSE»reply«ENDIF»',
                         'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Back to overview'«IF app.targets('1.3.x')», $dom«ENDIF»),
@@ -161,8 +178,10 @@ class ItemActions {
                     «IF !many»
                         if (!isset($this->«relationAliasName») || $this->«relationAliasName» == null) {
                             «IF app.targets('1.3.x')»
-                                $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
-                                                 '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                                $urlArgs = array(
+                                    'ot' => '«otherEntity.name.formatForCode»',
+                                    '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»
+                                );
                             «ELSE»
                                 $urlArgs = ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»];
                             «ENDIF»
@@ -173,9 +192,13 @@ class ItemActions {
                             }
                             $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                                 «IF app.targets('1.3.x')»
-                                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                                    'url' => array(
+                                        'type' => '«controller.formattedName»',
+                                        'func' => 'edit',
+                                        'arguments' => $urlArgs
+                                    ),
                                 «ELSE»
-                                    'url' => ['type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs],
+                                    'url' => $router->generate('«app.appName.formatForDB»_«otherEntity.name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', $urlArgs),
                                 «ENDIF»
                                 'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
                                 'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»),
@@ -184,8 +207,10 @@ class ItemActions {
                         }
                     «ELSE»
                         «IF app.targets('1.3.x')»
-                            $urlArgs = array('ot' => '«otherEntity.name.formatForCode»',
-                                             '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»);
+                            $urlArgs = array(
+                                'ot' => '«otherEntity.name.formatForCode»',
+                                '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»
+                            );
                         «ELSE»
                             $urlArgs = ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»];
                         «ENDIF»
@@ -196,9 +221,13 @@ class ItemActions {
                         }
                         $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                             «IF app.targets('1.3.x')»
-                                'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => $urlArgs),
+                                'url' => array(
+                                    'type' => '«controller.formattedName»',
+                                    'func' => 'edit',
+                                    'arguments' => $urlArgs
+                                ),
                             «ELSE»
-                                'url' => ['type' => '«otherEntity.name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => $urlArgs],
+                                'url' => $router->generate('«app.appName.formatForDB»_«otherEntity.name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', $urlArgs),
                             «ENDIF»
                             'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
                             'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»),
@@ -221,9 +250,13 @@ class ItemActions {
         «IF !readOnly»«/*create is allowed, but editing not*/»
             $this->_actions[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 «IF application.targets('1.3.x')»
-                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)),
+                    'url' => array(
+                        'type' => '«controller.formattedName»',
+                        'func' => 'edit',
+                        'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)
+                    ),
                 «ELSE»
-                    'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => [«routeParams('this', false)»]],
+                    'url' => $router->generate('«application.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', [«routeParams('this', false)»]),
                 «ENDIF»
                 'icon' => '«IF application.targets('1.3.x')»edit«ELSE»pencil-square-o«ENDIF»',
                 'linkTitle' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Edit'«IF application.targets('1.3.x')», $dom«ENDIF»),
@@ -233,9 +266,13 @@ class ItemActions {
         «IF tree == EntityTreeType.NONE»
             $this->_actions[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 «IF application.targets('1.3.x')»
-                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false, 'astemplate')»)),
+                    'url' => array(
+                        'type' => '«controller.formattedName»',
+                        'func' => 'edit',
+                        'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false, 'astemplate')»)
+                    ),
                 «ELSE»
-                    'url' => ['type' => '«name.formatForCode»', 'func' => '«IF controller instanceof AdminController»admin«ENDIF»edit', 'arguments' => [«routeParams('this', false, 'astemplate')»]],
+                    'url' => $router->generate('«application.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', [«routeParams('this', false, 'astemplate')»]),
                 «ENDIF»
                 'icon' => '«IF application.targets('1.3.x')»saveas«ELSE»files-o«ENDIF»',
                 'linkTitle' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Reuse for new item'«IF application.targets('1.3.x')», $dom«ENDIF»),

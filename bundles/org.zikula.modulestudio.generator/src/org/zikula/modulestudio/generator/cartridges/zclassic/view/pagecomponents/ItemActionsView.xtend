@@ -95,7 +95,7 @@ class ItemActionsView {
 
     def private linkEntryCommonAttributesLegacy(Entity it) '''href="{$option.url.type|«application.appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"'''
 
-    def private linkEntryCommonAttributes(Entity it) '''href="{{ option.url.type|«application.appName.formatForDB»_actionUrl(option.url.func, option.url.arguments) }}" title="{{ option.linkTitle|e('html_attr') }}"'''
+    def private linkEntryCommonAttributes(Entity it) '''href="{{ option.url }}" title="{{ option.linkTitle|e('html_attr') }}"'''
 
     def private javaScript(Entity it, String context) '''
         «IF !application.targets('1.3.x') && context == 'view'»
