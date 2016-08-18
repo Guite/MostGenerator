@@ -228,25 +228,29 @@ class ControllerExtensions {
      * Determines the controller in which the config action is living.
      */
     def configController(Application it) {
-        if (!getAllAdminControllers.empty)
-            getAllAdminControllers.head.formattedName
-        else
-            if (!getAllUserControllers.empty)
-                getMainUserController.formattedName
+        if (!targets('1.3.x')) {
+            'config'
+        } else {
+            if (!getAllAdminControllers.empty)
+                getAllAdminControllers.head.formattedName
             else
-                controllers.head.formattedName
+                if (!getAllUserControllers.empty)
+                    getMainUserController.formattedName
+                else
+                    controllers.head.formattedName
+        }
     }
 
     /**
      * Checks for whether the given controller is responsible for the config action.
      */
     def isConfigController(Controller it) {
-        application.configController == formattedName
+        application.targets('1.3.x') && application.configController == formattedName
     }
 
     /**
-     * Determines whether the given int var instance represents a user group selector
-     * for moderation purposes.
+     * Determines whether the given integer variable instance represents a user group
+     * selector for moderation purposes.
      */
     def isUserGroupSelector(IntVar it) {
         if (name.contains('moderationGroupFor')

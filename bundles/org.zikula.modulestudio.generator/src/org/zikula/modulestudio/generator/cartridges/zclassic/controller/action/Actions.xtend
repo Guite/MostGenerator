@@ -184,7 +184,7 @@ class Actions {
 
                     return $this->redirectToRoute('«app.appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'view');
                 «ENDIF»
-            «ELSEIF controller.isConfigController»
+            «ELSEIF isLegacy && controller.isConfigController»
                 // redirect to config action
                 «IF isLegacy»
                     $redirectUrl = ModUtil::url($this->name, '«controller.formattedName»', 'config', array('lct' => '«controller.formattedName»'));
