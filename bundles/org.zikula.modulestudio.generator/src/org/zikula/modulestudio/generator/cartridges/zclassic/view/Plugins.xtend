@@ -207,7 +207,6 @@ class Plugins {
         public function getFunctions()
         {
             return [
-                new \Twig_SimpleFunction('«appNameLower»_templateHeaders', [$this, 'templateHeaders']),
                 «IF hasTrees»
                     new \Twig_SimpleFunction('«appNameLower»_treeData', [$this, 'getTreeData']),
                     new \Twig_SimpleFunction('«appNameLower»_treeSelection', [$this, 'getTreeSelection']),
@@ -389,7 +388,9 @@ class Plugins {
         val result = newArrayList
         result += new ActionUrl().generate(it, fsa)
         result += new ObjectState().generate(it, fsa)
-        result += new TemplateHeaders().generate(it, fsa)
+        if (targets('1.3.x')) {
+            result += new TemplateHeaders().generate(it, fsa)
+        }
         if (hasCountryFields) {
             result += new GetCountryName().generate(it, fsa)
         }

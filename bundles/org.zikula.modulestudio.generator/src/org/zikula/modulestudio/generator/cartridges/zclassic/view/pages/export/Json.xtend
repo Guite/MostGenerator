@@ -45,11 +45,11 @@ class Json {
     def private jsonView(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» view json view #}
-        {{ «appName.formatForDB»_templateHeaders(contentType='application/json') }}[
+        [
         {% for «objName» in items %}
             {% if not loop.first %},{% endif %}
             {{ «objName».toJson() }}
-        {/foreach}
+        {% endfor %}
         ]
     '''
 
@@ -63,7 +63,6 @@ class Json {
     def private jsonDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display json view #}
-        {#{ «appName.formatForDB»_templateHeaders(contentType='application/json') }#}
         {{ «objName».toJson() }}
     '''
 }

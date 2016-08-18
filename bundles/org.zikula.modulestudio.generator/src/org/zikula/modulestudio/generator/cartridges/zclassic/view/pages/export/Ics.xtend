@@ -78,7 +78,6 @@ class Ics {
     def private icsDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» display ics view #}
-        {{ «appName.formatForDB»_templateHeaders(contentType='text/calendar; charset=iso-8859-15«/*charset=utf-8*/»', asAttachment=true, fileName='«name.formatForCode»_' ~ «IF hasSluggableFields»«objName».slug«ELSE»«objName».getTitleFromDisplayPattern()«ENDIF» ~ '.ics') }}
         BEGIN:VCALENDAR
         VERSION:2.0
         PRODID:{{ pageGetVar('homepath') }}

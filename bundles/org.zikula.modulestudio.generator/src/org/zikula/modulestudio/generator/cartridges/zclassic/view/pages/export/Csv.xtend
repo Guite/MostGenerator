@@ -54,8 +54,7 @@ class Csv {
     '''
 
     def private csvView(Entity it, String appName) '''
-        {* purpose of this template: «nameMultiple.formatForDisplay» view csv view *}
-        {{ «appName.formatForDB»_templateHeaders(contentType='text/comma-separated-values; charset=iso-8859-15', asAttachment=true, fileName='«nameMultiple.formatForCodeCapital».csv') }}
+        {# purpose of this template: «nameMultiple.formatForDisplay» view csv view #}
         {% spaceless %}«FOR field : getDisplayFields.filter[name != 'workflowState'] SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{{ __('«geoFieldName.formatForDisplayCapital»') }}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{{ __('Deleted at') }}"«ENDIF»;"{{ __('Workflow state') }}"
         «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.headerLineRelation(false)»«ENDFOR»
         «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.headerLineRelation(true)»«ENDFOR»

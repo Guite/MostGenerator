@@ -868,7 +868,17 @@ class Actions {
         «IF isLegacy»
             return $viewHelper->processTemplate($this->view, $objectType, 'display', array(), $templateFile);
         «ELSE»
-            return $viewHelper->processTemplate($this->get('twig'), $objectType, 'display', $request, $templateParameters);
+            $response = $viewHelper->processTemplate($this->get('twig'), $objectType, 'display', $request, $templateParameters);
+            «IF app.generateIcsTemplates»
+
+                $format = $request->getRequestFormat();
+                if ($format == 'ics') {
+                    $fileName = $objectType . '_' . (property_exists($entity, 'slug') ? $entity['slug'] : $entity->getTitleFromDisplayPattern()) . '.ics';
+                    $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
+                }
+            «ENDIF»
+
+            return $response;
         «ENDIF»
     '''
 

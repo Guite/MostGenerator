@@ -205,21 +205,22 @@ class ViewHelper {
                 }
 
             «ENDIF»
+            «IF !isLegacy»
+                $response = null;
+            «ENDIF»
             if ($raw == true) {
                 // standalone output
                 if ($templateExtension == 'pdf«IF !isLegacy».twig«ENDIF»') {
                     $template = str_replace('.pdf', '«IF !isLegacy».html«ENDIF»', $template);
 
                     return $this->processPdf(«IF isLegacy»$view«ELSE»$twig, $request, $templateParameters«ENDIF», $template);
-                } else {
-                    «IF isLegacy»
-                        $view->display($template);
-                    «ELSE»
-                        return new PlainResponse($twig->render($template, $templateParameters));
-                    «ENDIF»
                 }
+
                 «IF isLegacy»
+                    $view->display($template);
                     System::shutDown();
+                «ELSE»
+                    $response = new PlainResponse($twig->render($template, $templateParameters));
                 «ENDIF»
             }
 
@@ -227,7 +228,51 @@ class ViewHelper {
             «IF isLegacy»
                 return $view->fetch($template);
             «ELSE»
-                return new Response($twig->render($template, $templateParameters));
+                $response = new Response($twig->render($template, $templateParameters));
+                «val supportedFormats = getListOfViewFormats + getListOfDisplayFormats»
+
+                // check if we need to set any custom headers
+                switch ($templateExtension) {
+                    «IF supportedFormats.exists[e|e == 'csv']»
+                        case 'csv.twig':
+                            $response->headers->set('Content-Type', 'text/comma-separated-values; charset=iso-8859-15');
+                            $fileName = $type . '-list.csv';
+                            $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'ics']»
+                        case 'ics.twig':
+                            $response->headers->set('Content-Type', 'text/calendar; charset=iso-8859-15«/*charset=utf-8*/»');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'json']»
+                        case 'json.twig':
+                            $response->headers->set('Content-Type', 'application/json');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'kml']»
+                        case 'kml.twig':
+                            $response->headers->set('Content-Type', 'application/vnd.google-earth.kml+xml');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'xml']»
+                        case 'xml.twig':
+                            $response->headers->set('Content-Type', 'text/xml');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'atom']»
+                        case 'atom.twig':
+                            $response->headers->set('Content-Type', 'application/atom+xml');
+                            break;
+                    «ENDIF»
+                    «IF supportedFormats.exists[e|e == 'rss']»
+                        case 'rss.twig':
+                            $response->headers->set('Content-Type', 'application/rss+xml');
+                            break;
+                    «ENDIF»
+                }
+
+                return $response;
             «ENDIF»
         }
     '''

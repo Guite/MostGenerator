@@ -71,7 +71,7 @@ class EventListener {
 
             return true;
         }
-        «IF !getDerivedFields.filter(AbstractStringField).empty»
+        «IF application.targets('1.3.x') && !getDerivedFields.filter(AbstractStringField).empty»
 
             /**
              * Formats a given textual field depending on it's actual kind of content.
@@ -125,7 +125,7 @@ class EventListener {
                 return preg_match("/<[^<]+>/", $string, $m) != 0;
             }
         «ENDIF»
-        «IF !getDerivedFields.filter(ObjectField).empty»
+        «IF application.targets('1.3.x') && !getDerivedFields.filter(ObjectField).empty»
 
             /**
              * Formats a given object field.

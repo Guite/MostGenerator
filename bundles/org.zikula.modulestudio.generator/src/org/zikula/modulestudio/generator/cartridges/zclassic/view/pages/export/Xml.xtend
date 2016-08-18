@@ -63,7 +63,7 @@ class Xml {
 
     def private xmlView(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» view xml view #}
-        {{ «appName.formatForDB»_templateHeaders(contentType='text/xml') }}<?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
+        <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
         <«nameMultiple.formatForCode»>
         {% for «name.formatForCode» in items %}
             {{ include('@«application.appName»/«name.formatForCodeCapital»/include.xml.twig') }}
@@ -81,7 +81,7 @@ class Xml {
 
     def private xmlDisplay(Entity it, String appName) '''
         {# purpose of this template: «nameMultiple.formatForDisplay» display xml view #}
-        {{ «appName.formatForDB»_templateHeaders(contentType='text/xml') }}<?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
+        <?xml version="1.0" encoding="{{ pageGetVar('meta.charset') }}" ?>
         {{ include('@«application.appName»/«name.formatForCodeCapital»/include.xml.twig') }}
     '''
 

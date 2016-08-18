@@ -55,7 +55,7 @@ class Kml {
     def private kmlView(Entity it, String appName) '''
         «val objName = name.formatForCode»
         {# purpose of this template: «nameMultiple.formatForDisplay» view kml view #}
-        {{ «appName.formatForDB»_templateHeaders(contentType='application/vnd.google-earth.kml+xml') }}<?xml version="1.0" encoding="UTF-8"?>
+        <?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
         {% for «objName» in items %}
@@ -90,8 +90,8 @@ class Kml {
 
     def private kmlDisplay(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        {* purpose of this template: «nameMultiple.formatForDisplay» display kml view *}
-        {{ «appName.formatForDB»_templateHeaders(contentType='application/vnd.google-earth.kml+xml') }}<?xml version="1.0" encoding="UTF-8"?>
+        {# purpose of this template: «nameMultiple.formatForDisplay» display kml view #}
+        <?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
             <Placemark>
