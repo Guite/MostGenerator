@@ -999,7 +999,8 @@ class Repository {
             «IF app.targets('1.3.x')»
                 $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             «ELSE»
-                $currentLegacyControllerType = $this->request->get('lct', 'user');
+                // request may not be set (e.g. for queries from moderation blocks), see #775
+                $currentLegacyControllerType = null !== $this->request ? $this->request->get('lct', 'user') : 'user';
             «ENDIF»
             if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
                 return $qb;
