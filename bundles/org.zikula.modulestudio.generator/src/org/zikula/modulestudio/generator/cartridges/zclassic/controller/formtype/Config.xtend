@@ -44,9 +44,6 @@ class Config {
     def private configTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Base;
 
-        «IF hasUserGroupSelectors»
-            use ModUtil;
-        «ENDIF»
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -189,7 +186,7 @@ class Config {
         'max_length' => 255,
         «IF hasUserGroupSelectors && isUserGroupSelector»
             // Zikula core should provide a form type for this to hide entity details
-            'class' => 'ZikulaGroupsModule:GroupsEntity',
+            'class' => 'ZikulaGroupsModule:GroupEntity',
             'choice_label' => 'name'
         «ELSE»
             'scale' => 0
