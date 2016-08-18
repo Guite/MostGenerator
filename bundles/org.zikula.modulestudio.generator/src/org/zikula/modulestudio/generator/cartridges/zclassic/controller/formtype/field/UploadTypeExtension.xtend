@@ -54,7 +54,7 @@ class UploadTypeExtension {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
-                if ($options['mandatory']) {
+                if ($options['required']) {
                     return;
                 }
 

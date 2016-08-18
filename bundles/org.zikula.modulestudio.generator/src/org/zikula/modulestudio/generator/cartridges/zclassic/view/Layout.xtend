@@ -179,7 +179,7 @@ class Layout {
 
             {% block date_widget %}
                 {{ parent() }}
-                {% if not mandatory %}
+                {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
             {% endblock %}
@@ -188,7 +188,7 @@ class Layout {
 
             {% block datetime_widget %}
                 {{ parent() }}
-                {% if not mandatory %}
+                {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
             {% endblock %}
@@ -199,7 +199,7 @@ class Layout {
                 {% spaceless %}
 
                 {{ parent() }}
-                {% if not mandatory %}
+                {% if not required %}
                     <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
                 <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
@@ -217,7 +217,7 @@ class Layout {
                         {% endif %}
                         </a>
                     </span>
-                    {% if not mandatory %}
+                    {% if not required %}
                         {{ form_row(attribute(form, id ~ 'DeleteFile')) }}
                     {% endif %}
                 {% endif %}
