@@ -21,7 +21,7 @@ class ModVars {
         switch it {
             BoolVar: '''«IF null !== value && value == 'true'»true«ELSE»false«ENDIF»'''
             IntVar: '''«IF null !== value && value != ''»«value»«ELSE»0«ENDIF»'''
-            ListVar: '''«IF it.multiple»«IF container.application.targets('1.3.x')»array(«ELSE»[«ENDIF»«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»«IF container.application.targets('1.3.x')»)«ELSE»]«ENDIF»«ENDIF»'''
+            ListVar: '''«IF it.multiple»«IF container.application.targets('1.3.x')»array(«ELSE»[«ENDIF»«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»«IF container.application.targets('1.3.x')»)«ELSE»]«ENDIF»«ELSEIF !it.multiple && it.getDefaultItems.empty»''«ENDIF»'''
             default: '\'' + (if (null !== value) value else '') + '\''
         }
     }
