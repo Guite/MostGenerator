@@ -1585,12 +1585,13 @@ class Repository {
                 return true;
             }
 
-            if (null == $this->request) {
-                // return as no request is given
-                return true;
-            }
+            «IF !app.targets('1.3.x')»
+                if (null == $this->request) {
+                    // return as no request is given
+                    return true;
+                }
 
-
+            «ENDIF»
             «val endField = getEndDateField»
             «IF endField instanceof DatetimeField»
                 $today = date('Y-m-d H:i:s');
