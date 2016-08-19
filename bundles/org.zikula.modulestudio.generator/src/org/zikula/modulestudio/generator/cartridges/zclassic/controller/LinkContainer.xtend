@@ -152,7 +152,7 @@ class LinkContainer {
                             return $links;
                         }
 
-                        if (!$this->permissionApi->hasPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
+                        if (!$this->permissionApi->hasPermission($this->getBundleName() . '::', '::', ACCESS_OVERVIEW)) {
                             return $links;
                         }
 
