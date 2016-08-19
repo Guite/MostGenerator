@@ -156,14 +156,14 @@ class ThirdParty {
          * The subject is an instance of Content_Types.
          * You can register custom content types as well as custom layout types.
          *
-         * @param «/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
+         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function contentGetTypes(«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function contentGetTypes(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
         {
             «IF !isBase»
                 parent::contentGetTypes($event);
