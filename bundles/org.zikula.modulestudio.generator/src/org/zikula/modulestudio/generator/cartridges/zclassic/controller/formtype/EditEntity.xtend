@@ -689,7 +689,9 @@ class EditEntity {
         'choices_as_values' => true,
         'choice_attr' => $choiceAttributes,
         'multiple' => «multiple.displayBool»,
-        'expanded' => «expanded.displayBool»
+        'expanded' => «expanded.displayBool»«IF expanded»,
+        'label_attr' => ['class' => '«IF multiple»checkbox«ELSE»radio«ENDIF»-inline']
+        «ENDIF»
     '''
 
     def private dispatch formType(UserField it) '''«app.appNamespace»\Form\Type\Field\User'''
