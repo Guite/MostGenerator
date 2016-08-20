@@ -59,25 +59,63 @@ class Uploads {
 
     def private htAccess(UploadField it) '''
         # «fh.generatedBy(entity.application, entity.application.timestampAllGeneratedFiles, entity.application.versionAllGeneratedFiles)»
-        # ----------------------------------------------------------------------
-        # Purpose of file: give access to upload files treated in this directory
-        # ----------------------------------------------------------------------
-        deny from all
+        # ------------------------------------------------------------
+        # Purpose of file: block any web access to unallowed files
+        # stored in this directory
+        # ------------------------------------------------------------
+
+        # Apache 2.2
+        <IfModule !mod_authz_core.c>
+            Deny from all
+        </IfModule>
+
+        # Apache 2.4
+        <IfModule mod_authz_core.c>
+            Require all denied
+        </IfModule>
+
         <FilesMatch "\.(«allowedExtensions.replace(", ", "|")»)$">
-            order allow,deny
-            allow from all
+            # Apache 2.2
+            <IfModule !mod_authz_core.c>
+                Order allow,deny
+                Allow from all
+            </IfModule>
+
+            # Apache 2.4
+            <IfModule mod_authz_core.c>
+                Require all granted
+            </IfModule>
         </filesmatch>
     '''
 
     def private htAccessTemplate(Application it) '''
         # «fh.generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
-        # ----------------------------------------------------------------------
-        # Purpose of file: give access to upload files treated in this directory
-        # ----------------------------------------------------------------------
-        deny from all
+        # ------------------------------------------------------------
+        # Purpose of file: block any web access to unallowed files
+        # stored in this directory
+        # ------------------------------------------------------------
+
+        # Apache 2.2
+        <IfModule !mod_authz_core.c>
+            Deny from all
+        </IfModule>
+
+        # Apache 2.4
+        <IfModule mod_authz_core.c>
+            Require all denied
+        </IfModule>
+
         <FilesMatch "\.(__EXTENSIONS__)$">
-            order allow,deny
-            allow from all
+            # Apache 2.2
+            <IfModule !mod_authz_core.c>
+                Order allow,deny
+                Allow from all
+            </IfModule>
+
+            # Apache 2.4
+            <IfModule mod_authz_core.c>
+                Require all granted
+            </IfModule>
         </filesmatch>
     '''
 
