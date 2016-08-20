@@ -416,14 +416,19 @@ class EditEntity {
         «IF it instanceof ListField»
             «fetchListEntries»
         «ENDIF»
+        «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
         $builder->add('«name.formatForCode»«IF idSuffix != ''» . «idSuffix»«ENDIF»', '«formType»Type', [
             'label' => $this->__('«name.formatForDisplayCapital»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
-                    'class' => '«app.appName.toLowerCase»-form-tooltips',
+                    'class' => '«app.appName.toLowerCase»-form-tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
                     'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
                 «helpAttribute»
+            «ELSEIF isExpandedListField»
+                'label_attr' => [
+                    'class' => '«IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline'
+                ],
             «ENDIF»
             «IF readonly»
                 'disabled' => true,
@@ -689,9 +694,7 @@ class EditEntity {
         'choices_as_values' => true,
         'choice_attr' => $choiceAttributes,
         'multiple' => «multiple.displayBool»,
-        'expanded' => «expanded.displayBool»«IF expanded»,
-        'label_attr' => ['class' => '«IF multiple»checkbox«ELSE»radio«ENDIF»-inline']
-        «ENDIF»
+        'expanded' => «expanded.displayBool»
     '''
 
     def private dispatch formType(UserField it) '''«app.appNamespace»\Form\Type\Field\User'''
