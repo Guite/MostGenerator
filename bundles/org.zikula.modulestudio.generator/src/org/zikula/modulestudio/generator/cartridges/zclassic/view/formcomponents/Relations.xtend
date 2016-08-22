@@ -188,15 +188,14 @@ class Relations {
     def private formPluginAttributesLegacy(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
 
     def private includedEditTemplateBody(JoinRelationship it, Application app, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
-        «val aliasName = getRelationAliasName(!incoming)»
         {% if displayMode == 'choices' %}
-            {{ form_row(form.«aliasName.formatForCode») }}
+            {{ form_row(attribute(form, alias)) }}
         {% elseif displayMode == 'autocomplete' %}
             «IF !isManyToMany && !incoming»
                 «component_ParentEditing(ownEntity, many)»
             «ELSE»
                 {% set createUrl = allowEditing ? path('«app.appName.formatForDB»_«ownEntity.name.formatForDB»_' ~ routeArea ~ 'edit') : '' %}
-                {{ form_row(form.«aliasName.formatForCode») }}
+                {{ form_row(attribute(form, alias)) }}
                 «component_AutoComplete(app, ownEntity, many, incoming, hasEdit)»
             «ENDIF»
         {% endif %}
