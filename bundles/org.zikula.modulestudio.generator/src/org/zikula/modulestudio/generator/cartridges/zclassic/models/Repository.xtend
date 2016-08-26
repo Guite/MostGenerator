@@ -583,8 +583,8 @@ class Repository {
 
                 $serviceManager = ServiceUtil::getManager();
                 $logger = $serviceManager->get('logger');
-                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»'];
-                $logger->debug('{app}: User {user} truncated the {entity} entity table.', $logArgs);
+                $logArgs = ['app' => '«application.appName»', 'entity' => '«name.formatForDisplay»'];
+                $logger->debug('{app}: Truncated the {entity} entity table.', $logArgs);
             «ENDIF»
         }
     '''

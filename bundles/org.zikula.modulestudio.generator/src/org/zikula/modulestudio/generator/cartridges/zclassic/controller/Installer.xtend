@@ -98,7 +98,6 @@ class Installer {
         {
             «IF !targets('1.3.x')»
                 $logger = $this->container->get('logger');
-                $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
 
             «ENDIF»
             «processUploadFolders»
@@ -115,7 +114,7 @@ class Installer {
                         return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                     «ELSE»
                         $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                        $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
+                        $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                         return false;
                     «ENDIF»
@@ -132,7 +131,7 @@ class Installer {
                     return LogUtil::registerError($returnMessage);
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $returnMessage);
-                    $logger->error('{app}: User {user} could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
+                    $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                     return false;
                 «ENDIF»
@@ -270,7 +269,6 @@ class Installer {
         /*
             «IF !targets('1.3.x')»
                 $logger = $this->container->get('logger');
-                $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
 
             «ENDIF»
             // Upgrade dependent on old version number
@@ -291,7 +289,7 @@ class Installer {
                                 return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                             «ELSE»
                                 $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                                $logger->error('{app}: User {user} could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
+                                $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                                 return false;
                             «ENDIF»
@@ -300,7 +298,7 @@ class Installer {
                             return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                         «ELSE»
                             $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while updating tables for the %s extension.', ['%s' => '«appName»']));
-                            $logger->error('{app}: User {user} could not update the database tables during the ugprade. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
+                            $logger->error('{app}: Could not update the database tables during the ugprade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                             return false;
                         «ENDIF»
@@ -342,7 +340,6 @@ class Installer {
         {
             «IF !targets('1.3.x')»
                 $logger = $this->container->get('logger');
-                $userName = $this->container->get('zikula_users_module.current_user')->get('uname');
 
             «ENDIF»
             // delete stored object workflows
@@ -352,7 +349,7 @@ class Installer {
                     return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while removing stored object workflows for the %s extension.', ['%s' => '«appName»']));
-                    $logger->error('{app}: User {user} could not remove stored object workflows during uninstallation.', ['app' => '«appName»', 'user' => $userName]);
+                    $logger->error('{app}: Could not remove stored object workflows during uninstallation.', ['app' => '«appName»']);
 
                     return false;
                 «ENDIF»
@@ -370,7 +367,7 @@ class Installer {
                         return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                     «ELSE»
                         $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                        $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
+                        $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                         return false;
                     «ENDIF»
@@ -379,7 +376,7 @@ class Installer {
                     return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->getName())));
                 «ELSE»
                     $this->addFlash(\Zikula_Session::MESSAGE_ERROR, $this->__f('An error was encountered while dropping tables for the %s extension.', ['%s' => '«appName»']));
-                    $logger->error('{app}: User {user} could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'user' => $userName, 'errorMessage' => $e->getMessage()]);
+                    $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                     return false;
                 «ENDIF»
