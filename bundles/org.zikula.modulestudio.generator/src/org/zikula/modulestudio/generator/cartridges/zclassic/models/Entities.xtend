@@ -16,6 +16,8 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Entit
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityMethods
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.EventListener
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LifecycleListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
@@ -55,6 +57,8 @@ class Entities {
             for (entity : getAllEntities) {
                 validator.generateWrapper(entity, fsa)
             }
+        } else {
+            new LifecycleListener().generate(it, fsa)
         }
 
         for (entity : getAllEntities) {
@@ -144,8 +148,6 @@ class Entities {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Base;
 
-            use «app.appNamespace»\«app.name.formatForCodeCapital»Events;
-            use «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event;
         «ENDIF»
         «imports»
         «IF !app.targets('1.3.x')»
@@ -197,8 +199,8 @@ class Entities {
         «ENDIF»
         «accessors(validatorClassLegacy)»
 
-        «IF it instanceof Entity»
-            «thEvLi.generateBase(it)»
+        «IF it instanceof Entity && app.targets('1.3.x')»
+            «thEvLi.generateBase(it as Entity)»
 
         «ENDIF»
         «new EntityMethods().generate(it, app, thProp)»
@@ -304,9 +306,9 @@ class Entities {
                 «FOR relation : getBidirectionalIncomingJoinRelations»«thAssoc.relationAccessor(relation, false)»«ENDFOR»
                 «FOR relation : getOutgoingJoinRelations»«thAssoc.relationAccessor(relation, true)»«ENDFOR»
             «ENDIF»
-            «IF it instanceof Entity»
+            «IF it instanceof Entity && app.targets('1.3.x')»
 
-                «thEvLi.generateImpl(it)»
+                «thEvLi.generateImpl(it as Entity)»
             «ENDIF»
         }
     '''

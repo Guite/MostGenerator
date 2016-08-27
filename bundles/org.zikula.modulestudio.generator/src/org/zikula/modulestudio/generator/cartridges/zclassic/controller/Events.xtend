@@ -65,9 +65,9 @@ class Events {
          * are loaded from the database.
          *
          * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «entityClassName('', false)»::postLoadCallback()
+         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postLoad()
          * @var string
          */
         const «constPrefix»_POST_LOAD = '«entityEventPrefix»_post_load';
@@ -77,9 +77,9 @@ class Events {
          * is created in the system.
          *
          * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «entityClassName('', false)»::prePersistCallback()
+         * @see «app.appNamespace»\Listener\EntityLifecycleListener::prePersist()
          * @var string
          */
         const «constPrefix»_PRE_PERSIST = '«entityEventPrefix»_pre_persist';
@@ -89,9 +89,9 @@ class Events {
          * has been created in the system.
          *
          * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «entityClassName('', false)»::postPersistCallback()
+         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postPersist()
          * @var string
          */
         const «constPrefix»_POST_PERSIST = '«entityEventPrefix»_post_persist';
@@ -101,9 +101,9 @@ class Events {
          * is removed from the system.
          *
          * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «entityClassName('', false)»::preRemoveCallback()
+         * @see «app.appNamespace»\Listener\EntityLifecycleListener::preRemove()
          * @var string
          */
         const «constPrefix»_PRE_REMOVE = '«entityEventPrefix»_pre_remove';
@@ -113,9 +113,9 @@ class Events {
          * has been removed from the system.
          *
          * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «entityClassName('', false)»::postRemoveCallback()
+         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postRemove()
          * @var string
          */
         const «constPrefix»_POST_REMOVE = '«entityEventPrefix»_post_remove';
@@ -125,9 +125,9 @@ class Events {
          * is updated in the system.
          *
          * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «entityClassName('', false)»::preUpdateCallback()
+         * @see «app.appNamespace»\Listener\EntityLifecycleListener::preUpdate()
          * @var string
          */
         const «constPrefix»_PRE_UPDATE = '«entityEventPrefix»_pre_update';
@@ -137,36 +137,12 @@ class Events {
          * has been updated in the system.
          *
          * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
+         * «app.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
          *
-         * @see «entityClassName('', false)»::postUpdateCallback()
+         * @see «app.appNamespace»\Listener\EntityLifecycleListener::postUpdate()
          * @var string
          */
         const «constPrefix»_POST_UPDATE = '«entityEventPrefix»_post_update';
-
-        /**
-         * The «entityEventPrefix»_pre_save event is thrown before a new «name.formatForDisplay»
-         * is created or an existing «name.formatForDisplay» is updated in the system.
-         *
-         * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
-         *
-         * @see «entityClassName('', false)»::preSaveCallback()
-         * @var string
-         */
-        const «constPrefix»_PRE_SAVE = '«entityEventPrefix»_pre_save';
-
-        /**
-         * The «entityEventPrefix»_post_save event is thrown after a new «name.formatForDisplay»
-         * has been created or an existing «name.formatForDisplay» has been updated in the system.
-         *
-         * The event listener receives an
-         * «application.appNamespace»\Event\Filter«name.formatForCodeCapital»Event instance.
-         *
-         * @see «entityClassName('', false)»::postSaveCallback()
-         * @var string
-         */
-        const «constPrefix»_POST_SAVE = '«entityEventPrefix»_post_save';
 
     '''
 

@@ -129,6 +129,11 @@ class ServiceDefinitions {
 
     def private servicesEventSubscriber(Application it) '''
         # Event subscriber and listener classes
+        «modPrefix».entity_lifecycle_listener:
+            class: «appNamespace»\Listener\EntityLifecycleListener
+            tags:
+                - { name: doctrine.event_subscriber }
+
         «FOR className : getSubscriberNames»
             «modPrefix».«className.toLowerCase»_listener:
                 class: «appNamespace»\Listener\«className»Listener
