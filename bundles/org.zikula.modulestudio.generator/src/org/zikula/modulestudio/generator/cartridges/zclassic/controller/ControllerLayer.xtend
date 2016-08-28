@@ -405,7 +405,7 @@ class ControllerLayer {
                 «IF isLegacy»
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
+                    $flashBag->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', ['%s' => $action]));
                     $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }
@@ -418,14 +418,14 @@ class ControllerLayer {
                 «IF isLegacy»
                     LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item deleted.'));
+                    $flashBag->add('status', $this->__('Done! Item deleted.'));
                     $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => $userName, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             } else {
                 «IF isLegacy»
                     LogUtil::registerStatus($this->__('Done! Item updated.'));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item updated.'));
+                    $flashBag->add('status', $this->__('Done! Item updated.'));
                     $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             }
@@ -588,11 +588,11 @@ class ControllerLayer {
                 if ($form->get('save')->isClicked()) {
                     $this->setVars($form->getData());
 
-                    $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Module configuration updated.'));
+                    $this->addFlash('status', $this->__('Done! Module configuration updated.'));
                     $userName = $this->get('zikula_users_module.current_user')->get('uname');
                     $this->get('logger')->notice('{app}: User {user} updated the configuration.', ['app' => '«app.appName»', 'user' => $userName]);
                 } elseif ($form->get('cancel')->isClicked()) {
-                    $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Operation cancelled.'));
+                    $this->addFlash('status', $this->__('Operation cancelled.'));
                 }
 
                 // redirect to config page again (to show with GET request)

@@ -323,10 +323,11 @@ class EntityMethods {
                 $errors = $validator->validate($this);
 
                 if (count($errors) > 0) {
-                    $session = $serviceManager->get('session');
+                    $flashBag = $serviceManager->get('session')->getFlashBag();
                     foreach ($errors as $error) {
-                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $error->getMessage());
+                        $flashBag->add('error', $error->getMessage());
                     }
+
                     return false;
                 }
             «ENDIF»
@@ -452,8 +453,8 @@ class EntityMethods {
                     $dom = ZLanguage::getModuleDomain('«application.appName»');
                     LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
                 «ELSE»
-                    $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator.default')->__('Error! Could not load the associated workflow.'));
+                    $flashBag = $serviceManager->get('session')->getFlashBag();
+                    $flashBag->add('error', $serviceManager->get('translator.default')->__('Error! Could not load the associated workflow.'));
                 «ENDIF»
             }
         }

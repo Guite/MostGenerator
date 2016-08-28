@@ -29,8 +29,7 @@ class LinkTable {
             namespace «app.appNamespace»\Entity\Repository\Base;
 
             use Doctrine\ORM\EntityRepository;
-            use ServiceUtil;
-            use UserUtil;
+            use Psr\Log\LoggerInterface;
 
         «ENDIF»
         /**
@@ -45,7 +44,14 @@ class LinkTable {
         class «refClass.formatForCodeCapital» extends EntityRepository
         «ENDIF»
         {
-            public function truncateTable()
+            /**
+             * Deletes all items in this table.
+             «IF !app.targets('1.3.x')»
+             *
+             * @param LoggerInterface $logger Logger service instance
+             «ENDIF»
+             */
+            public function truncateTable(«IF !app.targets('1.3.x')»LoggerInterface $logger«ENDIF»)
             {
                 $qb = $this->getEntityManager()->createQueryBuilder();
                 «IF app.targets('1.3.x')»
@@ -57,10 +63,8 @@ class LinkTable {
                 $query->execute();
                 «IF !app.targets('1.3.x')»
 
-                    $serviceManager = ServiceUtil::getManager();
-                    $logger = $serviceManager->get('logger');
-                    $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«refClass.formatForDisplay»'];
-                    $logger->debug('{app}: User {user} truncated the {entity} entity table.', $logArgs);
+                    $logArgs = ['app' => '«app.appName»', 'entity' => '«refClass.formatForDisplay»'];
+                    $logger->debug('{app}: Truncated the {entity} entity table.', $logArgs);
                 «ENDIF»
             }
         }

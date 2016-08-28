@@ -66,6 +66,11 @@ class ExampleData {
     '''
 
     def private exampleRows(Application it) '''
+        «IF !targets('1.3.x')»
+            $entityManager = $this->container->get('doctrine.entitymanager');
+            $logger = $this->container->get('logger')
+
+        «ENDIF»
         «FOR entity : getAllEntities»«entity.truncateTable»«ENDFOR»
         «IF amountOfExampleRows > 0»
             «IF !getAllEntities.filter[tree != EntityTreeType.NONE].empty»
@@ -82,8 +87,7 @@ class ExampleData {
             $this->entityManager->getRepository($entityClass)->truncateTable();
         «ELSE»
             $entityClass = '«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity';
-            $entityManager = $this->container->get('doctrine.entitymanager');
-            $entityManager->getRepository($entityClass)->truncateTable();
+            $entityManager->getRepository($entityClass)->truncateTable($logger);
         «ENDIF»
     '''
 
@@ -226,7 +230,7 @@ class ExampleData {
             «IF targets('1.3.x')»
                 LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ELSE»
-                $this->addFlash(\Zikula_Session::MESSAGE_WARNING, $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+                $this->addFlash('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
             «ENDIF»
         }
     '''

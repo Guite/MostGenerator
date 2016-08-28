@@ -294,7 +294,7 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $e->getMessage());
+                    $flashBag->add('error', $e->getMessage());
                     $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
 
                     return false;
@@ -307,7 +307,7 @@ class Uploads {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
                     «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not move your file to the destination folder.'));
+                        $flashBag->add('error', $this->__('Error! Could not move your file to the destination folder.'));
                         $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName]);
 
                         return false;
@@ -361,7 +361,7 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! No file found.', $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! No file found.'));
+                    $flashBag->add('error', $this->__('Error! No file found.'));
                     $logger->error('{app}: User {user} tried to upload a file which could not be found.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
                     return false;
@@ -388,7 +388,7 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! This file type is not allowed. Please choose another file format.'));
+                    $flashBag->add('error', $this->__('Error! This file type is not allowed. Please choose another file format.'));
                     $logger->error('{app}: User {user} tried to upload a file with a forbidden extension ("{extension}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'extension' => $extension]);
 
                     return false;
@@ -415,7 +415,7 @@ class Uploads {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
                     «ELSE»
-                        $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB]));
+                        $flashBag->add('error', $this->__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB]));
                         $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeKB]);
 
                         $fs = new Filesystem();
@@ -433,7 +433,7 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB]));
+                    $flashBag->add('error', $this->__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB]));
                     $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeMB]);
 
                     $fs = new Filesystem();
@@ -456,7 +456,7 @@ class Uploads {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
                 «ELSE»
-                    $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! This file type seems not to be a valid image.'));
+                    $flashBag->add('error', $this->__('Error! This file type seems not to be a valid image.'));
                     $logger->error('{app}: User {user} tried to upload a file which is seems not to be a valid image.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
                     return false;
@@ -693,7 +693,7 @@ class Uploads {
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
                 $session = $serviceManager->get('session');
-                $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error with upload') . ': ' . $errorMessage);
+                $session->getFlashBag()->add('error', $this->__('Error with upload') . ': ' . $errorMessage);
                 $logger = $serviceManager->get('logger');
                 $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'errorMessage' => $errorMessage]);
 

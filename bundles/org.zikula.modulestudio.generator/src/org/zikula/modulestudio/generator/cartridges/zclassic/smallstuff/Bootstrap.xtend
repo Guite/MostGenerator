@@ -166,6 +166,13 @@ class Bootstrap {
                     $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 «ELSE»
                     $logger = $serviceManager->get('logger');
+                    $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                    $session = $serviceManager->get('session');
+                    $translator = $serviceManager->get('translator.default');
+                    $workflowHelper = $serviceManager->get('«appService».workflow_helper');
+                    «IF hasHookSubscribers»
+                        $hookHelper = $serviceManager->get('«appService».hook_helper');
+                    «ENDIF»
                 «ENDIF»
                 «FOR entity : entitiesWithArchive»
                     // check if service exists (does not if module is uninstalled, see #770)
@@ -183,8 +190,10 @@ class Bootstrap {
                     «ELSE»
                         $repository = $serviceManager->get('«appService».«entity.name.formatForCode»_factory')->getRepository();
                     «ENDIF»
-                    $repository->archiveObjects();
-                    «IF !targets('1.3.x')»
+                    «IF targets('1.3.x')»
+                        $repository->archiveObjects();
+                    «ELSE»
+                        $repository->archiveObjects($permissionHelper, $session, $translator, $workflowHelper«IF !entity.skipHookSubscribers», $hookHelper«ENDIF»);
                         $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
                     «ENDIF»
                 «ENDFOR»

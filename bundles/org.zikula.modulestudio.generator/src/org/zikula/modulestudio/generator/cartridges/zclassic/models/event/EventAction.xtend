@@ -213,8 +213,8 @@ class EventAction {
 
                     return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
                 «ELSE»
-                    $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator.default')->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
+                    $flashBag = $serviceManager->get('session')->getFlashBag();
+                    $flashBag->add('error', $serviceManager->get('translator.default')->__('Error! Could not remove stored workflow. Deletion has been aborted.'));
 
                     return false;
                 «ENDIF»
@@ -367,8 +367,9 @@ class EventAction {
                     return LogUtil::registerError($e->getMessage());
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
-                    $session = $serviceManager->get('session');
-                    $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $e->getMessage());
+                    $flashBag = $serviceManager->get('session')->getFlashBag();
+                    $flashBag->add('error', $e->getMessage());
+
                     return false;
                 «ENDIF»
             }

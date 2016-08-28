@@ -159,6 +159,11 @@ class User {
 
                     $serviceManager = ServiceUtil::getManager();
                     $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+                    «IF !targets('1.3.x')»
+                        $translator = $serviceManager->get('translator.default');
+                        $logger = $serviceManager->get('logger');
+                        $currentUserApi = $serviceManager->get('zikula_users_module.current_user');
+                    «ENDIF»
                     «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
             «ENDIF»
@@ -172,18 +177,18 @@ class User {
             «IF standardFields»
                 «IF onAccountDeletionCreator != AccountDeletionHandler.DELETE»
                     // set creator to «onAccountDeletionCreator.adhAsConstant» («onAccountDeletionCreator.adhUid») for all «nameMultiple.formatForDisplay» created by this user
-                    $repo->updateCreator($uid, «onAccountDeletionCreator.adhUid»);
+                    $repo->updateCreator($uid, «onAccountDeletionCreator.adhUid»«IF !application.targets('1.3.x')», $translator, $logger, $currentUserApi«ENDIF»);
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» created by this user
-                    $repo->deleteByCreator($uid);
+                    $repo->deleteByCreator($uid«IF !application.targets('1.3.x')», $translator, $logger, $currentUserApi«ENDIF»);
                 «ENDIF»
 
                 «IF onAccountDeletionLastEditor != AccountDeletionHandler.DELETE»
                     // set last editor to «onAccountDeletionLastEditor.adhAsConstant» («onAccountDeletionLastEditor.adhUid») for all «nameMultiple.formatForDisplay» updated by this user
-                    $repo->updateLastEditor($uid, «onAccountDeletionLastEditor.adhUid»);
+                    $repo->updateLastEditor($uid, «onAccountDeletionLastEditor.adhUid»«IF !application.targets('1.3.x')», $translator, $logger, $currentUserApi«ENDIF»);
                 «ELSE»
                     // delete all «nameMultiple.formatForDisplay» recently updated by this user
-                    $repo->deleteByLastEditor($uid);
+                    $repo->deleteByLastEditor($uid«IF !application.targets('1.3.x')», $translator, $logger, $currentUserApi«ENDIF»);
                 «ENDIF»
             «ENDIF»
             «IF hasUserFieldsEntity»
@@ -193,9 +198,8 @@ class User {
             «ENDIF»
             «IF !application.targets('1.3.x')»
 
-                $logger = $serviceManager->get('logger');
                 $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»'];
-                $logger->notice('{app}: User {user} has been deleted, so we deleted corresponding {entities}, too.', $logArgs);
+                $logger->notice('{app}: User {user} has been deleted, so we deleted/updated corresponding {entities}, too.', $logArgs);
             «ENDIF»
         «ENDIF»
     '''
@@ -204,10 +208,10 @@ class User {
         «IF entity instanceof Entity»
             «IF onAccountDeletion != AccountDeletionHandler.DELETE»
                 // set last editor to «onAccountDeletion.adhAsConstant» («onAccountDeletion.adhUid») for all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->updateUserField('«name.formatForCode»', $uid, «onAccountDeletion.adhUid»);
+                $repo->updateUserField('«name.formatForCode»', $uid, «onAccountDeletion.adhUid»«IF !entity.application.targets('1.3.x')», $translator, $logger, $currentUserApi«ENDIF»);
             «ELSE»
                 // delete all «(entity as Entity).nameMultiple.formatForDisplay» affected by this user
-                $repo->deleteByUserField('«name.formatForCode»', $uid);
+                $repo->deleteByUserField('«name.formatForCode»', $uid«IF !entity.application.targets('1.3.x')», $translator, $logger, $currentUserApi«ENDIF»);
             «ENDIF»
         «ENDIF»
     '''

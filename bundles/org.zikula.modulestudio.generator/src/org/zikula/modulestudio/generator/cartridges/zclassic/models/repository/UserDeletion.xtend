@@ -7,6 +7,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserDeletion {
+
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
@@ -44,28 +45,34 @@ class UserDeletion {
         /**
          * Updates the creator of all objects created by a certain user.
          *
+         «IF application.targets('1.3.x')»
          * @param integer $userId    The userid of the creator to be replaced
          * @param integer $newUserId The new userid of the creator as replacement
+         «ELSE»
+         * @param integer             $userId         The userid of the creator to be replaced
+         * @param integer             $newUserId      The new userid of the creator as replacement
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param LoggerInterface     $logger         Logger service instance
+         * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+         «ENDIF»
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateCreator($userId, $newUserId)
+        public function updateCreator($userId, $newUserId«IF !application.targets('1.3.x')», TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi $currentUserApi«ENDIF»)
         {
             «IF application.targets('1.3.x')»
                 $dom = ZLanguage::getModuleDomain($this->name);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
 
+            «ENDIF»
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -81,9 +88,8 @@ class UserDeletion {
             $query->execute();
             «IF !application.targets('1.3.x')»
 
-                $logger = $serviceManager->get('logger');
-                $logArgs = ['app' => '«application.appName»', 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
-                $logger->debug('{app}: Updated {entities} created by user id {userid}.', $logArgs);
+                $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} updated {entities} created by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -92,28 +98,34 @@ class UserDeletion {
         /**
          * Updates the last editor of all objects updated by a certain user.
          *
+         «IF application.targets('1.3.x')»
          * @param integer $userId    The userid of the last editor to be replaced
          * @param integer $newUserId The new userid of the last editor as replacement
+         «ELSE»
+         * @param integer             $userId         The userid of the last editor to be replaced
+         * @param integer             $newUserId      The new userid of the last editor as replacement
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param LoggerInterface     $logger         Logger service instance
+         * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+         «ENDIF»
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateLastEditor($userId, $newUserId)
+        public function updateLastEditor($userId, $newUserId«IF !application.targets('1.3.x')», TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi $currentUserApi«ENDIF»)
         {
             «IF application.targets('1.3.x')»
                 $dom = ZLanguage::getModuleDomain($this->name);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
 
+            «ENDIF»
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -129,9 +141,8 @@ class UserDeletion {
             $query->execute();
             «IF !application.targets('1.3.x')»
 
-                $logger = $serviceManager->get('logger');
-                $logArgs = ['app' => '«application.appName»', 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
-                $logger->debug('{app}: Updated {entities} edited by user id {userid}.', $logArgs);
+                $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} updated {entities} edited by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -140,26 +151,31 @@ class UserDeletion {
         /**
          * Deletes all objects created by a certain user.
          *
+         «IF application.targets('1.3.x')»
          * @param integer $userId The userid of the creator to be removed
+         «ELSE»
+         * @param integer             $userId         The userid of the creator to be removed
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param LoggerInterface     $logger         Logger service instance
+         * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+         «ENDIF»
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByCreator($userId)
+        public function deleteByCreator($userId«IF !application.targets('1.3.x')», TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi $currentUserApi«ENDIF»)
         {
             «IF application.targets('1.3.x')»
                 $dom = ZLanguage::getModuleDomain($this->name);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
 
+            «ENDIF»
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -173,9 +189,8 @@ class UserDeletion {
             $query->execute();
             «IF !application.targets('1.3.x')»
 
-                $logger = $serviceManager->get('logger');
-                $logArgs = ['app' => '«application.appName»', 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
-                $logger->debug('{app}: Deleted {entities} created by user id {userid}.', $logArgs);
+                $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} deleted {entities} created by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -184,26 +199,31 @@ class UserDeletion {
         /**
          * Deletes all objects updated by a certain user.
          *
+         «IF application.targets('1.3.x')»
          * @param integer $userId The userid of the last editor to be removed
+         «ELSE»
+         * @param integer             $userId         The userid of the last editor to be removed
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param LoggerInterface     $logger         Logger service instance
+         * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+         «ENDIF»
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByLastEditor($userId)
+        public function deleteByLastEditor($userId«IF !application.targets('1.3.x')», TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi $currentUserApi«ENDIF»)
         {
             «IF application.targets('1.3.x')»
                 $dom = ZLanguage::getModuleDomain($this->name);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
 
+            «ENDIF»
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -217,9 +237,8 @@ class UserDeletion {
             $query->execute();
             «IF !application.targets('1.3.x')»
 
-                $logger = $serviceManager->get('logger');
-                $logArgs = ['app' => '«application.appName»', 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
-                $logger->debug('{app}: Deleted {entities} edited by user id {userid}.', $logArgs);
+                $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
+                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''
@@ -228,28 +247,35 @@ class UserDeletion {
          /**
          * Updates a user field value of all objects affected by a certain user.
          *
+         «IF application.targets('1.3.x')»
          * @param string  $fieldName The name of the user field
          * @param integer $userId    The userid to be replaced
          * @param integer $newUserId The new userid as replacement
+         «ELSE»
+         * @param string              $fieldName      The name of the user field
+         * @param integer             $userId         The userid to be replaced
+         * @param integer             $newUserId      The new userid as replacement
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param LoggerInterface     $logger         Logger service instance
+         * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+         «ENDIF»
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function updateUserField($userFieldName, $userId, $newUserId)
+        public function updateUserField($userFieldName, $userId, $newUserId«IF !application.targets('1.3.x')», TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi $currentUserApi«ENDIF»)
         {
             «IF application.targets('1.3.x')»
                 $dom = ZLanguage::getModuleDomain($this->name);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
 
+            «ENDIF»
             // check field parameter
             if (empty($userFieldName) || !in_array($userFieldName, «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user field name received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user field name received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user field name received.'));
                 «ENDIF»
             }
             // check id parameter
@@ -258,7 +284,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -274,8 +300,7 @@ class UserDeletion {
             $query->execute();
             «IF !application.targets('1.3.x')»
 
-                $logger = $serviceManager->get('logger');
-                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId];
+                $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId, 'newuserid' => $newUserId];
                 $logger->debug('{app}: User {user} updated {entities} setting {field} from {userid} to {newuserid}.', $logArgs);
             «ENDIF»
         }
@@ -285,27 +310,33 @@ class UserDeletion {
         /**
          * Deletes all objects updated by a certain user.
          *
+         «IF application.targets('1.3.x')»
          * @param string  $fieldName The name of the user field
          * @param integer $userId    The userid to be removed
+         «ELSE»
+         * @param string              $fieldName      The name of the user field
+         * @param integer             $userId         The userid to be removed
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param LoggerInterface     $logger         Logger service instance
+         * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+         «ENDIF»
          *
          * @return void
          *
          * @throws InvalidArgumentException Thrown if invalid parameters are received
          */
-        public function deleteByUserField($userFieldName, $userId)
+        public function deleteByUserField($userFieldName, $userId«IF !application.targets('1.3.x')», TranslatorInterface $translator, LoggerInterface $logger, CurrentUserApi $currentUserApi«ENDIF»)
         {
             «IF application.targets('1.3.x')»
                 $dom = ZLanguage::getModuleDomain($this->name);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
 
+            «ENDIF»
             // check field parameter
             if (empty($userFieldName) || !in_array($userFieldName, «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user field name received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user field name received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user field name received.'));
                 «ENDIF»
             }
             // check id parameter
@@ -313,7 +344,7 @@ class UserDeletion {
                 «IF application.targets('1.3.x')»
                     throw new \InvalidArgumentException(__('Invalid user identifier received.', $dom));
                 «ELSE»
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid user identifier received.'));
+                    throw new InvalidArgumentException($translator->__('Invalid user identifier received.'));
                 «ENDIF»
             }
 
@@ -327,9 +358,8 @@ class UserDeletion {
             $query->execute();
             «IF !application.targets('1.3.x')»
 
-                $logger = $serviceManager->get('logger');
-                $logArgs = ['app' => '«application.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'userid' => $userId];
-                $logger->debug('{app}: User {user} deleted {entities} edited by user id {userid}.', $logArgs);
+                $logArgs = ['app' => '«application.appName»', 'user' => $currentUserApi->get('uname'), 'entities' => '«nameMultiple.formatForDisplay»', 'field' => $userFieldName, 'userid' => $userId];
+                $logger->debug('{app}: User {user} deleted {entities} with {field} having set to user id {userid}.', $logArgs);
             «ENDIF»
         }
     '''

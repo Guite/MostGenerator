@@ -1072,7 +1072,7 @@ class Actions {
             «IF isLegacy»
                 return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
             «ELSE»
-                $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! Could not determine workflow actions.'));
+                $flashBag->add('error', $this->__('Error! Could not determine workflow actions.'));
                 $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but failed to determine available workflow actions.', $logArgs);
                 throw new \RuntimeException($this->__('Error! Could not determine workflow actions.'));
             «ENDIF»
@@ -1104,7 +1104,7 @@ class Actions {
             «IF isLegacy»
                 return LogUtil::registerError($this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
             «ELSE»
-                $flashBag->add(\Zikula_Session::MESSAGE_ERROR, $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
+                $flashBag->add('error', $this->__('Error! It is not allowed to delete this «name.formatForDisplay».'));
                 $logger->error('{app}: User {user} tried to delete the {entity} with id {id}, but this action was not allowed.', $logArgs);
 
                 return $this->redirectToRoute($redirectRoute);
@@ -1123,7 +1123,7 @@ class Actions {
                 if ($form->get('delete')->isClicked()) {
                     «deletionProcess(action)»
                 } elseif ($form->get('cancel')->isClicked()) {
-                    $this->addFlash(\Zikula_Session::MESSAGE_STATUS, $this->__('Operation cancelled.'));
+                    $this->addFlash('status', $this->__('Operation cancelled.'));
 
                     return $this->redirectToRoute($redirectRoute);
                 }
@@ -1198,7 +1198,7 @@ class Actions {
             «IF isLegacy»
                 $this->registerStatus($this->__('Done! Item deleted.'));
             «ELSE»
-                $flashBag->add(\Zikula_Session::MESSAGE_STATUS, $this->__('Done! Item deleted.'));
+                $flashBag->add('status', $this->__('Done! Item deleted.'));
                 $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', $logArgs);
             «ENDIF»
         }

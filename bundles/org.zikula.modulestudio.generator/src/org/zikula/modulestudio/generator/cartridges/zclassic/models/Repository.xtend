@@ -268,13 +268,23 @@ class Repository {
                 use Zikula\Component\FilterUtil\Plugin\DatePlugin as DateFilter;
             «ENDIF»
             use ModUtil;
+            use Psr\Log\LoggerInterface;
             use ServiceUtil;
             use System;
+            use Zikula\Common\Translator\TranslatorInterface;
+            «IF hasArchive && null !== getEndDateField»
+                use Symfony\Component\HttpFoundation\Session\Session;
+                use Zikula\Core\RouteUrl;
+                use Zikula\PermissionsModule\Api\PermissionApi;
+            «ENDIF»
+            use Zikula\UsersModule\Api\CurrentUserApi;
             «IF hasArchive && null !== getEndDateField»
                 use ZLanguage;
-                use Zikula\Core\RouteUrl;
             «ENDIF»
             use «app.appNamespace»\Entity\«name.formatForCode»Entity;
+            «IF hasArchive && null !== getEndDateField»
+                use «app.appNamespace»\Helper\WorkflowHelper;
+            «ENDIF»
 
         «ENDIF»
     '''
@@ -557,10 +567,14 @@ class Repository {
         /**
          * Helper method for truncating the table.
          * Used during installation when inserting default data.
+         «IF !app.targets('1.3.x')»
+         *
+         * @param LoggerInterface $logger Logger service instance
+         «ENDIF»
          *
          * @return void
          */
-        public function truncateTable()
+        public function truncateTable(«IF !app.targets('1.3.x')»LoggerInterface $logger«ENDIF»)
         {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl');
@@ -579,10 +593,8 @@ class Repository {
             «ENDIF»
 
             $query->execute();
-            «IF !application.targets('1.3.x')»
+            «IF !app.targets('1.3.x')»
 
-                $serviceManager = ServiceUtil::getManager();
-                $logger = $serviceManager->get('logger');
                 $logArgs = ['app' => '«application.appName»', 'entity' => '«name.formatForDisplay»'];
                 $logger->debug('{app}: Truncated the {entity} entity table.', $logArgs);
             «ENDIF»
@@ -1571,16 +1583,23 @@ class Repository {
          * @return bool If everything went right or not
          «IF !app.targets('1.3.x')»
          *
+         * @param PermissionApi       $permissionApi  PermissionApi service instance
+         * @param Session             $session        Session service instance
+         * @param TranslatorInterface $translator     Translator service instance
+         * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
+         «IF !skipHookSubscribers»
+         * @param HookHelper          $hookHelper     HookHelper service instance
+         «ENDIF»
+         *
          * @throws RuntimeException Thrown if workflow action execution fails
          «ENDIF»
          */
-        public function archiveObjects()
+        public function archiveObjects(«IF !app.targets('1.3.x')»PermissionApi $permissionApi, Session $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»«ENDIF»)
         {
-            $serviceManager = ServiceUtil::getManager();
-            «IF !app.targets('1.3.x')»
-                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+            «IF app.targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
             «ENDIF»
-            if (\PageUtil::getVar('«app.appName»AutomaticArchiving', false) !== true && !«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«app.appName»', '.*', ACCESS_EDIT)) {
+            if (true !== \PageUtil::getVar('«app.appName»AutomaticArchiving', false) && !«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«app.appName»', '.*', ACCESS_EDIT)) {
                 // current user has no permission for executing the archive workflow action
                 return true;
             }
@@ -1617,15 +1636,10 @@ class Repository {
             «IF app.targets('1.3.x')»
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
                 «IF !skipHookSubscribers»
-                    $hookHelper = new «app.appName»_Util_Hook($this->serviceManager);
+                    $hookHelper = new «app.appName»_Util_Hook($serviceManager);
                 «ENDIF»
-            «ELSE»
-                $workflowHelper = $serviceManager->get('«app.appService».workflow_helper');
-                «IF !skipHookSubscribers»
-                    $hookHelper = $serviceManager->get('«app.appService».hook_helper');
-                «ENDIF»
-            «ENDIF»
 
+            «ENDIF»
             foreach ($affectedEntities as $entity) {
                 $entity->initWorkflow();
 
@@ -1650,8 +1664,8 @@ class Repository {
                         $dom = ZLanguage::getModuleDomain($this->name);
                         LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
                     «ELSE»
-                        $session = $serviceManager->get('session');
-                        $session->getFlashBag()->add(\Zikula_Session::MESSAGE_ERROR, $serviceManager->get('translator.default')->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', [$action]));
+                        $flashBag = $session->getFlashBag();
+                        $flashBag->add('error', $translator->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', ['%s' => $action]));
                     «ENDIF»
                 }
 
