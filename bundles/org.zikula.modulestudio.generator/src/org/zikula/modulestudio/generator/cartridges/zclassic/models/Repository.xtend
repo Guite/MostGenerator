@@ -282,6 +282,9 @@ class Repository {
                 use ZLanguage;
             «ENDIF»
             use «app.appNamespace»\Entity\«name.formatForCode»Entity;
+            «IF app.hasUploads»
+                use «app.appNamespace»\Helper\ImageHelper;
+            «ENDIF»
             «IF hasArchive && null !== getEndDateField»
                 use «app.appNamespace»\Helper\WorkflowHelper;
             «ENDIF»
@@ -375,12 +378,18 @@ class Repository {
         /**
          * Returns an array of additional template variables which are specific to the object type treated by this repository.
          *
+         «IF app.targets('1.3.x') || !app.hasUploads»
          * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
          * @param array  $args    Additional arguments
+         «ELSE»
+         * @param ImageHelper $imageHelper ImageHelper service instance
+         * @param string      $context     Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
+         * @param array       $args        Additional arguments
+         «ENDIF»
          *
          * @return array List of template variables to be assigned
          */
-        public function getAdditionalTemplateParameters($context = '', $args = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getAdditionalTemplateParameters(«IF !app.targets('1.3.x') && app.hasUploads»ImageHelper $imageHelper, «ENDIF»$context = '', $args = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
             if (!in_array($context, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
@@ -389,14 +398,11 @@ class Repository {
             $templateParameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             if ($context == 'controllerAction') {
-                «IF app.hasUploads || (hasListFieldsEntity && !app.targets('1.3.x'))»
-                    $serviceManager = ServiceUtil::getManager();
-                «ENDIF»
                 if (!isset($args['action'])) {
                     «IF app.targets('1.3.x')»
                         $args['action'] = FormUtil::getPassedValue('func', 'main', 'GETPOST');
                     «ELSE»
-                        $args['action'] = $this->request->query->getAlpha('func', 'index');
+                        $args['action'] = $this->getRequest()->query->getAlpha('func', 'index');
                     «ENDIF»
                 }
                 if (in_array($args['action'], «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
@@ -425,12 +431,11 @@ class Repository {
 
                     // initialise Imagine preset instances
                     «IF app.targets('1.3.x')»
+                        $serviceManager = ServiceUtil::getManager();
                         $imageHelper = new «app.appName»_Util_Image($serviceManager);
-                    «ELSE»
-                        $imageHelper = $serviceManager->get('«app.appService».image_helper');
+
                     «ENDIF»
                     «IF hasUploadFieldsEntity»
-
                         $objectType = '«name.formatForCode»';
                         «FOR uploadField : getUploadFieldsEntity»
                             $templateParameters[$objectType . 'ThumbPreset«uploadField.name.formatForCodeCapital»'] = $imageHelper->getPreset($objectType, '«uploadField.name.formatForCode»', $context, $args);
@@ -444,7 +449,7 @@ class Repository {
             }
 
             // in the concrete child class you could do something like
-            // $parameters = parent::getAdditionalTemplateParameters($context, $args);
+            // $parameters = parent::getAdditionalTemplateParameters(«IF !app.targets('1.3.x') && app.hasUploads»$imageHelper, «ENDIF»$context, $args);
             // $parameters['myvar'] = 'myvalue';
             // return $parameters;
 
@@ -477,7 +482,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $parameters['«sourceAliasName»'] = isset($this->controllerArguments['«sourceAliasName»']) ? $this->controllerArguments['«sourceAliasName»'] : FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                     «ELSE»
-                        $parameters['«sourceAliasName»'] = $this->request->query->get('«sourceAliasName»', 0);
+                        $parameters['«sourceAliasName»'] = $this->getRequest()->query->get('«sourceAliasName»', 0);
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -487,7 +492,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
-                        $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                        $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -497,7 +502,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
                     «ELSE»
-                        $parameters['«fieldName»'] = (int) $this->request->query->get('«fieldName»', 0);
+                        $parameters['«fieldName»'] = (int) $this->getRequest()->query->get('«fieldName»', 0);
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -507,7 +512,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
-                        $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                        $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -517,7 +522,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
-                        $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                        $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -527,7 +532,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
-                        $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                        $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -538,18 +543,18 @@ class Repository {
                             FormUtil::getPassedValue('q', FormUtil::getPassedValue('searchterm', '', 'GET'), 'GET')
                         );
                 «ELSE»
-                    $parameters['q'] = $this->request->query->get('q', '');
+                    $parameters['q'] = $this->getRequest()->query->get('q', '');
                 «ENDIF»
             «ENDIF»
             «/* not needed as already handled in the controller
-            $parameters['pageSize'] = (int) $this->request->query->get('pageSize', $pageSize);*/»
+            $parameters['pageSize'] = (int) $this->getRequest()->query->get('pageSize', $pageSize);*/»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
                     «IF app.targets('1.3.x')»
                         $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                     «ELSE»
-                        $parameters['«fieldName»'] = $this->request->query->get('«fieldName»', '');
+                        $parameters['«fieldName»'] = $this->getRequest()->query->get('«fieldName»', '');
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -603,19 +608,6 @@ class Repository {
 
     def private selectById(Entity it) '''
         /**
-         * Adds id filters to given query instance.
-         *
-         * @param mixed        $id The id (or array of ids) to use to retrieve the object
-         * @param QueryBuilder $qb Query builder to be enhanced
-         *
-         * @return QueryBuilder Enriched query builder instance
-         */
-        protected function addIdFilter($id, QueryBuilder $qb)
-        {
-            return $this->addIdListFilter(«IF app.targets('1.3.x')»array($id)«ELSE»[$id]«ENDIF», $qb);
-        }
-        
-        /**
          * Adds an array of id filters to given query instance.
          *
          * @param mixed        $idList The array of ids to use to retrieve the object
@@ -634,8 +626,7 @@ class Repository {
                         $dom = ZLanguage::getModuleDomain($this->name);
                         throw new \InvalidArgumentException(__('Invalid identifier received.', $dom));
                     «ELSE»
-                        $serviceManager = ServiceUtil::getManager();
-                        throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid identifier received.'));
+                        throw new InvalidArgumentException('Invalid identifier received.');
                     «ENDIF»
                 }
 
@@ -648,7 +639,6 @@ class Repository {
                 } else {
                     $orX->add($qb->expr()->eq('tbl.«getFirstPrimaryKey.name.formatForCode»', $id));
                 }
-                
             }
 
             $qb->andWhere($orX);
@@ -719,8 +709,7 @@ class Repository {
                     $dom = ZLanguage::getModuleDomain($this->name);
                     throw new \InvalidArgumentException(__('Invalid slug title received.', $dom));
                 «ELSE»
-                    $serviceManager = ServiceUtil::getManager();
-                    throw new InvalidArgumentException($serviceManager->get('translator.default')->__('Invalid slug title received.'));
+                    throw new InvalidArgumentException('Invalid slug title received.');
                 «ENDIF»
             }
 
@@ -884,27 +873,28 @@ class Repository {
             «val sessionVar = app.appName + nameMultiple.formatForCodeCapital + 'CurrentPage'»
             if (!$hasFilters) {
                 «IF !app.targets('1.3.x')»
-                    $serviceManager = ServiceUtil::getManager();
-                    $session = $serviceManager->get('session');
+                    $session = null !== $this->getRequest() ? $this->getRequest()->getSession() : null;
                 «ENDIF»
                 if ($page > 1 || isset($_GET['pos'])) {
                     // store current page in session
                     «IF app.targets('1.3.x')»
                         SessionUtil::setVar('«sessionVar»', $page);
                     «ELSE»
-                        $session->set('«sessionVar»', $page);
+                        if (null !== $session) {
+                            $session->set('«sessionVar»', $page);
+                        }
                     «ENDIF»
                 } else {
                     // restore current page from session
                     «IF app.targets('1.3.x')»
                         $page = SessionUtil::getVar('«sessionVar»', 1);
+                        System::queryStringSetVar('pos', $page);
                     «ELSE»
-                        $page = $session->get('«sessionVar»', 1);
-                    «ENDIF»
-                    System::queryStringSetVar('pos', $page);
-                    «IF !app.targets('1.3.x')»
-                        if ($this->getRequest() !== null) {
-                            $this->getRequest()->query->set('pos', $page);
+                        if (null !== $session) {
+                            $page = $session->get('«sessionVar»', 1);
+                            if (null !== $this->getRequest()) {
+                                $this->getRequest()->query->set('pos', $page);
+                            }
                         }
                     «ENDIF»
                 }
@@ -1011,7 +1001,7 @@ class Repository {
             «IF app.targets('1.3.x')»
                 $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
             «ELSE»
-                $currentLegacyControllerType = null !== $this->request ? $this->request->get('lct', 'user') : 'user';
+                $currentLegacyControllerType = null !== $this->getRequest() ? $this->getRequest()->get('lct', 'user') : 'user';
             «ENDIF»
             if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
                 return $qb;
@@ -1024,9 +1014,10 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
                     «ELSE»
-                        $serviceManager = ServiceUtil::getManager();
-                        $varHelper = $serviceManager->get('zikula_extensions_module.api.variable');
-                        $showOnlyOwnEntries = $this->request->query->getDigits('own', $varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0));
+                        «/*$serviceManager = ServiceUtil::getManager();
+                        $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
+                        $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
+                        $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', 0);
                     «ENDIF»
                     if ($showOnlyOwnEntries == 1) {
                         // allow the owner to see his deferred «nameMultiple.formatForDisplay»
@@ -1049,7 +1040,7 @@ class Repository {
             «IF application.targets('1.3.x')»
                 $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
             «ELSE»
-                $startDate = $this->request->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
+                $startDate = $this->getRequest()->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
             «ENDIF»
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
@@ -1058,7 +1049,7 @@ class Repository {
             «IF application.targets('1.3.x')»
                 $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
             «ELSE»
-                $endDate = $this->request->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
+                $endDate = $this->getRequest()->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
             «ENDIF»
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);
@@ -1435,15 +1426,17 @@ class Repository {
                 «IF app.targets('1.3.x')»
                     $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
                 «ELSE»
-                    $serviceManager = ServiceUtil::getManager();
-                    $varHelper = $serviceManager->get('zikula_extensions_module.api.variable');
-                    $showOnlyOwnEntries = /*$request->query->getDigits('own', */$varHelper->get('«app.appName»', 'showOnlyOwnEntries', 0)/*)*/;
+                    «/*$serviceManager = ServiceUtil::getManager();
+                    $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
+                    $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
+                    $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', 0);
                 «ENDIF»
                 if ($showOnlyOwnEntries == 1) {
                     «IF app.targets('1.3.x')»
                         $uid = UserUtil::getVar('uid');
                     «ELSE»
-                        $uid = $serviceManager->get('zikula_users_module.current_user')->get('uid');
+                        «/*$uid = $serviceManager->get('zikula_users_module.current_user')->get('uid');*/»
+                        $uid = $this->getRequest()->getSession()->get('uid');
                     «ENDIF»
                     $qb->andWhere('tbl.createdUserId = :creator')
                        ->setParameter('creator', $uid);
@@ -1596,16 +1589,13 @@ class Repository {
          */
         public function archiveObjects(«IF !app.targets('1.3.x')»PermissionApi $permissionApi, Session $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»«ENDIF»)
         {
-            «IF app.targets('1.3.x')»
-                $serviceManager = ServiceUtil::getManager();
-            «ENDIF»
             if (true !== \PageUtil::getVar('«app.appName»AutomaticArchiving', false) && !«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«app.appName»', '.*', ACCESS_EDIT)) {
                 // current user has no permission for executing the archive workflow action
                 return true;
             }
 
             «IF !app.targets('1.3.x')»
-                if (null == $this->request) {
+                if (null == $this->getRequest()) {
                     // return as no request is given
                     return true;
                 }
@@ -1634,6 +1624,7 @@ class Repository {
 
             $action = 'archive';
             «IF app.targets('1.3.x')»
+                $serviceManager = ServiceUtil::getManager();
                 $workflowHelper = new «app.appName»_Util_Workflow($serviceManager);
                 «IF !skipHookSubscribers»
                     $hookHelper = new «app.appName»_Util_Hook($serviceManager);

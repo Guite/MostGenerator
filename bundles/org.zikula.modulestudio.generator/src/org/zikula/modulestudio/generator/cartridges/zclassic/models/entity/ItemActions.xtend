@@ -42,7 +42,7 @@ class ItemActions {
                 $dom = ZLanguage::getModuleDomain('«app.appName»');
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
-                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
                 $translator = $serviceManager->get('translator.default');
                 $router = $serviceManager->get('router');
             «ENDIF»
@@ -100,11 +100,11 @@ class ItemActions {
         «IF controller.hasActions('view') || controller.hasActions('display')»
             if (in_array($currentFunc, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                 «IF controller.hasActions('edit')»
-                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                         «IF ownerPermission && standardFields»
                             $uid = «IF app.targets('1.3.x')»UserUtil::getVar('uid')«ELSE»$serviceManager->get('zikula_users_module.current_user')->get('uid')«ENDIF»;
                             // only allow editing for the owner or people with higher permissions
-                            if ($this['createdUserId'] == $uid || «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
+                            if ($this['createdUserId'] == $uid || «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
                                 «itemActionsForEditAction(controller)»
                             }
                         «ELSE»
@@ -113,7 +113,7 @@ class ItemActions {
                     }
                 «ENDIF»
                 «IF controller.hasActions('delete')»
-                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_DELETE)) {
+                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_DELETE)) {
                         $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                             «IF app.targets('1.3.x')»
                                 'url' => array(
@@ -162,7 +162,7 @@ class ItemActions {
         «IF !refedElems.empty && controller.hasActions('edit')»
 
             // more actions for adding new related items
-            $authAdmin = «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_ADMIN);
+            $authAdmin = «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADMIN);
             «/* TODO review the permission levels and maybe define them for each related entity
               * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
               */»

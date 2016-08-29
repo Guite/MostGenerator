@@ -166,7 +166,7 @@ class Bootstrap {
                     $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 «ELSE»
                     $logger = $serviceManager->get('logger');
-                    $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                    $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
                     $session = $serviceManager->get('session');
                     $translator = $serviceManager->get('translator.default');
                     $workflowHelper = $serviceManager->get('«appService».workflow_helper');
@@ -193,7 +193,7 @@ class Bootstrap {
                     «IF targets('1.3.x')»
                         $repository->archiveObjects();
                     «ELSE»
-                        $repository->archiveObjects($permissionHelper, $session, $translator, $workflowHelper«IF !entity.skipHookSubscribers», $hookHelper«ENDIF»);
+                        $repository->archiveObjects($permissionApi, $session, $translator, $workflowHelper«IF !entity.skipHookSubscribers», $hookHelper«ENDIF»);
                         $logger->notice('{app}: Automatic archiving for the {entity} entity completed.', ['app' => '«appName»', 'entity' => '«entity.name.formatForCode»']);
                     «ENDIF»
                 «ENDFOR»

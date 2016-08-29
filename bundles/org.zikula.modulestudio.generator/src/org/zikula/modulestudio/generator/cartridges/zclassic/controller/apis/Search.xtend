@@ -133,9 +133,9 @@ class Search {
         public function getOptions($active, $modVars = null)
         {
             $serviceManager = ServiceUtil::getManager();
-            $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
-            if (!$permissionHelper->hasPermission($this->name . '::', '::', ACCESS_READ)) {
+            if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
@@ -301,9 +301,9 @@ class Search {
         public function getResults(array $words, $searchType = 'AND', $modVars = null)
         {
             $serviceManager = ServiceUtil::getManager();
-            $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+            $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
-            if (!$permissionHelper->hasPermission($this->name . '::', '::', ACCESS_READ)) {
+            if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return [];
             }
 
@@ -377,7 +377,7 @@ class Search {
 
                     $instanceId = $entity->createCompositeIdentifier();
                     // perform permission check
-                    if (!$permissionHelper->hasPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                    if (!$permissionApi->hasPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
 

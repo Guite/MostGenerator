@@ -340,9 +340,9 @@ class ViewHelper {
         {
             $extensions = «IF isLegacy»array()«ELSE»[]«ENDIF»;
             «IF !isLegacy»
-                $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
+                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
             «ENDIF»
-            $hasAdminAccess = «IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
+            $hasAdminAccess = «IF isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«appName»:' . ucfirst($type) . ':', '::', ACCESS_ADMIN);
             if ($func == 'view') {
                 if ($hasAdminAccess) {
                     $extensions = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR format : getListOfViewFormats SEPARATOR ', '»'«format»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;

@@ -134,10 +134,10 @@ class ItemSelector {
 
                 «IF !targets('1.3.x')»
                     $serviceManager = ServiceUtil::getManager();
-                    $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                    $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
                 «ENDIF»
-                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
+                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«appName»:' . ucfirst($this->objectType) . ':', '::', ACCESS_COMMENT)) {
                     return false;
                 }
                 «IF hasCategorisableEntities»

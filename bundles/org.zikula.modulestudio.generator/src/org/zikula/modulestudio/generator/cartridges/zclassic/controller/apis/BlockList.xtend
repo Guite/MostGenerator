@@ -336,7 +336,10 @@ class BlockList {
                     'items' => $entities«IF hasCategorisableEntities»,
                     'properties' => $properties«ENDIF»
                 ];
-                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('block'));
+                «IF hasUploads»
+                    $imageHelper = $this->get('«appService».image_helper');
+                «ENDIF»
+                $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'block'));
 
                 return $this->renderView($template, $templateParameters);
             «ENDIF»

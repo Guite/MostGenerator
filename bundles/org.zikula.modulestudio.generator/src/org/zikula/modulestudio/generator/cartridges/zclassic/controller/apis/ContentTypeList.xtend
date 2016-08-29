@@ -301,7 +301,7 @@ class ContentTypeList {
 
             «ENDIF»
             «IF !targets('1.3.x')»
-                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
             «IF targets('1.3.x')»
@@ -310,10 +310,10 @@ class ContentTypeList {
                 $component = '«appName»:' . ucfirst($this->objectType) . ':';
                 $instance = '::';
                 $accessLevel = ACCESS_READ;
-                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
+                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
                     $accessLevel = ACCESS_COMMENT;
                 }
-                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                     $accessLevel = ACCESS_EDIT;
                 }
                 $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
@@ -378,7 +378,10 @@ class ContentTypeList {
                     'registries' => $this->catRegistries,
                     'properties' => $this->catProperties«ENDIF»
                 ];
-                $templateParameters = array_merge($templateData, $repository->getAdditionalTemplateParameters('contentType'));
+                «IF hasUploads»
+                    $imageHelper = $serviceManager->get('«appService».image_helper');
+                «ENDIF»
+                $templateParameters = array_merge($templateData, $repository->getAdditionalTemplateParameters(«IF hasUploads»$imageHelper, «ENDIF»'contentType'));
 
                 $template = $this->getDisplayTemplate();
 

@@ -68,10 +68,10 @@ class Tag {
             $serviceManager = ServiceUtil::getManager();
 
             «IF !targets('1.3.x')»
-                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
             «ENDIF»
             $component = $module . ':' . ucfirst($objectType) . ':';
-            $perm = «IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($component, $objectId . '::', ACCESS_READ);
+            $perm = «IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $objectId . '::', ACCESS_READ);
             if (!$perm) {
                 return;
             }

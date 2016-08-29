@@ -383,6 +383,9 @@ class Actions {
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
+            «IF app.hasUploads»
+                $imageHelper = $this->get('«app.appService».image_helper');
+            «ENDIF»
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
 
@@ -398,7 +401,7 @@ class Actions {
                                ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
                 «ELSE»
                     $templateParameters['trees'] = $trees;
-                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+                    $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
                 «ENDIF»
                 // fetch and return the appropriate template
                 «IF isLegacy»
@@ -415,7 +418,7 @@ class Actions {
 
         «prepareViewUrlArgs(true)»
 
-        $additionalParameters = $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs);
+        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
 
         $resultsPerPage = 0;
         if ($showAllEntries != 1) {
@@ -861,7 +864,10 @@ class Actions {
         «ELSE»
             $templateParameters[$objectType] = $entity;
             $templateParameters['currentUrlObject'] = $currentUrlObject;
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+            «IF app.hasUploads»
+                $imageHelper = $this->get('«app.appService».image_helper');
+            «ENDIF»
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
         «ENDIF»
 
         // fetch and return the appropriate template
@@ -1014,7 +1020,10 @@ class Actions {
             $templateParameters = [
                 'routeArea' => $isAdmin ? 'admin' : ''
             ];
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+            «IF app.hasUploads»
+                $imageHelper = $this->get('«app.appService».image_helper');
+            «ENDIF»
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
 
             // delegate form processing to the form handler
             $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
@@ -1156,7 +1165,10 @@ class Actions {
                        ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
         «ELSE»
             $templateParameters[$objectType] = $entity;
-            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+            «IF app.hasUploads»
+                $imageHelper = $this->get('«app.appService».image_helper');
+            «ENDIF»
+            $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
         «ENDIF»
 
         // fetch and return the appropriate template

@@ -469,11 +469,11 @@ class FormHandler {
             $this->«IF isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» = $hasIdentifier ? 'edit' : 'create';
 
             «IF !isLegacy»
-                $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
+                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
             if («IF isLegacy»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» == 'edit') {
-                if (!«IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
+                if (!«IF isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
                     «IF isLegacy»
                         return LogUtil::registerPermissionError();
                     «ELSE»
@@ -488,7 +488,7 @@ class FormHandler {
 
                 «locking.addPageLock(it)»
             } else {
-                if (!«IF isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, '::', ACCESS_EDIT)) {
+                if (!«IF isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->permissionComponent, '::', ACCESS_EDIT)) {
                     «IF isLegacy»
                         return LogUtil::registerPermissionError();
                     «ELSE»
@@ -1334,9 +1334,9 @@ class FormHandler {
             «ENDIF»
             if (isset($entity['createdUserId']) && $entity['createdUserId'] != $uid) {
                 «IF !app.isLegacy»
-                    $permissionHelper = $this->container->get('zikula_permissions_module.api.permission');
+                    $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
                 «ENDIF»
-                if (!«IF app.isLegacy»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+                if (!«IF app.isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
                     «IF app.isLegacy»
                         return LogUtil::registerPermissionError();
                     «ELSE»

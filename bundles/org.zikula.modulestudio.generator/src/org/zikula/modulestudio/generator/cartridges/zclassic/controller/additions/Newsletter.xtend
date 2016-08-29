@@ -215,13 +215,13 @@ class Newsletter {
 
             «IF !targets('1.3.x')»
                 $serviceManager = ServiceUtil::getManager();
-                $permissionHelper = $serviceManager->get('zikula_permissions_module.api.permission');
+                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
             $output = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
             foreach ($objectTypes as $objectType) {
-                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionHelper->has«ENDIF»Permission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
+                if (!«IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($this->modname . ':' . ucfirst($objectType) . ':', '::', ACCESS_READ, $this->userNewsletter)) {
                     // the newsletter has no permission for these items
                     continue;
                 }
