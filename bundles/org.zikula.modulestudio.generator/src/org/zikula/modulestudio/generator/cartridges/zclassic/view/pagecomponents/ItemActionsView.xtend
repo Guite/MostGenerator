@@ -21,7 +21,8 @@ class ItemActionsView {
                     «ENDIF»
                 {/if}
             «ELSE»
-                {% if «name.formatForCode»._actions|length > 0 %}
+                {% set actionLinks = «application.appName.toLowerCase»_actions(entity=«name.formatForCode», area=routeArea, context='view') %}
+                {% if actionLinks|length > 0 %}
                     «markup('view')»
                 {% endif %}
             «ENDIF»
@@ -37,7 +38,8 @@ class ItemActionsView {
                 «javaScript('display')»
             {/if}
         «ELSE»
-            {% if «name.formatForCode»._actions|length > 0 %}
+            {% set actionLinks = «application.appName.toLowerCase»_actions(entity=«name.formatForCode», area=routeArea, context='display') %}
+            {% if actionLinks|length > 0 %}
                 «markup('display')»
                 «javaScript('display')»
             {% endif %}
@@ -70,7 +72,7 @@ class ItemActionsView {
                 «linkEntry(context)»
             {/foreach}
         «ELSE»
-            {% for option in «name.formatForCode»._actions %}
+            {% for option in actionLinks %}
                 «linkEntry(context)»
             {% endfor %}
         «ENDIF»

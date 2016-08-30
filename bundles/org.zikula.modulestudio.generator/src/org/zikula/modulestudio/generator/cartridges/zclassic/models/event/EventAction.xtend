@@ -41,10 +41,9 @@ class EventAction {
 
         «IF isLegacy»
             «entity.postLoadImpl»
-        «ENDIF»
 
-        «entityVar»->prepareItemActions();
-        «IF !isLegacy»
+            «entityVar»->prepareItemActions();
+        «ELSE»
 
             $serviceManager = ServiceUtil::getManager();
             $dispatcher = $serviceManager->get('event_dispatcher');

@@ -236,14 +236,14 @@ class Entities {
              */
             protected $_propertyChangedListeners = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
         «ENDIF»
+        «IF application.targets('1.3.x')»
 
-        /**
-         «IF !application.targets('1.3.x')»
-         * @Assert\Type(type="array")
-         «ENDIF»
-         * @var array List of available item actions
-         */
-        protected $_actions = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            /**
+             * @Assert\Type(type="array")
+             * @var array List of available item actions
+             */
+            protected $_actions = array();
+        «ENDIF»
 
         /**
          * @var array The current workflow data of this object
@@ -263,7 +263,9 @@ class Entities {
             «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
         «ENDIF»
         «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «IF application.targets('1.3.x')»
+            «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «ENDIF»
         «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»

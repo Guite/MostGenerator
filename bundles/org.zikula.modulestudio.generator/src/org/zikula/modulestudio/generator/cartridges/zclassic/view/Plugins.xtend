@@ -103,13 +103,14 @@ class Plugins {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\VariableApi;
-        use «appNamespace»\Helper\WorkflowHelper;
-        «IF hasUploads»
-            use «appNamespace»\Helper\ViewHelper;
-        «ENDIF»
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
+        «IF hasUploads»
+            use «appNamespace»\Helper\ViewHelper;
+        «ENDIF»
+        use «appNamespace»\Helper\WorkflowHelper;
+        use «appNamespace»\LinkContainer\LinkContainer;
 
         /**
          * Twig extension base class.
@@ -136,6 +137,11 @@ class Plugins {
          * @var VariableApi
          */
         protected $variableApi;
+
+        /**
+         * @var LinkContainer
+         */
+        protected $linkContainer;
 
         /**
          * @var WorkflowHelper
@@ -165,6 +171,7 @@ class Plugins {
             «' '»* @param Routerinterface     $router         Router service instance
         «ENDIF»
          * @param VariableApi         $variableApi    VariableApi service instance
+         * @param LinkContainer       $linkContainer  LinkContainer service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
         «IF hasUploads»
             «' '»* @param ViewHelper          $viewHelper     ViewHelper service instance
@@ -173,13 +180,14 @@ class Plugins {
             «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
         «ENDIF»
          */
-        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF», VariableApi $variableApi, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
+        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF», VariableApi $variableApi, LinkContainer $linkContainer, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
         {
             $this->setTranslator($translator);
             «IF hasTrees»
                 $this->router = $router;
             «ENDIF»
             $this->variableApi = $variableApi;
+            $this->linkContainer = $linkContainer;
             $this->workflowHelper = $workflowHelper;
             «IF hasUploads»
                 $this->viewHelper = $viewHelper;
@@ -207,6 +215,7 @@ class Plugins {
         public function getFunctions()
         {
             return [
+                new \Twig_SimpleFunction('«appNameLower»_actions', [$this, 'getActionLinks']),
                 «IF hasTrees»
                     new \Twig_SimpleFunction('«appNameLower»_treeData', [$this, 'getTreeData']),
                     new \Twig_SimpleFunction('«appNameLower»_treeSelection', [$this, 'getTreeSelection']),
@@ -248,6 +257,20 @@ class Plugins {
                 «ENDIF»
                 new \Twig_SimpleFilter('«appNameLower»_profileLink', [$this, 'profileLink'])
             ];
+        }
+
+        /**
+         * Returns action links for a given entity.
+         *
+         * @param EntityAccess $entity  The entity
+         * @param string       $area    The context area name (e.g. admin or nothing for user)
+         * @param string       $context The context page name (e.g. view, display, edit, delete)
+         *
+         * @return array Array of action links
+         */
+        public function getActionLinks(EntityAccess $entity, $area = '', $context = 'view')
+        {
+            return $this->linkContainer->getActionLinks($entity, $area, $context);
         }
 
         «generateInternal»

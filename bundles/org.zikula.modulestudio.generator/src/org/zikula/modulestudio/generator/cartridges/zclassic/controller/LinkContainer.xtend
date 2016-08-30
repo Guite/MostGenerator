@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Controller
 import de.guite.modulestudio.metamodel.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ItemActions
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -48,8 +49,13 @@ class LinkContainer {
         use Zikula\PermissionsModule\Api\PermissionApi;
         «IF app.generateAccountApi»
             use Zikula\ExtensionsModule\Api\VariableApi;
+        «ENDIF»
+        «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
+        «FOR entity : app.entities»
+            use «app.appNamespace»\Entity\«entity.name.formatForCode»Entity;
+        «ENDFOR»
         use «app.appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -96,10 +102,12 @@ class LinkContainer {
              * @param ControllerHelper    $controllerHelper ControllerHelper service instance
              «IF app.generateAccountApi»
              * @param VariableApi         $variableApi      VariableApi service instance
+             «ENDIF»
+             «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
              * @param CurrentUserApi      $currentUserApi   CurrentUserApi service instance
              «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper«IF app.generateAccountApi», VariableApi $variableApi, CurrentUserApi $currentUserApi«ENDIF»)
+            public function __construct(TranslatorInterface $translator, RouterInterface $router, PermissionApi $permissionApi, ControllerHelper $controllerHelper«IF app.generateAccountApi», VariableApi $variableApi«ENDIF»«IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty», CurrentUserApi $currentUserApi«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->router = $router;
@@ -107,6 +115,8 @@ class LinkContainer {
                 $this->controllerHelper = $controllerHelper;
                 «IF app.generateAccountApi»
                     $this->variableApi = $variableApi;
+                «ENDIF»
+                «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
                     $this->currentUserApi = $currentUserApi;
                 «ENDIF»
             }
@@ -194,6 +204,30 @@ class LinkContainer {
                 return $links;
             }
 
+            /**
+             * Returns action links for a given entity.
+             *
+             * @param EntityAccess $entity  The entity
+             * @param string       $area    The context area name (e.g. admin or nothing for user)
+             * @param string       $context The context page name (e.g. view, display, edit, delete)
+             *
+             * @return array Array of action links
+             */
+            public function getActionLinks(EntityAccess $entity, $area = '', $context = 'view')
+            {
+                // Create an array of links to return
+                $links = [];
+
+                «new ItemActions().itemActionsImpl(app)»
+
+                return $links;
+            }
+
+            /**
+             * Returns the name of the providing bundle.
+             *
+             * @return string The bundle name
+             */
             public function getBundleName()
             {
                 return '«app.appName»';

@@ -64,8 +64,10 @@ class EntityMethods {
         «validate»
 
         «toJson»
+        «IF app.targets('1.3.x')»
 
-        «new ItemActions().prepareItemActions(it, app)»
+            «new ItemActions().prepareItemActions(it, app)»
+        «ENDIF»
 
         «createUrlArgs»
 

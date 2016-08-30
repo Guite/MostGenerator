@@ -24,6 +24,7 @@ class ItemActions {
     extension UrlExtensions = new UrlExtensions
     extension Utils = new Utils
 
+    // 1.3.x only
     def prepareItemActions(Entity it, Application app) '''
         /**
          * Collect available actions for this entity.
@@ -35,17 +36,10 @@ class ItemActions {
             }
 
             $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
             $component = '«app.appName»:«name.formatForCodeCapital»:';
             $instance = «idFieldsAsParameterCode('this')» . '::';
-            «IF app.targets('1.3.x')»
-                $dom = ZLanguage::getModuleDomain('«app.appName»');
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-                $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
-                $translator = $serviceManager->get('translator.default');
-                $router = $serviceManager->get('router');
-            «ENDIF»
+            $dom = ZLanguage::getModuleDomain('«app.appName»');
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentLegacyControllerType == '«controller.formattedName»') {
                     «itemActionsTargetingDisplay(app, controller)»
@@ -57,40 +51,64 @@ class ItemActions {
         }
     '''
 
+    // 1.4.x only
+    def itemActionsImpl(Application app) '''
+        «/* TODO this needs to be cleaned for version 0.7.1 after #260 and #715 are done */»
+        $currentLegacyControllerType = $area != '' ? $area : 'user';
+        $currentFunc = $context;
+
+        «FOR entity : app.getAllEntities»
+            if ($entity instanceof «entity.name.formatForCode»Entity) {
+                $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
+                $instance = «entity.idFieldsAsParameterCode('this')» . '::';
+
+            «FOR controller : app.getAdminAndUserControllers»
+                if ($currentLegacyControllerType == '«controller.formattedName»') {
+                    «entity.itemActionsTargetingDisplay(app, controller)»
+                    «entity.itemActionsTargetingEdit(app, controller)»
+                    «entity.itemActionsTargetingView(app, controller)»
+                    «entity.itemActionsForAddingRelatedItems(app, controller)»
+                }
+            «ENDFOR»
+            }
+        «ENDFOR»
+    '''
+
+
     def private itemActionsTargetingDisplay(Entity it, Application app, Controller controller) '''
         «IF controller.hasActions('view')»
-            if (in_array($currentFunc, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
+            if (in_array($currentFunc, «IF app.isLegacy»array(«ELSE»[«ENDIF»'«IF app.isLegacy»main«ELSE»index«ENDIF»', 'view'«IF app.isLegacy»)«ELSE»]«ENDIF»)) {
                 «IF controller.tempIsAdminController && application.hasUserController && application.getMainUserController.hasActions('display')»
-                    $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                        «IF app.targets('1.3.x')»
+                    «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                        «IF app.isLegacy»
                             'url' => array(
                                 'type' => 'user',
                                 'func' => 'display',
                                 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)
                             ),
                         «ELSE»
-                            'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_display', [«routeParams('this', false)»]),
+                            'url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_display', [«routeParams('this', false)»]),
                         «ENDIF»
-                        'icon' => '«IF app.targets('1.3.x')»preview«ELSE»search-plus«ENDIF»',
-                        'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Open preview page'«IF app.targets('1.3.x')», $dom«ENDIF»),
-                        'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Preview'«IF app.targets('1.3.x')», $dom«ENDIF»)
-                    «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                        'icon' => '«IF app.isLegacy»preview«ELSE»search-plus«ENDIF»',
+                        'linkTitle' => «IF !app.isLegacy»$this->«ENDIF»__('Open preview page'«IF app.isLegacy», $dom«ENDIF»),
+                        'linkText' => «IF !app.isLegacy»$this->«ENDIF»__('Preview'«IF app.isLegacy», $dom«ENDIF»)
+                    «IF app.isLegacy»)«ELSE»]«ENDIF»;
                 «ENDIF»
                 «IF controller.hasActions('display')»
-                    $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                        «IF app.targets('1.3.x')»
+                    «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                        «IF app.isLegacy»
                             'url' => array(
                                 'type' => '«controller.formattedName»',
                                 'func' => 'display',
                                 'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, true)»)
                             ),
                         «ELSE»
-                            'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»display', [«routeParams('this', false)»]),
+                            'url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»display', [«routeParams('this', false)»]),
                         «ENDIF»
-                        'icon' => '«IF app.targets('1.3.x')»display«ELSE»eye«ENDIF»',
-                        'linkTitle' => str_replace('"', '', $this->getTitleFromDisplayPattern()),
-                        'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Details'«IF app.targets('1.3.x')», $dom«ENDIF»)
-                    «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                        'icon' => '«IF app.isLegacy»display«ELSE»eye«ENDIF»',
+                        'linkTitle' => str_replace('"', '', «entityVar»->getTitleFromDisplayPattern()),
+                        'linkText' => «IF !app.isLegacy»$this->«ENDIF»__('Details'«IF app.isLegacy», $dom«ENDIF»)
+                    «IF app.isLegacy»)«ELSE»]«ENDIF»;
                 «ENDIF»
             }
         «ENDIF»
@@ -98,13 +116,13 @@ class ItemActions {
 
     def private itemActionsTargetingEdit(Entity it, Application app, Controller controller) '''
         «IF controller.hasActions('view') || controller.hasActions('display')»
-            if (in_array($currentFunc, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'«IF app.targets('1.3.x')»main«ELSE»index«ENDIF»', 'view', 'display'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
+            if (in_array($currentFunc, «IF app.isLegacy»array(«ELSE»[«ENDIF»'«IF app.isLegacy»main«ELSE»index«ENDIF»', 'view', 'display'«IF app.isLegacy»)«ELSE»]«ENDIF»)) {
                 «IF controller.hasActions('edit')»
-                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                    if («IF app.isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                         «IF ownerPermission && standardFields»
-                            $uid = «IF app.targets('1.3.x')»UserUtil::getVar('uid')«ELSE»$serviceManager->get('zikula_users_module.current_user')->get('uid')«ENDIF»;
+                            $uid = «IF app.isLegacy»UserUtil::getVar('uid')«ELSE»$this->currentUserApi->get('uid')«ENDIF»;
                             // only allow editing for the owner or people with higher permissions
-                            if ($this['createdUserId'] == $uid || «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
+                            if («entityVar»->createdUserId == $uid || «IF app.isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADD)) {
                                 «itemActionsForEditAction(controller)»
                             }
                         «ELSE»
@@ -113,21 +131,21 @@ class ItemActions {
                     }
                 «ENDIF»
                 «IF controller.hasActions('delete')»
-                    if («IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_DELETE)) {
-                        $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                            «IF app.targets('1.3.x')»
+                    if («IF app.isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_DELETE)) {
+                        «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                            «IF app.isLegacy»
                                 'url' => array(
                                     'type' => '«controller.formattedName»',
                                     'func' => 'delete',
                                     'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)
                                 ),
                             «ELSE»
-                                'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»delete', [«routeParams('this', false)»]),
+                                'url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»delete', [«routeParams('this', false)»]),
                             «ENDIF»
-                            'icon' => '«IF app.targets('1.3.x')»delete«ELSE»trash-o«ENDIF»',
-                            'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Delete'«IF app.targets('1.3.x')», $dom«ENDIF»),
-                            'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Delete'«IF app.targets('1.3.x')», $dom«ENDIF»)
-                        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                            'icon' => '«IF app.isLegacy»delete«ELSE»trash-o«ENDIF»',
+                            'linkTitle' => «IF !app.isLegacy»$this->«ENDIF»__('Delete'«IF app.isLegacy», $dom«ENDIF»),
+                            'linkText' => «IF !app.isLegacy»$this->«ENDIF»__('Delete'«IF app.isLegacy», $dom«ENDIF»)
+                        «IF app.isLegacy»)«ELSE»]«ENDIF»;
                     }
                 «ENDIF»
             }
@@ -138,20 +156,20 @@ class ItemActions {
         «IF controller.hasActions('display')»
             if ($currentFunc == 'display') {
                 «IF controller.hasActions('view')»
-                    $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                        «IF app.targets('1.3.x')»
+                    «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                        «IF app.isLegacy»
                             'url' => array(
                                 'type' => '«controller.formattedName»',
                                 'func' => 'view',
                                 'arguments' => array('ot' => '«name.formatForCode»')
                             ),
                         «ELSE»
-                            'url' => $router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»view'),
+                            'url' => $this->router->generate('«app.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»view'),
                         «ENDIF»
-                        'icon' => '«IF app.targets('1.3.x')»back«ELSE»reply«ENDIF»',
-                        'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Back to overview'«IF app.targets('1.3.x')», $dom«ENDIF»),
-                        'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Back to overview'«IF app.targets('1.3.x')», $dom«ENDIF»)
-                    «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                        'icon' => '«IF app.isLegacy»back«ELSE»reply«ENDIF»',
+                        'linkTitle' => «IF !app.isLegacy»$this->«ENDIF»__('Back to overview'«IF app.isLegacy», $dom«ENDIF»),
+                        'linkText' => «IF !app.isLegacy»$this->«ENDIF»__('Back to overview'«IF app.isLegacy», $dom«ENDIF»)
+                    «IF app.isLegacy»)«ELSE»]«ENDIF»;
                 «ENDIF»
             }
         «ENDIF»
@@ -162,12 +180,12 @@ class ItemActions {
         «IF !refedElems.empty && controller.hasActions('edit')»
 
             // more actions for adding new related items
-            $authAdmin = «IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADMIN);
+            $authAdmin = «IF app.isLegacy»SecurityUtil::check«ELSE»$this->permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_ADMIN);
             «/* TODO review the permission levels and maybe define them for each related entity
               * ACCESS_ADMIN for admin controllers else: «IF relatedEntity.workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»
               */»
-            $uid = «IF app.targets('1.3.x')»UserUtil::getVar('uid')«ELSE»$serviceManager->get('zikula_users_module.current_user')->get('uid')«ENDIF»;
-            if ($authAdmin || (isset($uid) && isset($this->createdUserId) && $this->createdUserId == $uid)) {
+            $uid = «IF app.isLegacy»UserUtil::getVar('uid')«ELSE»$this->currentUserApi->get('uid')«ENDIF»;
+            if ($authAdmin || (isset($uid) && isset(«entityVar»->createdUserId) && «entityVar»->createdUserId == $uid)) {
                 «FOR elem : refedElems»
 
                     «val useTarget = (elem.source == it)»
@@ -176,8 +194,8 @@ class ItemActions {
                     «val otherEntity = (if (!useTarget) elem.source else elem.target)»
                     «val many = elem.isManySideDisplay(useTarget)»
                     «IF !many»
-                        if (!isset($this->«relationAliasName») || $this->«relationAliasName» == null) {
-                            «IF app.targets('1.3.x')»
+                        if (!isset(«entityVar»->«relationAliasName») || null === «entityVar»->«relationAliasName») {
+                            «IF app.isLegacy»
                                 $urlArgs = array(
                                     'ot' => '«otherEntity.name.formatForCode»',
                                     '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»
@@ -190,23 +208,23 @@ class ItemActions {
                             } elseif ($currentFunc == 'display') {
                                 $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
                             }
-                            $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                                «IF app.targets('1.3.x')»
+                            «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                                «IF app.isLegacy»
                                     'url' => array(
                                         'type' => '«controller.formattedName»',
                                         'func' => 'edit',
                                         'arguments' => $urlArgs
                                     ),
                                 «ELSE»
-                                    'url' => $router->generate('«app.appName.formatForDB»_«otherEntity.name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', $urlArgs),
+                                    'url' => $this->router->generate('«app.appName.formatForDB»_«otherEntity.name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', $urlArgs),
                                 «ENDIF»
-                                'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
-                                'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»),
-                                'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»)
-                            «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                                'icon' => '«IF app.isLegacy»add«ELSE»plus«ENDIF»',
+                                'linkTitle' => «IF !app.isLegacy»$this->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.isLegacy», $dom«ENDIF»),
+                                'linkText' => «IF !app.isLegacy»$this->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.isLegacy», $dom«ENDIF»)
+                            «IF app.isLegacy»)«ELSE»]«ENDIF»;
                         }
                     «ELSE»
-                        «IF app.targets('1.3.x')»
+                        «IF app.isLegacy»
                             $urlArgs = array(
                                 'ot' => '«otherEntity.name.formatForCode»',
                                 '«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»
@@ -219,20 +237,20 @@ class ItemActions {
                         } elseif ($currentFunc == 'display') {
                             $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
                         }
-                        $this->_actions[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                            «IF app.targets('1.3.x')»
+                        «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
+                            «IF app.isLegacy»
                                 'url' => array(
                                     'type' => '«controller.formattedName»',
                                     'func' => 'edit',
                                     'arguments' => $urlArgs
                                 ),
                             «ELSE»
-                                'url' => $router->generate('«app.appName.formatForDB»_«otherEntity.name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', $urlArgs),
+                                'url' => $this->router->generate('«app.appName.formatForDB»_«otherEntity.name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', $urlArgs),
                             «ENDIF»
-                            'icon' => '«IF app.targets('1.3.x')»add«ELSE»plus«ENDIF»',
-                            'linkTitle' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»),
-                            'linkText' => «IF !app.targets('1.3.x')»$translator->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.targets('1.3.x')», $dom«ENDIF»)
-                        «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                            'icon' => '«IF app.isLegacy»add«ELSE»plus«ENDIF»',
+                            'linkTitle' => «IF !app.isLegacy»$this->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.isLegacy», $dom«ENDIF»),
+                            'linkText' => «IF !app.isLegacy»$this->«ENDIF»__('Create «otherEntity.name.formatForDisplay»'«IF app.isLegacy», $dom«ENDIF»)
+                        «IF app.isLegacy»)«ELSE»]«ENDIF»;
                     «ENDIF»
                 «ENDFOR»
             }
@@ -248,36 +266,44 @@ class ItemActions {
 
     def private itemActionsForEditAction(Entity it, Controller controller) '''
         «IF !readOnly»«/*create is allowed, but editing not*/»
-            $this->_actions[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                «IF application.targets('1.3.x')»
+            «returnVar»[] = «IF application.isLegacy»array(«ELSE»[«ENDIF»
+                «IF application.isLegacy»
                     'url' => array(
                         'type' => '«controller.formattedName»',
                         'func' => 'edit',
                         'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false)»)
                     ),
                 «ELSE»
-                    'url' => $router->generate('«application.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', [«routeParams('this', false)»]),
+                    'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', [«routeParams('this', false)»]),
                 «ENDIF»
-                'icon' => '«IF application.targets('1.3.x')»edit«ELSE»pencil-square-o«ENDIF»',
-                'linkTitle' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Edit'«IF application.targets('1.3.x')», $dom«ENDIF»),
-                'linkText' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Edit'«IF application.targets('1.3.x')», $dom«ENDIF»)
-            «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                'icon' => '«IF application.isLegacy»edit«ELSE»pencil-square-o«ENDIF»',
+                'linkTitle' => «IF !application.isLegacy»$this->«ENDIF»__('Edit'«IF application.isLegacy», $dom«ENDIF»),
+                'linkText' => «IF !application.isLegacy»$this->«ENDIF»__('Edit'«IF application.isLegacy», $dom«ENDIF»)
+            «IF application.isLegacy»)«ELSE»]«ENDIF»;
         «ENDIF»
         «IF tree == EntityTreeType.NONE»
-            $this->_actions[] = «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                «IF application.targets('1.3.x')»
+            «returnVar»[] = «IF application.isLegacy»array(«ELSE»[«ENDIF»
+                «IF application.isLegacy»
                     'url' => array(
                         'type' => '«controller.formattedName»',
                         'func' => 'edit',
                         'arguments' => array('ot' => '«name.formatForCode»', «routeParamsLegacy('this', false, false, 'astemplate')»)
                     ),
                 «ELSE»
-                    'url' => $router->generate('«application.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', [«routeParams('this', false, 'astemplate')»]),
+                    'url' => $this->router->generate('«application.appName.formatForDB»_«name.formatForDB»_«IF controller instanceof AdminController»admin«ENDIF»edit', [«routeParams('this', false, 'astemplate')»]),
                 «ENDIF»
-                'icon' => '«IF application.targets('1.3.x')»saveas«ELSE»files-o«ENDIF»',
-                'linkTitle' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Reuse for new item'«IF application.targets('1.3.x')», $dom«ENDIF»),
-                'linkText' => «IF !application.targets('1.3.x')»$translator->«ENDIF»__('Reuse'«IF application.targets('1.3.x')», $dom«ENDIF»)
-            «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
+                'icon' => '«IF application.isLegacy»saveas«ELSE»files-o«ENDIF»',
+                'linkTitle' => «IF !application.isLegacy»$this->«ENDIF»__('Reuse for new item'«IF application.isLegacy», $dom«ENDIF»),
+                'linkText' => «IF !application.isLegacy»$this->«ENDIF»__('Reuse'«IF application.isLegacy», $dom«ENDIF»)
+            «IF application.isLegacy»)«ELSE»]«ENDIF»;
         «ENDIF»
     '''
+
+    def private entityVar(Entity it) '''«IF application.isLegacy»$this«ELSE»$entity«ENDIF»'''
+
+    def private returnVar(Entity it) '''«IF application.isLegacy»$this->_actions«ELSE»$links«ENDIF»'''
+
+    def private isLegacy(Application it) {
+        targets('1.3.x')
+    }
 }
