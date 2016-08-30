@@ -74,7 +74,6 @@ class ItemActions {
         «ENDFOR»
     '''
 
-
     def private itemActionsTargetingDisplay(Entity it, Application app, Controller controller) '''
         «IF controller.hasActions('view')»
             if (in_array($currentFunc, «IF app.isLegacy»array(«ELSE»[«ENDIF»'«IF app.isLegacy»main«ELSE»index«ENDIF»', 'view'«IF app.isLegacy»)«ELSE»]«ENDIF»)) {
