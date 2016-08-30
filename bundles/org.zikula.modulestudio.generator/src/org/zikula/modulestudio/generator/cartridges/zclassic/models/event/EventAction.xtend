@@ -34,12 +34,12 @@ class EventAction {
 
     // entity argument is only assigned for 1.3.x
     def postLoad(Application it, Entity entity) '''
-        // echo 'loaded a record ...';
-        if ($this->processedPostLoad) {
-            return true;
-        }
-
         «IF isLegacy»
+            // echo 'loaded a record ...';
+            if ($this->processedPostLoad) {
+                return true;
+            }
+
             «entity.postLoadImpl»
 
             «entityVar»->prepareItemActions();

@@ -54,7 +54,7 @@ class LinkContainer {
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
         «FOR entity : app.entities»
-            use «app.appNamespace»\Entity\«entity.name.formatForCode»Entity;
+            use «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
         «ENDFOR»
         use «app.appNamespace»\Helper\ControllerHelper;
 

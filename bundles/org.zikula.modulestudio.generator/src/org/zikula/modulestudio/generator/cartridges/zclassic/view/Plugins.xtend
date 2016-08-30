@@ -110,7 +110,7 @@ class Plugins {
             use «appNamespace»\Helper\ViewHelper;
         «ENDIF»
         use «appNamespace»\Helper\WorkflowHelper;
-        use «appNamespace»\LinkContainer\LinkContainer;
+        use «appNamespace»\Container\LinkContainer;
 
         /**
          * Twig extension base class.

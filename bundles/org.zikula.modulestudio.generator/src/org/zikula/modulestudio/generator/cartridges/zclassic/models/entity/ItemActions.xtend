@@ -58,7 +58,7 @@ class ItemActions {
         $currentFunc = $context;
 
         «FOR entity : app.getAllEntities»
-            if ($entity instanceof «entity.name.formatForCode»Entity) {
+            if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
                 $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
                 $instance = «entity.idFieldsAsParameterCode('this')» . '::';
 

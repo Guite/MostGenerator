@@ -23,7 +23,7 @@ class LifecycleListener {
             return
         }
         app = it
-        generateClassPair(fsa, getAppSourceLibPath + 'Listener/EntityLifecycleListener',
+        generateClassPair(fsa, getAppSourceLibPath + 'Listener/EntityLifecycleListener.php',
             fh.phpFileContent(it, lifecycleListenerBaseImpl), fh.phpFileContent(it, lifecycleListenerImpl)
         )
     }
@@ -36,6 +36,7 @@ class LifecycleListener {
         use Doctrine\Common\Persistence\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
         use ServiceUtil;
+        use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : entities»
             use «appNamespace»\Event\Filter«entity.name.formatForCodeCapital»Event;
@@ -46,8 +47,6 @@ class LifecycleListener {
          */
         class EntityLifecycleListener implements EventSubscriber
         {
-            protected $processedPostLoad = false;
-
             /**
              * Returns list of events to subscribe.
              *
@@ -75,6 +74,10 @@ class LifecycleListener {
             public function preRemove(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
+                if (!$this->isEntityManagedByThisBundle($entity)) {
+                    return;
+                }
+
                 «eventAction.preRemove(app)»
             }
 
@@ -91,6 +94,10 @@ class LifecycleListener {
             public function postRemove(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
+                if (!$this->isEntityManagedByThisBundle($entity)) {
+                    return;
+                }
+
                 «eventAction.postRemove(app)»
             }
 
@@ -107,6 +114,10 @@ class LifecycleListener {
             public function prePersist(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
+                if (!$this->isEntityManagedByThisBundle($entity)) {
+                    return;
+                }
+
                 «eventAction.prePersist(app)»
             }
 
@@ -120,6 +131,10 @@ class LifecycleListener {
             public function postPersist(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
+                if (!$this->isEntityManagedByThisBundle($entity)) {
+                    return;
+                }
+
                 «eventAction.postPersist(app)»
             }
 
@@ -134,6 +149,10 @@ class LifecycleListener {
             public function preUpdate(PreUpdateEventArgs $args)
             {
                 $entity = $args->getObject();
+                if (!$this->isEntityManagedByThisBundle($entity)) {
+                    return;
+                }
+
                 «eventAction.preUpdate(app)»
             }
 
@@ -146,6 +165,10 @@ class LifecycleListener {
             public function postUpdate(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
+                if (!$this->isEntityManagedByThisBundle($entity)) {
+                    return;
+                }
+
                 «eventAction.postUpdate(app)»
             }
 
@@ -163,7 +186,25 @@ class LifecycleListener {
             public function postLoad(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
+                if (!$this->isEntityManagedByThisBundle($entity)) {
+                    return;
+                }
+
                 «eventAction.postLoad(app, null)»
+            }
+
+            /**
+             * Checks whether this listener is responsible for the given entity or not.
+             *
+             * @param EntityAccess $entity The given entity
+             *
+             * @return boolean True if entity is managed by this listener, false otherwise
+             */
+            protected function isEntityManagedByThisBundle(EntityAccess $entity)
+            {
+                $entityClassParts = explode('\\', get_class($entity));
+
+                return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»');
             }
         }
     '''

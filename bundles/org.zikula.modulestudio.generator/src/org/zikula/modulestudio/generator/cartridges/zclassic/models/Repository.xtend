@@ -281,7 +281,10 @@ class Repository {
             «IF hasArchive && null !== getEndDateField»
                 use ZLanguage;
             «ENDIF»
-            use «app.appNamespace»\Entity\«name.formatForCode»Entity;
+            use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
+            «IF hasArchive && null !== getEndDateField && !skipHookSubscribers»
+                use «app.appNamespace»\Helper\HookHelper;
+            «ENDIF»
             «IF app.hasUploads»
                 use «app.appNamespace»\Helper\ImageHelper;
             «ENDIF»

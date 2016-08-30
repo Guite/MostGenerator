@@ -68,7 +68,7 @@ class ExampleData {
     def private exampleRows(Application it) '''
         «IF !targets('1.3.x')»
             $entityManager = $this->container->get('doctrine.entitymanager');
-            $logger = $this->container->get('logger')
+            $logger = $this->container->get('logger');
 
         «ENDIF»
         «FOR entity : getAllEntities»«entity.truncateTable»«ENDFOR»
