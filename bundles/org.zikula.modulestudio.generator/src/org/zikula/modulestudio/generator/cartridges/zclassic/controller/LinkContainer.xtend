@@ -45,6 +45,7 @@ class LinkContainer {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\Core\LinkContainer\LinkContainerInterface;
         use Zikula\PermissionsModule\Api\PermissionApi;
         «IF app.generateAccountApi»
