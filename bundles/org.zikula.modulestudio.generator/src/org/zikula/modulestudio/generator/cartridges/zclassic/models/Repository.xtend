@@ -941,20 +941,22 @@ class Repository {
 
             $parameters = $this->getViewQuickNavParameters('', «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»);
             foreach ($parameters as $k => $v) {
-                if ($k == 'catId') {
-                    // single category filter
-                    if ($v > 0) {
-                        $qb->andWhere('tblCategories.category = :category')
-                           ->setParameter('category', $v);
-                    }
-                } elseif ($k == 'catIdList') {
-                    // multi category filter
-                    /* old
-                    $qb->andWhere('tblCategories.category IN (:categories)')
-                       ->setParameter('categories', $v);
-                     */
-                    $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
-                } elseif (in_array($k, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'q', 'searchterm'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
+                «IF categorisable»
+                    if ($k == 'catId') {
+                        // single category filter
+                        if ($v > 0) {
+                            $qb->andWhere('tblCategories.category = :category')
+                               ->setParameter('category', $v);
+                        }
+                    } elseif ($k == 'catIdList') {
+                        // multi category filter
+                        /* old
+                        $qb->andWhere('tblCategories.category IN (:categories)')
+                           ->setParameter('categories', $v);
+                         */
+                        $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
+                «ENDIF»
+                «IF categorisable»} else«ENDIF»if (in_array($k, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'q', 'searchterm'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                     // quick search
                     if (!empty($v)) {
                         $qb = $this->addSearchFilter($qb, $v);
