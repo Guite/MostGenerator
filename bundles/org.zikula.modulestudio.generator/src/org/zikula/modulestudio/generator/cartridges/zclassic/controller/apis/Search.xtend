@@ -96,6 +96,7 @@ class Search {
 
     // 1.3.x only
     def private optionsLegacy(Application it) '''
+        «val entitiesWithStrings = entities.filter[hasAbstractStringFieldsEntity]»
         /**
          * Display the search form.
          *
@@ -111,10 +112,10 @@ class Search {
 
             $view = Zikula_View::getInstance($this->name);
 
-            «FOR entity : entities.filter[hasAbstractStringFieldsEntity]»
-                «val fieldName = 'active_' + entity.name.formatForCode»
-                $view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
-            «ENDFOR»
+            $searchTypes = array(«FOR entity : entitiesWithStrings»'«entity.name.formatForCode»'«IF entity != entitiesWithStrings.last», «ENDIF»«ENDFOR»);
+            foreach ($searchTypes as $searchType) {
+                $view->assign('active_' . $searchType, (!isset($args['«appName.toFirstLower»SearchTypes']) || in_array($searchType, $args['«appName.toFirstLower»SearchTypes'])));
+            }
 
             return $view->fetch('search/options.tpl');
         }
@@ -139,12 +140,12 @@ class Search {
                 return '';
             }
 
-            $templateParameters = [
-            «FOR entity : entitiesWithStrings»
-                «val fieldName = 'active_' + entity.name.formatForCode»
-                '«fieldName»' => (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»']))«IF entity != entitiesWithStrings.last»,«ENDIF»
-            «ENDFOR»
-            ];
+            $templateParameters = [];
+
+            $searchTypes = array(«FOR entity : entitiesWithStrings»'«entity.name.formatForCode»'«IF entity != entitiesWithStrings.last», «ENDIF»«ENDFOR»);
+            foreach ($searchTypes as $searchType) {
+                $templateParameters['active_' . $searchType] = (!isset($args['«appName.toFirstLower»SearchTypes']) || in_array($searchType, $args['«appName.toFirstLower»SearchTypes']));
+            }
 
             return $this->getContainer()->get('twig')->render('@«appName»/Search/options.html.twig', $templateParameters);
         }
