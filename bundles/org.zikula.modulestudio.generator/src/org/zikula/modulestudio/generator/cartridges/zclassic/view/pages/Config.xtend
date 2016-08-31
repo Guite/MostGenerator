@@ -80,7 +80,7 @@ class Config {
             «ENDIF»
         «ELSE»
             {# purpose of this template: module configuration page #}
-            {% extends '«appName»::«IF configController.formatForDB == 'admin'»adminBase«ELSE»base«ENDIF».html.twig' %}
+            {% extends '«appName»::adminBase.html.twig' %}
             {% block title __('Settings') %}
             {% block admin_page_icon 'wrench' %}
             {% block content %}

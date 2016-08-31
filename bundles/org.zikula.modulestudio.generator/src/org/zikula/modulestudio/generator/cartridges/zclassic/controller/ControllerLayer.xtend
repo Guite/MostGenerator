@@ -550,6 +550,9 @@ class ControllerLayer {
          * @Route("/config",
          *        methods = {"GET", "POST"}
          * )
+         «ELSEIF !isLegacy && isBase»
+         *
+         * @Theme("admin")
          «ENDIF»
          «IF !isLegacy»
          *
