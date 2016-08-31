@@ -337,7 +337,7 @@ class Entities {
 
     def private entityImplClassDocblockAdditions(Entity it, Application app) '''
          «IF indexes.empty»
-          * @ORM\Table(name="«fullEntityTableName»")
+         «' '»* @ORM\Table(name="«fullEntityTableName»")
          «ELSE»
           * @ORM\Table(name="«fullEntityTableName»",
          «IF hasNormalIndexes»
@@ -353,18 +353,20 @@ class Entities {
           * )
          «ENDIF»
          «IF isTopSuperClass»
-          * @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
-          * @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-          * @ORM\Discriminatormap[{"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
+         «' '»* @ORM\InheritanceType("«getChildRelations.head.strategy.literal»")
+         «' '»* @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
+         «' '»* @ORM\Discriminatormap[{"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
-          * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
+         «' '»* @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.literal»")
          «ENDIF»
-         * @ORM\HasLifecycleCallbacks
+         «IF app.targets('1.3.x')»
+         «' '»* @ORM\HasLifecycleCallbacks
+         «ENDIF»
     '''
 
     def private index(EntityIndex it, String indexType) '''
-         *         @ORM\«indexType.toFirstUpper»(name="«name.formatForDB»", columns={«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»})
+         «' '»*         @ORM\«indexType.toFirstUpper»(name="«name.formatForDB»", columns={«FOR item : items SEPARATOR ','»«item.indexField»«ENDFOR»})
     '''
     def private indexField(EntityIndexItem it) '''"«name.formatForCode»"'''
 
