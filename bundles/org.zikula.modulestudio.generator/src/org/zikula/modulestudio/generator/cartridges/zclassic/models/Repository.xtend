@@ -1431,6 +1431,11 @@ class Repository {
                 «IF app.targets('1.3.x')»
                     $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
                 «ELSE»
+                    if (null === $this->getRequest()) {
+                        // if no request is set we return (#783)
+                        return $qb;
+                    }
+
                     «/*$serviceManager = ServiceUtil::getManager();
                     $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
                     $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
