@@ -25,6 +25,7 @@ class PhpUnitXmlDist {
     def private phpUnitXml(Application it) '''
         <?xml version="1.0" encoding="UTF-8"?>
         <phpunit
+            bootstrap="./../../../lib/bootstrap.php"
             backupGlobals="false"
             backupStaticAttributes="false"
             colors="true"
@@ -33,12 +34,13 @@ class PhpUnitXmlDist {
             convertWarningsToExceptions="true"
             processIsolation="false"
             stopOnFailure="false"
-            syntaxCheck="false"
-            bootstrap="vendor/autoload.php"
+            syntaxCheck="true"
         >
             <testsuites>
                 <testsuite name="«appName» Module Test Suite">
-                    <directory>./Tests/</directory>
+                    <directory>./Tests</directory>
+                    <exclude>./Tests/Entity/*/Repository</exclude>
+                    <exclude>./vendor</exclude>
                 </testsuite>
             </testsuites>
         
