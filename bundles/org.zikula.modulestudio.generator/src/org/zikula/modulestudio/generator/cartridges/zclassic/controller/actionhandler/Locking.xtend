@@ -22,7 +22,10 @@ class Locking {
     '''
 
     def addPageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
+        «IF !isLegacy»
+            $extensionApi = $this->container->get('zikula_extensions_module.api.extension');
+        «ENDIF»
+        if (true === $this->hasPageLockSupport && «IF isLegacy»ModUtil::available('PageLock')«ELSE»null !== $extensionApi->getModuleInstanceOrNull('ZikulaPageLockModule')«ENDIF») {
             // try to guarantee that only one person at a time can be editing this entity
             «IF isLegacy»
                 ModUtil::apiFunc('PageLock', 'user', 'pageLock', array(
@@ -38,7 +41,10 @@ class Locking {
     '''
 
     def releasePageLock(Application it) '''
-        if (true === $this->hasPageLockSupport && «IF isLegacy»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» == 'edit' && ModUtil::available('«IF isLegacy»PageLock«ELSE»ZikulaPageLockModule«ENDIF»')) {
+        «IF !isLegacy»
+            $extensionApi = $this->container->get('zikula_extensions_module.api.extension');
+        «ENDIF»
+        if (true === $this->hasPageLockSupport && «IF isLegacy»$this->mode«ELSE»$this->templateParameters['mode']«ENDIF» == 'edit' && «IF isLegacy»ModUtil::available('PageLock')«ELSE»null !== $extensionApi->getModuleInstanceOrNull('ZikulaPageLockModule')«ENDIF») {
             «IF isLegacy»
                 ModUtil::apiFunc('PageLock', 'user', 'releaseLock', array(
                     'lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()

@@ -111,7 +111,14 @@ class Newsletter {
          */
         public function pluginAvailable()
         {
-            return ModUtil::available($this->modname);
+            «IF targets('1.3.x')»
+                return ModUtil::available($this->modname);
+            «ELSE»
+                $serviceManager = ServiceUtil::getManager();
+                $extensionApi = $serviceManager->get('zikula_extensions_module.api.extension');
+
+                return null !== $extensionApi->getModuleInstanceOrNull($this->modname);
+            «ENDIF»
         }
 
         /**
@@ -127,7 +134,7 @@ class Newsletter {
 
             «ENDIF»
             $objectTypes = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-            if (ModUtil::available($this->modname) && ModUtil::loadApi($this->modname)) {
+            if ($this->pluginAvailable()«IF targets('1.3.x')» && ModUtil::loadApi($this->modname)«ENDIF») {
                 «FOR entity : getAllEntities»
                     «IF targets('1.3.x')»
                         $objectTypes['«entity.name.formatForCode»'] = array('name' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'));

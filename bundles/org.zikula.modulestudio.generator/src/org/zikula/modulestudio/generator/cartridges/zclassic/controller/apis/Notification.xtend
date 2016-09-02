@@ -42,10 +42,7 @@ class Notification {
     def private notificationHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use LogUtil;
         use ModUtil;
-        use ServiceUtil;
-        use System;
         use UserUtil;
         use ZLanguage;
 
@@ -56,6 +53,7 @@ class Notification {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
+        use Zikula\ExtensionsModule\Api\ExtensionApi;
         use Zikula\ExtensionsModule\Api\VariableApi;
         use Zikula\MailerModule\Api\MailerApi;
         use Zikula\UsersModule\Api\CurrentUserApi;
@@ -82,6 +80,11 @@ class Notification {
              * @var RouterInterface
              */
             protected $router;
+
+            /**
+             * @var ExtensionApi
+             */
+            protected $extensionApi;
 
             /**
              * @var VariableApi
@@ -145,6 +148,7 @@ class Notification {
              * @param TranslatorInterface $translator     Translator service instance
              * @param Session             $session        Session service instance
              * @param Routerinterface     $router         Router service instance
+             * @param ExtensionApi        $extensionApi   ExtensionApi service instance
              * @param VariableApi         $variableApi    VariableApi service instance
              * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
              * @param Twig_Environment    $twig           Twig service instance
@@ -155,6 +159,7 @@ class Notification {
                 TranslatorInterface $translator,
                 Session $session,
                 RouterInterface $router,
+                ExtensionApi $extensionApi,
                 VariableApi $variableApi,
                 CurrentUserApi $currentUserApi,
                 Twig_Environment $twig,
@@ -164,6 +169,7 @@ class Notification {
                 $this->setTranslator($translator);
                 $this->session = $session;
                 $this->router = $router;
+                $this->extensionApi = $extensionApi;
                 $this->variableApi = $variableApi;
                 $this->currentUserApi = $currentUserApi;
                 $this->templating = $twig;
@@ -215,9 +221,17 @@ class Notification {
                 return true;
             }
 
-            if (!ModUtil::available('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»') || !ModUtil::loadApi('«IF targets('1.3.x')»Mailer«ELSE»ZikulaMailerModule«ENDIF»', 'user')) {
-                return LogUtil::registerError($this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
-            }
+            «IF targets('1.3.x')»
+                if (!ModUtil::available('Mailer') || !ModUtil::loadApi('Mailer', 'user')) {
+                    return LogUtil::registerError($this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+                }
+            «ELSE»
+                if (null === $this->extensionApi->getModuleInstanceOrNull('ZikulaMailerModule')) {
+                    $this->session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
+
+                    return false;
+                }
+            «ENDIF»
 
             $result = $this->sendMails();
 

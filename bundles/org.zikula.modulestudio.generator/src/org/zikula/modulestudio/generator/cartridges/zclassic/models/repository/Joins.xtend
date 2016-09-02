@@ -12,6 +12,7 @@ class Joins {
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
 
+    // TODO replace ModUtil::available by $extensionApi->getModuleInstanceOrNull() for 2.0 target
     def generate(Entity it, Application app) '''
         /**
          * Helper method to add join selections.

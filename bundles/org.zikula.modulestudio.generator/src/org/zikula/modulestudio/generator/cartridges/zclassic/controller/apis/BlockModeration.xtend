@@ -134,7 +134,7 @@ class BlockModeration {
 
                 $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
             «ELSE»
-                $currentUserApi = ServiceUtil::get('zikula_users_module.current_user');
+                $currentUserApi = $this->get('zikula_users_module.current_user');
                 if (!$currentUserApi->isLoggedIn()) {
                     return false;
                 }
