@@ -942,14 +942,13 @@ class FormHandler {
                 «ENDIF»
                 $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $formData);
 
-                foreach ($translations as $translation) {
-                    foreach ($translation['fields'] as $fieldName => $value) {
-                        $transRepository->translate($entity, $fieldName, $translation['locale'], $value);
+                foreach ($translations as $locale => $translationFields) {
+                    foreach ($translationFields as $fieldName => $value) {
+                        $transRepository->translate($entity, $fieldName, $locale, $value);
                     }
                 }
 
-                // save updated entity
-                $this->entityRef = $entity;
+                $this->entityManager->flush();
             }
         «ENDIF»
 

@@ -239,7 +239,6 @@ class Entities {
         «IF application.targets('1.3.x')»
 
             /**
-             * @Assert\Type(type="array")
              * @var array List of available item actions
              */
             protected $_actions = array();

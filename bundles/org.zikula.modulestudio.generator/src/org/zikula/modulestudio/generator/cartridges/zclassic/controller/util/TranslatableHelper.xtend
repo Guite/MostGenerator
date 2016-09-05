@@ -182,7 +182,7 @@ class TranslatableHelper {
                 }
                 $translationData = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($fields as $field) {
-                    $translationData[$field['name'] . $language] = isset($entityTranslations[$language]) ? $entityTranslations[$language][$field['name']] : '';
+                    $translationData[$field['name'] . $language] = isset($entityTranslations[$language]) ? $entityTranslations[$language][$field['name']] : $field['default'];
                 }
                 // add data to collected translations
                 $translations[$language] = $translationData;
@@ -226,20 +226,20 @@ class TranslatableHelper {
                         // skip current language as this is not treated as translation on controller level
                         continue;
                     }
-                    $translations[$language] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'language' => $language, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
+                    $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                     $translationData = $formData[strtolower($objectType) . $language];
                     foreach ($fields as $field) {
-                        $translations[$language]['fields'][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
+                        $translations[$language][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
                         unset($formData[$field['name'] . $language]);
                     }
                 }
             }
             if ($useOnlyCurrentLanguage === true) {
                 $language = ZLanguage::getLanguageCode();
-                $translations[$language] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'language' => $language, 'fields' => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
+                $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $translationData = $formData[strtolower($objectType) . $language];
                 foreach ($fields as $field) {
-                    $translations[$language]['fields'][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
+                    $translations[$language][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
                     unset($formData[$field['name'] . $language]);
                 }
             }
