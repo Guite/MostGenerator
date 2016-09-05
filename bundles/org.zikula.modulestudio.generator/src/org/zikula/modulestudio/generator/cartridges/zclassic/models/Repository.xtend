@@ -1045,7 +1045,7 @@ class Repository {
             «IF application.targets('1.3.x')»
                 $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
             «ELSE»
-                $startDate = $this->getRequest()->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow»);
+                $startDate = null !== $this->getRequest() ? $this->getRequest()->query->get('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow») : «startDateField.defaultValueForNow»;
             «ENDIF»
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
@@ -1054,7 +1054,7 @@ class Repository {
             «IF application.targets('1.3.x')»
                 $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
             «ELSE»
-                $endDate = $this->getRequest()->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow»);
+                $endDate = null !== $this->getRequest() ? $this->getRequest()->query->get('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow») : «endDateField.defaultValueForNow»;
             «ENDIF»
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);
