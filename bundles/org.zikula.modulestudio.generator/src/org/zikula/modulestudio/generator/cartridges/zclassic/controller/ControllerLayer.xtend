@@ -164,7 +164,7 @@ class ControllerLayer {
 
                 «handleInlineRedirect(true)»
             «ENDIF»
-            «IF !isLegacy && app.needsConfig && isConfigController»
+            «IF isLegacy && app.needsConfig && isConfigController»
 
                 «configAction(true)»
             «ENDIF»
