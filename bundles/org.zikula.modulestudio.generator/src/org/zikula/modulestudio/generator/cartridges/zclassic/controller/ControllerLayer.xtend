@@ -153,14 +153,18 @@ class ControllerLayer {
             «ENDIF»
 
             «FOR action : actions»
-                «actionHelper.generate(action, true)»
+                «IF !isLegacy && app.needsConfig && isConfigController && action.name.formatForCode == 'config'»
+                    «configAction(true)»
+                «ELSE»
+                    «actionHelper.generate(action, true)»
+                «ENDIF»
 
             «ENDFOR»
             «IF hasActions('edit') && app.needsAutoCompletion»
 
                 «handleInlineRedirect(true)»
             «ENDIF»
-            «IF app.needsConfig && isConfigController»
+            «IF !isLegacy && app.needsConfig && isConfigController»
 
                 «configAction(true)»
             «ENDIF»

@@ -245,7 +245,7 @@ class ControllerExtensions {
      * Checks for whether the given controller is responsible for the config action.
      */
     def isConfigController(Controller it) {
-        application.targets('1.3.x') && application.configController == formattedName
+        application.configController == formattedName
     }
 
     /**
