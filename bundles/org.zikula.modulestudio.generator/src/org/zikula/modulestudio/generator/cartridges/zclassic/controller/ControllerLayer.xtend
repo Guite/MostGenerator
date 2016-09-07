@@ -232,6 +232,7 @@ class ControllerLayer {
             use Zikula\Core\Controller\AbstractController;
             use Zikula\Core\RouteUrl;
             «controllerBaseImportsResponse»
+            use Zikula\ThemeModule\Engine\Annotation\Theme;
 
         «ENDIF»
     '''
