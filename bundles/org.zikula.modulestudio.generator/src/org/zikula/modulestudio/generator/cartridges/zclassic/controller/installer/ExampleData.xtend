@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer
 
 import de.guite.modulestudio.metamodel.AbstractDateField
+import de.guite.modulestudio.metamodel.AbstractStringField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.ArrayField
 import de.guite.modulestudio.metamodel.BooleanField
@@ -316,6 +317,14 @@ class ExampleData {
         «ENDIF»'''
 
     def private exampleRowValueText(DerivedField it, Entity dataEntity, Integer number) {
+        if (it instanceof AbstractStringField && (it as AbstractStringField).nospace) {
+            exampleRowValueTextInternal(dataEntity, number).toString.replace(' ', '')
+        } else {
+            exampleRowValueTextInternal(dataEntity, number)
+        }
+    }
+
+    def private exampleRowValueTextInternal(DerivedField it, Entity dataEntity, Integer number) {
         switch it {
             StringField: exampleRowValueTextLength(dataEntity, number, it.length)
             TextField: exampleRowValueTextLength(dataEntity, number, it.length)
