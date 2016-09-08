@@ -418,7 +418,7 @@ class Actions {
 
         «prepareViewUrlArgs(true)»
 
-        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
+        $additionalParameters = $repository->getAdditionalTemplateParameters(«IF !isLegacy && app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs);
 
         $resultsPerPage = 0;
         if ($showAllEntries != 1) {
