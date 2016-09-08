@@ -34,7 +34,7 @@ class MenuLinksHelperFunctions {
                 «entity.menuLinkToViewAction(it)»
             «ENDFOR»
             «IF app.needsConfig»
-                «IF isLegacy && isConfigController»
+                «IF isLegacy»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         $links[] = array(
                             'url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
