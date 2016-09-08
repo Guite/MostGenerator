@@ -50,7 +50,6 @@ class Installer {
                 use ModUtil;
             «ENDIF»
             use RuntimeException;
-            use System;
             use UserUtil;
             use Zikula\Core\AbstractExtensionInstaller;
             use Zikula_Workflow_Util;
@@ -109,28 +108,10 @@ class Installer {
                     $this->schemaTool->create($this->listEntityClasses());
                 «ENDIF»
             } catch (\Exception $e) {
-                if (System::isDevelopmentMode()) {
-                    «IF targets('1.3.x')»
-                        return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                    «ELSE»
-                        $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                        $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
-
-                        return false;
-                    «ENDIF»
-                }
-                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', «IF targets('1.3.x')»array($this->getName())«ELSE»['%s' => '«appName»']«ENDIF»);
-                if (!System::isDevelopmentMode()) {
-                    «IF targets('1.3.x')»
-                        $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
-                    «ELSE»
-                        $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /app/config/parameters.yml file (change the env variable to dev) in order to reveal the error details (or look into the log files at /app/logs/).');
-                    «ENDIF»
-                }
                 «IF targets('1.3.x')»
-                    return LogUtil::registerError($returnMessage);
+                    return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                 «ELSE»
-                    $this->addFlash('error', $returnMessage);
+                    $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
                     $logger->error('{app}: Could not create the database tables during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                     return false;
@@ -284,21 +265,11 @@ class Installer {
                             $this->schemaTool->update($this->listEntityClasses());
                         «ENDIF»
                     } catch (\Exception $e) {
-                        if (System::isDevelopmentMode()) {
-                            «IF targets('1.3.x')»
-                                return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                            «ELSE»
-                                $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                                $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
-
-                                return false;
-                            «ENDIF»
-                        }
                         «IF targets('1.3.x')»
-                            return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
+                            return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                         «ELSE»
-                            $this->addFlash('error', $this->__f('An error was encountered while updating tables for the %s extension.', ['%s' => '«appName»']));
-                            $logger->error('{app}: Could not update the database tables during the ugprade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
+                            $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
+                            $logger->error('{app}: Could not update the database tables during the upgrade. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                             return false;
                         «ENDIF»
@@ -362,20 +333,10 @@ class Installer {
                     $this->schemaTool->drop($this->listEntityClasses());
                 «ENDIF»
             } catch (\Exception $e) {
-                if (System::isDevelopmentMode()) {
-                    «IF targets('1.3.x')»
-                        return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                    «ELSE»
-                        $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
-                        $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
-
-                        return false;
-                    «ENDIF»
-                }
                 «IF targets('1.3.x')»
-                    return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->getName())));
+                    return LogUtil::registerError($this->__('Doctrine Exception') . ': ' . $e->getMessage());
                 «ELSE»
-                    $this->addFlash('error', $this->__f('An error was encountered while dropping tables for the %s extension.', ['%s' => '«appName»']));
+                    $this->addFlash('error', $this->__('Doctrine Exception') . ': ' . $e->getMessage());
                     $logger->error('{app}: Could not remove the database tables during uninstallation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
 
                     return false;

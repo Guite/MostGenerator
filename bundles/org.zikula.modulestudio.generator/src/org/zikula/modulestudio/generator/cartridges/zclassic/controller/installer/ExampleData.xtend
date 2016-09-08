@@ -228,9 +228,12 @@ class ExampleData {
             «FOR entity : getAllEntities»«entity.persistEntities(it)»«ENDFOR»
         } catch(\Exception $e) {
             «IF targets('1.3.x')»
-                LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+                return LogUtil::registerError($this->__('Exception during example data creation') . ': ' . $e->getMessage());
             «ELSE»
-                $this->addFlash('warning', $this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+                $this->addFlash('error', $this->__('Exception during example data creation') . ': ' . $e->getMessage());
+                $logger->error('{app}: Could not completely create example data during installation. Error details: {errorMessage}.', ['app' => '«appName»', 'errorMessage' => $e->getMessage()]);
+
+                return false;
             «ENDIF»
         }
     '''
