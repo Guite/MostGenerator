@@ -115,9 +115,9 @@ class Newsletter {
                 return ModUtil::available($this->modname);
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
-                $extensionApi = $serviceManager->get('zikula_extensions_module.api.extension');
+                $kernel = $serviceManager->get('kernel');
 
-                return null !== $extensionApi->getModuleInstanceOrNull($this->modname);
+                return null !== $kernel->getModule($this->modname);
             «ENDIF»
         }
 

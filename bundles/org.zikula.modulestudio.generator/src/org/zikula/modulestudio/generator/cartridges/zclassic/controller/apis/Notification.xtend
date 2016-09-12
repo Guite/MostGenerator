@@ -48,12 +48,12 @@ class Notification {
 
         use Swift_Message;
         use Symfony\Component\HttpFoundation\Session\Session;
+        use Symfony\Component\HttpKernel\KernelInterface;
         use Symfony\Component\Routing\RouterInterface;
         use Twig_Environment;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\Core\Doctrine\EntityAccess;
-        use Zikula\ExtensionsModule\Api\ExtensionApi;
         use Zikula\ExtensionsModule\Api\VariableApi;
         use Zikula\MailerModule\Api\MailerApi;
         use Zikula\UsersModule\Api\CurrentUserApi;
@@ -82,9 +82,9 @@ class Notification {
             protected $router;
 
             /**
-             * @var ExtensionApi
+             * @var KernelInterface
              */
-            protected $extensionApi;
+            protected $kernel;
 
             /**
              * @var VariableApi
@@ -148,7 +148,7 @@ class Notification {
              * @param TranslatorInterface $translator     Translator service instance
              * @param Session             $session        Session service instance
              * @param Routerinterface     $router         Router service instance
-             * @param ExtensionApi        $extensionApi   ExtensionApi service instance
+             * @param KernelInterface     $kernel         Kernel service instance
              * @param VariableApi         $variableApi    VariableApi service instance
              * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
              * @param Twig_Environment    $twig           Twig service instance
@@ -159,7 +159,7 @@ class Notification {
                 TranslatorInterface $translator,
                 Session $session,
                 RouterInterface $router,
-                ExtensionApi $extensionApi,
+                KernelInterface $kernel,
                 VariableApi $variableApi,
                 CurrentUserApi $currentUserApi,
                 Twig_Environment $twig,
@@ -169,7 +169,7 @@ class Notification {
                 $this->setTranslator($translator);
                 $this->session = $session;
                 $this->router = $router;
-                $this->extensionApi = $extensionApi;
+                $this->kernel = $kernel;
                 $this->variableApi = $variableApi;
                 $this->currentUserApi = $currentUserApi;
                 $this->templating = $twig;
@@ -226,7 +226,7 @@ class Notification {
                     return LogUtil::registerError($this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
                 }
             «ELSE»
-                if (null === $this->extensionApi->getModuleInstanceOrNull('ZikulaMailerModule')) {
+                if (null === $this->kernel->getModule('ZikulaMailerModule')) {
                     $this->session->getFlashBag()->add('error', $this->__('Could not inform other persons about your amendments, because the Mailer module is not available - please contact an administrator about that!'));
 
                     return false;
