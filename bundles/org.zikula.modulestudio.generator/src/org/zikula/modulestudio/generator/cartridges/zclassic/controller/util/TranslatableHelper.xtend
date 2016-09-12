@@ -130,13 +130,14 @@ class TranslatableHelper {
             «ENDIF»
             if («IF targets('1.3.x')»System::getVar(«ELSE»$variableApi->get(VariableApi::Config, «ENDIF»'multilingual')) {
                 return ZLanguage::getInstalledLanguages();
-            } else {
-                «IF targets('1.3.x')»
-                    return array(ZLanguage::getLanguageCode());
-                «ELSE»
-                    return [ZLanguage::getLanguageCode()];
-                «ENDIF»
             }
+
+            // if multi language is disabled use only the current language
+            «IF targets('1.3.x')»
+                return array(ZLanguage::getLanguageCode());
+            «ELSE»
+                return [ZLanguage::getLanguageCode()];
+            «ENDIF»
         }
     '''
 
