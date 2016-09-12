@@ -48,6 +48,7 @@ class TranslatableHelper {
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Core\Doctrine\EntityAccess;
+            use Zikula\ExtensionsModule\Api\VariableApi;
             use ZLanguage;
 
         «ENDIF»
@@ -124,7 +125,18 @@ class TranslatableHelper {
          */
         public function getSupportedLanguages($objectType)
         {
-            return ZLanguage::getInstalledLanguages();
+            «IF !targets('1.3.x')»
+                $variableApi = $this->container->get('zikula_extensions_module.api.variable');
+            «ENDIF»
+            if («IF targets('1.3.x')»System::getVar«ELSE»$variableApi->get(VariableApi::Config, «ENDIF»'multilingual') {
+                return ZLanguage::getInstalledLanguages();
+            } else {
+                «IF targets('1.3.x')»
+                    return array(ZLanguage::getLanguageCode());
+                «ELSE»
+                    return [ZLanguage::getLanguageCode()];
+                «ENDIF»
+            }
         }
     '''
 
