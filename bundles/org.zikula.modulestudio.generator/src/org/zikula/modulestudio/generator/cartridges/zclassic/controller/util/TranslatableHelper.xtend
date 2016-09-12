@@ -128,7 +128,7 @@ class TranslatableHelper {
             «IF !targets('1.3.x')»
                 $variableApi = $this->container->get('zikula_extensions_module.api.variable');
             «ENDIF»
-            if («IF targets('1.3.x')»System::getVar(«ELSE»$variableApi->get(VariableApi::Config, «ENDIF»'multilingual') {
+            if («IF targets('1.3.x')»System::getVar(«ELSE»$variableApi->get(VariableApi::Config, «ENDIF»'multilingual')) {
                 return ZLanguage::getInstalledLanguages();
             } else {
                 «IF targets('1.3.x')»
