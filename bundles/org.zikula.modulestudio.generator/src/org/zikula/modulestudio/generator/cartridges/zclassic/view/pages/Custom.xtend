@@ -104,7 +104,7 @@ class Custom {
             {% block adminPageIcon %}square{% endblock %}
             {% block content %}
                 <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
-                    <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getViewPath»«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/Resources/views/modules/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+                    <p>Please override this template by moving it from <em>/«app.rootFolder»/«if (app.systemModule) app.name.formatForCode else app.appName»/«app.getViewPath»«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> to either your <em>/themes/YourTheme/Resources/views/modules/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em> or <em>/config/templates/«app.appName»/«entity.name.formatForDisplayCapital»/«name.formatForCode.toFirstLower».html.twig</em>.</p>
                 </div>
             {% endblock %}
         «ENDIF»
