@@ -141,7 +141,7 @@ class ViewHelper {
                     $template .= '_' . DataUtil::formatForOS($tpl);
                 }
             «ELSE»
-                «/* TODO refactor this */»
+                «/* TODO refactor this, e.g. using http://twig.sensiolabs.org/api/master/Twig_Environment.html#method_resolveTemplate */»
                 // check if custom template exists
                 if (!empty($tpl)) {
                     $template .= '_' . DataUtil::formatForOS($tpl);

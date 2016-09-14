@@ -102,8 +102,8 @@ class TreeFunctions {
             contextMenu.append(
                 jQuery('<li>', { role: 'presentation' }).append(
                     jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                        .attr('href', Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=display&id=' + currentNodeId)
-                        «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
+                        .attr('href', Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: currentNodeId }, true))
+                        «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
                         .append(jQuery('<i>', class: 'fa fa-eye' }))
                         .append(Zikula.__('Display', '«appName.formatForDB»_js'))
                 )
@@ -113,8 +113,8 @@ class TreeFunctions {
             contextMenu.append(
                 jQuery('<li>', { role: 'presentation' }).append(
                     jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                        .attr('href', Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=edit&id=' + currentNodeId)
-                        «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
+                        .attr('href', Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: currentNodeId }, true))
+                        «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
                         .append(jQuery('<i>', class: 'fa fa-pencil-square-o' }))
                         .append(Zikula.__('Edit', '«appName.formatForDB»_js'))
                 )
@@ -211,8 +211,8 @@ class TreeFunctions {
                     var url;
 
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=display&id=' + currentNodeId;
-                    «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
+                    url = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: currentNodeId }, true);
+                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
 
                     if (isRightClick) {
                         window.open(url);
@@ -230,8 +230,8 @@ class TreeFunctions {
                     var url;
 
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + objectType + '&func=edit&id=' + currentNodeId;
-                    «/* TODO use routing for creating the url (requires more detailed differentiation of parameters to be provided, e.g. slugs and composite keys) */»
+                    url = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: currentNodeId }, true);
+                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
 
                     if (isRightClick) {
                         window.open(url);

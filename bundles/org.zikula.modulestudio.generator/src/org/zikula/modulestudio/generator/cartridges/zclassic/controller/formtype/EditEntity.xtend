@@ -922,8 +922,8 @@ class EditEntity {
                 'attr' => [
                     'title' => $options['mode'] == 'create' ? $this->__('Enter any additions about your content') : $this->__('Enter any additions about your changes')
                 ],
-                'required' => false«/* TODO apply help attribute in template (Section class)
-                'help' => $helpText*/»
+                'required' => false,
+                'help' => $helpText
             ]);
         }
     '''

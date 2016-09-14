@@ -613,7 +613,6 @@ class EntityMethods {
                         }
                     «ENDIF»
                 «ENDIF»
-                «/* TODO consider other extensions here (meta data, translatable, loggable, maybe more) */»
             }
             // otherwise do nothing, do NOT throw an exception!
         }
