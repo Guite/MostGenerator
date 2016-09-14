@@ -17,7 +17,6 @@ class Selection {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating selection api')
         generateClassPair(fsa, getAppSourceLibPath + 'Api/Selection' + (if (targets('1.3.x')) '' else 'Api') + '.php',
             fh.phpFileContent(it, selectionBaseClass), fh.phpFileContent(it, selectionImpl)
         )
