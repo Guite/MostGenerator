@@ -311,6 +311,11 @@ class Validation {
                     «IF targets('1.3.x')»
                         cmpVal = «vendorAndName»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
                         cmpVal2 = «vendorAndName»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
+
+                        if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
+                            return true;
+                        }
+
                         result = (cmpVal <= cmpVal2);
                         if (result) {
                             $('advice-«validateClass»-«startFieldName»').hide();
@@ -329,6 +334,11 @@ class Validation {
                     «ELSE»
                         cmpVal = «vendorAndName»ReadDate(jQuery('#«startFieldName»').val(), «(startDateField instanceof DatetimeField).displayBool»);
                         cmpVal2 = «vendorAndName»ReadDate(jQuery('#«endFieldName»').val(), «(endDateField instanceof DatetimeField).displayBool»);
+
+                        if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
+                            return true;
+                        }
+
                         result = (cmpVal <= cmpVal2);
                         if (result) {
                             jQuery('#advice-«validateClass»-«startFieldName»').hide();
