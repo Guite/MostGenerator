@@ -87,6 +87,8 @@ class LinkContainer {
                  */
                 protected $variableApi;
 
+            «ENDIF»
+            «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
                 /**
                  * @var CurrentUserApi
                  */
