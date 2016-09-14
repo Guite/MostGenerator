@@ -77,6 +77,7 @@ class Validation {
                 }
                 todayDate += hours + ':' + minutes;// + ':' + seconds;
             }
+
             return todayDate;
         }
 
@@ -94,6 +95,7 @@ class Validation {
                 if (includeTime === true) {
                     newVal += ' ' + val.substr(11, 5);
                 }
+
                 return newVal;
             }
         }
