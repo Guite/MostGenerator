@@ -131,7 +131,7 @@ class SimpleFields {
             «IF isLegacyApp»
                 <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
             «ELSE»
-                <a href="mailto:{{ «realName» }}" title="{{ __('Send an email') }}" class="fa fa-envelope"></a>
+                <a href="mailto:{{ «realName»|protectMail }}" title="{{ __('Send an email') }}" class="fa fa-envelope"></a>
             «ENDIF»
             «IF page == 'display'»
                 «IF isLegacyApp»
@@ -140,7 +140,7 @@ class SimpleFields {
                   {/if}
                 «ELSE»
                   {% else %}
-                    {{ «realName» }}
+                    {{ «realName»|protectMail }}
                   {% endif %}
                 «ENDIF»
             «ENDIF»
