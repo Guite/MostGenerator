@@ -308,8 +308,8 @@ class Notification {
             «IF targets('1.3.x')»
                 $siteName = System::getVar('sitename');
             «ELSE»
-                $siteName = $this->variableApi->get(VariableApi::CONFIG, 'sitename_' . ZLanguage::getLanguageCode(), $this->variableApi->get(VariableApi::CONFIG, 'sitename_en'));
-                $adminMail = $this->variableApi->get(VariableApi::CONFIG, 'adminmail');
+                $siteName = $this->variableApi->getSystemVar('sitename_' . ZLanguage::getLanguageCode(), $this->variableApi->getSystemVar('sitename_en'));
+                $adminMail = $this->variableApi->getSystemVar('adminmail');
             «ENDIF»
 
             «IF targets('1.3.x')»

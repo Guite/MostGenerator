@@ -69,16 +69,23 @@ class TranslatableHelper {
                 protected $translator;
 
                 /**
+                 * @var VariableApi
+                 */
+                protected $variableApi;
+
+                /**
                  * Constructor.
                  * Initialises member vars.
                  *
                  * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
                  * @param TranslatorInterface    $translator     Translator service instance
+                 * @param VariableApi            $variableApi    VariableApi service instance
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator)
+                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, VariableApi $variableApi)
                 {
                     $this->container = $serviceManager;
                     $this->translator = $translator;
+                    $this->variableApi = $variableApi;
                 }
 
             «ENDIF»
@@ -125,10 +132,7 @@ class TranslatableHelper {
          */
         public function getSupportedLanguages($objectType)
         {
-            «IF !targets('1.3.x')»
-                $variableApi = $this->container->get('zikula_extensions_module.api.variable');
-            «ENDIF»
-            if («IF targets('1.3.x')»System::getVar(«ELSE»$variableApi->get(VariableApi::Config, «ENDIF»'multilingual')) {
+            if («IF targets('1.3.x')»System::getVar(«ELSE»$this->variableApi->getSystemVar(«ENDIF»'multilingual')) {
                 return ZLanguage::getInstalledLanguages();
             }
 

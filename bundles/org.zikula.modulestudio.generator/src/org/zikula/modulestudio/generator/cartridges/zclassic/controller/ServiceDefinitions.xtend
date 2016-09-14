@@ -364,7 +364,7 @@ class ServiceDefinitions {
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
-                arguments: ["@service_container", "@translator.default"]
+                arguments: ["@service_container", "@translator.default", "@zikula_extensions_module.api.variable"]
         «ENDIF»
     '''
 

@@ -346,7 +346,7 @@ class EditEntity {
 
     def private translatableFields(Entity it) '''
         $useOnlyCurrentLanguage = true;
-        if ($this->variableApi->get(VariableApi::CONFIG, 'multilingual')) {
+        if ($this->variableApi->getSystemVar('multilingual')) {
             $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
             if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
                 $useOnlyCurrentLanguage = false;
