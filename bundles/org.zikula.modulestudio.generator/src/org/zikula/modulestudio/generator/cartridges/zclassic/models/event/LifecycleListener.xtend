@@ -200,8 +200,12 @@ class LifecycleListener {
              *
              * @return boolean True if entity is managed by this listener, false otherwise
              */
-            protected function isEntityManagedByThisBundle(EntityAccess $entity)
+            protected function isEntityManagedByThisBundle($entity)
             {
+                if (!($entity instanceof EntityAccess)) {
+                    return false;
+                }
+
                 $entityClassParts = explode('\\', get_class($entity));
 
                 return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»');
