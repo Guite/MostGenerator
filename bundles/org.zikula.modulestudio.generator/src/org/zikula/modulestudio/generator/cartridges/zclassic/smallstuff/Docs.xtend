@@ -6,12 +6,14 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.document
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_GPL
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.documents.License_LGPL
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Docs {
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -77,6 +79,9 @@ class Docs {
                 fileName = 'LICENSE.generated'
             }
             fsa.generateFile(getAppLicencePath + fileName, License)
+        }
+        if (writeModelToDocs) {
+            fsa.generateFile(docPath + '/model/.htaccess', htAccessForModel)
         }
     }
 
@@ -179,5 +184,23 @@ class Docs {
         «ELSE»
             Please enter your license text here.
         «ENDIF»
+    '''
+
+    def private htAccessForModel(Application it) '''
+        # «new FileHelper().generatedBy(it, timestampAllGeneratedFiles, versionAllGeneratedFiles)»
+        # ------------------------------------------------------------
+        # Purpose of file: block any web access to unallowed files
+        # stored in this directory
+        # ------------------------------------------------------------
+
+        # Apache 2.2
+        <IfModule !mod_authz_core.c>
+            Deny from all
+        </IfModule>
+
+        # Apache 2.4
+        <IfModule mod_authz_core.c>
+            Require all denied
+        </IfModule>
     '''
 }

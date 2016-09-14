@@ -249,6 +249,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether the model should be written into the docs folder or not.
+     */
+    def writeModelToDocs(Application it) {
+        if (hasSettings) getSettings.writeModelToDocs else false
+    }
+
+    /**
      * Retrieves the SettingsContainer if present.
      */
     def private getSettings(Application it) {
