@@ -115,9 +115,9 @@ class ComposerFile {
             "user": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_«getLeadingEntity.getPrimaryAction»"},
         «ENDIF»
         «IF hasAdminController»
-            "admin": {"route": "«appName.formatForDB»_admin_index"},
+            "admin": {"route": "«appName.formatForDB»_admin_index"}«IF hasExtraCapabilities»,«ENDIF»
         «ELSE»
-            "admin": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"},
+            "admin": {"route": "«appName.formatForDB»_«getLeadingEntity.name.formatForDB»_admin«getLeadingEntity.getPrimaryAction»"}«IF hasExtraCapabilities»,«ENDIF»
         «ENDIF»
         «IF generateSearchApi»
             "searchable": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\SearchHelper"},
@@ -142,6 +142,22 @@ class ComposerFile {
         «ENDIF»«/* TODO see #15 ,
         "hook_provider": {"class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Container\\HookContainer"} */»
     '''
+
+    def private hasExtraCapabilities(Application it) {
+        if (generateSearchApi) {
+            return true
+        }
+        if (hasCategorisableEntities) {
+            return true
+        }
+        if (null !== capabilities && capabilities != '') {
+            return true
+        }
+        if (hasHookSubscribers) {
+            return true
+        }
+        false
+    }
 
     def private getPrimaryAction(Entity it) {
         if (hasActions('index')) {
