@@ -151,6 +151,7 @@ class Validation {
                                 // check if request was successful
                                 if (!req.isSuccess()) {
                                     Zikula.showajaxerror(req.getMessage());
+
                                     return;
                                 }
 
@@ -159,10 +160,12 @@ class Validation {
                                 if (data.isDuplicate !== '1') {
                                     $('advice-validate-unique-' + elem.id).hide();
                                     elem.removeClassName('validation-failed').addClassName('validation-passed');
+
                                     return true;
                                 } else {
                                     $('advice-validate-unique-' + elem.id).show();
                                     elem.removeClassName('validation-passed').addClassName('validation-failed');
+
                                     return false;
                                 }
                             }
@@ -216,6 +219,7 @@ class Validation {
                 if (val === '') {
                     return true;
                 }
+
                 fileExtension = '.' + val.substr(val.lastIndexOf('.') + 1);
                 allowedExtensions = «IF targets('1.3.x')»$(elem.id«ELSE»jQuery('#' + elem.attr('id')«ENDIF» + 'FileExtensions').innerHTML;
                 allowedExtensions = '(.' + allowedExtensions.replace(/, /g, '|.').replace(/,/g, '|.') + ')$';
@@ -313,10 +317,11 @@ class Validation {
                         cmpVal2 = «vendorAndName»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
 
                         if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
-                            return true;
+                            result = true;
+                        } else {
+                            result = (cmpVal <= cmpVal2);
                         }
 
-                        result = (cmpVal <= cmpVal2);
                         if (result) {
                             $('advice-«validateClass»-«startFieldName»').hide();
                             $('advice-«validateClass»-«endFieldName»').hide();
@@ -336,10 +341,11 @@ class Validation {
                         cmpVal2 = «vendorAndName»ReadDate(jQuery('#«endFieldName»').val(), «(endDateField instanceof DatetimeField).displayBool»);
 
                         if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
-                            return true;
+                            result = true;
+                        } else {
+                            result = (cmpVal <= cmpVal2);
                         }
 
-                        result = (cmpVal <= cmpVal2);
                         if (result) {
                             jQuery('#advice-«validateClass»-«startFieldName»').hide();
                             jQuery('#advice-«validateClass»-«endFieldName»').hide();
