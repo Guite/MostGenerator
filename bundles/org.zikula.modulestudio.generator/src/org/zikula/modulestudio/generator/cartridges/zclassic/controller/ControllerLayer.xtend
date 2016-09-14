@@ -365,7 +365,6 @@ class ControllerLayer {
             «IF !skipHookSubscribers»
                 $hookHelper = $this->get('«app.appService».hook_helper');
             «ENDIF»
-            $flashBag = $request->getSession()->getFlashBag();
             $logger = $this->get('logger');
             $userName = $this->get('zikula_users_module.current_user')->get('uname');
         «ENDIF»
@@ -410,7 +409,7 @@ class ControllerLayer {
                 «IF isLegacy»
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 «ELSE»
-                    $flashBag->add('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', ['%s' => $action]));
+                    $this->addFlash('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', ['%s' => $action]));
                     $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }
@@ -423,14 +422,14 @@ class ControllerLayer {
                 «IF isLegacy»
                     LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 «ELSE»
-                    $flashBag->add('status', $this->__('Done! Item deleted.'));
+                    $this->addFlash('status', $this->__('Done! Item deleted.'));
                     $logger->notice('{app}: User {user} deleted the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => $userName, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             } else {
                 «IF isLegacy»
                     LogUtil::registerStatus($this->__('Done! Item updated.'));
                 «ELSE»
-                    $flashBag->add('status', $this->__('Done! Item updated.'));
+                    $this->addFlash('status', $this->__('Done! Item updated.'));
                     $logger->notice('{app}: User {user} executed the {action} workflow action for the {entity} with id {id}.', ['app' => '«app.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid]);
                 «ENDIF»
             }
