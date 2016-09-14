@@ -102,7 +102,7 @@ class ServiceDefinitions {
         services:
             «modPrefix».link_container:
                 class: «appNamespace»\Container\LinkContainer
-                arguments: ["@translator.default", "@router", "@zikula_permissions_module.api.permission", "@«modPrefix».controller_helper"«IF generateAccountApi», "@zikula_extensions_module.api.variable", "@zikula_users_module.current_user"«ENDIF»]
+                arguments: ["@translator.default", "@router", "@zikula_permissions_module.api.permission", "@«modPrefix».controller_helper"«IF generateAccountApi», "@zikula_extensions_module.api.variable"«ENDIF»«IF generateAccountApi || !controllers.filter[c|c.hasActions('edit')].empty», "@zikula_users_module.current_user"«ENDIF»]
                 tags:
                     - { name: zikula.link_container }
     '''
