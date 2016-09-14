@@ -300,6 +300,9 @@ class Listeners {
                 use «appNamespace»\Listener\Base\ThemeListener as BaseThemeListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+                use Zikula\ThemeModule\ThemeEvents;
+                use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
+                use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
