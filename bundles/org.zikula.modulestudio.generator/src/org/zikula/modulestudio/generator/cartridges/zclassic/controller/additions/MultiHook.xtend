@@ -48,7 +48,7 @@ class MultiHook {
         {
             $info = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
                 // module name
-                'module'  => 'MediaAttach',
+                'module'  => '«app.appName»',
                 // possible needles
                 'info'    => '«app.prefix.toUpperCase»{«IF hasActions('view')»«nameMultiple.formatForCode.toUpperCase»«ENDIF»«IF hasActions('display')»«IF hasActions('view')»|«ENDIF»«name.formatForCode.toUpperCase»-«name.formatForCode»Id«ENDIF»}',
                 // whether a reverse lookup is possible, needs «app.appName»_needleapi_«name.formatForDisplay»_inspect() function
