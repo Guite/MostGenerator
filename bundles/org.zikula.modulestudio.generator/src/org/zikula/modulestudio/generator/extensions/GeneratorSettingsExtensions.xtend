@@ -129,6 +129,13 @@ class GeneratorSettingsExtensions {
     }
 
     /**
+     * Determines whether MultiHook needles should be generated or not.
+     */
+    def generateMultiHookNeedles(Application it) {
+        if (hasSettings) getSettings.generateMultiHookNeedles else true
+    }
+
+    /**
      * Determines whether rss view templates should be generated or not.
      */
     def generateRssTemplates(Application it) {

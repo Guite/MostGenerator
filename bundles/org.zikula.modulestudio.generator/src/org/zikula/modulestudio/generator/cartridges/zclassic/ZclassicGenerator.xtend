@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ServiceD
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.UtilityServices
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.MultiHook
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
@@ -249,6 +250,11 @@ class ZclassicGenerator implements IGenerator {
             pm?.subTask('Integration: Mailz api')
             println('Generating mailz api')
             new Mailz().generate(it, fsa)
+        }
+        if (generateMultiHookNeedles) {
+            pm?.subTask('Integration: MultiHook needles')
+            println('Generating MultiHook needles')
+            new MultiHook().generate(it, fsa)
         }
         if (generateTagSupport &&
             ((hasUserController && getMainUserController.hasActions('display'))
