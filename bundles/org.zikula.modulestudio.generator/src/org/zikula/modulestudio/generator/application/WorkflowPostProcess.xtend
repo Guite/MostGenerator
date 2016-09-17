@@ -4,18 +4,23 @@ import java.io.File
 import java.io.IOException
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.IStatus
-import org.eclipse.core.runtime.Path
-import org.eclipse.core.runtime.Platform
 import org.eclipse.emf.mwe.utils.FileCopy
 import org.zikula.modulestudio.generator.workflow.components.ModelFileCopier
 
 /**
- * Workflow post processing for copying the admin image (zclassic) and
- * exporting the report files (reporting).
+ * Workflow post processing for copying model files and creating custom images.
  */
 class WorkflowPostProcess {
+    /**
+     * The workflow settings.
+     */
     WorkflowSettings settings
 
+    /**
+     * Constructor.
+     *
+     * @param settings The workflow settings
+     */
     new(WorkflowSettings settings) {
         this.settings = settings
     }
@@ -25,7 +30,14 @@ class WorkflowPostProcess {
      */
     def run() {
         copyModelFiles
-        copyAdminImage
+        val imageCreator = new ImageCreator
+        try {
+            imageCreator.generate(settings)
+        } catch (Exception e) {
+            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+            // if custom images could not be created copy the default one
+            copyAdminImage
+        }
     }
 
     /**
@@ -49,35 +61,24 @@ class WorkflowPostProcess {
      * Copies the admin image for zclassic cartridge.
      */
     def private copyAdminImage() {
-        val fileCopy = new FileCopy
-        val bundle = Platform.getBundle(ModuleStudioGeneratorActivator.PLUGIN_ID)
-        var resources = FileLocator.findEntries(bundle, new Path('/src/resources/images/MOST_48.png')) //$NON-NLS-1$
-        val resourcesExported = FileLocator.findEntries(bundle, new Path('/resources/images/MOST_48.png')) //$NON-NLS-1$
-        if (resources.empty) {
-            resources = resourcesExported
+        val url = settings.adminImageUrl
+        if (null === url) {
+            return
         }
-        if (!resources.empty) {
-            try {
-                val url = resources.head
-                val fileUrl = FileLocator.toFileURL(url)
-                val file = new File(fileUrl.getPath)
-                fileCopy.sourceFile = file.absolutePath
 
-                val targetBasePath = settings.outputPath + File.separator + 'zclassic' + File.separator + settings.appName.toFirstUpper + File.separator //$NON-NLS-1$
-                var imageFolder = 'Resources' + File.separator + 'public' + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                var targetFolder = new File(targetBasePath + imageFolder)
-                if (!targetFolder.exists) {
-                    // BC support for 1.3.x
-                    imageFolder = 'src' + File.separator + 'modules' + File.separator + settings.appName.toFirstUpper + File.separator + 'images' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    targetFolder = new File(targetBasePath + imageFolder)
-                }
-                if (targetFolder.exists) {
-                    fileCopy.targetFile = targetBasePath + imageFolder + File.separator + 'admin.png' //$NON-NLS-1$
-                    fileCopy.invoke(null)
-                }
-            } catch (IOException e) {
-                ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
+        try {
+            val targetFolder = settings.getPathToModuleImageAssets
+            if (targetFolder.exists) {
+                val sourceImageUrl = FileLocator.toFileURL(url)
+                val sourceImageFile = new File(sourceImageUrl.getPath)
+
+                val fileCopy = new FileCopy
+                fileCopy.sourceFile = sourceImageFile.absolutePath
+                fileCopy.targetFile = targetFolder + File.separator + 'admin.png' //$NON-NLS-1$
+                fileCopy.invoke(null)
             }
+        } catch (IOException e) {
+            ModuleStudioGeneratorActivator.log(IStatus.ERROR, e.message, e)
         }
     }
 }

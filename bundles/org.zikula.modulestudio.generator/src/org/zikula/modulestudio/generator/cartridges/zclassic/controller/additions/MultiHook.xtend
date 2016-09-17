@@ -169,7 +169,6 @@ class MultiHook {
         {
             return «app.appName»_needleapi_«name.formatForDB»_baseInfo();
         }
-        }
     '''
 
     def private needleImpl(Entity it) '''
@@ -186,7 +185,6 @@ class MultiHook {
         function «app.appName»_needleapi_«name.formatForDB»($args)
         {
             return «app.appName»_needleapi_«name.formatForDB»_base($args)
-        }
         }
     '''
 }

@@ -15,7 +15,6 @@ class Images {
     def generate(Application it, IFileSystemAccess fsa) {
         val imagePath = getAppImagePath
         if (!shouldBeSkipped(imagePath + 'index.html')) {
-            // This index.html file will be removed later. At the moment we need it to create according directories.
             fsa.generateFile(imagePath + 'index.html', msUrl)
         }
 

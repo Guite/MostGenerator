@@ -85,6 +85,9 @@ class Scribite {
             }
             fsa.generateFile(pluginPath + fileName, ckLangNl)
         }
+        if (!shouldBeSkipped(pluginPath + 'images/index.html')) {
+            fsa.generateFile(pluginPath + 'images/index.html', msUrl)
+        }
     }
 
     def private pluginMarkItUp(Application it) {
@@ -137,6 +140,9 @@ class Scribite {
             }
             fsa.generateFile(pluginPath + fileName, tinyLangNl)
         }
+        if (!shouldBeSkipped(pluginPath + 'images/index.html')) {
+            fsa.generateFile(pluginPath + 'images/index.html', msUrl)
+        }
     }
 
     def private pluginWym(Application it) {
@@ -163,6 +169,10 @@ class Scribite {
                 fileName = appName + '.generated.js'
             }
             fsa.generateFile(pluginPath + fileName, xinhaPlugin)
+        }
+
+        if (!shouldBeSkipped(pluginPath + 'images/index.html')) {
+            fsa.generateFile(pluginPath + 'images/index.html', msUrl)
         }
     }
 
@@ -205,8 +215,7 @@ class Scribite {
                 editor.ui.addButton('«appName.formatForDB»', {
                     label: editor.lang.«appName.formatForDB».title,
                     command: 'insert«appName»',
-                 // icon: this.path + 'images/ed_«appName.formatForDB».png'
-                    icon: '/images/icons/extrasmall/favorites.png'
+                    icon: this.path + 'images/«appName».png'
                 });
             }
         });
@@ -281,8 +290,7 @@ class Scribite {
                     ed.addButton('«name.formatForDB»', {
                         title : '«name.formatForDB».desc',
                         cmd : 'mce«appName»',
-                     // image : url + '/img/«appName».gif'
-                        image : '/images/icons/extrasmall/favorites.png',
+                        image : url + '/images/«appName».png',
                         onPostRender: function() {
                             var ctrl = this;
         
@@ -369,8 +377,7 @@ class Scribite {
             cfg.registerButton({
                 id       : '«appName»',
                 tooltip  : 'Insert «appName» object',
-             // image    : _editor_url + 'plugins/«appName»/img/ed_«appName».gif',
-                image    : '/images/icons/extrasmall/favorites.png',
+                image    : _editor_url + 'plugins/«appName»/images/«appName».png',
                 textMode : false,
                 action   : function (editor) {
                     «IF targets('1.3.x')»
