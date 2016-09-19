@@ -68,9 +68,9 @@ class Factory {
          * This is the base factory class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.x')»
-        class «app.appName»_Entity_Factory_Base_«name.formatForCodeCapital»
+        abstract class «app.appName»_Entity_Factory_Base_Abstract«name.formatForCodeCapital»
         «ELSE»
-        class «name.formatForCodeCapital»Factory
+        abstract class Abstract_«name.formatForCodeCapital»Factory
         «ENDIF»
         {
             /**
@@ -118,7 +118,7 @@ class Factory {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Factory;
 
-            use «app.appNamespace»\Entity\Factory\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF»Factory as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»Factory;
+            use «app.appNamespace»\Entity\Factory\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Factory;
 
         «ENDIF»
         /**
@@ -127,9 +127,9 @@ class Factory {
          * This is the concrete factory class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.x')»
-        class «app.appName»_Entity_Factory_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Factory_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Factory_Base_«name.formatForCodeCapital»«ENDIF»
+        class «app.appName»_Entity_Factory_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Factory_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Factory_Base_Abstract«name.formatForCodeCapital»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»Factory extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»Factory
+        class «name.formatForCodeCapital»Factory extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«ENDIF»Factory
         «ENDIF»
         {
             // feel free to customise the manager

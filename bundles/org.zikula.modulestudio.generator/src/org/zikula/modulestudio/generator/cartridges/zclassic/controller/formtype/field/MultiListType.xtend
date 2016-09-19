@@ -38,7 +38,7 @@ class MultiListType {
         /**
          * Multi list field type base class.
          */
-        class MultiListType extends AbstractType
+        abstract class AbstractMultiListType extends AbstractType
         {
             /**
              * @var ListEntriesHelper
@@ -93,12 +93,12 @@ class MultiListType {
     def private multiListTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\MultiListType as BaseMultiListType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractMultiListType;
 
         /**
          * Multi list field type implementation class.
          */
-        class MultiListType extends BaseMultiListType
+        class MultiListType extends AbstractMultiListType
         {
             // feel free to extend the base form type class here
         }

@@ -101,7 +101,7 @@ class Listeners {
     }
 
     def private listenerFile(String name, CharSequence content) {
-        var filePath = listenerPath + name + listenerSuffix
+        var filePath = listenerPath + (if (isBase) 'Abstract') + name + listenerSuffix
         if (!app.shouldBeSkipped(filePath)) {
             if (app.shouldBeMarked(filePath)) {
                 filePath = listenerPath + name + listenerSuffix.replace('.php', '.generated.php')
@@ -115,7 +115,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\CoreListener as BaseCoreListener;
+                use «appNamespace»\Listener\Base\AbstractCoreListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -127,9 +127,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_AbstractCore
         «ELSE»
-        class CoreListener«IF !isBase» extends BaseCoreListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class CoreListener«IF !isBase» extends AbstractCoreListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Core().generate(it, isBase)»
@@ -141,7 +141,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for frontend controller interaction events.
          */
-        class «IF !isBase»«appName»_Listener_FrontController extends «ENDIF»«appName»_Listener_Base_FrontController
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_FrontController extends «ENDIF»«appName»_Listener_Base_AbstractFrontController
         {
             «new FrontControllerLegacy().generate(it, isBase)»
         }
@@ -152,7 +152,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\InstallerListener as BaseInstallerListener;
+                use «appNamespace»\Listener\Base\AbstractInstallerListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -166,9 +166,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_AbstractInstaller
         «ELSE»
-        class InstallerListener«IF !isBase» extends BaseInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class InstallerListener«IF !isBase» extends AbstractInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ModuleInstaller().generate(it, isBase)»
@@ -180,7 +180,7 @@ class Listeners {
         namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
         «IF !isBase»
-            use «appNamespace»\Listener\Base\KernelListener as BaseKernelListener;
+            use «appNamespace»\Listener\Base\AbstractKernelListener;
         «ELSE»
             use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             use Symfony\Component\HttpKernel\KernelEvents;
@@ -198,7 +198,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for Symfony kernel events.
          */
-        class KernelListener«IF !isBase» extends BaseKernelListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class KernelListener«IF !isBase» extends AbstractKernelListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «new Kernel().generate(it, isBase)»
         }
@@ -209,7 +209,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\ModuleDispatchListener as BaseModuleDispatchListener;
+                use «appNamespace»\Listener\Base\AbstractModuleDispatchListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -220,9 +220,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_AbstractModuleDispatch
         «ELSE»
-        class ModuleDispatchListener«IF !isBase» extends BaseModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class ModuleDispatchListener«IF !isBase» extends AbstractModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ModuleDispatch().generate(it, isBase)»
@@ -234,7 +234,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\MailerListener as BaseMailerListener;
+                use «appNamespace»\Listener\Base\AbstractMailerListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -247,9 +247,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_AbstractMailer
         «ELSE»
-        class MailerListener«IF !isBase» extends BaseMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Mailer().generate(it, isBase)»
@@ -261,7 +261,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\PageListener as BasePageListener;
+                use «appNamespace»\Listener\Base\AbstractPageListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -272,9 +272,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for page-related events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_AbstractPage
         «ELSE»
-        class PageListener«IF !isBase» extends BasePageListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class PageListener«IF !isBase» extends AbstractPageListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Page().generate(it, isBase)»
@@ -286,7 +286,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for error-related events.
          */
-        class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_AbstractErrors
         {
             «new ErrorsLegacy().generate(it, isBase)»
         }
@@ -297,7 +297,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\ThemeListener as BaseThemeListener;
+                use «appNamespace»\Listener\Base\AbstractThemeListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Zikula\ThemeModule\ThemeEvents;
@@ -311,9 +311,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_AbstractTheme
         «ELSE»
-        class ThemeListener«IF !isBase» extends BaseThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class ThemeListener«IF !isBase» extends AbstractThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Theme().generate(it, isBase)»
@@ -325,7 +325,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\ViewListener as BaseViewListener;
+                use «appNamespace»\Listener\Base\AbstractViewListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -336,9 +336,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for view-related events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_AbstractView
         «ELSE»
-        class ViewListener«IF !isBase» extends BaseViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class ViewListener«IF !isBase» extends BaseViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new View().generate(it, isBase)»
@@ -350,7 +350,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\UserLoginListener as BaseUserLoginListener;
+                use «appNamespace»\Listener\Base\AbstractUserLoginListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -364,9 +364,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_AbstractUserLogin
         «ELSE»
-        class UserLoginListener«IF !isBase» extends BaseUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class UserLoginListener«IF !isBase» extends AbstractUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserLogin().generate(it, isBase)»
@@ -378,7 +378,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\UserLogoutListener as BaseUserLogoutListener;
+                use «appNamespace»\Listener\Base\AbstractUserLogoutListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -392,9 +392,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user logout events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_AbstractUserLogout
         «ELSE»
-        class UserLogoutListener«IF !isBase» extends BaseUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class UserLogoutListener«IF !isBase» extends AbstractUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserLogout().generate(it, isBase)»
@@ -406,7 +406,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\UserListener as BaseUserListener;
+                use «appNamespace»\Listener\Base\AbstractUserListener;
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
                     use ServiceUtil;
@@ -425,9 +425,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user-related events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_AbstractUser
         «ELSE»
-        class UserListener«IF !isBase» extends BaseUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class UserListener«IF !isBase» extends AbstractUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new User().generate(it, isBase)»
@@ -439,7 +439,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\UserRegistrationListener as BaseUserRegistrationListener;
+                use «appNamespace»\Listener\Base\AbstractUserRegistrationListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -453,9 +453,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user registration events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_AbstractUserRegistration
         «ELSE»
-        class UserRegistrationListener«IF !isBase» extends BaseUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class UserRegistrationListener«IF !isBase» extends AbstractUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserRegistration().generate(it, isBase)»
@@ -467,7 +467,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\UsersListener as BaseUsersListener;
+                use «appNamespace»\Listener\Base\AbstractUsersListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -481,9 +481,9 @@ class Listeners {
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for events of the Users module.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_AbstractUsers
         «ELSE»
-        class UsersListener«IF !isBase» extends BaseUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class UsersListener«IF !isBase» extends AbstractUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Users().generate(it, isBase)»
@@ -495,7 +495,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\GroupListener as BaseGroupListener;
+                use «appNamespace»\Listener\Base\AbstractGroupListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
@@ -506,9 +506,9 @@ class Listeners {
          * Event handler implementation class for group-related events.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_AbstractGroup
         «ELSE»
-        class GroupListener«IF !isBase» extends BaseGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class GroupListener«IF !isBase» extends AbstractGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Group().generate(it, isBase)»
@@ -520,7 +520,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use «appNamespace»\Listener\Base\ThirdPartyListener as BaseThirdPartyListener;
+                use «appNamespace»\Listener\Base\AbstractThirdPartyListener;
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -541,9 +541,9 @@ class Listeners {
          * Event handler implementation class for special purposes and 3rd party api support.
          */
         «IF targets('1.3.x')»
-        class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
+        «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_AbstractThirdParty
         «ELSE»
-        class ThirdPartyListener«IF !isBase» extends BaseThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class ThirdPartyListener«IF !isBase» extends AbstractThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ThirdParty().generate(it, isBase)»

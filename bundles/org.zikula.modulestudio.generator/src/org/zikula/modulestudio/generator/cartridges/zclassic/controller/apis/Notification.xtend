@@ -33,7 +33,7 @@ class Notification {
         /**
          * Notification api base class.
          */
-        class «appName»_Api_Base_Notification extends Zikula_AbstractApi
+        abstract class «appName»_Api_Base_AbstractNotification extends Zikula_AbstractApi
         {
             «notificationApiBaseImpl»
         }
@@ -61,7 +61,7 @@ class Notification {
         /**
          * Notification helper base class.
          */
-        class NotificationHelper
+        abstract class AbstractNotificationHelper
         {
             «notificationApiBaseImpl»
         }
@@ -468,7 +468,7 @@ class Notification {
         /**
          * Notification api implementation class.
          */
-        class «appName»_Api_Notification extends «appName»_Api_Base_Notification
+        class «appName»_Api_Notification extends «appName»_Api_Base_AbstractNotification
         {
             // feel free to extend the notification api here
         }
@@ -477,12 +477,12 @@ class Notification {
     def private notificationHelperImpl(Application it) '''
         namespace «appNamespace»\Helper;
 
-        use «appNamespace»\Helper\Base\NotificationHelper as BaseNotificationHelper;
+        use «appNamespace»\Helper\Base\AbstractNotificationHelper;
 
         /**
          * Notification helper implementation class.
          */
-        class NotificationHelper extends BaseNotificationHelper
+        class NotificationHelper extends AbstractNotificationHelper
         {
             // feel free to extend the notification helper here
         }

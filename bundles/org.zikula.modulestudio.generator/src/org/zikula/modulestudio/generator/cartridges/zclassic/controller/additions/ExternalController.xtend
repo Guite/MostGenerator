@@ -48,7 +48,7 @@ class ExternalController {
     /**
      * Controller for external calls base class.
      */
-    class «IF isLegacy»«appName»_Controller_Base_External extends Zikula_AbstractController«ELSE»ExternalController extends AbstractController«ENDIF»
+    abstract class «IF isLegacy»«appName»_Controller_Base_AbstractExternal extends Zikula_AbstractController«ELSE»AbstractExternalController extends AbstractController«ENDIF»
     {
         «IF hasCategorisableEntities»
             /**
@@ -381,7 +381,7 @@ class ExternalController {
         «IF !isLegacy»
             namespace «appNamespace»\Controller;
 
-            use «appNamespace»\Controller\Base\ExternalController as BaseExternalController;
+            use «appNamespace»\Controller\Base\AbstractExternalController;
 
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -394,9 +394,9 @@ class ExternalController {
          «ENDIF»
          */
         «IF isLegacy»
-        class «appName»_Controller_External extends «appName»_Controller_Base_External
+        class «appName»_Controller_External extends «appName»_Controller_Base_AbstractExternal
         «ELSE»
-        class ExternalController extends BaseExternalController
+        class ExternalController extends AbstractExternalController
         «ENDIF»
         {
             «IF !isLegacy»

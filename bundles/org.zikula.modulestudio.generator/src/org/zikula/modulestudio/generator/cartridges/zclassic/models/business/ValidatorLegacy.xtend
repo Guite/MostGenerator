@@ -77,7 +77,7 @@ class ValidatorLegacy {
          *
          * This is the base validation class with general checks.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Base_Validator«ELSE»AbstractValidator«ENDIF» extends Zikula_AbstractBase
+        abstract class «IF targets('1.3.x')»«appName»_Base_AbstractValidator«ELSE»AbstractValidator«ENDIF» extends Zikula_AbstractBase
         {
             /**
              * @var Zikula_EntityAccess The entity instance which is treated by this validator
@@ -503,7 +503,7 @@ class ValidatorLegacy {
         «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
-            use «appNamespace»\Base\AbstractValidator as BaseAbstractValidator;
+            use «appNamespace»\Base\AbstractValidator;
 
         «ENDIF»
         /**
@@ -512,9 +512,9 @@ class ValidatorLegacy {
          * This is the concrete validation class with general checks.
          */
         «IF targets('1.3.x')»
-        class «appName»_Validator extends «appName»_Base_Validator
+        abstract class «appName»_Validator extends «appName»_Base_AbstractValidator
         «ELSE»
-        class AbstractValidator extends BaseAbstractValidator
+        abstract class AbstractValidator extends AbstractValidator
         «ENDIF»
         {
             // here you can add custom validation methods or override existing checks
@@ -564,9 +564,9 @@ class ValidatorLegacy {
          * This is the base validation class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.x')»
-        class «app.appName»_Entity_Validator_Base_«name.formatForCodeCapital» extends «app.appName»_Validator
+        abstract class «app.appName»_Entity_Validator_Base_Abstract«name.formatForCodeCapital» extends «app.appName»_Validator
         «ELSE»
-        class «name.formatForCodeCapital»Validator extends BaseAbstractValidator
+        abstract class Abstract«name.formatForCodeCapital»Validator extends BaseAbstractValidator
         «ENDIF»
         {
             «validatorBaseImplBody(false)»
@@ -578,9 +578,9 @@ class ValidatorLegacy {
             namespace «app.appNamespace»\Entity\Validator;
 
             «IF isInheriting»
-                use «app.appNamespace»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator as Base«parentType.name.formatForCodeCapital»Validator;
+                use «app.appNamespace»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator as BaseValidator;
             «ELSE»
-                use «app.appNamespace»\Entity\Validator\Base\«name.formatForCodeCapital»Validator as Base«name.formatForCodeCapital»Validator;
+                use «app.appNamespace»\Entity\Validator\Base\Abstract«name.formatForCodeCapital»Validator as BaseValidator;
             «ENDIF»
             «IF isInheriting»
 
@@ -595,9 +595,9 @@ class ValidatorLegacy {
          * This is the concrete validation class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.x')»
-        class «app.appName»_Entity_Validator_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForCodeCapital»«ENDIF»
+        class «app.appName»_Entity_Validator_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Validator_Base_Abstract«name.formatForCodeCapital»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»Validator extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»Validator
+        class «name.formatForCodeCapital»Validator extends BaseValidator
         «ENDIF»
         {
             // here you can add custom validation methods or override existing checks

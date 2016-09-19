@@ -60,7 +60,7 @@ class ControllerHelper {
         /**
          * Utility base class for controller helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Controller extends Zikula_AbstractBase«ELSE»ControllerHelper«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractController extends Zikula_AbstractBase«ELSE»AbstractControllerHelper«ENDIF»
         {
             «IF !targets('1.3.x')»
                 /**
@@ -545,16 +545,16 @@ class ControllerHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\ControllerHelper as BaseControllerHelper;
+            use «appNamespace»\Helper\Base\AbstractControllerHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for controller helper methods.
          */
         «IF targets('1.3.x')»
-        class «appName»_Util_Controller extends «appName»_Util_Base_Controller
+        class «appName»_Util_Controller extends «appName»_Util_Base_AbstractController
         «ELSE»
-        class ControllerHelper extends BaseControllerHelper
+        class ControllerHelper extends AbstractControllerHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

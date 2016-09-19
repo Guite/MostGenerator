@@ -81,17 +81,12 @@ class Entities {
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
         var fileName = ''
         if (!isInheriting) {
-            fileName = entityFileName + '.php'
-            if (app.targets('1.3.x') && !app.shouldBeSkipped(entityPath + 'Base/' + fileName)) {
+            fileName = 'Abstract/' + entityFileName + '.php'
+            if (!app.shouldBeSkipped(entityPath + 'Base/' + fileName)) {
                 if (app.shouldBeMarked(entityPath + 'Base/' + fileName)) {
                     fileName = entityFileName + '.generated.php'
                 }
                 fsa.generateFile(entityPath + 'Base/' + fileName, fh.phpFileContent(app, modelEntityBaseImpl(app)))
-            } else if (!app.shouldBeSkipped(entityPath + 'Base/Abstract' + fileName)) {
-                if (app.shouldBeMarked(entityPath + 'Base/Abstract' + fileName)) {
-                    fileName = entityFileName + '.generated.php'
-                }
-                fsa.generateFile(entityPath + 'Base/Abstract' + fileName, fh.phpFileContent(app, modelEntityBaseImpl(app)))
             }
         }
         fileName = entityFileName + '.php'
@@ -180,7 +175,7 @@ class Entities {
          * @abstract
          */
         «IF app.targets('1.3.x')»
-        abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        abstract class «app.appName»_Entity_Base_Abstract«name.formatForCodeCapital» extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ENDIF»
@@ -278,16 +273,16 @@ class Entities {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity;
 
-            use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»;
+            use «app.appNamespace»\Entity\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as BaseEntity;
 
         «ENDIF»
         «imports»
 
         «entityImplClassDocblock(app)»
         «IF app.targets('1.3.x')»
-        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
+        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»Abstract«entityClassName('', true)»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»Entity extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»
+        class «name.formatForCodeCapital»Entity extends BaseEntity
         «ENDIF»
         {
             // feel free to add your own methods here

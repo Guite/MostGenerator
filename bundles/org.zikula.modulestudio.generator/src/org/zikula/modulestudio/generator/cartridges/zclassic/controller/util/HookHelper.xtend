@@ -53,7 +53,7 @@ class HookHelper {
         /**
          * Utility base class for hook related helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Hook extends Zikula_AbstractBase«ELSE»HookHelper«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractHook extends Zikula_AbstractBase«ELSE»AbstractHookHelper«ENDIF»
         {
             «IF !targets('1.3.x')»
                 /**
@@ -167,16 +167,16 @@ class HookHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\HookHelper as BaseHookHelper;
+            use «appNamespace»\Helper\Base\AbstractHookHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for hook related helper methods.
          */
         «IF targets('1.3.x')»
-        class «appName»_Util_Hook extends «appName»_Util_Base_Hook
+        class «appName»_Util_Hook extends «appName»_Util_Base_AbstractHook
         «ELSE»
-        class HookHelper extends BaseHookHelper
+        class HookHelper extends AbstractHookHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here
@@ -186,13 +186,13 @@ class HookHelper {
     def private hookContainerBaseImpl(Application it) '''
         namespace «appNamespace»\Container\Base;
 
-        use Zikula\Bundle\HookBundle\AbstractHookContainer;
+        use Zikula\Bundle\HookBundle\AbstractHookContainer as ZikulaHookContainer;
         use Zikula\Bundle\HookBundle\Bundle\SubscriberBundle;
 
         /**
          * Base class for hook container methods.
          */
-        class HookContainer extends AbstractHookContainer
+        abstract class AbstractHookContainer extends ZikulaHookContainer
         {
             «setup»
         }
@@ -214,12 +214,12 @@ class HookHelper {
     def private hookContainerImpl(Application it) '''
         namespace «appNamespace»\Container;
 
-        use «appNamespace»\Container\Base\HookContainer as BaseHookContainer;
+        use «appNamespace»\Container\Base\AbstractHookContainer;
 
         /**
          * Implementation class for hook container methods.
          */
-        class HookContainer extends BaseHookContainer
+        class HookContainer extends AbstractHookContainer
         {
             // feel free to add your own convenience methods here
         }

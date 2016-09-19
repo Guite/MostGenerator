@@ -55,7 +55,7 @@ class TranslatableHelper {
         /**
          * Utility base class for translatable helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Translatable extends Zikula_AbstractBase«ELSE»TranslatableHelper«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractTranslatable extends Zikula_AbstractBase«ELSE»AbstractTranslatableHelper«ENDIF»
         {
             «IF !targets('1.3.x')»
                 /**
@@ -331,16 +331,16 @@ class TranslatableHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\TranslatableHelper as BaseTranslatableHelper;
+            use «appNamespace»\Helper\Base\AbstractTranslatableHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for translatable helper methods.
          */
         «IF targets('1.3.x')»
-        class «appName»_Util_Translatable extends «appName»_Util_Base_Translatable
+        class «appName»_Util_Translatable extends «appName»_Util_Base_AbstractTranslatable
         «ELSE»
-        class TranslatableHelper extends BaseTranslatableHelper
+        class TranslatableHelper extends AbstractTranslatableHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

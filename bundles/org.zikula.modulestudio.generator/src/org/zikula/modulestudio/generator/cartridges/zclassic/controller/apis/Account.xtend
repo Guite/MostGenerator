@@ -34,7 +34,7 @@ class Account {
         /**
          * Account api base class.
          */
-        class «appName»_Api_Base_Account extends Zikula_AbstractApi
+        abstract class «appName»_Api_Base_AbstractAccount extends Zikula_AbstractApi
         {
             «accountApiBaseImpl»
         }
@@ -105,7 +105,7 @@ class Account {
         /**
          * Account api implementation class.
          */
-        class «appName»_Api_Account extends «appName»_Api_Base_Account
+        class «appName»_Api_Account extends «appName»_Api_Base_AbstractAccount
         {
             // feel free to extend the account api here
         }

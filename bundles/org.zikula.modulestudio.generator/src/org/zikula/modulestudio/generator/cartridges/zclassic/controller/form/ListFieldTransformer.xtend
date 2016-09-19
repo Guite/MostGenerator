@@ -29,7 +29,7 @@ class ListFieldTransformer {
          *
          * This data transformer treats multi-valued list fields.
          */
-        class ListFieldTransformer implements DataTransformerInterface
+        abstract class AbstractListFieldTransformer implements DataTransformerInterface
         {
             /**
              * @var ListEntriesHelper
@@ -83,14 +83,14 @@ class ListFieldTransformer {
     def private transformerImpl(Application it) '''
         namespace «appNamespace»\Form\DataTransformer;
 
-        use «appNamespace»\Form\DataTransformer\Base\ListFieldTransformer as BaseTransformer;
+        use «appNamespace»\Form\DataTransformer\Base\AbstractListFieldTransformer;
 
         /**
          * List fields transformer implementation class.
          *
          * This data transformer treats multi-valued list fields.
          */
-        class ListFieldTransformer extends BaseTransformer
+        class ListFieldTransformer extends AbstractListFieldTransformer
         {
             // feel free to add your customisation here
         }

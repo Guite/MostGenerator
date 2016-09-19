@@ -45,7 +45,7 @@ class LifecycleListener {
         /**
          * Event subscriber base class for entity lifecycle events.
          */
-        class EntityLifecycleListener implements EventSubscriber
+        abstract class AbstractEntityLifecycleListener implements EventSubscriber
         {
             /**
              * Returns list of events to subscribe.
@@ -216,12 +216,12 @@ class LifecycleListener {
     def private lifecycleListenerImpl(Application it) '''
         namespace «appNamespace»\Listener;
 
-        use «appNamespace»\Listener\Base\EntityLifecycleListener as BaseEntityLifecycleListener;
+        use «appNamespace»\Listener\Base\AbstractEntityLifecycleListener;
 
         /**
          * Event subscriber implementation class for entity lifecycle events.
          */
-        class EntityLifecycleListener extends BaseEntityLifecycleListener
+        class EntityLifecycleListener extends AbstractEntityLifecycleListener
         {
         }
     '''

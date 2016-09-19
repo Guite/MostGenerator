@@ -50,7 +50,7 @@ class ListBlock {
         /**
          * List block form type base class.
          */
-        class ItemListBlockType extends AbstractType
+        abstract class AbstractItemListBlockType extends AbstractType
         {
             use TranslatorTrait;
 
@@ -309,12 +309,12 @@ class ListBlock {
     def private listBlockTypeImpl(Application it) '''
         namespace «appNamespace»\Block\Form\Type;
 
-        use «appNamespace»\Block\Form\Type\Base\ItemListBlockType as BaseItemListBlockType;
+        use «appNamespace»\Block\Form\Type\Base\AbstractItemListBlockType;
 
         /**
          * List block form type implementation class.
          */
-        class ItemListBlockType extends BaseItemListBlockType
+        class ItemListBlockType extends AbstractItemListBlockType
         {
             // feel free to extend the list block form type class here
         }

@@ -43,7 +43,7 @@ class ModelHelper {
         /**
          * Utility base class for model helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Model extends Zikula_AbstractBase«ELSE»ModelHelper«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractModel extends Zikula_AbstractBase«ELSE»AbstractModelHelper«ENDIF»
         {
             «IF !targets('1.3.x')»
                 /**
@@ -179,16 +179,16 @@ class ModelHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\ModelHelper as BaseModelHelper;
+            use «appNamespace»\Helper\Base\AbstractModelHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for model helper methods.
          */
         «IF targets('1.3.x')»
-        class «appName»_Util_Model extends «appName»_Util_Base_Model
+        class «appName»_Util_Model extends «appName»_Util_Base_AbstractModel
         «ELSE»
-        class ModelHelper extends BaseModelHelper
+        class ModelHelper extends AbstractModelHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

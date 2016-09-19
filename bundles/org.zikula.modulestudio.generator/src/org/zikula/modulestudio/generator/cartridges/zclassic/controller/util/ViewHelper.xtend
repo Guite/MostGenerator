@@ -46,7 +46,7 @@ class ViewHelper {
         /**
          * Utility base class for view helper methods.
          */
-        class «IF isLegacy»«appName»_Util_Base_View extends Zikula_AbstractBase«ELSE»ViewHelper«ENDIF»
+        abstract class «IF isLegacy»«appName»_Util_Base_AbstractView extends Zikula_AbstractBase«ELSE»AbstractViewHelper«ENDIF»
         {
             «IF !isLegacy»
                 /**
@@ -487,16 +487,16 @@ class ViewHelper {
         «IF !isLegacy»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\ViewHelper as BaseViewHelper;
+            use «appNamespace»\Helper\Base\AbstractViewHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for view helper methods.
          */
         «IF isLegacy»
-        class «appName»_Util_View extends «appName»_Util_Base_View
+        class «appName»_Util_View extends «appName»_Util_Base_AbstractView
         «ELSE»
-        class ViewHelper extends BaseViewHelper
+        class ViewHelper extends AbstractViewHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

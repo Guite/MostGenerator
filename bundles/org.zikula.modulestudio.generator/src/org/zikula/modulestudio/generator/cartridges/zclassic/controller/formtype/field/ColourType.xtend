@@ -34,7 +34,7 @@ class ColourType {
          *
          * The allowed formats are '#RRGGBB' and '#RGB'.
          */
-        class ColourType extends AbstractType
+        abstract class AbstractColourType extends AbstractType
         {
             /**
              * @var AssetBag
@@ -144,14 +144,14 @@ class ColourType {
     def private colourTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\ColourType as BaseColourType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractColourType;
 
         /**
          * Colour field type implementation class.
          *
          * The allowed formats are '#RRGGBB' and '#RGB'.
          */
-        class ColourType extends BaseColourType
+        class ColourType extends AbstractColourType
         {
             // feel free to add your customisation here
         }

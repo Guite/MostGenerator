@@ -115,7 +115,7 @@ class Plugins {
         /**
          * Twig extension base class.
          */
-        class TwigExtension extends \Twig_Extension
+        abstract class AbstractTwigExtension extends \Twig_Extension
         {
             «twigExtensionBody»
         }
@@ -395,12 +395,12 @@ class Plugins {
     def private twigExtensionImpl(Application it) '''
         namespace «appNamespace»\Twig;
 
-        use «appNamespace»\Twig\Base\TwigExtension as BaseTwigExtension;
+        use «appNamespace»\Twig\Base\AbstractTwigExtension;
 
         /**
          * Twig extension implementation class.
          */
-        class TwigExtension extends BaseTwigExtension
+        class TwigExtension extends AbstractTwigExtension
         {
             // feel free to add your own Twig extension methods here
         }

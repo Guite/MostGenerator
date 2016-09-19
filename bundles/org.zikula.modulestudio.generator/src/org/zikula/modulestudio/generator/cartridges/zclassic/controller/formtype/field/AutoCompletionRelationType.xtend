@@ -34,7 +34,7 @@ class AutoCompletionRelationType {
         /**
          * Auto completion relation field type base class.
          */
-        class AutoCompletionRelationType extends AbstractType
+        abstract class AbstractAutoCompletionRelationType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -120,12 +120,12 @@ class AutoCompletionRelationType {
     def private relationTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\AutoCompletionRelationType as BaseRelationType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractAutoCompletionRelationType;
 
         /**
          * Auto completion relation field type implementation class.
          */
-        class AutoCompletionRelationType extends BaseRelationType
+        class AutoCompletionRelationType extends AbstractRelationType
         {
             // feel free to add your customisation here
         }

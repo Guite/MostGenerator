@@ -37,7 +37,7 @@ class Category {
         /**
          * Category api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Category extends Zikula_AbstractApi«ELSE»CategoryApi extends Zikula_AbstractBase«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Api_Base_AbstractCategory extends Zikula_AbstractApi«ELSE»AbstractCategoryApi extends Zikula_AbstractBase«ENDIF»
         {
             «categoryBaseImpl»
         }
@@ -312,16 +312,16 @@ class Category {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
-            use «appNamespace»\Api\Base\CategoryApi as BaseCategoryApi;
+            use «appNamespace»\Api\Base\AbstractCategoryApi;
 
         «ENDIF»
         /**
          * Category api implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Api_Category extends «appName»_Api_Base_Category
+        class «appName»_Api_Category extends «appName»_Api_Base_AbstractCategory
         «ELSE»
-        class CategoryApi extends BaseCategoryApi
+        class CategoryApi extends AbstractCategoryApi
         «ENDIF»
         {
             // feel free to extend the category api at this place

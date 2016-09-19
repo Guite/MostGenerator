@@ -33,7 +33,7 @@ class AutoCompletionRelationTransformer {
          *
          * This data transformer identifiers chosen by an auto completion functionality.
          */
-        class AutoCompletionRelationTransformer implements DataTransformerInterface
+        abstract class AbstractAutoCompletionRelationTransformer implements DataTransformerInterface
         {
             /**
              * @var ObjectManager The object manager to be used for determining the repository
@@ -196,14 +196,14 @@ class AutoCompletionRelationTransformer {
     def private transformerImpl(Application it) '''
         namespace «appNamespace»\Form\DataTransformer;
 
-        use «appNamespace»\Form\DataTransformer\Base\AutoCompletionRelationTransformer as BaseTransformer;
+        use «appNamespace»\Form\DataTransformer\Base\AbstractAutoCompletionRelationTransformer;
 
         /**
          * Auto completion relation transformer implementation class.
          *
          * This data transformer identifiers chosen by an auto completion functionality.
          */
-        class AutoCompletionRelationTransformer extends BaseTransformer
+        class AutoCompletionRelationTransformer extends AbstractAutoCompletionRelationTransformer
         {
             // feel free to add your customisation here
         }

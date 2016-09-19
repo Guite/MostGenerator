@@ -36,7 +36,7 @@ class LegacyPaginatorSwitch {
          * Paginator switch base class for making 1.3.x modules work with 1.4.
          * Uses the newer Paginator.
          */
-        abstract class «appName»_Paginator_Base_Paginator
+        abstract class «appName»_Paginator_Base_AbstractPaginator
         {
             /**
              * @var Query The query instance
@@ -79,7 +79,7 @@ class LegacyPaginatorSwitch {
         /**
          * Paginator switch implementation class for making 1.3.x modules work with 1.4.
          */
-        class «appName»_Paginator_Paginator extends «appName»_Paginator_Base_Paginator
+        class «appName»_Paginator_Paginator extends «appName»_Paginator_Base_AbstractPaginator
         {
             // extend the paginator class here if desired
         }
@@ -93,7 +93,7 @@ class LegacyPaginatorSwitch {
          * Paginator switch base class for 1.3.x modules.
          * Uses the old Paginator.
          */
-        abstract class «appName»_Paginator_Base_LegacyPaginator
+        abstract class «appName»_Paginator_Base_AbstractLegacyPaginator
         {
             /**
              * @var Query The query instance
@@ -143,7 +143,7 @@ class LegacyPaginatorSwitch {
         /**
          * Paginator switch implementation class for 1.3.x modules.
          */
-        class «appName»_Paginator_LegacyPaginator extends «appName»_Paginator_Base_LegacyPaginator
+        class «appName»_Paginator_LegacyPaginator extends «appName»_Paginator_Base_AbstractLegacyPaginator
         {
             // extend the paginator class here if desired
         }

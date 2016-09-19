@@ -40,9 +40,9 @@ class ContentTypeSingle {
          * Generic single item display content plugin base class.
          */
         «IF targets('1.3.x')»
-        class «appName»_ContentType_Base_Item extends Content_AbstractContentType
+        abstract class «appName»_ContentType_Base_AbstractItem extends Content_AbstractContentType
         «ELSE»
-        class Item extends \Content_AbstractContentType
+        abstract class AbstractItem extends \Content_AbstractContentType
         «ENDIF»
         {
             «contentTypeBaseImpl»
@@ -226,16 +226,16 @@ class ContentTypeSingle {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\ContentType;
 
-            use «appNamespace»\ContentType\Base\Item as BaseItem;
+            use «appNamespace»\ContentType\Base\AbstractItem;
 
         «ENDIF»
         /**
          * Generic single item display content plugin implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_ContentType_Item extends «appName»_ContentType_Base_Item
+        class «appName»_ContentType_Item extends «appName»_ContentType_Base_AbstractItem
         «ELSE»
-        class Item extends BaseItem
+        class Item extends AbstractItem
         «ENDIF»
         {
             // feel free to extend the content type here

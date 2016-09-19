@@ -41,7 +41,7 @@ class EntityMetaData {
         /**
          * Entity meta data form type base class.
          */
-        class EntityMetaDataType extends AbstractType
+        abstract class AbstractEntityMetaDataType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -133,12 +133,12 @@ class EntityMetaData {
     def private metaDataTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type;
 
-        use «appNamespace»\Form\Type\Base\EntityMetaDataType as BaseEntityMetaDataType;
+        use «appNamespace»\Form\Type\Base\AbstractEntityMetaDataType;
 
         /**
          * Entity meta data form type implementation class.
          */
-        class EntityMetaDataType extends BaseEntityMetaDataType
+        class EntityMetaDataType extends AbstractEntityMetaDataType
         {
             // feel free to extend the meta data form type class here
         }

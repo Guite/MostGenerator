@@ -61,7 +61,7 @@ class Installer {
         /**
          * Installer base class.
          */
-        class «IF targets('1.3.x')»«appName»_Base_Installer extends Zikula_AbstractInstaller«ELSE»«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Base_AbstractInstaller extends Zikula_AbstractInstaller«ELSE»Abstract«name.formatForCodeCapital»ModuleInstaller extends AbstractExtensionInstaller«ENDIF»
         {
             «installerBaseImpl»
         }
@@ -434,16 +434,16 @@ class Installer {
         «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
-            use «appNamespace»\Base\«name.formatForCodeCapital»ModuleInstaller as Base«name.formatForCodeCapital»ModuleInstaller;
+            use «appNamespace»\Base\Abstract«name.formatForCodeCapital»ModuleInstaller;
 
         «ENDIF»
         /**
          * Installer implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Installer extends «appName»_Base_Installer
+        class «appName»_Installer extends «appName»_Base_AbstractInstaller
         «ELSE»
-        class «name.formatForCodeCapital»ModuleInstaller extends Base«name.formatForCodeCapital»ModuleInstaller
+        class «name.formatForCodeCapital»ModuleInstaller extends Abstract«name.formatForCodeCapital»ModuleInstaller
         «ENDIF»
         {
             // feel free to extend the installer here

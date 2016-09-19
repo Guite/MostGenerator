@@ -46,7 +46,7 @@ class Cache {
         /**
          * Cache api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Cache extends Zikula_AbstractApi«ELSE»CacheApi extends Zikula_AbstractBase«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Api_Base_AbstractCache extends Zikula_AbstractApi«ELSE»AbstractCacheApi extends Zikula_AbstractBase«ENDIF»
         {
             «cacheApiBaseImpl»
         }
@@ -196,16 +196,16 @@ class Cache {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
-            use «appNamespace»\Api\Base\CacheApi as BaseCacheApi;
+            use «appNamespace»\Api\Base\AbstractCacheApi;
 
         «ENDIF»
         /**
          * Cache api implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Api_Cache extends «appName»_Api_Base_Cache
+        class «appName»_Api_Cache extends «appName»_Api_Base_AbstractCache
         «ELSE»
-        class CacheApi extends BaseCacheApi
+        class CacheApi extends AbstractCacheApi
         «ENDIF»
         {
             // feel free to extend the cache api here

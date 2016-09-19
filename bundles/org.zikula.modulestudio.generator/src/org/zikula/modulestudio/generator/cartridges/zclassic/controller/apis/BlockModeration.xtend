@@ -32,7 +32,7 @@ class BlockModeration {
         /**
          * Moderation block base class.
          */
-        class «IF targets('1.3.x')»«appName»_Block_Base_Moderation extends Zikula_Controller_AbstractBlock«ELSE»ModerationBlock extends AbstractBlockHandler«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Block_Base_AbstractModeration extends Zikula_Controller_AbstractBlock«ELSE»AbstractModerationBlock extends AbstractBlockHandler«ENDIF»
         {
             «moderationBlockBaseImpl»
         }
@@ -191,16 +191,16 @@ class BlockModeration {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block;
 
-            use «appNamespace»\Block\Base\ModerationBlock as BaseModerationBlock;
+            use «appNamespace»\Block\Base\AbstractModerationBlock;
 
         «ENDIF»
         /**
          * Moderation block implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Block_Moderation extends «appName»_Block_Base_Moderation
+        class «appName»_Block_Moderation extends «appName»_Block_Base_AbstractModeration
         «ELSE»
-        class ModerationBlock extends BaseModerationBlock
+        class ModerationBlock extends AbstractModerationBlock
         «ENDIF»
         {
             // feel free to extend the moderation block here

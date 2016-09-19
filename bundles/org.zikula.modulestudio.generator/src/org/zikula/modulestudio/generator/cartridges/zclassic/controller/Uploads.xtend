@@ -138,9 +138,9 @@ class Uploads {
          * Upload handler base class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Base_UploadHandler
+        abstract class «appName»_Base_AbstractUploadHandler
         «ELSE»
-        class UploadHandler
+        abstract class AbstractUploadHandler
         «ENDIF»
         {
             «IF !targets('1.3.x')»
@@ -774,16 +774,16 @@ class Uploads {
         «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
-            use «appNamespace»\Base\UploadHandler as BaseUploadHandler;
+            use «appNamespace»\Base\AbstractUploadHandler;
 
         «ENDIF»
         /**
          * Upload handler implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_UploadHandler extends «appName»_Base_UploadHandler
+        class «appName»_UploadHandler extends «appName»_Base_AbstractUploadHandler
         «ELSE»
-        class UploadHandler extends BaseUploadHandler
+        class UploadHandler extends AbstractUploadHandler
         «ENDIF»
         {
             // feel free to add your upload handler enhancements here

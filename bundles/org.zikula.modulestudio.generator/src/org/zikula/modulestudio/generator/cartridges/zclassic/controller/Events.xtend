@@ -49,7 +49,7 @@ class Events {
         /**
          * Events definition base class.
          */
-        class «name.formatForCodeCapital»Events
+        abstract class Abstract«name.formatForCodeCapital»Events
         {
             «FOR entity : getAllEntities»
                 «entity.eventDefinitions»
@@ -191,12 +191,12 @@ class Events {
     def private filterEventImpl(Entity it) '''
         namespace «app.appNamespace»\Event;
 
-        use «app.appNamespace»\Event\Base\Filter«name.formatForCodeCapital»Event as BaseFilter«name.formatForCodeCapital»Event;
+        use «app.appNamespace»\Event\Base\AbstractFilter«name.formatForCodeCapital»Event;
 
         /**
          * Event implementation class for filtering «name.formatForDisplay» processing.
          */
-        class Filter«name.formatForCodeCapital»Event extends BaseFilter«name.formatForCodeCapital»Event
+        class Filter«name.formatForCodeCapital»Event extends AbstractFilter«name.formatForCodeCapital»Event
         {
             // feel free to extend the event class here
         }

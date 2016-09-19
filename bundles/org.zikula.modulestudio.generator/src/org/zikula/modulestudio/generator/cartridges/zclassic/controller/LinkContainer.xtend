@@ -62,7 +62,7 @@ class LinkContainer {
         /**
          * This is the link container service implementation class.
          */
-        class LinkContainer implements LinkContainerInterface
+        abstract class AbstractLinkContainer implements LinkContainerInterface
         {
             use TranslatorTrait;
 
@@ -241,12 +241,12 @@ class LinkContainer {
     def private linkContainerImpl(Controller it) '''
         namespace «app.appNamespace»\Container;
 
-        use «app.appNamespace»\Container\Base\LinkContainer as BaseLinkContainer;
+        use «app.appNamespace»\Container\Base\AbstractLinkContainer;
 
         /**
          * This is the link container service implementation class.
          */
-        class LinkContainer extends BaseLinkContainer
+        class LinkContainer extends AbstractLinkContainer
         {
             // feel free to add own extensions here
         }

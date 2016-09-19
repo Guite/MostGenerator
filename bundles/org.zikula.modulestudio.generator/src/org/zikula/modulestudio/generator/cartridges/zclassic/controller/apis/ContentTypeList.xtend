@@ -46,9 +46,9 @@ class ContentTypeList {
          * Generic item list content plugin base class.
          */
         «IF targets('1.3.x')»
-        class «appName»_ContentType_Base_ItemList extends Content_AbstractContentType
+        abstract class «appName»_ContentType_Base_AbstractItemList extends Content_AbstractContentType
         «ELSE»
-        class ItemList extends \Content_AbstractContentType
+        abstract class AbstractItemList extends \Content_AbstractContentType
         «ENDIF»
         {
             «contentTypeBaseImpl»
@@ -534,16 +534,16 @@ class ContentTypeList {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\ContentType;
 
-            use «appNamespace»\ContentType\Base\ItemList as BaseItemList;
+            use «appNamespace»\ContentType\Base\AbstractItemList;
 
         «ENDIF»
         /**
          * Generic item list content plugin implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_ContentType_ItemList extends «appName»_ContentType_Base_ItemList
+        class «appName»_ContentType_ItemList extends «appName»_ContentType_Base_AbstractItemList
         «ELSE»
-        class ItemList extends BaseItemList
+        class ItemList extends AbstractItemList
         «ENDIF»
         {
             // feel free to extend the content type here

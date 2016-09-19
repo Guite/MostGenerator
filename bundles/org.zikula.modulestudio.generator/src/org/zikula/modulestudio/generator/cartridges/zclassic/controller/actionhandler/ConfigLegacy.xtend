@@ -37,7 +37,7 @@ class ConfigLegacy {
         /**
          * Configuration handler base class.
          */
-        class «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config extends Zikula_Form_AbstractHandler
+        abstract class «appName»_Form_Handler_«configController.toFirstUpper»_Base_AbstractConfig extends Zikula_Form_AbstractHandler
         {
             /**
              * Post construction hook.
@@ -183,7 +183,7 @@ class ConfigLegacy {
         /**
          * Configuration handler implementation class.
          */
-        class «appName»_Form_Handler_«configController.toFirstUpper»_Config extends «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config
+        class «appName»_Form_Handler_«configController.toFirstUpper»_Config extends «appName»_Form_Handler_«configController.toFirstUpper»_Base_AbstractConfig
         {
             // feel free to extend the base handler class here
         }

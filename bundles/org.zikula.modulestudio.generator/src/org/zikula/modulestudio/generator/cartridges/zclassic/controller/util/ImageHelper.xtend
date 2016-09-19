@@ -33,7 +33,7 @@ class ImageHelper {
         /**
          * Utility base class for image helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Image extends Zikula_AbstractBase«ELSE»ImageHelper«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractImage extends Zikula_AbstractBase«ELSE»AbstractImageHelper«ENDIF»
         {
             «IF !targets('1.3.x')»
                 /**
@@ -148,16 +148,16 @@ class ImageHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\ImageHelper as BaseImageHelper;
+            use «appNamespace»\Helper\Base\AbstractImageHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for image helper methods.
          */
         «IF targets('1.3.x')»
-        class «appName»_Util_Image extends «appName»_Util_Base_Image
+        class «appName»_Util_Image extends «appName»_Util_Base_AbstractImage
         «ELSE»
-        class ImageHelper extends BaseImageHelper
+        class ImageHelper extends AbstractImageHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

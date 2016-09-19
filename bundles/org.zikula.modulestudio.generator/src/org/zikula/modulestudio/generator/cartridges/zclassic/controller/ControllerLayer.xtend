@@ -143,7 +143,7 @@ class ControllerLayer {
         /**
          * «name» controller class.
          */
-        class «IF isLegacy»«app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»«ELSE»«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
+        abstract class «IF isLegacy»«app.appName»_Controller_Base_Abstract«name.formatForCodeCapital» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»«ELSE»Abstract«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
         {
             «IF isAjaxController»
 
@@ -179,7 +179,7 @@ class ControllerLayer {
         /**
          * «name.formatForDisplayCapital» controller base class.
          */
-        class «IF isLegacy»«app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_AbstractController«ELSE»«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
+        abstract class «IF isLegacy»«app.appName»_Controller_Base_Abstract«name.formatForCodeCapital» extends Zikula_AbstractController«ELSE»Abstract«name.formatForCodeCapital»Controller extends AbstractController«ENDIF»
         {
             «IF isLegacy»
                 «new ControllerHelperFunctions().controllerPostInitialize(it, false, '')»
@@ -619,7 +619,7 @@ class ControllerLayer {
         «IF !isLegacy»
             namespace «app.appNamespace»\Controller;
 
-            use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
+            use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
 
             «IF it instanceof AjaxController»
                 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -636,9 +636,9 @@ class ControllerLayer {
         «ENDIF»
          */
         «IF isLegacy»
-        class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
+        class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_Abstract«name.formatForCodeCapital»
         «ELSE»
-        class «name.formatForCodeCapital»Controller extends Base«name.formatForCodeCapital»Controller
+        class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         «ENDIF»
         {
             «IF !isLegacy»
@@ -666,7 +666,7 @@ class ControllerLayer {
         «IF !isLegacy»
             namespace «app.appNamespace»\Controller;
 
-            use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
+            use «app.appNamespace»\Controller\Base\Abstract«name.formatForCodeCapital»Controller;
 
             use RuntimeException;
             use Symfony\Component\HttpFoundation\Request;
@@ -682,9 +682,9 @@ class ControllerLayer {
          * «name.formatForDisplayCapital» controller class providing navigation and interaction functionality.
          */
         «IF isLegacy»
-        class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
+        class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_Abstract«name.formatForCodeCapital»
         «ELSE»
-        class «name.formatForCodeCapital»Controller extends Base«name.formatForCodeCapital»Controller
+        class «name.formatForCodeCapital»Controller extends Abstract«name.formatForCodeCapital»Controller
         «ENDIF»
         {
             «IF !isLegacy»
@@ -729,7 +729,7 @@ class ControllerLayer {
         /**
          * This is the «name» api helper class.
          */
-        class «app.appName»_Api_Base_«name.formatForCodeCapital» extends Zikula_AbstractApi
+        abstract class «app.appName»_Api_Base_Abstract«name.formatForCodeCapital» extends Zikula_AbstractApi
         {
             «IF !isAjaxController»
             /**
@@ -772,7 +772,7 @@ class ControllerLayer {
         /**
          * This is the «name» api helper class.
          */
-        class «app.appName»_Api_«name.formatForCodeCapital» extends «app.appName»_Api_Base_«name.formatForCodeCapital»
+        class «app.appName»_Api_«name.formatForCodeCapital» extends «app.appName»_Api_Base_Abstract«name.formatForCodeCapital»
         {
             // feel free to add own api methods here
         }

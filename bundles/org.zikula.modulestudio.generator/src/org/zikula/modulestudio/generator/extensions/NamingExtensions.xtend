@@ -4,6 +4,8 @@ import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.JoinRelationship
+import java.io.File
+import java.util.Arrays
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 /**
@@ -149,10 +151,14 @@ class NamingExtensions {
      * @param concreteContent Content for concrete class file.
      */
     def generateClassPair(Application it, IFileSystemAccess fsa, String concretePath, CharSequence baseContent, CharSequence concreteContent) {
-        var basePathParts = concretePath.split('/') //$NON-NLS-1$
+        var basePathParts = concretePath.split(File.separator)
+        var baseFileName = basePathParts.last
+        basePathParts = Arrays.copyOf(basePathParts, basePathParts.length - 1)
+
         var basePathPartsChangeable = newArrayList(basePathParts)
-        basePathPartsChangeable.add(basePathPartsChangeable.size-1, 'Base') //$NON-NLS-1$
-        val basePath = basePathPartsChangeable.join('/') //$NON-NLS-1$
+        basePathPartsChangeable += 'Base' //$NON-NLS-1$
+        basePathPartsChangeable += 'Abstract' + baseFileName //$NON-NLS-1$
+        val basePath = basePathPartsChangeable.join(File.separator)
 
         if (!shouldBeSkipped(basePath)) {
             if (shouldBeMarked(basePath)) {

@@ -45,7 +45,7 @@ class VersionFileLegacy {
         /**
          * Version information base class.
          */
-        class «appName»_Base_Version extends Zikula_AbstractVersion
+        abstract class «appName»_AbstractVersion extends Zikula_AbstractVersion
         {
             /**
              * Retrieves meta data information for this application.
@@ -108,7 +108,7 @@ class VersionFileLegacy {
         /**
          * Version information implementation class.
          */
-        class «appName»_Version extends «appName»_Base_Version
+        class «appName»_Version extends «appName»_AbstractVersion
         {
             // custom enhancements can go here
         }

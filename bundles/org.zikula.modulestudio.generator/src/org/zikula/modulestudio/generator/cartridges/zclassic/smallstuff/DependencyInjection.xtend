@@ -34,7 +34,7 @@ class DependencyInjection {
         /**
          * Base class for service definition loader using the DependencyInjection extension.
          */
-        class «vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension extends Extension
+        abstract class Abstract«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension extends Extension
         {
             /**
              * Loads service definition file containing persistent event handlers.
@@ -55,12 +55,12 @@ class DependencyInjection {
     def private extensionImpl(Application it) '''
         namespace «appNamespace»\DependencyInjection;
 
-        use «appNamespace»\DependencyInjection\Base\«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension as Base«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension;
+        use «appNamespace»\DependencyInjection\Base\Abstract«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension;
 
         /**
          * Implementation class for service definition loader using the DependencyInjection extension.
          */
-        class «vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension extends Base«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension
+        class «vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension extends Abstract«vendor.formatForCodeCapital»«name.formatForCodeCapital»Extension
         {
             // custom enhancements can go here
         }

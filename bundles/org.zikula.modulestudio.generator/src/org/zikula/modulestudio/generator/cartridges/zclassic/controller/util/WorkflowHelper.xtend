@@ -45,7 +45,7 @@ class WorkflowHelper {
         /**
          * Utility base class for workflow helper methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_Workflow extends Zikula_AbstractBase«ELSE»WorkflowHelper«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractWorkflow extends Zikula_AbstractBase«ELSE»AbstractWorkflowHelper«ENDIF»
         {
             «IF !targets('1.3.x')»
                 /**
@@ -549,16 +549,16 @@ class WorkflowHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\WorkflowHelper as BaseWorkflowHelper;
+            use «appNamespace»\Helper\Base\AbstractWorkflowHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for workflow helper methods.
          */
         «IF targets('1.3.x')»
-        class «appName»_Util_Workflow extends «appName»_Util_Base_Workflow
+        class «appName»_Util_Workflow extends «appName»_Util_Base_AbstractWorkflow
         «ELSE»
-        class WorkflowHelper extends BaseWorkflowHelper
+        class WorkflowHelper extends AbstractWorkflowHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

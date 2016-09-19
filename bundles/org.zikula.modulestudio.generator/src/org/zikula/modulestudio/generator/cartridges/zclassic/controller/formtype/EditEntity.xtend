@@ -106,7 +106,7 @@ class EditEntity {
         /**
          * «name.formatForDisplayCapital» editing form type base class.
          */
-        class «name.formatForCodeCapital»Type extends AbstractType
+        abstract class Abstract«name.formatForCodeCapital»Type extends AbstractType
         {
             use TranslatorTrait;
 
@@ -969,12 +969,12 @@ class EditEntity {
     def private editTypeImpl(DataObject it) '''
         namespace «app.appNamespace»\Form\Type;
 
-        use «app.appNamespace»\Form\Type\Base\«name.formatForCodeCapital»Type as Base«name.formatForCodeCapital»Type;
+        use «app.appNamespace»\Form\Type\Base\Abstract«name.formatForCodeCapital»Type;
 
         /**
          * «name.formatForDisplayCapital» editing form type implementation class.
          */
-        class «name.formatForCodeCapital»Type extends Base«name.formatForCodeCapital»Type
+        class «name.formatForCodeCapital»Type extends Abstract«name.formatForCodeCapital»Type
         {
             // feel free to extend the «name.formatForDisplay» editing form type class here
         }

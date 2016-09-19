@@ -39,7 +39,7 @@ class ListEntriesHelper {
         /**
          * Utility base class for list field entries related methods.
          */
-        class «IF targets('1.3.x')»«appName»_Util_Base_ListEntries extends Zikula_AbstractBase«ELSE»ListEntriesHelper«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractListEntries extends Zikula_AbstractBase«ELSE»AbstractListEntriesHelper«ENDIF»
         {
             «IF !targets('1.3.x')»
                 /**
@@ -268,16 +268,16 @@ class ListEntriesHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper;
 
-            use «appNamespace»\Helper\Base\ListEntriesHelper as BaseListEntriesHelper;
+            use «appNamespace»\Helper\Base\AbstractListEntriesHelper;
 
         «ENDIF»
         /**
          * Utility implementation class for list field entries related methods.
          */
         «IF targets('1.3.x')»
-        class «appName»_Util_ListEntries extends «appName»_Util_Base_ListEntries
+        class «appName»_Util_ListEntries extends «appName»_Util_Base_AbstractListEntries
         «ELSE»
-        class ListEntriesHelper extends BaseListEntriesHelper
+        class ListEntriesHelper extends AbstractListEntriesHelper
         «ENDIF»
         {
             // feel free to add your own convenience methods here

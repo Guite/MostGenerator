@@ -33,7 +33,7 @@ class Selection {
         /**
          * Selection api base class.
          */
-        class «IF targets('1.3.x')»«appName»_Api_Base_Selection extends Zikula_AbstractApi«ELSE»SelectionApi extends Zikula_AbstractBase«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Api_Base_AbstractSelection extends Zikula_AbstractApi«ELSE»AbstractSelectionApi extends Zikula_AbstractBase«ENDIF»
         {
             «selectionBaseImpl»
         }
@@ -299,16 +299,16 @@ class Selection {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Api;
 
-            use «appNamespace»\Api\Base\SelectionApi as BaseSelectionApi;
+            use «appNamespace»\Api\Base\AbstractSelectionApi;
 
         «ENDIF»
         /**
          * Selection api implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Api_Selection extends «appName»_Api_Base_Selection
+        class «appName»_Api_Selection extends «appName»_Api_Base_AbstractSelection
         «ELSE»
-        class SelectionApi extends BaseSelectionApi
+        class SelectionApi extends AbstractSelectionApi
         «ENDIF»
         {
             // feel free to extend the selection api here

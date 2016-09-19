@@ -37,9 +37,9 @@ class Tag {
          * This class provides object meta data for the Tag module.
          */
         «IF targets('1.3.x')»
-        class «appName»_TaggedObjectMeta_Base_«appName» extends Tag_AbstractTaggedObjectMeta
+        abstract class «appName»_TaggedObjectMeta_Base_Abstract«appName» extends Tag_AbstractTaggedObjectMeta
         «ELSE»
-        class «appName» extends AbstractTaggedObjectMeta
+        abstract class Abstract«appName» extends AbstractTaggedObjectMeta
         «ENDIF»
         {
             «tagBaseImpl»
@@ -145,16 +145,16 @@ class Tag {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\TaggedObjectMeta;
 
-            use «appNamespace»\TaggedObjectMeta\Base\«appName» as Base«appName»;
+            use «appNamespace»\TaggedObjectMeta\Base\Abstract«appName»;
 
         «ENDIF»
         /**
          * This class provides object meta data for the Tag module.
          */
         «IF targets('1.3.x')»
-        class «appName»_TaggedObjectMeta_«appName» extends «appName»_TaggedObjectMeta_Base_«appName»
+        class «appName»_TaggedObjectMeta_«appName» extends «appName»_TaggedObjectMeta_Base_Abstract«appName»
         «ELSE»
-        class «appName» extends Base«appName»
+        class «appName» extends Abstract«appName»
         «ENDIF»
         {
             // feel free to extend the tag support here

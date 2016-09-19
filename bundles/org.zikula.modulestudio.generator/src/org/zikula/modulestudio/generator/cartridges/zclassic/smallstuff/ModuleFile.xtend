@@ -35,7 +35,7 @@ class ModuleFile {
         /**
          * Module base class.
          */
-        class «appName» extends Abstract«IF isSystemModule»Core«ENDIF»Module
+        abstract class Abstract«appName» extends Abstract«IF isSystemModule»Core«ENDIF»Module
         {
         }
     '''
@@ -43,12 +43,12 @@ class ModuleFile {
     def private moduleInfoImpl(Application it) '''
         namespace «appNamespace»;
 
-        use «appNamespace»\Base\«appName» as Base«appName»;
+        use «appNamespace»\Base\Abstract«appName»;
 
         /**
          * Module implementation class.
          */
-        class «appName» extends Base«appName»
+        class «appName» extends Abstract«appName»
         {
             // custom enhancements can go here
         }

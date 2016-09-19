@@ -48,9 +48,9 @@ class UrlRoutingLegacy {
          * Url router facade base class
          */
         «IF targets('1.3.x')»
-        class «appName»_Base_RouterFacade
+        abstract class «appName»_Base_AbstractRouterFacade
         «ELSE»
-        class RouterFacade
+        abstract class AbstractRouterFacade
         «ENDIF»
         {
             /**
@@ -288,16 +288,16 @@ class UrlRoutingLegacy {
         «IF !targets('1.3.x')»
             namespace «appNamespace»;
 
-            use «appNamespace»\Base\RouterFacade as BaseRouterFacade;
+            use «appNamespace»\Base\AbstractRouterFacade;
 
         «ENDIF»
         /**
          * Url router facade implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_RouterFacade extends «appName»_Base_RouterFacade
+        class «appName»_RouterFacade extends «appName»_Base_AbstractRouterFacade
         «ELSE»
-        class RouterFacade extends BaseRouterFacade
+        class RouterFacade extends AbstractRouterFacade
         «ENDIF»
         {
             // here you can customise the data which is provided to the url router.

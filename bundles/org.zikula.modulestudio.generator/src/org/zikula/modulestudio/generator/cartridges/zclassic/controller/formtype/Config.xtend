@@ -53,7 +53,7 @@ class Config {
         /**
          * Configuration form type base class.
          */
-        class AppSettingsType extends AbstractType
+        abstract class AbstractAppSettingsType extends AbstractType
         {
             use TranslatorTrait;
 
@@ -221,12 +221,12 @@ class Config {
     def private configTypeImpl(Application it) '''
         namespace «appNamespace»\Form;
 
-        use «appNamespace»\Form\Base\AppSettingsType as BaseAppSettingsType;
+        use «appNamespace»\Form\Base\AbstractAppSettingsType;
 
         /**
          * Configuration form type implementation class.
          */
-        class AppSettingsType extends BaseAppSettingsType
+        class AppSettingsType extends AbstractAppSettingsType
         {
             // feel free to extend the base form type class here
         }

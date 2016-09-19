@@ -64,7 +64,7 @@ class QuickNavigation {
         /**
          * «name.formatForDisplayCapital» quick navigation form type base class.
          */
-        class «name.formatForCodeCapital»QuickNavType extends AbstractType
+        abstract class Abstract«name.formatForCodeCapital»QuickNavType extends AbstractType
         {
             use TranslatorTrait;
 
@@ -600,12 +600,12 @@ class QuickNavigation {
     def private quickNavTypeImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\QuickNavigation;
 
-        use «app.appNamespace»\Form\Type\QuickNavigation\Base\«name.formatForCodeCapital»QuickNavType as Base«name.formatForCodeCapital»QuickNavType;
+        use «app.appNamespace»\Form\Type\QuickNavigation\Base\Abstract«name.formatForCodeCapital»QuickNavType;
 
         /**
          * «name.formatForDisplayCapital» quick navigation form type implementation class.
          */
-        class «name.formatForCodeCapital»QuickNavType extends Base«name.formatForCodeCapital»QuickNavType
+        class «name.formatForCodeCapital»QuickNavType extends Abstract«name.formatForCodeCapital»QuickNavType
         {
             // feel free to extend the base form type class here
         }

@@ -30,7 +30,7 @@ class DateTypeExtension {
         /**
          * Date field type extension base class.
          */
-        class DateTypeExtension extends AbstractTypeExtension
+        abstract class AbstractDateTypeExtension extends AbstractTypeExtension
         {
             /**
              * {@inheritdoc}
@@ -106,12 +106,12 @@ class DateTypeExtension {
     def private dateTypeExtensionImpl(Application it) '''
         namespace «appNamespace»\Form\Extension;
 
-        use «appNamespace»\Form\Extension\Base\DateTypeExtension as BaseDateTypeExtension;
+        use «appNamespace»\Form\Extension\Base\AbstractDateTypeExtension;
 
         /**
          * Date field type extension implementation class.
          */
-        class DateTypeExtension extends BaseDateTypeExtension
+        class DateTypeExtension extends AbstractDateTypeExtension
         {
             // feel free to add your customisation here
         }

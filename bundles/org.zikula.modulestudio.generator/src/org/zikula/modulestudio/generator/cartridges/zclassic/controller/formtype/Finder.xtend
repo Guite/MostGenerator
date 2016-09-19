@@ -50,7 +50,7 @@ class Finder {
         /**
          * «name.formatForDisplayCapital» finder form type base class.
          */
-        class «name.formatForCodeCapital»FinderType extends AbstractType
+        abstract class Abstract«name.formatForCodeCapital»FinderType extends AbstractType
         {
             use TranslatorTrait;
 
@@ -311,12 +311,12 @@ class Finder {
     def private finderTypeImpl(Entity it) '''
         namespace «app.appNamespace»\Form\Type\Finder;
 
-        use «app.appNamespace»\Form\Type\Finder\Base\«name.formatForCodeCapital»FinderType as Base«name.formatForCodeCapital»FinderType;
+        use «app.appNamespace»\Form\Type\Finder\Base\Abstract«name.formatForCodeCapital»FinderType;
 
         /**
          * «name.formatForDisplayCapital» finder form type implementation class.
          */
-        class «name.formatForCodeCapital»FinderType extends Base«name.formatForCodeCapital»FinderType
+        class «name.formatForCodeCapital»FinderType extends Abstract«name.formatForCodeCapital»FinderType
         {
             // feel free to extend the base form type class here
         }

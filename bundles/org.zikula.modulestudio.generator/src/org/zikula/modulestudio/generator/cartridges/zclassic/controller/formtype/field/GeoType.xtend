@@ -29,7 +29,7 @@ class GeoType {
         /**
          * Geo field type base class.
          */
-        class GeoType extends AbstractType
+        abstract class AbstractGeoType extends AbstractType
         {
             /**
              * {@inheritdoc}
@@ -76,12 +76,12 @@ class GeoType {
     def private geoTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\GeoType as BaseGeoType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractGeoType;
 
         /**
          * Geo field type implementation class.
          */
-        class GeoType extends BaseGeoType
+        class GeoType extends AbstractGeoType
         {
             // feel free to add your customisation here
         }

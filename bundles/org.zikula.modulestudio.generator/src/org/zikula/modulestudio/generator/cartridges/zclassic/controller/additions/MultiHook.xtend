@@ -156,7 +156,7 @@ class MultiHook {
     '''
 
     def private needleInfo(Entity it) '''
-        include_once 'Needles/Base/«name.formatForDB»_info.php';
+        include_once 'Needles/Base/Abstract«name.formatForDB»_info.php';
 
         /**
          * «app.appName» «name.formatForDisplay» needle information.
@@ -172,7 +172,7 @@ class MultiHook {
     '''
 
     def private needleImpl(Entity it) '''
-        include_once 'Needles/Base/«name.formatForDB».php';
+        include_once 'Needles/Base/Abstract«name.formatForDB».php';
 
         /**
          * Replaces a given needle id by the corresponding content.

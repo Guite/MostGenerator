@@ -32,7 +32,7 @@ class TimeTypeExtension {
         /**
          * Time field type extension base class.
          */
-        class TimeTypeExtension extends AbstractTypeExtension
+        abstract class AbstractTimeTypeExtension extends AbstractTypeExtension
         {
             /**
              * @var AssetBag
@@ -151,12 +151,12 @@ class TimeTypeExtension {
     def private timeTypeExtensionImpl(Application it) '''
         namespace «appNamespace»\Form\Extension;
 
-        use «appNamespace»\Form\Extension\Base\TimeTypeExtension as BaseTimeTypeExtension;
+        use «appNamespace»\Form\Extension\Base\AbstractTimeTypeExtension;
 
         /**
          * Time field type extension implementation class.
          */
-        class TimeTypeExtension extends BaseTimeTypeExtension
+        class TimeTypeExtension extends AbstractTimeTypeExtension
         {
             // feel free to add your customisation here
         }

@@ -30,7 +30,7 @@ class EntityTreeType {
         /**
          * Entity tree type base class.
          */
-        class EntityTreeType extends AbstractType
+        abstract class AbstractEntityTreeType extends AbstractType
         {
             /**
              * {@inheritdoc}
@@ -168,12 +168,12 @@ class EntityTreeType {
     def private entityTreeTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\EntityTreeType as BaseEntityTreeType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractEntityTreeType;
 
         /**
          * Entity tree type implementation class.
          */
-        class EntityTreeType extends BaseEntityTreeType
+        class EntityTreeType extends AbstractEntityTreeType
         {
             // feel free to add your customisation here
         }

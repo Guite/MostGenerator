@@ -40,7 +40,7 @@ class DeleteEntity {
         /**
          * Entity deletion form type base class.
          */
-        class DeleteEntityType extends AbstractType
+        abstract class AbstractDeleteEntityType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -102,12 +102,12 @@ class DeleteEntity {
     def private deleteEntityTypeImpl(Application it) '''
         namespace «appNamespace»\Form;
 
-        use «appNamespace»\Form\Base\DeleteEntityType as BaseDeleteEntityType;
+        use «appNamespace»\Form\Base\AbstractDeleteEntityType;
 
         /**
          * Entity deletion form type implementation class.
          */
-        class DeleteEntityType extends BaseDeleteEntityType
+        class DeleteEntityType extends AbstractDeleteEntityType
         {
             // feel free to extend the base form type class here
         }

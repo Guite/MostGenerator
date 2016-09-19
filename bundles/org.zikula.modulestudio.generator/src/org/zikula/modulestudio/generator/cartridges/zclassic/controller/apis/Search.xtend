@@ -36,7 +36,7 @@ class Search {
         /**
          * Search api base class.
          */
-        class «appName»_Api_Base_Search extends Zikula_AbstractApi
+        abstract class «appName»_Api_Base_AbstractSearch extends Zikula_AbstractApi
         {
             «searchApiBaseImpl»
         }
@@ -56,7 +56,7 @@ class Search {
         /**
          * Search helper base class.
          */
-        class SearchHelper extends AbstractSearchable
+        abstract class AbstractSearchHelper extends AbstractSearchable
         {
             «searchHelperBaseImpl»
         }
@@ -411,7 +411,7 @@ class Search {
         /**
          * Search api implementation class.
          */
-        class «appName»_Api_Search extends «appName»_Api_Base_Search
+        class «appName»_Api_Search extends «appName»_Api_Base_AbstractSearch
         {
             // feel free to extend the search api here
         }
@@ -420,12 +420,12 @@ class Search {
     def private searchHelperImpl(Application it) '''
         namespace «appNamespace»\Helper;
 
-        use «appNamespace»\Helper\Base\SearchHelper as BaseSearchHelper;
+        use «appNamespace»\Helper\Base\AbstractSearchHelper;
 
         /**
          * Search helper implementation class.
          */
-        class SearchHelper extends BaseSearchHelper
+        class SearchHelper extends AbstractSearchHelper
         {
             // feel free to extend the search helper here
         }

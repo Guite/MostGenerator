@@ -34,7 +34,7 @@ class UploadType {
         /**
          * Upload field type extension base class.
          */
-        class UploadType extends AbstractType
+        abstract class AbstractUploadType extends AbstractType
         {
             /**
              * @var TranslatorInterface
@@ -149,12 +149,12 @@ class UploadType {
     def private uploadTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\UploadType as BaseUploadType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractUploadType;
 
         /**
          * Upload field type implementation class.
          */
-        class UploadType extends BaseUploadType
+        class UploadType extends AbstractUploadType
         {
             // feel free to add your customisation here
         }

@@ -171,9 +171,9 @@ class FormHandler {
         «ENDIF»
          */
         «IF isLegacy»
-        class «appName»_Form_Handler_Common_Base_«actionName.formatForCodeCapital» extends Zikula_Form_AbstractHandler
+        abstract class «appName»_Form_Handler_Common_Base_Abstract«actionName.formatForCodeCapital» extends Zikula_Form_AbstractHandler
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler
+        abstract class Abstract«actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             «IF !isLegacy»
@@ -1197,7 +1197,7 @@ class FormHandler {
         «IF !isLegacy»
             namespace «appNamespace»\Form\Handler\Common;
 
-            use «appNamespace»\Form\Handler\Common\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «appNamespace»\Form\Handler\Common\Base\Abstract«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         /**
@@ -1205,9 +1205,9 @@ class FormHandler {
          * It collects common functionality required by different object types.
          */
         «IF isLegacy»
-        class «appName»_Form_Handler_Common_«actionName.formatForCodeCapital» extends «appName»_Form_Handler_Common_Base_«actionName.formatForCodeCapital»
+        abstract class «appName»_Form_Handler_Common_«actionName.formatForCodeCapital» extends «appName»_Form_Handler_Common_Base_Abstract«actionName.formatForCodeCapital»
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
+        abstract class «actionName.formatForCodeCapital»Handler extends Abstract«actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             // feel free to extend the base handler class here
@@ -1230,9 +1230,9 @@ class FormHandler {
         «ENDIF»
          */
         «IF app.isLegacy»
-        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_Common_«actionName.formatForCodeCapital»
+        abstract class «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_Abstract«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_Common_«actionName.formatForCodeCapital»
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
+        abstract class «actionName.formatForCodeCapital»Handler extends «actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             «IF app.isLegacy»
@@ -1263,7 +1263,7 @@ class FormHandler {
         «IF !app.isLegacy»
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
-            use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «app.appNamespace»\Form\Handler\Common\Abstract«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         «locking.imports(it)»

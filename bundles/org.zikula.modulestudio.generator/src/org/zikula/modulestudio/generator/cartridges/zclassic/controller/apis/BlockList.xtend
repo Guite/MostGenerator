@@ -44,7 +44,7 @@ class BlockList {
         /**
          * Generic item list block base class.
          */
-        class «IF targets('1.3.x')»«appName»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock«ELSE»ItemListBlock extends AbstractBlockHandler«ENDIF»
+        abstract class «IF targets('1.3.x')»«appName»_Block_Base_AbstractItemList extends Zikula_Controller_AbstractBlock«ELSE»AbstractItemListBlock extends AbstractBlockHandler«ENDIF»
         {
             «listBlockBaseImpl»
         }
@@ -535,16 +535,16 @@ class BlockList {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block;
 
-            use «appNamespace»\Block\Base\ItemListBlock as BaseItemListBlock;
+            use «appNamespace»\Block\Base\AbstractItemListBlock;
 
         «ENDIF»
         /**
          * Generic item list block implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Block_ItemList extends «appName»_Block_Base_ItemList
+        class «appName»_Block_ItemList extends «appName»_Block_Base_AbstractItemList
         «ELSE»
-        class ItemListBlock extends BaseItemListBlock
+        class ItemListBlock extends AbstractItemListBlock
         «ENDIF»
         {
             // feel free to extend the item list block here

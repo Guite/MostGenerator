@@ -29,7 +29,7 @@ class UserType {
         /**
          * User field type base class.
          */
-        class UserType extends AbstractType
+        abstract class AbstractUserType extends AbstractType
         {
             /**
              * {@inheritdoc}
@@ -80,12 +80,12 @@ class UserType {
     def private userTypeImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field;
 
-        use «appNamespace»\Form\Type\Field\Base\UserType as BaseUserType;
+        use «appNamespace»\Form\Type\Field\Base\AbstractUserType;
 
         /**
          * User field type implementation class.
          */
-        class UserType extends BaseUserType
+        class UserType extends AbstractUserType
         {
             // feel free to add your customisation here
         }

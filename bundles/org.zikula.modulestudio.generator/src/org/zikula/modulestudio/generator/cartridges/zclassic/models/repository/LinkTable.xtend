@@ -39,9 +39,9 @@ class LinkTable {
          * between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.x')»
-        class «app.appName»_Entity_Repository_Base_«refClass.formatForCodeCapital» extends EntityRepository
+        class «app.appName»_Entity_Repository_Base_Abstract«refClass.formatForCodeCapital» extends EntityRepository
         «ELSE»
-        class «refClass.formatForCodeCapital» extends EntityRepository
+        class Abstract«refClass.formatForCodeCapital» extends EntityRepository
         «ENDIF»
         {
             /**
@@ -74,7 +74,7 @@ class LinkTable {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository;
 
-            use «app.appNamespace»\Entity\Repository\Base\«refClass.formatForCodeCapital» as Base«refClass.formatForCodeCapital»;
+            use «app.appNamespace»\Entity\Repository\Base\Abstract«refClass.formatForCodeCapital»;
 
         «ENDIF»
         /**
@@ -84,9 +84,9 @@ class LinkTable {
          * between «source.name.formatForDisplay» and «target.name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.x')»
-        class «app.appName»_Entity_Repository_«refClass.formatForCodeCapital» extends «app.appName»_Entity_Repository_Base_«refClass.formatForCodeCapital»
+        class «app.appName»_Entity_Repository_«refClass.formatForCodeCapital» extends «app.appName»_Entity_Repository_Base_Abstract«refClass.formatForCodeCapital»
         «ELSE»
-        class «refClass.formatForCodeCapital» extends Base«refClass.formatForCodeCapital»
+        class «refClass.formatForCodeCapital» extends Abstract«refClass.formatForCodeCapital»
         «ENDIF»
         {
             // feel free to add your own methods here, like for example reusable DQL queries
