@@ -170,7 +170,7 @@ class ImageCreator {
 
         // copy MOST default icon into left bottom area of the current image
         val resizedSourceImage = resizeImage(sourceImage, size/2, size/2)
-        graphics.drawImage(resizedSourceImage, 0, size/2, null)
+        graphics.drawImage(resizedSourceImage, size/4, size/2, null)
 
         // add the text to the upper area
         graphics.font = new Font('Arial', Font.BOLD, fontSize)
