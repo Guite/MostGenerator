@@ -168,7 +168,7 @@ class ImageCreator {
         graphics.color = backgroundColour
         graphics.fillRect(0, 0, size, size)
 
-        // copy MOST default icon into left bottom area of the current image
+        // copy MOST default icon into bottom area of the current image
         val resizedSourceImage = resizeImage(sourceImage, size/2, size/2)
         graphics.drawImage(resizedSourceImage, size/4, size/2, null)
 
