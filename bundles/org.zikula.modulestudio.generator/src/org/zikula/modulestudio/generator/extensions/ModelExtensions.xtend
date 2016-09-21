@@ -391,7 +391,14 @@ class ModelExtensions {
      * Returns a list of all image fields of this entity.
      */
     def getImageFieldsEntity(DataObject it) {
-        getUploadFieldsEntity.filter[allowedExtensions.split(', ').forall[it == 'gif' || it == 'jpeg' || it == 'jpg' || it == 'png']]
+        getUploadFieldsEntity.filter[isImageField]
+    }
+
+    /**
+     * Checks whether an upload field is an image field.
+     */
+    def isImageField(UploadField it) {
+        allowedExtensions.split(', ').forall[it == 'gif' || it == 'jpeg' || it == 'jpg' || it == 'png']
     }
 
     /**
@@ -718,7 +725,7 @@ class ModelExtensions {
             TextField: 'text'
             EmailField: 'string'
             UrlField: 'string'
-            UploadField: 'string'
+            UploadField: if (entity.application.targets('1.3.x')) 'string' else 'File'
             ListField: 'string'
             ArrayField: 'array'
             ObjectField: 'object'

@@ -105,6 +105,9 @@ class Entities {
         «ENDIF»
         use Gedmo\Mapping\Annotation as Gedmo;
         «IF !application.targets('1.3.x')»
+            «IF hasUploadFieldsEntity»
+                use Symfony\Component\HttpFoundation\File\File;
+            «ENDIF»
             use Symfony\Component\Validator\Constraints as Assert;
             «IF !getListFieldsEntity.filter[multiple].empty»
                 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -129,6 +132,9 @@ class Entities {
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
         «ENDIF»
         «IF !application.targets('1.3.x')»
+            «IF hasUploadFieldsEntity»
+                use Symfony\Component\HttpFoundation\File\File;
+            «ENDIF»
             use Symfony\Component\Validator\Constraints as Assert;
             «IF !getListFieldsEntity.filter[multiple].empty»
                 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -151,9 +157,6 @@ class Entities {
             use FormUtil;
             use RuntimeException;
             use ServiceUtil;
-            «IF hasUploadFieldsEntity»
-                use System;
-            «ENDIF»
             use UserUtil;
             use Zikula_Workflow_Util;
             use Zikula\Core\Doctrine\EntityAccess;

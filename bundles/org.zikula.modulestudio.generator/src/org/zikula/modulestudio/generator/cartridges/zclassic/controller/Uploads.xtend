@@ -166,11 +166,13 @@ class Uploads {
              * @var array List of dangerous file types to be rejected
              */
             protected $forbiddenFileTypes;
+            «IF targets('1.3.x')»
 
-            /**
-             * @var array List of allowed file sizes per field
-             */
-            protected $allowedFileSizes;
+                /**
+                 * @var array List of allowed file sizes per field
+                 */
+                protected $allowedFileSizes;
+            «ENDIF»
 
             /**
              * Constructor initialising the supported object types.
@@ -188,7 +190,9 @@ class Uploads {
                 $this->allowedObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $this->imageFileTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'gif', 'jpeg', 'jpg', 'png', 'swf'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $this->forbiddenFileTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-                $this->allowedFileSizes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»' => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR field : entity.getUploadFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»' => «field.allowedFileSize»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                «IF targets('1.3.x')»
+                    $this->allowedFileSizes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»' => «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR field : entity.getUploadFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»' => «field.allowedFileSize»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                «ENDIF»
             }
 
             /**
@@ -404,19 +408,38 @@ class Uploads {
     '''
 
     def private doFileValidation(Application it, String fileVar) '''
-        // validate file size
-        $maxSize = $this->allowedFileSizes[$objectType][$fieldName];
-        if ($maxSize > 0) {
-            $fileSize = filesize(«fileVar»);
-            if ($fileSize > $maxSize) {
-                $maxSizeKB = $maxSize / 1024;
-                if ($maxSizeKB < 1024) {
-                    $maxSizeKB = DataUtil::formatNumber($maxSizeKB); 
+        «IF targets('1.3.x')»
+            // validate file size
+            $maxSize = $this->allowedFileSizes[$objectType][$fieldName];
+            if ($maxSize > 0) {
+                $fileSize = filesize(«fileVar»);
+                if ($fileSize > $maxSize) {
+                    $maxSizeKB = $maxSize / 1024;
+                    if ($maxSizeKB < 1024) {
+                        $maxSizeKB = DataUtil::formatNumber($maxSizeKB); 
+                        «IF targets('1.3.x')»
+                            return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                        «ELSE»
+                            $flashBag->add('error', $this->__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB]));
+                            $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeKB]);
+
+                            $fs = new Filesystem();
+                            try {
+                                $fs->remove(array(«fileVar»));
+                            } catch (IOExceptionInterface $e) {
+                                $logger->error('{app}: The file could not be properly removed from the file system.', []);
+                            }
+
+                            return false;
+                        «ENDIF»
+                    }
+                    $maxSizeMB = $maxSizeKB / 1024;
+                    $maxSizeMB = DataUtil::formatNumber($maxSizeMB); 
                     «IF targets('1.3.x')»
-                        return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                        return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                     «ELSE»
-                        $flashBag->add('error', $this->__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', [$maxSizeKB]));
-                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} KB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeKB]);
+                        $flashBag->add('error', $this->__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB]));
+                        $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeMB]);
 
                         $fs = new Filesystem();
                         try {
@@ -428,26 +451,9 @@ class Uploads {
                         return false;
                     «ENDIF»
                 }
-                $maxSizeMB = $maxSizeKB / 1024;
-                $maxSizeMB = DataUtil::formatNumber($maxSizeMB); 
-                «IF targets('1.3.x')»
-                    return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
-                «ELSE»
-                    $flashBag->add('error', $this->__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', [$maxSizeMB]));
-                    $logger->error('{app}: User {user} tried to upload a file with a size greater than "{size} MB".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'size' => $maxSizeMB]);
-
-                    $fs = new Filesystem();
-                    try {
-                        $fs->remove(array(«fileVar»));
-                    } catch (IOExceptionInterface $e) {
-                        $logger->error('{app}: The file could not be properly removed from the file system.', []);
-                    }
-
-                    return false;
-                «ENDIF»
             }
-        }
 
+        «ENDIF»
         // validate image file
         $isImage = in_array($extension, $this->imageFileTypes);
         if ($isImage) {

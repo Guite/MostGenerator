@@ -188,7 +188,72 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
+        «' '»* @Assert\File(
+            «FOR constraint : getUploadConstraints»
+            «constraint»«IF constraint != getUploadConstraints.last»,«ENDIF»
+            «ENDFOR»
+        «' '»* )
+        «IF isImageField»
+            «' '»* @Assert\Image(
+                «FOR constraint : getUploadImageConstraints»
+                «constraint»«IF constraint != getUploadImageConstraints.last»,«ENDIF»
+                «ENDFOR»
+            «' '»* )
+        «ENDIF»
     '''
+    def private getUploadConstraints(UploadField it) {
+        val constraints = newArrayList
+
+        if (maxSize != '') {
+            constraints += '''maxSize = "«maxSize»"'''
+        } else if (allowedFileSize > 0) {
+            constraints += '''"«allowedFileSize»"'''
+        }
+        if (mimeTypes != '') {
+            val mimeTypesList = mimeTypes.replaceAll(', ', ',').split(',')
+            var mimeTypeString = '"' + mimeTypesList.join('", "') + '"'
+            constraints += '''mimeTypes = {«mimeTypeString»}'''
+        }
+
+        constraints
+    }
+    def private getUploadImageConstraints(UploadField it) {
+        val constraints = newArrayList
+
+        if (minWidth > 0) {
+            constraints += '''minWidth = «minWidth»'''
+        }
+        if (maxWidth > 0) {
+            constraints += '''maxWidth = «maxWidth»'''
+        }
+        if (minHeight > 0) {
+            constraints += '''minHeight = «minHeight»'''
+        }
+        if (maxHeight > 0) {
+            constraints += '''maxHeight = «maxHeight»'''
+        }
+        if (minRatio > 0) {
+            constraints += '''minRatio = «minRatio»'''
+        }
+        if (maxRatio > 0) {
+            constraints += '''maxRatio = «maxRatio»'''
+        }
+        if (!allowSquare) {
+            constraints += 'allowSquare = false'
+        }
+        if (!allowLandscape) {
+            constraints += 'allowLandscape = false'
+        }
+        if (!allowPortrait) {
+            constraints += 'allowPortrait = false'
+        }
+        if (detectCorrupted) {
+            //to be enabled for Zikula 2.0 (see #799)
+            //constraints += 'detectCorrupted = true'
+        }
+
+        constraints
+    }
     def dispatch fieldAnnotations(ListField it) '''
         «fieldAnnotationsMandatory»
         «IF !multiple»
