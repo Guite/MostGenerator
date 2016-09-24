@@ -215,12 +215,13 @@ class TranslatableHelper {
          * This ensures easy compatibility to the Forms plugins where it
          * it is not possible yet to define sub arrays in the group attribute.
          *
-         * @param string $objectType The currently treated object type
-         * @param array  $formData   Form data containing translations
+         * @param string              $objectType The currently treated object type
+         * @param Zikula_EntityAccess $entity     The entity being edited
+         * @param array               $formData   Form data containing translations
          *
          * @return array collected translations having the language codes as keys
          */
-        public function processEntityAfterEditing($objectType, $formData)
+        public function processEntityAfterEditing($objectType, $entity, $formData)
         {
             $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             // check arguments
@@ -254,10 +255,8 @@ class TranslatableHelper {
             if ($useOnlyCurrentLanguage === true) {
                 $language = ZLanguage::getLanguageCode();
                 $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-                $translationData = $formData[strtolower($objectType) . $language];
                 foreach ($fields as $field) {
-                    $translations[$language][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
-                    unset($formData[$field['name'] . $language]);
+                    $translations[$language][$field['name']] = isset($entity[$field['name']]) ? $entity[$field['name']] : '';
                 }
             }
 
