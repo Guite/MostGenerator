@@ -940,11 +940,13 @@ class FormHandler {
                 «ELSE»
                     $translatableHelper = $this->container->get('«app.appService».translatable_helper');
                 «ENDIF»
-                $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $formData);
+                $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $entity, $formData);
 
-                foreach ($translations as $locale => $translationFields) {
-                    foreach ($translationFields as $fieldName => $value) {
-                        $transRepository->translate($entity, $fieldName, $locale, $value);
+                if (System::getVar('multilingual') == 1) {
+                    foreach ($translations as $locale => $translationFields) {
+                        foreach ($translationFields as $fieldName => $value) {
+                            $transRepository->translate($entity, $fieldName, $locale, $value);
+                        }
                     }
                 }
 
