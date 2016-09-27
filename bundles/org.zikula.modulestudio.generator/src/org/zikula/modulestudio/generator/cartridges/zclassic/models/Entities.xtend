@@ -283,7 +283,7 @@ class Entities {
 
         «entityImplClassDocblock(app)»
         «IF app.targets('1.3.x')»
-        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»Abstract«entityClassName('', true)»«ENDIF»
+        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital»Entity extends BaseEntity
         «ENDIF»

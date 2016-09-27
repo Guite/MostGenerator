@@ -121,9 +121,9 @@ class NamingExtensions {
     def entityClassName(DataObject it, String suffix, Boolean isBase) {
         val app = application
         if (app.targets('1.3.x'))
-            app.appName + '_Entity_' + (if (isBase) 'Base_' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
+            app.appName + '_Entity_' + (if (isBase) 'Base_Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
         else
-            app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\' + (if (isBase) 'Base\\' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
+            app.vendor.formatForCodeCapital + '\\' + app.name.formatForCodeCapital + 'Module\\Entity\\' + (if (isBase) 'Base\\Abstract' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
     }
 
     /**
