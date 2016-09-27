@@ -93,7 +93,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
          *
          * This is the base «classType.formatForDisplay» class for «it.name.formatForDisplay» entities.
          */
-        abstract class Abstract«IF !app.targets('1.3.x')»«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»«entityClassName(classType, true)»«ENDIF» extends «extensionBaseClass»
+        abstract class «IF !app.targets('1.3.x')»Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»«entityClassName(classType, true)»«ENDIF» extends «extensionBaseClass»
         {
             «extensionClassBaseAnnotations»
         }
