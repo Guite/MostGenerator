@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -10,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 
 class Bootstrap {
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -18,9 +20,23 @@ class Bootstrap {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        generateClassPair(fsa, getAppSourcePath + 'bootstrap.php',
-            fh.phpFileContent(it, bootstrapBaseImpl), fh.phpFileContent(it, bootstrapImpl)
-        )
+        val basePath = getAppSourcePath + 'Base/bootstrap.php'
+        if (!shouldBeSkipped(basePath)) {
+            if (shouldBeMarked(basePath)) {
+                fsa.generateFile(basePath.replace('.php', '.generated.php'), fh.phpFileContent(it, bootstrapBaseImpl))
+            } else {
+                fsa.generateFile(basePath, bootstrapBaseImpl)
+            }
+        }
+
+        val concretePath = getAppSourcePath + 'bootstrap.php'
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
+            if (shouldBeMarked(concretePath)) {
+                fsa.generateFile(concretePath.replace('.php', '.generated.php'), fh.phpFileContent(it, bootstrapImpl))
+            } else {
+                fsa.generateFile(concretePath, bootstrapImpl)
+            }
+        }
     }
 
     def private bootstrapDocs() '''
