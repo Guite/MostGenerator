@@ -173,7 +173,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         «extensionClassImplAnnotations»
          */
         «IF app.targets('1.3.x')»
-        class «entityClassName(classType, false)» extends «IF isInheriting»«parentType.entityClassName(classType, false)»«ELSE»Abstract«entityClassName(classType, true)»«ENDIF»
+        class «entityClassName(classType, false)» extends «IF isInheriting»«parentType.entityClassName(classType, false)»«ELSE»«entityClassName(classType, true)»«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends BaseEntity
         «ENDIF»
