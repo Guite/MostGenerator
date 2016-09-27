@@ -131,7 +131,7 @@ class Installer {
 
                 // add default entry for category registry (property named Main)
                 «IF targets('1.3.x')»
-                    include_once '«rootFolder»/«appName»/lib/«appName»/Api/Base/Category.php';
+                    include_once '«rootFolder»/«appName»/lib/«appName»/Api/Base/AbstractCategory.php';
                     include_once '«rootFolder»/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»

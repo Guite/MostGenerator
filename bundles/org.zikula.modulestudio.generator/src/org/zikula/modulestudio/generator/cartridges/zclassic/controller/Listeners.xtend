@@ -101,7 +101,7 @@ class Listeners {
     }
 
     def private listenerFile(String name, CharSequence content) {
-        var filePath = listenerPath + (if (isBase) 'Abstract') + name + listenerSuffix
+        var filePath = listenerPath + (if (isBase) 'Abstract' else '') + name + listenerSuffix
         if (!app.shouldBeSkipped(filePath)) {
             if (app.shouldBeMarked(filePath)) {
                 filePath = listenerPath + name + listenerSuffix.replace('.php', '.generated.php')
