@@ -25,7 +25,7 @@ class Bootstrap {
             if (shouldBeMarked(basePath)) {
                 fsa.generateFile(basePath.replace('.php', '.generated.php'), fh.phpFileContent(it, bootstrapBaseImpl))
             } else {
-                fsa.generateFile(basePath, bootstrapBaseImpl)
+                fsa.generateFile(basePath, fh.phpFileContent(it, bootstrapBaseImpl))
             }
         }
 
@@ -34,7 +34,7 @@ class Bootstrap {
             if (shouldBeMarked(concretePath)) {
                 fsa.generateFile(concretePath.replace('.php', '.generated.php'), fh.phpFileContent(it, bootstrapImpl))
             } else {
-                fsa.generateFile(concretePath, bootstrapImpl)
+                fsa.generateFile(concretePath, fh.phpFileContent(it, bootstrapImpl))
             }
         }
     }
