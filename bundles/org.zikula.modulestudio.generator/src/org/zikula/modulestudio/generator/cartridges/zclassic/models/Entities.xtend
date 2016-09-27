@@ -81,7 +81,7 @@ class Entities {
         val entityFileName = name.formatForCodeCapital + entityClassSuffix
         var fileName = ''
         if (!isInheriting) {
-            fileName = 'Abstract/' + entityFileName + '.php'
+            fileName = 'Abstract' + entityFileName + '.php'
             if (!app.shouldBeSkipped(entityPath + 'Base/' + fileName)) {
                 if (app.shouldBeMarked(entityPath + 'Base/' + fileName)) {
                     fileName = entityFileName + '.generated.php'
