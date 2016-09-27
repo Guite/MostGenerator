@@ -530,12 +530,12 @@ class ValidatorLegacy {
         val validatorSuffix = (if (app.targets('1.3.x')) '' else 'Validator')
         val validatorFileName = name.formatForCodeCapital + validatorSuffix + '.php'
         if (!isInheriting) {
-            if (!app.shouldBeSkipped(validatorPath + 'Base/' + validatorFileName)) {
+            if (!app.shouldBeSkipped(validatorPath + 'Base/Abstract' + validatorFileName)) {
                 var fileName = validatorFileName
-                if (app.shouldBeMarked(validatorPath + 'Base/' + validatorFileName)) {
+                if (app.shouldBeMarked(validatorPath + 'Base/Abstract' + validatorFileName)) {
                     fileName = name.formatForCodeCapital + validatorSuffix + '.generated.php'
                 }
-                fsa.generateFile(validatorPath + 'Base/' + fileName, fh.phpFileContent(app, validatorBaseImpl))
+                fsa.generateFile(validatorPath + 'Base/Abstract' + fileName, fh.phpFileContent(app, validatorBaseImpl))
             }
         }
         if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(validatorPath + validatorFileName)) {
