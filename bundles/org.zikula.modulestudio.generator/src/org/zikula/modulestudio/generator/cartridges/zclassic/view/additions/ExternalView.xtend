@@ -440,7 +440,7 @@ class ExternalView {
                                 <a href="#" onclick="«app.appName.toFirstLower».finder.selectItem({$itemId})" onkeypress="«app.appName.toFirstLower».finder.selectItem({$itemId})">{$«name.formatForCode»->getTitleFromDisplayPattern()}</a>
                                 <input type="hidden" id="url{$itemId}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}«ENDIF»" />
                                 <input type="hidden" id="title{$itemId}" value="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}" />
-                                <input type="hidden" id="desc{$itemId}" value="{capture assign='description'}«displayDescription('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
+                                <input type="hidden" id="desc{$itemId}" value="{capture assign='description'}«displayDescriptionLegacy('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
                             </li>
                         {foreachelse}
                             <li>{gt text='No entries found.'}</li>
