@@ -71,7 +71,7 @@ class Config {
                 {/form}
             </div>
             {include file='«configController.formatForDB»/footer.tpl'}
-            «IF !getAllVariables.filter[null !== documentation && documentation != ''].empty»
+            «IF !getAllVariables.filter[null !== documentation && documentation != ''].empty || hasImageFields»
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     «IF hasImageFields»
@@ -88,7 +88,9 @@ class Config {
 
                     «ENDIF»
                     document.observe('dom:loaded', function() {
-                        Zikula.UI.Tooltips($$('.«appName.toLowerCase»-form-tooltips'));
+                        «IF !getAllVariables.filter[null !== documentation && documentation != ''].empty»
+                            Zikula.UI.Tooltips($$('.«appName.toLowerCase»-form-tooltips'));
+                        «ENDIF»
                         «IF hasImageFields»
                             $$('.shrink-enabler').each(function(elem, index) {
                                 elem.observe('click', «prefix.formatForDB»ToggleShrinkSettings(elem.getAttribute('id').replace('enableShrinkingFor', '')));
