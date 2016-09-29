@@ -183,15 +183,21 @@ class Config {
     def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
     def private dispatch additionalOptions(IntVar it) '''
-        'max_length' => 255,
         «IF hasUserGroupSelectors && isUserGroupSelector»
+            'max_length' => 255,
             // Zikula core should provide a form type for this to hide entity details
             'class' => 'ZikulaGroupsModule:GroupEntity',
             'choice_label' => 'name'
         «ELSE»
-            'scale' => 0
+            'max_length' => «IF isShrinkDimensionField»4«ELSE»255«ENDIF»,
+            'scale' => 0«IF isShrinkDimensionField»,
+            'input_group' => ['right' => $this->__('pixels')]«ENDIF»
         «ENDIF»
     '''
+
+    def private isShrinkDimensionField(Variable it) {
+        name.formatForCode.startsWith('shrinkWidth') || name.formatForCode.startsWith('shrinkHeight')
+    }
 
     def private dispatch fieldType(TextVar it) '''«nsSymfonyFormType»Text«IF multiline»area«ENDIF»'''
     def private dispatch additionalOptions(TextVar it) '''

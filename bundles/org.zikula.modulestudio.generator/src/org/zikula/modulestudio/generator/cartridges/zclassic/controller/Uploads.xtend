@@ -306,13 +306,14 @@ class Uploads {
             }
             $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
+            $destinationFilePath = $basePath . $fileName;
             «IF targets('1.3.x')»
-                if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
+                if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $destinationFilePath)) {
                     «IF targets('1.3.x')»
                         return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
                     «ELSE»
                         $flashBag->add('error', $this->__('Error! Could not move your file to the destination folder.'));
-                        $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $basePath . $fileName]);
+                        $logger->error('{app}: User {user} could not upload a file ("{sourcePath}") to destination folder ("{destinationPath}").', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'sourcePath' => $fileData[$fieldName]['tmp_name'], 'destinationPath' => $destinationFilePath]);
 
                         return false;
                     «ENDIF»
@@ -320,12 +321,36 @@ class Uploads {
             «ELSE»
                 $targetFile = $file->move($basePath, $fileName);
 
-                «doFileValidation('$basePath . $fileName')»
+                «doFileValidation('$destinationFilePath')»
             «ENDIF»
+
+            $isImage = in_array($extension, $this->imageFileTypes);
+            if ($isImage) {
+                // check if shrinking functionality is enabled
+                $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
+                if (\ModUtil::getVar('«appName»', 'enableShrinkingFor' . $fieldSuffix, false) == true) {
+                    // resize to allowed maximum size
+                    $thumbManager = $serviceManager->get('systemplugin.imagine.manager');
+                    $maxWidth = \ModUtil::getVar('«appName»', 'shrinkWidth' . $fieldSuffix, 800);
+                    $maxHeight = \ModUtil::getVar('«appName»', 'shrinkHeight' . $fieldSuffix, 600);
+
+                    $imgInfo = getimagesize($destinationFilePath);
+                    if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
+                        // create thumbnail image
+                        $thumbFilePath = $thumbManager->getThumb($destinationFilePath, $maxWidth, $maxHeight);
+
+                        // remove original image
+                        unlink($destinationFilePath);
+
+                        // rename thumbnail image to original image
+                        rename($thumbFilePath, $destinationFilePath);
+                    }
+                }
+            }
 
             // collect data to return
             $result['fileName'] = $fileName;
-            $result['metaData'] = $this->readMetaDataForFile($fileName, $basePath . $fileName);
+            $result['metaData'] = $this->readMetaDataForFile($fileName, $destinationFilePath);
 
             return $result;
         }

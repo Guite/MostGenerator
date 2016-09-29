@@ -51,6 +51,7 @@ class PersistenceTransformer {
         }
 
         addWorkflowSettings
+        addImageSettings
 
         // add legacy bridge methods to admin/user controllers
         if (targets('1.3.x')) {
@@ -255,6 +256,58 @@ class PersistenceTransformer {
         val varContainer = factory.createVariables => [
             name = 'Moderation'
             documentation = 'Here you can assign moderation groups for enhanced workflow actions.'
+            sortOrder = newSortNumber
+        ]
+
+        varContainer
+    }
+
+    def private addImageSettings(Application it) {
+        val entitiesWithImageUploads = getAllEntities.filter[hasImageFieldsEntity]
+        if (entitiesWithImageUploads.empty) {
+            return
+        }
+
+        val varContainer = createVarContainerForImageSettings
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        for (entity : entitiesWithImageUploads) {
+            for (imageUploadField : entity.imageFieldsEntity) {
+                val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
+                varContainer.vars += factory.createBoolVar => [
+                    name = 'enableShrinkingFor' + fieldSuffix
+                    value = 'false'
+                    documentation = 'Whether to enable shrinking to maximum image dimensions. The original image is not stored.'
+                ]
+                varContainer.vars += factory.createIntVar => [
+                    name = 'shrinkWidth' + fieldSuffix
+                    value = '800'
+                    documentation = 'The maximum image width.'
+                ]
+                varContainer.vars += factory.createIntVar => [
+                    name = 'shrinkHeight' + fieldSuffix
+                    value = '600'
+                    documentation = 'The maximum image height.'
+                ]
+            }
+        }
+
+        variables += varContainer
+    }
+
+    def private createVarContainerForImageSettings(Application it) {
+        var lastVarContainerSortNumber = 0
+        if (!variables.empty) {
+            lastVarContainerSortNumber = variables.sortBy[sortOrder].reverseView.head.sortOrder
+        }
+
+        val newSortNumber = lastVarContainerSortNumber + 1
+
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        val varContainer = factory.createVariables => [
+            name = 'Images'
+            documentation = 'Here you can define shrinking behaviour for huge images.'
             sortOrder = newSortNumber
         ]
 

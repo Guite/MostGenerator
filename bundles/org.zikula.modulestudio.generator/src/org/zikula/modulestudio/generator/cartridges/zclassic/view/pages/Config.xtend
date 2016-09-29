@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.Variables
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -17,6 +18,7 @@ class Config {
 
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -72,8 +74,28 @@ class Config {
             «IF !getAllVariables.filter[null !== documentation && documentation != ''].empty»
                 <script type="text/javascript">
                 /* <![CDATA[ */
+                    «IF hasImageFields»
+                        function «prefix.formatForDB»ToggleShrinkSettings(fieldName)
+                        {
+                            $$('.shrinkdimension-' + fieldName.toLowerCase()).each(function(elem, index) {
+                                if ($('enableShrinkingFor' + fieldName).checked == true) {
+                                    elem.removeClassName('z-hide');
+                                } else {
+                                    elem.addClassName('z-hide');
+                                }
+                            });
+                        }
+
+                    «ENDIF»
                     document.observe('dom:loaded', function() {
                         Zikula.UI.Tooltips($$('.«appName.toLowerCase»-form-tooltips'));
+                        «IF hasImageFields»
+                            $$('.shrink-enabler').each(function(elem, index) {
+                                elem.observe('click', «prefix.formatForDB»ToggleShrinkSettings(elem.getAttribute('id').replace('enableShrinkingFor', '')));
+                                elem.observe('keyup', «prefix.formatForDB»ToggleShrinkSettings(elem.getAttribute('id').replace('enableShrinkingFor', '')));
+                                «prefix.formatForDB»ToggleShrinkSettings(elem.getAttribute('id').replace('enableShrinkingFor', ''));
+                            });
+                        «ENDIF»
                     });
                 /* ]]> */
                 </script>
@@ -187,17 +209,27 @@ class Config {
 
     def private formRow(Variable it) '''
         «IF container.application.targets('1.3.x')»
-            <div class="z-formrow">
+            <div class="z-formrow«IF isShrinkDimensionField» shrinkdimension-«name.formatForCode.replace('shrinkWidth', '').replace('shrinkHeight', '').toLowerCase»«ENDIF»">
                 «IF null !== documentation && documentation != ""»
                     {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
                 «ENDIF»
                 {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF null !== documentation && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»'«IF null !== documentation && documentation != ''» title=$toolTip«ENDIF»}
-                «inputFieldLegacy»
+                «IF isShrinkDimensionField»
+                    <div>
+                        «inputFieldLegacy» {gt text='pixels'}
+                    </div>
+                «ELSE»
+                    «inputFieldLegacy»
+                «ENDIF»
             </div>
         «ELSE»
             {{ form_row(form.«name.formatForCode») }}
         «ENDIF»
     '''
+
+    def private isShrinkDimensionField(Variable it) {
+        name.formatForCode.startsWith('shrinkWidth') || name.formatForCode.startsWith('shrinkHeight')
+    }
 
     def private dispatch inputFieldLegacy(Variable it) '''
         {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'}
@@ -207,7 +239,11 @@ class Config {
         «IF isUserGroupSelector»
             {formdropdownlist id='«name.formatForCode»' group='config' __title='Choose the «name.formatForDisplay»'}
         «ELSE»
-            {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'}
+            «IF isShrinkDimensionField»
+                {formintinput id='«name.formatForCode»' group='config' size=8 maxLength=4 __title='«documentation.formatForDisplay»'}
+            «ELSE»
+                {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'}
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -216,7 +252,7 @@ class Config {
     '''
 
     def private dispatch inputFieldLegacy(BoolVar it) '''
-        {formcheckbox id='«name.formatForCode»' group='config'}
+        {formcheckbox id='«name.formatForCode»' group='config'«IF name.formatForCode.startsWith('enableShrinkingFor')» cssClass='shrink-enabler'«ENDIF»}
     '''
 
     def private dispatch inputFieldLegacy(ListVar it) '''
