@@ -213,7 +213,7 @@ class ExternalView {
         «IF hasImageFieldsEntity»
             <dd>«displaySnippet»</dd>
         «ENDIF»
-        «displayDescription('<dd>', '</dd>')»
+        «displayDescriptionLegacy('<dd>', '</dd>')»
         «IF categorisable»
             <dd>{assignedcategorieslist categories=$«name.formatForCode».categories doctrine2=true}</dd>
         «ENDIF»
