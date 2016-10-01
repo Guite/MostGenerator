@@ -184,7 +184,7 @@ class TreeSelector {
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
-        class «appName»_Form_Plugin_TreeSelector extends «appName»_Form_Plugin_Base_TreeSelector
+        class «appName»_Form_Plugin_TreeSelector extends «appName»_Form_Plugin_Base_AbstractTreeSelector
         {
             // feel free to add your customisation here
         }

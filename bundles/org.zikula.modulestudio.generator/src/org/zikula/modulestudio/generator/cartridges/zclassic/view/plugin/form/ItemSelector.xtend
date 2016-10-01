@@ -215,16 +215,16 @@ class ItemSelector {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
-            use «appNamespace»\Form\Plugin\Base\ItemSelector as BaseItemSelector;
+            use «appNamespace»\Form\Plugin\Base\AbstractItemSelector;
 
         «ENDIF»
         /**
          * Item selector plugin implementation class.
          */
         «IF targets('1.3.x')»
-        class «appName»_Form_Plugin_ItemSelector extends «appName»_Form_Plugin_Base_ItemSelector
+        class «appName»_Form_Plugin_ItemSelector extends «appName»_Form_Plugin_Base_AbstractItemSelector
         «ELSE»
-        class ItemSelector extends BaseItemSelector
+        class ItemSelector extends AbstractItemSelector
         «ENDIF»
         {
             // feel free to add your customisation here

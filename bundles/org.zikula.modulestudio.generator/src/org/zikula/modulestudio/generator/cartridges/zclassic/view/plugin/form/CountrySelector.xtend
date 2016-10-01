@@ -104,7 +104,7 @@ class CountrySelector {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Form\Plugin;
 
-            use «appNamespace»\Form\Plugin\Base\CountrySelector as BaseCountrySelector;
+            use «appNamespace»\Form\Plugin\Base\AbstractCountrySelector;
 
         «ENDIF»
         /**
@@ -112,9 +112,9 @@ class CountrySelector {
          * It understands an optional argument to limit the select options to a given set of allowed countries.
          */
         «IF targets('1.3.x')»
-        class «appName»_Form_Plugin_CountrySelector extends «appName»_Form_Plugin_Base_CountrySelector
+        class «appName»_Form_Plugin_CountrySelector extends «appName»_Form_Plugin_Base_AbstractCountrySelector
         «ELSE»
-        class CountrySelector extends BaseCountrySelector
+        class CountrySelector extends AbstractCountrySelector
         «ENDIF»
         {
             // feel free to add your customisation here

@@ -145,7 +145,7 @@ class GeoInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the geo input inherits from it.
          */
-        class «appName»_Form_Plugin_GeoInput extends «appName»_Form_Plugin_Base_GeoInput
+        class «appName»_Form_Plugin_GeoInput extends «appName»_Form_Plugin_Base_AbstractGeoInput
         {
             // feel free to add your customisation here
         }

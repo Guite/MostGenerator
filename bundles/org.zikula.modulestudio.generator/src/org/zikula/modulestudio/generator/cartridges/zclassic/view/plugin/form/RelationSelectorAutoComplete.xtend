@@ -184,7 +184,7 @@ class RelationSelectorAutoComplete {
         /**
          * Relation selector plugin implementation class.
          */
-        class «appName»_Form_Plugin_RelationSelectorAutoComplete extends «appName»_Form_Plugin_Base_RelationSelectorAutoComplete
+        class «appName»_Form_Plugin_RelationSelectorAutoComplete extends «appName»_Form_Plugin_Base_AbstractRelationSelectorAutoComplete
         {
             // feel free to add your customisation here
         }

@@ -183,7 +183,7 @@ class UserInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the user input inherits from it.
          */
-        class «appName»_Form_Plugin_UserInput extends «appName»_Form_Plugin_Base_UserInput
+        class «appName»_Form_Plugin_UserInput extends «appName»_Form_Plugin_Base_AbstractUserInput
         {
             // feel free to add your customisation here
         }

@@ -228,7 +228,7 @@ class TimeInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the time input inherits from it.
          */
-        class «appName»_Form_Plugin_TimeInput extends «appName»_Form_Plugin_Base_TimeInput
+        class «appName»_Form_Plugin_TimeInput extends «appName»_Form_Plugin_Base_AbstractTimeInput
         {
             // feel free to add your customisation here
         }

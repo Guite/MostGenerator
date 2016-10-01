@@ -92,7 +92,7 @@ class RelationSelectorList {
         /**
          * Relation selector plugin implementation class.
          */
-        class «appName»_Form_Plugin_RelationSelectorList extends «appName»_Form_Plugin_Base_RelationSelectorList
+        class «appName»_Form_Plugin_RelationSelectorList extends «appName»_Form_Plugin_Base_AbstractRelationSelectorList
         {
             // feel free to add your customisation here
         }
