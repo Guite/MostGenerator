@@ -4,11 +4,14 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class AbstractObjectSelector {
+
     extension FormattingExtensions = new FormattingExtensions
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -19,9 +22,24 @@ class AbstractObjectSelector {
         if (!targets('1.3.x')) {
             return
         }
-        generateClassPair(fsa, getAppSourceLibPath + 'Form/Plugin/AbstractObjectSelector.php',
-            fh.phpFileContent(it, selectorBaseImpl), fh.phpFileContent(it, selectorImpl)
-        )
+
+        val basePath = getAppSourceLibPath + 'Form/Plugin/Base/AbstractObjectSelector.php'
+        if (!shouldBeSkipped(basePath)) {
+            if (shouldBeMarked(basePath)) {
+                fsa.generateFile(basePath.replace('.php', '.generated.php'), fh.phpFileContent(it, selectorBaseImpl))
+            } else {
+                fsa.generateFile(basePath, fh.phpFileContent(it, selectorBaseImpl))
+            }
+        }
+
+        val concretePath = getAppSourceLibPath + 'Form/Plugin/AbstractObjectSelector.php'
+        if (!generateOnlyBaseClasses && !shouldBeSkipped(concretePath)) {
+            if (shouldBeMarked(concretePath)) {
+                fsa.generateFile(concretePath.replace('.php', '.generated.php'), fh.phpFileContent(it, selectorImpl))
+            } else {
+                fsa.generateFile(concretePath, fh.phpFileContent(it, selectorImpl))
+            }
+        }
     }
 
     def private selectorBaseImpl(Application it) '''
