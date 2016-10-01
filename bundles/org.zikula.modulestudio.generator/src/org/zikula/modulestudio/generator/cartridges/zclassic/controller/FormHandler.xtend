@@ -1355,7 +1355,7 @@ class FormHandler {
         «IF !app.isLegacy»
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
 
-            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\Abstract«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         /**
@@ -1363,9 +1363,9 @@ class FormHandler {
          * It aims on the «name.formatForDisplay» object type.
          */
         «IF app.isLegacy»
-        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital»
+        class «app.appName»_Form_Handler_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_Abstract«actionName.formatForCodeCapital»
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
+        class «actionName.formatForCodeCapital»Handler extends Abstract«actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             // feel free to extend the base handler class here
