@@ -34,7 +34,7 @@ class DateInput {
          * You can also use all of the features from the Zikula_Form_Plugin_DateInput plugin since
          * the date input inherits from it.
          */
-        class «appName»_Form_Plugin_Base_DateInput extends Zikula_Form_Plugin_DateInput
+        class «appName»_Form_Plugin_Base_AbstractDateInput extends Zikula_Form_Plugin_DateInput
         {
             /**
              * Get filename of this file.

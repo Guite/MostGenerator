@@ -34,7 +34,7 @@ class TimeInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the time input inherits from it.
          */
-        class «appName»_Form_Plugin_Base_TimeInput extends Zikula_Form_Plugin_TextInput
+        class «appName»_Form_Plugin_Base_AbstractTimeInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Flag for switching between 24 and 12 hour mode.

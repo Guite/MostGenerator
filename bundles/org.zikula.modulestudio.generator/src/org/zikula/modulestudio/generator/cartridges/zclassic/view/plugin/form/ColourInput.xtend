@@ -36,7 +36,7 @@ class ColourInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the colour input inherits from it.
          */
-        class «appName»_Form_Plugin_Base_ColourInput extends Zikula_Form_Plugin_TextInput
+        class «appName»_Form_Plugin_Base_AbstractColourInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Get filename of this file.

@@ -31,7 +31,7 @@ class RelationSelectorList {
         /**
          * Relation selector plugin base class.
          */
-        class «appName»_Form_Plugin_Base_RelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
+        class «appName»_Form_Plugin_Base_AbstractRelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
         {
             /**
              * Get filename of this file.

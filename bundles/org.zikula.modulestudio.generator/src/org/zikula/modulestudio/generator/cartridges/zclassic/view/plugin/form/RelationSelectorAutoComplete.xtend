@@ -31,7 +31,7 @@ class RelationSelectorAutoComplete {
         /**
          * Relation selector plugin base class.
          */
-        class «appName»_Form_Plugin_Base_RelationSelectorAutoComplete extends «appName»_Form_Plugin_AbstractObjectSelector
+        class «appName»_Form_Plugin_Base_AbstractRelationSelectorAutoComplete extends «appName»_Form_Plugin_AbstractObjectSelector
         {
             /**
              * Identifier prefix (unique name for JS).

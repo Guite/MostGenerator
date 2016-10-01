@@ -46,7 +46,7 @@ class ItemSelector {
         /**
          * Item selector plugin base class.
          */
-        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»ItemSelector extends Zikula_Form_Plugin_TextInput
+        class «IF targets('1.3.x')»«appName»_Form_Plugin_Base_«ENDIF»AbstractItemSelector extends Zikula_Form_Plugin_TextInput
         {
             /**
              * The treated object type.
