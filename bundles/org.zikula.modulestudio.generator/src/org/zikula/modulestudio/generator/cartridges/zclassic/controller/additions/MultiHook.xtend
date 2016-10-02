@@ -133,7 +133,7 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
-                $entity = \ModUtil::apiFunc('«app.appName»', 'selection', 'getEntity', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«name.formatForCode», 'id' => $entityId«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
+                $entity = \ModUtil::apiFunc('«app.appName»', 'selection', 'getEntity', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«name.formatForCode»', 'id' => $entityId«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
                 if (null === $entity) {
                     $cache[$nid] = '<em>' . __f('«name.formatForDisplayCapital» with id %s could not be found', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»$entityId«IF app.targets('1.3.x')»)«ELSE»]«ENDIF», $dom) . '</em>';
 
