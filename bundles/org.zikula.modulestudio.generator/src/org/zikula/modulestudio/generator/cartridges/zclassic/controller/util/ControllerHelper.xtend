@@ -87,14 +87,14 @@ class ControllerHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
-                 * @param TranslatorInterface    $translator     Translator service instance
-                 * @param Session                $session        Session service instance
-                 * @param Logger                 $logger         Logger service instance
+                 * @param ContainerBuilder    $container  ContainerBuilder service instance
+                 * @param TranslatorInterface $translator Translator service instance
+                 * @param Session             $session    Session service instance
+                 * @param Logger              $logger     Logger service instance
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, Session $session, Logger $logger)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, Session $session, Logger $logger)
                 {
-                    $this->container = $serviceManager;
+                    $this->container = $container;
                     $this->translator = $translator;
                     $this->session = $session;
                     $this->logger = $logger;

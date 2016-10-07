@@ -77,13 +77,13 @@ class TranslatableHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
-                 * @param TranslatorInterface    $translator     Translator service instance
-                 * @param VariableApi            $variableApi    VariableApi service instance
+                 * @param ContainerBuilder    $container   ContainerBuilder service instance
+                 * @param TranslatorInterface $translator  Translator service instance
+                 * @param VariableApi         $variableApi VariableApi service instance
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, VariableApi $variableApi)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, VariableApi $variableApi)
                 {
-                    $this->container = $serviceManager;
+                    $this->container = $container;
                     $this->translator = $translator;
                     $this->variableApi = $variableApi;
                 }

@@ -354,17 +354,17 @@ class FormHandler {
                 /**
                  * Constructor.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
-                 * @param TranslatorInterface    $translator     Translator service instance
-                 * @param RequestStack           $requestStack   RequestStack service instance
-                 * @param RouterInterface        $router         Router service instance
+                 * @param ContainerBuilder    $container    ContainerBuilder service instance
+                 * @param TranslatorInterface $translator   Translator service instance
+                 * @param RequestStack        $requestStack RequestStack service instance
+                 * @param RouterInterface     $router       Router service instance
                 «IF hasUploads»
                     «' '»* @param UploadHandler          $uploadHandler  UploadHandler service instance
                 «ENDIF»
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router«IF hasUploads», UploadHandler $uploadHandler«ENDIF»)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router«IF hasUploads», UploadHandler $uploadHandler«ENDIF»)
                 {
-                    $this->container = $serviceManager;
+                    $this->container = $container;
                     $this->setTranslator($translator);
                     $this->request = $requestStack->getCurrentRequest();
                     $this->router = $router;

@@ -55,11 +55,11 @@ class ModelHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
+                 * @param ContainerBuilder $container ContainerBuilder service instance
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager)
+                public function __construct(ContainerBuilder $container)
                 {
-                    $this->container = $serviceManager;
+                    $this->container = $container;
                 }
 
             «ENDIF»

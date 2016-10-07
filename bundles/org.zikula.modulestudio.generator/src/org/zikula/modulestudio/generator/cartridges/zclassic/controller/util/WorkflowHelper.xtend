@@ -69,15 +69,15 @@ class WorkflowHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param \Zikula_ServiceManager $serviceManager ServiceManager instance
-                 * @param TranslatorInterface    $translator     Translator service instance
+                 * @param ContainerBuilder    $container  ContainerBuilder service instance
+                 * @param TranslatorInterface $translator Translator service instance
                  *
                  * @return void
                  */
-                public function __construct(\Zikula_ServiceManager $serviceManager, TranslatorInterface $translator)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator)
                 {
                     $this->name = '«appName»';
-                    $this->container = $serviceManager;
+                    $this->container = $container;
                     $this->translator = $translator;
                 }
 
