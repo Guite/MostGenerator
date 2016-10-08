@@ -619,14 +619,18 @@ class Actions {
                        ->assign('sort', $sort)
                        ->assign('sdir', $sortdir)
                        ->assign('pageSize', $resultsPerPage)
+                       «IF !skipHookSubscribers»
                        ->assign('currentUrlObject', $currentUrlObject)
+                       «ENDIF»
                        ->assign($additionalParameters);
         «ELSE»
             $templateParameters['items'] = $entities;
             $templateParameters['sort'] = $sort;
             $templateParameters['sdir'] = $sortdir;
             $templateParameters['pagesize'] = $resultsPerPage;
+            «IF !skipHookSubscribers»
             $templateParameters['currentUrlObject'] = $currentUrlObject;
+            «ENDIF»
             $templateParameters = array_merge($templateParameters, $additionalParameters);
 
             $formOptions = [
@@ -859,11 +863,15 @@ class Actions {
 
             // assign output data to view object.
             $this->view->assign($objectType, $entity)
+                       «IF !skipHookSubscribers»
                        ->assign('currentUrlObject', $currentUrlObject)
+                       «ENDIF»
                        ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
         «ELSE»
             $templateParameters[$objectType] = $entity;
+            «IF !skipHookSubscribers»
             $templateParameters['currentUrlObject'] = $currentUrlObject;
+            «ENDIF»
             «IF app.hasUploads»
                 $imageHelper = $this->get('«app.appService».image_helper');
             «ENDIF»
