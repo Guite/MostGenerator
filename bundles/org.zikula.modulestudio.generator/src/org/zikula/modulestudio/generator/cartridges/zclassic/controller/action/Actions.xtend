@@ -52,11 +52,7 @@ class Actions {
             $permLevel = «IF controller instanceof AdminController»ACCESS_ADMIN«ELSE»«getPermissionAccessLevel»«ENDIF»;
             «permissionCheck('', '')»
         «ELSE»
-            «IF isLegacy»
-                $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->get('«app.appService».controller_helper');
-            «ENDIF»
+            «initControllerHelper»
 
             // parameter specifying which type of objects we are treating
             «IF isLegacy»
@@ -119,12 +115,6 @@ class Actions {
         «IF it instanceof MainAction»
             «permissionCheck('', '')»
         «ELSE»
-            «IF isLegacy»
-                $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
-            «ELSE»
-                $controllerHelper = $this->get('«app.appService».controller_helper');
-            «ENDIF»
-
             // parameter specifying which type of objects we are treating
             $objectType = '«name.formatForCode»';
             $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'controller' => '«name.formatForCode»', 'action' => '«action.name.formatForCode.toFirstLower»'«IF isLegacy»)«ELSE»]«ENDIF»;
@@ -136,6 +126,17 @@ class Actions {
             «action.permissionCheck("' . ucfirst($objectType) . '", '')»
         «ENDIF»
         «actionImplBody(it, action)»
+    '''
+
+    /**
+     * Initialise controller helper.
+     */
+    def private initControllerHelper() '''
+        «IF isLegacy»
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+        «ELSE»
+            $controllerHelper = $this->get('«app.appService».controller_helper');
+        «ENDIF»
     '''
 
     /**
@@ -717,6 +718,8 @@ class Actions {
     '''
 
     def private actionImplBodyAjaxDisplay(DisplayAction it) '''
+        «initControllerHelper»
+
         «IF isLegacy»
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
@@ -766,6 +769,8 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DisplayAction action) '''
         «IF isLegacy»
+            «initControllerHelper»
+
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
@@ -900,6 +905,9 @@ class Actions {
         switch controller {
             AjaxController: '''
         $this->checkAjaxToken();
+
+        «initControllerHelper»
+
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
 
         «IF isLegacy»
@@ -1051,6 +1059,8 @@ class Actions {
 
     def private dispatch actionImplBody(Entity it, DeleteAction action) '''
         «IF isLegacy»
+            «initControllerHelper»
+
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
             // retrieve identifier of the object we wish to delete
