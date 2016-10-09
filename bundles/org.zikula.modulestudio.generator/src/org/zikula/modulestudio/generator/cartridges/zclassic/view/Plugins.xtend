@@ -239,7 +239,6 @@ class Plugins {
         public function getFilters()
         {
             return [
-                new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState']),
                 «IF hasCountryFields»
                     new \Twig_SimpleFilter('«appNameLower»_countryName', [$this, 'getCountryName']),
                 «ENDIF»
@@ -255,7 +254,7 @@ class Plugins {
                 «IF (generateIcsTemplates && !entities.filter[null !== startDateField && null !== endDateField].empty)»
                     new \Twig_SimpleFilter('«appNameLower»_icalText', [$this, 'formatIcalText']),
                 «ENDIF»
-                new \Twig_SimpleFilter('«appNameLower»_profileLink', [$this, 'profileLink'])
+                new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'])
             ];
         }
 
@@ -358,34 +357,6 @@ class Plugins {
 
             $view = \Zikula_View::getInstance('«appName»');
             $result = smarty_function_thumb($params, $view);
-
-            return $result;
-        }
-
-        /**
-         * Returns a link to the user's profile.
-         *
-         * @param int     $uid       The user's id (optional)
-         * @param string  $class     The class name for the link (optional)
-         * @param integer $maxLength If set then user names are truncated to x chars
-         *
-         * @return string
-         */
-        public function profileLink($uid, $class = '', $maxLength = 0)
-        {
-            $result = '';
-            $image = '';
-
-            if ($uid == '') {
-                return $result;
-            }
-
-            if ($this->variableApi->getSystemVar('profilemodule') != '') {
-                include_once 'lib/legacy/viewplugins/modifier.profilelinkbyuid.php';
-                $result = smarty_modifier_profilelinkbyuid($uid, $class, $image, $maxLength);
-            } else {
-                $result = \UserUtil::getVar('uname', $uid);
-            }
 
             return $result;
         }

@@ -93,7 +93,7 @@ class SimpleFields {
                     {$«realName»|profilelinkbyuid}
                     <span class="avatar">{useravatar uid=$«realName» rating='g'}</span>
                 «ELSE»
-                    {{ «realName»|«entity.application.appName.formatForDB»_profileLink }}
+                    {{ «realName»|profileLinkByUserId() }}
                     <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(uid=«realName», rating='g')|raw }}</span>
                 «ENDIF»
             «IF page == 'display'»
