@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.IntegerField
 import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.StringField
+import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.TimeField
 import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.UrlField
@@ -117,6 +118,9 @@ class SimpleFields {
         if (!password) '''
             «IF isLegacyApp»{$«objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»GetCountryName|safetext«ELSEIF language || locale»|getlanguagename|safetext«ENDIF»}«ELSE»{{ «objName».«name.formatForCode»«IF country»|«entity.application.appName.formatForDB»_countryName«ELSEIF language || locale»|languageName«ENDIF» }}«ENDIF»'''
     }
+
+    def dispatch displayField(TextField it, String objName, String page) '''
+        «IF isLegacyApp»{$«objName».«name.formatForCode»|safehtml}«ELSE»{{ «objName».«name.formatForCode»|safeHtml }}«ENDIF»'''
 
     def dispatch displayField(EmailField it, String objName, String page) {
         val realName = objName + '.' + name.formatForCode
