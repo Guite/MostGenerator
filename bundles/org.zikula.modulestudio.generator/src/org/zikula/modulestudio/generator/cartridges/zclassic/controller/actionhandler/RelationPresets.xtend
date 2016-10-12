@@ -93,6 +93,9 @@ class RelationPresets {
 
             if ($args['commandName'] == 'create') {
                 «IF !owningAssociationsNonEditable.empty»
+                «IF !app.targets('1.3.x')»
+                    $selectionHelper = $this->get('«app.appService».selection_helper');
+                «ENDIF»
                 // save predefined incoming relationship from parent entity
                 «FOR relation : owningAssociationsNonEditable»
                     «relation.saveSinglePreset(false)»
@@ -118,8 +121,12 @@ class RelationPresets {
         «val aliasInverse = getRelationAliasName(!useTarget)»
         «val otherObjectType = (if (useTarget) target else source).name.formatForCode»
         if (!empty($this->relationPresets['«alias»'])) {
-            $relObj = ModUtil::apiFunc('«application.appName»', 'selection', 'getEntity', «IF application.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']«IF application.targets('1.3.x')»)«ELSE»]«ENDIF»);
-            if ($relObj != null) {
+            «IF application.targets('1.3.x')»
+                $relObj = ModUtil::apiFunc('«application.appName»', 'selection', 'getEntity', array('ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']));
+            «ELSE»
+                $relObj = $selectionHelper->getEntity('«otherObjectType»', $this->relationPresets['«alias»']);
+            «ENDIF»
+            if (null !== $relObj) {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);
                 «ELSE»

@@ -19,26 +19,103 @@ class Category {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating category api')
-        generateClassPair(fsa, getAppSourceLibPath + 'Api/Category' + (if (targets('1.3.x')) '' else 'Api') + '.php',
-            fh.phpFileContent(it, categoryBaseClass), fh.phpFileContent(it, categoryImpl)
-        )
+        if (isLegacy) {
+            generateClassPair(fsa, getAppSourceLibPath + 'Api/Category.php',
+                fh.phpFileContent(it, categoryApiBaseClass), fh.phpFileContent(it, categoryApiImpl)
+            )
+        } else {
+            generateClassPair(fsa, getAppSourceLibPath + 'Helper/CategoryHelper.php',
+                fh.phpFileContent(it, categoryHelperBaseClass), fh.phpFileContent(it, categoryHelperImpl)
+            )
+        }
     }
 
-    def private categoryBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api\Base;
-
-            use CategoryRegistryUtil;
-            use ModUtil;
-            use Zikula_AbstractBase;
-
-        «ENDIF»
+    def private categoryApiBaseClass(Application it) '''
+        use Doctrine\ORM\QueryBuilder;
 
         /**
          * Category api base class.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Api_Base_AbstractCategory extends Zikula_AbstractApi«ELSE»AbstractCategoryApi extends Zikula_AbstractBase«ENDIF»
+        abstract class «appName»_Api_Base_AbstractCategory extends Zikula_AbstractApi
         {
+            «categoryBaseImpl»
+        }
+    '''
+
+    def private categoryHelperBaseClass(Application it) '''
+        namespace «appNamespace»\Helper\Base;
+
+        use CategoryRegistryUtil;
+        use Doctrine\ORM\QueryBuilder;
+        use Psr\Log\LoggerInterface;
+        use Symfony\Component\DependencyInjection\ContainerBuilder;
+        use Symfony\Component\HttpFoundation\RequestStack;
+        use Symfony\Component\HttpFoundation\Session\SessionInterface;
+        use Zikula\Common\Translator\TranslatorInterface;
+        use Zikula\UsersModule\Api\CurrentUserApi;
+
+        /**
+         * Category helper base class.
+         */
+        abstract class AbstractCategoryHelper
+        {
+            /**
+             * @var ContainerBuilder
+             */
+            protected $container;
+
+            /**
+             * @var TranslatorInterface
+             */
+            protected $translator;
+
+            /**
+             * @var SessionInterface
+             */
+            protected $session;
+
+            /**
+             * @var LoggerInterface
+             */
+            protected $logger;
+
+            /**
+             * @var RequestStack
+             */
+            protected $requestStack;
+
+            /**
+             * @var CurrentUserApi
+             */
+            private $currentUserApi;
+
+            /**
+             * Constructor.
+             * Initialises member vars.
+             *
+             * @param ContainerBuilder    $container      ContainerBuilder service instance
+             * @param TranslatorInterface $translator     Translator service instance
+             * @param SessionInterface    $session        Session service instance
+             * @param LoggerInterface     $logger         Logger service instance
+             * @param RequestStack        $requestStack   RequestStack service instance
+             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             */
+            public function __construct(
+                ContainerBuilder $container,
+                TranslatorInterface $translator,
+                SessionInterface $session,
+                LoggerInterface $logger,
+                RequestStack $requestStack,
+                CurrentUserApi $currentUserApi)
+            {
+                $this->container = $container;
+                $this->translator = $translator;
+                $this->session = $session;
+                $this->logger = $logger;
+                $this->requestStack = $requestStack;
+                $this->currentUserApi = $currentUserApi;
+            }
+
             «categoryBaseImpl»
         }
     '''
@@ -47,26 +124,39 @@ class Category {
         /**
          * Retrieves the main/default category of «appName».
          *
-         * @param string $args['ot']       The object type to be treated (optional)
+         «IF isLegacy»
+         * @param string $args['ot']       The object type to retrieve (optional)
          * @param string $args['registry'] Name of category registry to be used (optional)
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         * @param string $registry   Name of category registry to be used (optional)
+         «ENDIF»
          * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead
          *
          * @return mixed Category array on success, false on failure
          */
-        public function getMainCat(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getMainCat(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $registry = ''«ENDIF»)
         {
-            if (isset($args['registry'])) {
-                $args['registry'] = $this->getPrimaryProperty($args);
-            }
-
-            $objectType = $this->determineObjectType($args, 'getMainCat');
-            «IF !targets('1.3.x')»
-
-                $logArgs = ['app' => '«appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname')];
-                $this->get('logger')->warning('{app}: User {user} called CategoryApi#getMainCat which is deprecated.', $logArgs);
+            «IF isLegacy»
+                if (!isset($args['registry']) || empty($args['registry']) {
+                    // default to the primary registry
+                    $args['registry'] = $this->getPrimaryProperty($args);
+                }
+            «ELSE»
+                if (empty($registry)) {
+                    // default to the primary registry
+                    $registry = $this->getPrimaryProperty($objectType);
+                }
             «ENDIF»
 
-            return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucfirst($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
+            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getMainCat');
+            «IF !isLegacy»
+
+                $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
+                $this->logger->warning('{app}: User {user} called CategoryHelper#getMainCat which is deprecated.', $logArgs);
+            «ENDIF»
+
+            return CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType), «IF isLegacy»$args['registry']«ELSE»$registry«ENDIF», 32); // 32 == /__System/Modules/Global
         }
 
         /**
@@ -74,19 +164,31 @@ class Category {
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
          *
-         * @param string $args['ot']       The object type to be treated (optional)
+         «IF isLegacy»
+         * @param string $args['ot']       The object type to retrieve (optional)
          * @param string $args['registry'] Name of category registry to be used (optional)
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         * @param string $registry   Name of category registry to be used (optional)
+         «ENDIF»
          *
          * @return boolean true if multiple selection is allowed, else false
          */
-        public function hasMultipleSelection(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function hasMultipleSelection(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $registry = ''«ENDIF»)
         {
-            if (!isset($args['registry'])) {
-                // default to the primary registry
-                $args['registry'] = $this->getPrimaryProperty($args);
-            }
+            «IF isLegacy»
+                if (!isset($args['registry']) || empty($args['registry'])) {
+                    // default to the primary registry
+                    $args['registry'] = $this->getPrimaryProperty($args);
+                }
+            «ELSE»
+                if (empty($args['registry'])) {
+                    // default to the primary registry
+                    $registry = $this->getPrimaryProperty($objectType);
+                }
+            «ENDIF»
 
-            $objectType = $this->determineObjectType($args, 'hasMultipleSelection');
+            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'hasMultipleSelection');
 
             // we make no difference between different category registries here
             // if you need a custom behaviour you should override this method
@@ -106,46 +208,51 @@ class Category {
         /**
          * Retrieves input data from POST for all registries.
          *
-         * @param string $args['ot']     The object type to be treated (optional)
+         «IF isLegacy»
+         * @param string $args['ot']       The object type to retrieve (optional)
          * @param string $args['source'] Where to retrieve the data from (defaults to POST)
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         * @param string $source     Where to retrieve the data from (defaults to POST)
+         «ENDIF»
          *
          * @return array The fetched data indexed by the registry id
          */
-        public function retrieveCategoriesFromRequest(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function retrieveCategoriesFromRequest(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $source = 'POST'«ENDIF»)
         {
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $dataSource = $this->request->request;
                 if (isset($args['source']) && $args['source'] == 'GET') {
                     $dataSource = $this->request->query;
                 }
             «ELSE»
-                $request = $this->get('request_stack')->getCurrentRequest();
-                $dataSource = $request->request;
-                if (isset($args['source']) && $args['source'] == 'GET') {
-                    $dataSource = $request->query;
-                }
+                $request = $this->requestStack->getCurrentRequest();
+                $dataSource = $source == 'GET' ? $request->query : $request->request;
             «ENDIF»
 
-            $catIdsPerRegistry = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $catIdsPerRegistry = «IF isLegacy»array()«ELSE»[]«ENDIF»;
 
-            $objectType = $this->determineObjectType($args, 'retrieveCategoriesFromRequest');
-            $properties = $this->getAllProperties($args);
+            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'retrieveCategoriesFromRequest');
+            $properties = $this->getAllProperties(«IF isLegacy»$args«ELSE»$objectType«ENDIF»);
             foreach ($properties as $propertyName => $propertyId) {
-                $hasMultiSelection = $this->hasMultipleSelection(«IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType, 'registry' => $propertyName«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                $hasMultiSelection = $this->hasMultipleSelection(«IF isLegacy»array(«ELSE»[«ENDIF»
+                    'ot' => $objectType,
+                    'registry' => $propertyName
+                «IF isLegacy»)«ELSE»]«ENDIF»);
                 if ($hasMultiSelection === true) {
                     $argName = 'catids' . $propertyName;
-                    $inputValue = $dataSource->get($argName, «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»);
+                    $inputValue = $dataSource->get($argName, «IF isLegacy»array()«ELSE»[]«ENDIF»);
                     if (!is_array($inputValue)) {
                         $inputValue = explode(',', $inputValue);
                     }
                 } else {
                     $argName = 'catid' . $propertyName;
-                    «IF targets('1.3.x')»
+                    «IF isLegacy»
                         $inputVal = (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);
                     «ELSE»
                         $inputVal = $dataSource->getInt($argName, 0);
                     «ENDIF»
-                    $inputValue = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                    $inputValue = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                     if ($inputVal > 0) {
                         $inputValue[] = $inputVal;
                     }
@@ -167,24 +274,38 @@ class Category {
         /**
          * Adds a list of where clauses for a certain list of categories to a given query builder.
          *
-         * @param Doctrine\ORM\QueryBuilder $args['qb']     Query builder instance to be enhanced
-         * @param string                    $args['ot']     The object type to be treated (optional)
-         * @param string                    $args['catids'] Category ids grouped by property name
+         «IF isLegacy»
+         * @param QueryBuilder $args['qb']     Query builder instance to be enhanced
+         * @param string       $args['ot']     The object type to be treated (optional)
+         * @param array        $args['catids'] Category ids grouped by property name
+         «ELSE»
+         * @param QueryBuilder $queryBuilder Query builder instance to be enhanced
+         * @param string       $objectType   The object type to be treated (optional)
+         * @param array        $catIds       Category ids grouped by property name
+         «ENDIF»
          *
-         * @return Doctrine\ORM\QueryBuilder The enriched query builder instance
+         * @return QueryBuilder The enriched query builder instance
          */
-        public function buildFilterClauses(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function buildFilterClauses(«IF isLegacy»array $args = array()«ELSE»QueryBuilder $queryBuilder, $objectType = '', $catIds = []«ENDIF»)
         {
-            $qb = $args['qb'];
+            $qb = «IF isLegacy»$args['qb']«ELSE»$queryBuilder«ENDIF»;
 
-            $properties = $this->getAllProperties($args);
-            $catIds = $args['catids'];
+            $properties = $this->getAllProperties(«IF isLegacy»$args«ELSE»$objectType«ENDIF»);
+            «IF isLegacy»
+                $catIds = $args['catids'];
+            «ENDIF»
 
-            $filtersPerRegistry = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-            «IF targets('1.3.x')»
-                $filterParameters = array('values' => array(), 'registries' => array());
+            $filtersPerRegistry = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+            «IF isLegacy»
+                $filterParameters = array(
+                    'values' => array(),
+                    'registries' => array()
+                );
             «ELSE»
-                $filterParameters = ['values' => [], 'registries' => []];
+                $filterParameters = [
+                    'values' => [],
+                    'registries' => []
+                ];
             «ENDIF»
 
             foreach ($properties as $propertyName => $propertyId) {
@@ -216,15 +337,19 @@ class Category {
         /**
          * Returns a list of all registries / properties for a given object type.
          *
+         «IF isLegacy»
          * @param string $args['ot'] The object type to retrieve (optional)
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         «ENDIF»
          *
          * @return array list of the registries (property name as key, id as value)
          */
-        public function getAllProperties(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getAllProperties(«IF isLegacy»array $args = array()«ELSE»$objectType = ''«ENDIF»)
         {
-            $objectType = $this->determineObjectType($args, 'getAllProperties');
+            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getAllProperties');
 
-            $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds($this->name, ucfirst($objectType));
+            $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType));
 
             return $propertyIdsPerName;
         }
@@ -232,20 +357,27 @@ class Category {
         /**
          * Returns a list of all registries with main category for a given object type.
          *
+         «IF isLegacy»
          * @param string $args['ot']       The object type to retrieve (optional)
          * @param string $args['arraykey'] Key for the result array (optional)
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         * @param string $arrayKey   Key for the result array (optional)
+         «ENDIF»
          *
          * @return array list of the registries (registry id as key, main category id as value)
          */
-        public function getAllPropertiesWithMainCat(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getAllPropertiesWithMainCat(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $arrayKey = ''«ENDIF»)
         {
-            $objectType = $this->determineObjectType($args, 'getAllPropertiesWithMainCat');
+            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getAllPropertiesWithMainCat');
 
-            if (!isset($args['arraykey'])) {
-                $args['arraykey'] = '';
-            }
+            «IF isLegacy»
+                if (!isset($args['arraykey'])) {
+                    $args['arraykey'] = '';
+                }
 
-            $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, ucfirst($objectType), $args['arraykey']);
+            «ENDIF»
+            $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType), «IF isLegacy»$args['arraykey']«ELSE»$arrayKey«ENDIF»);
 
             return $registryInfo;
         }
@@ -253,16 +385,21 @@ class Category {
         /**
          * Returns the main category id for a given object type and a certain property name.
          *
+         «IF isLegacy»
          * @param string $args['ot']       The object type to retrieve (optional)
          * @param string $args['property'] The property name (optional)
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         * @param string $property   The property name (optional)
+         «ENDIF»
          *
          * @return integer The main category id of desired tree
          */
-        public function getMainCatForProperty(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getMainCatForProperty(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $property = ''«ENDIF»)
         {
-            $objectType = $this->determineObjectType($args, 'getMainCatForProperty');
+            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getMainCatForProperty');
 
-            $catId = CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucfirst($objectType), $args['property']);
+            $catId = CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType), «IF isLegacy»$args['property']«ELSE»$property«ENDIF»);
 
             return $catId;
         }
@@ -270,13 +407,17 @@ class Category {
         /**
          * Returns the name of the primary registry.
          *
+         «IF isLegacy»
          * @param string $args['ot'] The object type to retrieve (optional)
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         «ENDIF»
          *
          * @return string name of the main registry
          */
-        public function getPrimaryProperty(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getPrimaryProperty(«IF isLegacy»array $args = array()«ELSE»$objectType = ''«ENDIF»)
         {
-            $objectType = $this->determineObjectType($args, 'getPrimaryProperty');
+            $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getPrimaryProperty');
 
             $registry = 'Main';
 
@@ -286,20 +427,25 @@ class Category {
         /**
          * Determine object type using controller util methods.
          *
+         «IF isLegacy»
          * @param string $args['ot'] The object type to retrieve (optional)
          * @param string $methodName Name of calling method
+         «ELSE»
+         * @param string $objectType The object type to retrieve (optional)
+         * @param string $methodName Name of calling method
+         «ENDIF»
          *
          * @return string name of the determined object type
          */
-        protected function determineObjectType(array $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF», $methodName = '')
+        protected function determineObjectType(«IF isLegacy»array $args = array()«ELSE»$objectType = ''«ENDIF», $methodName = '')
         {
-            $objectType = isset($args['ot']) ? $args['ot'] : '';
-            «IF targets('1.3.x')»
+            «IF isLegacy»
+                $objectType = isset($args['ot']) ? $args['ot'] : '';
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «ELSE»«/* we can not use the container here, because it is not available yet during installation */»
-                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->serviceManager, $this->serviceManager->get('translator.default'), $this->serviceManager->get('session'), $this->serviceManager->get('logger'));
+                $controllerHelper = new \«appNamespace»\Helper\ControllerHelper($this->container, $this->translator, $this->session, $this->logger);
             «ENDIF»
-            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'api' => 'category', 'action' => $methodName«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'api' => 'category', 'action' => $methodName«IF isLegacy»)«ELSE»]«ENDIF»;
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
             }
@@ -308,23 +454,31 @@ class Category {
         }
     '''
 
-    def private categoryImpl(Application it) '''
-        «IF !targets('1.3.x')»
-            namespace «appNamespace»\Api;
-
-            use «appNamespace»\Api\Base\AbstractCategoryApi;
-
-        «ENDIF»
+    def private categoryApiImpl(Application it) '''
         /**
          * Category api implementation class.
          */
-        «IF targets('1.3.x')»
         class «appName»_Api_Category extends «appName»_Api_Base_AbstractCategory
-        «ELSE»
-        class CategoryApi extends AbstractCategoryApi
-        «ENDIF»
         {
-            // feel free to extend the category api at this place
+            // feel free to extend the category api here
         }
     '''
+
+    def private categoryHelperImpl(Application it) '''
+        namespace «appNamespace»\Helper;
+
+        use «appNamespace»\Helper\Base\AbstractCategoryHelper;
+
+        /**
+         * Category helper implementation class.
+         */
+        class CategoryHelper extends AbstractCategoryHelper
+        {
+            // feel free to extend the category helper here
+        }
+    '''
+
+    def private isLegacy(Application it) {
+        targets('1.3.x')
+    }
 }

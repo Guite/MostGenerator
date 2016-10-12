@@ -148,11 +148,13 @@ class ExternalController {
             $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
+            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
         «ELSE»
             $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($this->get('request_stack')->getCurrentRequest());
+            $selectionHelper = $this->get('«appService».selection_helper');
+            $idFields = $selectionHelper->getIdFields($objectType);
         «ENDIF»
-        $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
         $idValues = «IF isLegacy»array(«ELSE»[«ENDIF»'id' => $id«IF isLegacy»)«ELSE»]«ENDIF»;«/** TODO consider composite keys properly */»
 
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
@@ -291,7 +293,12 @@ class ExternalController {
 
             // fetch selected categories to reselect them in the output
             // the actual filtering is done inside the repository class
-            $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'source' => 'GET'«IF isLegacy»)«ELSE»]«ENDIF»);
+            «IF isLegacy»
+                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
+            «ELSE»
+                $categoryHelper = $this->get('«appService».category_helper');
+                $categoryIds = $categoryHelper->retrieveCategoriesFromRequest($objectType, 'GET');
+            «ENDIF»
         «ENDIF»
         «IF isLegacy»
             $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);
@@ -341,7 +348,11 @@ class ExternalController {
                 // assign category properties
                 $properties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    «IF isLegacy»
+                        $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    «ELSE»
+                        $properties = $categoryHelper->getAllProperties($objectType);
+                    «ENDIF»
                 }
                 $view->assign('properties', $properties)
                      ->assign('catIds', $categoryIds);

@@ -372,12 +372,17 @@ class ControllerLayer {
         // process each item
         foreach ($items as $itemid) {
             // check if item exists, and get record instance
-            $selectionArgs = «IF isLegacy»array(«ELSE»[«ENDIF»
-                'ot' => $objectType,
-                'id' => $itemid,
-                'useJoins' => false
-            «IF isLegacy»)«ELSE»]«ENDIF»;
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
+            «IF isLegacy»
+                $selectionArgs = array(
+                    'ot' => $objectType,
+                    'id' => $itemid,
+                    'useJoins' => false
+                );
+                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
+            «ELSE»
+                $selectionHelper = $this->get('«app.appService».selection_helper');
+                $entity = $selectionHelper->getEntity($objectType, $itemid«IF app.hasSluggable», ''«ENDIF», false);
+            «ENDIF»
 
             $entity->initWorkflow();
 

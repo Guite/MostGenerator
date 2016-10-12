@@ -343,7 +343,12 @@ class Newsletter {
 
             $sortParam = '';
             if ($args['sorting'] == 'newest') {
-                $idFields = ModUtil::apiFunc($this->modname, 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $args['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                «IF targets('1.3.x')»
+                    $idFields = ModUtil::apiFunc($this->modname, 'selection', 'getIdFields', array('ot' => $args['objectType']));
+                «ELSE»
+                    $selectionHelper = ServiceUtil::get('«appService».selection_helper');
+                    $idFields = $selectionHelper->getIdFields($args['objectType']);
+                «ENDIF»
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {

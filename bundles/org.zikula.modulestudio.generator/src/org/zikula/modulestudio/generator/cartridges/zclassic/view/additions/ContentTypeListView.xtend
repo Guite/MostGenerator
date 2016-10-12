@@ -181,7 +181,11 @@ class ContentTypeListView {
                     {/if}
                 {/foreach}
                 <div class="«IF targets('1.3.x')»z-formrow«ELSE»form-group«ENDIF»">
-                    {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                    «IF targets('1.3.x')»
+                        {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                    «ELSE»
+                        {assign var='hasMultiSelection' value=$categoryHelper->hasMultipleSelection($objectType, $propertyName)}
+                    «ENDIF»
                     {gt text='Category' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='categorySelectorLabel'}
                     {assign var='selectionMode' value='single'}
                     {if $hasMultiSelection eq true}

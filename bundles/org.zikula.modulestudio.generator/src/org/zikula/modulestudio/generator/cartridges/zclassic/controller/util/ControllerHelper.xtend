@@ -43,14 +43,14 @@ class ControllerHelper {
             «IF hasGeographical»
                 use UserUtil;
             «ENDIF»
-            use Monolog\Logger;
+            use Psr\Log\LoggerInterface;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             «IF hasUploads»
                 use Symfony\Component\Filesystem\Filesystem;
                 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             «ENDIF»
             use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\HttpFoundation\Session\Session;
+            use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
             «IF hasGeographical»
                 use ZLanguage;
@@ -74,12 +74,12 @@ class ControllerHelper {
                 protected $translator;
 
                 /**
-                 * @var Session
+                 * @var SessionInterface
                  */
                 protected $session;
 
                 /**
-                 * @var Logger
+                 * @var LoggerInterface
                  */
                 protected $logger;
 
@@ -89,10 +89,10 @@ class ControllerHelper {
                  *
                  * @param ContainerBuilder    $container  ContainerBuilder service instance
                  * @param TranslatorInterface $translator Translator service instance
-                 * @param Session             $session    Session service instance
-                 * @param Logger              $logger     Logger service instance
+                 * @param SessionInterface    $session    Session service instance
+                 * @param LoggerInterface     $logger     Logger service instance
                  */
-                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, Session $session, Logger $logger)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, SessionInterface $session, LoggerInterface $logger)
                 {
                     $this->container = $container;
                     $this->translator = $translator;

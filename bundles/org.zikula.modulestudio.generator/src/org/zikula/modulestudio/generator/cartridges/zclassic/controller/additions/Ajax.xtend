@@ -232,11 +232,13 @@ class Ajax {
             $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
+            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
         «ELSE»
             $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
+            $selectionHelper = $this->get('«app.appService».selection_helper');
+            $idFields = $selectionHelper->getIdFields($objectType);
         «ENDIF»
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF app.isLegacy»)«ELSE»]«ENDIF»);
 
         $descriptionField = $repository->getDescriptionFieldName();
 
@@ -374,10 +376,12 @@ class Ajax {
         «IF app.isLegacy»
             $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
+            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
         «ELSE»
             $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
+            $selectionHelper = $this->get('«app.appService».selection_helper');
+            $idFields = $selectionHelper->getIdFields($objectType);
         «ENDIF»
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF app.isLegacy»)«ELSE»]«ENDIF»);
 
         $fragment = '';
         $exclude = '';
@@ -705,8 +709,13 @@ class Ajax {
         }
 
         // select data from data source
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $id«IF app.isLegacy»)«ELSE»]«ENDIF»);
-        if ($entity == null) {
+        «IF app.isLegacy»
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
+        «ELSE»
+            $selectionHelper = $this->get('«app.appService».selection_helper');
+            $entity = $selectionHelper->getEntity($objectType, $id);
+        «ENDIF»
+        if (null === $entity) {
             return new «IF app.isLegacy»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
         }
 
@@ -826,10 +835,18 @@ class Ajax {
             }
         }
 
+        «IF !app.isLegacy»
+            $selectionHelper = $this->get('«app.appService».selection_helper');
+
+        «ENDIF»
         // Select tree
         $tree = null;
         if (!in_array($op, «IF app.isLegacy»array(«ELSE»[«ENDIF»'addRootNode'«IF app.isLegacy»)«ELSE»]«ENDIF»)) {
-            $tree = ModUtil::apiFunc($this->name, 'selection', 'getTree', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'rootId' => $rootId«IF app.isLegacy»)«ELSE»]«ENDIF»);
+            «IF app.isLegacy»
+                $tree = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+            «ELSE»
+                $tree = $selectionHelper->getTree($objectType, $rootId);
+            «ENDIF»
         }
 
         // verification and recovery of tree
@@ -850,7 +867,11 @@ class Ajax {
 
         // Renew tree
         /** postponed, for now we do a page reload
-        $returnValue['data'] = ModUtil::apiFunc($this->name, 'selection', 'getTree', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'rootId' => $rootId«IF app.isLegacy»)«ELSE»]«ENDIF»);
+        «IF app.isLegacy»
+            $returnValue['data'] = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+        «ELSE»
+            $returnValue['data'] = $selectionHelper->getTree($objectType, $rootId);
+        «ENDIF»
         */
 
         return new «IF app.isLegacy»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($returnValue);
@@ -906,6 +927,7 @@ class Ajax {
         «IF !app.isLegacy»
             $logger = $this->get('logger');
             $logArgs = ['app' => '«app.appName»', 'user' => $this->get('zikula_users_module.current_user')->get('uname'), 'entity' => $objectType];
+            $selectionHelper = $this->get('«app.appService».selection_helper');
 
         «ENDIF»
         switch ($op) {
@@ -1028,8 +1050,12 @@ class Ajax {
             }
 
             //$childEntity->setParent($parentEntity);
-            $parentEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $parentId, 'useJoins' => false«IF app.isLegacy»)«ELSE»]«ENDIF»);
-            if ($parentEntity == null) {
+            «IF app.isLegacy»
+                $parentEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
+            «ELSE»
+                $parentEntity = $selectionHelper->getEntity($objectType, $parentId«IF app.hasSluggable», ''«ENDIF», false);
+            «ENDIF»
+            if (null === $parentEntity) {
                 return new «IF app.isLegacy»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
             }
             $repository->persistAsLastChildOf($childEntity, $parentEntity);
@@ -1039,8 +1065,12 @@ class Ajax {
 
     def private treeOperationDeleteNode(AjaxController it, Application app) '''
         // remove node from tree and reparent all children
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $id, 'useJoins' => false«IF app.isLegacy»)«ELSE»]«ENDIF»);
-        if ($entity == null) {
+        «IF app.isLegacy»
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+        «ELSE»
+            $entity = $selectionHelper->getEntity($objectType, $id«IF app.hasSluggable», ''«ENDIF», false);
+        «ENDIF»
+        if (null === $entity) {
             return new «IF app.isLegacy»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
         }
 
@@ -1076,8 +1106,12 @@ class Ajax {
             throw new «IF app.isLegacy»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
         }
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $id, 'useJoins' => false«IF app.isLegacy»)«ELSE»]«ENDIF»);
-        if ($entity == null) {
+        «IF app.isLegacy»
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+        «ELSE»
+            $entity = $selectionHelper->getEntity($objectType, $id«IF app.hasSluggable», ''«ENDIF», false);
+        «ENDIF»
+        if (null === $entity) {
             return new «IF app.isLegacy»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
         }
 
@@ -1109,8 +1143,13 @@ class Ajax {
         }
 
         //$this->entityManager->transactional(function($entityManager) {
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $id, 'useJoins' => false«IF app.isLegacy»)«ELSE»]«ENDIF»);
-            $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF app.isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $destId, 'useJoins' => false«IF app.isLegacy»)«ELSE»]«ENDIF»);
+            «IF app.isLegacy»
+                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
+            «ELSE»
+                $entity = $selectionHelper->getEntity($objectType, $id«IF app.hasSluggable», ''«ENDIF», false);
+                $destEntity = $selectionHelper->getEntity($objectType, $destId«IF app.hasSluggable», ''«ENDIF», false);
+            «ENDIF»
             if (null === $entity || null === $destEntity) {
                 return new «IF app.isLegacy»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
             }

@@ -273,7 +273,7 @@ class Repository {
             use System;
             use Zikula\Common\Translator\TranslatorInterface;
             «IF hasArchive && null !== getEndDateField»
-                use Symfony\Component\HttpFoundation\Session\Session;
+                use Symfony\Component\HttpFoundation\Session\SessionInterface;
                 use Zikula\Core\RouteUrl;
                 use Zikula\PermissionsModule\Api\PermissionApi;
             «ENDIF»
@@ -477,7 +477,12 @@ class Repository {
 
             $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             «IF categorisable»
-                $parameters['catIdList'] = ModUtil::apiFunc('«app.appName»', 'category', 'retrieveCategoriesFromRequest', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«name.formatForCode»', 'source' => 'GET'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
+                «IF app.targets('1.3.x')»
+                    $parameters['catIdList'] = ModUtil::apiFunc('«app.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
+                «ELSE»
+                    $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
+                    $parameters['catIdList'] = $categoryHelper->retrieveCategoriesFromRequest('«name.formatForCode»', 'GET');
+                «ENDIF»
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
@@ -954,7 +959,12 @@ class Repository {
                         $qb->andWhere('tblCategories.category IN (:categories)')
                            ->setParameter('categories', $v);
                          */
-                        $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
+                        «IF app.targets('1.3.x')»
+                            $qb = ModUtil::apiFunc('«app.appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v));
+                        «ELSE»
+                            $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
+                            $qb = $categoryHelper->buildFilterClauses($qb, '«name.formatForCode»', $v);
+                        «ENDIF»
                 «ENDIF»
                 «IF categorisable»} else«ENDIF»if (in_array($k, «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'q', 'searchterm'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                     // quick search
@@ -1396,7 +1406,8 @@ class Repository {
 
                     // add category plugins dynamically for all existing registry properties
                     // we need to create one category plugin instance for each one
-                    $categoryProperties = ModUtil::apiFunc('«app.appName»', 'category', 'getAllProperties', ['ot' => '«name.formatForCode»']);
+                    $categoryHelper = \ServiceUtil::get('«app.appService».category_helper');
+                    $categoryProperties = $categoryHelper->getAllProperties('«name.formatForCode»');
                     foreach ($categoryProperties as $propertyName => $registryId) {
                         $config['plugins'][] = new CategoryFilter('«app.appName»', $propertyName, 'categories' . ucfirst($propertyName));
                     }
@@ -1597,7 +1608,7 @@ class Repository {
          * @throws RuntimeException Thrown if workflow action execution fails
          «ENDIF»
          */
-        public function archiveObjects(«IF !app.targets('1.3.x')»PermissionApi $permissionApi, Session $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»«ENDIF»)
+        public function archiveObjects(«IF !app.targets('1.3.x')»PermissionApi $permissionApi, SessionInterface $session, TranslatorInterface $translator, WorkflowHelper $workflowHelper«IF !skipHookSubscribers», HookHelper $hookHelper«ENDIF»«ENDIF»)
         {
             if (true !== \PageUtil::getVar('«app.appName»AutomaticArchiving', false) && !«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«app.appName»', '.*', ACCESS_EDIT)) {
                 // current user has no permission for executing the archive workflow action

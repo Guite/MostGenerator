@@ -31,7 +31,7 @@ class ContentTypeList {
     }
 
     def private contentTypeBaseClass(Application it) '''
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             namespace «appNamespace»\ContentType\Base;
 
             «IF hasCategorisableEntities»
@@ -45,7 +45,7 @@ class ContentTypeList {
         /**
          * Generic item list content plugin base class.
          */
-        «IF targets('1.3.x')»
+        «IF isLegacy»
         abstract class «appName»_ContentType_Base_AbstractItemList extends Content_AbstractContentType
         «ELSE»
         abstract class AbstractItemList extends \Content_AbstractContentType
@@ -155,7 +155,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $dom = ZLanguage::getModuleDomain('«appName»');
 
                 return __('«appName» list view', $dom);
@@ -173,7 +173,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $dom = ZLanguage::getModuleDomain('«appName»');
 
                 return __('Display list of «appName» objects.', $dom);
@@ -192,13 +192,13 @@ class ContentTypeList {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $controllerHelper = new «appName»_Util_Controller($serviceManager);
             «ELSE»
                 $controllerHelper = $serviceManager->get('«appService».controller_helper');
             «ENDIF»
 
-            $utilArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'name' => 'list'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            $utilArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'name' => 'list'«IF isLegacy»)«ELSE»]«ENDIF»;
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
                 $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $utilArgs);
             }
@@ -212,7 +212,7 @@ class ContentTypeList {
                 $data['amount'] = 1;
             }
             if (!isset($data['template'])) {
-                $data['template'] = 'itemlist_' . $this->objectType . '_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
+                $data['template'] = 'itemlist_' . $this->objectType . '_display.«IF isLegacy»tpl«ELSE»html.twig«ENDIF»';
             }
             if (!isset($data['customTemplate'])) {
                 $data['customTemplate'] = '';
@@ -227,20 +227,34 @@ class ContentTypeList {
             $this->customTemplate = $data['customTemplate'];
             $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
-                $this->categorisableObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                $this->categorisableObjectTypes = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
+                «IF !isLegacy»
+                    $categoryHelper = $serviceManager->get('«appService».category_helper');
+                «ENDIF»
 
                 // fetch category properties
-                $this->catRegistries = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-                $this->catProperties = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $this->catRegistries = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                $this->catProperties = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                    $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'arraykey' => $idFields[0]«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    «IF isLegacy»
+                        $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                        $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $idFields[0]));
+                        $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                    «ELSE»
+                        $selectionHelper = $serviceManager->get('«appService».selection_helper');
+                        $idFields = $selectionHelper->getIdFields($this->objectType);
+                        $this->catRegistries = $categoryHelper->getAllPropertiesWithMainCat($this->objectType, $idFields[0]);
+                        $this->catProperties = $categoryHelper->getAllProperties($this->objectType);
+                    «ENDIF»
                 }
 
                 if (!isset($data['catIds'])) {
-                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                    $data['catIds'] = «IF targets('1.3.x')»array($primaryRegistry => array())«ELSE»[$primaryRegistry => []]«ENDIF»;
+                    «IF isLegacy»
+                        $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF isLegacy»)«ELSE»]«ENDIF»);
+                    «ELSE»
+                        $primaryRegistry = $categoryHelper->getPrimaryProperty($this->objectType);
+                    «ENDIF»
+                    $data['catIds'] = «IF isLegacy»array($primaryRegistry => array())«ELSE»[$primaryRegistry => []]«ENDIF»;
                     // backwards compatibility
                     if (isset($data['catId'])) {
                         $data['catIds'][$primaryRegistry][] = $data['catId'];
@@ -263,9 +277,9 @@ class ContentTypeList {
                     }
                     if (!is_array($data['catIds'][$propName])) {
                         if ($data['catIds'][$propName]) {
-                            $data['catIds'][$propName] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$data['catIds'][$propName]«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                            $data['catIds'][$propName] = «IF isLegacy»array(«ELSE»[«ENDIF»$data['catIds'][$propName]«IF isLegacy»)«ELSE»]«ENDIF»;
                         } else {
-                            $data['catIds'][$propName] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                            $data['catIds'][$propName] = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                         }
                     }
                 }
@@ -283,37 +297,37 @@ class ContentTypeList {
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
 
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 ModUtil::initOOModule('«appName»');
                 $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            «IF targets('1.3.x')»
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+            «IF isLegacy»
+                $entityManager = $serviceManager->getService('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();
             «ENDIF»
 
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 // ensure that the view does not look for templates in the Content module (#218)
                 $this->view->toplevelmodule = '«appName»';
 
             «ENDIF»
-            «IF !targets('1.3.x')»
+            «IF !isLegacy»
                 $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
 
             «ENDIF»
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 $this->view->setCaching(Zikula_View::CACHE_ENABLED);
                 // set cache id
                 $component = '«appName»:' . ucfirst($this->objectType) . ':';
                 $instance = '::';
                 $accessLevel = ACCESS_READ;
-                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
+                if («IF isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
                     $accessLevel = ACCESS_COMMENT;
                 }
-                if («IF targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                if («IF isLegacy»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
                     $accessLevel = ACCESS_EDIT;
                 }
                 $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
@@ -335,18 +349,23 @@ class ContentTypeList {
                 // apply category filters
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                     if (is_array($this->catIds) && count($this->catIds) > 0) {
-                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => $this->objectType, 'catids' => $this->catIds«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                        «IF isLegacy»
+                            $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $this->objectType, 'catids' => $this->catIds));
+                        «ELSE»
+                            $categoryHelper = $serviceManager->get('«appService».category_helper');
+                            $qb = $categoryHelper->buildFilterClauses($qb, $this->objectType, $this->catIds);
+                        «ENDIF»
                     }
                 }
             «ENDIF»
 
             // get objects from database
             $currentPage = 1;
-            $resultsPerPage = (isset($this->amount) ? $this->amount : 1);
+            $resultsPerPage = isset($this->amount) ? $this->amount : 1;
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
             $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
 
-            $data = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            $data = «IF isLegacy»array(«ELSE»[«ENDIF»
                 'objectType' => $this->objectType,
                 'catids' => $this->catIds,
                 'sorting' => $this->sorting,
@@ -354,9 +373,9 @@ class ContentTypeList {
                 'template' => $this->template,
                 'customTemplate' => $this->customTemplate,
                 'filter' => $this->filter
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            «IF isLegacy»)«ELSE»]«ENDIF»;
 
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 // assign vars and fetched data
                 $this->view->assign('vars', $data)
                            ->assign('objectType', $this->objectType)
@@ -406,12 +425,12 @@ class ContentTypeList {
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $templateFile);
 
             $template = '';
-            if ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
-                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
-                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
+            if ($this->view->template_exists('«IF isLegacy»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
+                $template = '«IF isLegacy»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
+            } elseif ($this->view->template_exists('«IF isLegacy»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
+                $template = '«IF isLegacy»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
             } else {
-                $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
+                $template = '«IF isLegacy»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.«IF isLegacy»tpl«ELSE»html.twig«ENDIF»';
             }
 
             return $template;
@@ -432,7 +451,12 @@ class ContentTypeList {
 
             $sortParam = '';
             if ($this->sorting == 'newest') {
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                «IF isLegacy»
+                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                «ELSE»
+                    $selectionHelper = ServiceUtil::get('«appService».selection_helper');
+                    $idFields = $selectionHelper->getIdFields($this->objectType);
+                «ENDIF»
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {
@@ -465,14 +489,14 @@ class ContentTypeList {
          */
         public function getDefaultData()
         {
-            return «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
+            return «IF isLegacy»array(«ELSE»[«ENDIF»
                 'objectType' => '«getLeadingEntity.name.formatForCode»',
                 'sorting' => 'default',
                 'amount' => 1,
-                'template' => 'itemlist_display.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»',
+                'template' => 'itemlist_display.«IF isLegacy»tpl«ELSE»html.twig«ENDIF»',
                 'customTemplate' => '',
                 'filter' => ''
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            «IF isLegacy»)«ELSE»]«ENDIF»;
         }
 
         /**
@@ -484,7 +508,7 @@ class ContentTypeList {
             $this->view->toplevelmodule = '«appName»';
 
             // ensure our custom plugins are loaded
-            «IF targets('1.3.x')»
+            «IF isLegacy»
                 array_push($this->view->plugins_dir, '«rootFolder»/«appName»/templates/plugins');
             «ELSE»
                 array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getViewPath»»/plugins');
@@ -496,14 +520,14 @@ class ContentTypeList {
                            ->assign('properties', $this->catProperties);
 
                 // assign categories lists for simulating category selectors
-                «IF targets('1.3.x')»
+                «IF isLegacy»
                     $dom = ZLanguage::getModuleDomain('«appName»');
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
                     $translator = $serviceManager->get('translator.default');
                 «ENDIF»
                 $locale = ZLanguage::getLanguageCode();
-                $categories = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $categories = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($this->catRegistries as $registryId => $registryCid) {
                     $propName = '';
                     foreach ($this->catProperties as $propertyName => $propertyId) {
@@ -515,23 +539,24 @@ class ContentTypeList {
 
                     //$mainCategory = CategoryUtil::getCategoryByID($registryCid);
                     $cats = CategoryUtil::getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
-                    $catsForDropdown = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-                        «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => '', 'text' => «IF !targets('1.3.x')»$translator->«ENDIF»__('All'«IF targets('1.3.x')», $dom«ENDIF»)«IF targets('1.3.x')»)«ELSE»]«ENDIF»
-                    «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                    $catsForDropdown = «IF isLegacy»array(«ELSE»[«ENDIF»
+                        «IF isLegacy»array(«ELSE»[«ENDIF»'value' => '', 'text' => «IF !isLegacy»$translator->«ENDIF»__('All'«IF isLegacy», $dom«ENDIF»)«IF isLegacy»)«ELSE»]«ENDIF»
+                    «IF isLegacy»)«ELSE»]«ENDIF»;
                     foreach ($cats as $cat) {
                         $catName = isset($cat['display_name'][$locale]) ? $cat['display_name'][$locale] : $cat['name'];
-                        $catsForDropdown[] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'value' => $cat['id'], 'text' => $catName«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+                        $catsForDropdown[] = «IF isLegacy»array(«ELSE»[«ENDIF»'value' => $cat['id'], 'text' => $catName«IF isLegacy»)«ELSE»]«ENDIF»;
                     }
                     $categories[$propName] = $catsForDropdown;
                 }
 
-                $this->view->assign('categories', $categories);
+                $this->view->assign('categories', $categories)«IF !isLegacy»
+                           ->assign('categoryHelper', $serviceManager->get('«appService».category_helper'))«ENDIF»;
             «ENDIF»
         }
     '''
 
     def private contentTypeImpl(Application it) '''
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             namespace «appNamespace»\ContentType;
 
             use «appNamespace»\ContentType\Base\AbstractItemList;
@@ -540,7 +565,7 @@ class ContentTypeList {
         /**
          * Generic item list content plugin implementation class.
          */
-        «IF targets('1.3.x')»
+        «IF isLegacy»
         class «appName»_ContentType_ItemList extends «appName»_ContentType_Base_AbstractItemList
         «ELSE»
         class ItemList extends AbstractItemList
@@ -549,4 +574,8 @@ class ContentTypeList {
             // feel free to extend the content type here
         }
     '''
+
+    def private isLegacy(Application it) {
+        targets('1.3.x')
+    }
 }

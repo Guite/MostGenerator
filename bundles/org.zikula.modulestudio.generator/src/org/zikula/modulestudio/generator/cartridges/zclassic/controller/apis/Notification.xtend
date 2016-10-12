@@ -47,7 +47,7 @@ class Notification {
         use ZLanguage;
 
         use Swift_Message;
-        use Symfony\Component\HttpFoundation\Session\Session;
+        use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Symfony\Component\HttpKernel\KernelInterface;
         use Symfony\Component\Routing\RouterInterface;
         use Twig_Environment;
@@ -72,7 +72,7 @@ class Notification {
             use TranslatorTrait;
 
             /**
-             * @var Session
+             * @var SessionInterface
              */
             protected $session;
 
@@ -146,7 +146,7 @@ class Notification {
              * Initialises member vars.
              *
              * @param TranslatorInterface $translator     Translator service instance
-             * @param Session             $session        Session service instance
+             * @param SessionInterface    $session        Session service instance
              * @param Routerinterface     $router         Router service instance
              * @param KernelInterface     $kernel         Kernel service instance
              * @param VariableApi         $variableApi    VariableApi service instance
@@ -157,7 +157,7 @@ class Notification {
              */
             public function __construct(
                 TranslatorInterface $translator,
-                Session $session,
+                SessionInterface $session,
                 RouterInterface $router,
                 KernelInterface $kernel,
                 VariableApi $variableApi,

@@ -300,29 +300,39 @@ class Actions {
         «ENDIF»
         $where = str_replace('"', '', $where);
 
-        $selectionArgs = «IF isLegacy»array(«ELSE»[«ENDIF»
-            'ot' => $objectType,
-            'where' => $where,
-            'orderBy' => $sort . ' ' . $sortdir
-        «IF isLegacy»)«ELSE»]«ENDIF»;
+        «IF isLegacy»
+            $selectionArgs = array(
+                'ot' => $objectType,
+                'where' => $where,
+                'orderBy' => $sort . ' ' . $sortdir
+            );
+        «ELSE»
+            $selectionHelper = $this->get('«app.appService».selection_helper');
+        «ENDIF»
 
         «prepareViewUrlArgs(false)»
+        «IF isLegacy»
 
-        // prepare access level for cache id
-        $accessLevel = ACCESS_READ;
-        $component = '«app.appName»:' . ucfirst($objectType) . ':';
-        $instance = '::';
-        if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
-            $accessLevel = ACCESS_COMMENT;
-        }
-        if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
-            $accessLevel = ACCESS_EDIT;
-        }
+            // prepare access level for cache id
+            $accessLevel = ACCESS_READ;
+            $component = '«app.appName»:' . ucfirst($objectType) . ':';
+            $instance = '::';
+            if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_COMMENT)) {
+                $accessLevel = ACCESS_COMMENT;
+            }
+            if («IF isLegacy»SecurityUtil::check«ELSE»$this->has«ENDIF»Permission($component, $instance, ACCESS_EDIT)) {
+                $accessLevel = ACCESS_EDIT;
+            }
+        «ENDIF»
 
         $resultsPerPage = 0;
         if ($showAllEntries == 1) {
             // retrieve item list without pagination
-            $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            «IF isLegacy»
+                $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            «ELSE»
+                $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
+            «ENDIF»
             $objectCount = count($entities);
         } else {
             // the current offset which is used to calculate the pagination
@@ -343,9 +353,13 @@ class Actions {
             }
 
             // retrieve item list with pagination
-            $selectionArgs['currentPage'] = $currentPage;
-            $selectionArgs['resultsPerPage'] = $resultsPerPage;
-            list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            «IF isLegacy»
+                $selectionArgs['currentPage'] = $currentPage;
+                $selectionArgs['resultsPerPage'] = $resultsPerPage;
+                list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            «ELSE»
+                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
+            «ENDIF»
         }
 
         foreach ($entities as $k => $entity) {
@@ -387,6 +401,7 @@ class Actions {
             «IF app.hasUploads»
                 $imageHelper = $this->get('«app.appService».image_helper');
             «ENDIF»
+            $selectionHelper = $this->get('«app.appService».selection_helper');
         «ENDIF»
         «IF tree != EntityTreeType.NONE»
 
@@ -396,11 +411,12 @@ class Actions {
                 $tpl = $request->query->getAlpha('tpl', '');
             «ENDIF»
             if ($tpl == 'tree') {
-                $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
                 «IF isLegacy»
+                    $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
                     $this->view->assign('trees', $trees)
                                ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
                 «ELSE»
+                    $trees = $selectionHelper->getAllTrees($objectType);
                     $templateParameters['trees'] = $trees;
                     $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
                 «ENDIF»
@@ -454,12 +470,12 @@ class Actions {
             «sortableColumns»
         «ENDIF»
 
-        $selectionArgs = «IF isLegacy»array(«ELSE»[«ENDIF»
-            'ot' => $objectType,
-            'where' => $where,
-            'orderBy' => $sort . ' ' . $sortdir
-        «IF isLegacy»)«ELSE»]«ENDIF»;
         «IF isLegacy»
+            $selectionArgs = array(
+                'ot' => $objectType,
+                'where' => $where,
+                'orderBy' => $sort . ' ' . $sortdir
+            );
 
             // prepare access level for cache id
             $accessLevel = ACCESS_READ;
@@ -487,7 +503,11 @@ class Actions {
 
             «ENDIF»
             // retrieve item list without pagination
-            $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            «IF isLegacy»
+                $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            «ELSE»
+                $entities = $selectionHelper->getEntities($objectType, [], $where, $sort . ' ' . $sortdir);
+            «ENDIF»
         } else {
             // the current offset which is used to calculate the pagination
             «IF isLegacy»
@@ -507,9 +527,13 @@ class Actions {
 
             «ENDIF»
             // retrieve item list with pagination
-            $selectionArgs['currentPage'] = $currentPage;
-            $selectionArgs['resultsPerPage'] = $resultsPerPage;
-            list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            «IF isLegacy»
+                $selectionArgs['currentPage'] = $currentPage;
+                $selectionArgs['resultsPerPage'] = $resultsPerPage;
+                list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            «ELSE»
+                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $sort . ' ' . $sortdir, $currentPage, $resultsPerPage);
+            «ENDIF»
 
             «IF isLegacy»
                 $this->view->assign('currentPage', $currentPage)
@@ -724,12 +748,15 @@ class Actions {
             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
+
+            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
         «ELSE»
             $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
-        «ENDIF»
 
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
+            $selectionHelper = $this->get('«app.appService».selection_helper');
+            $idFields = $selectionHelper->getIdFields($objectType);
+        «ENDIF»
 
         // retrieve identifier of the object we wish to view
         $idValues = $controllerHelper->retrieveIdentifier($«IF isLegacy»this->«ENDIF»request, «IF isLegacy»array()«ELSE»[]«ENDIF», $objectType, $idFields);
@@ -743,10 +770,11 @@ class Actions {
             }
         «ENDIF»
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $idValues«IF isLegacy»)«ELSE»]«ENDIF»);
         «IF isLegacy»
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
             $this->throwNotFoundUnless(null !== $entity, $this->__('No such item.'));
         «ELSE»
+            $entity = $selectionHelper->getEntity($objectType, $idValues);
             if (null === $entity) {
                 throw new NotFoundHttpException($this->__('No such item.'));
             }
@@ -908,7 +936,12 @@ class Actions {
 
         «initControllerHelper»
 
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType«IF isLegacy»)«ELSE»]«ENDIF»);
+        «IF isLegacy»
+            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        «ELSE»
+            $selectionHelper = $this->get('«app.appService».selection_helper');
+            $idFields = $selectionHelper->getIdFields($objectType);
+        «ENDIF»
 
         «IF isLegacy»
             $data = $this->request->query->get('data', null);
@@ -930,10 +963,11 @@ class Actions {
             }
         «ENDIF»
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $objectType, 'id' => $idValues«IF isLegacy»)«ELSE»]«ENDIF»);
         «IF isLegacy»
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
             $this->throwNotFoundUnless(null !== $entity, $this->__('No such item.'));
         «ELSE»
+            $entity = $selectionHelper->getEntity($objectType, $idValues);
             if (null === $entity) {
                 throw new NotFoundHttpException($this->__('No such item.'));
             }

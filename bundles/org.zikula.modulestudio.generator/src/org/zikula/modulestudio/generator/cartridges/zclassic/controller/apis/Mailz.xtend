@@ -101,11 +101,14 @@ class Mailz {
                 $serviceManager = ServiceUtil::getManager();
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
+
+                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             «ELSE»
                 $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
 
-            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                $selectionHelper = $this->get('«appService».selection_helper');
+                $idFields = $selectionHelper->getIdFields($objectType);
+            «ENDIF»
 
             $sortParam = '';
             if ($args['pluginid'] == 2) {
@@ -127,14 +130,18 @@ class Mailz {
             $resultsPerPage = 3;
 
             // get objects from database
-            $selectionArgs = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-                'ot' => $objectType,
-                'where' => $where,
-                'orderBy' => $sortParam,
-                'currentPage' => 1,
-                'resultsPerPage' => $resultsPerPage
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
-            list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            «IF targets('1.3.x')»
+                $selectionArgs = array(
+                    'ot' => $objectType,
+                    'where' => $where,
+                    'orderBy' => $sortParam,
+                    'currentPage' => 1,
+                    'resultsPerPage' => $resultsPerPage
+                );
+                list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            «ELSE»
+                list($entities, $objectCount) = $selectionHelper->getEntitiesPaginated($objectType, $where, $orderBy, 1, $resultsPerPage);
+            «ENDIF»
 
             $templateType = $args['contenttype'] == 't' ? 'text' : 'html';
 

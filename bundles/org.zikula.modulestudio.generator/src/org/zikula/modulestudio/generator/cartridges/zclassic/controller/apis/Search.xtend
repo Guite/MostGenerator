@@ -217,7 +217,6 @@ class Search {
                     continue;
                 }
 
-                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $descriptionField = $repository->getDescriptionFieldName();
 
                 $entitiesWithDisplayAction = array(«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
@@ -367,7 +366,6 @@ class Search {
                     continue;
                 }
 
-                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', ['ot' => $objectType]);
                 $descriptionField = $repository->getDescriptionFieldName();
 
                 $entitiesWithDisplayAction = [«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];

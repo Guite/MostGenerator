@@ -135,10 +135,11 @@ class ListBlock {
                 $resolver
                     ->setDefaults([
                         'objectType' => '«leadingEntity.name.formatForCode»',
-                        'isCategorisable' => false
+                        'isCategorisable' => false,
+                        'categoryHelper' => null
                     ])
                     ->setRequired(['objectType'])
-                    ->setOptional(['isCategorisable'])
+                    ->setOptional(['isCategorisable', 'categoryHelper'])
                     ->setAllowedTypes([
                         'objectType' => 'string',
                         'isCategorisable' => 'bool'
@@ -185,11 +186,11 @@ class ListBlock {
          */
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
-            if (!$options['isCategorisable']) {
+            if (!$options['isCategorisable'] || is_null($options['categoryHelper'])) {
                 return;
             }
 
-            $hasMultiSelection = \ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', ['ot' => $options['objectType']]);
+            $hasMultiSelection = $options['categoryHelper']->hasMultipleSelection($options['objectType']);
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
                 'label' => ($hasMultiSelection ? $this->__('Categories') : $this->__('Category')) . ':',
                 'empty_data' => [],

@@ -147,7 +147,12 @@ class ItemSelector {
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         // fetch selected categories to reselect them in the output
                         // the actual filtering is done inside the repository class
-                        $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                        «IF targets('1.3.x')»
+                            $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
+                        «ELSE»
+                            $categoryHelper = $serviceManager->get('«appService».category_helper');
+                            $catIds = $categoryHelper->retrieveCategoriesFromRequest($this->objectType);
+                        «ENDIF»
                     }
                 «ENDIF»
 
@@ -182,10 +187,15 @@ class ItemSelector {
                     // assign category properties
                     $properties = null;
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
-                        $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                        «IF targets('1.3.x')»
+                            $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                        «ELSE»
+                            $properties = $categoryHelper->getAllProperties($this->objectType);
+                        «ENDIF»
                     }
                     $view->assign('properties', $properties)
-                         ->assign('catIds', $catIds);
+                         ->assign('catIds', $catIds)«IF !targets('1.3.x')»
+                         ->assign('categoryHelper', $categoryHelper)«ENDIF»;
                 «ENDIF»
 
                 «IF targets('1.3.x')»

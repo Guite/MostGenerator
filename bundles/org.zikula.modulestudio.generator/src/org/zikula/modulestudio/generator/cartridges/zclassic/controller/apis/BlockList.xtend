@@ -124,7 +124,12 @@ class BlockList {
             protected function resolveCategoryIds(array $properties)
             {
                 if (!isset($properties['catIds'])) {
-                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                    «IF targets('1.3.x')»
+                        $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']);
+                    «ELSE»
+                        $categoryHelper = $this->get('«appService».category_helper');
+                        $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);
+                    «ENDIF»
                     $properties['catIds'] = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»$primaryRegistry => «IF targets('1.3.x')»array())«ELSE»[]]«ENDIF»;
                     «IF targets('1.3.x')»
                         // backwards compatibility
@@ -287,11 +292,20 @@ class BlockList {
                 // fetch category registries
                 $catProperties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    $catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $objectType«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                    // apply category filters
-                    if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
-                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'qb' => $qb, 'ot' => $objectType, 'catids' => $properties['catIds']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
-                    }
+                    «IF targets('1.3.x')»
+                        $catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                        // apply category filters
+                        if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
+                            $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $objectType, 'catids' => $properties['catIds']));
+                        }
+                    «ELSE»
+                        $categoryHelper = $this->get('«appService».category_helper');
+                        $catProperties = $categoryHelper->getAllProperties($objectType);
+                        // apply category filters
+                        if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
+                            $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['catIds']);
+                        }
+                    «ENDIF»
                 }
             «ENDIF»
 
@@ -400,7 +414,12 @@ class BlockList {
 
             $sortParam = '';
             if ($properties['sorting'] == 'newest') {
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => $properties['objectType']«IF targets('1.3.x')»)«ELSE»]«ENDIF»);
+                «IF targets('1.3.x')»
+                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $properties['objectType']));
+                «ELSE»
+                    $selectionHelper = $this->get('«appService».selection_helper');
+                    $idFields = $selectionHelper->getIdFields($properties['objectType']);
+                «ENDIF»
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {
@@ -470,7 +489,8 @@ class BlockList {
             {
                 return [
                     'objectType' => $properties['objectType']«IF hasCategorisableEntities»,
-                    'isCategorisable' => in_array($properties['objectType'], $this->categorisableObjectTypes)«ENDIF»
+                    'isCategorisable' => in_array($properties['objectType'], $this->categorisableObjectTypes),
+                    'categoryHelper' => $this->get('«appService».category_helper')«ENDIF»
                 ];
             }
 

@@ -135,7 +135,14 @@ class Installer {
                     include_once '«rootFolder»/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»
-                    $categoryApi = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Api\CategoryApi($this->container, new \«appNamespace»\«appName»());
+                    $categoryHelper = new \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Helper\CategoryHelper(
+                        $this->container,
+                        $this->container->get('translator.default'),
+                        $this->container->get('session'),
+                        $logger,
+                        $this->container->get('request_stack'),
+                        $this->container->get('zikula_users_module.current_user')
+                    );
                 «ENDIF»
                 $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
                 «IF targets('1.3.x')»
@@ -158,7 +165,7 @@ class Installer {
                         $registry = new CategoryRegistryEntity();
                         $registry->setModname('«appName»');
                         $registry->setEntityname('«entity.name.formatForCodeCapital»');
-                        $registry->setProperty($categoryApi->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»']));
+                        $registry->setProperty($categoryHelper->getPrimaryProperty(['ot' => '«entity.name.formatForCodeCapital»']));
                         $registry->setCategory_Id($categoryGlobal['id']);
 
                         try {

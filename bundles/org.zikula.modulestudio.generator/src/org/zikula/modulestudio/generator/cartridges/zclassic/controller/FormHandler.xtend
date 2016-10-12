@@ -453,13 +453,18 @@ class FormHandler {
 
             $this->permissionComponent = «IF isLegacy»$this->name . '«ELSE»'«appName»«ENDIF»:' . $this->objectTypeCapital . ':';
 
-            $this->idFields = ModUtil::apiFunc(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», 'selection', 'getIdFields', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $this->objectType«IF isLegacy»)«ELSE»]«ENDIF»);
+            «IF isLegacy»
+                $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
+            «ELSE»
+                $selectionHelper = $this->container->get('«appService».selection_helper');
+                $this->idFields = $selectionHelper->getIdFields($this->objectType);
+            «ENDIF»
 
             // retrieve identifier of the object we wish to view
             «IF isLegacy»
-                $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
+                $controllerHelper = new «appName»_Util_Controller($this->view->getServiceManager());
             «ELSE»
-                $controllerHelper = $this->container->get('«app.appService».controller_helper');
+                $controllerHelper = $this->container->get('«appService».controller_helper');
             «ENDIF»
 
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, «IF isLegacy»array()«ELSE»[]«ENDIF», $this->objectType, $this->idFields);
@@ -622,7 +627,12 @@ class FormHandler {
          */
         protected function initEntityForEditing()
         {
-            $entity = ModUtil::apiFunc(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'id' => $this->idValues«IF isLegacy»)«ELSE»]«ENDIF»);
+            «IF isLegacy»
+                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
+            «ELSE»
+                $selectionHelper = $this->container->get('«appService».selection_helper');
+                $entity = $selectionHelper->getEntity($this->objectType, $this->idValues);
+            «ENDIF»
             if (null === $entity) {
                 «IF isLegacy»
                     return LogUtil::registerError($this->__('No such item.'));
@@ -665,7 +675,12 @@ class FormHandler {
                         $i++;
                     }
                     // reuse existing entity
-                    $entityT = ModUtil::apiFunc(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», 'selection', 'getEntity', «IF isLegacy»array(«ELSE»[«ENDIF»'ot' => $this->objectType, 'id' => $templateIdValues«IF isLegacy»)«ELSE»]«ENDIF»);
+                    «IF isLegacy»
+                        $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
+                    «ELSE»
+                        $selectionHelper = $this->container->get('«appService».selection_helper');
+                        $entityT = $selectionHelper->getEntity($this->objectType, $templateIdValues);
+                    «ENDIF»
                     if (null === $entityT) {
                         «IF isLegacy»
                             return LogUtil::registerError($this->__('No such item.'));

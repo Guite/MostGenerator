@@ -100,6 +100,10 @@ class MultiHook {
             // strip application prefix from needle
             $needleId = str_replace('«app.prefix.toUpperCase»', '', $nid);
 
+            «IF !app.targets('1.3.x')»
+                $router = \ServiceUtil::getService('router');
+
+            «ENDIF»
             «IF hasActions('view')»
                 if ($needleId == '«nameMultiple.formatForCode.toUpperCase»') {
                     if (!\SecurityUtil::checkPermission('«app.appName»:«name.formatForCodeCapital»:', '::', ACCESS_READ)) {
@@ -112,8 +116,6 @@ class MultiHook {
                 «IF app.targets('1.3.x')»
                     $cache[$nid] = '<a href="' . ModUtil::url('«app.appName»', '«name.formatForCode»', 'view') . '" title="' . __('View «nameMultiple.formatForDisplay»', $dom) . '">' . __('«nameMultiple.formatForDisplayCapital»', $dom) . '</a>';
                 «ELSE»
-                    $router = \ServiceUtil::getService('router');
-
                     $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_view') . '" title="' . __('View «nameMultiple.formatForDisplay»', $dom) . '">' . __('«nameMultiple.formatForDisplayCapital»', $dom) . '</a>';
                 «ENDIF»
             «ENDIF»
@@ -125,15 +127,23 @@ class MultiHook {
                     return $cache[$nid];
                 }
 
+                «IF !app.targets('1.3.x')»
+                    $permissionApi = \ServiceUtil::get('zikula_permissions_module.api.permission');
+                «ENDIF»
                 $entityId = (int)$needleParts[1];
 
-                if (!\SecurityUtil::checkPermission('«app.appName»:«name.formatForCodeCapital»:', $entityId . '::', ACCESS_READ)) {
+                if (!«IF app.targets('1.3.x')»SecurityUtil::check«ELSE»$permissionApi->has«ENDIF»Permission('«app.appName»:«name.formatForCodeCapital»:', $entityId . '::', ACCESS_READ)) {
                     $cache[$nid] = '';
 
                     return $cache[$nid];
                 }
 
-                $entity = \ModUtil::apiFunc('«app.appName»', 'selection', 'getEntity', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'ot' => '«name.formatForCode»', 'id' => $entityId«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»);
+                «IF app.targets('1.3.x')»
+                    $entity = \ModUtil::apiFunc('«app.appName»', 'selection', 'getEntity', array('ot' => '«name.formatForCode»', 'id' => $entityId));
+                «ELSE»
+                    $selectionHelper = \ServiceUtil::get('«app.appService».selection_helper');
+                    $entity = $selectionHelper->getEntity('«name.formatForCode»', $entityId);
+                «ENDIF»
                 if (null === $entity) {
                     $cache[$nid] = '<em>' . __f('«name.formatForDisplayCapital» with id %s could not be found', «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»$entityId«IF app.targets('1.3.x')»)«ELSE»]«ENDIF», $dom) . '</em>';
 
@@ -145,8 +155,6 @@ class MultiHook {
                 «IF app.targets('1.3.x')»
                     $cache[$nid] = '<a href="' . ModUtil::url('«app.appName»', '«name.formatForCode»', 'display', array('id' => $entityId)) . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
                 «ELSE»
-                    $router = \ServiceUtil::getService('router');
-
                     $cache[$nid] = '<a href="' . $router->generate('«app.appName.formatForDB»_«nameMultiple.formatForDB»_display', ['id' => $entityId]) . '" title="' . str_replace('"', '', $title) . '">' . $title . '</a>';
                 «ENDIF»
             «ENDIF»

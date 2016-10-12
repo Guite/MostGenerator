@@ -322,21 +322,15 @@ class ServiceDefinitions {
     def private servicesHelper(Application it) '''
         # Helper classes
         «val nsBase = appNamespace + '\\Helper\\'»
-        «modPrefix».model_helper:
-            class: «nsBase»ModelHelper
-            arguments: ["@service_container"]
+        «IF hasCategorisableEntities»
+            «modPrefix».category_helper:
+                class: «nsBase»CategoryHelper
+                arguments: ["@service_container", "@translator.default", "@session", "@logger", "@request_stack", "@zikula_users_module.current_user"]
 
+        «ENDIF»
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
             arguments: ["@service_container", "@translator.default", "@session", "@logger"]
-
-        «modPrefix».view_helper:
-            class: «nsBase»ViewHelper
-            arguments: ["@service_container", "@translator.default"]
-
-        «modPrefix».workflow_helper:
-            class: «nsBase»WorkflowHelper
-            arguments: ["@service_container", "@translator.default"]
         «IF hasHookSubscribers»
 
             «modPrefix».hook_helper:
@@ -354,18 +348,34 @@ class ServiceDefinitions {
                 class: «nsBase»ListEntriesHelper
                 arguments: ["@translator.default"]
         «ENDIF»
+
+        «modPrefix».model_helper:
+            class: «nsBase»ModelHelper
+            arguments: ["@service_container"]
         «IF needsApproval»
 
             «modPrefix».notification_helper:
                 class: «nsBase»NotificationHelper
                 arguments: ["@translator.default", "@session", "@router", "@kernel", "@zikula_extensions_module.api.variable", "@zikula_users_module.current_user", "@twig", "@zikula_mailer_module.api.mailer", "@«modPrefix».workflow_helper"]
         «ENDIF»
+
+        «modPrefix».selection_helper:
+            class: «nsBase»SelectionHelper
+            arguments: ["@service_container", "@doctrine.orm.entity_manager", "@translator.default", "@«modPrefix».controller_helper"]
         «IF hasTranslatable»
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
                 arguments: ["@service_container", "@translator.default", "@zikula_extensions_module.api.variable"]
         «ENDIF»
+
+        «modPrefix».view_helper:
+            class: «nsBase»ViewHelper
+            arguments: ["@service_container", "@translator.default"]
+
+        «modPrefix».workflow_helper:
+            class: «nsBase»WorkflowHelper
+            arguments: ["@service_container", "@translator.default"]
     '''
 
     def private twig(Application it) '''

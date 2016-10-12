@@ -568,7 +568,11 @@ class ExternalView {
                 {nocache}
                 {foreach key='propertyName' item='propertyId' from=$properties}
                     <p>
-                        {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$propertyName assign='hasMultiSelection'}
+                        «IF app.targets('1.3.x')»
+                            {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$propertyName assign='hasMultiSelection'}
+                        «ELSE»
+                            {assign var='hasMultiSelection' value=$categoryHelper->hasMultipleSelection('«name.formatForCode»', $propertyName)}
+                        «ENDIF»
                         {gt text='Category' assign='categoryLabel'}
                         {assign var='categorySelectorId' value='catid'}
                         {assign var='categorySelectorName' value='catid'}
