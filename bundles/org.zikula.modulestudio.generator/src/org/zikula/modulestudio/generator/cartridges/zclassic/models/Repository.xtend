@@ -13,6 +13,7 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
@@ -1012,36 +1013,38 @@ class Repository {
          */
         protected function applyDefaultFilters(QueryBuilder $qb, $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            $currentModule = ModUtil::getName();
-            «IF app.targets('1.3.x')»
-                $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
-            «ELSE»
-                $currentLegacyControllerType = null !== $this->getRequest() ? $this->getRequest()->get('lct', 'user') : 'user';
-            «ENDIF»
-            if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
-                return $qb;
-            }
-
-            if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
-                // per default we show approved «nameMultiple.formatForDisplay» only
-                $onlineStates = «IF app.targets('1.3.x')»array('approved')«ELSE»['approved']«ENDIF»;
-                «IF ownerPermission»
-                    «IF app.targets('1.3.x')»
-                        $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
-                    «ELSE»
-                        «/*$serviceManager = ServiceUtil::getManager();
-                        $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
-                        $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
-                        $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', 0);
-                    «ENDIF»
-                    if ($showOnlyOwnEntries == 1) {
-                        // allow the owner to see his deferred «nameMultiple.formatForDisplay»
-                        $onlineStates[] = 'deferred';
-                    }
+            «IF workflow == EntityWorkflowType.STANDARD || workflow == EntityWorkflowType.ENTERPRISE»
+                $currentModule = ModUtil::getName();
+                «IF app.targets('1.3.x')»
+                    $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
+                «ELSE»
+                    $currentLegacyControllerType = null !== $this->getRequest() ? $this->getRequest()->get('lct', 'user') : 'user';
                 «ENDIF»
-                $qb->andWhere('tbl.workflowState IN (:onlineStates)')
-                   ->setParameter('onlineStates', $onlineStates);
-            }
+                if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
+                    return $qb;
+                }
+
+                if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+                    // per default we show approved «nameMultiple.formatForDisplay» only
+                    $onlineStates = «IF app.targets('1.3.x')»array('approved')«ELSE»['approved']«ENDIF»;
+                    «IF ownerPermission»
+                        «IF app.targets('1.3.x')»
+                            $showOnlyOwnEntries = (int) FormUtil::getPassedValue('own', ModUtil::getVar('«app.appName»', 'showOnlyOwnEntries', 0), 'GETPOST');
+                        «ELSE»
+                            «/*$serviceManager = ServiceUtil::getManager();
+                            $variableApi = $serviceManager->get('zikula_extensions_module.api.variable');
+                            $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', $variableApi->get('«app.appName»', 'showOnlyOwnEntries', 0));*/»
+                            $showOnlyOwnEntries = $this->getRequest()->query->getDigits('own', 0);
+                        «ENDIF»
+                        if ($showOnlyOwnEntries == 1) {
+                            // allow the owner to see his deferred «nameMultiple.formatForDisplay»
+                            $onlineStates[] = 'deferred';
+                        }
+                    «ENDIF»
+                    $qb->andWhere('tbl.workflowState IN (:onlineStates)')
+                       ->setParameter('onlineStates', $onlineStates);
+                }
+            «ENDIF»
             «applyDefaultDateRangeFilter»
 
             return $qb;

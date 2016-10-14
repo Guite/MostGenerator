@@ -11,6 +11,7 @@ import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
+import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.OneToManyRelationship
@@ -382,12 +383,12 @@ class Actions {
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments(array());
         «ELSE»
-            // temporary workarounds
-            // let repository know if we are in admin or user area
-            $request->query->set('lct', $isAdmin ? 'admin' : 'user');
-            // let entities know if we are in admin or user area
-            System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
+            «IF workflow == EntityWorkflowType.STANDARD || workflow == EntityWorkflowType.ENTERPRISE»
+                // temporary workaround
+                // let repository know if we are in admin or user area
+                $request->query->set('lct', $isAdmin ? 'admin' : 'user');
 
+            «ENDIF»
             $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
         «ENDIF»
@@ -836,12 +837,12 @@ class Actions {
             $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
             unset($idValues);
         «ELSE»
-            // temporary workarounds
-            // let repository know if we are in admin or user area
-            $request->query->set('lct', $isAdmin ? 'admin' : 'user');
-            // let entities know if we are in admin or user area
-            System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
+            «IF workflow == EntityWorkflowType.STANDARD || workflow == EntityWorkflowType.ENTERPRISE»
+                // temporary workaround
+                // let repository know if we are in admin or user area
+                $request->query->set('lct', $isAdmin ? 'admin' : 'user');
 
+            «ENDIF»
             $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
             $repository->setRequest($request);
 
@@ -1059,12 +1060,12 @@ class Actions {
             // execute form using supplied template and page event handler
             return $view->execute($template, new $handlerClass());
         «ELSE»
-            // temporary workarounds
-            // let repository know if we are in admin or user area
-            $request->query->set('lct', $isAdmin ? 'admin' : 'user');
-            // let entities know if we are in admin or user area
-            System::queryStringSetVar('lct', $isAdmin ? 'admin' : 'user');
+            «IF workflow == EntityWorkflowType.STANDARD || workflow == EntityWorkflowType.ENTERPRISE»
+                // temporary workaround
+                // let repository know if we are in admin or user area
+                $request->query->set('lct', $isAdmin ? 'admin' : 'user');
 
+            «ENDIF»
             $repository = $this->get('«app.appService».' . $objectType . '_factory')->getRepository();
 
             $templateParameters = [
