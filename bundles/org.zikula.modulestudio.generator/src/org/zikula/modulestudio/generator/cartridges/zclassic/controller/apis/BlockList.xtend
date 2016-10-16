@@ -125,7 +125,7 @@ class BlockList {
             {
                 if (!isset($properties['catIds'])) {
                     «IF targets('1.3.x')»
-                        $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']);
+                        $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $properties['objectType']));
                     «ELSE»
                         $categoryHelper = $this->get('«appService».category_helper');
                         $primaryRegistry = $categoryHelper->getPrimaryProperty($properties['objectType']);

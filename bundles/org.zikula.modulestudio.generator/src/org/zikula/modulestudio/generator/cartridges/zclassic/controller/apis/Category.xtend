@@ -138,7 +138,7 @@ class Category {
         public function getMainCat(«IF isLegacy»array $args = array()«ELSE»$objectType = '', $registry = ''«ENDIF»)
         {
             «IF isLegacy»
-                if (!isset($args['registry']) || empty($args['registry']) {
+                if (!isset($args['registry']) || empty($args['registry'])) {
                     // default to the primary registry
                     $args['registry'] = $this->getPrimaryProperty($args);
                 }
