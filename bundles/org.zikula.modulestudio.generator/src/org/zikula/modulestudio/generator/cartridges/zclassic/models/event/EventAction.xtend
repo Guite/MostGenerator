@@ -187,7 +187,6 @@ class EventAction {
         «ENDIF»
         // delete workflow for this entity
         «IF !isLegacy»
-            $serviceManager = ServiceUtil::getManager();
             $workflowHelper = $serviceManager->get('«appService».workflow_helper');
             $workflowHelper->normaliseWorkflowData(«entityVar»);
         «ENDIF»

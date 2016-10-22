@@ -129,7 +129,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_AbstractCore
         «ELSE»
-        «IF isBase»abstract «ENDIF»class CoreListener«IF !isBase» extends AbstractCoreListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»CoreListener«IF !isBase» extends AbstractCoreListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Core().generate(it, isBase)»
@@ -168,7 +168,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_AbstractInstaller
         «ELSE»
-        «IF isBase»abstract «ENDIF»class InstallerListener«IF !isBase» extends AbstractInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»InstallerListener«IF !isBase» extends AbstractInstallerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ModuleInstaller().generate(it, isBase)»
@@ -198,7 +198,7 @@ class Listeners {
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for Symfony kernel events.
          */
-        «IF isBase»abstract «ENDIF»class KernelListener«IF !isBase» extends AbstractKernelListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»KernelListener«IF !isBase» extends AbstractKernelListener«ELSE» implements EventSubscriberInterface«ENDIF»
         {
             «new Kernel().generate(it, isBase)»
         }
@@ -222,7 +222,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_AbstractModuleDispatch
         «ELSE»
-        «IF isBase»abstract «ENDIF»class ModuleDispatchListener«IF !isBase» extends AbstractModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ModuleDispatchListener«IF !isBase» extends AbstractModuleDispatchListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ModuleDispatch().generate(it, isBase)»
@@ -249,7 +249,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_AbstractMailer
         «ELSE»
-        «IF isBase»abstract «ENDIF»class MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»MailerListener«IF !isBase» extends AbstractMailerListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Mailer().generate(it, isBase)»
@@ -274,7 +274,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_AbstractPage
         «ELSE»
-        «IF isBase»abstract «ENDIF»class PageListener«IF !isBase» extends AbstractPageListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»PageListener«IF !isBase» extends AbstractPageListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Page().generate(it, isBase)»
@@ -313,7 +313,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_AbstractTheme
         «ELSE»
-        «IF isBase»abstract «ENDIF»class ThemeListener«IF !isBase» extends AbstractThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThemeListener«IF !isBase» extends AbstractThemeListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Theme().generate(it, isBase)»
@@ -338,7 +338,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_AbstractView
         «ELSE»
-        «IF isBase»abstract «ENDIF»class ViewListener«IF !isBase» extends AbstractViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ViewListener«IF !isBase» extends AbstractViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new View().generate(it, isBase)»
@@ -366,7 +366,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_AbstractUserLogin
         «ELSE»
-        «IF isBase»abstract «ENDIF»class UserLoginListener«IF !isBase» extends AbstractUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLoginListener«IF !isBase» extends AbstractUserLoginListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserLogin().generate(it, isBase)»
@@ -394,7 +394,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_AbstractUserLogout
         «ELSE»
-        «IF isBase»abstract «ENDIF»class UserLogoutListener«IF !isBase» extends AbstractUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserLogoutListener«IF !isBase» extends AbstractUserLogoutListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserLogout().generate(it, isBase)»
@@ -427,7 +427,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_AbstractUser
         «ELSE»
-        «IF isBase»abstract «ENDIF»class UserListener«IF !isBase» extends AbstractUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserListener«IF !isBase» extends AbstractUserListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new User().generate(it, isBase)»
@@ -455,7 +455,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_AbstractUserRegistration
         «ELSE»
-        «IF isBase»abstract «ENDIF»class UserRegistrationListener«IF !isBase» extends AbstractUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UserRegistrationListener«IF !isBase» extends AbstractUserRegistrationListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new UserRegistration().generate(it, isBase)»
@@ -483,7 +483,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_AbstractUsers
         «ELSE»
-        «IF isBase»abstract «ENDIF»class UsersListener«IF !isBase» extends AbstractUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»UsersListener«IF !isBase» extends AbstractUsersListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Users().generate(it, isBase)»
@@ -508,7 +508,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_AbstractGroup
         «ELSE»
-        «IF isBase»abstract «ENDIF»class GroupListener«IF !isBase» extends AbstractGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»GroupListener«IF !isBase» extends AbstractGroupListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new Group().generate(it, isBase)»
@@ -543,7 +543,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_AbstractThirdParty
         «ELSE»
-        «IF isBase»abstract «ENDIF»class ThirdPartyListener«IF !isBase» extends AbstractThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class «IF isBase»Abstract«ENDIF»ThirdPartyListener«IF !isBase» extends AbstractThirdPartyListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new ThirdParty().generate(it, isBase)»
