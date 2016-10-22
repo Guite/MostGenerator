@@ -939,7 +939,7 @@ class EditEntity {
         {
             foreach ($options['actions'] as $action) {
                 $builder->add($action['id'], '«nsSymfonyFormType»SubmitType', [
-                    'label' => $this->__($action['title']),
+                    'label' => $this->__(/** @ignore */$action['title']),
                     'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
                     'attr' => [
                         'class' => $action['buttonClass'],

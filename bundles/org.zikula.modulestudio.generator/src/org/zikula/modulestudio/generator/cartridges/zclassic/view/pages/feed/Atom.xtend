@@ -112,7 +112,7 @@ class Atom {
             <id>{{ uniqueID }}</id>
             <updated>{{ «IF standardFields»items[0].updatedDate«ELSE»'now'«ENDIF»|date('Y-m-dTH:M:SZ') }}</updated>
         {% endif %}
-            <link rel="alternate" type="text/html" hreflang="{{ lang() }}" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasActions('index')»index«ELSEIF hasActions('view')»view«ELSE»«app.getAdminAndUserControllers.map[actions].flatten.toList.head.name.formatForCode»«ENDIF»') }}" />
+            <link rel="alternate" type="text/html" hreflang="{{ app.request.locale }}" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasActions('index')»index«ELSEIF hasActions('view')»view«ELSE»«app.getAdminAndUserControllers.map[actions].flatten.toList.head.name.formatForCode»«ENDIF»') }}" />
             <link rel="self" type="application/atom+xml" href="{{ homePath ~ app.request.getPathInfo() }}" />
             <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ homePath|e }}</rights>
         «val objName = name.formatForCode»

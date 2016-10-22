@@ -110,7 +110,7 @@ class Rss {
                 <link>{{ homePath|e }}</link>
                 <atom:link href="{{ homePath ~ app.request.getPathInfo() }}" rel="self" type="application/rss+xml" />
                 <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getModVar('ZConfig', 'slogan') }}</description>
-                <language>{{ lang() }}</language>
+                <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
                     <title>{{ getModVar('ZConfig', 'sitename') }}</title>

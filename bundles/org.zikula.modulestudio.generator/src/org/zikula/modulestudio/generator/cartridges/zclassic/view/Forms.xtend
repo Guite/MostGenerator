@@ -259,7 +259,7 @@ class Forms {
                 {% if getModVar('ZConfig', 'multilingual') %}
                     {% if supportedLanguages is iterable and supportedLanguages|length > 1 %}
                         {% set useOnlyCurrentLanguage = false %}
-                        {% set currentLanguage = lang() %}
+                        {% set currentLanguage = app.request.locale %}
                         {% for language in supportedLanguages %}
                             {% if language == currentLanguage %}
                                 «translatableFieldSet('', '')»
@@ -273,7 +273,7 @@ class Forms {
                     {% endif %}
                 {% endif %}
                 {% if useOnlyCurrentLanguage == true %}
-                    {% set language = lang() %}
+                    {% set language = app.request.locale %}
                     «translatableFieldSet('', '')»
                 {% endif %}
             «ENDIF»
@@ -695,7 +695,7 @@ class Forms {
             {# purpose of this template: close an iframe from within this iframe #}
         «ENDIF»
         <!DOCTYPE html>
-        <html xml:lang="«IF targets('1.3.x')»{lang}«ELSE»{{ lang() }}«ENDIF»" lang="«IF targets('1.3.x')»{lang}«ELSE»{{ lang() }}«ENDIF»" dir="«IF targets('1.3.x')»{langdirection}«ELSE»{{ langdirection() }}«ENDIF»">
+        <html xml:lang="«IF targets('1.3.x')»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" lang="«IF targets('1.3.x')»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" dir="«IF targets('1.3.x')»{langdirection}«ELSE»{{ langdirection() }}«ENDIF»">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 «IF targets('1.3.x')»
