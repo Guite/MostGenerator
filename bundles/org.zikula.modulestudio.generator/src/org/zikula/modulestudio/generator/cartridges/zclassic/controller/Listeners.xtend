@@ -338,7 +338,7 @@ class Listeners {
         «IF targets('1.3.x')»
         «IF isBase»abstract «ENDIF»class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_AbstractView
         «ELSE»
-        «IF isBase»abstract «ENDIF»class ViewListener«IF !isBase» extends BaseViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
+        «IF isBase»abstract «ENDIF»class ViewListener«IF !isBase» extends AbstractViewListener«ELSE» implements EventSubscriberInterface«ENDIF»
         «ENDIF»
         {
             «new View().generate(it, isBase)»
