@@ -1249,7 +1249,7 @@ class FormHandler {
         «IF app.isLegacy»
         abstract class «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_Abstract«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_Common_«actionName.formatForCodeCapital»
         «ELSE»
-        abstract class «actionName.formatForCodeCapital»Handler extends «actionName.formatForCodeCapital»Handler
+        abstract class Abstract«actionName.formatForCodeCapital»Handler extends «actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             «IF app.isLegacy»
@@ -1280,7 +1280,7 @@ class FormHandler {
         «IF !app.isLegacy»
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
-            use «app.appNamespace»\Form\Handler\Common\Abstract«actionName.formatForCodeCapital»Handler;
+            use «app.appNamespace»\Form\Handler\Common\«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         «locking.imports(it)»
