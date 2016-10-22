@@ -39,7 +39,7 @@ class Selection {
     '''
 
     def private selectionHelperBaseClass(Application it) '''
-        namespace «appNamespace»\Api\Base;
+        namespace «appNamespace»\Helper\Base;
 
         use Doctrine\Common\Persistence\ObjectManager;
         use Symfony\Component\DependencyInjection\ContainerBuilder;
