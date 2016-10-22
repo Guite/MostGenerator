@@ -105,16 +105,15 @@ class Atom {
             <author>
                 <name>{{ getModVar('ZConfig', 'sitename') }}</name>
             </author>
-        {% set homePath = pageGetVar('homepath') %}
         {% set amountOfItems = items|length %}
         {% if amountOfItems > 0 %}
-        {% set uniqueID %}tag:{{ homePath|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasActions('display')»display«ELSE»«IF hasActions('view')»view«ELSE»index«ENDIF»«ENDIF»'«IF hasActions('display')»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
+        {% set uniqueID %}tag:{{ pagevars.homepath|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»items.first.createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasActions('display')»display«ELSE»«IF hasActions('view')»view«ELSE»index«ENDIF»«ENDIF»'«IF hasActions('display')»«routeParams('items.first', true)»«ENDIF») }}{% endset %}
             <id>{{ uniqueID }}</id>
             <updated>{{ «IF standardFields»items[0].updatedDate«ELSE»'now'«ENDIF»|date('Y-m-dTH:M:SZ') }}</updated>
         {% endif %}
             <link rel="alternate" type="text/html" hreflang="{{ app.request.locale }}" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«IF hasActions('index')»index«ELSEIF hasActions('view')»view«ELSE»«app.getAdminAndUserControllers.map[actions].flatten.toList.head.name.formatForCode»«ENDIF»') }}" />
-            <link rel="self" type="application/atom+xml" href="{{ homePath ~ app.request.getPathInfo() }}" />
-            <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ homePath|e }}</rights>
+            <link rel="self" type="application/atom+xml" href="{{ pagevars.homepath ~ app.request.getPathInfo() }}" />
+            <rights>Copyright (c) {{ 'now'|date('Y') }}, {{ pagevars.homepath|e }}</rights>
         «val objName = name.formatForCode»
         {% for «objName» in items %}
             {{ block('entry') }}
@@ -128,7 +127,7 @@ class Atom {
         {% block entry_content %}
             <title type="html">{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}</title>
             <link rel="alternate" type="text/html" href="{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}" />
-            {% set uniqueID %}tag:{{ homePath|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}{% endset %}
+            {% set uniqueID %}tag:{{ pagevars.homepath|replace({ 'http://': '', '/': '' }) }},{{ «IF standardFields»«objName».createdDate«ELSE»'now'«ENDIF»|date('Y-m-d') }}:{{ path('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}{% endset %}
             <id>{{ uniqueID }}</id>
             «IF standardFields»
                 {% if «objName».updatedDate|default %}

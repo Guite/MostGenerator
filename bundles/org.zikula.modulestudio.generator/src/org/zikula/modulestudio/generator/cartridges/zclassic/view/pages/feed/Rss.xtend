@@ -104,22 +104,21 @@ class Rss {
             xmlns:content="http://purl.org/rss/1.0/modules/content/"
             xmlns:atom="http://www.w3.org/2005/Atom">
         {*<rss version="0.92">*}
-        {% set homePath = pageGetVar('homepath') %}
             <channel>
                 <title>{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
-                <link>{{ homePath|e }}</link>
-                <atom:link href="{{ homePath ~ app.request.getPathInfo() }}" rel="self" type="application/rss+xml" />
+                <link>{{ pagevars.homepath|e }}</link>
+                <atom:link href="{{ pagevars.homepath ~ app.request.getPathInfo() }}" rel="self" type="application/rss+xml" />
                 <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getModVar('ZConfig', 'slogan') }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
                     <title>{{ getModVar('ZConfig', 'sitename') }}</title>
-                    <url>{{ homePath|e }}{{ imagepath }}/logo.jpg</url>
-                    <link>{{ homePath|e }}</link>
+                    <url>{{ pagevars.homepath|e }}{{ imagepath }}/logo.jpg</url>
+                    <link>{{ pagevars.homepath|e }}</link>
                 </image>
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
-                <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ homePath|e }}</copyright>
+                <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ pagevars.homepath|e }}</copyright>
                 <webMaster>{{ pageGetVar('adminmail)|e }} ({{ «appName.toLowerCase»_userVar('name', 2, 'admin') }})</webMaster>
         «val objName = name.formatForCode»
         {% for «objName» in items %}

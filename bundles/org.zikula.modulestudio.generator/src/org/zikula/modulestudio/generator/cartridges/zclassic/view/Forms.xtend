@@ -358,12 +358,11 @@ class Forms {
                     </script>
                 {/pageaddvarblock}
             «ELSE»
-                {% set homePath = pageGetVar('homepath') %}
                 {% set geoScripts %}
                     <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-                    <script type="text/javascript" src="{{ homePath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
-                    {*<script type="text/javascript" src="{{ homePath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
-                    <script type="text/javascript" src="{{ homePath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>*}
+                    <script type="text/javascript" src="{{ pagevars.homepath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
+                    {*<script type="text/javascript" src="{{ pagevars.homepath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
+                    <script type="text/javascript" src="{{ pagevars.homepath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>*}
                     <script type="text/javascript">
                     /* <![CDATA[ */
 
@@ -711,8 +710,8 @@ class Forms {
                     <link rel="stylesheet" href="web/bootstrap/css/bootstrap-theme.css" type="text/css" />
                     <script type="text/javascript" src="web/jquery/jquery.min.js"></script>
                     <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
-                    <script type="text/javascript" src="{{ pageGetVar('homepath') }}/javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
-                    <script type="text/javascript" src="{{ pageGetVar('homepath') }}/«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«appName».EditFunctions.js"></script>
+                    <script type="text/javascript" src="{{ pagevars.homepath }}/javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
+                    <script type="text/javascript" src="{{ pagevars.homepath }}/«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«appName».EditFunctions.js"></script>
                 «ENDIF»
             </head>
             <body>
