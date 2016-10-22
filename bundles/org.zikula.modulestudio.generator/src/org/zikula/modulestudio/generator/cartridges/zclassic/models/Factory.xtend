@@ -39,7 +39,7 @@ class Factory {
         println('Generating factory classes for entity "' + name.formatForDisplay + '"')
         val factoryPath = app.getAppSourceLibPath + 'Entity/Factory/'
 
-        var fileName = 'Base/' + name.formatForCodeCapital + 'Factory.php'
+        var fileName = 'Base/Abstract' + name.formatForCodeCapital + 'Factory.php'
         if (!isInheriting && !app.shouldBeSkipped(factoryPath + fileName)) {
             if (app.shouldBeMarked(factoryPath + fileName)) {
                 fileName = 'Base/' + name.formatForCodeCapital + '.generated.php'
@@ -70,7 +70,7 @@ class Factory {
         «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Factory_Base_Abstract«name.formatForCodeCapital»
         «ELSE»
-        abstract class Abstract_«name.formatForCodeCapital»Factory
+        abstract class Abstract«name.formatForCodeCapital»Factory
         «ENDIF»
         {
             /**
