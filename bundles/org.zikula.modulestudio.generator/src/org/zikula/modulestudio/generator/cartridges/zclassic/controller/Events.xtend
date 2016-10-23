@@ -169,7 +169,7 @@ class Events {
         /**
          * Event base class for filtering «name.formatForDisplay» processing.
          */
-        class Filter«name.formatForCodeCapital»Event extends Event
+        class AbstractFilter«name.formatForCodeCapital»Event extends Event
         {
             /**
              * @var «name.formatForCodeCapital»Entity Reference to treated entity instance.
