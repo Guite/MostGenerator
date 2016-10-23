@@ -149,12 +149,12 @@ class Events {
     def private eventDefinitionsImpl(Application it) '''
         namespace «appNamespace»;
 
-        use «appNamespace»\Base\«name.formatForCodeCapital»Events as Base«name.formatForCodeCapital»Events;
+        use «appNamespace»\Base\Abstract«name.formatForCodeCapital»Events;
 
         /**
          * Events definition implementation class.
          */
-        class «name.formatForCodeCapital»Events extends Base«name.formatForCodeCapital»Events
+        class «name.formatForCodeCapital»Events extends Abstract«name.formatForCodeCapital»Events
         {
             // feel free to extend the events definition here
         }
