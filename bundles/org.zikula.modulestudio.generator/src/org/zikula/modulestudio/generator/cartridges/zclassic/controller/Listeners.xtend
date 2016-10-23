@@ -301,9 +301,9 @@ class Listeners {
             «ELSE»
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
                 use Zikula\ThemeModule\ThemeEvents;
-                use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
-                use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
             «ENDIF»
+            use Zikula\ThemeModule\Bridge\Event\TwigPostRenderEvent;
+            use Zikula\ThemeModule\Bridge\Event\TwigPreRenderEvent;
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
