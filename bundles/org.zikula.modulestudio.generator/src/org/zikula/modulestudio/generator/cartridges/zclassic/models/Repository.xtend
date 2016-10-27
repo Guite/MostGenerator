@@ -73,19 +73,20 @@ class Repository {
     def private generate(Entity it) {
         println('Generating repository classes for entity "' + name.formatForDisplay + '"')
         val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository/'
+        var fileSuffix = if (app.targets('1.3.x')) '' else 'Repository'
 
-        var fileName = 'Base/Abstract' + name.formatForCodeCapital + '.php'
+        var fileName = 'Base/Abstract' + name.formatForCodeCapital + fileSuffix + '.php'
         if (!isInheriting && !app.shouldBeSkipped(repositoryPath + fileName)) {
             if (app.shouldBeMarked(repositoryPath + fileName)) {
-                fileName = 'Base/' + name.formatForCodeCapital + '.generated.php'
+                fileName = 'Base/' + name.formatForCodeCapital + fileSuffix + '.generated.php'
             }
             fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, modelRepositoryBaseImpl))
         }
 
-        fileName = name.formatForCodeCapital + '.php'
+        fileName = name.formatForCodeCapital + fileSuffix + '.php'
         if (!app.generateOnlyBaseClasses && !app.shouldBeSkipped(repositoryPath + fileName)) {
             if (app.shouldBeMarked(repositoryPath + fileName)) {
-                fileName = name.formatForCodeCapital + '.generated.php'
+                fileName = name.formatForCodeCapital + fileSuffix + '.generated.php'
             }
             fsa.generateFile(repositoryPath + fileName, fh.phpFileContent(app, modelRepositoryImpl))
         }
@@ -101,7 +102,7 @@ class Repository {
         «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Repository_Base_Abstract«name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital» extends «IF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
             «IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
@@ -1716,7 +1717,7 @@ class Repository {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository;
 
-            use «app.appNamespace»\Entity\Repository\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF» as BaseRepository;
+            use «app.appNamespace»\Entity\Repository\«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»Repository;
 
         «ENDIF»
         /**
@@ -1727,7 +1728,7 @@ class Repository {
         «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Repository_Base_Abstract«name.formatForCodeCapital»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends BaseRepository
+        class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«ENDIF»Repository
         «ENDIF»
         {
             // feel free to add your own methods here, like for example reusable DQL queries

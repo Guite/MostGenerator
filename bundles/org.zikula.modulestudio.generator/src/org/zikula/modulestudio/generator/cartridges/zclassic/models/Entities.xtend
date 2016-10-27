@@ -321,7 +321,7 @@ class Entities {
          «IF it instanceof MappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSEIF it instanceof Entity»
-          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.x')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.x')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»Repository«ENDIF»"«IF (it as Entity).readOnly», readOnly=true«ENDIF»)
          «ENDIF»
         «IF it instanceof Entity»
             «entityImplClassDocblockAdditions(app)»

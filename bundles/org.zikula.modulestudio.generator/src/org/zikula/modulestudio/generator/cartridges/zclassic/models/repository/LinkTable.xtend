@@ -19,7 +19,7 @@ class LinkTable {
      * Creates a reference table class file for every many-to-many relationship instance.
      */
     def generate(ManyToManyRelationship it, Application app, IFileSystemAccess fsa) {
-        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Entity/Repository/' + refClass.formatForCodeCapital + '.php',
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Entity/Repository/' + refClass.formatForCodeCapital + (if (app.targets('1.3.x')) '' else 'Repository') + '.php',
             fh.phpFileContent(app, modelRefRepositoryBaseImpl(app)), fh.phpFileContent(app, modelRefRepositoryImpl(app))
         )
     }
@@ -41,7 +41,7 @@ class LinkTable {
         «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_Base_Abstract«refClass.formatForCodeCapital» extends EntityRepository
         «ELSE»
-        class Abstract«refClass.formatForCodeCapital» extends EntityRepository
+        class Abstract«refClass.formatForCodeCapital»Repository extends EntityRepository
         «ENDIF»
         {
             /**
@@ -74,7 +74,7 @@ class LinkTable {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository;
 
-            use «app.appNamespace»\Entity\Repository\Base\Abstract«refClass.formatForCodeCapital»;
+            use «app.appNamespace»\Entity\Repository\Base\Abstract«refClass.formatForCodeCapital»Repository;
 
         «ENDIF»
         /**
@@ -86,7 +86,7 @@ class LinkTable {
         «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_«refClass.formatForCodeCapital» extends «app.appName»_Entity_Repository_Base_Abstract«refClass.formatForCodeCapital»
         «ELSE»
-        class «refClass.formatForCodeCapital» extends Abstract«refClass.formatForCodeCapital»
+        class «refClass.formatForCodeCapital»Repository extends Abstract«refClass.formatForCodeCapital»Repository
         «ENDIF»
         {
             // feel free to add your own methods here, like for example reusable DQL queries
