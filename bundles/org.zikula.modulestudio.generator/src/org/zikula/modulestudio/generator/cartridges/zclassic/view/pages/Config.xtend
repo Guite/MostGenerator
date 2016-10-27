@@ -140,21 +140,6 @@ class Config {
                     {{ form_end(form) }}
                 </div>
             {% endblock %}
-            «IF !getAllVariables.filter[null !== documentation && documentation != ''].empty»
-                {% block footer %}
-                    {{ parent() }}
-
-                    <script type="text/javascript">
-                    /* <![CDATA[ */
-                        ( function($) {
-                            $(document).ready(function() {
-                                $('.«appName.toLowerCase»-form-tooltips').tooltip();
-                            });
-                        })(jQuery);
-                    /* ]]> */
-                    </script>
-                {% endblock %}
-            «ENDIF»
         «ENDIF»
     '''
 

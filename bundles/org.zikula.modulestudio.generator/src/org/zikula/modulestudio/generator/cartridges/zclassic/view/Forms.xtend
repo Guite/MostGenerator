@@ -511,7 +511,6 @@ class Forms {
                         triggerFormValidation();
                     {% endif %}
 
-                    $('#«name.formatForCode»EditForm label').tooltip();
                     «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»
                 });
             })(jQuery);

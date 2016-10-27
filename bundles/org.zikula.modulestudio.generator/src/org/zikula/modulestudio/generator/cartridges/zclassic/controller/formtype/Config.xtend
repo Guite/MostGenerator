@@ -22,7 +22,6 @@ class Config {
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
-    Application app
     Boolean hasUserGroupSelectors = false
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
@@ -34,7 +33,6 @@ class Config {
         if (!needsConfig) {
             return
         }
-        app = it
         hasUserGroupSelectors = !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty
         generateClassPair(fsa, getAppSourceLibPath + 'Form/AppSettingsType.php',
             fh.phpFileContent(it, configTypeBaseImpl), fh.phpFileContent(it, configTypeImpl)
@@ -160,7 +158,7 @@ class Config {
             'label' => $this->__('«name.formatForDisplayCapital»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
-                    'class' => '«app.appName.toLowerCase»-form-tooltips',
+                    'class' => 'tooltips',
                     'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
                 'help' => $this->__('«documentation.replace("'", '"')»'),

@@ -421,7 +421,7 @@ class EditEntity {
             'label' => $this->__('«name.formatForDisplayCapital»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
-                    'class' => '«app.appName.toLowerCase»-form-tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
+                    'class' => 'tooltips«IF isExpandedListField» «IF (it as ListField).multiple»checkbox«ELSE»radio«ENDIF»-inline«ENDIF»',
                     'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
                 «helpAttribute»
@@ -916,7 +916,7 @@ class EditEntity {
                 'mapped' => false,
                 'label' => $this->__('Additional remarks'),
                 'label_attr' => [
-                    'class' => '«app.appName.toLowerCase»-form-tooltips',
+                    'class' => 'tooltips',
                     'title' => $helpText
                 ],
                 'attr' => [
