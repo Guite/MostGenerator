@@ -124,7 +124,7 @@ class TravisFile {
           file: «appName».zip
           on:
             tags: true
-            repo: «vendor.formatForCode»/«name.formatForCodeCapital»Module
+            repo: «vendor.formatForCode»/«name.formatForCodeCapital»
 
     '''
 }
