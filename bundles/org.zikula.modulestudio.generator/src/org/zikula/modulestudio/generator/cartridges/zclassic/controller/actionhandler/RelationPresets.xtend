@@ -29,6 +29,10 @@ class RelationPresets {
 
     def initPresets(Entity it) '''
         «val owningAssociations = getOwningAssociations(it.application)»
+        «val ownedMMAssociations = getOwnedMMAssociations(it.application)»
+        «IF !application.targets('1.3.x') && (!owningAssociations.empty || !ownedMMAssociations.empty)»
+            $selectionHelper = $this->get('«application.appService».selection_helper');
+        «ENDIF»
         «IF !owningAssociations.empty»
 
             // assign identifiers of predefined incoming relationships
@@ -44,7 +48,6 @@ class RelationPresets {
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
-        «val ownedMMAssociations = getOwnedMMAssociations(it.application)»
         «IF !ownedMMAssociations.empty»
 
             // assign identifiers of predefined outgoing many to many relationships
@@ -92,10 +95,10 @@ class RelationPresets {
         «IF !owningAssociationsNonEditable.empty || !ownedMMAssociationsNonEditable.empty»
 
             if ($args['commandName'] == 'create') {
-                «IF !owningAssociationsNonEditable.empty»
                 «IF !app.targets('1.3.x')»
                     $selectionHelper = $this->get('«app.appService».selection_helper');
                 «ENDIF»
+                «IF !owningAssociationsNonEditable.empty»
                 // save predefined incoming relationship from parent entity
                 «FOR relation : owningAssociationsNonEditable»
                     «relation.saveSinglePreset(false)»
