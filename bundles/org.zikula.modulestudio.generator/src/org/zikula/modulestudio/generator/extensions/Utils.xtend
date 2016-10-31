@@ -105,6 +105,7 @@ class Utils {
     def Boolean targets(Application it, String version) {
         // we query '1.3.x' for BC
         val useSymfony = (version != '1.3.x')
+        val useUnstableCore = (version == '1.4-dev')
 
         switch getCoreVersion {
             case ZK135:
@@ -115,6 +116,8 @@ class Utils {
                 version == '2.x'
             case ZK14:
                 useSymfony
+            case ZK14DEV:
+                useUnstableCore
             case ZKPRE14:
                 useSymfony
             default:
