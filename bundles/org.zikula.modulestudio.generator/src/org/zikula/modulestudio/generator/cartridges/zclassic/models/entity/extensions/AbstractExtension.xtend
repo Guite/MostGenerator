@@ -193,7 +193,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         if (null === app) {
             app = application
         }
-        (if (app.targets('1.3.x')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital
+        (if (app.targets('1.3.x')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital + 'Repository'
     }
 
     def protected extensionClassRepositoryBaseImpl(Entity it) '''
@@ -217,7 +217,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Repository_Base_Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
+        abstract class Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Repository extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
         «ENDIF»
         {
         }
@@ -227,7 +227,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         «IF !app.targets('1.3.x')»
             namespace «app.appNamespace»\Entity\Repository;
 
-            use «app.appNamespace»\Entity\Repository\«IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF» as BaseRepository;
+            use «app.appNamespace»\Entity\Repository\«IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»Repository;
 
         «ENDIF»
         /**
@@ -238,7 +238,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»«app.appName»_Entity_Repository_Base_Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends BaseRepository
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Repository extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»Repository
         «ENDIF»
         {
             // feel free to add your own methods here

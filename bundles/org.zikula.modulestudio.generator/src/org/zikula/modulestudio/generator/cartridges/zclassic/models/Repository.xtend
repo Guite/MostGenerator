@@ -1728,7 +1728,7 @@ class Repository {
         «IF app.targets('1.3.x')»
         class «app.appName»_Entity_Repository_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Repository_Base_Abstract«name.formatForCodeCapital»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«ENDIF»Repository
+        class «name.formatForCodeCapital»Repository extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«ENDIF»Repository
         «ENDIF»
         {
             // feel free to add your own methods here, like for example reusable DQL queries

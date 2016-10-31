@@ -648,8 +648,10 @@ class ControllerLayer {
         {
             «IF !isLegacy»
                 «FOR action : actions»
-                    «actionHelper.generate(action, false)»
+                    «IF action.name.formatForCode != 'config'»
+                        «actionHelper.generate(action, false)»
 
+                    «ENDIF»
                 «ENDFOR»
                 «IF hasActions('edit') && app.needsAutoCompletion»
 
