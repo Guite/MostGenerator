@@ -144,7 +144,9 @@ class ValidationConstraints {
         «IF fixed»
             «' '»@Assert\Length(min="«length»", max="«length»")
         «ENDIF»
-        «IF country»
+        «IF bic»
+            «' '»* @Assert\Bic()
+        «ELSEIF country»
             «' '»* @Assert\Country()
         «ELSEIF creditCard»
             «' '»* @Assert\Luhn(message="Please check your credit card number.")
