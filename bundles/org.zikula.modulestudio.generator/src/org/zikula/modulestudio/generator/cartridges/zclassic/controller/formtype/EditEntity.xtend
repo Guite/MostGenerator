@@ -417,7 +417,7 @@ class EditEntity {
             «fetchListEntries»
         «ENDIF»
         «val isExpandedListField = it instanceof ListField && (it as ListField).expanded»
-        $builder->add('«name.formatForCode»«IF idSuffix != ''» . «idSuffix»«ENDIF»', '«formType»Type', [
+        $builder->add('«name.formatForCode»'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«formType»Type', [
             'label' => $this->__('«name.formatForDisplayCapital»') . ':',
             «IF null !== documentation && documentation != ''»
                 'label_attr' => [
