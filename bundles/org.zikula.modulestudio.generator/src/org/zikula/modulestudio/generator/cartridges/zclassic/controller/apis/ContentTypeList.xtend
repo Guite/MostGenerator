@@ -511,7 +511,7 @@ class ContentTypeList {
             «IF isLegacy»
                 array_push($this->view->plugins_dir, '«rootFolder»/«appName»/templates/plugins');
             «ELSE»
-                array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getViewPath»»/plugins');
+                array_push($this->view->plugins_dir, '«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getViewPath»/plugins');
             «ENDIF»
             «IF hasCategorisableEntities»
 
