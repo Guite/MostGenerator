@@ -180,7 +180,7 @@ class Entities {
         «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Base_Abstract«name.formatForCodeCapital» extends Zikula_EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && (it as Entity).hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         «ENDIF»
         {
             «modelEntityBaseImplBody(app)»

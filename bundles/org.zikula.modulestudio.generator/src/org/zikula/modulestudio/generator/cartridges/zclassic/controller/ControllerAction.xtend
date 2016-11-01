@@ -53,9 +53,9 @@ class ControllerAction {
                 «ENDIF»
                 «IF softDeleteable && !isLegacy»
                     «IF isAdmin»
-                        //$this->entityManager->getFilters()->disable('softdeleteable');
+                        //$this->entityManager->getFilters()->disable('soft-deleteable');
                     «ELSE»
-                        $this->entityManager->getFilters()->enable('softdeleteable');
+                        $this->entityManager->getFilters()->enable('soft-deleteable');
                     «ENDIF»
 
                 «ENDIF»

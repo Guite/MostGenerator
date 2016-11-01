@@ -102,7 +102,7 @@ class Repository {
         «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Repository_Base_Abstract«name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF hasTranslatableFields»TranslationRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
             «IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
@@ -242,6 +242,8 @@ class Repository {
                 use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
             «ENDIF»
             use Doctrine\ORM\EntityManager;
+        «ELSEIF !app.targets('1.3.x') && hasTranslatableFields»
+            use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;
         «ELSE»
