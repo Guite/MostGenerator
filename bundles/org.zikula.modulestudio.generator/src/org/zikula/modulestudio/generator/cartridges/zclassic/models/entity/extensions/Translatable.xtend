@@ -71,9 +71,6 @@ class Translatable extends AbstractExtension implements EntityExtensionInterface
      */
     override extensionClassImports(Entity it) '''
         use Gedmo\Translatable\Entity\«extensionBaseClass»;
-        «IF !application.targets('1.3.x')»
-            use Gedmo\Translatable\Translatable;
-        «ENDIF»
     '''
 
     /**

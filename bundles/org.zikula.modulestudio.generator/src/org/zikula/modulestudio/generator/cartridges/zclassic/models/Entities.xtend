@@ -132,6 +132,9 @@ class Entities {
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
         «ENDIF»
         «IF !application.targets('1.3.x')»
+            «IF hasTranslatableFields»
+                use Gedmo\Translatable\Translatable;
+            «ENDIF»
             «IF hasUploadFieldsEntity»
                 use Symfony\Component\HttpFoundation\File\File;
             «ENDIF»
