@@ -139,7 +139,7 @@ class Selection {
                 $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
 
             «ENDIF»
-            return $controllerHelper->hasCompositeKeys($objectType);
+            return $«IF !isLegacy»this->«ENDIF»controllerHelper->hasCompositeKeys($objectType);
         }
 
         /**
