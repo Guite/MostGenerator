@@ -537,7 +537,7 @@ class QuickNavigation {
     '''
 
     def private dispatch fieldImpl(DerivedField it) '''
-        $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
+        $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSEIF it instanceof UserField»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
             'label' => $this->__('«name.formatForDisplayCapital»'),
             'attr' => [
                 'class' => 'input-sm'
@@ -555,7 +555,6 @@ class QuickNavigation {
         'placeholder' => $this->__('All')
     '''
 
-    def private dispatch fieldType(UserField it) '''Entity'''
     def private dispatch additionalOptions(UserField it) '''
         'placeholder' => $this->__('All'),
         // Zikula core should provide a form type for this to hide entity details
