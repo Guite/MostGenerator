@@ -94,7 +94,7 @@ class EntityTreeType {
              */
             public function getParent()
             {
-                return 'Symfony\Component\Form\Extension\Core\Type\EntityType';
+                return 'Symfony\Bridge\Doctrine\Form\Type\EntityType';
             }
 
             /**
