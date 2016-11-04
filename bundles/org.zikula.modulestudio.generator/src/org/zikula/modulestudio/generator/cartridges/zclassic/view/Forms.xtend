@@ -693,7 +693,7 @@ class Forms {
             {# purpose of this template: close an iframe from within this iframe #}
         «ENDIF»
         <!DOCTYPE html>
-        <html xml:lang="«IF targets('1.3.x')»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" lang="«IF targets('1.3.x')»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" dir="«IF targets('1.3.x')»{langdirection}«ELSE»{{ langdirection() }}«ENDIF»">
+        <html xml:lang="«IF targets('1.3.x')»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" lang="«IF targets('1.3.x')»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" dir="«IF targets('1.3.x')»{langdirection}«ELSE»{{ localeApi.language_direction }}«ENDIF»">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 «IF targets('1.3.x')»

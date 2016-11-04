@@ -388,7 +388,7 @@ class Layout {
 
     def private pdfHeaderImpl(Application it) '''
         <!DOCTYPE html>
-        <html xml:lang="«IF isLegacy»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" lang="«IF isLegacy»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" dir="«IF isLegacy»{langdirection}«ELSE»{{ langdirection() }}«ENDIF»">
+        <html xml:lang="«IF isLegacy»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" lang="«IF isLegacy»{lang}«ELSE»{{ app.request.locale }}«ENDIF»" dir="«IF isLegacy»{langdirection}«ELSE»{{ localeApi.language_direction }}«ENDIF»">
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
             <title>«IF isLegacy»{pagegetvar name='title'}«ELSE»{{ pageGetVar('title') }}«ENDIF»</title>
