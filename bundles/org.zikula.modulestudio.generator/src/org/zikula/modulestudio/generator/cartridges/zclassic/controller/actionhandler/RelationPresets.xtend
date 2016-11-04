@@ -31,7 +31,7 @@ class RelationPresets {
         «val owningAssociations = getOwningAssociations(it.application)»
         «val ownedMMAssociations = getOwnedMMAssociations(it.application)»
         «IF !application.targets('1.3.x') && (!owningAssociations.empty || !ownedMMAssociations.empty)»
-            $selectionHelper = $this->get('«application.appService».selection_helper');
+            $selectionHelper = $this->container->get('«application.appService».selection_helper');
         «ENDIF»
         «IF !owningAssociations.empty»
 
@@ -96,7 +96,7 @@ class RelationPresets {
 
             if ($args['commandName'] == 'create') {
                 «IF !app.targets('1.3.x')»
-                    $selectionHelper = $this->get('«app.appService».selection_helper');
+                    $selectionHelper = $this->container->get('«app.appService».selection_helper');
                 «ENDIF»
                 «IF !owningAssociationsNonEditable.empty»
                 // save predefined incoming relationship from parent entity

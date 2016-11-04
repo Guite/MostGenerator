@@ -177,6 +177,7 @@ class Property {
             DecimalField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: if (entity.application.targets('1.3.x')) 'array()' else '[]'
+            UploadField: if (entity.application.targets('1.3.x') && null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             ObjectField: 'null'
             ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''

@@ -433,7 +433,7 @@ class EditEntity {
             «IF readonly»
                 'disabled' => true,
             «ENDIF»
-            'empty_data' => '«defaultValue»',
+            'empty_data' => «IF it instanceof UploadField»null«ELSE»'«defaultValue»'«ENDIF»,
             'attr' => [
                 'class' => '«validationHelper.fieldValidationCssClass(it)»',
                 «IF readonly»
