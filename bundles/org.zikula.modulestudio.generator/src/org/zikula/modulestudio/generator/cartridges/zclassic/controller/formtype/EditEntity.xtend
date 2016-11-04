@@ -352,14 +352,16 @@ class EditEntity {
                 $useOnlyCurrentLanguage = false;
                 $currentLanguage = ZLanguage::getLanguageCode();
                 foreach ($supportedLanguages as $language) {
-                    if ($language == $currentLanguage) {
-                        «translatableFieldSet('', '')»
+                    if ($language != $currentLanguage) {
+                        continue;
                     }
+                    «translatableFieldSet('', '')»
                 }
                 foreach ($supportedLanguages as $language) {
-                    if ($language != $currentLanguage) {
-                        «translatableFieldSet('$language', '$language')»
+                    if ($language == $currentLanguage) {
+                        continue;
                     }
+                    «translatableFieldSet('$language', '$language')»
                 }
             }
         }

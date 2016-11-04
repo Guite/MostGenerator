@@ -77,7 +77,13 @@ class SimpleFields {
     def private groupAndId(EntityField it, String groupSuffix, String idSuffix) '''group=«templateIdWithSuffix(entity.name.formatForDB, groupSuffix)» id=«templateIdWithSuffix(name.formatForCode, idSuffix)»'''
 
     // 1.4.x only
-    def private fieldRow(EntityField it, String groupSuffix, String idSuffix) '''{{ form_row(form.«IF groupSuffix != ''»«groupSuffix».«ENDIF»«name.formatForCode»«idSuffix») }}'''
+    def private fieldRow(EntityField it, String groupSuffix, String idSuffix) {
+        if (groupSuffix != '' || idSuffix != '') {
+            '''{{ form_row(attribute(form, «IF groupSuffix != ''»«groupSuffix» ~ «ENDIF»'«name.formatForCode»'«IF idSuffix != ''» ~ «idSuffix»«ENDIF»)) }}'''
+        } else {
+            '''{{ form_row(form.«name.formatForCode») }}'''
+        }
+    }
 
     def private dispatch formField(BooleanField it, String groupSuffix, String idSuffix) '''
         «IF isLegacyApp»

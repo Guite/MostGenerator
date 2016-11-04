@@ -267,7 +267,7 @@ class Forms {
                         {% endfor %}
                         {% for language in supportedLanguages %}
                             {% if language != currentLanguage %}
-                                «translatableFieldSet('language', 'language')»
+                                «translatableFieldSet('', 'language')»
                             {% endif %}
                         {% endfor %}
                     {% endif %}
