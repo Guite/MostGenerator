@@ -12,7 +12,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.util.Vie
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.util.WorkflowHelper
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
  * Entry point for the utility service class creation.
@@ -21,7 +20,6 @@ class UtilityServices {
 
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
-    extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         new ModelHelper().generate(it, fsa)
@@ -29,7 +27,7 @@ class UtilityServices {
         new ViewHelper().generate(it, fsa)
         new WorkflowHelper().generate(it, fsa)
 
-        if (hasUploads && targets('1.3.x')) {
+        if (hasUploads) {
             new ImageHelper().generate(it, fsa)
         }
         if (hasListFields) {
