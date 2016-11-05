@@ -207,7 +207,8 @@ class SimpleFields {
             «ELSE»
                 <a href="{{ «realName»FullPathURL }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="lightbox"{% endif %}>
                 {% if «realName»Meta.isImage %}
-                    {{ «entity.application.appName.formatForDB»_thumb({ image: «realName»FullPath, objectid: '«entity.name.formatForCode»«FOR pkField : entity.getPrimaryKeyFields»-' ~ «objName».«pkField.name.formatForCode» ~ '«ENDFOR»', preset: «entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital», tag: true, img_alt: «objName».getTitleFromDisplayPattern(), img_class: 'img-thumbnail' }) }}
+                    {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
+                    <img src="{{ «realName»FullPath|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
                 {% else %}
                     {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName»FullPath, false, false) }})
                 {% endif %}

@@ -211,7 +211,8 @@ class Layout {
                         {{ __('Current file') }}:
                         <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="lightbox"{% endif %}>
                         {% if file_meta.isImage %}
-                            {{ «appName.formatForDB»_thumb({ image: file_path, objectid: object_type ~ object_id, preset: object_type ~ 'ThumbPreset' ~ id|capitalize, tag: true, img_alt: formattedEntityTitle, img_class: 'img-thumbnail' }) }}
+                            {% set thumbOptions = attribute(thumbRuntimeOptions, object_type ~ id|capitalize) %}
+                            <img src="{{ file_path|imagine_filter('zkroot', thumbOptions) }}" alt="{{ formattedEntityTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
                         {% else %}
                             {{ __('Download') }} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
                         {% endif %}

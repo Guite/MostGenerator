@@ -17,14 +17,14 @@ class ImageHelper {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for image handling')
-        val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
-        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Image' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
+        val helperFolder = if (isLegacy) 'Util' else 'Helper'
+        generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Image' + (if (isLegacy) '' else 'Helper') + '.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
         )
     }
 
     def private imageFunctionsBaseImpl(Application it) '''
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             namespace «appNamespace»\Helper\Base;
 
             use SystemPlugin_Imagine_Preset;
@@ -33,9 +33,9 @@ class ImageHelper {
         /**
          * Utility base class for image helper methods.
          */
-        abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractImage extends Zikula_AbstractBase«ELSE»AbstractImageHelper«ENDIF»
+        abstract class «IF isLegacy»«appName»_Util_Base_AbstractImage extends Zikula_AbstractBase«ELSE»AbstractImageHelper«ENDIF»
         {
-            «IF !targets('1.3.x')»
+            «IF !isLegacy»
                 /**
                  * Name of the application.
                  *
@@ -53,99 +53,121 @@ class ImageHelper {
                 }
 
             «ENDIF»
-            «getPreset»
+            «getRuntimeOptions»
 
-            «getCustomPreset»
+            «getCustomRuntimeOptions»
         }
     '''
 
-    def private getPreset(Application it) '''
+    def private getRuntimeOptions(Application it) '''
         /**
-         * This method returns an Imagine preset for the given arguments.
+         * This method returns an Imagine «IF isLegacy»preset«ELSE»runtime options array«ENDIF» for the given arguments.
          *
          * @param string $objectType Currently treated entity type
          * @param string $fieldName  Name of upload field
          * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
          * @param array  $args       Additional arguments
          *
-         * @return SystemPlugin_Imagine_Preset The selected preset
+         * @return «IF isLegacy»SystemPlugin_Imagine_Preset The selected preset«ELSE»array The selected runtime options«ENDIF»
          */
-        public function getPreset($objectType = '', $fieldName = '', $context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function get«IF isLegacy»Preset«ELSE»RuntimeOptions«ENDIF»($objectType = '', $fieldName = '', $context = '', $args = «IF isLegacy»array()«ELSE»[]«ENDIF»)
         {
-            if (!in_array($context, «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF targets('1.3.x')»)«ELSE»]«ENDIF»)) {
+            if (!in_array($context, «IF isLegacy»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF isLegacy»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
             }
 
-            $presetName = '';
+            $«IF isLegacy»preset«ELSE»context«ENDIF»Name = '';
             if ($context == 'controllerAction') {
                 if (!isset($args['controller'])) {
                     $args['controller'] = 'user';
                 }
                 if (!isset($args['action'])) {
-                    $args['action'] = '«IF targets('1.3.x')»main«ELSE»index«ENDIF»';
+                    $args['action'] = '«IF isLegacy»main«ELSE»index«ENDIF»';
                 }
 
                 if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
-                    $presetName = $this->name . '_ajax_autocomplete';
+                    $«IF isLegacy»preset«ELSE»context«ENDIF»Name = $this->name . '_ajax_autocomplete';
                 } else {
-                    $presetName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
+                    $«IF isLegacy»preset«ELSE»context«ENDIF»Name = $this->name . '_' . $args['controller'] . '_' . $args['action'];
                 }
             }
-            if (empty($presetName)) {
-                $presetName = $this->name . '_default';
+            if (empty($«IF isLegacy»preset«ELSE»context«ENDIF»Name)) {
+                $«IF isLegacy»preset«ELSE»context«ENDIF»Name = $this->name . '_default';
             }
 
-            $preset = $this->getCustomPreset($objectType, $fieldName, $presetName, $context, $args);
-
-            return $preset;
+            return $this->getCustom«IF isLegacy»Preset«ELSE»RuntimeOptions«ENDIF»($objectType, $fieldName, $«IF isLegacy»preset«ELSE»context«ENDIF»Name, $context, $args);
         }
     '''
 
-    def private getCustomPreset(Application it) '''
+    def private getCustomRuntimeOptions(Application it) '''
         /**
-         * This method returns an Imagine preset for the given arguments.
+         * This method returns an Imagine «IF isLegacy»preset«ELSE»runtime options array«ENDIF» for the given arguments.
          *
          * @param string $objectType Currently treated entity type
          * @param string $fieldName  Name of upload field
-         * @param string $presetName Name of desired preset
+         * @param string $«IF isLegacy»preset«ELSE»context«ENDIF»Name Name of desired «IF isLegacy»preset«ELSE»context«ENDIF»
          * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType)
          * @param array  $args       Additional arguments
          *
-         * @return SystemPlugin_Imagine_Preset The selected preset
+         * @return «IF isLegacy»SystemPlugin_Imagine_Preset The selected preset«ELSE»array The selected runtime options«ENDIF»
          */
-        public function getCustomPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»)
+        public function getCustom«IF isLegacy»Preset«ELSE»RuntimeOptions«ENDIF»($objectType = '', $fieldName = '', $«IF isLegacy»preset«ELSE»context«ENDIF»Name = '', $context = '', $args = «IF isLegacy»array()«ELSE»[]«ENDIF»)
         {
-            $presetData = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
-                'width'     => 100,      // thumbnail width in pixels
-                'height'    => 100,      // thumbnail height in pixels
-                'mode'      => 'inset',  // inset or outbound
-                'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
-            «IF targets('1.3.x')»)«ELSE»]«ENDIF»;
+            «IF isLegacy»
+                $presetData = array(
+                    'width'     => 100,      // thumbnail width in pixels
+                    'height'    => 100,      // thumbnail height in pixels
+                    'mode'      => 'inset',  // inset or outbound
+                    'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
+                );
+            «ELSE»
+                $options = [
+                    'thumbnail' => [
+                        'size'      => [100, 100], // thumbnail width and height in pixels
+                        'mode'      => 'inset',    // inset or outbound
+                        'extension' => null        // file extension for thumbnails (jpg, png, gif; null for original file type)
+                    ]
+                ];
+            «ENDIF»
 
-            if ($presetName == $this->name . '_ajax_autocomplete') {
-                $presetData['width'] = 100;
-                $presetData['height'] = 80;
-            } elseif ($presetName == $this->name . '_relateditem') {
-                $presetData['width'] = 50;
-                $presetData['height'] = 40;
+            if ($«IF isLegacy»preset«ELSE»context«ENDIF»Name == $this->name . '_ajax_autocomplete') {
+                «IF isLegacy»
+                    $presetData['width'] = 100;
+                    $presetData['height'] = 80;
+                «ELSE»
+                    $options['thumbnail']['size'] = [100, 80];
+                «ENDIF»
+            } elseif ($«IF isLegacy»preset«ELSE»context«ENDIF»Name == $this->name . '_relateditem') {
+                «IF isLegacy»
+                    $presetData['width'] = 50;
+                    $presetData['height'] = 40;
+                «ELSE»
+                    $options['thumbnail']['size'] = [50, 40];
+                «ENDIF»
             } elseif ($context == 'controllerAction') {
                 if ($args['action'] == 'view') {
-                    $presetData['width'] = 32;
-                    $presetData['height'] = 20;
+                    «IF isLegacy»
+                        $presetData['width'] = 32;
+                        $presetData['height'] = 20;
+                    «ELSE»
+                        $options['thumbnail']['size'] = [32, 20];
+                    «ENDIF»
                 } elseif ($args['action'] == 'display') {
-                    $presetData['width'] = 250;
-                    $presetData['height'] = 150;
+                    «IF isLegacy»
+                        $presetData['width'] = 250;
+                        $presetData['height'] = 150;
+                    «ELSE»
+                        $options['thumbnail']['size'] = [250, 150];
+                    «ENDIF»
                 }
             }
 
-            $preset = new SystemPlugin_Imagine_Preset($presetName, $presetData);
-
-            return $preset;
+            return «IF isLegacy»new SystemPlugin_Imagine_Preset($presetName, $presetData)«ELSE»$options«ENDIF»;
         }
     '''
 
     def private imageFunctionsImpl(Application it) '''
-        «IF !targets('1.3.x')»
+        «IF !isLegacy»
             namespace «appNamespace»\Helper;
 
             use «appNamespace»\Helper\Base\AbstractImageHelper;
@@ -154,7 +176,7 @@ class ImageHelper {
         /**
          * Utility implementation class for image helper methods.
          */
-        «IF targets('1.3.x')»
+        «IF isLegacy»
         class «appName»_Util_Image extends «appName»_Util_Base_AbstractImage
         «ELSE»
         class ImageHelper extends AbstractImageHelper
@@ -163,4 +185,8 @@ class ImageHelper {
             // feel free to add your own convenience methods here
         }
     '''
+
+    def private isLegacy(Application it) {
+        targets('1.3.x')
+    }
 }

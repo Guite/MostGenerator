@@ -52,7 +52,6 @@ class Repository {
     /**
      * Entry point for Doctrine repository classes.
      */
-
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         app = it
@@ -444,13 +443,21 @@ class Repository {
                     «ENDIF»
                     «IF hasUploadFieldsEntity»
                         $objectType = '«name.formatForCode»';
-                        «FOR uploadField : getUploadFieldsEntity»
-                            $templateParameters[$objectType . 'ThumbPreset«uploadField.name.formatForCodeCapital»'] = $imageHelper->getPreset($objectType, '«uploadField.name.formatForCode»', $context, $args);
-                        «ENDFOR»
+                        «IF app.targets('1.3.x')»
+                            «FOR uploadField : getUploadFieldsEntity»
+                                $templateParameters[$objectType . 'ThumbPreset«uploadField.name.formatForCodeCapital»'] = $imageHelper->getPreset($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                            «ENDFOR»
+                        «ELSE»
+                            $thumbRuntimeOptions = [];
+                            «FOR uploadField : getUploadFieldsEntity»
+                                $thumbRuntimeOptions[$objectType . '«uploadField.name.formatForCodeCapital»'] = $imageHelper->getRuntimeOptions($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                            «ENDFOR»
+                            $templateParameters['thumbRuntimeOptions'] = $thumbRuntimeOptions;
+                        «ENDIF»
                     «ENDIF»
                     if (in_array($args['action'], «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»'display', 'view'«IF app.targets('1.3.x')»)«ELSE»]«ENDIF»)) {
                         // use separate preset for images in related items
-                        $templateParameters['relationThumbPreset'] = $imageHelper->getCustomPreset('', '', '«app.appName»_relateditem', $context, $args);
+                        $templateParameters['relationThumb«IF app.targets('1.3.x')»Preset«ELSE»RuntimeOptions«ENDIF»'] = $imageHelper->getCustom«IF app.targets('1.3.x')»Preset«ELSE»RuntimeOptions«ENDIF»('', '', '«app.appName»_relateditem', $context, $args);
                     }
                 «ENDIF»
             }

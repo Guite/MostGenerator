@@ -150,7 +150,7 @@ class Relations {
             <br />
             «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
             {% if item.«imageFieldName» != '' and item.«imageFieldName»FullPath is defined and item.«imageFieldName»Meta.isImage %}
-                {{ «app.appName.formatForDB»_thumb({ image: item.«imageFieldName»FullPath, objectid: '«name.formatForCode»«FOR pkField : getPrimaryKeyFields»-' ~ item.«pkField.name.formatForCode» ~ '«ENDFOR»', preset: relationThumbPreset, tag: true, img_alt: item.getTitleFromDisplayPattern(), img_class: 'img-rounded' }) }}
+                <img src="{{ item.«imageFieldName»FullPath|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
             {% endif %}
         «ENDIF»
         «IF many»

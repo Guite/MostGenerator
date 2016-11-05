@@ -226,8 +226,7 @@ class Plugins {
                 new \Twig_SimpleFunction('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
                 new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector']),
                 new \Twig_SimpleFunction('«appNameLower»_userVar', [$this, 'getUserVar']),
-                new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar']),
-                new \Twig_SimpleFunction('«appNameLower»_thumb', [$this, 'getImageThumb'])
+                new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'])
             ];
         }
 
@@ -340,23 +339,6 @@ class Plugins {
 
             $view = \Zikula_View::getInstance('«appName»');
             $result = smarty_function_useravatar($params, $view);
-
-            return $result;
-        }
-
-        /**
-         * Display an image thumbnail using Imagine system plugin.
-         *
-         * @param array $params Parameters assigned to bridged Smarty plugin
-         *
-         * @return string Thumb path
-         */
-        public function getImageThumb($params)
-        {
-            include_once 'plugins/Imagine/templates/plugins/function.thumb.php';
-
-            $view = \Zikula_View::getInstance('«appName»');
-            $result = smarty_function_thumb($params, $view);
 
             return $result;
         }
