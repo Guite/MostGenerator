@@ -402,6 +402,9 @@ class EditEntity {
             $builder->add('slug'«IF idSuffix != ''» . «idSuffix»«ENDIF», '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Permalink') . ':',
                 'required' => false«/* slugUnique.displayBool */»,
+                «IF idSuffix != ''»
+                    'mapped' => false,
+                «ENDIF»
                 'attr' => [
                     «IF slugUnique»
                         'class' => 'validate-unique',
@@ -436,6 +439,9 @@ class EditEntity {
                 'disabled' => true,
             «ENDIF»
             'empty_data' => «IF it instanceof UploadField»null«ELSE»'«defaultValue»'«ENDIF»,
+            «IF idSuffix != ''»
+                'mapped' => false,
+            «ENDIF»
             'attr' => [
                 'class' => '«validationHelper.fieldValidationCssClass(it)»',
                 «IF readonly»
