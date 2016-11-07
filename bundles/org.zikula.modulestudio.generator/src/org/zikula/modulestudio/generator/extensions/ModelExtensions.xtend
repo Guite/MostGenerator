@@ -725,7 +725,7 @@ class ModelExtensions {
             TextField: 'text'
             EmailField: 'string'
             UrlField: 'string'
-            UploadField: if (entity.application.targets('1.3.x')) 'string' else 'File'
+            UploadField: 'string'
             ListField: 'string'
             ArrayField: 'array'
             ObjectField: 'object'

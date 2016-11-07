@@ -1285,8 +1285,11 @@ class FormHandler {
         «ENDIF»
         «locking.imports(it)»
         «IF !app.isLegacy»
-            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+            «IF hasUploadFieldsEntity»
+                use Symfony\Component\HttpFoundation\File\File;
+            «ENDIF»
             use Symfony\Component\HttpFoundation\RedirectResponse;
+            use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use ModUtil;
             use RuntimeException;
             use System;
@@ -1360,6 +1363,15 @@ class FormHandler {
                     «ENDIF»
                 }
             }
+            «IF !app.isLegacy && hasUploadFieldsEntity»
+
+                // file field type expects File instances instead of file names
+                $controllerHelper = $this->container->get('«app.appService».controller_helper');
+                foreach ($this->uploadFields as $uploadFieldName => $isMandatory) {
+                «FOR uploadField : getUploadFieldsEntity»
+                    $entity[$uploadFieldName] = new File($controllerHelper->getFileBaseFolder($this->objectType, $uploadFieldName) . $entity[$uploadFieldName]);
+                «ENDFOR»
+            «ENDIF»
 
             return $entity;
         }
