@@ -102,7 +102,7 @@ class Forms {
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».EditFunctions.js')) }}
                 {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Validation.js')) }}
                 «IF (hasUserFieldsEntity || !getOutgoingJoinRelations.empty || !getIncomingJoinRelations.empty)»
-                    {{ pageAddAsset('javascript', '/vendor/twitter/typeahead.js/dist/typeahead.bundle.min.js') }}
+                    {{ pageAddAsset('javascript', pagevars.homepath ~ 'vendor/twitter/typeahead.js/dist/typeahead.bundle.min.js') }}
                 «ENDIF»
             {% endblock %}
         «ENDIF»
@@ -360,9 +360,9 @@ class Forms {
             «ELSE»
                 {% set geoScripts %}
                     <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-                    <script type="text/javascript" src="{{ pagevars.homepath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
-                    {*<script type="text/javascript" src="{{ pagevars.homepath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
-                    <script type="text/javascript" src="{{ pagevars.homepath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>*}
+                    <script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
+                    {#<script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.geocoder.js"></script>
+                    <script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.googlev3.geocoder.js"></script>#}
                     <script type="text/javascript">
                     /* <![CDATA[ */
 
@@ -379,7 +379,7 @@ class Forms {
                     /* ]]> */
                     </script>
                 {% endset %}
-                {{ pageAddAsset('header', geoScripts) }}
+                {{ pageAddAsset('footer', geoScripts) }}
             «ENDIF»
         «ENDIF»
 
@@ -602,7 +602,7 @@ class Forms {
             «ENDIF»
         }
 
-        {{*
+        «IF app.targets('1.3.x')»{{*«ELSE»{#«ENDIF»
             Initialise geocoding functionality.
             In contrast to the map picker this one determines coordinates for a given address.
             To use this please customise the following method for assembling the address.
@@ -622,7 +622,7 @@ class Forms {
             }
 
             «app.vendorAndName»InitGeoCoding(determineAddressForGeoCoding);
-        *}}
+        «IF app.targets('1.3.x')»*}}«ELSE»#}«ENDIF»
     '''
 
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''

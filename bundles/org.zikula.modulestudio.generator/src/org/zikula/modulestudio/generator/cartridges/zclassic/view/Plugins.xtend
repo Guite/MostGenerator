@@ -266,7 +266,7 @@ class Plugins {
          *
          * @return array Array of action links
          */
-        public function getActionLinks(EntityAccess $entity, $area = '', $context = 'view')
+        public function getActionLinks(/*EntityAccess */$entity, $area = '', $context = 'view')
         {
             return $this->linkContainer->getActionLinks($entity, $area, $context);
         }

@@ -194,8 +194,12 @@ class ViewQuickNavForm {
                 «formFieldImplLegacy»
             {/if}
         «ELSE»
-            {% if «fieldName»Filter is not defined or «fieldName»Filter == true %}
+            {% if «fieldName»Filter is defined and «fieldName»Filter != true %}
+                <div class="hidden">
+            {% endif %}
                 {{ form_row(quickNavForm.«fieldName») }}
+            {% if «fieldName»Filter is defined and «fieldName»Filter != true %}
+                </div>
             {% endif %}
         «ENDIF»
     '''
@@ -278,8 +282,12 @@ class ViewQuickNavForm {
                 {/php}
             {/if}
         «ELSE»
-            {% if «sourceName»Filter is not defined or «sourceName»Filter == true %}
+            {% if «sourceName»Filter is defined and «sourceName»Filter != true %}
+                <div class="hidden">
+            {% endif %}
                 {{ form_row(quickNavForm.«sourceAliasName») }}
+            {% if «sourceName»Filter is defined and «sourceName»Filter != true %}
+                </div>
             {% endif %}
         «ENDIF»
     '''

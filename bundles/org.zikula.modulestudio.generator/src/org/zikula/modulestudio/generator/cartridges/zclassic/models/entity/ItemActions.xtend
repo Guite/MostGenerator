@@ -60,7 +60,7 @@ class ItemActions {
         «FOR entity : app.getAllEntities»
             if ($entity instanceof «entity.name.formatForCodeCapital»Entity) {
                 $component = '«app.appName»:«entity.name.formatForCodeCapital»:';
-                $instance = «entity.idFieldsAsParameterCode('this')» . '::';
+                $instance = «entity.idFieldsAsParameterCode('entity')» . '::';
 
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentLegacyControllerType == '«controller.formattedName»') {

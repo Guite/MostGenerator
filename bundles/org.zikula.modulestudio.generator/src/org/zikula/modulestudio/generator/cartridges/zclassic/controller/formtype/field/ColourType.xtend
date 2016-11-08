@@ -27,6 +27,7 @@ class ColourType {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        use Symfony\Component\Routing\RouterInterface;
         use Zikula\ThemeModule\Engine\AssetBag;
 
         /**
@@ -36,6 +37,11 @@ class ColourType {
          */
         abstract class AbstractColourType extends AbstractType
         {
+            /**
+             * @var RouterInterface
+             */
+            protected $router;
+
             /**
              * @var AssetBag
              */
@@ -54,12 +60,14 @@ class ColourType {
             /**
              * ColourType constructor.
              *
-             * @param AssetBag $jsAssetBag     AssetBag service instance for JS files
-             * @param AssetBag $cssAssetBag    AssetBag service instance for CSS files
-             * @param AssetBag $footerAssetBag AssetBag service instance for footer code
+             * @param Routerinterface $router         Router service instance
+             * @param AssetBag        $jsAssetBag     AssetBag service instance for JS files
+             * @param AssetBag        $cssAssetBag    AssetBag service instance for CSS files
+             * @param AssetBag        $footerAssetBag AssetBag service instance for footer code
              */
-            public function __construct(AssetBag $jsAssetBag, AssetBag $cssAssetBag, AssetBag $footerAssetBag)
+            public function __construct(RouterInterface $router, AssetBag $jsAssetBag, AssetBag $cssAssetBag, AssetBag $footerAssetBag)
             {
+                $this->router = $router;
                 $this->jsAssetBag = $jsAssetBag;
                 $this->cssAssetBag = $cssAssetBag;
                 $this->footerAssetBag = $footerAssetBag;
@@ -80,8 +88,9 @@ class ColourType {
                 }
 
                 if ($firstTime) {
-                    $this->jsAssetBag->add('web/jquery-minicolors/jquery.minicolors.min.js');
-                    $this->cssAssetBag->add('web/jquery-minicolors/jquery.minicolors.css');
+                    $homePath = $this->router->generate('home');
+                    $this->jsAssetBag->add($homePath . 'web/jquery-minicolors/jquery.minicolors.min.js');
+                    $this->cssAssetBag->add($homePath . 'web/jquery-minicolors/jquery.minicolors.css');
                     $firstTime = false;
                 }
 

@@ -253,7 +253,7 @@ class ModelExtensions {
      * Concatenates all id strings using underscore as delimiter.
      * Used for generating some controller classes. 
      */
-    def idFieldsAsParameterCode(DataObject it, String objVar) '''«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields SEPARATOR ' . \'_\' . '»$this->«pkField.name.formatForCode»«ENDFOR»«ELSE»$this->«getFirstPrimaryKey.name.formatForCode»«ENDIF»'''
+    def idFieldsAsParameterCode(DataObject it, String objVar) '''«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields SEPARATOR ' . \'_\' . '»$«objVar»['«pkField.name.formatForCode»']«ENDFOR»«ELSE»$«objVar»['«getFirstPrimaryKey.name.formatForCode»']«ENDIF»'''
 
     /**
      * Concatenates all id strings using underscore as delimiter.

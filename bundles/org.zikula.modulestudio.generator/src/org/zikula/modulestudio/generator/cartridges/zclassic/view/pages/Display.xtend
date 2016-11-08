@@ -381,7 +381,7 @@ class Display {
             «ELSE»
                 {% set geoScripts %}
                     <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-                    <script type="text/javascript" src="{{ pagevars.homepath }}/plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
+                    <script type="text/javascript" src="{{ pagevars.homepath }}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
                     <script type="text/javascript">
                     /* <![CDATA[ */
                         var mapstraction;
