@@ -49,7 +49,7 @@ class Relations {
         }
 
         val useTarget = !incoming
-        if (useTarget && !isManyToMany) {
+        if (useTarget && !isManyToMany && !app.targets('1.3.x')) {
             /* Exclude parent view for 1:1 1:n and n:1 for now - see https://github.com/Guite/MostGenerator/issues/10 */
             return ''''''
         }

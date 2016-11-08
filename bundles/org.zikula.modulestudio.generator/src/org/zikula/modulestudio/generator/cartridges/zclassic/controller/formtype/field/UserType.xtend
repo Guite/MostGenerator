@@ -40,9 +40,6 @@ class UserType {
 
                 $resolver
                     ->setDefaults([
-                        'attr' => [
-                            'class' => 'user-selector typeahead'
-                        ],
                         'inlineUsage' => false
                     ])
                     ->setAllowedTypes([

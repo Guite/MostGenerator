@@ -115,8 +115,8 @@ class EditFunctions {
                         showHintOnFocus: true,
                         scrollHeight: 400,
 
-                        // The data source to query against. Receives the query value in the input field and the process callback.
-                        source: function (query, process) {
+                        // The data source to query against. Receives the query value in the input field and the process callbacks.
+                        source: function (query, syncResults, asyncResults) {
                             users[fieldName] = [];
                             userMap[fieldName] = {};
 
@@ -139,8 +139,8 @@ class EditFunctions {
                                 jQuery('#' + fieldName + 'Indicator').addClass('hidden');
                             });
 
-                            // call process() function with dropdown array
-                            return process(users[fieldName]);
+                            // call asyncResults() function with dropdown array
+                            return asyncResults(users[fieldName]);
                         },
 
                         // custom formatting of result items
@@ -173,7 +173,7 @@ class EditFunctions {
 
                     // Ensure that clearing out the selector is reflected into the hidden field properly
                     jQuery('#' + fieldName + 'Selector').blur(function() {
-                        if (jQuery(this).val().length == 0 || jQuery('#' + fieldName).val() != userMap[fieldName][jQuery(this).val()]) {
+                        if (jQuery(this).val().length == 0 || typeof userMap[fieldName] == 'undefined' || jQuery('#' + fieldName).val() != userMap[fieldName][jQuery(this).val()]) {
                             jQuery('#' + fieldName).val('');
                         }
                     });

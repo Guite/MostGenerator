@@ -71,8 +71,8 @@ class EditEntity {
             if (categorisable) extensions.add('categories')
         }
         app = it.application
-        incomingRelations = getBidirectionalIncomingJoinRelations.filter[source.application == app && source instanceof Entity]
-        outgoingRelations = getOutgoingJoinRelations.filter[target.application == app && target instanceof Entity]
+        incomingRelations = getBidirectionalIncomingJoinRelations.filter[source.application == app && source instanceof Entity && getEditStageCode(true) > 0]
+        outgoingRelations = getOutgoingJoinRelations.filter[target.application == app && target instanceof Entity && getEditStageCode(false) > 0]
         app.generateClassPair(fsa, app.getAppSourceLibPath + 'Form/Type/' + name.formatForCodeCapital + 'Type.php',
             fh.phpFileContent(app, editTypeBaseImpl), fh.phpFileContent(app, editTypeImpl)
         )
@@ -706,7 +706,6 @@ class EditEntity {
     '''
 
     def private dispatch formType(UserField it) '''«app.appNamespace»\Form\Type\Field\User'''
-    def private dispatch titleAttribute(UserField it) '''Enter a part of the user name to search'''
     def private dispatch additionalOptions(UserField it) '''
         'required' => «mandatory.displayBool»,
         'max_length' => «length»,
@@ -836,7 +835,7 @@ class EditEntity {
                 'objectType' => '«(if (outgoing) target else source).name.formatForCode»',
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'uniqueNameForJs' => '«uniqueNameForJs»',
-                «IF outgoing && !nullable»
+                «IF outgoing && nullable»
                     'required' => false,
                 «ENDIF»
             «ELSE»

@@ -491,7 +491,7 @@ class Forms {
                         // initialise auto completion for user fields
                         «FOR userField : userFields»
                             «val realName = userField.name.formatForCode»
-                            «app.vendorAndName»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
+                            «app.vendorAndName»InitUserField('«app.appName.toLowerCase»_«name.formatForCode.toLowerCase»_«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
                         «ENDFOR»
                     «ENDIF»
                     «relationHelper.initJs(it, app, true)»
