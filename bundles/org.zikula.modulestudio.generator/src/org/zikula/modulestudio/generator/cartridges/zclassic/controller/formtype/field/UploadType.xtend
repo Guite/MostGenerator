@@ -27,8 +27,8 @@ class UploadType {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
-        use Symfony\Component\PropertyAccess\PropertyAccess;
         use Symfony\Component\OptionsResolver\OptionsResolver;
+        use Symfony\Component\PropertyAccess\PropertyAccess;
         use Zikula\Common\Translator\TranslatorInterface;
 
         /**
@@ -88,17 +88,27 @@ class UploadType {
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
+                $fieldName = $form->getConfig()->getName();
                 $parentData = $form->getParent()->getData();
 
                 $view->vars['object_type'] = $parentData->get_objectType();
                 $view->vars['object_id'] = $parentData->createCompositeIdentifier();
+                $view->vars['formattedEntityTitle'] = $parentData->getTitleFromDisplayPattern();
+                $view->vars['fieldName'] = $fieldName;
 
                 $parentData = $form->getParent()->getData();
                 $accessor = PropertyAccess::createPropertyAccessor();
-                $fieldNameGetter = 'get' . ucfirst($form->getConfig()->getName());
+                $fieldNameGetter = 'get' . ucfirst($fieldName);
 
                 // assign basic file properties
-                $view->vars['file_meta'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : ['isImage' => false, 'size' => 0];
+                $fileMeta = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : [];
+                if (!isset($fileMeta['isImage'])) {
+                    $fileMeta['isImage'] = false;
+                }
+                if (!isset($fileMeta['size'])) {
+                    $fileMeta['size'] = 0;
+                }
+                $view->vars['file_meta'] = $fileMeta;
                 $view->vars['file_path'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'FullPath') : null;
                 $view->vars['file_url'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'FullPathUrl') : null;
 

@@ -653,12 +653,20 @@ class Forms {
     }
 
     def private additionalInitScriptUpload(UploadField it) '''
-        «entity.application.vendorAndName»InitUploadField('«name.formatForCode»');
+        «IF entity.application.targets('1.3.x')»
+            «entity.application.vendorAndName»InitUploadField('«name.formatForCode»');
+        «ELSE»
+            «entity.application.vendorAndName»InitUploadField('«entity.application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»');
+        «ENDIF»
     '''
 
     def private additionalInitScriptCalendar(AbstractDateField it) '''
         «IF !mandatory && nullable»
-            «entity.application.vendorAndName»InitDateField('«name.formatForCode»');
+            «IF entity.application.targets('1.3.x')»
+                «entity.application.vendorAndName»InitDateField('«name.formatForCode»');
+            «ELSE»
+                «entity.application.vendorAndName»InitDateField('«entity.application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»');
+            «ENDIF»
         «ENDIF»
     '''
 

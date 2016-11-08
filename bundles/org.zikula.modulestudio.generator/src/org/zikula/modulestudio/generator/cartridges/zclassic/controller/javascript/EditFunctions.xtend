@@ -195,10 +195,8 @@ class EditFunctions {
                     $(fieldName).setAttribute('type', 'file');
                 }
             «ELSE»
-                jQuery("input[id$='" + fieldName.toLowerCase() + "']").attr({
-                    type: 'input',
-                    type: 'file'
-                });
+                jQuery('#' + fieldName).attr('type', 'input');
+                jQuery('#' + fieldName).attr('type', 'file');
             «ENDIF»
         }
     '''
@@ -220,7 +218,7 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                jQuery("a[id$='" + fieldName.toLowerCase() + "Val']").click( function (event) {
+                jQuery('#' + fieldName + 'ResetVal').click( function (event) {
                     event.stopPropagation();
                     «vendorAndName»ResetUploadField(fieldName);
                 }).removeClass('hidden');
@@ -242,8 +240,8 @@ class EditFunctions {
                     $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName.formatForDB»_js'));
                 }
             «ELSE»
-                jQuery("input[id$='" + fieldName.toLowerCase() + "']").val('');
-                jQuery([id$='" + fieldName.toLowerCase() + "cal']".html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
+                jQuery('#' + fieldName).val('');
+                jQuery('#' + fieldName + 'cal').html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
             «ENDIF»
         }
     '''
@@ -265,7 +263,7 @@ class EditFunctions {
                     }).removeClassName('z-hide').setStyle({ display: 'block' });
                 }
             «ELSE»
-                jQuery("a[id$='" + fieldName.toLowerCase() + "Val']").click( function (event) {
+                jQuery('#' + fieldName + 'ResetVal').click( function (event) {
                     event.stopPropagation();
                     «vendorAndName»ResetDateField(fieldName);
                 }).removeClass('hidden');

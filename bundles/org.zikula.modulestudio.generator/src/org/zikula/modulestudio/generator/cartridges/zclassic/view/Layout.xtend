@@ -180,7 +180,7 @@ class Layout {
             {% block date_widget %}
                 {{ block('date_widget') }}
                 {% if not required %}
-                    <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                    <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
             {% endblock %}
         «ENDIF»
@@ -189,7 +189,7 @@ class Layout {
             {% block datetime_widget %}
                 {{ block('datetime_widget') }}
                 {% if not required %}
-                    <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                    <span class="help-block"><a id="reset{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
             {% endblock %}
         «ENDIF»
@@ -200,7 +200,7 @@ class Layout {
 
                 {{ block('file_widget') }}
                 {% if not required %}
-                    <span class="help-block"><a id="reset{{ id|capitalize }}Val" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
+                    <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
                 <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
                 {% if allowed_size|default is not null and allowed_size > 0 %}
@@ -219,7 +219,7 @@ class Layout {
                         </a>
                     </span>
                     {% if not required %}
-                        {{ form_row(attribute(form, id ~ 'DeleteFile')) }}
+                        {{ form_row(attribute(form, fieldName ~ 'DeleteFile')) }}
                     {% endif %}
                 {% endif %}
 
