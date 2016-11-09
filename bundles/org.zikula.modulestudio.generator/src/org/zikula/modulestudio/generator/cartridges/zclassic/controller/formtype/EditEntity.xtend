@@ -950,7 +950,7 @@ class EditEntity {
                     'icon' => ($action['id'] == 'delete' ? 'fa-trash-o' : ''),
                     'attr' => [
                         'class' => $action['buttonClass'],
-                        'title' => $this->__($action['description'])
+                        'title' => $this->__(/** @ignore */$action['description'])
                     ]
                 ]);
             }
