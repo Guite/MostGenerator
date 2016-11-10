@@ -39,7 +39,7 @@ class FormatIcalText {
             $result = str_replace('€', 'Euro', $result);
             $result = ereg_replace("(\r\n|\n|\r)", '=0D=0A', $result);
 
-            return ';LANGUAGE=' . $this->request->getLocale() . ';ENCODING=QUOTED-PRINTABLE:' . $result . "\r\n";
+            return ';LANGUAGE=' . «IF targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$this->request->getLocale()«ENDIF» . ';ENCODING=QUOTED-PRINTABLE:' . $result . "\r\n";
         }
     '''
 }
