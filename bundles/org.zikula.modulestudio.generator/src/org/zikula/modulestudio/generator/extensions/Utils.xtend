@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.extensions
 
 import de.guite.modulestudio.metamodel.Application
 import java.util.Date
+import org.eclipse.xtext.generator.IFileSystemAccess
 
 /**
  * Miscellaneous utility methods.
@@ -12,6 +13,11 @@ class Utils {
      * Extensions used for formatting element names.
      */
     extension FormattingExtensions = new FormattingExtensions
+
+    /**
+     * Extensions used for naming elements.
+     */
+    extension NamingExtensions = new NamingExtensions
 
     /**
      * Helper methods for generator settings.
@@ -37,9 +43,27 @@ class Utils {
     }
 
     /**
+     * Creates a placeholder file in a given file path.
+     *
+     * @param it The {@link Application} instance.
+     * @param fsa The file system access.
+     * @param path The file path.
+     */
+    def createPlaceholder(Application it, IFileSystemAccess fsa, String path) {
+        var fileName = 'README'
+        val fileContent = 'This file is a placeholder.'
+        if (!shouldBeSkipped(path + fileName)) {
+            if (shouldBeMarked(path + fileName)) {
+                fileName = 'README.generated'
+            }
+            fsa.generateFile(path + fileName, fileContent)
+        }
+    }
+
+    /**
      * Returns a combined title consisting of vendor and name.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The formatted name.
      */
@@ -50,7 +74,7 @@ class Utils {
     /**
      * Returns the formatted name of the application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The formatted name.
      */
@@ -62,7 +86,7 @@ class Utils {
     /**
      * Returns the base namespace of the application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The formatted namespace.
      */
@@ -74,7 +98,7 @@ class Utils {
     /**
      * Returns prefix for service names for this application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The formatted service prefix.
      */
@@ -86,7 +110,7 @@ class Utils {
     /**
      * Returns the lowercase application-specific prefix.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return String The prefix.
      */
@@ -97,7 +121,7 @@ class Utils {
     /**
      * Checks whether a given core version is targeted or not.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      * @param version The version in question
      *
      * @return Boolean The result.
@@ -128,7 +152,7 @@ class Utils {
     /**
      * Checks whether any variables are part of the model or not.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return Boolean The result.
      */
@@ -139,7 +163,7 @@ class Utils {
     /**
      * Checks whether there exist multiple variables containers.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return Boolean The result.
      */
@@ -150,7 +174,7 @@ class Utils {
     /**
      * Returns the variables containers sorted by their sort order.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return List<Variables> The selected list.
      */
@@ -161,7 +185,7 @@ class Utils {
     /**
      * Returns all variables for a given application.
      *
-     * @param it The {@link de.guite.modulestudio.metamodel.Application} instance.
+     * @param it The {@link Application} instance.
      *
      * @return List<Variable> The selected list.
      */

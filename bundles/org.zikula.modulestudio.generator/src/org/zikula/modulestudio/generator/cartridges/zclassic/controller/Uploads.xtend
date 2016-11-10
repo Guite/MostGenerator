@@ -34,26 +34,27 @@ class Uploads {
     }
 
     def private createUploadFolders(Application it) {
-        /* This index.html files will be removed later. At the moment we need them to create according directories. */
-        fsa.generateFile(getAppUploadPath + 'index.html', msUrl)
+        /* These files will be removed later. At the moment we need them to create according directories. */
+        val uploadPath = getAppUploadPath
+        createPlaceholder(fsa, uploadPath)
         for (entity : getUploadEntities.filter(Entity)) {
             val subFolderName = entity.nameMultiple.formatForDB + '/'
-            fsa.generateFile(getAppUploadPath + subFolderName + '/index.html', msUrl)
+            createPlaceholder(fsa, uploadPath + subFolderName)
             val uploadFields = entity.getUploadFieldsEntity
             if (uploadFields.size > 1) {
                 for (uploadField : uploadFields) {
-                    uploadField.uploadFolder(subFolderName + uploadField.subFolderPathSegment)
+                    uploadField.uploadFolder(uploadPath, subFolderName + uploadField.subFolderPathSegment)
                 }
             } else if (uploadFields.size > 0) {
-                uploadFields.head.uploadFolder(subFolderName + uploadFields.head.subFolderPathSegment)
+                uploadFields.head.uploadFolder(uploadPath, subFolderName + uploadFields.head.subFolderPathSegment)
             }
         }
         val docPath = (if (targets('1.3.x')) getAppSourcePath + 'docs/' else getAppDocPath)
         fsa.generateFile(docPath + 'htaccessTemplate', htAccessTemplate)
     }
 
-    def private uploadFolder(UploadField it, String folder) {
-        fsa.generateFile(getAppUploadPath(entity.application) + folder + '/index.html', msUrl)
+    def private uploadFolder(UploadField it, String basePath, String folder) {
+        entity.application.createPlaceholder(fsa, basePath + folder + '/')
         fsa.generateFile(getAppUploadPath(entity.application) + folder + '/.htaccess', htAccess)
     }
 

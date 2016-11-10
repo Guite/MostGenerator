@@ -14,9 +14,7 @@ class Images {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         val imagePath = getAppImagePath
-        if (!shouldBeSkipped(imagePath + 'index.html')) {
-            fsa.generateFile(imagePath + 'index.html', msUrl)
-        }
+        createPlaceholder(fsa, imagePath)
 
         if (!shouldBeSkipped(imagePath + 'admin.png')) {
             //fsa.generateFile(imagePath + 'admin.png', adminImage)

@@ -49,9 +49,7 @@ class Scribite {
     }
 
     def private pluginAloha(Application it) {
-        if (!shouldBeSkipped(docPath + 'Aloha/vendor/aloha/index.html')) {
-            //fsa.generateFile(docPath + 'Aloha/vendor/aloha/index.html', msUrl)
-        }
+        //createPlaceholder(fsa, docPath + 'Aloha/vendor/aloha/')
     }
 
     def private pluginCk(Application it) {
@@ -85,21 +83,15 @@ class Scribite {
             }
             fsa.generateFile(pluginPath + fileName, ckLangNl)
         }
-        if (!shouldBeSkipped(pluginPath + 'images/index.html')) {
-            fsa.generateFile(pluginPath + 'images/index.html', msUrl)
-        }
+        createPlaceholder(fsa, pluginPath + 'images/')
     }
 
     def private pluginMarkItUp(Application it) {
-        if (!shouldBeSkipped(docPath + 'MarkItUp/vendor/markitup/index.html')) {
-            //fsa.generateFile(docPath + 'MarkItUp/vendor/markitup/index.html', msUrl)
-        }
+        //createPlaceholder(fsa, docPath + 'MarkItUp/vendor/markitup/')
     }
 
     def private pluginNicEdit(Application it) {
-        if (!shouldBeSkipped(docPath + 'NicEdit/vendor/nicedit/index.html')) {
-            //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
-        }
+        //createPlaceholder(fsa, docPath + 'NicEdit/vendor/nicedit/')
     }
 
     def private pluginTinyMce(Application it) {
@@ -140,24 +132,15 @@ class Scribite {
             }
             fsa.generateFile(pluginPath + fileName, tinyLangNl)
         }
-        if (!shouldBeSkipped(pluginPath + 'images/index.html')) {
-            fsa.generateFile(pluginPath + 'images/index.html', msUrl)
-        }
+        createPlaceholder(fsa, pluginPath + 'images/')
     }
 
     def private pluginWym(Application it) {
-        var pluginPath = ''
-
-        pluginPath = docPath + 'WYMeditor/vendor/wymeditor/plugins/' + name.formatForDB + '/'
-        if (!shouldBeSkipped(pluginPath + 'index.html')) {
-            //fsa.generateFile(pluginPath + 'index.html', msUrl)
-        }
+        //createPlaceholder(fsa, docPath + 'WYMeditor/vendor/wymeditor/plugins/' + name.formatForDB + '/')
     }
 
     def private pluginWysi(Application it) {
-        if (!shouldBeSkipped(docPath + 'Wysihtml5/javascript/index.html')) {
-            //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
-        }
+        //createPlaceholder(fsa, docPath + 'Wysihtml5/javascript/')
     }
 
     def private pluginXinha(Application it) {
@@ -171,15 +154,11 @@ class Scribite {
             fsa.generateFile(pluginPath + fileName, xinhaPlugin)
         }
 
-        if (!shouldBeSkipped(pluginPath + 'images/index.html')) {
-            fsa.generateFile(pluginPath + 'images/index.html', msUrl)
-        }
+        createPlaceholder(fsa, pluginPath + 'images/')
     }
 
     def private pluginYui(Application it) {
-        if (!shouldBeSkipped(docPath + 'YUI/index.html')) {
-            //fsa.generateFile(docPath + 'YUI/index.html', msUrl)
-        }
+        //createPlaceholder(fsa, docPath + 'YUI/')
     }
 
     def private integration(Application it) '''
