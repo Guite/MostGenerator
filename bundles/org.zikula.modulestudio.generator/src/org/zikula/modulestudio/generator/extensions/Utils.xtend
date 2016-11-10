@@ -15,11 +15,6 @@ class Utils {
     extension FormattingExtensions = new FormattingExtensions
 
     /**
-     * Extensions used for naming elements.
-     */
-    extension NamingExtensions = new NamingExtensions
-
-    /**
      * Helper methods for generator settings.
      */
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -52,12 +47,12 @@ class Utils {
     def createPlaceholder(Application it, IFileSystemAccess fsa, String path) {
         var fileName = 'README'
         val fileContent = 'This file is a placeholder.'
-        if (!shouldBeSkipped(path + fileName)) {
+        /*if (!shouldBeSkipped(path + fileName)) {
             if (shouldBeMarked(path + fileName)) {
                 fileName = 'README.generated'
-            }
+            }*/
             fsa.generateFile(path + fileName, fileContent)
-        }
+        //}
     }
 
     /**
