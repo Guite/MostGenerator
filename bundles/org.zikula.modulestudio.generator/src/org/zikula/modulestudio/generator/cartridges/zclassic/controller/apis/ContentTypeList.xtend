@@ -522,11 +522,12 @@ class ContentTypeList {
                 // assign categories lists for simulating category selectors
                 «IF isLegacy»
                     $dom = ZLanguage::getModuleDomain('«appName»');
+                    $locale = ZLanguage::getLanguageCode();
                 «ELSE»
                     $serviceManager = ServiceUtil::getManager();
                     $translator = $serviceManager->get('translator.default');
+                    $locale = $serviceManager->get('request_stack')->getMasterRequest()->getLocale();
                 «ENDIF»
-                $locale = ZLanguage::getLanguageCode();
                 $categories = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($this->catRegistries as $registryId => $registryCid) {
                     $propName = '';

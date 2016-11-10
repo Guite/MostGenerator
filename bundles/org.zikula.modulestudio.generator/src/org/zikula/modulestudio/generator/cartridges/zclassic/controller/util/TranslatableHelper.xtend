@@ -43,9 +43,9 @@ class TranslatableHelper {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Helper\Base;
 
-            use ServiceUtil;
-            use System;
             use Symfony\Component\DependencyInjection\ContainerBuilder;
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpFoundation\RequestStack;
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Core\Doctrine\EntityAccess;
             use Zikula\ExtensionsModule\Api\VariableApi;
@@ -69,6 +69,11 @@ class TranslatableHelper {
                 protected $translator;
 
                 /**
+                 * @var Request
+                 */
+                protected $request;
+
+                /**
                  * @var VariableApi
                  */
                 protected $variableApi;
@@ -77,19 +82,23 @@ class TranslatableHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param ContainerBuilder    $container   ContainerBuilder service instance
-                 * @param TranslatorInterface $translator  Translator service instance
-                 * @param VariableApi         $variableApi VariableApi service instance
+                 * @param ContainerBuilder    $container    ContainerBuilder service instance
+                 * @param TranslatorInterface $translator   Translator service instance
+                 * @param RequestStack        $requestStack RequestStack service instance
+                 * @param VariableApi         $variableApi  VariableApi service instance
                  */
-                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, VariableApi $variableApi)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, VariableApi $variableApi)
                 {
                     $this->container = $container;
                     $this->translator = $translator;
+                    $this->request = $requestStack->getMasterRequest();
                     $this->variableApi = $variableApi;
                 }
 
             «ENDIF»
             «getTranslatableFieldsImpl»
+
+            «getCurrentLanguage»
 
             «getSupportedLanguages»
 
@@ -122,6 +131,22 @@ class TranslatableHelper {
         }
     '''
 
+    def private getCurrentLanguage(Application it) '''
+        /**
+         * Return the current language code.
+         *
+         * @return string code of current language
+         */
+        public function getCurrentLanguage()
+        {
+            «IF targets('1.3.x')»
+                return ZLanguage::getLanguageCode();
+            «ELSE»
+                return $this->request->getLocale();
+            «ENDIF»
+        }
+    '''
+
     def private getSupportedLanguages(Application it) '''
         /**
          * Return list of supported languages on the current system.
@@ -138,9 +163,9 @@ class TranslatableHelper {
 
             // if multi language is disabled use only the current language
             «IF targets('1.3.x')»
-                return array(ZLanguage::getLanguageCode());
+                return array($this->getCurrentLanguage());
             «ELSE»
-                return [ZLanguage::getLanguageCode()];
+                return [$this->getCurrentLanguage()];
             «ENDIF»
         }
     '''
@@ -171,7 +196,7 @@ class TranslatableHelper {
                 return $translations;
             }
 
-            if (System::getVar('multilingual') != 1) {
+            if («IF targets('1.3.x')»System::getVar(«ELSE»$this->variableApi->getSystemVar(«ENDIF»'multilingual') != 1) {
                 // Translatable extension did already fetch current translation
                 return $translations;
             }
@@ -191,7 +216,7 @@ class TranslatableHelper {
             $entityTranslations = $repository->findTranslations($entity);
 
             $supportedLanguages = $this->getSupportedLanguages($objectType);
-            $currentLanguage = ZLanguage::getLanguageCode();
+            $currentLanguage = $this->getCurrentLanguage();
             foreach ($supportedLanguages as $language) {
                 if ($language == $currentLanguage) {
                     // Translatable extension did already fetch current translation
@@ -235,10 +260,10 @@ class TranslatableHelper {
             }
 
             $useOnlyCurrentLanguage = true;
-            if (System::getVar('multilingual') == 1) {
+            if («IF targets('1.3.x')»System::getVar(«ELSE»$this->variableApi->getSystemVar(«ENDIF»'multilingual') == 1) {
                 $useOnlyCurrentLanguage = false;
                 $supportedLanguages = $this->getSupportedLanguages($objectType);
-                $currentLanguage = ZLanguage::getLanguageCode();
+                $currentLanguage = $this->getCurrentLanguage();
                 foreach ($supportedLanguages as $language) {
                     if ($language == $currentLanguage) {
                         // skip current language as this is not treated as translation on controller level
@@ -253,7 +278,7 @@ class TranslatableHelper {
                 }
             }
             if ($useOnlyCurrentLanguage === true) {
-                $language = ZLanguage::getLanguageCode();
+                $language = $this->getCurrentLanguage();
                 $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($fields as $field) {
                     $translations[$language][$field['name']] = isset($entity[$field['name']]) ? $entity[$field['name']] : '';

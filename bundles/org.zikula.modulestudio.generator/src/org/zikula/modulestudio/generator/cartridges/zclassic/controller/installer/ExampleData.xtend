@@ -70,6 +70,7 @@ class ExampleData {
         «IF !targets('1.3.x')»
             $entityManager = $this->container->get('doctrine.entitymanager');
             $logger = $this->container->get('logger');
+            $request = $this->container->get('request_stack')->getMasterRequest();
 
         «ENDIF»
         «FOR entity : getAllEntities»«entity.truncateTable»«ENDFOR»
@@ -157,7 +158,7 @@ class ExampleData {
             «ENDIF»
             «FOR field : getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
             «/*«IF hasTranslatableFields»
-                $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
+                $«entityName»«number»->setLocale(«IF app.targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»);
             «ENDIF»*/»
             «IF tree != EntityTreeType.NONE»
                 $«entityName»«number»->setParent(«IF number == 1»null«ELSE»$«entityName»1«ENDIF»);
@@ -338,7 +339,7 @@ class ExampleData {
             BooleanField: if (defaultValue == 'true') 'true' else 'false'
             IntegerField: exampleRowValueNumber(dataEntity, number)
             DecimalField: exampleRowValueNumber(dataEntity, number)
-            StringField: if (it.country || it.language || it.locale) 'ZLanguage::getLanguageCode()' else if (it.currency) 'EUR' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
+            StringField: if (it.country || it.language || it.locale) '''«IF dataEntity.application.targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»''' else if (it.currency) 'EUR' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
             EmailField: '\'' + entity.application.email + '\''
             UrlField: '\'' + entity.application.url + '\''

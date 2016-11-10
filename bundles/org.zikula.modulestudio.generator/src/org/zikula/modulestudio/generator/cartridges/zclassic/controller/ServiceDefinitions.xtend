@@ -356,7 +356,7 @@ class ServiceDefinitions {
 
             «modPrefix».notification_helper:
                 class: «nsBase»NotificationHelper
-                arguments: ["@translator.default", "@session", "@router", "@kernel", "@zikula_extensions_module.api.variable", "@zikula_users_module.current_user", "@twig", "@zikula_mailer_module.api.mailer", "@«modPrefix».workflow_helper"]
+                arguments: ["@translator.default", "@session", "@router", "@kernel", "@request_stack", "@zikula_extensions_module.api.variable", "@zikula_users_module.current_user", "@twig", "@zikula_mailer_module.api.mailer", "@«modPrefix».workflow_helper"]
         «ENDIF»
 
         «modPrefix».selection_helper:
@@ -366,7 +366,7 @@ class ServiceDefinitions {
 
             «modPrefix».translatable_helper:
                 class: «nsBase»TranslatableHelper
-                arguments: ["@service_container", "@translator.default", "@zikula_extensions_module.api.variable"]
+                arguments: ["@service_container", "@translator.default", "@request_stack", "@zikula_extensions_module.api.variable"]
         «ENDIF»
 
         «modPrefix».view_helper:
@@ -388,7 +388,7 @@ class ServiceDefinitions {
         «val nsBase = appNamespace + '\\Twig\\'»
         «modPrefix».twig_extension:
             class: «nsBase»TwigExtension
-            arguments: ["@translator.default"«IF hasTrees», "@router"«ENDIF», "@zikula_extensions_module.api.variable", "@«modPrefix».link_container", "@«modPrefix».workflow_helper"«IF hasUploads», "@«modPrefix».view_helper"«ENDIF»«IF hasListFields», "@«modPrefix».listentries_helper"«ENDIF»]
+            arguments: ["@translator.default"«IF hasTrees», "@router"«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», "@request_stack"«ENDIF», "@zikula_extensions_module.api.variable", "@«modPrefix».link_container", "@«modPrefix».workflow_helper"«IF hasUploads», "@«modPrefix».view_helper"«ENDIF»«IF hasListFields», "@«modPrefix».listentries_helper"«ENDIF»]
             public: false
             tags:
                 - { name: twig.extension }

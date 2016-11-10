@@ -118,7 +118,7 @@ class OverrideTemplates {
                 «ENDIF»
             «ENDIF»
             «IF entity.hasActions('display')»
-                «IF generateIcsTemplates && null !== entity.startDateField && null !== entity.endDateField»
+                «IF generateIcsTemplates && entity.supportsIcsTemplates»
                     «sourcePath»«templateFolder»display«templateExtension('ics')»: «destinationPath»«templateFolder»display«templateExtension('ics')»
                 «ENDIF»
             «ENDIF»

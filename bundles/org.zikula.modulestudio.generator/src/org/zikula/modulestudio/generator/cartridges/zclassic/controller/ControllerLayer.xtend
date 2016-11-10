@@ -228,7 +228,6 @@ class ControllerLayer {
             «IF (hasActions('view') && isAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
-            use ZLanguage;
             use Zikula\Core\Controller\AbstractController;
             use Zikula\Core\RouteUrl;
             «controllerBaseImportsResponse»
@@ -264,13 +263,11 @@ class ControllerLayer {
             «IF (hasActions('view') && app.hasAdminController) || hasActions('index') || hasActions('delete')»
                 use System;
             «ENDIF»
-            use ZLanguage;
             «IF hasActions('view')»
                 use Zikula\Component\SortableColumns\Column;
                 use Zikula\Component\SortableColumns\SortableColumns;
             «ENDIF»
             use Zikula\Core\Controller\AbstractController;
-            use Zikula\Core\ModUrl;
             use Zikula\Core\RouteUrl;
             «entityControllerBaseImportsResponse»
             use Zikula\ThemeModule\Engine\Annotation\Theme;
@@ -448,6 +445,7 @@ class ControllerLayer {
                     «IF isLegacy»
                         $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                     «ELSE»
+                        $urlArgs['_locale'] = $request->getLocale();
                         $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $urlArgs);
                     «ENDIF»
                 }

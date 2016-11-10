@@ -22,6 +22,11 @@ class ModelBehaviourExtensions {
     extension ModelExtensions = new ModelExtensions
 
     /**
+     * Extensions related to generator settings.
+     */
+    extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+
+    /**
      * Checks whether the application contains at least one entity with the loggable extension enabled.
      */
     def hasLoggable(Application it) {
@@ -47,6 +52,13 @@ class ModelBehaviourExtensions {
      */
     def getGeographicalEntities(Application it) {
         getAllEntities.filter[geographical]
+    }
+
+    /**
+     * Checks whether the generation of ics templates is needed or not.
+     */
+    def hasEntitiesWithIcsTemplates(Application it) {
+        generateIcsTemplates && getAllEntities.exists[supportsIcsTemplates]
     }
 
     /**
@@ -162,6 +174,13 @@ class ModelBehaviourExtensions {
     }
 
 
+
+    /**
+     * Checks whether the entity supports ics templates.
+     */
+    def supportsIcsTemplates(Entity it) {
+        null !== startDateField && null !== endDateField
+    }
 
     /**
      * Checks whether the entity contains at least one field with the sluggable extension enabled.

@@ -97,6 +97,10 @@ class Plugins {
     def private twigExtensionBaseImpl(Application it) '''
         namespace «appNamespace»\Twig\Base;
 
+        «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+            use Symfony\Component\HttpFoundation\Request;
+            use Symfony\Component\HttpFoundation\RequestStack;
+        «ENDIF»
         «IF hasTrees»
             use Symfony\Component\Routing\RouterInterface;
         «ENDIF»
@@ -131,6 +135,13 @@ class Plugins {
              * @var RouterInterface
              */
             protected $router;
+
+        «ENDIF»
+        «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+            /**
+             * @var Request
+             */
+            protected $request;
 
         «ENDIF»
         /**
@@ -170,6 +181,9 @@ class Plugins {
         «IF hasTrees»
             «' '»* @param Routerinterface     $router         Router service instance
         «ENDIF»
+        «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+            «' '»* @param RequestStack        $requestStack   RequestStack service instance
+        «ENDIF»
          * @param VariableApi         $variableApi    VariableApi service instance
          * @param LinkContainer       $linkContainer  LinkContainer service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
@@ -180,11 +194,14 @@ class Plugins {
             «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
         «ENDIF»
          */
-        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF», VariableApi $variableApi, LinkContainer $linkContainer, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
+        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», RequestStack $requestStack«ENDIF», VariableApi $variableApi, LinkContainer $linkContainer, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
         {
             $this->setTranslator($translator);
             «IF hasTrees»
                 $this->router = $router;
+            «ENDIF»
+            «IF generateIcsTemplates && hasEntitiesWithIcsTemplates»
+                $this->request = $requestStack->getMasterRequest();
             «ENDIF»
             $this->variableApi = $variableApi;
             $this->linkContainer = $linkContainer;
@@ -250,7 +267,7 @@ class Plugins {
                 «IF hasGeographical»
                     new \Twig_SimpleFilter('«appNameLower»_geoData', [$this, 'formatGeoData']),
                 «ENDIF»
-                «IF (generateIcsTemplates && !entities.filter[null !== startDateField && null !== endDateField].empty)»
+                «IF hasEntitiesWithIcsTemplates»
                     new \Twig_SimpleFilter('«appNameLower»_icalText', [$this, 'formatIcalText']),
                 «ENDIF»
                 new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'])
@@ -387,7 +404,7 @@ class Plugins {
         if (generateModerationPanel && needsApproval) {
             result += new ModerationObjects().generate(it, fsa)
         }
-        if (generateIcsTemplates && !entities.filter[null !== startDateField && null !== endDateField].empty) {
+        if (generateIcsTemplates && hasEntitiesWithIcsTemplates) {
             result += new FormatIcalText().generate(it, fsa)
         }
         result.join("\n\n")

@@ -870,6 +870,7 @@ class FormHandler {
                             «IF isLegacy»
                                 $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
                             «ELSE»
+                                $urlArgs['_locale'] = $this->container->get('request_stack')->getMasterRequest()->getLocale();
                                 $url = new RouteUrl('«appName.formatForDB»_' . $this->objectType . '_display', $urlArgs);
                             «ENDIF»
                         }

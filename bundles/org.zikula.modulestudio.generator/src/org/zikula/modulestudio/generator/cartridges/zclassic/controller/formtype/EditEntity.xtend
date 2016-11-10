@@ -96,7 +96,6 @@ class EditEntity {
         use «app.appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF extensions.contains('translatable')»
             use Zikula\ExtensionsModule\Api\VariableApi;
-            use ZLanguage;
             use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
         «IF hasListFieldsEntity»
@@ -350,7 +349,7 @@ class EditEntity {
             $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
             if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
                 $useOnlyCurrentLanguage = false;
-                $currentLanguage = ZLanguage::getLanguageCode();
+                $currentLanguage = $this->translatableHelper->getCurrentLanguage();
                 foreach ($supportedLanguages as $language) {
                     if ($language != $currentLanguage) {
                         continue;
@@ -366,7 +365,7 @@ class EditEntity {
             }
         }
         if ($useOnlyCurrentLanguage === true) {
-            $language = ZLanguage::getLanguageCode();
+            $language = $this->translatableHelper->getCurrentLanguage();
             «translatableFieldSet('', '')»
         }
     '''

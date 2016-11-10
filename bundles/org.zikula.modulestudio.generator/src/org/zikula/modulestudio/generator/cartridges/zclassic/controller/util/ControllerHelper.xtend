@@ -52,9 +52,6 @@ class ControllerHelper {
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
-            «IF hasGeographical»
-                use ZLanguage;
-            «ENDIF»
 
         «ENDIF»
         /**
@@ -487,7 +484,7 @@ class ControllerHelper {
          */
         public function performGeoCoding($address)
         {
-            $lang = ZLanguage::getLanguageCode();
+            $lang = «IF targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$this->container->get('request_stack')->getMasterRequest()->getLocale()«ENDIF»;
             $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 

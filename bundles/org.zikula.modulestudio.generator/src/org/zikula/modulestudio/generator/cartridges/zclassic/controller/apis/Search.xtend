@@ -45,11 +45,7 @@ class Search {
     def private searchHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        use FormUtil;
-        use ModUtil;
         use ServiceUtil;
-        use ZLanguage;
-
         use Zikula\Core\RouteUrl;
         use Zikula\SearchModule\AbstractSearchable;
 
@@ -302,6 +298,7 @@ class Search {
         {
             $serviceManager = ServiceUtil::getManager();
             $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            $request = $serviceManager->get('request_stack')->getMasterRequest();
 
             if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
                 return [];
@@ -311,14 +308,18 @@ class Search {
             $session = $serviceManager->get('session');
             $sessionId = $session->getId();
 
-            // save current language
-            $languageCode = ZLanguage::getLanguageCode();
-
             // initialise array for results
             $records = [];
 
             // retrieve list of activated object types
-            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : (array) FormUtil::getPassedValue('«appName.toFirstLower»SearchTypes', [], 'GETPOST');
+            $searchTypes = isset($modVars['objectTypes']) ? (array)$modVars['objectTypes'] : [];
+            if (!is_array($searchTypes) || !count($searchTypes)) {
+                if ($request->isMethod('GET')) {
+                    $searchTypes = $request->query->get('«appName.toFirstLower»SearchTypes', []);
+                } elseif ($request->isMethod('POST')) {
+                    $searchTypes = $request->request->get('«appName.toFirstLower»SearchTypes', []);
+                }
+            }
 
             $controllerHelper = $serviceManager->get('«appService».controller_helper');
             $utilArgs = ['helper' => 'search', 'action' => 'getResults'];
@@ -383,10 +384,7 @@ class Search {
                     $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
                     $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
 
-                    // override language if required
-                    if ($languageField != null) {
-                        $languageCode = $entity[$languageField];
-                    }
+                    $urlArgs['_locale'] = (null !== $languageField && !empty($entity[$languageField])) ? $entity[$languageField] : $request->getLocale();
 
                     $displayUrl = $hasDisplayAction ? new RouteUrl('«appName.formatForDB»_' . $objectType . '_display', $urlArgs) : '';
 

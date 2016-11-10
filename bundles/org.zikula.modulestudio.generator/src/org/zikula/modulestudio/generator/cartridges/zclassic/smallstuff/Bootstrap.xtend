@@ -140,8 +140,11 @@ class Bootstrap {
 
     def private initTranslatable(Application it) '''
         «IF hasTranslatable»
+            «IF !targets('1.3.x')»
+                $request = ServiceUtil::get('request_stack')->getMasterRequest();
+            «ENDIF»
             $translatableListener = $helper->getListener('translatable');
-            //$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
+            //$translatableListener->setTranslatableLocale(«IF targets('1.3.x')»ZLanguage::getLanguageCode()«ELSE»$request->getLocale()«ENDIF»);
             $currentLanguage = preg_replace('#[^a-z-].#', '', FormUtil::getPassedValue('lang', System::getVar('language_i18n', 'en'), 'GET'));
             $translatableListener->setTranslatableLocale($currentLanguage);
             /*

@@ -635,8 +635,13 @@ class Actions {
     def private prepareViewItemsEntity(Entity it) '''
         «IF !skipHookSubscribers»
 
-            // build ModUrl instance for display hooks
-            $currentUrlObject = new «IF isLegacy»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+            // build «IF isLegacy»ModUrl«ELSE»RouteUrl«ENDIF» instance for display hooks
+            «IF isLegacy»
+                $currentUrlObject = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+            «ELSE»
+                $currentUrlArgs['_locale'] = $request->getLocale();
+                $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'view', $currentUrlArgs);
+            «ENDIF»
         «ENDIF»
 
         «IF isLegacy»
@@ -860,14 +865,19 @@ class Actions {
     '''
 
     def private prepareDisplayPermissionCheck(Entity it) '''
-        // «IF !skipHookSubscribers»build ModUrl instance for display hooks; also «ENDIF»create identifier for permission check
+        // «IF !skipHookSubscribers»build «IF isLegacy»ModUrl«ELSE»RouteUrl«ENDIF» instance for display hooks; also «ENDIF»create identifier for permission check
         «IF !skipHookSubscribers»
             $currentUrlArgs = $entity->createUrlArgs();
         «ENDIF»
         $instanceId = $entity->createCompositeIdentifier();
         «IF !skipHookSubscribers»
             $currentUrlArgs['id'] = $instanceId; // TODO remove this
-            $currentUrlObject = new «IF isLegacy»Zikula_«ENDIF»ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+            «IF isLegacy»
+                $currentUrlObject = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+            «ELSE»
+                $currentUrlArgs['_locale'] = $request->getLocale();
+                $currentUrlObject = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_' . /*($isAdmin ? 'admin' : '') . */'display', $currentUrlArgs);
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -1018,6 +1028,7 @@ class Actions {
                         «IF isLegacy»
                             $url = new Zikula_ModUrl($this->name, FormUtil::getPassedValue('type', 'user', 'GETPOST'), 'display', ZLanguage::getLanguageCode(), $urlArgs);
                         «ELSE»
+                            $urlArgs['_locale'] = $request->getLocale();
                             $url = new RouteUrl('«app.appName.formatForDB»_' . $objectType . '_' . ($isAdmin ? 'admin' : '') . 'display', $urlArgs);
                         «ENDIF»
                     }

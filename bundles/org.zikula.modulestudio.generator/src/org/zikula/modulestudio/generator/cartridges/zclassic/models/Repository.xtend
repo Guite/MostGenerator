@@ -281,9 +281,6 @@ class Repository {
                 use Zikula\PermissionsModule\Api\PermissionApi;
             «ENDIF»
             use Zikula\UsersModule\Api\CurrentUserApi;
-            «IF hasArchive && null !== getEndDateField»
-                use ZLanguage;
-            «ENDIF»
             use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
             «IF hasArchive && null !== getEndDateField && !skipHookSubscribers»
                 use «app.appNamespace»\Helper\HookHelper;
@@ -1705,6 +1702,7 @@ class Repository {
                     «IF app.targets('1.3.x')»
                         $url = new Zikula_ModUrl($this->name, '«name.formatForCode»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                     «ELSE»
+                        $urlArgs['_locale'] = $serviceManager->get('request_stack')->getMasterRequest()->getLocale();
                         $url = new RouteUrl('«app.appName.formatForDB»_«name.formatForCode»_display', $urlArgs);
                     «ENDIF»
                     $hookHelper->callProcessHooks($entity, $hookType, $url);

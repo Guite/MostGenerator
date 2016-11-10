@@ -44,9 +44,10 @@ class Notification {
 
         use ModUtil;
         use UserUtil;
-        use ZLanguage;
 
         use Swift_Message;
+        use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         use Symfony\Component\HttpKernel\KernelInterface;
         use Symfony\Component\Routing\RouterInterface;
@@ -85,6 +86,11 @@ class Notification {
              * @var KernelInterface
              */
             protected $kernel;
+
+            /**
+             * @var Request
+             */
+            protected $request;
 
             /**
              * @var VariableApi
@@ -149,6 +155,7 @@ class Notification {
              * @param SessionInterface    $session        Session service instance
              * @param Routerinterface     $router         Router service instance
              * @param KernelInterface     $kernel         Kernel service instance
+             * @param RequestStack        $requestStack   RequestStack service instance
              * @param VariableApi         $variableApi    VariableApi service instance
              * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
              * @param Twig_Environment    $twig           Twig service instance
@@ -160,6 +167,7 @@ class Notification {
                 SessionInterface $session,
                 RouterInterface $router,
                 KernelInterface $kernel,
+                RequestStack $requestStack,
                 VariableApi $variableApi,
                 CurrentUserApi $currentUserApi,
                 Twig_Environment $twig,
@@ -170,6 +178,7 @@ class Notification {
                 $this->session = $session;
                 $this->router = $router;
                 $this->kernel = $kernel;
+                $this->request = $requestStack->getMasterRequest();
                 $this->variableApi = $variableApi;
                 $this->currentUserApi = $currentUserApi;
                 $this->templating = $twig;
@@ -308,7 +317,7 @@ class Notification {
             «IF targets('1.3.x')»
                 $siteName = System::getVar('sitename');
             «ELSE»
-                $siteName = $this->variableApi->getSystemVar('sitename_' . ZLanguage::getLanguageCode(), $this->variableApi->getSystemVar('sitename_en'));
+                $siteName = $this->variableApi->getSystemVar('sitename_' . $this->request->getLocale(), $this->variableApi->getSystemVar('sitename_en'));
                 $adminMail = $this->variableApi->getSystemVar('adminmail');
             «ENDIF»
 
