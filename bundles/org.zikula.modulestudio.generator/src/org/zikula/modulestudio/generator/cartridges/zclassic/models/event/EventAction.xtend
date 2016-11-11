@@ -195,7 +195,7 @@ class EventAction {
             «IF isLegacy»
                 $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
             «ELSE»
-                $entityManager = $serviceManager->get('doctrine.entitymanager');
+                $entityManager = $serviceManager->get('doctrine.orm.default_entity_manager');
                 $result = true;
                 try {
                     $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);

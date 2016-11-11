@@ -68,7 +68,7 @@ class ExampleData {
 
     def private exampleRows(Application it) '''
         «IF !targets('1.3.x')»
-            $entityManager = $this->container->get('doctrine.entitymanager');
+            $entityManager = $this->container->get('doctrine.orm.default_entity_manager');
             $logger = $this->container->get('logger');
             $request = $this->container->get('request_stack')->getMasterRequest();
 

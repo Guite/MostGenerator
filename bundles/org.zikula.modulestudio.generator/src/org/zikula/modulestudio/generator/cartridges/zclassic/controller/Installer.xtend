@@ -169,7 +169,7 @@ class Installer {
                         $registry->setCategory_Id($categoryGlobal['id']);
 
                         try {
-                            $entityManager = $this->container->get('doctrine.entitymanager');
+                            $entityManager = $this->container->get('doctrine.orm.default_entity_manager');
                             $entityManager->persist($registry);
                             $entityManager->flush();
                         } catch (\Exception $e) {

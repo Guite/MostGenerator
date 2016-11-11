@@ -163,7 +163,7 @@ class ItemSelector {
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
                 «IF targets('1.3.x')»
-                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
                     $repository = $entityManager->getRepository($entityClass);
                 «ELSE»
                     $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();

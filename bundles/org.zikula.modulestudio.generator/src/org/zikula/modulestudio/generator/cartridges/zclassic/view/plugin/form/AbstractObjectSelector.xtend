@@ -437,7 +437,7 @@ class AbstractObjectSelector {
 
             $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->getService('doctrine.orm.default_entity_manager');
             $repository = $entityManager->getRepository($entityClass);
 
             $inputValue = FormUtil::getPassedValue($this->inputName, $this->getSelectedValue(), $source);
@@ -473,7 +473,7 @@ class AbstractObjectSelector {
         {
             $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->getService('doctrine.orm.default_entity_manager');
             $repository = $entityManager->getRepository($entityClass);
 
             $qb = $repository->genericBaseQuery('', '', false);
@@ -544,7 +544,7 @@ class AbstractObjectSelector {
         public function persistRelatedItems()
         {
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $serviceManager->getService('doctrine.orm.default_entity_manager');
         
             foreach ($this->selectedItems as $relatedItem) {
                 $entityManager->persist($relatedItem);

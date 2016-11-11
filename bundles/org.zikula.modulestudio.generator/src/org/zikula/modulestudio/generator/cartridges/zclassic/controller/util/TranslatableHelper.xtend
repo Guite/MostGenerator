@@ -203,7 +203,7 @@ class TranslatableHelper {
 
             // prepare form data to edit multiple translations at once
             «IF targets('1.3.x')»
-                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
             «ENDIF»
 
             // get translations

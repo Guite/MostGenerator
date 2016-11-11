@@ -158,7 +158,7 @@ class User {
                     «ENDIF»
 
                     $serviceManager = ServiceUtil::getManager();
-                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.entitymanager');
+                    $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
                     «IF !targets('1.3.x')»
                         $translator = $serviceManager->get('translator.default');
                         $logger = $serviceManager->get('logger');

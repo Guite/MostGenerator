@@ -303,7 +303,7 @@ class ContentTypeList {
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             «IF isLegacy»
-                $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                $entityManager = $serviceManager->getService('doctrine.orm.default_entity_manager');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $serviceManager->get('«appService».' . $this->objectType . '_factory')->getRepository();

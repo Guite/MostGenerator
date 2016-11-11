@@ -96,7 +96,7 @@ class TreeSelector {
 
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                $entityManager = $serviceManager->getService('doctrine.orm.default_entity_manager');
                 $this->repository = $entityManager->getRepository($entityClass);
             }
 

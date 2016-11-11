@@ -726,7 +726,7 @@ class Ajax {
         «IF app.isLegacy»
             $this->entityManager->flush();
         «ELSE»
-            $entityManager = $this->get('doctrine.entitymanager');
+            $entityManager = $this->get('doctrine.orm.default_entity_manager');
             $entityManager->flush();
         «ENDIF»
 
