@@ -1369,9 +1369,10 @@ class FormHandler {
                 // file field type expects File instances instead of file names
                 $controllerHelper = $this->container->get('«app.appService».controller_helper');
                 foreach ($this->uploadFields as $uploadFieldName => $isMandatory) {
-                «FOR uploadField : getUploadFieldsEntity»
-                    $entity[$uploadFieldName] = new File($controllerHelper->getFileBaseFolder($this->objectType, $uploadFieldName) . $entity[$uploadFieldName]);
-                «ENDFOR»
+                    «FOR uploadField : getUploadFieldsEntity»
+                        $entity[$uploadFieldName] = new File($controllerHelper->getFileBaseFolder($this->objectType, $uploadFieldName) . $entity[$uploadFieldName]);
+                    «ENDFOR»
+                }
             «ENDIF»
 
             return $entity;
