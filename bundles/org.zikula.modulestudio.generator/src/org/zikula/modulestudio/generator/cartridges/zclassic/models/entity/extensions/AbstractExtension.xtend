@@ -193,7 +193,7 @@ abstract class AbstractExtension implements EntityExtensionInterface {
         if (null === app) {
             app = application
         }
-        (if (app.targets('1.3.x')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital + 'Repository'
+        (if (app.targets('1.3.x')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital + (if (app.targets('1.3.x')) '' else 'Repository')
     }
 
     def protected extensionClassRepositoryBaseImpl(Entity it) '''
