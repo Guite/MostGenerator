@@ -18,12 +18,14 @@ import de.guite.modulestudio.metamodel.TextField
 import de.guite.modulestudio.metamodel.UploadField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventAction {
 
     extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
+    extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     String entityVar
@@ -195,7 +197,7 @@ class EventAction {
             «IF isLegacy»
                 $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
             «ELSE»
-                $entityManager = $serviceManager->get('doctrine.orm.default_entity_manager');
+                $entityManager = $serviceManager->get('«entityManagerService»');
                 $result = true;
                 try {
                     $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);

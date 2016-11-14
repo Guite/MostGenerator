@@ -126,6 +126,14 @@ class NamingExtensions {
     }
 
     /**
+     * Returns the doctrine entity manager service name.
+     */
+    def entityManagerService(Application it) {
+        if (targets('1.3.x')) 'doctrine.entitymanager'
+        else 'doctrine.orm.default_entity_manager'
+    }
+
+    /**
      * Checks whether a certain file path is contained in the blacklist for files to be skipped during generation.
      */
     def shouldBeSkipped(Application it, String filePath) {

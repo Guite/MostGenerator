@@ -99,7 +99,7 @@ class Mailz {
             «IF targets('1.3.x')»
                 $entityClass = '«appName»_Entity_' . ucfirst($objectType);
                 $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
+                $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
                 $repository = $entityManager->getRepository($entityClass);
 
                 $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));

@@ -530,7 +530,7 @@ class WorkflowHelper {
         {
             «IF targets('1.3.x')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
-                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
+                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
                 $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();

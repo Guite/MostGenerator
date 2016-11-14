@@ -112,7 +112,7 @@ class Operations {
 
         // get entity manager
         $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
-        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
+        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('«app.entityManagerService»');
         «IF !app.targets('1.3.x')»
             $logger = $serviceManager->get('logger');
             $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];
@@ -139,7 +139,7 @@ class Operations {
     def private deleteImpl() '''
         // get entity manager
         $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
-        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
+        $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('«app.entityManagerService»');
         «IF !app.targets('1.3.x')»
             $logger = $serviceManager->get('logger');
             $logArgs = ['app' => '«app.appName»', 'user' => $serviceManager->get('zikula_users_module.current_user')->get('uname')];

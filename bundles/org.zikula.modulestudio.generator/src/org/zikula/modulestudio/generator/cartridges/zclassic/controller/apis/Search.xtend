@@ -176,9 +176,7 @@ class Search {
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
-            «IF targets('1.3.x')»
-                $entityManager = ServiceUtil::get«IF targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
-            «ENDIF»
+            $entityManager = ServiceUtil::get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
             $currentPage = 1;
             $resultsPerPage = 50;
 

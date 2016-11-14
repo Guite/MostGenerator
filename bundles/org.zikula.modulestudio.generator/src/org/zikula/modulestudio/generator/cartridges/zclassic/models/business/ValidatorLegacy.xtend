@@ -663,7 +663,7 @@ class ValidatorLegacy {
                 $entityClass = '«app.vendor.formatForCodeCapital»«app.name.formatForCodeCapital»Module:«name.formatForCodeCapital»Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('doctrine.orm.default_entity_manager');
+            $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('«app.entityManagerService»');
             $repository = $entityManager->getRepository($entityClass);
 
             $excludeid = $this->entity['«getFirstPrimaryKey.name.formatForCode»'];
