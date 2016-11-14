@@ -833,7 +833,7 @@ class Actions {
 
             $selectionArgs = array('ot' => $objectType, 'id' => $idValues);
             «IF hasSluggableFields»
-                if ($legacyControllerType == 'user') {
+                if ($legacyControllerType == 'user' && $hasSlug) {
                     $selectionArgs['slug'] = $slug;
                 }
             «ENDIF»

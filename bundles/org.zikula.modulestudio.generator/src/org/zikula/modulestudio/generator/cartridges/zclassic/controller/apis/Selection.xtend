@@ -197,7 +197,7 @@ class Selection {
 
             «IF hasSluggable»
                 $entity = null;
-                if (null !== $slug) {
+                if (null !== $slug«IF isLegacy» && '' != $slug«ENDIF») {
                     $entity = $repository->selectBySlug($slug, $useJoins, $slimMode);
                 } else {
                     $entity = $repository->selectById($id, $useJoins, $slimMode);
