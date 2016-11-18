@@ -127,14 +127,6 @@ class Config {
             {
                 return '«appName.formatForDB»_appsettings';
             }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function getName()
-            {
-                return $this->getBlockPrefix();
-            }
         }
     '''
 

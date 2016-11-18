@@ -145,14 +145,6 @@ class UploadType {
             {
                 return '«appName.formatForDB»_field_upload';
             }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function getName()
-            {
-                return $this->getBlockPrefix();
-            }
         }
     '''
 

@@ -96,14 +96,6 @@ class EntityMetaData {
             /**
              * {@inheritdoc}
              */
-            public function getName()
-            {
-                return $this->getBlockPrefix();
-            }
-
-            /**
-             * {@inheritdoc}
-             */
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver->setDefaults([

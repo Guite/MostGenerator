@@ -79,14 +79,6 @@ class MultiListType {
             {
                 return '«appName.formatForDB»_field_multilist';
             }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function getName()
-            {
-                return $this->getBlockPrefix();
-            }
         }
     '''
 

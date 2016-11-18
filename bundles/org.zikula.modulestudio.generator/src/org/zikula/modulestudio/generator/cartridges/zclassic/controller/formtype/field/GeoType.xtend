@@ -62,14 +62,6 @@ class GeoType {
             {
                 return '«appName.formatForDB»_field_geo';
             }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function getName()
-            {
-                return $this->getBlockPrefix();
-            }
         }
     '''
 

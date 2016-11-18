@@ -63,14 +63,6 @@ class UserType {
             {
                 return '«appName.formatForDB»_field_user';
             }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function getName()
-            {
-                return $this->getBlockPrefix();
-            }
         }
     '''
 

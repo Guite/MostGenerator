@@ -139,14 +139,6 @@ class ColourType {
             {
                 return '«appName.formatForDB»_field_colour';
             }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function getName()
-            {
-                return $this->getBlockPrefix();
-            }
         }
     '''
 
