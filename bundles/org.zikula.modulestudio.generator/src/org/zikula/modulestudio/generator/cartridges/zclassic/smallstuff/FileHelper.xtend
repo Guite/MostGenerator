@@ -164,6 +164,10 @@ class FileHelper {
     def private dispatch setterAssignment(AbstractDateField it, String name, String type) '''
         if (is_object($«name») && $«name» instanceOf \DateTime) {
             $this->«name» = $«name»;
+        «IF nullable»
+        } else if (is_null($«name») || empty($«name»)) {
+            $this->«name» = null;
+        «ENDIF»
         } else {
             $this->«name» = new \DateTime($«name»);
         }
