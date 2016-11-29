@@ -365,7 +365,7 @@ class UserDeletion {
     '''
 
     def private initDeleteQueryAdditions(Entity it) '''
-        «IF softDeleteable»
+        «IF softDeleteable && !application.targets('1.3.x')»
 
             // set the softdeletable query hint
             $query->setHint(

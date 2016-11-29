@@ -600,7 +600,7 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl');
             $query = $qb->getQuery();
-            «IF softDeleteable»
+            «IF softDeleteable && !app.targets('1.3.x')»
 
                 // set the softdeletable query hint
                 $query->setHint(
