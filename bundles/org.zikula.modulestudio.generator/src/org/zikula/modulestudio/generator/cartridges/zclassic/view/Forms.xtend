@@ -717,8 +717,8 @@ class Forms {
                     <link rel="stylesheet" href="web/bootstrap/css/bootstrap-theme.css" type="text/css" />
                     <script type="text/javascript" src="web/jquery/jquery.min.js"></script>
                     <script type="text/javascript" src="web/bootstrap/js/bootstrap.min.js"></script>
-                    <script type="text/javascript" src="{{ pagevars.homepath }}/javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
-                    <script type="text/javascript" src="{{ pagevars.homepath }}/«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«appName».EditFunctions.js"></script>
+                    <script type="text/javascript" src="{{ pagevars.homepath }}javascript/helpers/Zikula.js"></script>«/* still required for Gettext */»
+                    <script type="text/javascript" src="{{ pagevars.homepath }}«rootFolder»/«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«appName».EditFunctions.js"></script>
                 «ENDIF»
             </head>
             <body>
