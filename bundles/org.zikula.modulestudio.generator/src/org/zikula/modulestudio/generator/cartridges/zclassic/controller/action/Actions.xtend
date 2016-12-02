@@ -363,9 +363,30 @@ class Actions {
             «ENDIF»
         }
 
+        «IF app.hasCategorisableEntities»
+            if (in_array($objectType, «IF isLegacy»array(«ELSE»[«ENDIF»'«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'«IF isLegacy»)«ELSE»]«ENDIF»)) {
+                «IF !isLegacy»
+                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+            	«ENDIF»
+                $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                foreach ($entities as $entity) {
+                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                        $filteredEntities[] = $entity;
+                    }
+            	}
+            	$entities = $filteredEntities;
+            	«IF !isLegacy»
+            	}
+            	«ENDIF»
+            }
+
+        «ENDIF»
+
         foreach ($entities as $k => $entity) {
             $entity->initWorkflow();
         }
+
         «prepareViewItemsAjax(controller)»
     '''
 
@@ -549,6 +570,23 @@ class Actions {
             «ENDIF»
         }
 
+        «IF categorisable»
+            «IF !isLegacy»
+            $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+        	«ENDIF»
+            $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+            foreach ($entities as $entity) {
+                if (CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                    $filteredEntities[] = $entity;
+                }
+            }
+            $entities = $filteredEntities;
+            «IF !isLegacy»
+            }
+        	«ENDIF»
+
+        «ENDIF»
         foreach ($entities as $k => $entity) {
             $entity->initWorkflow();
         }
@@ -797,6 +835,20 @@ class Actions {
         $instanceId = $entity->createCompositeIdentifier();
 
         «permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
+        «IF app.hasCategorisableEntities»
+            if (in_array($objectType, «IF isLegacy»array(«ELSE»[«ENDIF»'«app.getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'«IF isLegacy»)«ELSE»]«ENDIF»)) {
+                «IF isLegacy»
+                    $this->throwForbiddenUnless(CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW), LogUtil::getErrorMsgPermission());
+                «ELSE»
+                    $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                        if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                            throw new AccessDeniedException();
+                        }
+                    }
+                «ENDIF»
+            }
+        «ENDIF»
 
         $result = «IF isLegacy»array(«ELSE»[«ENDIF»
             'result' => true,
@@ -865,6 +917,18 @@ class Actions {
         «prepareDisplayPermissionCheck»
 
         «action.permissionCheck("' . ucfirst($objectType) . '", "$instanceId . ")»
+        «IF categorisable»
+            «IF isLegacy»
+                $this->throwForbiddenUnless(CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW), LogUtil::getErrorMsgPermission());
+            «ELSE»
+                $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                    if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                        throw new AccessDeniedException();
+                    }
+                }
+            «ENDIF»
+        «ENDIF»
 
         «processDisplayOutput»
     '''

@@ -381,6 +381,22 @@ class ContentTypeList {
             $resultsPerPage = isset($this->amount) ? $this->amount : 1;
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
             $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
+            «IF hasCategorisableEntities»
+
+                «IF !isLegacy»
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
+                «ENDIF»
+                $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                foreach ($entities as $entity) {
+                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                        $filteredEntities[] = $entity;
+                    }
+                }
+                $entities = $filteredEntities;
+                «IF !isLegacy»
+                }
+                «ENDIF»
+            «ENDIF»
 
             $data = «IF isLegacy»array(«ELSE»[«ENDIF»
                 'objectType' => $this->objectType,

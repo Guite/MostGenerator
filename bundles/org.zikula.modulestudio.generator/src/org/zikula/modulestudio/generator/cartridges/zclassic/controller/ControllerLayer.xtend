@@ -214,6 +214,9 @@ class ControllerLayer {
             «IF hasActions('index') || hasActions('view') || hasActions('delete') || (app.needsConfig && isConfigController)»
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
+            «IF app.hasCategorisableEntities»
+                use CategoryUtil;
+            «ENDIF»
             «IF isAjaxController»
                 «IF !app.getAllUserFields.empty»
                     use Doctrine\ORM\AbstractQuery;
@@ -232,6 +235,9 @@ class ControllerLayer {
             use Zikula\Core\RouteUrl;
             «controllerBaseImportsResponse»
             use Zikula\ThemeModule\Engine\Annotation\Theme;
+            «IF app.hasCategorisableEntities»
+                use «app.appNamespace»\Helper\FeatureActivationHelper;
+            «ENDIF»
 
         «ENDIF»
     '''
@@ -254,6 +260,9 @@ class ControllerLayer {
                 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+            «IF categorisable»
+                use CategoryUtil;
+            «ENDIF»
             use FormUtil;
             «IF hasActions('edit') && app.needsAutoCompletion»
                 use JCSSUtil;
@@ -271,6 +280,9 @@ class ControllerLayer {
             use Zikula\Core\RouteUrl;
             «entityControllerBaseImportsResponse»
             use Zikula\ThemeModule\Engine\Annotation\Theme;
+            «IF app.hasCategorisableEntities»
+                use «app.appNamespace»\Helper\FeatureActivationHelper;
+            «ENDIF»
 
         «ENDIF»
     '''

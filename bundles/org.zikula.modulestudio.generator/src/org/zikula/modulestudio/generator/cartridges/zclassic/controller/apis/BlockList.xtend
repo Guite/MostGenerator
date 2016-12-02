@@ -36,9 +36,14 @@ class BlockList {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            use ModUtil;
+            «IF hasCategorisableEntities»
+                use CategoryUtil;
+            «ENDIF»
             use Zikula\BlocksModule\AbstractBlockHandler;
             use Zikula\Core\AbstractBundle;
+            «IF hasCategorisableEntities»
+                use «appNamespace»\Helper\FeatureActivationHelper;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -323,6 +328,22 @@ class BlockList {
             $resultsPerPage = $properties['amount'];
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
             $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
+            «IF hasCategorisableEntities»
+
+                «IF !targets('1.3.x')»
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                «ENDIF»
+                $filteredEntities = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                foreach ($entities as $entity) {
+                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                        $filteredEntities[] = $entity;
+                    }
+                }
+                $entities = $filteredEntities;
+                «IF !targets('1.3.x')»
+                }
+                «ENDIF»
+            «ENDIF»
 
             «IF targets('1.3.x')»
                 // assign block vars and fetched data

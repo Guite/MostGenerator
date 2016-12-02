@@ -37,12 +37,18 @@ class ExternalController {
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
+        «IF hasCategorisableEntities»
+            use CategoryUtil;
+        «ENDIF»
         use ModUtil;
         use PageUtil;
         use ThemeUtil;
         use UserUtil;
         use Zikula\Core\Controller\AbstractController;
         use Zikula\Core\Response\PlainResponse;
+        «IF hasCategorisableEntities»
+            use «appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
 
     «ENDIF»
     /**
@@ -331,6 +337,25 @@ class ExternalController {
         $where = '';
         list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
+        «IF hasCategorisableEntities»
+            if (in_array($objectType, «IF isLegacy»array(«ELSE»[«ENDIF»'«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'«IF isLegacy»)«ELSE»]«ENDIF»)) {
+                «IF !isLegacy»
+                $featureActivationHelper = $this->get('«appService».feature_activation_helper');
+                if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+            	«ENDIF»
+                $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                foreach ($entities as $entity) {
+                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                        $filteredEntities[] = $entity;
+                    }
+            	}
+            	$entities = $filteredEntities;
+            	«IF !isLegacy»
+            	}
+            	«ENDIF»
+            }
+
+        «ENDIF»
         foreach ($entities as $k => $entity) {
             $entity->initWorkflow();
         }

@@ -6,13 +6,16 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelp
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.SearchView
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Search {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -45,9 +48,15 @@ class Search {
     def private searchHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
+        «IF hasCategorisableEntities»
+            use CategoryUtil;
+        «ENDIF»
         use ServiceUtil;
         use Zikula\Core\RouteUrl;
         use Zikula\SearchModule\AbstractSearchable;
+        «IF hasCategorisableEntities»
+            use «appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
 
         /**
          * Search helper base class.
@@ -233,6 +242,13 @@ class Search {
                     if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
+                    «IF hasCategorisableEntities»
+                        if (in_array($objectType, array('«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'))) {
+                            if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                                continue;
+                            }
+                        }
+                    «ENDIF»
 
                     $title = $entity->getTitleFromDisplayPattern();
                     $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
@@ -296,6 +312,9 @@ class Search {
         {
             $serviceManager = ServiceUtil::getManager();
             $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
+            «IF hasCategorisableEntities»
+                $featureActivationHelper = $serviceManager('«appService».feature_activation_helper');
+            «ENDIF»
             $request = $serviceManager->get('request_stack')->getMasterRequest();
 
             if (!$permissionApi->hasPermission($this->name . '::', '::', ACCESS_READ)) {
@@ -378,6 +397,15 @@ class Search {
                     if (!$permissionApi->hasPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
+                    «IF hasCategorisableEntities»
+                        if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
+                            if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
+                                if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                                    continue;
+                                }
+                            }
+                        }
+                    «ENDIF»
 
                     $description = !empty($descriptionField) ? $entity[$descriptionField] : '';
                     $created = isset($entity['createdDate']) ? $entity['createdDate'] : null;
