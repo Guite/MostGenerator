@@ -316,7 +316,7 @@ class ExternalView {
             {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/finder.css') }}
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
-                Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ pagevars.homepath }}'}; /* ]]> */
+                Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() }}'}; /* ]]> */
             </script>
             {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
             {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}

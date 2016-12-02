@@ -106,19 +106,19 @@ class Rss {
         {*<rss version="0.92">*}
             <channel>
                 <title>{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
-                <link>{{ pagevars.homepath|e }}</link>
-                <atom:link href="{{ pagevars.homepath ~ app.request.getPathInfo() }}" rel="self" type="application/rss+xml" />
+                <link>{{ app.request.getSchemeAndHttpHost()|e }}</link>
+                <atom:link href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getPathInfo() }}" rel="self" type="application/rss+xml" />
                 <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getModVar('ZConfig', 'slogan') }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
                     <title>{{ getModVar('ZConfig', 'sitename') }}</title>
-                    <url>{{ pagevars.homepath|e }}{{ imagepath }}/logo.jpg</url>
-                    <link>{{ pagevars.homepath|e }}</link>
+                    <url>{{ app.request.getSchemeAndHttpHost()|e }}{{ imagepath }}/logo.jpg</url>
+                    <link>{{ app.request.getSchemeAndHttpHost()|e }}</link>
                 </image>
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
-                <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ pagevars.homepath|e }}</copyright>
+                <copyright>Copyright (c) {{ 'now'|date('Y') }}, {{ app.request.getSchemeAndHttpHost()|e }}</copyright>
                 <webMaster>{{ pageGetVar('adminmail)|e }} ({{ «appName.toLowerCase»_userVar('name', 2, 'admin') }})</webMaster>
         «val objName = name.formatForCode»
         {% for «objName» in items %}

@@ -80,7 +80,7 @@ class Ics {
         {# purpose of this template: «nameMultiple.formatForDisplay» display ics view #}
         BEGIN:VCALENDAR
         VERSION:2.0
-        PRODID:{{ pagevars.homepath }}
+        PRODID:{{ app.request.getSchemeAndHttpHost() }}
         METHOD:PUBLISH
         BEGIN:VEVENT
         DTSTART:{{ «objName»|date('Ymd\THi00\Z') }}
