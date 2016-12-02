@@ -311,18 +311,19 @@ class ExternalView {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ __('Search and select «name.formatForDisplay»') }}</title>
-            <link type="text/css" rel="stylesheet" href="{{ zasset('style/core.css') }}" />
-            <link type="text/css" rel="stylesheet" href="{{ zasset('@«app.appName»:css/style.css') }}" />
-            <link type="text/css" rel="stylesheet" href="{{ zasset('@«app.appName»:css/finder.css') }}" />
+            {{ pageAddAsset('stylesheet', zasset('style/core.css') }}
+            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css') }}
+            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/finder.css') }}
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
                 Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ pagevars.homepath }}'}; /* ]]> */
             </script>
-            <link rel="stylesheet" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap.min.css" type="text/css" />
-            <link rel="stylesheet" href="{{ pagevars.homepath }}web/bootstrap/css/bootstrap-theme.css" type="text/css" />
-            <script type="text/javascript" src="{{ pagevars.homepath }}web/jquery/jquery.min.js"></script>
-            <script type="text/javascript" src="{{ pagevars.homepath }}web/bootstrap/js/bootstrap.min.js"></script>
-            <script type="text/javascript" src="{{ zasset('@«app.appName»:js/«app.appName».Finder.js') }}"></script>
+            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap.min.css')) }}
+            {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
+            {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}
+            {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
+            {{ pageAddAsset('javascript', pagevars.homepath ~ 'javascript/helpers/Zikula.js')) }}«/* still required for Gettext */»
+            {{ pageAddAsset('javascript', zasset('@«app.appName»:javascript/«app.appName».Finder.js')) }}
         </head>
         <body>
             <div class="container">
