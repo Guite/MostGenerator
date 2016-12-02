@@ -97,6 +97,11 @@ class Redirect {
          */
         protected function getDefaultReturnUrl($args)
         {
+            if (null !== $this->returnTo) {
+                // return to referer
+                return $this->returnTo;
+            }
+
             «IF hasActions('view') || hasActions('index') || hasActions('display') && tree != EntityTreeType.NONE»
                 «IF app.isLegacy»
                     $legacyControllerType = $this->request->query->filter('lct', 'user', FILTER_SANITIZE_STRING);

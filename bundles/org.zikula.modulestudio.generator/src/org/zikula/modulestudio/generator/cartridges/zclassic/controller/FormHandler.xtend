@@ -448,8 +448,20 @@ class FormHandler {
             «ELSE»
                 $this->returnTo = $this->request->query->getAlnum('returnTo', null);
             «ENDIF»
+            if (null === $this->returnTo) {
+                // default to referer
+                «IF isLegacy»
+                    $this->returnTo = System::serverGetVar('HTTP_REFERER');
+                «ELSE»
+                    if ($this->request->headers->has('referer')) {
+                        $this->returnTo = $this->request->headers->get('referer');
+                    } elseif ($this->request->server->has('HTTP_REFERER')) {
+                        $this->returnTo = $this->request->server->get('HTTP_REFERER');
+                    }
+                «ENDIF»
+            }
             // store current uri for repeated creations
-            $this->repeatReturnUrl = System::getCurrentURI();
+            $this->repeatReturnUrl = «IF isLegacy»System::getCurrentURI()«ELSE»$this->request->getSchemeAndHttpHost() . $this->request->getPathInfo()«ENDIF»;
 
             $this->permissionComponent = «IF isLegacy»$this->name . '«ELSE»'«appName»«ENDIF»:' . $this->objectTypeCapital . ':';
 
