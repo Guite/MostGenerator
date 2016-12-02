@@ -161,6 +161,9 @@ class FormHandler {
             «IF hasUploads»
                 use «appNamespace»\UploadHandler;
             «ENDIF»
+            «IF needsFeatureActivationHelper»
+                use «appNamespace»\Helper\FeatureActivationHelper;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -589,16 +592,32 @@ class FormHandler {
     '''
 
     def private initialiseExtensions(Application it) '''
+        «IF !isLegacy && (hasAttributableEntities || hasTranslatable)»
+            $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
+
+        «ENDIF»
         «IF hasAttributableEntities»
 
             if (true === $this->hasAttributes) {
-                $this->initAttributesForEditing();
+                «IF isLegacy»
+                    $this->initAttributesForEditing();
+                «ELSE»
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                        $this->initAttributesForEditing();
+                    }
+                «ENDIF»
             }
         «ENDIF»
         «IF hasTranslatable»
 
             if (true === $this->hasTranslatableFields) {
-                $this->initTranslationsForEditing();
+                «IF isLegacy»
+                    $this->initTranslationsForEditing();
+                «ELSE»
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                        $this->initTranslationsForEditing();
+                    }
+                «ENDIF»
             }
         «ENDIF»
         «IF isLegacy»
@@ -861,7 +880,14 @@ class FormHandler {
             «IF hasTranslatable»
 
                 if ($isRegularAction && true === $this->hasTranslatableFields) {
-                    $this->processTranslationsForUpdate($entity, $unmappedFormData);
+                    «IF isLegacy»
+                        $this->processTranslationsForUpdate($entity, $unmappedFormData);
+                    «ELSE»
+                        $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
+                        if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
+                            $this->processTranslationsForUpdate($entity, $unmappedFormData);
+                        }
+                    «ENDIF»
                 }
             «ENDIF»
 
@@ -1141,7 +1167,14 @@ class FormHandler {
             «IF hasAttributableEntities»
 
                 if (true === $this->hasAttributes) {
-                    $this->processAttributesForUpdate($entity, $formData);
+                    «IF isLegacy»
+                        $this->processAttributesForUpdate($entity, $formData);
+                    «ELSE»
+                        $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
+                        if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                            $this->processAttributesForUpdate($entity, $formData);
+                        }
+                    «ENDIF»
                 }
             «ENDIF»
             «IF app.isLegacy»
@@ -1511,13 +1544,16 @@ class FormHandler {
                 $options = [
                     'mode' => $this->templateParameters['mode'],
                     'actions' => $this->templateParameters['actions'],
-                    «IF attributable»
-                        'attributes' => $this->templateParameters['attributes'],
-                    «ENDIF»
                     «IF !incoming.empty || !outgoing.empty»
                         'inlineUsage' => $this->templateParameters['inlineUsage']
                     «ENDIF»
                 ];
+                «IF attributable»
+                    $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
+                        $options['attributes'] = $this->templateParameters['attributes'];
+                    }
+                «ENDIF»
                 «IF !app.isLegacy && workflow != EntityWorkflowType.NONE»
 
                     $workflowRoles = $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);

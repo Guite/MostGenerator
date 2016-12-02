@@ -191,7 +191,7 @@ class Relations {
             {if $mayManage || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
             <p class="managelink">
                 {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
-                <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo="`$lct`Display«relatedEntity.name.formatForCodeCapital»"'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
+                <a href="{modurl modname='«appName»' type=$lct func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam»="«relatedEntity.idFieldsAsParameterTemplate»"}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
             </p>
             {/if}
             «IF !many»
@@ -232,7 +232,7 @@ class Relations {
             {% if mayManage or (uid is defined and «relatedEntity.name.formatForCode».createdUserId is defined and «relatedEntity.name.formatForCode».createdUserId == uid) %}
             <p class="managelink">
                 {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
-                <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate», returnTo: area|lower ~ 'Display«relatedEntity.name.formatForCodeCapital»' }) }}" title="{{ createTitle }}" class="fa fa-plus">{{ createTitle }}</a>
+                <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate» }) }}" title="{{ createTitle }}" class="fa fa-plus">{{ createTitle }}</a>
             </p>
             {% endif %}
             «IF !many»

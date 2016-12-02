@@ -247,7 +247,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»quicknav:
                     class: «nsBase»QuickNavigation\«entity.name.formatForCodeCapital»QuickNavType
-                    arguments: ["@translator.default", "@request_stack"«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»]
+                    arguments: ["@translator.default", "@request_stack"«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»«IF needsFeatureActivationHelper», "@«modPrefix».feature_activation_helper"«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -265,7 +265,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»:
                     class: «nsBase»«entity.name.formatForCodeCapital»Type
-                    arguments: ["@translator.default", "@«modPrefix».«entity.name.formatForCode»_factory"«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», "@zikula_extensions_module.api.variable", "@«modPrefix».translatable_helper"«ENDIF»«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»]
+                    arguments: ["@translator.default", "@«modPrefix».«entity.name.formatForCode»_factory"«IF entity instanceof Entity && (entity as Entity).hasTranslatableFields», "@zikula_extensions_module.api.variable", "@«modPrefix».translatable_helper"«ENDIF»«IF entity.hasListFieldsEntity», "@«modPrefix».listentries_helper"«ENDIF»«IF needsFeatureActivationHelper», "@«modPrefix».feature_activation_helper"«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -299,7 +299,7 @@ class ServiceDefinitions {
 
                 «modPrefix».form.type.«entity.name.formatForDB»finder:
                     class: «nsBase»Finder\«entity.name.formatForCodeCapital»FinderType
-                    arguments: ["@translator.default"]
+                    arguments: ["@translator.default"«IF needsFeatureActivationHelper», "@«modPrefix».feature_activation_helper"«ENDIF»]
                     tags:
                         - { name: form.type }
             «ENDFOR»
@@ -331,6 +331,11 @@ class ServiceDefinitions {
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
             arguments: ["@service_container", "@translator.default", "@session", "@logger"]
+        «IF needsFeatureActivationHelper»
+
+            «modPrefix».feature_activation_helper:
+                class: «nsBase»FeatureActivationHelper
+        «ENDIF»
         «IF hasHookSubscribers»
 
             «modPrefix».hook_helper:

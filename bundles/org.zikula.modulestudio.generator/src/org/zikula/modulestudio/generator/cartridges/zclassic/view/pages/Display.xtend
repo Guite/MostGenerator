@@ -434,34 +434,42 @@ class Display {
             «ENDIF»
         «ELSE»
             «IF attributable»
-                {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
+                    {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {% endif %}
             «ENDIF»
             «IF categorisable»
-                {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                    {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {% endif %}
             «ENDIF»
             «IF tree != EntityTreeType.NONE»
-                «IF useGroupingPanels('display')»
+                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
+                    «IF useGroupingPanels('display')»
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseRelatives">{{ __('Relatives') }}</a></h3>
                         </div>
                         <div id="collapseRelatives" class="panel-collapse collapse in">
                             <div class="panel-body">
-                «ELSE»
+                    «ELSE»
                     <h3 class="relatives">{{ __('Relatives') }}</h3>
-                «ENDIF»
+                    «ENDIF»
                         {{ include(
                             '@«application.appName»/«name.formatForCodeCapital»/displayTreeRelatives.html.twig',
                             { allParents: true, directParent: true, allChildren: true, directChildren: true, predecessors: true, successors: true, preandsuccessors: true }
                         ) }}
-                «IF useGroupingPanels('display')»
+                    «IF useGroupingPanels('display')»
                             </div>
                         </div>
                     </div>
-                «ENDIF»
+                    «ENDIF»
+                {% endif %}
             «ENDIF»
             «IF metaData»
-                {{ include('@«application.appName»/Helper/includeMetaDataDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
+                    {{ include('@«application.appName»/Helper/includeMetaDataDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
+                {% endif %}
             «ENDIF»
             «IF standardFields»
                 {{ include('@«application.appName»/Helper/includeStandardFieldsDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}

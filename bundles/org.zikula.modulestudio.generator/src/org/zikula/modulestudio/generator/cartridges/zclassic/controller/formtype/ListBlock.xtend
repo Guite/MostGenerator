@@ -81,7 +81,9 @@ class ListBlock {
             {
                 $this->addObjectTypeField($builder, $options);
                 «IF hasCategorisableEntities»
-                    $this->addCategoriesField($builder, $options);
+                    if ($options['featureActivationHelper']->isEnabled(FeatureActivationHelper::CATEGORIES, $options['objectType'])) {
+                        $this->addCategoriesField($builder, $options);
+                    }
                 «ENDIF»
                 $this->addSortingField($builder, $options);
                 $this->addAmountField($builder, $options);

@@ -22,10 +22,10 @@ class ControllerHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating utility class for controller layer')
+        println('Generating helper class for controller layer')
         val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Controller' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, controllerFunctionsBaseImpl), fh.phpFileContent(it, controllerFunctionsImpl)
@@ -55,7 +55,7 @@ class ControllerHelper {
 
         «ENDIF»
         /**
-         * Utility base class for controller helper methods.
+         * Helper base class for controller layer methods.
          */
         abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractController extends Zikula_AbstractBase«ELSE»AbstractControllerHelper«ENDIF»
         {
@@ -546,7 +546,7 @@ class ControllerHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for controller helper methods.
+         * Helper implementation class for controller layer methods.
          */
         «IF targets('1.3.x')»
         class «appName»_Util_Controller extends «appName»_Util_Base_AbstractController

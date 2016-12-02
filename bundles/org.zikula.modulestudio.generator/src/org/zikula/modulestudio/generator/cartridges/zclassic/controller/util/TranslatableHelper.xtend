@@ -29,10 +29,10 @@ class TranslatableHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating utility class for translatable entities')
+        println('Generating helper class for translatable entities')
         val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Translatable' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, translatableFunctionsBaseImpl), fh.phpFileContent(it, translatableFunctionsImpl)
@@ -53,7 +53,7 @@ class TranslatableHelper {
 
         «ENDIF»
         /**
-         * Utility base class for translatable helper methods.
+         * Helper base class for translatable methods.
          */
         abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractTranslatable extends Zikula_AbstractBase«ELSE»AbstractTranslatableHelper«ENDIF»
         {
@@ -359,7 +359,7 @@ class TranslatableHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for translatable helper methods.
+         * Helper implementation class for translatable methods.
          */
         «IF targets('1.3.x')»
         class «appName»_Util_Translatable extends «appName»_Util_Base_AbstractTranslatable

@@ -16,14 +16,14 @@ class HookHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (!hasHookSubscribers) {
             return
         }
 
-        println('Generating utility class for hook calls')
+        println('Generating helper class for hook calls')
         val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Hook' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, hookFunctionsBaseImpl), fh.phpFileContent(it, hookFunctionsImpl)
@@ -31,7 +31,7 @@ class HookHelper {
         if (targets('1.3.x')) {
             return
         }
-        println('Generating utility class for hook bundles')
+        println('Generating helper class for hook bundles')
         generateClassPair(fsa, getAppSourceLibPath + 'Container/HookContainer.php',
             fh.phpFileContent(it, hookContainerBaseImpl), fh.phpFileContent(it, hookContainerImpl)
         )
@@ -51,7 +51,7 @@ class HookHelper {
 
         «ENDIF»
         /**
-         * Utility base class for hook related helper methods.
+         * Helper base class for hook related methods.
          */
         abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractHook extends Zikula_AbstractBase«ELSE»AbstractHookHelper«ENDIF»
         {
@@ -171,7 +171,7 @@ class HookHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for hook related helper methods.
+         * Helper implementation class for hook related methods.
          */
         «IF targets('1.3.x')»
         class «appName»_Util_Hook extends «appName»_Util_Base_AbstractHook

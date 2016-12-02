@@ -18,10 +18,10 @@ class ViewHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating utility class for view layer')
+        println('Generating helper class for view layer')
         val helperFolder = if (isLegacy) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/View' + (if (isLegacy) '' else 'Helper') + '.php',
             fh.phpFileContent(it, viewFunctionsBaseImpl), fh.phpFileContent(it, viewFunctionsImpl)
@@ -44,7 +44,7 @@ class ViewHelper {
 
         «ENDIF»
         /**
-         * Utility base class for view helper methods.
+         * Helper base class for view layer methods.
          */
         abstract class «IF isLegacy»«appName»_Util_Base_AbstractView extends Zikula_AbstractBase«ELSE»AbstractViewHelper«ENDIF»
         {
@@ -155,7 +155,7 @@ class ViewHelper {
 
     def private processTemplate(Application it) '''
         /**
-         * Utility method for managing view templates.
+         * Helper method for managing view templates.
          *
         «IF isLegacy»
             «' '»* @param Zikula_View $view     Reference to view object
@@ -491,7 +491,7 @@ class ViewHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for view helper methods.
+         * Helper implementation class for view layer methods.
          */
         «IF isLegacy»
         class «appName»_Util_View extends «appName»_Util_Base_AbstractView

@@ -23,10 +23,10 @@ class ModelHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating utility class for model layer')
+        println('Generating helper class for model layer')
         val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Model' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, modelFunctionsBaseImpl), fh.phpFileContent(it, modelFunctionsImpl)
@@ -41,7 +41,7 @@ class ModelHelper {
 
         «ENDIF»
         /**
-         * Utility base class for model helper methods.
+         * Helper base class for model layer methods.
          */
         abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractModel extends Zikula_AbstractBase«ELSE»AbstractModelHelper«ENDIF»
         {
@@ -183,7 +183,7 @@ class ModelHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for model helper methods.
+         * Helper implementation class for model layer methods.
          */
         «IF targets('1.3.x')»
         class «appName»_Util_Model extends «appName»_Util_Base_AbstractModel

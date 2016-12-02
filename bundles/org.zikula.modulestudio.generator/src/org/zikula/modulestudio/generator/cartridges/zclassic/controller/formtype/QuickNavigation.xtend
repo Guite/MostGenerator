@@ -13,14 +13,17 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class QuickNavigation {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelJoinExtensions = new ModelJoinExtensions
     extension NamingExtensions = new NamingExtensions
@@ -57,6 +60,9 @@ class QuickNavigation {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        «IF app.needsFeatureActivationHelper»
+            use «app.appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
         «ENDIF»
@@ -79,6 +85,13 @@ class QuickNavigation {
                  */
                 protected $listHelper;
             «ENDIF»
+            «IF app.needsFeatureActivationHelper»
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                protected $featureActivationHelper;
+            «ENDIF»
 
             /**
              * «name.formatForCodeCapital»QuickNavType constructor.
@@ -88,13 +101,19 @@ class QuickNavigation {
             «IF hasListFieldsEntity»
                 «' '»* @param ListEntriesHelper   $listHelper   ListEntriesHelper service instance
             «ENDIF»
+            «IF app.needsFeatureActivationHelper»
+                «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+            «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, RequestStack $requestStack«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator, RequestStack $requestStack«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->requestStack = $requestStack;
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
+                «ENDIF»
+                «IF app.needsFeatureActivationHelper»
+                    $this->featureActivationHelper = $featureActivationHelper;
                 «ENDIF»
             }
 
@@ -126,7 +145,9 @@ class QuickNavigation {
                 ;
 
                 «IF categorisable»
-                    $this->addCategoriesField($builder, $options);
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, '«name.formatForCode»')) {
+                        $this->addCategoriesField($builder, $options);
+                    }
                 «ENDIF»
                 «IF !incomingRelations.empty»
                     $this->addIncomingRelationshipFields($builder, $options);

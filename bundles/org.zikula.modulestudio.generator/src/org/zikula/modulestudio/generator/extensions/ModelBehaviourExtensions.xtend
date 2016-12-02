@@ -27,6 +27,13 @@ class ModelBehaviourExtensions {
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
 
     /**
+     * Checks whether the feature activation helper class should be generated or not.
+     */
+    def needsFeatureActivationHelper(Application it) {
+        hasCategorisableEntities || hasAttributableEntities || hasTranslatable || hasMetaDataEntities || hasTrees
+    }
+
+    /**
      * Checks whether the application contains at least one entity with the loggable extension enabled.
      */
     def hasLoggable(Application it) {

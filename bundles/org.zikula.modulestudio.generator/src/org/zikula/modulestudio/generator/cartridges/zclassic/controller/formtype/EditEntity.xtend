@@ -39,6 +39,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EditEntity {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
@@ -93,13 +94,18 @@ class EditEntity {
             use Symfony\Component\Validator\Constraints\Valid;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
-        use «app.appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
         «IF extensions.contains('translatable')»
             use Zikula\ExtensionsModule\Api\VariableApi;
-            use «app.appNamespace»\Helper\TranslatableHelper;
+        «ENDIF»
+        use «app.appNamespace»\Entity\Factory\«name.formatForCodeCapital»Factory;
+        «IF app.needsFeatureActivationHelper»
+            use «app.appNamespace»\Helper\FeatureActivationHelper;
         «ENDIF»
         «IF hasListFieldsEntity»
             use «app.appNamespace»\Helper\ListEntriesHelper;
+        «ENDIF»
+        «IF extensions.contains('translatable')»
+            use «app.appNamespace»\Helper\TranslatableHelper;
         «ENDIF»
 
         /**
@@ -132,6 +138,13 @@ class EditEntity {
                  */
                 protected $listHelper;
             «ENDIF»
+            «IF app.needsFeatureActivationHelper»
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                protected $featureActivationHelper;
+            «ENDIF»
 
             /**
              * «name.formatForCodeCapital»Type constructor.
@@ -145,8 +158,11 @@ class EditEntity {
             «IF hasListFieldsEntity»
                 «' '»* @param ListEntriesHelper   $listHelper    «IF extensions.contains('translatable')» «ENDIF»ListEntriesHelper service instance
             «ENDIF»
+            «IF app.needsFeatureActivationHelper»
+                «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+            «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»)
+            public function __construct(TranslatorInterface $translator, «name.formatForCodeCapital»Factory $entityFactory«IF extensions.contains('translatable')», VariableApi $variableApi, TranslatableHelper $translatableHelper«ENDIF»«IF hasListFieldsEntity», ListEntriesHelper $listHelper«ENDIF»«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->entityFactory = $entityFactory;
@@ -156,6 +172,9 @@ class EditEntity {
                 «ENDIF»
                 «IF hasListFieldsEntity»
                     $this->listHelper = $listHelper;
+                «ENDIF»
+                «IF app.needsFeatureActivationHelper»
+                    $this->featureActivationHelper = $featureActivationHelper;
                 «ENDIF»
             }
 
@@ -182,10 +201,14 @@ class EditEntity {
                     ]);
                 «ENDIF»
                 «IF extensions.contains('attributes')»
-                    $this->addAttributeFields($builder, $options);
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, '«name.formatForCode»')) {
+                        $this->addAttributeFields($builder, $options);
+                    }
                 «ENDIF»
                 «IF extensions.contains('categories')»
-                    $this->addCategoriesField($builder, $options);
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, '«name.formatForCode»')) {
+                        $this->addCategoriesField($builder, $options);
+                    }
                 «ENDIF»
                 «IF !incomingRelations.empty»
                     $this->addIncomingRelationshipFields($builder, $options);
@@ -194,7 +217,9 @@ class EditEntity {
                     $this->addOutgoingRelationshipFields($builder, $options);
                 «ENDIF»
                 «IF extensions.contains('metadata')»
-                    $this->addMetaDataFields($builder, $options);
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::META_DATA, '«name.formatForCode»')) {
+                        $this->addMetaDataFields($builder, $options);
+                    }
                 «ENDIF»
                 «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
@@ -337,7 +362,7 @@ class EditEntity {
 
     def private translatableFields(Entity it) '''
         $useOnlyCurrentLanguage = true;
-        if ($this->variableApi->getSystemVar('multilingual')) {
+        if ($this->variableApi->getSystemVar('multilingual') && $this->featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, '«name.formatForCode»')) {
             $supportedLanguages = $this->translatableHelper->getSupportedLanguages('«name.formatForCode»');
             if (is_array($supportedLanguages) && count($supportedLanguages) > 1) {
                 $useOnlyCurrentLanguage = false;
@@ -356,7 +381,7 @@ class EditEntity {
                 }
             }
         }
-        if ($useOnlyCurrentLanguage === true) {
+        if (true === $useOnlyCurrentLanguage) {
             $language = $this->translatableHelper->getCurrentLanguage();
             «translatableFieldSet('', '')»
         }

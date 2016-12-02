@@ -141,8 +141,12 @@ class ViewQuickNavForm {
                     <input type="text" id="searchTerm" name="q" value="{$q}" />
                 {/if}
             «ELSE»
-                {% if searchFilter is not defined or searchFilter == true %}
+                {% if searchFilter is defined and searchFilter != true %}
+                    <div class="hidden">
+                {% endif %}
                     {{ form_row(quickNavForm.q) }}
+                {% if searchFilter is defined and searchFilter != true %}
+                    </div>
                 {% endif %}
             «ENDIF»
         «ENDIF»
@@ -181,8 +185,13 @@ class ViewQuickNavForm {
                 {/nocache}
             {/if}
         «ELSE»
-            {% if categoryFilter is not defined or categoryFilter == true %}
+            {% set categoriesEnabled = featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+            {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
+                <div class="hidden">
+            {% endif %}
                 {{ form_row(quickNavForm.categories) }}
+            {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
+                </div>
             {% endif %}
         «ENDIF»
     '''

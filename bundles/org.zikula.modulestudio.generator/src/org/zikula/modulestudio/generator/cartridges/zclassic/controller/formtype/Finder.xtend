@@ -7,13 +7,16 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Finder {
+
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
+    extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
@@ -49,6 +52,9 @@ class Finder {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        «IF app.needsFeatureActivationHelper»
+            use «app.appNamespace»\Helper\FeatureActivationHelper;
+        «ENDIF»
 
         /**
          * «name.formatForDisplayCapital» finder form type base class.
@@ -56,15 +62,28 @@ class Finder {
         abstract class Abstract«name.formatForCodeCapital»FinderType extends AbstractType
         {
             use TranslatorTrait;
+            «IF app.needsFeatureActivationHelper»
+
+                /**
+                 * @var FeatureActivationHelper
+                 */
+                protected $featureActivationHelper;
+            «ENDIF»
 
             /**
              * «name.formatForCodeCapital»FinderType constructor.
              *
              * @param TranslatorInterface $translator Translator service instance
+            «IF app.needsFeatureActivationHelper»
+                «' '»* @param FeatureActivationHelper $featureActivationHelper FeatureActivationHelper service instance
+            «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator)
+            public function __construct(TranslatorInterface $translator«IF app.needsFeatureActivationHelper», FeatureActivationHelper $featureActivationHelper«ENDIF»)
             {
                 $this->setTranslator($translator);
+                «IF app.needsFeatureActivationHelper»
+                    $this->featureActivationHelper = $featureActivationHelper;
+                «ENDIF»
             }
 
             /**
@@ -93,7 +112,9 @@ class Finder {
                 ;
 
                 «IF categorisable»
-                    $this->addCategoriesField($builder, $options);
+                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $options['objectType'])) {
+                        $this->addCategoriesField($builder, $options);
+                    }
                 «ENDIF»
                 $this->addPasteAsField($builder, $options);
                 $this->addSortingFields($builder, $options);

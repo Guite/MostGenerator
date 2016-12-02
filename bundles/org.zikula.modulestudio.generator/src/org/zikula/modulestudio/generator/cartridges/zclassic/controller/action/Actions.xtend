@@ -420,6 +420,9 @@ class Actions {
                     $trees = $selectionHelper->getAllTrees($objectType);
                     $templateParameters['trees'] = $trees;
                     $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+                    «IF app.needsFeatureActivationHelper»
+                        $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
+                    «ENDIF»
                 «ENDIF»
                 // fetch and return the appropriate template
                 «IF isLegacy»
@@ -677,8 +680,10 @@ class Actions {
             if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
                 $templateParameters = array_merge($templateParameters, $form->getData());
             }
- 
             */»
+            «IF app.needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
+            «ENDIF»
         «ENDIF»
 
         «IF isLegacy»
@@ -920,6 +925,9 @@ class Actions {
                 $imageHelper = $this->get('«app.appService».image_helper');
             «ENDIF»
             $templateParameters = array_merge($templateParameters, $repository->getAdditionalTemplateParameters(«IF app.hasUploads»$imageHelper, «ENDIF»'controllerAction', $utilArgs));
+            «IF app.needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
+            «ENDIF»
         «ENDIF»
 
         // fetch and return the appropriate template
@@ -1093,6 +1101,9 @@ class Actions {
 
             $viewHelper = $this->get('«app.appService».view_helper');
             $templateParameters = $formHandler->getTemplateParameters();
+            «IF app.needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
+            «ENDIF»
 
             // fetch and return the appropriate template
             return $viewHelper->processTemplate($this->get('twig'), $objectType, 'edit', $request, $templateParameters);

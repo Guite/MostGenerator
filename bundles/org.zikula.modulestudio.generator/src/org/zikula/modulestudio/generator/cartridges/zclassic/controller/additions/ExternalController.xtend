@@ -198,6 +198,9 @@ class ExternalController {
                 $objectType => $entity,
                 'displayMode' => $displayMode
             ];
+            «IF needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
+            «ENDIF»
 
             return $this->render('@«appName»/External/' . ucfirst($objectType) . '/display.html.twig', $templateParameters);
         «ENDIF»
@@ -369,6 +372,9 @@ class ExternalController {
                 'currentPage' => $currentPage,
                 'pager', ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]
             ];
+            «IF needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
+            «ENDIF»
 
             $formOptions = [
                 'objectType' => $objectType,

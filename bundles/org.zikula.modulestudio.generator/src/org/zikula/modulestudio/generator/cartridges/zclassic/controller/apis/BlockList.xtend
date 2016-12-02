@@ -234,7 +234,14 @@ class BlockList {
             $properties = array_merge($defaults, $properties);
             «IF hasCategorisableEntities»
 
-                $properties = $this->resolveCategoryIds($properties);
+                «IF targets('1.3.x')»
+                    $properties = $this->resolveCategoryIds($properties);
+                «ELSE»
+                    $featureActivationHelper = $this->get('«appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
+                        $properties = $this->resolveCategoryIds($properties);
+                    }
+                «ENDIF»
             «ENDIF»
 
             «IF targets('1.3.x')»
@@ -299,11 +306,13 @@ class BlockList {
                             $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $objectType, 'catids' => $properties['catIds']));
                         }
                     «ELSE»
-                        $categoryHelper = $this->get('«appService».category_helper');
-                        $catProperties = $categoryHelper->getAllProperties($objectType);
-                        // apply category filters
-                        if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
-                            $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['catIds']);
+                        if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
+                            $categoryHelper = $this->get('«appService».category_helper');
+                            $catProperties = $categoryHelper->getAllProperties($objectType);
+                            // apply category filters
+                            if (is_array($properties['catIds']) && count($properties['catIds']) > 0) {
+                                $qb = $categoryHelper->buildFilterClauses($qb, $objectType, $properties['catIds']);
+                            }
                         }
                     «ENDIF»
                 }
@@ -347,9 +356,13 @@ class BlockList {
                 $templateParameters = [
                     'vars' => $properties,
                     'objectType' => $objectType,
-                    'items' => $entities«IF hasCategorisableEntities»,
-                    'properties' => $properties«ENDIF»
+                    'items' => $entities
                 ];
+                «IF hasCategorisableEntities»
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $properties['objectType'])) {
+                        $templateParameters['properties'] = $properties;
+                    }
+                «ENDIF»
                 «IF hasUploads»
                     $imageHelper = $this->get('«appService».image_helper');
                 «ENDIF»
@@ -490,7 +503,8 @@ class BlockList {
                 return [
                     'objectType' => $properties['objectType']«IF hasCategorisableEntities»,
                     'isCategorisable' => in_array($properties['objectType'], $this->categorisableObjectTypes),
-                    'categoryHelper' => $this->get('«appService».category_helper')«ENDIF»
+                    'categoryHelper' => $this->get('«appService».category_helper'),
+                    'featureActivationHelper' => $this->get('«appService».feature_activation_helper')«ENDIF»
                 ];
             }
 

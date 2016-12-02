@@ -13,10 +13,10 @@ class ImageHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating utility class for image handling')
+        println('Generating helper class for image handling')
         val helperFolder = if (isLegacy) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Image' + (if (isLegacy) '' else 'Helper') + '.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
@@ -27,11 +27,9 @@ class ImageHelper {
         «IF !isLegacy»
             namespace «appNamespace»\Helper\Base;
 
-            use SystemPlugin_Imagine_Preset;
-
         «ENDIF»
         /**
-         * Utility base class for image helper methods.
+         * Helper base class for image methods.
          */
         abstract class «IF isLegacy»«appName»_Util_Base_AbstractImage extends Zikula_AbstractBase«ELSE»AbstractImageHelper«ENDIF»
         {
@@ -174,7 +172,7 @@ class ImageHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for image helper methods.
+         * Helper implementation class for image methods.
          */
         «IF isLegacy»
         class «appName»_Util_Image extends «appName»_Util_Base_AbstractImage

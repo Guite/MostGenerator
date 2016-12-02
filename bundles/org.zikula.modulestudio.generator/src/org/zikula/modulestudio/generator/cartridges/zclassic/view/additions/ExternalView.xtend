@@ -159,7 +159,9 @@ class ExternalView {
                 <p class="«app.appName.toLowerCase»-external-description">
                     «displayDescription('', '<br />')»
                     «IF categorisable»
-                        «displayCategories»
+                        {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                            «displayCategories»
+                        {% endif %}
                     «ENDIF»
                 </p>
             #}
@@ -229,9 +231,11 @@ class ExternalView {
         «ENDIF»
         «displayDescription('<dd>', '</dd>')»
         «IF categorisable»
-            <dd>
-                «displayCategories»
-            </dd>
+            {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                <dd>
+                    «displayCategories»
+                </dd>
+            {% endif %}
         «ENDIF»
         </dl>
     '''
@@ -337,7 +341,9 @@ class ExternalView {
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
                     «IF categorisable»
-                        {{ form_row(finderForm.categories) }}
+                        {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                            {{ form_row(finderForm.categories) }}
+                        {% endif %}
                     «ENDIF»
                     {{ form_row(finderForm.pasteas) }}
                     <br />

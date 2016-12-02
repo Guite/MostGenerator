@@ -83,14 +83,20 @@ class Section {
             «ENDIF»
         «ELSE»
             «IF attributable»
-                {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
+                    {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {% endif %}
             «ENDIF»
             «IF categorisable»
-                {{ include('@«app.appName»/Helper/includeCategoriesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                    {{ include('@«app.appName»/Helper/includeCategoriesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {% endif %}
             «ENDIF»
             «relationHelper.generateIncludeStatement(it, app, fsa)»
             «IF metaData»
-                {{ include('@«app.appName»/Helper/includeMetaDataEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
+                    {{ include('@«app.appName»/Helper/includeMetaDataEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
+                {% endif %}
             «ENDIF»
             «IF standardFields»
                 {% if mode != 'create' %}

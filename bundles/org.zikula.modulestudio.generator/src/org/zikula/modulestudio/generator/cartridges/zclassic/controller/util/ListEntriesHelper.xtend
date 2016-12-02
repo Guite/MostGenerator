@@ -19,10 +19,10 @@ class ListEntriesHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating utility class for list entries')
+        println('Generating helper class for list entries')
         val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/ListEntries' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, listFieldFunctionsBaseImpl), fh.phpFileContent(it, listFieldFunctionsImpl)
@@ -37,7 +37,7 @@ class ListEntriesHelper {
 
         «ENDIF»
         /**
-         * Utility base class for list field entries related methods.
+         * Helper base class for list field entries related methods.
          */
         abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractListEntries extends Zikula_AbstractBase«ELSE»AbstractListEntriesHelper«ENDIF»
         {
@@ -272,7 +272,7 @@ class ListEntriesHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for list field entries related methods.
+         * Helper implementation class for list field entries related methods.
          */
         «IF targets('1.3.x')»
         class «appName»_Util_ListEntries extends «appName»_Util_Base_AbstractListEntries

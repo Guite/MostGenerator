@@ -40,6 +40,9 @@ class ContentTypeList {
             use ModUtil;
             use ServiceUtil;
             use ZLanguage;
+            «IF needsFeatureActivationHelper»
+                use «appNamespace»\Helper\FeatureActivationHelper;
+            «ENDIF»
 
         «ENDIF»
         /**
@@ -227,6 +230,10 @@ class ContentTypeList {
             $this->customTemplate = $data['customTemplate'];
             $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
+                «IF !isLegacy»
+                    $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
+                «ENDIF»
                 $this->categorisableObjectTypes = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
                 «IF !isLegacy»
                     $categoryHelper = $serviceManager->get('«appService».category_helper');
@@ -285,6 +292,9 @@ class ContentTypeList {
                 }
 
                 $this->catIds = $data['catIds'];
+                «IF !isLegacy»
+                    }
+                «ENDIF»
             «ENDIF»
         }
 
@@ -346,6 +356,10 @@ class ContentTypeList {
             $qb = $repository->genericBaseQuery($where, $orderBy);
             «IF hasCategorisableEntities»
 
+                «IF !isLegacy»
+                    $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
+                «ENDIF»
                 // apply category filters
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                     if (is_array($this->catIds) && count($this->catIds) > 0) {
@@ -357,6 +371,9 @@ class ContentTypeList {
                         «ENDIF»
                     }
                 }
+                «IF !isLegacy»
+                    }
+                «ENDIF»
             «ENDIF»
 
             // get objects from database
@@ -393,10 +410,14 @@ class ContentTypeList {
                 $templateParameters = [
                     'vars' => $data,
                     'objectType' => $this->objectType,
-                    'items' => $entities«IF hasCategorisableEntities»,
-                    'registries' => $this->catRegistries,
-                    'properties' => $this->catProperties«ENDIF»
+                    'items' => $entities
                 ];
+                «IF hasCategorisableEntities»,
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
+                        $templateParameters['registries'] = $this->catRegistries;
+                        $templateParameters['properties'] = $this->catProperties;
+                    }
+                «ENDIF»
                 «IF hasUploads»
                     $imageHelper = $serviceManager->get('«appService».image_helper');
                 «ENDIF»
@@ -515,6 +536,10 @@ class ContentTypeList {
             «ENDIF»
             «IF hasCategorisableEntities»
 
+                «IF !isLegacy»
+                    $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
+                    if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
+                «ENDIF»
                 // assign category data
                 $this->view->assign('registries', $this->catRegistries)
                            ->assign('properties', $this->catProperties);
@@ -552,6 +577,9 @@ class ContentTypeList {
 
                 $this->view->assign('categories', $categories)«IF !isLegacy»
                            ->assign('categoryHelper', $serviceManager->get('«appService».category_helper'))«ENDIF»;
+                «IF !isLegacy»
+                    }
+                «ENDIF»
             «ENDIF»
         }
     '''

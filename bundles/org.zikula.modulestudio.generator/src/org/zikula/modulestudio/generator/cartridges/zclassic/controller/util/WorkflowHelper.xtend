@@ -22,10 +22,10 @@ class WorkflowHelper {
     FileHelper fh = new FileHelper
 
     /**
-     * Entry point for the utility class creation.
+     * Entry point for the helper class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating utility class for workflows')
+        println('Generating helper class for workflows')
         val helperFolder = if (targets('1.3.x')) 'Util' else 'Helper'
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Workflow' + (if (targets('1.3.x')) '' else 'Helper') + '.php',
             fh.phpFileContent(it, workflowFunctionsBaseImpl), fh.phpFileContent(it, workflowFunctionsImpl)
@@ -43,7 +43,7 @@ class WorkflowHelper {
 
         «ENDIF»
         /**
-         * Utility base class for workflow helper methods.
+         * Helper base class for workflow methods.
          */
         abstract class «IF targets('1.3.x')»«appName»_Util_Base_AbstractWorkflow extends Zikula_AbstractBase«ELSE»AbstractWorkflowHelper«ENDIF»
         {
@@ -553,7 +553,7 @@ class WorkflowHelper {
 
         «ENDIF»
         /**
-         * Utility implementation class for workflow helper methods.
+         * Helper implementation class for workflow methods.
          */
         «IF targets('1.3.x')»
         class «appName»_Util_Workflow extends «appName»_Util_Base_AbstractWorkflow

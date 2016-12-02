@@ -202,11 +202,6 @@ class ItemActions {
                             «ELSE»
                                 $urlArgs = ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»];
                             «ENDIF»
-                            if ($currentFunc == 'view') {
-                                $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
-                            } elseif ($currentFunc == 'display') {
-                                $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
-                            }
                             «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
                                 «IF app.isLegacy»
                                     'url' => array(
@@ -231,11 +226,6 @@ class ItemActions {
                         «ELSE»
                             $urlArgs = ['«relationAliasNameParam.formatForDB»' => «idFieldsAsParameterCode('this')»];
                         «ENDIF»
-                        if ($currentFunc == 'view') {
-                            $urlArgs['returnTo'] = '«controller.formattedName»View«name.formatForCodeCapital»';
-                        } elseif ($currentFunc == 'display') {
-                            $urlArgs['returnTo'] = '«controller.formattedName»Display«name.formatForCodeCapital»';
-                        }
                         «returnVar»[] = «IF app.isLegacy»array(«ELSE»[«ENDIF»
                             «IF app.isLegacy»
                                 'url' => array(

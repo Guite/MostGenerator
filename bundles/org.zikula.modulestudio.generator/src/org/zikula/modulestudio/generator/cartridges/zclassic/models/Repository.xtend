@@ -1521,7 +1521,7 @@ class Repository {
         public function getQueryFromBuilder(QueryBuilder $qb)
         {
             $query = $qb->getQuery();
-            «IF hasTranslatableFields»
+            «IF hasTranslatableFields»«/* TODO decide whether this should be controlled by FeatureActivationHelper, too */»
 
                 // set the translation query hint
                 $query->setHint(
