@@ -347,8 +347,12 @@ class ViewQuickNavForm {
             {% if sorting is defined and sorting != true %}
                 </div>
             {% endif %}
-            {% if pageSizeSelector is not defined or pageSizeSelector == true %}
+            {% if pageSizeSelector is defined and pageSizeSelector != true %}
+                <div class="hidden">
+            {% endif %}
                 {{ form_row(quickNavForm.num) }}
+            {% if pageSizeSelector is defined and pageSizeSelector != true %}
+            	</div>
             {% endif %}
         «ENDIF»
     '''
