@@ -159,7 +159,7 @@ class ExternalView {
                 <p class="«app.appName.toLowerCase»-external-description">
                     «displayDescription('', '<br />')»
                     «IF categorisable»
-                        {% if featureActivationHelper.isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             «displayCategories»
                         {% endif %}
                     «ENDIF»
@@ -231,7 +231,7 @@ class ExternalView {
         «ENDIF»
         «displayDescription('<dd>', '</dd>')»
         «IF categorisable»
-            {% if featureActivationHelper.isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+            {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                 <dd>
                     «displayCategories»
                 </dd>
@@ -341,7 +341,7 @@ class ExternalView {
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
                     «IF categorisable»
-                        {% if featureActivationHelper.isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             {{ form_row(finderForm.categories) }}
                         {% endif %}
                     «ENDIF»
