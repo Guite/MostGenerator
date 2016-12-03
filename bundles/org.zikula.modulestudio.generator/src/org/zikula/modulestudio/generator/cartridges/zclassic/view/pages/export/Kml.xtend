@@ -96,9 +96,9 @@ class Kml {
         <Document>
             <Placemark>
                 «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
-                <name>«IF !stringFields.empty»{{ «objName»->get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»</name>
+                <name>«IF !stringFields.empty»{{ «objName».get«stringFields.head.name.formatForCodeCapital»() }}«ELSE»{{ __('«name.formatForDisplayCapital»') }}«ENDIF»</name>
                 <Point>
-                    <coordinates>{{ «objName»->getLongitude() }}, {{ «objName»->getLatitude() }}, 0</coordinates>
+                    <coordinates>{{ «objName».getLongitude() }}, {{ «objName».getLatitude() }}, 0</coordinates>
                 </Point>
             </Placemark>
         </Document>

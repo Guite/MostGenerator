@@ -34,7 +34,7 @@ class FeatureActivationHelper {
         /**
          * Helper base class for dynamic feature enablement methods.
          */
-        abstract class FeatureActivationHelper
+        abstract class AbstractFeatureActivationHelper
         {
             «featureConstants»
             «isEnabled»

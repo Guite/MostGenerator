@@ -332,9 +332,11 @@ class Display {
                 <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="hidden"><span class="fa fa-eye"></span></a>
                 <script type="text/javascript">
                 /* <![CDATA[ */
-                    document.observe('dom:loaded', function() {
-                        «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display'), '{{ «relObjName»->getTitleFromDisplayPattern()|e('js') }}');
-                    });
+                    ( function($) {
+                        $(document).ready(function() {
+                            «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display'), '{{ «relObjName».getTitleFromDisplayPattern()|e('js') }}');
+                        });
+                    })(jQuery);
                 /* ]]> */
                 </script>
               «ENDIF»
@@ -434,17 +436,17 @@ class Display {
             «ENDIF»
         «ELSE»
             «IF attributable»
-                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
+                {% if featureActivationHelper.isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
                     {{ include('@«application.appName»/Helper/includeAttributesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
             «IF categorisable»
-                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                {% if featureActivationHelper.isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                     {{ include('@«application.appName»/Helper/includeCategoriesDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
             «IF tree != EntityTreeType.NONE»
-                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
+                {% if featureActivationHelper.isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::TREE_RELATIVES'), '«name.formatForCode»') %}
                     «IF useGroupingPanels('display')»
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -467,7 +469,7 @@ class Display {
                 {% endif %}
             «ENDIF»
             «IF metaData»
-                {% if featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
+                {% if featureActivationHelper.isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
                     {{ include('@«application.appName»/Helper/includeMetaDataDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»

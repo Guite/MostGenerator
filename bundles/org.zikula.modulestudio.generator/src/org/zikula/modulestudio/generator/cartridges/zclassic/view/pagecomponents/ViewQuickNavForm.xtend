@@ -185,7 +185,7 @@ class ViewQuickNavForm {
                 {/nocache}
             {/if}
         «ELSE»
-            {% set categoriesEnabled = featureActivationHelper->isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+            {% set categoriesEnabled = featureActivationHelper.isEnabled(constant('«application.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
             {% if (categoryFilter is defined and categoryFilter != true) or not categoriesEnabled %}
                 <div class="hidden">
             {% endif %}

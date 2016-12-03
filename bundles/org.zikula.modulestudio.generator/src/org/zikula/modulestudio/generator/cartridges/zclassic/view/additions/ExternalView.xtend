@@ -159,7 +159,7 @@ class ExternalView {
                 <p class="«app.appName.toLowerCase»-external-description">
                     «displayDescription('', '<br />')»
                     «IF categorisable»
-                        {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        {% if featureActivationHelper.isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             «displayCategories»
                         {% endif %}
                     «ENDIF»
@@ -231,7 +231,7 @@ class ExternalView {
         «ENDIF»
         «displayDescription('<dd>', '</dd>')»
         «IF categorisable»
-            {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+            {% if featureActivationHelper.isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                 <dd>
                     «displayCategories»
                 </dd>
@@ -341,7 +341,7 @@ class ExternalView {
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>
                     «IF categorisable»
-                        {% if featureActivationHelper->isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                        {% if featureActivationHelper.isEnabled(constant('«app.appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                             {{ form_row(finderForm.categories) }}
                         {% endif %}
                     «ENDIF»
@@ -456,7 +456,7 @@ class ExternalView {
                         {% for «name.formatForCode» in items %}
                             <li>
                                 {% set itemId = «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }}
-                                <a href="#" data-itemid="{{ itemId }}">{{ «name.formatForCode»->getTitleFromDisplayPattern() }}</a>
+                                <a href="#" data-itemid="{{ itemId }}">{{ «name.formatForCode».getTitleFromDisplayPattern() }}</a>
                                 <input type="hidden" id="url{{ itemId }}" value="«IF app.hasUserController»{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}«ENDIF»" />
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
                                 <input type="hidden" id="desc{{ itemId }}" value="{% set description %}«displayDescription('', '')»{% endset %}{{ description|striptags|e('html_attr') }}" />
