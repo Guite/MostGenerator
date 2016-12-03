@@ -220,59 +220,111 @@ class Styles {
                     padding: 0;
                     width: 475px !important;
                 }
-            «ENDIF»
 
-            div.«cssPrefix»-autocomplete ul li«IF hasUserFields»,
-            div.«cssPrefix»-autocomplete-user ul li«ENDIF»«IF hasImageFields»,
-            div.«cssPrefix»-autocomplete-with-image ul li«ENDIF» {
-                margin: 0;
-                padding: 0.2em 0 0.2em 20px;
-                list-style-type: none;
-                line-height: 1.4em;
-                cursor: pointer;
-                display: block;
-                background-position: 2px 2px;
-                background-repeat: no-repeat;
-            }
-
-            div.«cssPrefix»-autocomplete ul li {
-                background-image: url("../../../images/icons/extrasmall/tab_right.png");
-            }
-            «IF hasUserFields»
-                div.«cssPrefix»-autocomplete-user ul li {
-                    background-image: url("../../../images/icons/extrasmall/user.png");
+                div.«cssPrefix»-autocomplete ul li«IF hasUserFields»,
+                div.«cssPrefix»-autocomplete-user ul li«ENDIF»«IF hasImageFields»,
+                div.«cssPrefix»-autocomplete-with-image ul li«ENDIF» {
+                    margin: 0;
+                    padding: 0.2em 0 0.2em 20px;
+                    list-style-type: none;
+                    line-height: 1.4em;
+                    cursor: pointer;
+                    display: block;
+                    background-position: 2px 2px;
+                    background-repeat: no-repeat;
                 }
-            «ENDIF»
-            «IF hasImageFields»
-                div.«cssPrefix»-autocomplete-with-image ul li {
-                    background-image: url("../../../images/icons/extrasmall/agt_Multimedia.png");
-                }
-            «ENDIF»
 
-            div.«cssPrefix»-autocomplete ul li.selected«IF hasUserFields»,
-            div.«cssPrefix»-autocomplete-user ul li.selected«ENDIF»«IF hasImageFields»,
-            div.«cssPrefix»-autocomplete-with-image ul li.selected«ENDIF» {
-                background-color: #ffb;
-            }
-
-            «IF hasImageFields || !joinRelations.empty»
-                div.«cssPrefix»-autocomplete ul li div.itemtitle«IF hasImageFields»,
-                div.«cssPrefix»-autocomplete-with-image ul li div.itemtitle«ENDIF» {
-                    font-weight: 700;
-                    font-size: 12px;
-                    line-height: 1.2em;
+                div.«cssPrefix»-autocomplete ul li {
+                    background-image: url("../../../images/icons/extrasmall/tab_right.png");
                 }
-                div.«cssPrefix»-autocomplete ul li div.itemdesc«IF hasImageFields»,
-                div.«cssPrefix»-autocomplete-with-image ul li div.itemdesc«ENDIF» {
+                «IF hasUserFields»
+                    div.«cssPrefix»-autocomplete-user ul li {
+                        background-image: url("../../../images/icons/extrasmall/user.png");
+                    }
+                «ENDIF»
+                «IF hasImageFields»
+                    div.«cssPrefix»-autocomplete-with-image ul li {
+                        background-image: url("../../../images/icons/extrasmall/agt_Multimedia.png");
+                    }
+                «ENDIF»
+
+                div.«cssPrefix»-autocomplete ul li.selected«IF hasUserFields»,
+                div.«cssPrefix»-autocomplete-user ul li.selected«ENDIF»«IF hasImageFields»,
+                div.«cssPrefix»-autocomplete-with-image ul li.selected«ENDIF» {
+                    background-color: #ffb;
+                }
+
+                «IF hasImageFields || !joinRelations.empty»
+                    div.«cssPrefix»-autocomplete ul li div.itemtitle«IF hasImageFields»,
+                    div.«cssPrefix»-autocomplete-with-image ul li div.itemtitle«ENDIF» {
+                        font-weight: 700;
+                        font-size: 12px;
+                        line-height: 1.2em;
+                    }
+                    div.«cssPrefix»-autocomplete ul li div.itemdesc«IF hasImageFields»,
+                    div.«cssPrefix»-autocomplete-with-image ul li div.itemdesc«ENDIF» {
+                        font-size: 10px;
+                        color: #888;
+                    }
+                    «IF !joinRelations.empty»
+
+                        button.«cssPrefix»-inline-button {
+                            margin-top: 1em;
+                        }
+                    «ENDIF»
+                «ENDIF»
+            «ELSE»
+                .tt-menu {
+                    max-height: 150px;
+                    overflow-y: auto;
+                }
+
+                .tt-menu .tt-suggestion {
+                    margin: 0;
+                    padding: 0.2em 0 0.2em 20px;
+                    list-style-type: none;
+                    line-height: 1.4em;
+                    cursor: pointer;
+                    display: block;
+                    background-position: 2px 2px;
+                    background-repeat: no-repeat;
+                }
+
+                div.«cssPrefix»-autocomplete .tt-menu .tt-suggestion {
+                    background-image: url("../../../../../../images/icons/extrasmall/tab_right.png");
+                }
+                «IF hasUserFields»
+                    div.«cssPrefix»-autocomplete-user .tt-menu .tt-suggestion {
+                        background-image: url("../../../../../../images/icons/extrasmall/user.png");
+                    }
+                «ENDIF»
+                «IF hasImageFields»
+                    div.«cssPrefix»-autocomplete-with-image .tt-menu .tt-suggestion {
+                        background-image: url("../../../../../../images/icons/extrasmall/agt_Multimedia.png");
+                    }
+                «ENDIF»
+                .tt-menu .tt-suggestion img {
+                    max-width: 20px;
+                    max-height: 20px;
+                }
+
+                .tt-menu .tt-suggestion.tt-cursor {
+                    background-color: #ffb;
+                }
+
+                .tt-menu .empty-message {
+                    padding: 5px 10px;
+                    text-align: center;
+                }
+
+                .tt-menu .tt-suggestion .media-body {
                     font-size: 10px;
                     color: #888;
                 }
-                «IF !joinRelations.empty»
-
-                    button.«cssPrefix»-inline-button {
-                        margin-top: 1em;
-                    }
-                «ENDIF»
+                .tt-menu .tt-suggestion .media-body .media-heading {
+                    font-size: 12px;
+                    line-height: 1.2em;
+                }
             «ENDIF»
 
         «ENDIF»

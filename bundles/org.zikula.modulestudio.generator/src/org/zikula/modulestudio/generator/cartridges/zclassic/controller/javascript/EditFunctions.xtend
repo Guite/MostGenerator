@@ -73,10 +73,6 @@ class EditFunctions {
              */
             function «vendorAndName»InitUserField(fieldName, getterName)
             {
-                «IF !targets('1.3.x')»
-                    var users, userMap;
-
-                «ENDIF»
                 «IF targets('1.3.x')»
                     if (null === $(fieldName + 'LiveSearch')) {
                         return;
@@ -106,76 +102,41 @@ class EditFunctions {
                         }
                     );
                 «ELSE»
-                    users = [];
-                    userMap = [];
-
                     jQuery('#' + fieldName + 'Selector').typeahead({
-                        items: 25,
-                        minLength: 2,
-                        showHintOnFocus: true,
-                        scrollHeight: 400,
-
+                        highlight: true,
+                        hint: true,
+                        minLength: 2
+                    }, {
+                        limit: 15,
                         // The data source to query against. Receives the query value in the input field and the process callbacks.
                         source: function (query, syncResults, asyncResults) {
-                            users[fieldName] = [];
-                            userMap[fieldName] = {};
-
                             // Retrieve data from server using "query" parameter as it contains the search string entered by the user
                             jQuery('#' + fieldName + 'Indicator').removeClass('hidden');
-                            jQuery.getJSON( Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
-
-                                if (data.length > 0) {
-                                    jQuery('#' + fieldName + 'NoResultsHint').addClass('hidden');
-
-                                    // map dropdown options to corresponding objects
-                                    jQuery.each(data, function (key, user) {
-                                        userMap[fieldName][user.uname] = user;
-                                        users[fieldName].push(user.uname);
-                                    });
-                                } else {
-                                    jQuery('#' + fieldName + 'NoResultsHint').removeClass('hidden');
-                                }
-
+                            jQuery.getJSON(Routing.generate('«appName.formatForDB»_ajax_' + getterName.toLowerCase(), { fragment: query }), function( data ) {
                                 jQuery('#' + fieldName + 'Indicator').addClass('hidden');
+                                asyncResults(data);
                             });
-
-                            // call asyncResults() function with dropdown array
-                            return asyncResults(users[fieldName]);
                         },
-
+                        templates: {
+                            empty: '<div class="empty-message">' + jQuery('#' + fieldName + 'NoResultsHint').text() + '</div>'
+                        },
                         // custom formatting of result items
-                        highlighter: function(item) {
-                            var html, user;
-
-                            user = userMap[fieldName][item];
+                        display: function(user) {
+                            var html;
 
                             html = '<div class="typeahead">';
-                            html += '<div class="media"><a class="pull-left" href="#"><img src="' + user.avatar + '" /></a>';
+                            html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + user.avatar + '</a>';
                             html += '<div class="media-body">';
                             html += '<p class="media-heading">' + user.uname + '</p>';
                             html += '</div>';
                             html += '</div>';
 
                             return html;
-                        },
-
+                        }
+                    }).bind('typeahead:select', function(ev, user) {
                         // Called after the user selects an item. Here we can do something with the selection.
-                        updater: function (item) {
-                            var userId;
-
-                            userId = userMap[fieldName][item].uid;
-
-                            jQuery('#' + fieldName).val(userId);
-
-                            return item;
-                        }
-                    });
-
-                    // Ensure that clearing out the selector is reflected into the hidden field properly
-                    jQuery('#' + fieldName + 'Selector').blur(function() {
-                        if (jQuery(this).val().length == 0 || typeof userMap[fieldName] == 'undefined' || jQuery('#' + fieldName).val() != userMap[fieldName][jQuery(this).val()]) {
-                            jQuery('#' + fieldName).val('');
-                        }
+                        jQuery('#' + fieldName).val(user.uid);
+                        jQuery(this).typeahead('val', user.uname);
                     });
                 «ENDIF»
             }
@@ -726,7 +687,7 @@ class EditFunctions {
          */
         function «vendorAndName»InitRelationItemsForm(objectType, idPrefix, includeEditing)
         {
-            var acOptions, itemIds, itemIdsArr«IF !targets('1.3.x')», listItems, listItemMap, acUrl«ENDIF»;
+            var acOptions«IF !targets('1.3.x')», acDataSet«ENDIF», itemIds, itemIdsArr«IF !targets('1.3.x')», acUrl«ENDIF»;
 
             «IF targets('1.3.x')»
                 // add handling for the toggle link if existing
@@ -795,71 +756,38 @@ class EditFunctions {
                     }
                 });
             «ELSE»
-                listItems = [];
-                listItemMap = [];
-
                 acOptions = {
-                    items: 25,
+                    highlight: true,
+                    hint: true,
                     minLength: 2,
-                    showHintOnFocus: true,
-                    scrollHeight: 400,
-
-                    // The data source to query against. Receives the query value in the input field and the process callback.
-                    source: function (query, process) {
-                        listItems[idPrefix] = [];
-                        listItemMap[idPrefix] = {};
-
+                };
+                acDataSet = {
+                    limit: 15,
+                    // The data source to query against. Receives the query value in the input field and the process callbacks.
+                    source: function (query, syncResults, asyncResults) {
                         // Retrieve data from server using "query" parameter as it contains the search string entered by the user
                         jQuery('#' + idPrefix + 'Indicator').removeClass('hidden');
-                        jQuery.getJSON( acUrl, { fragment: query }, function( data ) {
-
-                            if (data.length > 0) {
-                                jQuery('#' + idPrefix + 'NoResultsHint').addClass('hidden');
-
-                                // map dropdown options to corresponding objects
-                                jQuery.each(data, function (key, listItem) {
-                                    listItemMap[idPrefix][listItem.title] = listItem;
-                                    listItems[idPrefix].push(listItem.title);
-                                });
-                            } else {
-                                jQuery('#' + idPrefix + 'NoResultsHint').removeClass('hidden');
-                            }
-
+                        jQuery.getJSON(acUrl, { fragment: query }, function( data ) {
                             jQuery('#' + idPrefix + 'Indicator').addClass('hidden');
+                            asyncResults(data);
                         });
-
-                        // call process() function with dropdown array
-                        return process(listItems[idPrefix]);
                     },
-
+                    templates: {
+                        empty: '<div class="empty-message">' + jQuery('#' + idPrefix + 'NoResultsHint').text() + '</div>'
+                    },
                     // custom formatting of result items
-                    highlighter: function(item) {
-                        var html, listItem;
-
-                        listItem = listItemMap[idPrefix][item];
+                    display: function(item) {
+                        var html;
 
                         html = '<div class="typeahead">';
-                        html += '<div class="media"><a class="pull-left" href="#"><img src="' + listItem.image + '" /></a>';
+                        html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + item.image + '</a>';
                         html += '<div class="media-body">';
-                        html += '<p class="media-heading">' + listItem.title + '</p>';
-                        html += listItem.description;
+                        html += '<p class="media-heading">' + item.title + '</p>';
+                        html += item.description;
                         html += '</div>';
                         html += '</div>';
 
                         return html;
-                    },
-
-                    // Called after the user selects an item. Here we can do something with the selection.
-                    updater: function (item) {
-                        var inputField, listItem;
-
-                        inputField = jQuery('#' + idPrefix);
-                        listItem = listItemMap[idPrefix][item];
-
-                        «vendorAndName»SelectRelatedItem(objectType, idPrefix, inputField, listItem);
-                        inputField.val(listItemId);
-
-                        return item;
                     }
                 };
 
@@ -873,9 +801,15 @@ class EditFunctions {
                             acUrl += '&exclude=' + jQuery('#' + idPrefix).val();
                         }
 
-                        jQuery('#' + idPrefix + 'Selector').typeahead(acOptions);
+                        jQuery('#' + idPrefix + 'Selector')
+                            .typeahead(acOptions, acDataSet)
+                            .bind('typeahead:select', function(ev, item) {
+                                // Called after the user selects an item. Here we can do something with the selection.
+                                «vendorAndName»SelectRelatedItem(objectType, idPrefix, jQuery('#' + idPrefix), item);
+                                jQuery(this).typeahead('val', item.title);
+                            });
 
-                        // Ensure that clearing out the selector is reflected into the hidden field properly
+                        // Ensure that clearing out the selector is properly reflected into the hidden field
                         jQuery('#' + idPrefix + 'Selector').blur(function() {
                             if (jQuery(this).val().length == 0 || jQuery('#' + idPrefix).val() != listItemMap[idPrefix][jQuery(this).val()]) {
                                 jQuery('#' + idPrefix).val('');

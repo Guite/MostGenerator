@@ -105,7 +105,7 @@ class Ajax {
         $fragment = '';
         if ($«IF app.isLegacy»this->«ENDIF»request->«IF app.isLegacy»isPost()«ELSE»isMethod('POST')«ENDIF» && $«IF app.isLegacy»this->«ENDIF»request->request->has('fragment')) {
             $fragment = $«IF app.isLegacy»this->«ENDIF»request->request->get('fragment', '');
-        } elseif ($this->request->«IF app.isLegacy»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('fragment')) {
+        } elseif ($«IF app.isLegacy»this->«ENDIF»request->«IF app.isLegacy»isGet()«ELSE»isMethod('GET')«ENDIF» && $«IF app.isLegacy»this->«ENDIF»request->query->has('fragment')) {
             $fragment = $«IF app.isLegacy»this->«ENDIF»request->query->get('fragment', '');
         }
 
@@ -121,7 +121,8 @@ class Ajax {
             «/* ModUtil::initOOModule('ZikulaUsersModule');
             */»
             $dql = 'SELECT u FROM Zikula\Module\UsersModule\Entity\UserEntity u WHERE u.uname LIKE :fragment';
-            $query = $this->entityManager->createQuery($dql);
+            $entityManager = $this->get('doctrine')->getManager();
+            $query = $entityManager->createQuery($dql);
             $query->setParameter('fragment', '%' . $fragment . '%');
             $results = $query->getArrayResult();
         «ENDIF»
@@ -132,7 +133,7 @@ class Ajax {
         «ELSE»
             include_once 'lib/legacy/viewplugins/function.useravatar.php';
         «ENDIF»
-        $view = Zikula_View::getInstance('«app.appName»', false);
+        $view = «IF !app.isLegacy»\«ENDIF»Zikula_View::getInstance('«app.appName»', false);
 
         «IF app.isLegacy»
             $out = '<ul>';

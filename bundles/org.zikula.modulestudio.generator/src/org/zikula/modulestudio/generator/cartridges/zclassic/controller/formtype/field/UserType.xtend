@@ -24,6 +24,11 @@ class UserType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
+        use Symfony\Component\Form\FormBuilderInterface;
+        use Symfony\Component\Form\FormEvent;
+        use Symfony\Component\Form\FormEvents;
+        use Symfony\Component\Form\FormInterface;
+        use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
 
         /**
@@ -31,6 +36,31 @@ class UserType {
          */
         abstract class AbstractUserType extends AbstractType
         {
+            /**
+             * {@inheritdoc}
+             */
+            public function buildForm(FormBuilderInterface $builder, array $options)
+            {
+                $builder->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) {
+                    $formData = $event->getData();
+
+                    if (!$formData) {
+                        return;
+                    }
+
+                    $formData = intval($formData);
+                    $event->setData($formData);
+                });
+            }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function buildView(FormView $view, FormInterface $form, array $options)
+            {
+                $view->vars['inlineUsage'] = $options['inlineUsage'];
+            }
+
             /**
              * {@inheritdoc}
              */
