@@ -259,9 +259,6 @@ class View {
                             </th>
                         {/if}
                     «ELSE»
-                        «IF categorisable»
-                            {% set catIdListMainString = catIdList.Main|join(',') %}
-                        «ENDIF»
                         {% if routeArea == 'admin' %}
                             <th id="hSelect" scope="col" class="text-center">
                                 <input type="checkbox" id="toggle«nameMultiple.formatForCodeCapital»" />
