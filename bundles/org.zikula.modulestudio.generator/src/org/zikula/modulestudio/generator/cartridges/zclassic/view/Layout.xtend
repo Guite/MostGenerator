@@ -198,7 +198,7 @@ class Layout {
             {% block «appName.formatForDB»_field_upload_widget %}
                 {% spaceless %}
 
-                {{ block('file_widget') }}
+                <input type="file" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
                 {% if not required %}
                     <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
