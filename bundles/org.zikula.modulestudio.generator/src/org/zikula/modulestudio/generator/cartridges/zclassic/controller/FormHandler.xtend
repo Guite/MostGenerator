@@ -447,9 +447,9 @@ class FormHandler {
 
             // initialise redirect goal
             «IF isLegacy»
-                $this->returnTo = $this->request->query->filter('returnTo', null, FILTER_SANITIZE_STRING);
+                $this->returnTo = $this->request->query->get('returnTo', null, FILTER_SANITIZE_STRING);
             «ELSE»
-                $this->returnTo = $this->request->query->getAlnum('returnTo', null);
+                $this->returnTo = $this->request->query->get('returnTo', null);
             «ENDIF»
             if (null === $this->returnTo) {
                 // default to referer
