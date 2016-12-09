@@ -171,7 +171,7 @@ class ContentTypeListView {
 
     def private editTemplateCategories(Application it) '''
         «IF !targets('1.3.x')»
-            {if $featureActivationHelper->isEnabled(const('«appNamespace»\\Helper\\FeatureActivationHelper::CATEGORIES', $objectType))}
+            {if $featureActivationHelper->isEnabled(const('«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES', $objectType))}
         «ENDIF»
         {formvolatile}
         {if $properties ne null && is_array($properties)}

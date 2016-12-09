@@ -83,18 +83,18 @@ class Section {
             «ENDIF»
         «ELSE»
             «IF attributable»
-                {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
+                {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::ATTRIBUTES'), '«name.formatForCode»') %}
                     {{ include('@«app.appName»/Helper/includeAttributesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
             «IF categorisable»
-                {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
+                {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::CATEGORIES'), '«name.formatForCode»') %}
                     {{ include('@«app.appName»/Helper/includeCategoriesEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
             «relationHelper.generateIncludeStatement(it, app, fsa)»
             «IF metaData»
-                {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
+                {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
                     {{ include('@«app.appName»/Helper/includeMetaDataEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
