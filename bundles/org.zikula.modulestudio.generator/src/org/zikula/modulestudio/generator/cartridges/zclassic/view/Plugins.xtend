@@ -106,6 +106,7 @@ class Plugins {
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
+        use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
         «IF hasListFields»
             use «appNamespace»\Helper\ListEntriesHelper;
