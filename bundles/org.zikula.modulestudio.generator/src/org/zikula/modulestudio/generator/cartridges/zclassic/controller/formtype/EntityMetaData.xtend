@@ -100,7 +100,7 @@ class EntityMetaData {
             {
                 $resolver->setDefaults([
                     // define class for underlying data (required for embedding forms)
-                    'data_class' => 'Zikula\Core\Doctrine\Entity\AbstractEntityMetadata'
+                    //'data_class' => 'Zikula\Core\Doctrine\Entity\AbstractEntityMetadata'
                 ]);
             }
         }

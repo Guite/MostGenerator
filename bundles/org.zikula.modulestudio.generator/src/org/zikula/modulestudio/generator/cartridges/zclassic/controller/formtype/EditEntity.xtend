@@ -897,7 +897,8 @@ class EditEntity {
         {
             // embedded meta data form
             $builder->add('metadata', '«app.appNamespace»\Form\Type\EntityMetaDataType', [
-                'constraints' => new Valid()
+                'constraints' => new Valid(),
+                'data_class' => '«app.appNamespace»\Entity\«name.formatForCodeCapital»MetaDataEntity'
             ]);
         }
     '''
