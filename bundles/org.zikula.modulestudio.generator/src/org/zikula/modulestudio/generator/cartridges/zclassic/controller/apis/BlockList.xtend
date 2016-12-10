@@ -36,7 +36,7 @@ class BlockList {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            «IF hasCategorisableEntities»
+            «IF hasCategorisableEntities && !targets('1.4-dev')»
                 use CategoryUtil;
             «ENDIF»
             use Zikula\BlocksModule\AbstractBlockHandler;
@@ -334,10 +334,19 @@ class BlockList {
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
                 «ENDIF»
                 $filteredEntities = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                «IF targets('1.4-dev')»
+                    $categoryPermissionApi = $this->get('zikula_categories_module.api.category_permission');
+                «ENDIF»
                 foreach ($entities as $entity) {
-                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
-                        $filteredEntities[] = $entity;
-                    }
+                    «IF targets('1.4-dev')»
+                        if ($categoryPermissionApi->hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ELSE»
+                        if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ENDIF»
                 }
                 $entities = $filteredEntities;
                 «IF !targets('1.3.x')»

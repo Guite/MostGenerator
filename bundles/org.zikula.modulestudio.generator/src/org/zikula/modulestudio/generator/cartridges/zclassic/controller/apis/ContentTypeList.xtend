@@ -34,7 +34,7 @@ class ContentTypeList {
         «IF !isLegacy»
             namespace «appNamespace»\ContentType\Base;
 
-            «IF hasCategorisableEntities»
+            «IF hasCategorisableEntities && !targets('1.4-dev')»
                 use CategoryUtil;
             «ENDIF»
             use ModUtil;
@@ -386,11 +386,20 @@ class ContentTypeList {
                 «IF !isLegacy»
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
                 «ENDIF»
+                «IF targets('1.4-dev')»
+                    $categoryPermissionApi = $serviceManager->get('zikula_categories_module.api.category_permission');
+                «ENDIF»
                 $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($entities as $entity) {
-                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
-                        $filteredEntities[] = $entity;
-                    }
+                    «IF targets('1.4-dev')»
+                        if ($categoryPermissionApi->hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ELSE»
+                        if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ENDIF»
                 }
                 $entities = $filteredEntities;
                 «IF !isLegacy»
@@ -570,6 +579,9 @@ class ContentTypeList {
                     $locale = $serviceManager->get('request_stack')->getMasterRequest()->getLocale();
                 «ENDIF»
                 $categories = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                «IF targets('1.4-dev')»
+                    $categoryApi = $serviceManager->get('zikula_categories_module.api.category');
+                «ENDIF»
                 foreach ($this->catRegistries as $registryId => $registryCid) {
                     $propName = '';
                     foreach ($this->catProperties as $propertyName => $propertyId) {
@@ -579,8 +591,13 @@ class ContentTypeList {
                         }
                     }
 
-                    //$mainCategory = CategoryUtil::getCategoryByID($registryCid);
-                    $cats = CategoryUtil::getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
+                    «IF targets('1.4-dev')»
+                        //$mainCategory = $categoryApi->getCategoryById($registryCid);
+                        $cats = $categoryApi->getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
+                    «ELSE»
+                        //$mainCategory = CategoryUtil::getCategoryByID($registryCid);
+                        $cats = CategoryUtil::getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
+                    «ENDIF»
                     $catsForDropdown = «IF isLegacy»array(«ELSE»[«ENDIF»
                         «IF isLegacy»array(«ELSE»[«ENDIF»'value' => '', 'text' => «IF !isLegacy»$translator->«ENDIF»__('All'«IF isLegacy», $dom«ENDIF»)«IF isLegacy»)«ELSE»]«ENDIF»
                     «IF isLegacy»)«ELSE»]«ENDIF»;

@@ -368,17 +368,26 @@ class Actions {
                 «IF !isLegacy»
                 $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-            	«ENDIF»
+                «ENDIF»
+                «IF app.targets('1.4-dev')»
+                    $categoryPermissionApi = $this->get('zikula_categories_module.api.category_permission');
+                «ENDIF»
                 $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($entities as $entity) {
-                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
-                        $filteredEntities[] = $entity;
-                    }
-            	}
-            	$entities = $filteredEntities;
-            	«IF !isLegacy»
-            	}
-            	«ENDIF»
+                    «IF app.targets('1.4-dev')»
+                        if ($categoryPermissionApi->hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ELSE»
+                        if (CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ENDIF»
+                }
+                $entities = $filteredEntities;
+                «IF !isLegacy»
+                }
+                «ENDIF»
             }
 
         «ENDIF»
@@ -574,17 +583,26 @@ class Actions {
             «IF !isLegacy»
             $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-        	«ENDIF»
+            «ENDIF»
+            «IF app.targets('1.4-dev')»
+                $categoryPermissionApi = $this->get('zikula_categories_module.api.category_permission');
+            «ENDIF»
             $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
             foreach ($entities as $entity) {
-                if (CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
-                    $filteredEntities[] = $entity;
-                }
+                «IF app.targets('1.4-dev')»
+                    if ($categoryPermissionApi->hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                        $filteredEntities[] = $entity;
+                    }
+                «ELSE»
+                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                        $filteredEntities[] = $entity;
+                    }
+                «ENDIF»
             }
             $entities = $filteredEntities;
             «IF !isLegacy»
             }
-        	«ENDIF»
+            «ENDIF»
 
         «ENDIF»
         foreach ($entities as $k => $entity) {
@@ -842,9 +860,16 @@ class Actions {
                 «ELSE»
                     $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
                     if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                        if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
-                            throw new AccessDeniedException();
-                        }
+                        «IF app.targets('1.4-dev')»
+                            $categoryPermissionApi = $this->get('zikula_categories_module.api.category_permission');
+                            if (!$categoryPermissionApi->hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                                throw new AccessDeniedException();
+                            }
+                        «ELSE»
+                            if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                                throw new AccessDeniedException();
+                            }
+                        «ENDIF»
                     }
                 «ENDIF»
             }
@@ -923,9 +948,16 @@ class Actions {
             «ELSE»
                 $featureActivationHelper = $this->get('«app.appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                    if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
-                        throw new AccessDeniedException();
-                    }
+                    «IF app.targets('1.4-dev')»
+                        $categoryPermissionApi = $this->get('zikula_categories_module.api.category_permission');
+                        if (!$categoryPermissionApi->hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                            throw new AccessDeniedException();
+                        }
+                    «ELSE»
+                        if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«app.appName»', ACCESS_OVERVIEW)) {
+                            throw new AccessDeniedException();
+                        }
+                    «ENDIF»
                 }
             «ENDIF»
         «ENDIF»

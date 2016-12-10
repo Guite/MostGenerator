@@ -37,7 +37,7 @@ class ExternalController {
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-        «IF hasCategorisableEntities»
+        «IF hasCategorisableEntities && !targets('1.4-dev')»
             use CategoryUtil;
         «ENDIF»
         use ModUtil;
@@ -343,11 +343,20 @@ class ExternalController {
                 $featureActivationHelper = $this->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
             	«ENDIF»
+            	«IF targets('1.4-dev')»
+            	    $categoryPermissionApi = $this->get('zikula_categories_module.api.category_permission');
+            	«ENDIF»
                 $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($entities as $entity) {
-                    if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
-                        $filteredEntities[] = $entity;
-                    }
+                    «IF targets('1.4-dev')»
+                        if ($categoryPermissionApi->hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ELSE»
+                        if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                            $filteredEntities[] = $entity;
+                        }
+                    «ENDIF»
             	}
             	$entities = $filteredEntities;
             	«IF !isLegacy»

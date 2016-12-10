@@ -214,7 +214,7 @@ class ControllerLayer {
             «IF hasActions('index') || hasActions('view') || hasActions('delete') || (app.needsConfig && isConfigController)»
                 use Symfony\Component\HttpFoundation\RedirectResponse;
             «ENDIF»
-            «IF app.hasCategorisableEntities»
+            «IF app.hasCategorisableEntities && !app.targets('1.4-dev')»
                 use CategoryUtil;
             «ENDIF»
             «IF isAjaxController»
@@ -260,7 +260,7 @@ class ControllerLayer {
                 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-            «IF categorisable»
+            «IF categorisable && !app.targets('1.4-dev')»
                 use CategoryUtil;
             «ENDIF»
             use FormUtil;
