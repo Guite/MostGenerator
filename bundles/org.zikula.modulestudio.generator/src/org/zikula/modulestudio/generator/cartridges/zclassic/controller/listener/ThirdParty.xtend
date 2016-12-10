@@ -199,14 +199,14 @@ class ThirdParty {
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function getEditorHelpers(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function getEditorHelpers(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
         {
             «IF !isBase»
                 parent::getEditorHelpers($event);
