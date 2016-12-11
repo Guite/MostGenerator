@@ -145,7 +145,7 @@ class Attributes {
 
     def private editBody(Application it) '''
         {% for attributeName, attributeValue in attributes %}
-            {{ form_row(attribute(form.attributes, 'attributes' ~ attributeName)) }}
+            {{ form_row(attribute(form, 'attributes' ~ attributeName)) }}
         {% endfor %}
     '''
 }
