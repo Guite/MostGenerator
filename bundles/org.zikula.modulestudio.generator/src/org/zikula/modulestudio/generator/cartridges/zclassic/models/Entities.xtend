@@ -128,9 +128,6 @@ class Entities {
             use Doctrine\Common\NotifyPropertyChanged;
             use Doctrine\Common\PropertyChangedListener;
         «ENDIF»
-        «IF standardFields»
-            use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
-        «ENDIF»
         «IF !application.targets('1.3.x')»
             «IF hasTranslatableFields»
                 use Gedmo\Translatable\Translatable;

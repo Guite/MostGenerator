@@ -28,7 +28,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
 
         /**
          * @ORM\Column(type="integer")
-         * @ZK\StandardFields(type="userid", on="create")
+         * @Gedmo\Blameable(on="create")
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
@@ -41,7 +41,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
              * @Gedmo\Versioned
          «ENDIF»
          * @ORM\Column(type="integer")
-         * @ZK\StandardFields(type="userid", on="update")
+         * @Gedmo\Blameable(on="update")
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="integer")
          «ENDIF»
