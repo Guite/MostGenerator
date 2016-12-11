@@ -76,18 +76,18 @@ class Attributes {
 
     def private viewBodyLegacy(Application it) '''
         <dl class="propertylist">
-        {foreach key='fieldName' item='fieldInfo' from=$obj.attributes}
-            <dt>{$fieldName|safetext}</dt>
-            <dd>{$fieldInfo.value|default:''|safetext}</dd>
+        {foreach key='attributeName' item='attributeInfo' from=$obj.attributes}
+            <dt>{$attributeName|safetext}</dt>
+            <dd>{$attributeInfo.value|default:''|safetext}</dd>
         {/foreach}
         </dl>
     '''
 
     def private viewBody(Application it) '''
         <dl class="propertylist">
-        {% for fieldName, fieldInfo in obj.attributes %}
-            <dt>{{ fieldName }}</dt>
-            <dd>{{ fieldInfo.value }}</dd>
+        {% for attributeName, attributeInfo in obj.attributes %}
+            <dt>{{ attributeName }}</dt>
+            <dd>{{ attributeInfo.value }}</dd>
         {% endfor %}
         </dl>
     '''
@@ -134,18 +134,18 @@ class Attributes {
 
     def private editBodyLegacy(Application it) '''
         {formvolatile}
-        {foreach key='fieldName' item='fieldValue' from=$attributes}
+        {foreach key='attributeName' item='attributeValue' from=$attributes}
             <div class="z-formrow">
-                {formlabel for="attributes`$fieldName`"' text=$fieldName}
-                {formtextinput id="attributes`$fieldName`" group='attributes' dataField=$fieldName maxLength=255}
+                {formlabel for="attributes`$attributeName`"' text=$attributeName}
+                {formtextinput id="attributes`$attributeName`" group='attributes' dataField=$attributeName maxLength=255}
             </div>
         {/foreach}
         {/formvolatile}
     '''
 
     def private editBody(Application it) '''
-        {% for fieldName, fieldValue in attributes %}
-            {{ form_row(attribute(form.attributes, fieldName)) }}
+        {% for attributeName, attributeValue in attributes %}
+            {{ form_row(attribute(form.attributes, 'attributes' ~ attributeName)) }}
         {% endfor %}
     '''
 }
