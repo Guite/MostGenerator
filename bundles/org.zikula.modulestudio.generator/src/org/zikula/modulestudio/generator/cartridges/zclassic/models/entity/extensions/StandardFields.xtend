@@ -27,14 +27,16 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
     override properties(Entity it) '''
 
         /**
-         * @ORM\Column(type="integer")
          «IF application.targets('1.3.x')»
+         * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="create")
-         «ELSE»
-         * @Gedmo\Blameable(on="create")
-         * @Assert\Type(type="integer")
-         «ENDIF»
          * @var integer $createdUserId
+         «ELSE»
+         * @ORM\Column(type="string")
+         * @Gedmo\Blameable(on="create")«/*
+         * @Assert\Type(type="integer")*/»
+         * @var string $createdUserId
+         «ENDIF»
          */
         protected $createdUserId;
 
@@ -42,14 +44,16 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
-         * @ORM\Column(type="integer")
          «IF application.targets('1.3.x')»
+         * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="update")
-         «ELSE»
-         * @Gedmo\Blameable(on="update")
-         * @Assert\Type(type="integer")
-         «ENDIF»
          * @var integer $updatedUserId
+         «ELSE»
+         * @ORM\Column(type="string")
+         * @Gedmo\Blameable(on="update")«/*
+         * @Assert\Type(type="integer")*/»
+         * @var string $updatedUserId
+         «ENDIF»
          */
         protected $updatedUserId;
 
@@ -82,8 +86,8 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'createdUserId', 'integer', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedUserId', 'integer', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'createdUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, false, '', '')»
         «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, false, '', '')»
         «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, false, '', '')»
     '''
