@@ -32,7 +32,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Ti
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.UserInput
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -43,7 +42,6 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 class Plugins {
     extension ControllerExtensions = new ControllerExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
-    extension FormattingExtensions = new FormattingExtensions
     extension ModelExtensions = new ModelExtensions
     extension ModelBehaviourExtensions = new ModelBehaviourExtensions
     extension NamingExtensions = new NamingExtensions
@@ -292,16 +290,6 @@ class Plugins {
         «generateInternal»
 
         «twigExtensionCompat»
-
-        /**
-         * Returns internal name of this extension.
-         *
-         * @return string
-         */
-        public function getName()
-        {
-            return '«appName.formatForDB»_twigextension';
-        }
     '''
 
     // 1.4.x only
