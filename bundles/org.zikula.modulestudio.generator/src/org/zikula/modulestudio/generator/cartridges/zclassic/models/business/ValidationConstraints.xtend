@@ -326,7 +326,7 @@ class ValidationConstraints {
                 «ENDIF»
                 $listEntries = $helper->get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
 
-                $allowedValues = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+                $allowedValues = «IF app.targets('1.3.x')»array()«ELSE»[«IF name == 'workflowState'»'initial'«ENDIF»]«ENDIF»;
                 foreach ($listEntries as $entry) {
                     $allowedValues[] = $entry['value'];
                 }

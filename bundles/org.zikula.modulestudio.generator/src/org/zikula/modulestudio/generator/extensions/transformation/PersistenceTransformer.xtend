@@ -134,7 +134,7 @@ class PersistenceTransformer {
             name = 'workflowState'
             documentation = 'the current workflow state'
             length = 20
-            defaultValue = /*'initial'*/if (entity.workflow != EntityWorkflowType.NONE) 'waiting' else 'approved'
+            defaultValue = 'initial'
             multiple = false
         ]
         listField.items += factory.createListFieldItem => [

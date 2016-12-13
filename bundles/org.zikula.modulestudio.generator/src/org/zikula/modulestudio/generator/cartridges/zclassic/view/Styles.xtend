@@ -116,7 +116,7 @@ class Styles {
         «ELSE»
             div.form-group input:required, div.form-group textarea:required, div.form-group select:required {
                 /*border: 1px solid #00a8e6;*/
-                background-color: #ffffff;
+                background-color: #fff;
             }
             div.form-group input:required:valid, div.form-group textarea:required:valid, div.form-group select:required:valid {
                 /*border: 1px solid green;*/
@@ -288,6 +288,10 @@ class Styles {
                     display: block;
                     background-position: 2px 2px;
                     background-repeat: no-repeat;
+                    background-color: #fff;
+                }
+                .tt-menu .empty-message {
+                    background-color: #fff;
                 }
 
                 div.«cssPrefix»-autocomplete .tt-menu .tt-suggestion {

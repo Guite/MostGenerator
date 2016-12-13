@@ -122,7 +122,6 @@ class EntityConstructor {
             «ENDFOR»
 
         «ENDIF»
-        $this->workflowState = 'initial';
         «IF isIndexByTarget»
             «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»

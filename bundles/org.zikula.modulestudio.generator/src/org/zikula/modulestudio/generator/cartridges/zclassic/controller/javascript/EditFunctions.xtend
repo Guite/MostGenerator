@@ -118,20 +118,19 @@ class EditFunctions {
                             });
                         },
                         templates: {
-                            empty: '<div class="empty-message">' + jQuery('#' + fieldName + 'NoResultsHint').text() + '</div>'
-                        },
-                        // custom formatting of result items
-                        display: function(user) {
-                            var html;
+                            empty: '<div class="empty-message">' + jQuery('#' + fieldName + 'NoResultsHint').text() + '</div>',
+                            suggestion: function(user) {
+                                var html;
 
-                            html = '<div class="typeahead">';
-                            html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + user.avatar + '</a>';
-                            html += '<div class="media-body">';
-                            html += '<p class="media-heading">' + user.uname + '</p>';
-                            html += '</div>';
-                            html += '</div>';
+                                html = '<div class="typeahead">';
+                                html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + user.avatar + '</a>';
+                                html += '<div class="media-body">';
+                                html += '<p class="media-heading">' + user.uname + '</p>';
+                                html += '</div>';
+                                html += '</div>';
 
-                            return html;
+                                return html;
+                            }
                         }
                     }).bind('typeahead:select', function(ev, user) {
                         // Called after the user selects an item. Here we can do something with the selection.
@@ -773,21 +772,20 @@ class EditFunctions {
                         });
                     },
                     templates: {
-                        empty: '<div class="empty-message">' + jQuery('#' + idPrefix + 'NoResultsHint').text() + '</div>'
-                    },
-                    // custom formatting of result items
-                    display: function(item) {
-                        var html;
+                        empty: '<div class="empty-message">' + jQuery('#' + idPrefix + 'NoResultsHint').text() + '</div>',
+                        suggestion: function(item) {
+                            var html;
 
-                        html = '<div class="typeahead">';
-                        html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + item.image + '</a>';
-                        html += '<div class="media-body">';
-                        html += '<p class="media-heading">' + item.title + '</p>';
-                        html += item.description;
-                        html += '</div>';
-                        html += '</div>';
+                            html = '<div class="typeahead">';
+                            html += '<div class="media"><a class="pull-left" href="javascript:void(0)">' + item.image + '</a>';
+                            html += '<div class="media-body">';
+                            html += '<p class="media-heading">' + item.title + '</p>';
+                            html += item.description;
+                            html += '</div>';
+                            html += '</div>';
 
-                        return html;
+                            return html;
+                        }
                     }
                 };
 
