@@ -46,7 +46,7 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'categories', 'array', true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'categories', 'array', true, true, false, '', '')»
     '''
 
     /**

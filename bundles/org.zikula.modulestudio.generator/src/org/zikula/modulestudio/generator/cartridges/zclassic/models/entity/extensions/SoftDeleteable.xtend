@@ -49,6 +49,6 @@ class SoftDeleteable extends AbstractExtension implements EntityExtensionInterfa
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'deletedAt', 'datetime', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'deletedAt', 'datetime', true, false, false, '', '')»
     '''
 }

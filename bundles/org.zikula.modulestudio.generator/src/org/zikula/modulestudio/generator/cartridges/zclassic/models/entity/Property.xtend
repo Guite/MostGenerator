@@ -193,7 +193,7 @@ class Property {
         «IF isIndexByField»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, (it instanceof UploadField), '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, nullable, false, (it instanceof UploadField), '', '')»
         «ENDIF»
     '''
 
@@ -205,14 +205,14 @@ class Property {
         «IF isIndexByField/* || (null !== aggregateFor && aggregateFor != ''*/»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, false, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, nullable, false, false, '', '')»
         «ENDIF»
     '''
 
     def dispatch fieldAccessor(UploadField it) '''
         «fieldAccessorDefault»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, if (entity.application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', true, false, false, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', true, false, false, '', '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, false, if (entity.application.targets('1.3.x')) 'Array()' else '[]', '')»
     '''
 }

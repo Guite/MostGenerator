@@ -95,9 +95,9 @@ class UrlRoutingLegacy {
             «getFormattedSlug»
 
             «IF targets('1.3.x')»
-                «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', false, true, 'null', '')»
+                «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', true, false, true, 'null', '')»
             «ELSE»
-                «fh.getterAndSetterMethods(it, 'router', '\\Zikula\\Routing\\UrlRouter', false, true, 'null', '')»
+                «fh.getterAndSetterMethods(it, 'router', '\\Zikula\\Routing\\UrlRouter', true, false, true, 'null', '')»
             «ENDIF»
         }
     '''

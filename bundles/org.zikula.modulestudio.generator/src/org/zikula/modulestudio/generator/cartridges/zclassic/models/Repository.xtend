@@ -175,11 +175,11 @@ class Repository {
                 «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
             }
 
-            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', true, false, false, '', '')»
             «IF app.targets('1.3.x')»
-                «fh.getterAndSetterMethods(it, 'controllerArguments', 'array', false, true, 'Array()', '')»
+                «fh.getterAndSetterMethods(it, 'controllerArguments', 'array', true, false, true, 'Array()', '')»
             «ELSE»
-                «fh.getterAndSetterMethods(it, 'request', 'Request', false, false, '', '')»
+                «fh.getterAndSetterMethods(it, 'request', 'Request', true, false, false, '', '')»
             «ENDIF»
 
             «fieldNameHelpers(stringFields)»

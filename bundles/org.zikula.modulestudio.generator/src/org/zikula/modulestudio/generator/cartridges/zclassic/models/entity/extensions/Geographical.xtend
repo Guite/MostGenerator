@@ -60,7 +60,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'latitude', 'decimal', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'longitude', 'decimal', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'latitude', 'decimal', true, false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'longitude', 'decimal', true, false, false, '', '')»
     '''
 }

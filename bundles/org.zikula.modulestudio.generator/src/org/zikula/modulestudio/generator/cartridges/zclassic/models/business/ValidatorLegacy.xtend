@@ -638,7 +638,7 @@ class ValidatorLegacy {
 
         «checkForUniqueValues»
 
-        «fh.getterAndSetterMethods(app, 'entity', 'Zikula_EntityAccess', false, true, 'null', '')»
+        «fh.getterAndSetterMethods(app, 'entity', 'Zikula_EntityAccess', true, false, true, 'null', '')»
     '''
 
     def private checkForUniqueValues(Entity it) '''

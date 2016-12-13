@@ -258,15 +258,15 @@ class Entities {
     '''
 
     def private accessors(DataObject it, String validatorClassLegacy) '''
-        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, '_objectType', 'string', true, false, false, '', '')»
         «IF application.targets('1.3.x')»
-            «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, '_validator', validatorClassLegacy, true, false, true, 'null', '')»
         «ENDIF»
-        «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', true, false, false, '', '')»
         «IF application.targets('1.3.x')»
-            «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
+            «fh.getterAndSetterMethods(it, '_actions', 'array', true, false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
         «ENDIF»
-        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', true, false, true, if (application.targets('1.3.x')) 'Array()' else '[]', '')»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
         «extMan.additionalAccessors»

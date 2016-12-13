@@ -69,9 +69,9 @@ class FileHelper {
     '''
 
 
-    def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean useHint, String init, CharSequence customImpl) '''
+    def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
         «getterMethod(name, type, isMany)»
-        «setterMethod(name, type, isMany, useHint, init, customImpl)»
+        «setterMethod(name, type, isMany, nullable, useHint, init, customImpl)»
     '''
 
     def getterMethod(Object it, String name, String type, Boolean isMany) '''
@@ -87,7 +87,7 @@ class FileHelper {
         «/* this last line is on purpose */»
     '''
 
-    def setterMethod(Object it, String name, String type, Boolean isMany, Boolean useHint, String init, CharSequence customImpl) '''
+    def setterMethod(Object it, String name, String type, Boolean isMany, Boolean nullable, Boolean useHint, String init, CharSequence customImpl) '''
         /**
          * Sets the «name.formatForDisplay».
          *
@@ -100,14 +100,18 @@ class FileHelper {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»
             «ELSE»
-                «setterMethodImpl(name, type)»
+                «setterMethodImpl(name, type, nullable)»
             «ENDIF»
         }
         «/* this last line is on purpose */»
     '''
 
-    def private dispatch setterMethodImpl(Object it, String name, String type) '''
-        $this->«name» = $«name»;
+    def private dispatch setterMethodImpl(Object it, String name, String type, Boolean nullable) '''
+        «IF nullable»
+            $this->«name» = $«name»;
+        «ELSE»
+            $this->«name» = isset($«name») ? $«name» : '';
+        «ENDIF»
     '''
 
     def triggerPropertyChangeListeners(DerivedField it, String name) '''
@@ -116,7 +120,7 @@ class FileHelper {
         «ENDIF»
     '''
 
-    def private dispatch setterMethodImpl(DerivedField it, String name, String type) '''
+    def private dispatch setterMethodImpl(DerivedField it, String name, String type, Boolean nullable) '''
         «IF (entity instanceof Entity && (entity as Entity).hasNotifyPolicy) || entity.getInheritingEntities.exists[hasNotifyPolicy]»
             if ($«name» !== $this->«name.formatForCode») {
                 «triggerPropertyChangeListeners(name)»
@@ -127,7 +131,7 @@ class FileHelper {
         «ENDIF»
     '''
 
-    def private dispatch setterMethodImpl(BooleanField it, String name, String type) '''
+    def private dispatch setterMethodImpl(BooleanField it, String name, String type, Boolean nullable) '''
         if ($«name» !== $this->«name.formatForCode») {
             «triggerPropertyChangeListeners(name)»
             $this->«name» = (bool)$«name»;
@@ -135,7 +139,11 @@ class FileHelper {
     '''
 
     def private dispatch setterAssignment(DerivedField it, String name, String type) '''
+        «IF nullable»
             $this->«name» = $«name»;
+        «ELSE»
+            $this->«name» = isset($«name») ? $«name» : '';
+        «ENDIF»
     '''
 
     def private setterAssignmentNumeric(DerivedField it, String name, String type) '''

@@ -86,9 +86,9 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'createdUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'createdUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), true, false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), true, false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', true, false, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', true, false, false, '', '')»
     '''
 }

@@ -63,7 +63,7 @@ class Sluggable extends AbstractExtension implements EntityExtensionInterface {
         «IF application.targets('1.3.x')»
             «fh.getterMethod(it, 'slug', 'string', false)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, 'slug', 'string', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'slug', 'string', true, false, false, '', '')»
         «ENDIF»
     '''
 }
