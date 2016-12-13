@@ -246,7 +246,7 @@ class ListEntriesHelper {
 
     def private entryInfo(ListFieldItem it, Application app) '''
         $states[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-            'value'   => '«IF null !== value»«value.replace("'", "")»«ENDIF»',
+            'value'   => '«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
             'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«name.formatForDisplayCapital.replace("'", "")»'),
             'title'   => «IF null !== documentation && documentation != ''»$this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('«documentation.replace("'", "")»')«ELSE»''«ENDIF»,
             'image'   => '«IF null !== image && image != ''»«image».png«ENDIF»',
@@ -256,7 +256,7 @@ class ListEntriesHelper {
 
     def private entryInfoNegative(ListFieldItem it, Application app) '''
         $states[] = «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-            'value'   => '!«IF null !== value»«value.replace("'", "")»«ENDIF»',
+            'value'   => '!«IF null !== value»«value.replace("'", "")»«ELSE»«name.formatForCode.replace("'", "")»«ENDIF»',
             'text'    => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('All except «name.formatForDisplay.replace("'", "")»'),
             'title'   => $this->«IF !app.targets('1.3.x')»translator->«ENDIF»__('Shows all items except these which are «name.formatForDisplay.replace("'", "")»'),
             'image'   => '',
