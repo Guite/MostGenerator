@@ -59,7 +59,7 @@ class GeoInput {
              */
             public function create(Zikula_Form_View $view, &$params)
             {
-                $params['maxLength'] = 11;
+                $params['maxLength'] = 12;
                 $params['width'] = '6em';
 
                 // let parent plugin do the work in detail
