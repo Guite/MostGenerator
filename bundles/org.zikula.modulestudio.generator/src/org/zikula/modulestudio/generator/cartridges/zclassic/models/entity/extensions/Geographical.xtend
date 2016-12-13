@@ -32,7 +32,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
-         * @ORM\Column(type="decimal", precision=10, scale=7)
+         * @ORM\Column(type="decimal", precision=12, scale=7)
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
          «ENDIF»
@@ -46,7 +46,7 @@ class Geographical extends AbstractExtension implements EntityExtensionInterface
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
-         * @ORM\Column(type="decimal", precision=10, scale=7)
+         * @ORM\Column(type="decimal", precision=12, scale=7)
          «IF !application.targets('1.3.x')»
          * @Assert\Type(type="float")
          «ENDIF»
