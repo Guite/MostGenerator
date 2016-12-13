@@ -578,9 +578,9 @@ class Forms {
 
         «IF app.targets('1.3.x')»{{if $mode eq 'create'}}«ELSE»{% if mode == 'create' %}«ENDIF»
             // derive default coordinates from users position with html5 geolocation feature
-            if (navigator.geolocation) {
+            /*if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(setDefaultCoordinates, handlePositionError);
-            }
+            }*/
         «IF app.targets('1.3.x')»{{/if}}«ELSE»{% endif %}«ENDIF»
 
         function setDefaultCoordinates(position) {
