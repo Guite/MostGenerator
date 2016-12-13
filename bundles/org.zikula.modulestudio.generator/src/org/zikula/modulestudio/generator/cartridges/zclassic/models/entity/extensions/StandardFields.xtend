@@ -27,7 +27,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
     override properties(Entity it) '''
 
         /**
-         «IF application.targets('1.3.x')»
+         «IF !application.targets('1.4-dev')»
          * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="create")
          * @var integer $createdUserId
@@ -44,7 +44,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
          «IF loggable»
              * @Gedmo\Versioned
          «ENDIF»
-         «IF application.targets('1.3.x')»
+         «IF !application.targets('1.4-dev')»
          * @ORM\Column(type="integer")
          * @ZK\StandardFields(type="userid", on="update")
          * @var integer $updatedUserId
