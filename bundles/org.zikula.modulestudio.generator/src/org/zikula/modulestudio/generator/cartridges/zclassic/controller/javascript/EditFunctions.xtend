@@ -62,6 +62,8 @@ class EditFunctions {
         «IF hasGeographical»
             «initGeoCoding»
 
+            «initGeoLocation»
+
         «ENDIF»
         «relationFunctions»
     '''
@@ -294,6 +296,30 @@ class EditFunctions {
                 «ENDIF»
                 newCoordinatesEventHandler();
             }
+        }
+    '''
+
+    def private initGeoLocation(Application it) '''
+        /**
+         * Callback method for geolocation functionality.
+         */
+        function «vendorAndName»SetDefaultCoordinates (position) {
+            «IF targets('1.3.x')»
+                $('latitude').value = position.coords.latitude.toFixed(7);
+                $('longitude').value = position.coords.longitude.toFixed(7);
+            «ELSE»
+                $('#latitude').val(position.coords.latitude.toFixed(7));
+                $('#longitude').val(position.coords.longitude.toFixed(7));
+            «ENDIF»
+            newCoordinatesEventHandler();
+        }
+
+        function «vendorAndName»HandlePositionError (event) {
+            «IF targets('1.3.x')»
+                Zikula.UI.Alert(event.message, Zikula.__('Error during geolocation', 'module_«appName.formatForDB»_js'));
+            «ELSE»
+                «vendorAndName»SimpleAlert($('#mapContainer'), /*Zikula.__(*/'Error during geolocation'/*, '«appName.formatForDB»_js')*/, event.message, 'geoLocationAlert', 'danger');
+            «ENDIF»
         }
     '''
 

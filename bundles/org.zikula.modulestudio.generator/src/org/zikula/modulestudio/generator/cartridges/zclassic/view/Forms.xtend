@@ -579,28 +579,9 @@ class Forms {
         «IF app.targets('1.3.x')»{{if $mode eq 'create'}}«ELSE»{% if mode == 'create' %}«ENDIF»
             // derive default coordinates from users position with html5 geolocation feature
             /*if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(setDefaultCoordinates, handlePositionError);
+                navigator.geolocation.getCurrentPosition(«app.vendorAndName»SetDefaultCoordinates, «app.vendorAndName»HandlePositionError);
             }*/
         «IF app.targets('1.3.x')»{{/if}}«ELSE»{% endif %}«ENDIF»
-
-        function setDefaultCoordinates(position) {
-            «IF app.targets('1.3.x')»
-                $('latitude').value = position.coords.latitude.toFixed(7);
-                $('longitude').value = position.coords.longitude.toFixed(7);
-            «ELSE»
-                $('#latitude').val(position.coords.latitude.toFixed(7));
-                $('#longitude').val(position.coords.longitude.toFixed(7));
-            «ENDIF»
-            newCoordinatesEventHandler();
-        }
-
-        function handlePositionError(evt) {
-            «IF app.targets('1.3.x')»
-                Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»_js'));
-            «ELSE»
-                «app.vendorAndName»SimpleAlert($('#mapContainer'), Zikula.__('Error during geolocation', '«app.appName.formatForDB»_js'), evt.message, 'geoLocationAlert', 'danger');
-            «ENDIF»
-        }
 
         «IF app.targets('1.3.x')»{{*«ELSE»{#«ENDIF»
             Initialise geocoding functionality.
