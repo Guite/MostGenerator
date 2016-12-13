@@ -111,11 +111,11 @@ class Tree extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'lft', 'integer', true, false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'lvl', 'integer', true, false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'rgt', 'integer', true, false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'root', 'integer', true, false, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'parent', (if (!application.targets('1.3.x')) '\\' else '') + entityClassName('', false), true, false, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'lft', 'integer', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'root', 'integer', false, true, false, '', '')»
+        «fh.getterAndSetterMethods(it, 'parent', (if (!application.targets('1.3.x')) '\\' else '') + entityClassName('', false), false, true, true, 'null', '')»
         «fh.getterAndSetterMethods(it, 'children', 'array', true, true, false, '', '')»
     '''
 

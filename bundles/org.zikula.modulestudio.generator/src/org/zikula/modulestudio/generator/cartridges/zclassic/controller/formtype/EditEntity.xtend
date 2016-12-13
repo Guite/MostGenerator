@@ -86,6 +86,10 @@ class EditEntity {
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         use Symfony\Component\Form\AbstractType;
+        «IF hasUploadFieldsEntity»
+            use Symfony\Component\Form\FormEvent;
+            use Symfony\Component\Form\FormEvents;
+        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -226,6 +230,19 @@ class EditEntity {
                 «ENDIF»
                 $this->addReturnControlField($builder, $options);
                 $this->addSubmitButtons($builder, $options);
+                «IF hasUploadFieldsEntity»
+
+                    $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+                        // fetch file names from child elements
+                        $entity = $event->getData();
+                        $form = $event->getForm();
+                        foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
+                            $uploadField = $form->get($uploadFieldName)->get($uploadFieldName);
+                            $uploadFileName = $uploadField->getData();
+                            $entity[$uploadFieldName] = $uploadFileName;
+                        }
+                    });
+                «ENDIF»
             }
 
             «addFields»
@@ -290,6 +307,9 @@ class EditEntity {
                             «ENDFOR»
                             «FOR field : fields.filter(UserField)»
                                 'is«field.name.formatForCodeCapital»UserValid' => '«field.name.formatForCode»',
+                            «ENDFOR»
+                            «FOR field : fields.filter(UploadField)»
+                                '«field.name.formatForCode»' => '«field.name.formatForCode».«field.name.formatForCode»',
                             «ENDFOR»
                             «FOR field : fields.filter(TimeField).filter[mandatory && (past || future)]»
                                 «IF field.past»
@@ -860,7 +880,7 @@ class EditEntity {
                 'multiple' => «isManySide(outgoing).displayBool»,
                 'expanded' => «(if (outgoing) expandedTarget else expandedSource).displayBool»,
                 'query_builder' => function(EntityRepository $er) {
-                    return $er->getListQueryBuilder('', '', false, true);
+                    return $er->getListQueryBuilder();
                 },
                 «IF outgoing && !nullable»
                     'placeholder' => $this->__('Please choose an option'),

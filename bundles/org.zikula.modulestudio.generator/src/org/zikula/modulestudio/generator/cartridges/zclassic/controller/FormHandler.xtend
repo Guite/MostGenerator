@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionha
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessing
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.AutoCompletionRelationTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
@@ -93,6 +94,7 @@ class FormHandler {
                 }
                 if (hasUploads) {
                     new UploadType().generate(it, fsa)
+                    new UploadFileTransformer().generate(it, fsa)
                 }
                 if (hasUserFields) {
                     new UserType().generate(it, fsa)
@@ -554,12 +556,12 @@ class FormHandler {
                     return false;
                 }
 
-                // handle form request and check validity constraints of $task
+                $this->templateParameters['form'] = $this->form->createView();
+
+                // handle form request and check validity constraints of edited entity
                 if ($this->form->handleRequest($this->request)->isValid()) {
                     return $this->handleCommand();
                 }
-
-                $this->templateParameters['form'] = $this->form->createView();
             «ENDIF»
 
             // everything okay, no initialisation errors occured
@@ -828,7 +830,7 @@ class FormHandler {
          *
          * @return mixed Redirect or false on errors
          */
-        public function handleCommand(«IF isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
+        public function handleCommand(«IF isLegacy»Zikula_Form_View $view, &«ENDIF»$args«IF !isLegacy» = []«ENDIF»)
         {
             «IF !isLegacy»
                 // build $args for BC (e.g. used by redirect handling)
@@ -1417,9 +1419,11 @@ class FormHandler {
                 // file field type expects File instances instead of file names
                 $controllerHelper = $this->container->get('«app.appService».controller_helper');
                 foreach ($this->uploadFields as $uploadFieldName => $isMandatory) {
-                    «FOR uploadField : getUploadFieldsEntity»
-                        $entity[$uploadFieldName] = new File($controllerHelper->getFileBaseFolder($this->objectType, $uploadFieldName) . $entity[$uploadFieldName]);
-                    «ENDFOR»
+                    if (!$entity[$uploadFieldName]) {
+                        $entity[$uploadFieldName] = null;
+                        continue;
+                    }
+                    $entity[$uploadFieldName] = new File($controllerHelper->getFileBaseFolder($this->objectType, $uploadFieldName) . $entity[$uploadFieldName]);
                 }
             «ENDIF»
 
@@ -1583,7 +1587,7 @@ class FormHandler {
          *
          * @return mixed Redirect or false on errors
          */
-        public function handleCommand(«IF app.isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
+        public function handleCommand(«IF app.isLegacy»Zikula_Form_View $view, &«ENDIF»$args«IF !app.isLegacy» = []«ENDIF»)
         {
             $result = parent::handleCommand(«IF app.isLegacy»$view, «ENDIF»$args);
             if (false === $result) {
@@ -1678,9 +1682,9 @@ class FormHandler {
             «locking.catchException(it)»
             } catch(\Exception $e) {
                 «IF app.isLegacy»
-                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    LogUtil::registerError($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', array($action)) . ' ' . $e->getMessage());
                 «ELSE»
-                    $flashBag->add('error', $this->__f('Sorry, but an unknown error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]));
+                    $flashBag->add('error', $this->__f('Sorry, but an error occured during the %action% action. Please apply the changes again!', ['%action%' => $action]) . ' ' . $e->getMessage());
                     $logArgs = ['app' => '«app.appName»', 'user' => $this->container->get('zikula_users_module.current_user')->get('uname'), 'entity' => '«name.formatForDisplay»', 'id' => $entity->createCompositeIdentifier(), 'errorMessage' => $e->getMessage()];
                     $logger->error('{app}: User {user} tried to edit the {entity} with id {id}, but failed. Error details: {errorMessage}.', $logArgs);
                 «ENDIF»

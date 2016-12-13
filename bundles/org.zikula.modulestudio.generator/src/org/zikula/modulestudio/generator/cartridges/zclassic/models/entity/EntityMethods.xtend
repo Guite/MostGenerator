@@ -477,19 +477,7 @@ class EntityMethods {
          */
         public function __toString()
         {
-            «IF hasCompositeKeys»
-                $output = '';
-                «FOR field : primaryKeyFields»
-                    if (!empty($output)) {
-                        $output .= "\n";
-                    }
-                    $output .= $this->get«field.name.formatForCodeCapital»();
-                «ENDFOR»
-
-                return $output;
-            «ELSE»
-                return $this->get«primaryKeyFields.head.name.formatForCodeCapital»();
-            «ENDIF»
+            return '«name.formatForDisplayCapital» ' . $this->createCompositeIdentifier();
         }
     '''
 

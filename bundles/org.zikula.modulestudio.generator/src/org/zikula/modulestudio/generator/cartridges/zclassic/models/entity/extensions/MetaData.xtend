@@ -46,7 +46,7 @@ class MetaData extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'metadata', (if (!application.targets('1.3.x')) '\\' else '') + entityClassName('metaData', false), true, false, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, 'metadata', (if (!application.targets('1.3.x')) '\\' else '') + entityClassName('metaData', false), false, true, true, 'null', '')»
     '''
 
     /**

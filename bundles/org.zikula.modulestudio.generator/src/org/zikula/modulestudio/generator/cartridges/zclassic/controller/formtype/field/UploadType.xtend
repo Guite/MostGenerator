@@ -30,9 +30,10 @@ class UploadType {
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Zikula\Common\Translator\TranslatorInterface;
+        use «appNamespace»\Form\DataTransformer\UploadFileTransformer;
 
         /**
-         * Upload field type extension base class.
+         * Upload field type base class.
          */
         abstract class AbstractUploadType extends AbstractType
         {
@@ -56,6 +57,7 @@ class UploadType {
              */
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
+                $options['compound'] = false;
                 $fieldName = $builder->getForm()->getConfig()->getName();
 
                 $fileOptions = [];
@@ -68,6 +70,8 @@ class UploadType {
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, 'Symfony\Component\Form\Extension\Core\Type\FileType', $fileOptions);
+                $uploadFileTransformer = new UploadFileTransformer();
+                $builder->get($fieldName)->addModelTransformer($uploadFileTransformer);
 
                 if ($options['required']) {
                     return;
@@ -129,7 +133,8 @@ class UploadType {
                             'class' => 'file-selector'
                         ],
                         'allowed_extensions' => '',
-                        'allowed_size' => 0
+                        'allowed_size' => 0,
+                        'error_bubbling' => false
                     ])
                     ->setAllowedTypes([
                         'allowed_extensions' => 'string',

@@ -95,7 +95,7 @@ class SimpleFields {
                     <span class="avatar">{useravatar uid=$«realName» rating='g'}</span>
                 «ELSE»
                     {{ «realName»|profileLinkByUserId() }}
-                    <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(uid=«realName», rating='g')|raw }}</span>
+                    <span class="avatar">{{ «entity.application.appName.formatForDB»_userAvatar(uid=«realName», rating='g') }}</span>
                 «ENDIF»
             «IF page == 'display'»
                   «IF isLegacyApp»

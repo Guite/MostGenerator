@@ -95,7 +95,7 @@ class FileHelper {
          *
          * @return void
          */
-        public function set«name.formatForCodeCapital»(«IF useHint»«type» «ENDIF»$«name»«IF init != ''» = «init»«ENDIF»)
+        public function set«name.formatForCodeCapital»(«IF !nullable && useHint»«type» «ENDIF»$«name»«IF init != ''» = «init»«ENDIF»)
         {
             «IF null !== customImpl && customImpl != ''»
                 «customImpl»

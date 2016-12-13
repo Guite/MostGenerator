@@ -190,6 +190,8 @@ class ValidationConstraints {
     def dispatch fieldAnnotations(UploadField it) '''
         «fieldAnnotationsString»
         «' '»* @Assert\Length(min="«minLength»", max="«length»")
+    '''
+    def fieldUploadAnnotations(UploadField it) '''
         «' '»* @Assert\File(
             «FOR constraint : getUploadConstraints»
             «constraint»«IF constraint != getUploadConstraints.last»,«ENDIF»

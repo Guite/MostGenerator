@@ -34,12 +34,18 @@ class ThirdParty {
             public static function getSubscribedEvents()
             {
                 «IF isBase»
-                    return [«IF needsApproval && generatePendingContentSupport»
-                        'get.pending_content'                   => ['pendingContentListener', 5],«ENDIF»«IF generateListContentType || needsDetailContentType»
-                        'module.content.gettypes'               => ['contentGetTypes', 5],«ENDIF»«IF generateScribitePlugins»
-                        'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
-                        'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
-                        'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]«ENDIF»
+                    return [
+                        «IF needsApproval && generatePendingContentSupport»
+                            'get.pending_content'                   => ['pendingContentListener', 5],
+                        «ENDIF»
+                        «IF generateListContentType || needsDetailContentType»
+                            'module.content.gettypes'               => ['contentGetTypes', 5],
+                        «ENDIF»
+                        «IF generateScribitePlugins»
+                            'module.scribite.editorhelpers'         => ['getEditorHelpers', 5],
+                            'moduleplugin.tinymce.externalplugins'  => ['getTinyMcePlugins', 5],
+                            'moduleplugin.ckeditor.externalplugins' => ['getCKEditorPlugins', 5]
+                        «ENDIF»
                     ];
                 «ELSE»
                     return parent::getSubscribedEvents();

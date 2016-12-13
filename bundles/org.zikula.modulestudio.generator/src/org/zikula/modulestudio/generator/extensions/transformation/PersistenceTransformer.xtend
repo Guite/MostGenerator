@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
+import de.guite.modulestudio.metamodel.UploadField
 import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -94,6 +95,9 @@ class PersistenceTransformer {
         }
         //println('Added primary key, field size now: ' + fields.size + ' fields')
         addWorkflowState
+        for (field : fields.filter(UploadField).filter[f|!f.mandatory]) {
+            field.nullable = true
+        }
     }
 
     /**

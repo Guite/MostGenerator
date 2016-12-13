@@ -195,34 +195,35 @@ class Layout {
         «ENDIF»
         «IF hasUploads»
 
-            {% block «appName.formatForDB»_field_upload_widget %}
+            {% block «appName.formatForDB»_field_upload_label %}{% endblock %}
+            {% block «appName.formatForDB»_field_upload_row %}
                 {% spaceless %}
-
-                <input type="file" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-                {% if not required %}
-                    <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
-                {% endif %}
-                <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
-                {% if allowed_size|default is not null and allowed_size > 0 %}
-                    <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size|«appName.formatForDB»_fileSize('', false, false) }}</span>
-                {% endif %}
-                {% if file_path|default %}
-                    <span class="help-block">
-                        {{ __('Current file') }}:
-                        <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="lightbox"{% endif %}>
-                        {% if file_meta.isImage %}
-                            {% set thumbOptions = attribute(thumbRuntimeOptions, object_type ~ id|capitalize) %}
-                            <img src="{{ file_path|imagine_filter('zkroot', thumbOptions) }}" alt="{{ formattedEntityTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
-                        {% else %}
-                            {{ __('Download') }} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
-                        {% endif %}
-                        </a>
-                    </span>
+                {{ form_row(attribute(form, fieldName)) }}
+                <div class="col-sm-9 col-sm-offset-3">
                     {% if not required %}
-                        {{ form_row(attribute(form, fieldName ~ 'DeleteFile')) }}
+                        <span class="help-block"><a id="{{ id }}_{{ fieldName }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                     {% endif %}
-                {% endif %}
-
+                    <span class="help-block">{{ __('Allowed file extensions') }}: <span id="{{ id }}_{{ fieldName }}FileExtensions">{{ allowed_extensions|default('') }}</span></span>
+                    {% if allowed_size|default is not null and allowed_size > 0 %}
+                        <span class="help-block">{{ __('Allowed file size') }}: {{ allowed_size|«appName.formatForDB»_fileSize('', false, false) }}</span>
+                    {% endif %}
+                    {% if file_path|default %}
+                        <span class="help-block">
+                            {{ __('Current file') }}:
+                            <a href="{{ file_url }}" title="{{ __('Open file') }}"{% if file_meta.isImage %} class="lightbox"{% endif %}>
+                            {% if file_meta.isImage %}
+                                {% set thumbOptions = attribute(thumbRuntimeOptions, object_type ~ id|capitalize) %}
+                                <img src="{{ file_path|imagine_filter('zkroot', thumbOptions) }}" alt="{{ formattedEntityTitle|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
+                            {% else %}
+                                {{ __('Download') }} ({{ file_meta.size|«appName.formatForDB»_fileSize(file_path, false, false) }})
+                            {% endif %}
+                            </a>
+                        </span>
+                        {% if not required %}
+                            {{ form_row(attribute(form, fieldName ~ 'DeleteFile')) }}
+                        {% endif %}
+                    {% endif %}
+                </div>
                 {% endspaceless %}
             {% endblock %}
         «ENDIF»
@@ -239,7 +240,7 @@ class Layout {
                 </div>
                 {% if value and not inlineUsage %}
                     <span class="help-block avatar">
-                        {{ «appName.formatForDB»_userAvatar(uid=value, rating='g')|raw }}
+                        {{ «appName.formatForDB»_userAvatar(uid=value, rating='g') }}
                     </span>
                     {% if hasPermission('ZikulaUsersModule::', '::', 'ACCESS_ADMIN') %}
                         <span class="help-block"><a href="{{ path('zikulausersmodule_admin_modify', { 'userid': value }) }}" title="{{ __('Switch to users administration') }}">{{ __('Manage user') }}</a></span>

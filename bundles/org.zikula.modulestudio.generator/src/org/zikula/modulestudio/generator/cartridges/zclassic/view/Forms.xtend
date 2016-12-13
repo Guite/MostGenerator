@@ -656,7 +656,7 @@ class Forms {
         «IF entity.application.targets('1.3.x')»
             «entity.application.vendorAndName»InitUploadField('«name.formatForCode»');
         «ELSE»
-            «entity.application.vendorAndName»InitUploadField('«entity.application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»');
+            «entity.application.vendorAndName»InitUploadField('«entity.application.appName.toLowerCase»_«entity.name.formatForCode.toLowerCase»_«name.formatForCode»_«name.formatForCode»');
         «ENDIF»
     '''
 

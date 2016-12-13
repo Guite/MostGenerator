@@ -108,9 +108,9 @@ class Factory {
                 return new $entityClass(«/* TODO constructor arguments if required */»);
             }
 
-            «fh.getterAndSetterMethods(it, 'className', 'string', true, false, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'objectManager', 'ObjectManager', true, false, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'repository', 'EntityRepository', true, false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'className', 'string', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'objectManager', 'ObjectManager', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'repository', 'EntityRepository', false, true, false, '', '')»
         }
     '''
 

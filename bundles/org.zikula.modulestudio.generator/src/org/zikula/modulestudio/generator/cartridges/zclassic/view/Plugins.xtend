@@ -242,7 +242,7 @@ class Plugins {
                 new \Twig_SimpleFunction('«appNameLower»_objectTypeSelector', [$this, 'getObjectTypeSelector']),
                 new \Twig_SimpleFunction('«appNameLower»_templateSelector', [$this, 'getTemplateSelector']),
                 new \Twig_SimpleFunction('«appNameLower»_userVar', [$this, 'getUserVar']),
-                new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'])
+                new \Twig_SimpleFunction('«appNameLower»_userAvatar', [$this, 'getUserAvatar'], ['is_safe' => ['html']])
             ];
         }
 
@@ -269,7 +269,7 @@ class Plugins {
                 «IF hasEntitiesWithIcsTemplates»
                     new \Twig_SimpleFilter('«appNameLower»_icalText', [$this, 'formatIcalText']),
                 «ENDIF»
-                new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'])
+                new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']])
             ];
         }
 
