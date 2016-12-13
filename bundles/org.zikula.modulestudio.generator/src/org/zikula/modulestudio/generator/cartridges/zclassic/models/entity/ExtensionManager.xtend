@@ -10,7 +10,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.exten
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.EntityExtensionInterface
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Geographical
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Loggable
-import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.MetaData
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sluggable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.SoftDeleteable
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.Sortable
@@ -53,9 +52,6 @@ class ExtensionManager {
         }
         if (entity.attributable) {
             this.extensions += new Attributes
-        }
-        if (entity.metaData) {
-            this.extensions += new MetaData
         }
         if (entity.categorisable) {
             this.extensions += new Categories

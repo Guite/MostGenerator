@@ -269,14 +269,6 @@ class ServiceDefinitions {
                     tags:
                         - { name: form.type }
             «ENDFOR»
-            «IF hasMetaDataEntities»
-
-                «modPrefix».form.type.entitymetadata:
-                    class: «nsBase»EntityMetaDataType
-                    arguments: ["@translator.default"]
-                    tags:
-                        - { name: form.type }
-            «ENDIF»
         «ENDIF»
         «IF hasDeleteActions»
 

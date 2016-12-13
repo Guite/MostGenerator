@@ -63,13 +63,6 @@ class FeatureActivationHelper {
             const TRANSLATIONS = 'translations';
 
         «ENDIF»
-        «IF hasMetaDataEntities»
-            /**
-             * Meta data feature
-             */
-            const META_DATA = 'metadata';
-
-        «ENDIF»
         «IF hasTrees»
             /**
              * Tree relatives feature
@@ -118,16 +111,6 @@ class FeatureActivationHelper {
                     }
 
                     return in_array($objectType, ['«getTranslatableEntities.map[e|e.name.formatForCode].join('\', \'')»']);
-                }
-            «ENDIF»
-            «IF hasMetaDataEntities»
-                if ($feature == self::META_DATA) {
-                    $method = 'hasMetaData';
-                    if (method_exists($this, $method)) {
-                        return $this->$method($objectType);
-                    }
-
-                    return in_array($objectType, ['«getMetaDataEntities.map[e|e.name.formatForCode].join('\', \'')»']);
                 }
             «ENDIF»
             «IF hasTrees»

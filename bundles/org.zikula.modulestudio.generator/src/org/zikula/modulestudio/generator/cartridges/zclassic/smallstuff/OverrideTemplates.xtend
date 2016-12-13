@@ -208,14 +208,6 @@ class OverrideTemplates {
                 «sourcePath»«templateFolder»includeStandardFieldsEdit«templateExtension('html')»: «destinationPath»«templateFolder»includeStandardFieldsEdit«templateExtension('html')»
             «ENDIF»
         «ENDIF»
-        «IF hasMetaDataEntities»
-            «IF hasViewActions || hasDisplayActions»
-                «sourcePath»«templateFolder»includeMetaDataDisplay«templateExtension('html')»: «destinationPath»«templateFolder»includeMetaDataDisplay«templateExtension('html')»
-            «ENDIF»
-            «IF hasEditActions»
-                «sourcePath»«templateFolder»includeMetaDataEdit«templateExtension('html')»: «destinationPath»«templateFolder»includeMetaDataEdit«templateExtension('html')»
-            «ENDIF»
-        «ENDIF»
         «IF !isLegacy»
             «sourcePath»includeFilterSyntaxDialog«templateExtension('html')»: «destinationPath»includeFilterSyntaxDialog«templateExtension('html')»
         «ENDIF»

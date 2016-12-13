@@ -61,15 +61,6 @@ class FormLegacy {
              */
             protected $hasCategories = false;
         «ENDIF»
-        «IF hasMetaDataEntities»
-
-            /**
-             * Whether the entity has meta data or not.
-             *
-             * @var boolean
-             */
-            protected $hasMetaData = false;
-        «ENDIF»
         «IF hasUserFields»
 
              /**
@@ -136,12 +127,6 @@ class FormLegacy {
                 $this->initCategoriesForEditing();
             }
         «ENDIF»
-        «IF hasMetaDataEntities»
-
-            if ($this->hasMetaData === true) {
-                $this->initMetaDataForEditing();
-            }
-        «ENDIF»
     '''
 
     def initCategoriesForEditing(Application it) '''
@@ -167,22 +152,6 @@ class FormLegacy {
                 }
                 $this->view->assign('registries', $registries)
                            ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
-            }
-        «ENDIF»
-    '''
-
-    def initMetaDataForEditing(Application it) '''
-        «IF hasMetaDataEntities»
-
-            /**
-             * Initialise meta data.
-             */
-            protected function initMetaDataForEditing()
-            {
-                $entity = $this->entityRef;
-
-                $metaData = null !== $entity->getMetadata() ? $entity->getMetadata()->toArray() : array();
-                $this->view->assign('meta', $metaData);
             }
         «ENDIF»
     '''
@@ -251,12 +220,6 @@ class FormLegacy {
     '''
 
     def processExtensions(Application it) '''
-        «IF hasMetaDataEntities»
-            if ($this->hasMetaData === true) {
-                $this->processMetaDataForUpdate($entity, $formData);
-            }
-
-        «ENDIF»
         // search for relationship plugins to update the corresponding data
         $entityData = $this->writeRelationDataToEntity($view, $entity, $entityData);
     '''
@@ -332,40 +295,9 @@ class FormLegacy {
         }
     '''
 
-    def processMetaDataForUpdate(Application it) '''
-        /**
-         * Prepare update of meta data.
-         *
-         * @param Zikula_EntityAccess $entity   currently treated entity instance
-         * @param Array               $formData form data to be merged
-         */
-        protected function processMetaDataForUpdate($entity, $formData)
-        {
-            $metaData = $entity->getMetadata();
-            if (is_null($metaData)) {
-                $metaDataEntityClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'MetaData';
-                $metaData = new $metaDataEntityClass($entity);
-            }
-
-            if (isset($formData['meta']) && is_array($formData['meta'])) {
-                // convert form date values into DateTime objects
-                $formData['meta']['startdate'] = new \DateTime($formData['meta']['startdate']);
-                $formData['meta']['enddate'] = new \DateTime($formData['meta']['enddate']);
-
-                // now set meta data values
-                $metaData->merge($formData['meta']);
-            }
-            $entity->setMetadata($metaData);
-            unset($formData['meta']);
-        }
-    '''
-
     def setMemberVars(Entity it) '''
         «IF application.hasCategorisableEntities»
             $this->hasCategories = «categorisable.displayBool»;
-        «ENDIF»
-        «IF application.hasMetaDataEntities»
-            $this->hasMetaData = «metaData.displayBool»;
         «ENDIF»
         «IF hasUserFieldsEntity»
             // array with user fields and mandatory flags

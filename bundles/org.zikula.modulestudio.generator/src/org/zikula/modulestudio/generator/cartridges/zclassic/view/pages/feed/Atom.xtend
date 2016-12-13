@@ -67,15 +67,7 @@ class Atom {
                     {if isset($«objName».createdDate) && $«objName».createdDate ne null}
                         <published>{$«objName».createdDate|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</published>
                     {/if}
-                «ENDIF»
-                «IF !standardFields»
-                    «IF metaData»
-                        {if isset($«objName».metadata) && isset($«objName».metadata.author)}
-                            <author>{$«objName».metadata.author}</author>
-                        {/if}
-                    «ENDIF»
-                «ELSE»
-                    {if isset($«objName».createdUserId)}
+                    {if isset($«objName».createdUserId) && $«objName».updatedUserId ne null}
                         {usergetvar name='uname' uid=$«objName».createdUserId assign='cr_uname'}
                         {usergetvar name='name' uid=$«objName».createdUserId assign='cr_name'}
                         <author>
@@ -83,10 +75,6 @@ class Atom {
                            <uri>{usergetvar name='_UYOURHOMEPAGE' uid=$«objName».createdUserId assign='homepage'}{$homepage|default:'-'}</uri>
                            <email>{usergetvar name='email' uid=$«objName».createdUserId}</email>
                         </author>
-                        «IF metaData»
-                            {elseif isset($«objName».metadata) && isset($«objName».metadata.author)}
-                            <author>{$«objName».metadata.author}</author>
-                        «ENDIF»
                     {/if}
                 «ENDIF»
 
@@ -136,15 +124,7 @@ class Atom {
                 {% if «objName».createdDate|default %}
                     <published>{{ «objName».createdDate|date('Y-m-dTH:M:SZ') }}</published>
                 {% endif %}
-            «ENDIF»
-            «IF !standardFields»
-                «IF metaData»
-                    {% if «objName».metadata is defined and «objName».metadata.author is defined %}
-                        <author>{{ «objName».metadata.author }}</author>
-                    {/if}
-                «ENDIF»
-            «ELSE»
-                {% if «objName».createdUserId is defined %}
+                {% if «objName».createdUserId|default %}
                     {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
                     {% set cr_name = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
                     <author>
@@ -152,11 +132,6 @@ class Atom {
                        <uri>{{ «appName.toLowerCase»_userVar('_UYOURHOMEPAGE', «objName».createdUserId, '-') }}</uri>
                        <email>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }}</email>
                     </author>
-                    «IF metaData»
-                        {% elseif «objName».metadata is defined and «objName».metadata.author is defined %}
-                        <author>{{ «objName».metadata.author }}</author>
-                    «ENDIF»
-                    #}
                 {% endif %}
             «ENDIF»
             «description(objName)»

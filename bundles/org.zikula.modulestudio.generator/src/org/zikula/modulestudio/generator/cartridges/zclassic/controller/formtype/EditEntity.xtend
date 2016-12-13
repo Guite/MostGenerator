@@ -66,7 +66,6 @@ class EditEntity {
             return
         }
         if (it instanceof Entity) {
-            if (metaData) extensions.add('metadata')
             if (hasTranslatableFields) extensions.add('translatable')
             if (attributable) extensions.add('attributes')
             if (categorisable) extensions.add('categories')
@@ -94,9 +93,6 @@ class EditEntity {
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
-        «IF extensions.contains('metadata')»
-            use Symfony\Component\Validator\Constraints\Valid;
-        «ENDIF»
         use Zikula\Common\Translator\TranslatorTrait;
         «IF extensions.contains('translatable')»
             use Zikula\ExtensionsModule\Api\VariableApi;
@@ -220,11 +216,6 @@ class EditEntity {
                 «IF !outgoingRelations.empty»
                     $this->addOutgoingRelationshipFields($builder, $options);
                 «ENDIF»
-                «IF extensions.contains('metadata')»
-                    if ($this->featureActivationHelper->isEnabled(FeatureActivationHelper::META_DATA, '«name.formatForCode»')) {
-                        $this->addMetaDataFields($builder, $options);
-                    }
-                «ENDIF»
                 «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
                     $this->addAdditionalNotificationRemarksField($builder, $options);
                 «ENDIF»
@@ -265,10 +256,6 @@ class EditEntity {
             «ENDIF»
             «IF !outgoingRelations.empty»
                 «addOutgoingRelationshipFields»
-
-            «ENDIF»
-            «IF extensions.contains('metadata')»
-                «addMetaDataFields(it as Entity)»
 
             «ENDIF»
             «IF it instanceof Entity && (it as Entity).workflow != EntityWorkflowType.NONE»
@@ -905,23 +892,6 @@ class EditEntity {
             default: false
         }
     }
-
-    def private addMetaDataFields(Entity it) '''
-        /**
-         * Adds a meta data fields.
-         *
-         * @param FormBuilderInterface $builder The form builder
-         * @param array                $options The options
-         */
-        public function addMetaDataFields(FormBuilderInterface $builder, array $options)
-        {
-            // embedded meta data form
-            $builder->add('metadata', '«app.appNamespace»\Form\Type\EntityMetaDataType', [
-                'constraints' => new Valid(),
-                'data_class' => '«app.appNamespace»\Entity\«name.formatForCodeCapital»MetaDataEntity'
-            ]);
-        }
-    '''
 
     def private addReturnControlField(Entity it) '''
         /**

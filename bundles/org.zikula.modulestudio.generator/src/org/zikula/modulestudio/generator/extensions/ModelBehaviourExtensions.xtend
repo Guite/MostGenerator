@@ -30,7 +30,7 @@ class ModelBehaviourExtensions {
      * Checks whether the feature activation helper class should be generated or not.
      */
     def needsFeatureActivationHelper(Application it) {
-        hasCategorisableEntities || hasAttributableEntities || hasTranslatable || hasMetaDataEntities || hasTrees
+        hasCategorisableEntities || hasAttributableEntities || hasTranslatable || hasTrees
     }
 
     /**
@@ -136,20 +136,6 @@ class ModelBehaviourExtensions {
      */
     def getCategorisableEntities(Application it) {
         getAllEntities.filter[categorisable]
-    }
-
-    /**
-     * Checks whether the application contains at least one entity with the meta data extension enabled.
-     */
-    def hasMetaDataEntities(Application it) {
-        !getMetaDataEntities.empty
-    }
-
-    /**
-     * Returns a list of all entities with the meta data extension enabled.
-     */
-    def getMetaDataEntities(Application it) {
-        getAllEntities.filter[metaData]
     }
 
     /**

@@ -73,9 +73,6 @@ class Section {
                 {include file='helper/includeCategoriesEdit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
             «ENDIF»
             «relationHelper.generateIncludeStatement(it, app, fsa)»
-            «IF metaData»
-                {include file='helper/includeMetaDataEdit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
-            «ENDIF»
             «IF standardFields»
                 {if $mode ne 'create'}
                     {include file='helper/includeStandardFieldsEdit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
@@ -93,11 +90,6 @@ class Section {
                 {% endif %}
             «ENDIF»
             «relationHelper.generateIncludeStatement(it, app, fsa)»
-            «IF metaData»
-                {% if featureActivationHelper.isEnabled(constant('«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
-                    {{ include('@«app.appName»/Helper/includeMetaDataEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}
-                {% endif %}
-            «ENDIF»
             «IF standardFields»
                 {% if mode != 'create' %}
                     {{ include('@«app.appName»/Helper/includeStandardFieldsEdit.html.twig', { obj: «name.formatForDB»«IF useGroupingPanels('edit')», panel: true«ENDIF» }) }}

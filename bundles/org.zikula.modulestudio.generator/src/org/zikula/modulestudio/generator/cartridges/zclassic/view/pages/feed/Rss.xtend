@@ -64,21 +64,11 @@ class Rss {
                 <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName»->getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'«ENDIF»}]]></title>
                 <link>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</link>
                 <guid>{modurl modname='«appName»' type=$lct func='«defaultAction»' ot='«name.formatForCode»'«IF hasActions('display')» «routeParamsLegacy(objName, true, true)»«ENDIF» fqurl=true}</guid>
-                «IF !standardFields»
-                    «IF metaData»
-                        {if isset($«objName».metadata) && isset($«objName».metadata.author)}
-                            <author>{$«objName».metadata.author}</author>
-                        {/if}
-                    «ENDIF»
-                «ELSE»
+                «IF standardFields»
                     {if isset($«objName».createdUserId)}
                         {usergetvar name='uname' uid=$«objName».createdUserId assign='cr_uname'}
                         {usergetvar name='name' uid=$«objName».createdUserId assign='cr_name'}
                         <author>{usergetvar name='email' uid=$«objName».createdUserId} ({$cr_name|default:$cr_uname})</author>
-                        «IF metaData»
-                            {elseif isset($«objName».metadata) && isset($«objName».metadata.author)}
-                                <author>{$«objName».metadata.author}</author>
-                        «ENDIF»
                     {/if}
                 «ENDIF»
                 «IF categorisable»
@@ -135,21 +125,11 @@ class Rss {
             <title><![CDATA[{% if «objName».updatedDate|default %}{{ «objName».updatedDate|localizeddate('medium', 'short') }} - {% endif %}{{ «objName».getTitleFromDisplayPattern()«IF !skipHookSubscribers»|notifyfilters('«appName.formatForDB».filterhook.«nameMultiple.formatForDB»')«ENDIF» }}]]></title>
             <link>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</link>
             <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</guid>
-            «IF !standardFields»
-                «IF metaData»
-                    {% if «objName».metadata|default and «objName».metadata.author|default %}
-                        <author>{{ «objName».metadata.author }}</author>
-                    {% endif %}
-                «ENDIF»
-            «ELSE»
+            «IF standardFields»
                 {% if «objName».createdUserId is defined %}
                     {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
                     {% set cr_name = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
                     <author>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }} ({{ cr_name|default(cr_uname) }})</author>
-                    «IF metaData»
-                        {% elseif «objName».metadata|default and «objName».metadata.author|default %}
-                            <author>{{ «objName».metadata.author }}</author>
-                    «ENDIF»
                 {% endif %}
             «ENDIF»
             «IF categorisable»

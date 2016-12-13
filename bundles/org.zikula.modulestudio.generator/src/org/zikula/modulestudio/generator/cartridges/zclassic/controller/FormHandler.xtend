@@ -20,7 +20,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.Upl
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.DeleteEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EntityMetaData
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ColourType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.DateTypeExtension
@@ -73,9 +72,6 @@ class FormHandler {
                 // form types
                 for (entity : entities.filter[e|e instanceof MappedSuperClass || e.hasActions('edit')]) {
                     new EditEntity().generate(entity, fsa)
-                }
-                if (hasMetaDataEntities) {
-                    new EntityMetaData().generate(it, fsa)
                 }
                 if (hasColourFields) {
                     new ColourType().generate(it, fsa)
@@ -589,7 +585,6 @@ class FormHandler {
         «initAttributesForEditing»
         «IF isLegacy»
             «legacyParts.initCategoriesForEditing(it)»
-            «legacyParts.initMetaDataForEditing(it)»
         «ENDIF»
     '''
 
@@ -968,10 +963,6 @@ class FormHandler {
                 $entity->setAttribute('url', null); // remove
                 */»
             }
-        «ENDIF»
-        «IF hasMetaDataEntities && isLegacy»
-
-            «legacyParts.processMetaDataForUpdate(it)»
         «ENDIF»
         «IF hasTranslatable»
 

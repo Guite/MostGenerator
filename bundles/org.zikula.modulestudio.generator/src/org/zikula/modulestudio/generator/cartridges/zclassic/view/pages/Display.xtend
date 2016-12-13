@@ -428,9 +428,6 @@ class Display {
                     </div>
                 «ENDIF»
             «ENDIF»
-            «IF metaData»
-                {include file='helper/includeMetaDataDisplay.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
-            «ENDIF»
             «IF standardFields»
                 {include file='helper/includeStandardFieldsDisplay.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
             «ENDIF»
@@ -466,11 +463,6 @@ class Display {
                         </div>
                     </div>
                     «ENDIF»
-                {% endif %}
-            «ENDIF»
-            «IF metaData»
-                {% if featureActivationHelper.isEnabled(constant('«application.vendor.formatForCodeCapital»\\«application.name.formatForCodeCapital»Module\\Helper\\FeatureActivationHelper::META_DATA'), '«name.formatForCode»') %}
-                    {{ include('@«application.appName»/Helper/includeMetaDataDisplay.html.twig', { obj: «objName»«IF useGroupingPanels('display')», panel: true«ENDIF» }) }}
                 {% endif %}
             «ENDIF»
             «IF standardFields»

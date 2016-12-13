@@ -428,9 +428,6 @@ class Installer {
                 «IF entity.hasTranslatableFields»
                     $classNames[] = '«entity.entityClassName('translation', false)»';
                 «ENDIF»
-                «IF entity.metaData»
-                    $classNames[] = '«entity.entityClassName('metaData', false)»';
-                «ENDIF»
                 «IF entity.attributable»
                     $classNames[] = '«entity.entityClassName('attribute', false)»';
                 «ENDIF»

@@ -181,36 +181,6 @@ class ExampleData {
                 $«entityName»«number»->setAttribute('field2', 'second value');
                 $«entityName»«number»->setAttribute('field3', 'third value');
             «ENDIF»
-            «IF metaData»
-                // create meta data assignment
-                «IF app.targets('1.3.x')»
-                    $metaDataEntityClass = $this->name . '_Entity_«name.formatForCodeCapital»MetaData';
-                «ELSE»
-                    $metaDataEntityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«name.formatForCodeCapital»MetaDataEntity';
-                «ENDIF»
-                $metaData = new $metaDataEntityClass($entity);
-
-                $metaData->setTitle($this->__('Example title'));
-                $metaData->setAuthor($this->__('Example author'));
-                $metaData->setSubject($this->__('Example subject'));
-                $metaData->setKeywords($this->__('Example keywords, one, two, three'));
-                $metaData->setDescription($this->__('Example description'));
-                $metaData->setPublisher($this->__('Example publisher'));
-                $metaData->setContributor($this->__('Example contributor'));
-                $metaData->setStartdate('');
-                $metaData->setEnddate('');
-                $metaData->setType($this->__('Example type'));
-                $metaData->setFormat($this->__('Example format'));
-                $metaData->setUri('http://example.org/');
-                $metaData->setSource($this->__('Example source'));
-                $metaData->setLanguage('en');
-                $metaData->setRelation($this->__('Example relation'));
-                $metaData->setCoverage($this->__('Example coverafge'));
-                $metaData->setComment($this->__('Example comment'));
-                $metaData->setExtra($this->__('Example extra information'));
-
-                $«entityName»«number»->setMetadata($metaData);
-            «ENDIF»
         «ENDFOR»
         «IF tree != EntityTreeType.NONE»
             $treeCounterRoot++;
