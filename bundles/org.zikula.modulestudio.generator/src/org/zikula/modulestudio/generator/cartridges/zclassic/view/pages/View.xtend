@@ -508,9 +508,9 @@ class View {
             {{if $lct eq 'admin'}}
                 {{* init the "toggle all" functionality *}}
                 if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
-                    $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (e) {
+                    $('toggle«nameMultiple.formatForCodeCapital»').observe('click', function (event) {
                         Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
-                        e.stop();
+                        event.stop();
                     });
                 }
             {{/if}}
@@ -518,9 +518,8 @@ class View {
             {% if routeArea == 'admin' %}
                 {# init the "toggle all" functionality #}
                 if ($('#toggle«nameMultiple.formatForCodeCapital»').length > 0) {
-                    $('#toggle«nameMultiple.formatForCodeCapital»').on('click', function (e) {
-                        Zikula.toggleInput('«nameMultiple.formatForCode»ViewForm');
-                        e.preventDefault();
+                    $('#toggle«nameMultiple.formatForCodeCapital»').click(function (event) {
+                        $('«nameMultiple.formatForCode.toLowerCase»-checkbox').prop('checked', $(this).prop('checked'));
                     });
                 }
             {% endif %}

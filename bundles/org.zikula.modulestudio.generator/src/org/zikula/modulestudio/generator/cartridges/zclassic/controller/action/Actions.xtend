@@ -1193,7 +1193,10 @@ class Actions {
 
             // delegate form processing to the form handler
             $formHandler = $this->get('«app.appService».form.handler.«name.formatForDB»');
-            $formHandler->processForm($templateParameters);
+            $result = $formHandler->processForm($templateParameters);
+            if ($result instanceof RedirectResponse) {
+                return $result;
+            }
 
             $viewHelper = $this->get('«app.appService».view_helper');
             $templateParameters = $formHandler->getTemplateParameters();

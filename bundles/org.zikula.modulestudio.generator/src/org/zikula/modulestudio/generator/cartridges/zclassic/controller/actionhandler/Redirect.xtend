@@ -184,6 +184,14 @@ class Redirect {
                 return $this->repeatReturnUrl;
             }
 
+            «IF app.isLegacy»
+                SessionUtil::delVar('referer');
+            «ELSE»
+                if ($this->request->getSession()->has('referer')) {
+                    $this->request->getSession()->del('referer');
+                }
+            «ENDIF»
+
             // normal usage, compute return url from given redirect code
             if (!in_array($this->returnTo, $this->getRedirectCodes())) {
                 // invalid return code, so return the default url

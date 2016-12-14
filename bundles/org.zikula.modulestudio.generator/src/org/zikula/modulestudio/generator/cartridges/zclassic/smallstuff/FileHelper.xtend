@@ -1,13 +1,13 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import de.guite.modulestudio.metamodel.AbstractDateField
+import de.guite.modulestudio.metamodel.AbstractIntegerField
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.FloatField
-import de.guite.modulestudio.metamodel.IntegerField
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.GeneratorSettingsExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -151,7 +151,7 @@ class FileHelper {
         «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
         «ENDIF»
-        $this->«name» = $«name»;
+        $this->«name» = «IF it instanceof AbstractIntegerField»intval«ELSE»floatval«ENDIF»($«name»);
         «IF !aggregators.empty»
             «FOR aggregator : aggregators»
             $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
@@ -159,7 +159,7 @@ class FileHelper {
         «ENDIF»
     '''
 
-    def private dispatch setterAssignment(IntegerField it, String name, String type) '''
+    def private dispatch setterAssignment(AbstractIntegerField it, String name, String type) '''
         «setterAssignmentNumeric(name, type)»
     '''
     def private dispatch setterAssignment(DecimalField it, String name, String type) '''

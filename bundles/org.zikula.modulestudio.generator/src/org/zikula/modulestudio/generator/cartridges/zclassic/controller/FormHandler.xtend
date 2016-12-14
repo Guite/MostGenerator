@@ -452,12 +452,20 @@ class FormHandler {
             if (null === $this->returnTo) {
                 // default to referer
                 «IF isLegacy»
-                    $this->returnTo = System::serverGetVar('HTTP_REFERER');
+                    $this->returnTo = SessionUtil::getVar('referer', '');
+                    if ('' == $this->returnTo) {
+                        $this->returnTo = System::serverGetVar('HTTP_REFERER');
+                        SessionUtil::setVar('referer', $this->returnTo);
+                    }
                 «ELSE»
-                    if ($this->request->headers->has('referer')) {
+                    if ($this->request->getSession()->has('referer')) {
+                        $this->returnTo = $this->request->getSession()->get('referer');
+                    } elseif ($this->request->headers->has('referer')) {
                         $this->returnTo = $this->request->headers->get('referer');
+                        $this->request->getSession()->set('referer', $this->returnTo);
                     } elseif ($this->request->server->has('HTTP_REFERER')) {
                         $this->returnTo = $this->request->server->get('HTTP_REFERER');
+                        $this->request->getSession()->set('referer', $this->returnTo);
                     }
                 «ENDIF»
             }
@@ -552,12 +560,22 @@ class FormHandler {
                     return false;
                 }
 
-                $this->templateParameters['form'] = $this->form->createView();
-
                 // handle form request and check validity constraints of edited entity
-                if ($this->form->handleRequest($this->request)->isValid()) {
-                    return $this->handleCommand();
+                if ($this->form->handleRequest($this->request) && $this->form->isSubmitted()) {
+                    if ($this->form->isValid()) {
+                        $result = $this->handleCommand();
+                        if (false === $result) {
+                            $this->templateParameters['form'] = $this->form->createView();
+                        }
+
+                        return $result;
+                    }
+                    if ($this->form->get('cancel')->isClicked()) {
+                        return new RedirectResponse($this->getRedirectUrl(['commandName' => 'cancel']), 302);
+                    }
                 }
+
+                $this->templateParameters['form'] = $this->form->createView();
             «ENDIF»
 
             // everything okay, no initialisation errors occured
@@ -1466,7 +1484,7 @@ class FormHandler {
 
             «ENDIF»
             $result = parent::«IF app.isLegacy»initialize($view)«ELSE»processForm($templateParameters)«ENDIF»;
-            if (false === $result) {
+            if (true !== $result) {
                 return $result;
             }
 

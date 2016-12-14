@@ -231,7 +231,7 @@ class Layout {
 
             {% block «appName.formatForDB»_field_user_widget %}
                 <div id="{{ id }}LiveSearch" class="«appName.toLowerCase»-livesearch-user «appName.toLowerCase»-autocomplete-user hidden">
-                    <i class="fa fa-search" title="{{ __('Search user') }}"></i>{% if required %}<span class="required">*</span>{% endif %}
+                    <i class="fa fa-search" title="{{ __('Search user') }}"></i>
                     <noscript><p>{{ __('This function requires JavaScript activated!') }}</p></noscript>
                     <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" />
                     <input type="text" id="{{ id }}Selector" name="{{ id }}Selector" autocomplete="off" value="{% if value > 0 %}{{ «appName.formatForDB»_userVar('uname', value) }}{% endif %}" title="{{ __('Enter a part of the user name to search') }}" class="user-selector typeahead" />

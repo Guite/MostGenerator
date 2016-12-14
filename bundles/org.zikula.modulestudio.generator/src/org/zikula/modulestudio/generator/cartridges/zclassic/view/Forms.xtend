@@ -394,7 +394,8 @@ class Forms {
         «IF app.targets('1.3.x')»
             «relationHelper.initJs(it, app, false)»
 
-            var formButtons, formValidator;
+            var formButtons;
+            var formValidator;
 
             function handleFormButton (event) {
                 var result = formValidator.validate();
@@ -453,6 +454,7 @@ class Forms {
             «relationHelper.initJs(it, app, false)»
 
             var formButtons;
+            var triggerValidation = true;
 
             function executeCustomValidationConstraints()
             {
@@ -470,10 +472,12 @@ class Forms {
             }
 
             function handleFormSubmit (event) {
-                triggerFormValidation();
-                if (!document.getElementById('«name.formatForCode»EditForm').checkValidity()) {
-                    event.preventDefault();
-                    return false;
+                if (triggerValidation) {
+                    triggerFormValidation();
+                    if (!document.getElementById('«name.formatForCode»EditForm').checkValidity()) {
+                        event.preventDefault();
+                        return false;
+                    }
                 }
 
                 // hide form buttons to prevent double submits by accident
@@ -500,10 +504,13 @@ class Forms {
                     allFormFields.change(executeCustomValidationConstraints);
 
                     formButtons = $('#«name.formatForCode»EditForm .form-buttons input');
-                    $('.btn-danger').first().bind('click keypress', function (e) {
+                    $('.btn-danger').first().bind('click keypress', function (event) {
                         if (!window.confirm('{{ __('Really delete this «name.formatForDisplay»?') }}')) {
-                            e.preventDefault();
+                            event.preventDefault();
                         }
+                    });
+                    $('#«name.formatForCode»EditForm button[type=submit]').bind('click keypress', function (event) {
+                        triggerValidation = !$(this).attr('formnovalidate');
                     });
                     $('#«name.formatForCode»EditForm').submit(handleFormSubmit);
 
