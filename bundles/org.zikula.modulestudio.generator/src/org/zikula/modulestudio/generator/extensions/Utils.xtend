@@ -128,19 +128,19 @@ class Utils {
 
         switch getCoreVersion {
             case ZK135:
-                !useSymfony
+                !useSymfony && !useUnstableCore
             case ZK136:
-                !useSymfony
+                !useSymfony && !useUnstableCore
             case ZK20:
                 version == '2.x'
             case ZK14:
-                useSymfony
+                useSymfony && !useUnstableCore
             case ZK14DEV:
                 useUnstableCore
             case ZKPRE14:
-                useSymfony
+                useSymfony && !useUnstableCore
             default:
-                useSymfony
+                useSymfony && !useUnstableCore
         }
     }
 
