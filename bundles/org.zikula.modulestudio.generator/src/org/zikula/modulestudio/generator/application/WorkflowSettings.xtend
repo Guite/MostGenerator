@@ -143,7 +143,7 @@ class WorkflowSettings {
         }
 
         var File imageFolder
-        val supportedEditors = #['CKEditor', 'TinyMce', 'Xinha'] //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        val supportedEditors = #['CKEditor', 'TinyMce'] //$NON-NLS-1$ //$NON-NLS-2$
         for (editor : supportedEditors) {
             imageFolder = new File(targetBasePath + scribitePath + editor + File.separator + 'vendor' + File.separator + editor.toLowerCase + File.separator + 'plugins/' + (if (editor == 'Xinha') fullAppName else appName.toLowerCase) + File.separator + 'images') //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             if (imageFolder.exists) {

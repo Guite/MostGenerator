@@ -39,13 +39,7 @@ class Scribite {
 
         pluginAloha
         pluginCk
-        pluginMarkItUp
-        pluginNicEdit
         pluginTinyMce
-        pluginWym
-        pluginWysi
-        pluginXinha
-        pluginYui
     }
 
     def private pluginAloha(Application it) {
@@ -84,14 +78,6 @@ class Scribite {
             fsa.generateFile(pluginPath + fileName, ckLangNl)
         }
         createPlaceholder(fsa, pluginPath + 'images/')
-    }
-
-    def private pluginMarkItUp(Application it) {
-        //createPlaceholder(fsa, docPath + 'MarkItUp/vendor/markitup/')
-    }
-
-    def private pluginNicEdit(Application it) {
-        //createPlaceholder(fsa, docPath + 'NicEdit/vendor/nicedit/')
     }
 
     def private pluginTinyMce(Application it) {
@@ -135,43 +121,19 @@ class Scribite {
         createPlaceholder(fsa, pluginPath + 'images/')
     }
 
-    def private pluginWym(Application it) {
-        //createPlaceholder(fsa, docPath + 'WYMeditor/vendor/wymeditor/plugins/' + name.formatForDB + '/')
-    }
-
-    def private pluginWysi(Application it) {
-        //createPlaceholder(fsa, docPath + 'Wysihtml5/javascript/')
-    }
-
-    def private pluginXinha(Application it) {
-        var pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
-
-        var fileName = appName + '.js'
-        if (!shouldBeSkipped(pluginPath + fileName)) {
-            if (shouldBeMarked(pluginPath + fileName)) {
-                fileName = appName + '.generated.js'
-            }
-            fsa.generateFile(pluginPath + fileName, xinhaPlugin)
-        }
-
-        createPlaceholder(fsa, pluginPath + 'images/')
-    }
-
-    def private pluginYui(Application it) {
-        //createPlaceholder(fsa, docPath + 'YUI/')
-    }
-
     def private integration(Application it) '''
         SCRIBITE INTEGRATION
         --------------------
 
         It is easy to include «appName» in your Scribite editors.
         «appName» contains already the a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay»«IF entities.size() > 1» and other items«ENDIF».
-        Please note that Scribite 5.0 is required for this.
+        Please note that Scribite 5.0+ is required for this.
 
-        To activate the popup for the editor of your choice (currently supported: CKEditor, TinyMCE, Xinha)
-        check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins.
-        If not then copy from
+        To activate the popup for the editor of your choice (currently supported: CKEditor, TinyMCE)
+        you only need to add the plugin to the list of extra plugins in the editor configuration.
+
+        If such a configuration is not available for an editor check if the plugins for
+        «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy the directories from
             «rootFolder»/«IF targets('1.3.x')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
     '''
 
@@ -333,51 +295,5 @@ class Scribite {
         tinyMCE.addI18n('nl.«name.formatForDB»', {
             desc : '«appName» Object invoegen'
         });
-    '''
-
-    def private xinhaPlugin(Application it) '''
-        // «appName» plugin for Xinha
-        // developed by «author»
-        //
-        // requires «appName» module («url»)
-        //
-        // Distributed under the same terms as xinha itself.
-        // This notice MUST stay intact for use (see license.txt).
-
-        'use strict';
-
-        function «appName»(editor) {
-            var cfg, self;
-
-            this.editor = editor;
-            cfg = editor.config;
-            self = this;
-
-            cfg.registerButton({
-                id       : '«appName»',
-                tooltip  : 'Insert «appName» object',
-                image    : _editor_url + 'plugins/«appName»/images/«appName».png',
-                textMode : false,
-                action   : function (editor) {
-                    «IF targets('1.3.x')»
-                        var url = Zikula.Config.baseURL + 'index.php'/*Zikula.Config.entrypoint*/ + '?module=«appName»&type=external&func=finder&editor=xinha';
-                    «ELSE»
-                        var url = Routing.generate('«appName.formatForDB»_external_finder', { editor: 'xinha' });
-                    «ENDIF»
-                    «appName»FinderXinha(editor, url);
-                }
-            });
-            cfg.addToolbarElement('«appName»', 'insertimage', 1);
-        }
-
-        «appName»._pluginInfo = {
-            name          : '«appName» for xinha',
-            version       : '«version»',
-            developer     : '«author»',
-            developer_url : '«url»',
-            sponsor       : 'ModuleStudio «msVersion»',
-            sponsor_url   : '«msUrl»',
-            license       : 'htmlArea'
-        };
     '''
 }
