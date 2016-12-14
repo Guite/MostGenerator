@@ -25,70 +25,60 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
+        «IF !application.targets('1.4-dev')»
 
-        /**
-         «IF !application.targets('1.4-dev')»
-         * @ORM\Column(type="integer")
-         * @ZK\StandardFields(type="userid", on="create")
-         * @var integer $createdUserId
-         «ELSE»
-         * @ORM\Column(type="string")
-         * @Gedmo\Blameable(on="create")«/*
-         * @Assert\Type(type="integer")*/»
-         * @var string $createdUserId
-         «ENDIF»
-         */
-        protected $createdUserId;
+            /**
+             * @ORM\Column(type="integer")
+             * @ZK\StandardFields(type="userid", on="create")
+             * @var integer $createdUserId
+             */
+            protected $createdUserId;
 
-        /**
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
-         «IF !application.targets('1.4-dev')»
-         * @ORM\Column(type="integer")
-         * @ZK\StandardFields(type="userid", on="update")
-         * @var integer $updatedUserId
-         «ELSE»
-         * @ORM\Column(type="string")
-         * @Gedmo\Blameable(on="update")«/*
-         * @Assert\Type(type="integer")*/»
-         * @var string $updatedUserId
-         «ENDIF»
-         */
-        protected $updatedUserId;
+            /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
+             * @ORM\Column(type="integer")
+             * @ZK\StandardFields(type="userid", on="update")
+             * @var integer $updatedUserId
+             */
+            protected $updatedUserId;
 
-        /**
-         * @ORM\Column(type="datetime")
-         * @Gedmo\Timestampable(on="create")
-         «IF !application.targets('1.3.x')»
-         * @Assert\DateTime()
-         «ENDIF»
-         * @var \DateTime $createdDate
-         */
-        protected $createdDate;
+            /**
+             * @ORM\Column(type="datetime")
+             * @Gedmo\Timestampable(on="create")
+             «IF !application.targets('1.3.x')»
+             * @Assert\DateTime()
+             «ENDIF»
+             * @var \DateTime $createdDate
+             */
+            protected $createdDate;
 
-        /**
-         «IF loggable»
-             * @Gedmo\Versioned
-         «ENDIF»
-         * @ORM\Column(type="datetime")
-         * @Gedmo\Timestampable(on="update")
-         «IF !application.targets('1.3.x')»
-         * @Assert\DateTime()
-         «ENDIF»
-         * @var \DateTime $updatedDate
-         */
-        protected $updatedDate;
+            /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
+             * @ORM\Column(type="datetime")
+             * @Gedmo\Timestampable(on="update")
+             «IF !application.targets('1.3.x')»
+             * @Assert\DateTime()
+             «ENDIF»
+             * @var \DateTime $updatedDate
+             */
+            protected $updatedDate;
+        «ENDIF»
     '''
 
     /**
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'createdUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
+        «IF !application.targets('1.4-dev')»
+            «val fh = new FileHelper»
+            «fh.getterAndSetterMethods(it, 'createdUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedUserId', (if (application.targets('1.3.x')) 'integer' else 'string'), false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, true, false, '', '')»
+        «ENDIF»
     '''
 }

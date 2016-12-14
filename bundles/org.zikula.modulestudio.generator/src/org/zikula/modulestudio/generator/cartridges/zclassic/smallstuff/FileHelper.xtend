@@ -76,7 +76,7 @@ class FileHelper {
 
     def getterMethod(Object it, String name, String type, Boolean isMany) '''
         /**
-         * Gets the «name.formatForDisplay».
+         * Returns the «name.formatForDisplay».
          *
          * @return «IF type == 'smallint' || type == 'bigint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF»«IF type.toLowerCase != 'array' && isMany»[]«ENDIF»
          */

@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Entit
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.EntityMethods
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.ExtensionManager
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.Property
+import org.zikula.modulestudio.generator.cartridges.zclassic.models.entity.extensions.StandardFieldsTrait
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.EventListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.event.LifecycleListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -59,6 +60,9 @@ class Entities {
             }
         } else {
             new LifecycleListener().generate(it, fsa)
+            if (targets('1.4-dev') && hasStandardFieldEntities) {
+                new StandardFieldsTrait().generate(it, fsa)
+            }
         }
 
         for (entity : getAllEntities) {
@@ -145,6 +149,9 @@ class Entities {
             «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             «ENDIF»
+            «IF standardFields && application.targets('1.4-dev')»
+                use «application.appNamespace»\Traits\StandardFieldsTrait;
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -186,6 +193,14 @@ class Entities {
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         «ENDIF»
         {
+            «IF it instanceof Entity && (it as Entity).standardFields && application.targets('1.4-dev')»
+                /**
+                 * Hook standard fields behaviour.
+                 * Updates createdUserId, updatedUserId, createdDate, updatedDate fields.
+                 */
+                use StandardFieldsTrait;
+
+            «ENDIF»
             «modelEntityBaseImplBody(app)»
         }
     '''
