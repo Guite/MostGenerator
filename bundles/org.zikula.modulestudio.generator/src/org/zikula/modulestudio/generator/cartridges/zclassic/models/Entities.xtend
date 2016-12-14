@@ -132,7 +132,7 @@ class Entities {
             use Doctrine\Common\NotifyPropertyChanged;
             use Doctrine\Common\PropertyChangedListener;
         «ENDIF»
-        «IF standardFields && application.targets('1.3.x')»
+        «IF standardFields && !application.targets('1.3.x') && !application.targets('1.4-dev')»
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
         «ENDIF»
         «IF !application.targets('1.3.x')»
