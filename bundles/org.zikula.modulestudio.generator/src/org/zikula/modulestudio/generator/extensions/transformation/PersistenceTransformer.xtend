@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.ModuleStudioFactory
 import de.guite.modulestudio.metamodel.UploadField
+import de.guite.modulestudio.metamodel.UserController
 import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -78,6 +79,13 @@ class PersistenceTransformer {
                         name = 'Delete'
                     ]
                 }
+            }
+        } else {
+            // temporarily add a user controller to ensure user action links are also available for the user area
+            if (controllers.filter(UserController).empty) {
+                controllers += ModuleStudioFactory.eINSTANCE.createUserController => [
+                    name = 'User'
+                ]
             }
         }
     }

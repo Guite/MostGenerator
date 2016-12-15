@@ -195,8 +195,8 @@ class LinkContainer {
                     }
 
                 «ENDIF»
-                «/* TODO legacy, see #715 */»
-                «val linkControllers = application.controllers.filter(AdminController) + application.controllers.filter(UserController)»
+                «/* TODO legacy, see #715 - remove also temporary addition of user controller in PersistenceTransformer class */»
+                «val linkControllers = app.getAdminAndUserControllers»
                 «val menuLinksHelper = new MenuLinksHelperFunctions»
                 «FOR linkController : linkControllers»
                     if («IF linkController instanceof AdminController»LinkContainerInterface::TYPE_ADMIN«ELSEIF linkController instanceof UserController»LinkContainerInterface::TYPE_USER«ELSE»'«linkController.name.formatForCode»'«ENDIF» == $type) {

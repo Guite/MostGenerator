@@ -66,6 +66,7 @@ class Display {
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» display view #}
             {% extends routeArea == 'admin' ? '«application.appName»::adminBase.html.twig' : '«application.appName»::base.html.twig' %}
+            {% block pageTitle %}{{ «objName».getTitleFromDisplayPattern()|default(__('«name.formatForDisplayCapital»')) }}{% endblock %}
             {% block title %}
                 {% set templateTitle = «objName».getTitleFromDisplayPattern()|default(__('«name.formatForDisplayCapital»')) %}
                 «templateHeading(appName)»

@@ -98,7 +98,7 @@ class Layout {
         {% block titleArea %}
             <h2>{% block title %}{% endblock %}</h2>
         {% endblock %}
-        {{ pageSetVar('title', block('title')) }}
+        {{ pageSetVar('title', block('pageTitle')|default(block('title'))) }}
 
         «IF generateModerationPanel && needsApproval»
             {{ block('moderation_panel') }}
