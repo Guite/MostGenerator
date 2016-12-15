@@ -22,20 +22,27 @@ class UploadProcessing {
         /**
          * Helper method to process upload fields.
          *
-         * @param «IF targets('1.3.x')»       «ENDIF»array        $formData The form input data
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity   Existing entity object
+        «IF targets('1.3.x')»
+         * @param        array        $formData The form input data
+        «ENDIF»
+         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity «IF targets('1.3.x')»  «ENDIF»Existing entity object
+        «IF targets('1.3.x')»
          *
          * @return array Form data after processing
+        «ENDIF»
          */
-        protected function handleUploads($formData, $entity)
+        protected function handleUploads(«IF targets('1.3.x')»$formData, «ENDIF»$entity)
         {
             if (!count($this->uploadFields)) {
-                return $formData;
+                return«IF targets('1.3.x')» $formData«ENDIF»;
             }
 
             «IF targets('1.3.x')»
                 // initialise the upload handler
                 $uploadHandler = new «appName»_UploadHandler();
+            «ELSE»
+                // get treated entity reference from persisted member var
+                $entity = $this->entityRef;
             «ENDIF»
             $existingObjectData = $entity->toArray();
 
@@ -91,14 +98,14 @@ class UploadProcessing {
                     return false;
                 }
 
-                «IF !targets('1.3.x')»
-                    $this->entityRef = $entity;
+                $this->entityRef = $entity;
 
-                «ENDIF»
                 // upload succeeded
             }
+            «IF targets('1.3.x')»
 
-            return $formData;
+                return $formData;
+            «ENDIF»
         }
     '''
 }

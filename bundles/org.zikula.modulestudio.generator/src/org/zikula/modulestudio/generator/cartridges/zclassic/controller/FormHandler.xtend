@@ -470,7 +470,7 @@ class FormHandler {
                 «ENDIF»
             }
             // store current uri for repeated creations
-            $this->repeatReturnUrl = «IF isLegacy»System::getCurrentURI()«ELSE»$this->request->getSchemeAndHttpHost() . $this->request->getPathInfo()«ENDIF»;
+            $this->repeatReturnUrl = «IF isLegacy»System::getCurrentURI()«ELSE»$this->request->getSchemeAndHttpHost() . $this->request->getBasePath() . $this->request->getPathInfo()«ENDIF»;
 
             $this->permissionComponent = «IF isLegacy»$this->name . '«ELSE»'«appName»«ENDIF»:' . $this->objectTypeCapital . ':';
 
@@ -855,7 +855,7 @@ class FormHandler {
 
             «ENDIF»
             $action = $args['commandName'];
-            $isRegularAction = !in_array($action, «IF isLegacy»array(«ELSE»[«ENDIF»'delete'«IF isLegacy», 'cancel')«ELSE», 'reset', 'cancel']«ENDIF»);
+            $isRegularAction = !in_array($action, «IF isLegacy»array(«ELSE»[«ENDIF»'delete', 'cancel'«IF isLegacy»)«ELSE»]«ENDIF»);
             «IF isLegacy»
 
                 if ($isRegularAction) {
@@ -878,7 +878,7 @@ class FormHandler {
             «IF hasHookSubscribers»
 
                 $hookHelper = null;
-                if ($entity->supportsHookSubscribers() && «IF isLegacy»$action != 'cancel'«ELSE»!in_array($action, ['reset', 'cancel'])«ENDIF») {
+                if ($entity->supportsHookSubscribers() && $action != 'cancel') {
                     «IF isLegacy»
                         $hookHelper = new «app.appName»_Util_Hook($this->view->getServiceManager());
                     «ELSE»
@@ -951,10 +951,12 @@ class FormHandler {
             /**
              * Prepare update of attributes.
              *
-             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity   currently treated entity instance
-             * @param Array«IF isLegacy»       «ENDIF»        $formData form data to be merged
+             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity «IF isLegacy»  «ENDIF»Currently treated entity instance
+             «IF isLegacy»
+             * @param Array               $formData Form data to be merged
+             «ENDIF»
              */
-            protected function processAttributesForUpdate($entity, $formData)
+            protected function processAttributesForUpdate($entity«IF isLegacy», $formData«ENDIF»)
             {
                 «IF isLegacy»
                     if (!isset($formData['attributes'])) {
@@ -968,11 +970,7 @@ class FormHandler {
                     unset($formData['attributes']);
                 «ELSE»
                     foreach ($this->getAttributeFieldNames() as $fieldName) {
-                        $value = null;
-                        if (isset($formData['attributes' . $fieldName])) {
-                            $value = $formData['attributes' . $fieldName];
-                            unset($formData['attributes' . $fieldName]);
-                        }
+                        $value = $this->form['attributes' . $fieldName]->getData();
                         $entity->setAttribute($fieldName, $value);
                     }
                 «ENDIF»
@@ -1116,22 +1114,28 @@ class FormHandler {
             «ELSE»
                 $formData = $this->form->getData();
             «ENDIF»
+            «IF isLegacy»
 
-            // get treated entity reference from persisted member var
-            $entity = $this->entityRef;
+                // get treated entity reference from persisted member var
+                $entity = $this->entityRef;
+            «ENDIF»
             «IF (isLegacy && (hasUserFields || hasListFields)) || hasUploads || (!isLegacy && hasSluggable && !getAllEntities.filter[slugUpdatable].empty)»
 
-                if («IF isLegacy»$args['commandName'] != 'cancel'«ELSE»!in_array($args['commandName'], ['reset', 'cancel'])«ENDIF») {
+                if ($args['commandName'] != 'cancel') {
                     «IF isLegacy»
                         «legacyParts.processSpecialFields(it)»
 
                     «ENDIF»
                     «IF hasUploads»
                         if (count($this->uploadFields) > 0) {
-                            $entityData = $this->handleUploads(«IF isLegacy»$entityData«ELSE»$formData«ENDIF», $entity);
-                            if ($entityData == false) {
-                                return false;
-                            }
+                            «IF isLegacy»
+                                $entityData = $this->handleUploads($entityData, $entity);
+                                if ($entityData == false) {
+                                    return false;
+                                }
+                            «ELSE»
+                                $this->handleUploads();
+                            «ENDIF»
                         }
 
                     «ENDIF»
@@ -1160,8 +1164,8 @@ class FormHandler {
                     unset($entityData['repeatCreation']);
                 }
             «ELSE»
-                if ($this->templateParameters['mode'] == 'create' && isset($formData['repeatCreation']) && $formData['repeatCreation']) {
-                    $this->repeatCreateAction = $formData['repeatCreation'];
+                if ($this->templateParameters['mode'] == 'create' && isset($this->form['repeatCreation']) && $this->form['repeatCreation']->getData() == 1) {
+                    $this->repeatCreateAction = true;
                 }
             «ENDIF»
 
@@ -1171,8 +1175,8 @@ class FormHandler {
                     unset($entityData['additionalNotificationRemarks']);
                 }
             «ELSE»
-                if (isset($formData['additionalNotificationRemarks']) && $formData['additionalNotificationRemarks'] != '') {
-                    $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $formData['additionalNotificationRemarks']);
+                if (isset($this->form['additionalNotificationRemarks']) && $this->form['additionalNotificationRemarks']->getData() != '') {
+                    $this->request->getSession()->set('«appName»AdditionalNotificationRemarks', $this->form['additionalNotificationRemarks']->getData());
                 }
             «ENDIF»
             «IF hasAttributableEntities»
@@ -1183,12 +1187,12 @@ class FormHandler {
                     «ELSE»
                         $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
                         if ($featureActivationHelper->isEnabled(FeatureActivationHelper::ATTRIBUTES, $this->objectType)) {
-                            $this->processAttributesForUpdate($entity, $formData);
+                            $this->processAttributesForUpdate($entity);
                         }
                     «ENDIF»
                 }
             «ENDIF»
-            «IF app.isLegacy»
+            «IF isLegacy»
 
                 «legacyParts.processExtensions(it)»
 
@@ -1196,10 +1200,10 @@ class FormHandler {
                 $entity->merge($entityData);
 
                 «legacyParts.postMerge(it)»
-            «ENDIF»
 
-            // save updated entity
-            $this->entityRef = $entity;
+                // save updated entity
+                $this->entityRef = $entity;
+            «ENDIF»
 
             // return remaining form data
             return $formData;

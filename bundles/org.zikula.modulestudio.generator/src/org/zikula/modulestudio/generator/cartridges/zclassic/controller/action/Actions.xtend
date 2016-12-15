@@ -716,8 +716,8 @@ class Actions {
         «ELSE»
             $templateParameters['items'] = $entities;
             $templateParameters['sort'] = $sort;
-            $templateParameters['sdir'] = $sortdir;
-            $templateParameters['pagesize'] = $resultsPerPage;
+            $templateParameters['sortdir'] = $sortdir;
+            $templateParameters['num'] = $resultsPerPage;
             «IF !skipHookSubscribers»
             $templateParameters['currentUrlObject'] = $currentUrlObject;
             «ENDIF»

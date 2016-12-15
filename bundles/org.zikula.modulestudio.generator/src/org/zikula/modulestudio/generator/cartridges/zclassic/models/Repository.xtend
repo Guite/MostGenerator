@@ -13,7 +13,6 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityField
 import de.guite.modulestudio.metamodel.EntityTreeType
-import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.FloatField
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.ManyToManyRelationship
@@ -34,8 +33,10 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Repository {
+
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
     extension ModelExtensions = new ModelExtensions
@@ -44,6 +45,7 @@ class Repository {
     extension ModelInheritanceExtensions = new ModelInheritanceExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
+    extension WorkflowExtensions = new WorkflowExtensions
 
     IFileSystemAccess fsa
     FileHelper fh = new FileHelper
@@ -1020,16 +1022,23 @@ class Repository {
          */
         protected function applyDefaultFilters(QueryBuilder $qb, $parameters = «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»)
         {
-            «IF workflow == EntityWorkflowType.STANDARD || workflow == EntityWorkflowType.ENTERPRISE»
-                $currentModule = ModUtil::getName();
+            «IF hasVisibleWorkflow»
                 «IF app.targets('1.3.x')»
+                    $currentModule = ModUtil::getName();
                     $currentLegacyControllerType = FormUtil::getPassedValue('lct', 'user', 'GETPOST');
+                    if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
+                        return $qb;
+                    }
                 «ELSE»
-                    $currentLegacyControllerType = null !== $this->getRequest() ? $this->getRequest()->get('lct', 'user') : 'user';
+                    if (null === $this->getRequest()) {
+                        $this->request = ServiceUtil::get('request');
+                    }
+                    $routeName = $this->request->get('_route');
+                    $isAdminArea = false !== strpos($routeName, 'rkparkhausmodule_fahrzeug_admin');
+                    if ($isAdminArea) {
+                        return $qb;
+                    }
                 «ENDIF»
-                if ($currentLegacyControllerType == 'admin' && $currentModule == '«app.appName»') {
-                    return $qb;
-                }
 
                 if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
                     // per default we show approved «nameMultiple.formatForDisplay» only

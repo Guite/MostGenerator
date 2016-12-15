@@ -140,7 +140,7 @@ class MailzView {
                 «ENDIF»
             «ENDIF»
         «ELSE»
-            «IF app.targets('1.3.x')»{homepage}«ELSE»{{ app.request.getSchemeAndHttpHost() }}«ENDIF»
+            «IF app.targets('1.3.x')»{homepage}«ELSE»{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath() }}«ENDIF»
         «ENDIF»'''
 
     def private mailzEntryHtmlLinkText(Entity it, Application app) '''

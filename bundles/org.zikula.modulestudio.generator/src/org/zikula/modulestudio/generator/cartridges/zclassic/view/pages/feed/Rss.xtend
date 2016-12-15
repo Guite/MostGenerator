@@ -96,15 +96,15 @@ class Rss {
         {*<rss version="0.92">*}
             <channel>
                 <title>{{ __('Latest «nameMultiple.formatForDisplay»') }}</title>
-                <link>{{ app.request.getSchemeAndHttpHost()|e }}</link>
+                <link>{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath()|e }}</link>
                 <atom:link href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getPathInfo() }}" rel="self" type="application/rss+xml" />
                 <description>{{ __('A direct feed showing the list of «nameMultiple.formatForDisplay»') }} - {{ getModVar('ZConfig', 'slogan') }}</description>
                 <language>{{ app.request.locale }}</language>
                 {# commented out as imagepath is not defined and we can't know whether this logo exists or not
                 <image>
                     <title>{{ getModVar('ZConfig', 'sitename') }}</title>
-                    <url>{{ app.request.getSchemeAndHttpHost()|e }}{{ imagepath }}/logo.jpg</url>
-                    <link>{{ app.request.getSchemeAndHttpHost()|e }}</link>
+                    <url>{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath()|e }}{{ imagepath }}/logo.jpg</url>
+                    <link>{{ app.request.getSchemeAndHttpHost() ~ app.request.getBasePath()|e }}</link>
                 </image>
                 #}
                 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
