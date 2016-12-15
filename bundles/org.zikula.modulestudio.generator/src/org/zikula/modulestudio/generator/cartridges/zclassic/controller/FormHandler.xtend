@@ -13,7 +13,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionha
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Locking
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.RelationPresets
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessing
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.UploadProcessingLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.AutoCompletionRelationTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.ListFieldTransformer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.form.UploadFileTransformer
@@ -155,9 +155,6 @@ class FormHandler {
             use ModUtil;
             use RuntimeException;
             use UserUtil;
-            «IF hasUploads»
-                use «appNamespace»\UploadHandler;
-            «ENDIF»
             «IF needsFeatureActivationHelper»
                 use «appNamespace»\Helper\FeatureActivationHelper;
             «ENDIF»
@@ -295,7 +292,7 @@ class FormHandler {
                  */
                 protected $hasTranslatableFields = false;
             «ENDIF»
-            «IF hasUploads»
+            «IF isLegacy && hasUploads»
 
                 /**
                  * Array with upload field names and mandatory flags.
@@ -304,6 +301,7 @@ class FormHandler {
                  */
                 protected $uploadFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
             «ENDIF»
+
             «IF isLegacy»
                 «legacyParts.memberVars(it)»
 
@@ -327,15 +325,6 @@ class FormHandler {
                  * @var RouterInterface
                  */
                 protected $router = null;
-                «IF hasUploads»
-
-                    /**
-                     * The upload handler.
-                     *
-                     * @var UploadHandler
-                     */
-                    protected $uploadHandler = null;
-                «ENDIF»
 
                 /**
                  * The handled form type.
@@ -358,19 +347,13 @@ class FormHandler {
                  * @param TranslatorInterface $translator   Translator service instance
                  * @param RequestStack        $requestStack RequestStack service instance
                  * @param RouterInterface     $router       Router service instance
-                «IF hasUploads»
-                    «' '»* @param UploadHandler          $uploadHandler  UploadHandler service instance
-                «ENDIF»
                  */
-                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router«IF hasUploads», UploadHandler $uploadHandler«ENDIF»)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, RequestStack $requestStack, RouterInterface $router)
                 {
                     $this->container = $container;
                     $this->setTranslator($translator);
                     $this->request = $requestStack->getCurrentRequest();
                     $this->router = $router;
-                    «IF hasUploads»
-                        $this->uploadHandler = $uploadHandler;
-                    «ENDIF»
                 }
 
                 /**
@@ -401,8 +384,10 @@ class FormHandler {
 
                 «prepareWorkflowAdditions»
             «ENDIF»
+            «IF isLegacy»
 
-            «new UploadProcessing().generate(it)»
+                «new UploadProcessingLegacy().generate(it)»
+            «ENDIF»
         }
     '''
 
@@ -1134,19 +1119,12 @@ class FormHandler {
                         «legacyParts.processSpecialFields(it)»
 
                     «ENDIF»
-                    «IF hasUploads»
+                    «IF hasUploads && isLegacy»
                         if (count($this->uploadFields) > 0) {
-                            «IF isLegacy»
-                                $entityData = $this->handleUploads($entityData, $entity);
-                                if (false === $entityData) {
-                                    return false;
-                                }
-                            «ELSE»
-                                $result = $this->handleUploads();
-                                if (false === $result) {
-                                    return false;
-                                }
-                            «ENDIF»
+                            $entityData = $this->handleUploads($entityData, $entity);
+                            if (false === $entityData) {
+                                return false;
+                            }
                         }
 
                     «ENDIF»
@@ -1357,9 +1335,6 @@ class FormHandler {
         «ENDIF»
         «locking.imports(it)»
         «IF !app.isLegacy»
-            «IF hasUploadFieldsEntity»
-                use Symfony\Component\HttpFoundation\File\File;
-            «ENDIF»
             use Symfony\Component\HttpFoundation\RedirectResponse;
             use Symfony\Component\Security\Core\Exception\AccessDeniedException;
             use ModUtil;
@@ -1404,7 +1379,7 @@ class FormHandler {
         «IF app.hasTranslatable»
             $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
         «ENDIF»
-        «IF hasUploadFieldsEntity»
+        «IF app.isLegacy && hasUploadFieldsEntity»
             // array with upload fields and mandatory flags
             $this->uploadFields = «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»' => «uploadField.mandatory.displayBool»«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»;
         «ENDIF»
@@ -1438,18 +1413,6 @@ class FormHandler {
                     «ENDIF»
                 }
             }
-            «IF !app.isLegacy && hasUploadFieldsEntity»
-
-                // file field type expects File instances instead of file names
-                $controllerHelper = $this->container->get('«app.appService».controller_helper');
-                foreach ($this->uploadFields as $uploadFieldName => $isMandatory) {
-                    if (!$entity[$uploadFieldName]) {
-                        $entity[$uploadFieldName] = null;
-                        continue;
-                    }
-                    $entity[$uploadFieldName] = new File($controllerHelper->getFileBaseFolder($this->objectType, $uploadFieldName) . $entity[$uploadFieldName]);
-                }
-            «ENDIF»
 
             return $entity;
         }
@@ -1546,7 +1509,7 @@ class FormHandler {
             «ELSE»
                 $this->templateParameters[$this->objectTypeLower] = $entityData;
             «ENDIF»
-            «IF hasUploadFieldsEntity»
+            «IF app.isLegacy && hasUploadFieldsEntity»
 
                 if ($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'edit') {
                     // assign formatted title (used for image thumbnails)
@@ -1573,6 +1536,9 @@ class FormHandler {
             protected function createForm()
             {
                 $options = [
+                    «IF hasUploadFieldsEntity»
+                        'entity' => $this->entityRef,
+                    «ENDIF»
                     'mode' => $this->templateParameters['mode'],
                     'actions' => $this->templateParameters['actions'],
                     «IF !incoming.empty || !outgoing.empty»

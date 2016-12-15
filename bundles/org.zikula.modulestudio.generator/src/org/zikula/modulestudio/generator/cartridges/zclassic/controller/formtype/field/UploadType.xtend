@@ -43,6 +43,21 @@ class UploadType {
             protected $translator;
 
             /**
+             * @var string
+             */
+            protected $fieldName = '';
+
+            /**
+             * @var FormBuilderInterface
+             */
+            protected $formBuilder = null;
+
+            /**
+             * @var object
+             */
+            protected $entity = null;
+
+            /**
              * UploadTypeExtension constructor.
              *
              * @param TranslatorInterface $translator Translator service instance
@@ -58,19 +73,23 @@ class UploadType {
             public function buildForm(FormBuilderInterface $builder, array $options)
             {
                 $options['compound'] = false;
-                $fieldName = $builder->getForm()->getConfig()->getName();
+                $fieldName = $builder->getName();
+
+                $this->entity = $options['entity'];
+                $this->fieldName = $fieldName;
+                $this->formBuilder = $builder;
 
                 $fileOptions = [];
-                foreach ($options as $k => $v) {
-                    if (in_array($k, ['allowed_extensions', 'allowed_size'])) {
+                foreach ($options as $optionName => $optionValue) {
+                    if (in_array($optionName, ['entity', 'allowed_extensions', 'allowed_size'])) {
                         continue;
                     }
-                    $fileOptions[$k] = $v;
+                    $fileOptions[$optionName] = $optionValue;
                 }
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, 'Symfony\Component\Form\Extension\Core\Type\FileType', $fileOptions);
-                $uploadFileTransformer = new UploadFileTransformer();
+                $uploadFileTransformer = new UploadFileTransformer($this);
                 $builder->get($fieldName)->addModelTransformer($uploadFileTransformer);
 
                 if ($options['required']) {
@@ -92,17 +111,15 @@ class UploadType {
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
-                $fieldName = $form->getConfig()->getName();
-                $parentData = $form->getParent()->getData();
+                $this->fieldName = $form->getConfig()->getName();
 
-                $view->vars['object_type'] = $parentData->get_objectType();
-                $view->vars['object_id'] = $parentData->createCompositeIdentifier();
-                $view->vars['formattedEntityTitle'] = $parentData->getTitleFromDisplayPattern();
-                $view->vars['fieldName'] = $fieldName;
+                $view->vars['object_type'] = $this->entity->get_objectType();
+                $view->vars['fieldName'] = $this->fieldName;
+                $view->vars['formattedEntityTitle'] = $this->entity->getTitleFromDisplayPattern();
 
                 $parentData = $form->getParent()->getData();
                 $accessor = PropertyAccess::createPropertyAccessor();
-                $fieldNameGetter = 'get' . ucfirst($fieldName);
+                $fieldNameGetter = 'get' . ucfirst($this->fieldName);
 
                 // assign basic file properties
                 $fileMeta = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : [];
@@ -127,6 +144,7 @@ class UploadType {
             public function configureOptions(OptionsResolver $resolver)
             {
                 $resolver
+                    ->setRequired(['entity'])
                     ->setOptional(['allowed_extensions', 'allowed_size'])
                     ->setDefaults([
                         'attr' => [
@@ -143,6 +161,9 @@ class UploadType {
                 ;
             }
 
+            «new FileHelper().getterMethod(null, 'fieldName', 'string', false)»
+            «new FileHelper().getterMethod(null, 'formBuilder', 'FormBuilderInterface', false)»
+            «new FileHelper().getterMethod(null, 'entity', 'object', false)»
             /**
              * {@inheritdoc}
              */

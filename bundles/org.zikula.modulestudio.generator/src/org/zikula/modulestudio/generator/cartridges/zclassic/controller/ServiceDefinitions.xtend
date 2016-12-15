@@ -258,7 +258,7 @@ class ServiceDefinitions {
 
                     «modPrefix».form.handler.«entity.name.formatForDB»:
                         class: «nsBase.replace('Type\\', '')»Handler\«entity.name.formatForCodeCapital»\EditHandler
-                        arguments: ["@service_container", "@translator.default", "@request_stack", "@router"«IF hasUploads», "@«modPrefix».upload_handler"«ENDIF»]
+                        arguments: ["@service_container", "@translator.default", "@request_stack", "@router"]
                         tags:
                             - { name: form.type }
                 «ENDIF»

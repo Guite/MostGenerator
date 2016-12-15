@@ -251,16 +251,18 @@ class SimpleFields {
         «val appNameSmall = entity.application.appName.formatForDB»
         «val objName = entity.name.formatForDB»
         «val realName = objName + '.' + name.formatForCode»
-        <span class="z-formnote">
-            {gt text='Current file'}:
-            <a href="{$«realName»FullPathUrl}" title="{$formattedEntityTitle|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
-            {if $«realName»Meta.isImage}
-                {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$formattedEntityTitle}
-            {else}
-                {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
-            {/if}
-            </a>
-        </span>
+        {if $«realName» ne '' && $«realName»Meta}
+            <span class="z-formnote">
+                {gt text='Current file'}:
+                <a href="{$«realName»FullPathUrl}" title="{$formattedEntityTitle|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
+                {if $«realName»Meta.isImage}
+                    {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$formattedEntityTitle}
+                {else}
+                    {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
+                {/if}
+                </a>
+            </span>
+        {/if}
         «IF !mandatory»
             <span class="z-formnote">
                 {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}

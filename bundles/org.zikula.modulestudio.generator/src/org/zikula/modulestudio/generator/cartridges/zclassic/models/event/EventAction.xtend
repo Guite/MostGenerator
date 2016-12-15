@@ -45,18 +45,18 @@ class EventAction {
             «entity.postLoadImpl»
 
             «entityVar»->prepareItemActions();
+
+            $this->processedPostLoad = true;
         «ELSE»
 
             $serviceManager = ServiceUtil::getManager();
-            $dispatcher = $serviceManager->get('event_dispatcher');
+            $dispatcher = ServiceUtil::get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = 'Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
-            $dispatcher->dispatch(constant('«appName»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'), $event);
+            $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'), $event);
         «ENDIF»
-
-        $this->processedPostLoad = true;
     '''
 
     // 1.3.x only
@@ -143,13 +143,12 @@ class EventAction {
 
     def prePersist(Application it) '''
         «IF !isLegacy»
-            $serviceManager = ServiceUtil::getManager();
-            $dispatcher = $serviceManager->get('event_dispatcher');
+            $dispatcher = ServiceUtil::get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = 'Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
-            $dispatcher->dispatch(constant('«appName»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
+            $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
             if ($event->isPropagationStopped()) {
                 return false;
             }
@@ -167,9 +166,9 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = 'Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
-            $dispatcher->dispatch(constant('«appName»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'), $event);
+            $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'), $event);
         «ENDIF»
     '''
 
@@ -179,9 +178,9 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = 'Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
-            $dispatcher->dispatch(constant('«appName»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
+            $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
             if ($event->isPropagationStopped()) {
                 return false;
             }
@@ -256,7 +255,7 @@ class EventAction {
                 }
 
                 // remove upload file (and image thumbnails)
-                $uploadManager->deleteUploadFile('«it.name.formatForCode»', «entityVar», $uploadField, $objectId);
+                $uploadManager->deleteUploadFile(«entityVar», $uploadField);
             }
         «ENDIF»
         «IF !isLegacy»
@@ -268,9 +267,9 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = 'Filter' . ucfirst($objectType) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst($objectType) . 'Event';
             $event = new $filterEventClass(«entityVar»);
-            $dispatcher->dispatch(constant('«appName»Events::' . strtoupper($objectType) . '_POST_REMOVE'), $event);
+            $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper($objectType) . '_POST_REMOVE'), $event);
         «ENDIF»
     '''
 
@@ -280,9 +279,9 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = 'Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
-            $dispatcher->dispatch(constant('«appName»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
+            $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
             if ($event->isPropagationStopped()) {
                 return false;
             }
@@ -300,9 +299,9 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = 'Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
-            $dispatcher->dispatch(constant('«appName»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'), $event);
+            $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'), $event);
         «ENDIF»
     '''
 
@@ -376,7 +375,7 @@ class EventAction {
 
             $fullPath = $basePath . «entityVar»['«realName»'];
             «entityVar»['«realName»FullPath'] = $fullPath;
-            «entityVar»['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;«/* note: the 1.4 version would use "$request->getSchemeAndHttpHost() . $request->getBasePath()" (without trailing slash), see #846 */»
+            «entityVar»['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
 
             // just some backwards compatibility stuff«/*TODO remove on demand handling of upload meta data */»
             /*if (!isset(«entityVar»['«realName»Meta']) || !is_array(«entityVar»['«realName»Meta']) || !count(«entityVar»['«realName»Meta'])) {

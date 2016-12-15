@@ -85,10 +85,6 @@ class EditEntity {
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         use Symfony\Component\Form\AbstractType;
-        «IF hasUploadFieldsEntity»
-            use Symfony\Component\Form\FormEvent;
-            use Symfony\Component\Form\FormEvents;
-        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -221,19 +217,6 @@ class EditEntity {
                 «ENDIF»
                 $this->addReturnControlField($builder, $options);
                 $this->addSubmitButtons($builder, $options);
-                «IF hasUploadFieldsEntity»
-
-                    $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                        // fetch file names from child elements
-                        $entity = $event->getData();
-                        $form = $event->getForm();
-                        foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
-                            $uploadField = $form->get($uploadFieldName)->get($uploadFieldName);
-                            $uploadFileName = $uploadField->getData();
-                            $entity[$uploadFieldName] = $uploadFileName;
-                        }
-                    });
-                «ENDIF»
             }
 
             «addFields»
@@ -326,7 +309,7 @@ class EditEntity {
                         'actions' => [],
                         'inlineUsage' => false
                     ])
-                    ->setRequired(['mode', 'actions'])
+                    ->setRequired([«IF hasUploadFieldsEntity»'entity', «ENDIF»'mode', 'actions'])
                     ->setAllowedTypes([
                         'mode' => 'string',
                         «IF extensions.contains('attributes')»
@@ -697,6 +680,7 @@ class EditEntity {
     def private dispatch formType(UploadField it) '''«app.appNamespace»\Form\Type\Field\Upload'''
     def private dispatch additionalOptions(UploadField it) '''
         'required' => «mandatory.displayBool»«IF mandatory» && $options['mode'] == 'create'«ENDIF»,
+        'entity' => $options['entity'],
         'allowed_extensions' => '«allowedExtensions»',
         'allowed_size' => «allowedFileSize»
     '''

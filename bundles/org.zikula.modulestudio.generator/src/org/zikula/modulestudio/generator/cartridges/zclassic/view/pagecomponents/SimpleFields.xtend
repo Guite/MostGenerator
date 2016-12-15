@@ -191,10 +191,11 @@ class SimpleFields {
         val realName = objName + '.' + name.formatForCode
         if (page == 'viewcsv') '''«IF isLegacyApp»{$«realName»}«ELSE»{{ «realName» }}«ENDIF»'''
         else if (page == 'viewxml') '''
-            «IF isLegacyApp»{if $«realName» ne ''} extension="{$«realName»Meta.extension}" size="{$«realName»Meta.size}" isImage="{if $«realName»Meta.isImage}true{else}false{/if}"{if $«realName»Meta.isImage} width="{$«realName»Meta.width}" height="{$«realName»Meta.height}" format="{$«realName»Meta.format}"{/if}{/if}>{$«realName»}«ELSE»{% if «realName» is not empty %} extension="{{ «realName»Meta.extension }}" size="{{ «realName»Meta.size }}" isImage="{% if «realName»Meta.isImage %}true{% else %}false{% endif %}"{% if «realName»Meta.isImage %} width="{{ «realName»Meta.width }}" height="{{ «realName»Meta.height }}" format="{{ «realName»Meta.format }}"{% endif %}{% endif %}>{{ «realName» }}«ENDIF»'''
+            «IF isLegacyApp»{if $«realName» ne '' && $«realName»Meta} extension="{$«realName»Meta.extension}" size="{$«realName»Meta.size}" isImage="{if $«realName»Meta.isImage}true{else}false{/if}"{if $«realName»Meta.isImage} width="{$«realName»Meta.width}" height="{$«realName»Meta.height}" format="{$«realName»Meta.format}"{/if}{/if}>{$«realName»}«ELSE»{% if «realName» is not empty and «realName»Meta|default %} extension="{{ «realName»Meta.extension }}" size="{{ «realName»Meta.size }}" isImage="{% if «realName»Meta.isImage %}true{% else %}false{% endif %}"{% if «realName»Meta.isImage %} width="{{ «realName»Meta.width }}" height="{{ «realName»Meta.height }}" format="{{ «realName»Meta.format }}"{% endif %}{% endif %}>{{ «realName» }}«ENDIF»'''
         else '''
             «IF !mandatory»
-                «IF isLegacyApp»{if $«realName» ne ''}«ELSE»{% if «realName» is not empty %}«ENDIF»
+                «IF isLegacyApp»{if $«realName» ne '' && $«realName»Meta}«ELSE»{% if «realName» is not empty and «realName»Meta|default %}«ENDIF»
+            «ELSEIF !isLegacyApp»{% if «realName»Meta|default %}
             «ENDIF»
             «IF isLegacyApp»
                 <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
@@ -216,6 +217,7 @@ class SimpleFields {
             «ENDIF»
             «IF !mandatory»
                 «IF isLegacyApp»{else}&nbsp;{/if}«ELSE»{% else %}&nbsp;{% endif %}«ENDIF»
+            «ELSEIF !isLegacyApp»{% endif %}
             «ENDIF»
         '''
     }

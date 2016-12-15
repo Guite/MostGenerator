@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
@@ -11,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class LifecycleListener {
 
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -189,6 +191,39 @@ class LifecycleListener {
                 if (!$this->isEntityManagedByThisBundle($entity)) {
                     return;
                 }
+                «IF hasUploads»
+
+                    // prepare helper fields for uploaded files
+                    $objectType = $entity->get_objectType();
+                    $controllerHelper = ServiceUtil::get('«appService».controller_helper');
+                    $flashBag = ServiceUtil::get('session')->getFlashBag();
+                    $request = ServiceUtil::get('request_stack')->getCurrentRequest();
+
+                    $uploadFields = [];
+                    «FOR entity : getUploadEntities»
+                        if ($objectType == '«entity.name.formatForCode»') {
+                            $uploadFields = ['«entity.getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'];
+                        }
+                    «ENDFOR»
+
+                    if (count($uploadFields) > 0) {
+                        foreach ($uploadFields as $fieldName) {
+                            if (empty($entity[$fieldName])) {
+                                continue;
+                            }
+                            $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
+                            $fullPath = $basePath . $entity[$fieldName];
+                            $entity[$fieldName . 'FullPath'] = $fullPath;
+                            $entity[$fieldName . 'FullPathURL'] = $request->getSchemeAndHttpHost() . $request->getBasePath() . '/' . $fullPath;
+
+                            // just some backwards compatibility stuff«/*TODO remove on demand handling of upload meta data */»
+                            /*if (!isset($entity[$fieldName . 'Meta']) || !is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
+                                // assign new meta data
+                                $entity[$fieldName . 'Meta'] = $uploadManager->readMetaDataForFile($entity[$fieldName], $fullPath);
+                            }*/
+                        }
+                    }
+                «ENDIF»
 
                 «eventAction.postLoad(app, null)»
             }
@@ -208,7 +243,7 @@ class LifecycleListener {
 
                 $entityClassParts = explode('\\', get_class($entity));
 
-                return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»');
+                return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»Module');
             }
         }
     '''

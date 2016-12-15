@@ -126,12 +126,10 @@ class Uploads {
 
             use Symfony\Component\Filesystem\Filesystem;
             use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+            use Symfony\Component\HttpFoundation\File\UploadedFile;
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
             use Zikula\UsersModule\Api\CurrentUserApi;
-            use DataUtil;
-            use FileUtil;
-            use RuntimeException;
             use ServiceUtil;
 
         «ENDIF»
@@ -216,8 +214,10 @@ class Uploads {
 
             «determineFileName»
 
-            «handleError»
+            «IF !targets('1.3.x')»
+                «handleError»
 
+            «ENDIF»
             «deleteUploadFile»
         }
     '''
@@ -226,17 +226,19 @@ class Uploads {
         /**
          * Process a file upload.
          *
+         «IF targets('1.3.x')»
          * @param string $objectType Currently treated entity type
          * @param string $fileData   Form data array
          * @param string $fieldName  Name of upload field
+         «ELSE»
+         * @param string       $objectType Currently treated entity type
+         * @param UploadedFile $file       The uploaded file
+         * @param string       $fieldName  Name of upload field
+         «ENDIF»
          *
          * @return array Resulting file name and collected meta data
-         «IF !targets('1.3.x')»
-         *
-         * @throws RuntimeException Thrown if upload file base path retrieval fails or the file can not be moved to it's destination folder
-         «ENDIF»
          */
-        public function performFileUpload($objectType, $fileData, $fieldName)
+        public function performFileUpload($objectType, $file«IF targets('1.3.x')»Data«ENDIF», $fieldName)
         {
             «IF targets('1.3.x')»
                 $dom = ZLanguage::getModuleDomain('«appName»');
@@ -251,10 +253,6 @@ class Uploads {
             if (!in_array($objectType, $this->allowedObjectTypes)) {
                 return $result;
             }
-
-            «IF !targets('1.3.x')»
-                $file = $fileData[$fieldName];
-            «ENDIF»
 
             // perform validation
             «IF targets('1.3.x')»
@@ -361,15 +359,17 @@ class Uploads {
         /**
          * Check if an upload file meets all validation criteria.
          *
+         «IF targets('1.3.x')»
          * @param string $objectType Currently treated entity type
-         * @param array $file Reference to data of uploaded file
+         * @param array  $file       Reference to data of uploaded file
          * @param string $fieldName  Name of upload field
+         «ELSE»
+         * @param string       $objectType Currently treated entity type
+         * @param UploadedFile $file       Reference to data of uploaded file
+         * @param string       $fieldName  Name of upload field
+         «ENDIF»
          *
          * @return boolean true if file is valid else false
-         «IF !targets('1.3.x')»
-         *
-         * @throws RuntimeException Thrown if validating the upload file fails
-         «ENDIF»
          */
         protected function validateFileUpload($objectType, $file, $fieldName)
         {
@@ -384,19 +384,22 @@ class Uploads {
             «ENDIF»
 
             // check if a file has been uploaded properly without errors
-            if (!is_array($file) || (is_array($file) && $file['error'] != '0')) {
-                if (is_array($file)) {
-                    return $this->handleError($file);
-                }
-                «IF targets('1.3.x')»
+            «IF targets('1.3.x')»
+                if (!is_array($file) || (is_array($file) && $file['error'] != '0')) {
+                    if (is_array($file)) {
+                        return $this->handleError($file);
+                    }
+
                     return LogUtil::registerError(__('Error! No file found.', $dom));
-                «ELSE»
-                    $flashBag->add('error', $this->__('Error! No file found.'));
-                    $logger->error('{app}: User {user} tried to upload a file which could not be found.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
+                }
+            «ELSE»
+                if ($file->getError() != UPLOAD_ERR_OK) {
+                    $flashBag->add('error', $file->getErrorMessage());
+                    $logger->error('{app}: User {user} tried to upload a file with errors: ' . $file->getErrorMessage(), ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')]);
 
                     return false;
-                «ENDIF»
-            }
+                }
+            «ENDIF»
 
             // extract file extension
             $fileName = $file«IF targets('1.3.x')»['name']«ELSE»->getClientOriginalName()«ENDIF»;
@@ -677,6 +680,7 @@ class Uploads {
             break;
     '''
 
+    // 1.3.x only
     def private handleError(Application it) '''
         /**
          * Error handling helper method.
@@ -684,10 +688,6 @@ class Uploads {
          * @param array $file File array from $_FILES
          *
          * @return boolean false
-         «IF !targets('1.3.x')»
-         *
-         * @throws RuntimeException Thrown if an unknown error occurs
-         «ENDIF»
          */
         private function handleError($file)
         {
@@ -724,8 +724,8 @@ class Uploads {
                 return LogUtil::registerError(__('Error with upload', $dom) . ': ' . $errorMessage);
             «ELSE»
                 $serviceManager = ServiceUtil::getManager();
-                $session = $serviceManager->get('session');
-                $session->getFlashBag()->add('error', $this->__('Error with upload') . ': ' . $errorMessage);
+                $flashBag = $serviceManager->get('session')->getFlashBag();
+                $flashBag->add('error', $this->__('Error with upload') . ': ' . $errorMessage);
                 $logger = $serviceManager->get('logger');
                 $logger->error('{app}: User {user} received an upload error: "{errorMessage}".', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'errorMessage' => $errorMessage]);
 
@@ -739,21 +739,20 @@ class Uploads {
          * Deletes an existing upload file.
          * For images the thumbnails are removed, too.
          *
-         * @param string  $objectType Currently treated entity type
-         * @param string  $objectData Object data array
-         * @param string  $fieldName  Name of upload field
-         * @param integer $objectId   Primary identifier of the given object
+         * @param object  $entity    Currently treated entity
+         * @param string  $fieldName Name of upload field
          *
-         * @return mixed Array with updated object data on success, else false
+         * @return mixed Updated entity on success, else false
          */
-        public function deleteUploadFile($objectType, $objectData, $fieldName, $objectId)
+        public function deleteUploadFile($entity, $fieldName)
         {
+            $objectType = $entity->get_objectType();
             if (!in_array($objectType, $this->allowedObjectTypes)) {
                 return false;
             }
 
-            if (empty($objectData[$fieldName])) {
-                return $objectData;
+            if (empty($entity[$fieldName])) {
+                return $entity;
             }
 
             $serviceManager = ServiceUtil::getManager();
@@ -770,35 +769,39 @@ class Uploads {
                 «IF targets('1.3.x')»
                     LogUtil::registerError($e->getMessage());
                 «ELSE»
+                    $flashBag = ServiceUtil::get('session')->getFlashBag();
+                    $flashBag->add('error', $e->getMessage());
                     $logger = $serviceManager->get('logger');
                     $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
 
                     return false;
                 «ENDIF»
             }
-            $fileName = $objectData[$fieldName];
+            $fileName = $entity[$fieldName];
 
             // path to original file
             $filePath = $basePath . $fileName;
+            «IF targets('1.3.x')»
 
-            // check whether we have to consider thumbnails, too
-            $fileExtension = FileUtil::getExtension($fileName, false);
-            if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
-                // remove thumbnail images as well
-                $manager = ServiceUtil::getManager()->get«IF targets('1.3.x')»Service«ENDIF»('systemplugin.imagine.manager');
-                $manager->setModule('«appName»');
-                $fullObjectId = $objectType . '-' . $objectId;
-                $manager->removeImageThumbs($filePath, $fullObjectId);
-            }
+                // check whether we have to consider thumbnails, too
+                $fileExtension = FileUtil::getExtension($fileName, false);
+                if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
+                    // remove thumbnail images as well
+                    $manager = ServiceUtil::getManager()->get«IF targets('1.3.x')»Service«ENDIF»('systemplugin.imagine.manager');
+                    $manager->setModule('«appName»');
+                    $fullObjectId = $objectType . '-' . $entity->createCompositeIdentifier();
+                    $manager->removeImageThumbs($filePath, $fullObjectId);
+                }
+            «ENDIF»
 
             // remove original file
-            if (!unlink($filePath)) {
+            if (file_exists($filePath) && !unlink($filePath)) {
                 return false;
             }
-            $objectData[$fieldName] = '';
-            $objectData[$fieldName . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            $entity[$fieldName] = '';
+            $entity[$fieldName . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
-            return $objectData;
+            return $entity;
         }
     '''
 
