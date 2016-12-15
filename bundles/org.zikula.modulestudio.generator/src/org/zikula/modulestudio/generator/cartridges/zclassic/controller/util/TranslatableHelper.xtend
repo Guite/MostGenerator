@@ -279,7 +279,7 @@ class TranslatableHelper {
                     «IF targets('1.3.x')»
                         $translationData = $formData[$translationKey];
                     «ELSE»
-                        $translationData = isset($form[$translationKey]) && $this->form[$translationKey]->getData();
+                        $translationData = isset($form[$translationKey]) && $form[$translationKey]->getData();
                     «ENDIF»
                     foreach ($fields as $field) {
                         $translations[$language][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
