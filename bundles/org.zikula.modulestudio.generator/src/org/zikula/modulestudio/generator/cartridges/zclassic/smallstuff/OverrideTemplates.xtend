@@ -18,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
+// 1.3.x only
 class OverrideTemplates {
 
     extension ControllerExtensions = new ControllerExtensions
@@ -34,6 +35,10 @@ class OverrideTemplates {
      * Entry point for module documentation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        if (!targets('1.3.x')) {
+            return
+        }
+
         val docPath = getAppDocPath
 
         var fileName = 'overridesTemplate_config.yml'

@@ -273,9 +273,11 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Additions: Documentation')
         println('Generating documentation')
         new Docs().generate(it, fsa)
-        pm?.subTask('Additions: Override templates')
-        println('Generating override templates')
-        new OverrideTemplates().generate(it, fsa)
+        if (targets('1.3.x')) {
+            pm?.subTask('Additions: Override templates')
+            println('Generating override templates')
+            new OverrideTemplates().generate(it, fsa)
+        }
 
         if (generateTests) {
             pm?.subTask('Additions: Tests')
