@@ -642,9 +642,14 @@ class Actions {
         $additionalUrlParameters = [
             'all' => $showAllEntries,
             'own' => $showOwnEntries,
-            'pageSize' => $resultsPerPage
+            'num' => $resultsPerPage
         ];
-        $additionalUrlParameters = array_merge($additionalUrlParameters, $additionalParameters);
+        foreach ($additionalParameters as $parameterName => $parameterValue) {
+            if (false !== stripos($parameterName, 'thumbRuntimeOptions')) {
+                continue;
+            }
+            $additionalUrlParameters[$parameterName] = $parameterValue;
+        }
         $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
     '''
 
