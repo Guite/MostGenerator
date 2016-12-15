@@ -57,7 +57,6 @@ class QuickNavigation {
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\HttpFoundation\RequestStack;
-        use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         «IF app.needsFeatureActivationHelper»
@@ -134,14 +133,8 @@ class QuickNavigation {
             {
                 $builder
                     ->setMethod('GET')
-                    ->add('all', '«nsSymfonyFormType»HiddenType', [
-                        'data' => $options['all'],
-                        'empty_data' => 0
-                    ])
-                    ->add('own', '«nsSymfonyFormType»HiddenType', [
-                        'data' => $options['own'],
-                        'empty_data' => 0
-                    ])
+                    ->add('all', '«nsSymfonyFormType»HiddenType')
+                    ->add('own', '«nsSymfonyFormType»HiddenType')
                 ;
 
                 «IF categorisable»
@@ -246,24 +239,6 @@ class QuickNavigation {
             public function getBlockPrefix()
             {
                 return '«app.appName.formatForDB»_«name.formatForDB»quicknav';
-            }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function configureOptions(OptionsResolver $resolver)
-            {
-                $resolver
-                    ->setDefaults([
-                        'all' => 0,
-                        'own' => 0
-                    ])
-                    ->setRequired(['all', 'own'])
-                    ->setAllowedValues([
-                        'all' => [0, 1],
-                        'own' => [0, 1]
-                    ])
-                ;
             }
         }
     '''

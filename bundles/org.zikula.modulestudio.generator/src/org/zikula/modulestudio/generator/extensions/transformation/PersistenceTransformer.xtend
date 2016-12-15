@@ -83,9 +83,13 @@ class PersistenceTransformer {
         } else {
             // temporarily add a user controller to ensure user action links are also available for the user area
             if (controllers.filter(UserController).empty) {
-                controllers += ModuleStudioFactory.eINSTANCE.createUserController => [
+                var userController = ModuleStudioFactory.eINSTANCE.createUserController => [
                     name = 'User'
                 ]
+                userController.actions += ModuleStudioFactory.eINSTANCE.createMainAction => [
+                    name = 'Index'
+                ]
+                controllers += userController
             }
         }
     }

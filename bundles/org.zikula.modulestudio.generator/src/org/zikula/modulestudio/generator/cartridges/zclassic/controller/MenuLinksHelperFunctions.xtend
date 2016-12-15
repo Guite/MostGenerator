@@ -84,10 +84,10 @@ class MenuLinksHelperFunctions {
                             $links[] = [
                                 'url' => $this->router->generate('«app.appName.formatForDB»_«userController.formattedName»_«userController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                             'text' => $this->__('Frontend'),
-                             'title' => $this->__('Switch to user area.'),
-                             «IF isLegacy»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»
-                         «IF isLegacy»)«ELSE»]«ENDIF»;
+                            'text' => $this->__('Frontend'),
+                            'title' => $this->__('Switch to user area.'),
+                            «IF isLegacy»'class' => 'z-icon-es-home'«ELSE»'icon' => 'home'«ENDIF»
+                        «IF isLegacy»)«ELSE»]«ENDIF»;
                     }
                     '''
             UserController case !application.getAllAdminControllers.empty: '''
@@ -100,10 +100,10 @@ class MenuLinksHelperFunctions {
                             $links[] = [
                                 'url' => $this->router->generate('«app.appName.formatForDB»_«adminController.formattedName»_«adminController.indexUrlDetails14»),«/* end quote missing here on purpose */»
                         «ENDIF»
-                             'text' => $this->__('Backend'),
-                             'title' => $this->__('Switch to administration area.'),
-                             «IF isLegacy»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»
-                         «IF isLegacy»)«ELSE»]«ENDIF»;
+                            'text' => $this->__('Backend'),
+                            'title' => $this->__('Switch to administration area.'),
+                            «IF isLegacy»'class' => 'z-icon-es-options'«ELSE»'icon' => 'wrench'«ENDIF»
+                        «IF isLegacy»)«ELSE»]«ENDIF»;
                     }
                     '''
         }

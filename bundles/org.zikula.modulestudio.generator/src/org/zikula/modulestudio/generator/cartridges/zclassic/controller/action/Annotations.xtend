@@ -75,7 +75,7 @@ class Annotations {
          «' '»*
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«entity.nameMultiple.formatForCode»/view/{sort}/{sortdir}/{pos}/{num}.{_format}",
          «' '»*        requirements = {"sortdir" = "asc|desc|ASC|DESC", "pos" = "\d+", "num" = "\d+", "_format" = "html«IF app.getListOfViewFormats.size > 0»|«FOR format : app.getListOfViewFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
-         «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0, "_format" = "html"},
+         «' '»*        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 10, "_format" = "html"},
          «' '»*        methods = {"GET"}
          «' '»* )
     '''

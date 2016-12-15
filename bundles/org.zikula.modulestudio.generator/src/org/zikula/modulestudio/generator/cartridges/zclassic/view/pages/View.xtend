@@ -97,7 +97,7 @@ class View {
             «ELSE»
                 {{ block('page_nav_links') }}
 
-                {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig', { all: showAllEntries, own: showOwnEntries«IF !hasVisibleWorkflow», workflowStateFilter: false«ENDIF» }) }}{# see template file for available options #}
+                {{ include('@«application.appName»/«name.formatForCodeCapital»/viewQuickNav.html.twig'«IF !hasVisibleWorkflow», { workflowStateFilter: false }«ENDIF») }}{# see template file for available options #}
             «ENDIF»
 
             «viewForm(appName)»
@@ -163,9 +163,7 @@ class View {
                     {% endif %}
                 {% endif %}
             «ENDIF»
-            {% set own = showOwnEntries is defined and showOwnEntries == 1 ? 1 : 0 %}
-            {% set all = showAllEntries is defined and showAllEntries == 1 ? 1 : 0 %}
-            {% if all == 1 %}
+            {% if showAllEntries == 1 %}
                 {% set linkTitle = __('Back to paginated view') %}
                 <a href="{{ path('«appName.formatForDB»_«objName.toLowerCase»_' ~ routeArea ~ 'view') }}" title="{{ linkTitle|e('html_attr') }}" class="fa fa-table">{{ linkTitle }}</a>
             {% else %}
@@ -352,7 +350,7 @@ class View {
                 {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}
             {/if}
         «ELSE»
-            {% if showAllEntries != 1 %}
+            {% if showAllEntries != 1 and pager|default %}
                 {{ pager({ rowcount: pager.numitems, limit: pager.itemsperpage, display: 'page', route: '«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'view'}) }}
             {% endif %}
         «ENDIF»

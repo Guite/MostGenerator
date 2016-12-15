@@ -524,7 +524,34 @@ class Actions {
 
             $templateFile = $viewHelper->getViewTemplate($this->view, $objectType, 'view', array());
             $cacheId = $objectType . '_view|_sort_' . $sort . '_' . $sortdir;
+        «ELSE»
+            $templateParameters['sort'] = $sort;
+            $templateParameters['sortdir'] = $sortdir;
+            $templateParameters['num'] = $resultsPerPage;
+
+            $quickNavForm = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters);
+            if ($quickNavForm->handleRequest($request) && $quickNavForm->isSubmitted()) {
+                $quickNavData = $quickNavForm->getData();
+                foreach ($quickNavData as $fieldName => $fieldValue) {
+                    if ($fieldName == 'routeArea') {
+                        continue;
+                    }
+                    if ($fieldName == 'all') {
+                        $showAllEntries = $additionalUrlParameters['all'] = $templateParameters['all'] = $fieldValue;
+                    } elseif ($fieldName == 'own') {
+                        $showOwnEntries = $additionalUrlParameters['own'] = $templateParameters['own'] = $fieldValue;
+                    } elseif ($fieldName == 'num') {
+                        $resultsPerPage = $additionalUrlParameters['num'] = $fieldValue;
+                    } else {
+                        // set filter as query argument, fetched inside repository
+                        $request->query->set($fieldName, $fieldValue);
+                    }
+                }
+            }
+            $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
+            $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
         «ENDIF»
+
         if ($showAllEntries == 1) {
             «IF isLegacy»
                 // set cache id
@@ -637,7 +664,6 @@ class Actions {
                 «addSortColumn('updatedDate')»
             «ENDIF»
         ]);
-        $sortableColumns->setOrderBy($sortableColumns->getColumn($sort), strtoupper($sortdir));
 
         $additionalUrlParameters = [
             'all' => $showAllEntries,
@@ -650,7 +676,6 @@ class Actions {
             }
             $additionalUrlParameters[$parameterName] = $parameterValue;
         }
-        $sortableColumns->setAdditionalUrlParameters($additionalUrlParameters);
     '''
 
     def private addSortColumn(Entity it, String columnName) '''
@@ -684,15 +709,15 @@ class Actions {
                 $this->view->assign('showOwnEntries', $showOwnEntries)
                            ->assign('showAllEntries', $showAllEntries);
             «ELSE»
-                $templateParameters['showOwnEntries'] = $showOwnEntries;
-                $templateParameters['showAllEntries'] = $showAllEntries;
+                $templateParameters['own'] = $showAllEntries;
+                $templateParameters['all'] = $showOwnEntries;
             «ENDIF»
         «ENDIF»
-        if ($showOwnEntries == 1) {
-            $currentUrlArgs['own'] = 1;
-        }
         if ($showAllEntries == 1) {
             $currentUrlArgs['all'] = 1;
+        }
+        if ($showOwnEntries == 1) {
+            $currentUrlArgs['own'] = 1;
         }
     '''
 
@@ -728,21 +753,13 @@ class Actions {
             «ENDIF»
             $templateParameters = array_merge($templateParameters, $additionalParameters);
 
-            $formOptions = [
-                'all' => $templateParameters['showAllEntries'],
-                'own' => $templateParameters['showOwnEntries']
-            ];
-            $form = $this->createForm('«app.appNamespace»\Form\Type\QuickNavigation\\' . ucfirst($objectType) . 'QuickNavType', $templateParameters, $formOptions);
-
             $templateParameters['sort'] = $sortableColumns->generateSortableColumns();
-            $templateParameters['quickNavForm'] = $form->createView();
+            $templateParameters['quickNavForm'] = $quickNavForm->createView();
 
-            «/* shouldn't be necessary
-            if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
-                $templateParameters = array_merge($templateParameters, $form->getData());
-            }
-            */»
+            $templateParameters['showAllEntries'] = $templateParameters['all'];
+            $templateParameters['showOwnEntries'] = $templateParameters['own'];
             «IF app.needsFeatureActivationHelper»
+
                 $templateParameters['featureActivationHelper'] = $this->get('«app.appService».feature_activation_helper');
             «ENDIF»
         «ENDIF»
