@@ -140,6 +140,31 @@ class Config {
                     {{ form_end(form) }}
                 </div>
             {% endblock %}
+            «IF hasImageFields»
+                {% block footer %}
+                    {{ parent() }}
+
+                    <script type="text/javascript">
+                    /* <![CDATA[ */
+                        ( function($) {
+                            function «prefix.formatForDB»ToggleShrinkSettings(fieldName) {
+                                var idSuffix = fieldName.replace('«appName.toLowerCase»_appsettings_', '');
+                                $('#shrinkDetails' + idSuffix).toggleClass('hidden', !$('#«appName.toLowerCase»_appsettings_enableShrinkingFor' + idSuffix).prop('checked'));
+                            }
+
+                            $(document).ready(function() {
+                                $('.shrink-enabler').each(function (index) {
+                                    $(this).bind('click keyup', function (event) {
+                                        «prefix.formatForDB»ToggleShrinkSettings($(this).attr('id').replace('enableShrinkingFor', ''));
+                                    });
+                                    «prefix.formatForDB»ToggleShrinkSettings($(this).attr('id').replace('enableShrinkingFor', ''));
+                                });
+                            });
+                        })(jQuery);
+                    /* ]]> */
+                    </script>
+                {% endblock %}
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -210,7 +235,13 @@ class Config {
                 «ENDIF»
             </div>
         «ELSE»
+            «IF name.formatForCode.startsWith('shrinkWidth')»
+                <div id="shrinkDetails«name.formatForCode.replace('shrinkWidth', '').formatForCodeCapital»">
+            «ENDIF»
             {{ form_row(form.«name.formatForCode») }}
+            «IF name.formatForCode.startsWith('shrinkHeight')»
+                </div>
+            «ENDIF»
         «ENDIF»
     '''
 

@@ -156,10 +156,14 @@ class Config {
                 'help' => $this->__('«documentation.replace("'", '"')»'),
             «ENDIF»
             'required' => false,
-            'data' => $this->modVars['«name.formatForCode»'],
-            'empty_data' => '«value»',
+            'data' => «IF it instanceof BoolVar»(bool)«ENDIF»$this->modVars['«name.formatForCode»'],
+            «IF !(it instanceof BoolVar)»
+                'empty_data' => «IF it instanceof IntVar»intval('«value»')«ELSE»'«value»'«ENDIF»,
+            «ENDIF»
             'attr' => [
-                'title' => $this->__('«titleAttribute»')
+                'title' => $this->__('«titleAttribute»')«IF isShrinkDimensionField»,
+                'class' => 'shrinkdimension-«name.formatForCode.toLowerCase»'«ELSEIF name.formatForCode.startsWith('enableShrinkingFor')»,
+                'class' => 'shrink-enabler'«ENDIF»
             ],«additionalOptions»
         ])
     '''
