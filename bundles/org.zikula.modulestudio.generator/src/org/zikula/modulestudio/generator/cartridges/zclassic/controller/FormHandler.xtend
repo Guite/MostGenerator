@@ -1138,11 +1138,14 @@ class FormHandler {
                         if (count($this->uploadFields) > 0) {
                             «IF isLegacy»
                                 $entityData = $this->handleUploads($entityData, $entity);
-                                if ($entityData == false) {
+                                if (false === $entityData) {
                                     return false;
                                 }
                             «ELSE»
-                                $this->handleUploads();
+                                $result = $this->handleUploads();
+                                if (false === $result) {
+                                    return false;
+                                }
                             «ENDIF»
                         }
 
