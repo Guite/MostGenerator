@@ -44,6 +44,7 @@ class TranslatableHelper {
             namespace «appNamespace»\Helper\Base;
 
             use Symfony\Component\DependencyInjection\ContainerBuilder;
+            use Symfony\Component\Form\FormInterface;
             use Symfony\Component\HttpFoundation\Request;
             use Symfony\Component\HttpFoundation\RequestStack;
             use Zikula\Common\Translator\TranslatorInterface;
@@ -203,7 +204,7 @@ class TranslatableHelper {
 
             // prepare form data to edit multiple translations at once
             «IF targets('1.3.x')»
-                $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
+                $entityManager = $this->serviceManager->getService('«entityManagerService»');
             «ENDIF»
 
             // get translations
@@ -242,15 +243,19 @@ class TranslatableHelper {
          *
          * @param string              $objectType The currently treated object type
          * @param Zikula_EntityAccess $entity     The entity being edited
+         «IF targets('1.3.x')»
          * @param array               $formData   Form data containing translations
+         «ELSE»
+         * @param FormInterface       $form       Form containing translations
+         «ENDIF»
          *
          * @return array collected translations having the language codes as keys
          */
-        public function processEntityAfterEditing($objectType, $entity, $formData)
+        public function processEntityAfterEditing($objectType, $entity, $form«IF targets('1.3.x')»Data«ENDIF»)
         {
             $translations = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             // check arguments
-            if (!$objectType || !is_array($formData)) {
+            if (!$objectType«IF targets('1.3.x')» || !is_array($formData)«ENDIF») {
                 return $translations;
             }
 
@@ -270,7 +275,12 @@ class TranslatableHelper {
                         continue;
                     }
                     $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
-                    $translationData = $formData[strtolower($objectType) . $language];
+                    $translationKey = strtolower($objectType) . $language;
+                    «IF targets('1.3.x')»
+                        $translationData = $formData[$translationKey];
+                    «ELSE»
+                        $translationData = isset($form[$translationKey]) && $this->form[$translationKey]->getData();
+                    «ENDIF»
                     foreach ($fields as $field) {
                         $translations[$language][$field['name']] = isset($translationData[$field['name'] . $language]) ? $translationData[$field['name'] . $language] : '';
                         unset($formData[$field['name'] . $language]);

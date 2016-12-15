@@ -154,7 +154,6 @@ class FormHandler {
             use Zikula\Core\RouteUrl;
             use ModUtil;
             use RuntimeException;
-            use System;
             use UserUtil;
             «IF hasUploads»
                 use «appNamespace»\UploadHandler;
@@ -867,10 +866,12 @@ class FormHandler {
             «ENDIF»
 
             if ($isRegularAction || $action == 'delete') {
-                $unmappedFormData = $this->fetchInputData(«IF isLegacy»$view, «ENDIF»$args);
-                if (false === $unmappedFormData) {
-                    return false;
-                }
+                «IF isLegacy»$unmappedFormData = «ENDIF»$this->fetchInputData(«IF isLegacy»$view, «ENDIF»$args);
+                «IF isLegacy»
+                    if (false === $unmappedFormData) {
+                        return false;
+                    }
+                «ENDIF»
             }
 
             // get treated entity reference from persisted member var
@@ -900,7 +901,7 @@ class FormHandler {
                     «ELSE»
                         $featureActivationHelper = $this->container->get('«app.appService».feature_activation_helper');
                         if ($featureActivationHelper->isEnabled(FeatureActivationHelper::TRANSLATIONS, $this->objectType)) {
-                            $this->processTranslationsForUpdate($entity, $unmappedFormData);
+                            $this->processTranslationsForUpdate();
                         }
                     «ENDIF»
                 }
@@ -984,15 +985,20 @@ class FormHandler {
 
             /**
              * Prepare update of translations.
+             «IF isLegacy»
              *
-             * @param «IF isLegacy»Zikula_«ENDIF»EntityAccess $entity   currently treated entity instance
-             * @param Array«IF isLegacy»       «ENDIF»        $formData unmapped form data outside the entity scope
+             * @param Zikula_EntityAccess $entity   Currently treated entity instance
+             * @param Array               $formData Unmapped form data outside the entity scope
+             «ENDIF»
              */
-            protected function processTranslationsForUpdate($entity, $formData)
+            protected function processTranslationsForUpdate(«IF isLegacy»$entity, $formData«ENDIF»)
             {
                 «IF isLegacy»
                     $entityTransClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'Translation';
                 «ELSE»
+                    // get treated entity reference from persisted member var
+                    $entity = $this->entityRef;
+
                     $entityTransClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'TranslationEntity';
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
@@ -1003,9 +1009,9 @@ class FormHandler {
                 «ELSE»
                     $translatableHelper = $this->container->get('«app.appService».translatable_helper');
                 «ENDIF»
-                $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $entity, $formData);
+                $translations = $translatableHelper->processEntityAfterEditing($this->objectType, $entity, «IF isLegacy»$formData«ELSE»$this->form«ENDIF»);
 
-                if (System::getVar('multilingual') == 1) {
+                if («IF isLegacy»System::getVar«ELSE»$this->container->get('zikula_extensions_module.api.variable')->getSystemVar«ENDIF»('multilingual') == 1) {
                     foreach ($translations as $locale => $translationFields) {
                         foreach ($translationFields as $fieldName => $value) {
                             $transRepository->translate($entity, $fieldName, $locale, $value);
@@ -1096,14 +1102,16 @@ class FormHandler {
         /**
          * Input data processing called by handleCommand method.
          *
-        «IF isLegacy»
-            «' '»* @param Zikula_Form_View $view The form view instance
-        «ENDIF»
+         «IF isLegacy»
+         * @param Zikula_Form_View $view The form view instance
+         «ENDIF»
          * @param array «IF isLegacy»           «ENDIF»$args Additional arguments
+         «IF isLegacy»
          *
          * @return array form data after processing
+         «ENDIF»
          */
-        public function fetchInputData(«IF isLegacy»Zikula_Form_View $view, «ENDIF»&$args)
+        public function fetchInputData(«IF isLegacy»Zikula_Form_View $view, &«ENDIF»$args)
         {
             // fetch posted data input values as an associative array
             «IF isLegacy»

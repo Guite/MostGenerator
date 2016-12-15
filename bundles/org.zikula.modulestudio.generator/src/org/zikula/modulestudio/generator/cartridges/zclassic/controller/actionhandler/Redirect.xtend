@@ -130,7 +130,11 @@ class Redirect {
                     $url = $this->router->generate('«app.appName.formatForDB»_' . strtolower($this->objectType) . '_' . $routeArea . 'index');
                 «ENDIF»
             «ELSE»
-                $url = System::getHomepageUrl();
+                «IF app.isLegacy»
+                    $url = System::getHomepageUrl();
+                «ELSE»
+                    $url = $this->router->generate('home');
+                «ENDIF»
             «ENDIF»
             «IF hasActions('display') && tree != EntityTreeType.NONE»
 

@@ -22,16 +22,14 @@ class UploadProcessing {
         /**
          * Helper method to process upload fields.
          *
-        «IF targets('1.3.x')»
-         * @param        array        $formData The form input data
-        «ENDIF»
-         * @param «IF targets('1.3.x')»Zikula_«ENDIF»EntityAccess $entity «IF targets('1.3.x')»  «ENDIF»Existing entity object
-        «IF targets('1.3.x')»
+         «IF targets('1.3.x')»
+         * @param array               $formData The form input data
+         * @param Zikula_EntityAccess $entity   Existing entity object
          *
          * @return array Form data after processing
-        «ENDIF»
+         «ENDIF»
          */
-        protected function handleUploads(«IF targets('1.3.x')»$formData, «ENDIF»$entity)
+        protected function handleUploads(«IF targets('1.3.x')»$formData, $entity«ENDIF»)
         {
             if (!count($this->uploadFields)) {
                 return«IF targets('1.3.x')» $formData«ENDIF»;
