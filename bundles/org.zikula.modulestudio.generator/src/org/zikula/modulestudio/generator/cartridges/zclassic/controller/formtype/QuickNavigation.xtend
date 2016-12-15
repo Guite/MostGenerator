@@ -232,6 +232,8 @@ class QuickNavigation {
 
             «addSortingFields»
 
+            «getSortingChoices»
+
             «addAmountField»
 
             «IF hasBooleanFieldsEntity»
@@ -469,18 +471,7 @@ class QuickNavigation {
                     'attr' => [
                         'class' => 'input-sm'
                     ],
-                    'choices' => [
-                        «FOR field : getDerivedFields»
-                            «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                                $this->__('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
-                            «ENDIF»
-                        «ENDFOR»
-                        «IF standardFields»
-                            $this->__('Creation date') => 'createdDate',
-                            $this->__('Creator') => 'createdUserId',
-                            $this->__('Update date') => 'updatedDate'
-                        «ENDIF»
-                    ],
+                    'choices' => $this->getSortingChoices(),
                     'choices_as_values' => true,
                     'required' => false,
                     'expanded' => false
@@ -500,6 +491,29 @@ class QuickNavigation {
                     'expanded' => false
                 ])
             ;
+        }
+    '''
+
+    def private getSortingChoices(Entity it) '''
+        /**
+         * Returns the choices array for the sort field selection.
+         *
+         * @return array Sorting choices
+         */
+        protected function getSortingChoices()
+        {
+            return [
+                «FOR field : getDerivedFields»
+                    «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
+                        $this->__('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                    «ENDIF»
+                «ENDFOR»
+                «IF standardFields»
+                    $this->__('Creation date') => 'createdDate',
+                    $this->__('Creator') => 'createdUserId',
+                    $this->__('Update date') => 'updatedDate'
+                «ENDIF»
+            ];
         }
     '''
 
