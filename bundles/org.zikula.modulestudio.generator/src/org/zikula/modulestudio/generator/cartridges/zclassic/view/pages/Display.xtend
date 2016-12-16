@@ -185,7 +185,7 @@ class Display {
                 {{ parent() }}
 
         «ENDIF»
-        «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && isLegacyApp) || (hasImageFieldsEntity && !isLegacyApp)»
+        «IF hasBooleansWithAjaxToggleEntity('display') || (useGroupingPanels('display') && isLegacyApp) || (hasImageFieldsEntity && !isLegacyApp)»
 
         «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
             <script type="text/javascript">
@@ -208,7 +208,7 @@ class Display {
                             «IF hasImageFieldsEntity»
                                 $('a.lightbox').lightbox();
                             «ENDIF»
-                            «IF hasBooleansWithAjaxToggleEntity»
+                            «IF hasBooleansWithAjaxToggleEntity('display')»
                                 «initAjaxToggle»
                             «ENDIF»
                         });
@@ -224,15 +224,15 @@ class Display {
     '''
 
     def private initAjaxToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity»
+        «IF hasBooleansWithAjaxToggleEntity('display')»
             «IF isLegacyApp»
                 {{assign var='itemid' value=$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}}
-                «FOR field : getBooleansWithAjaxToggleEntity»
+                «FOR field : getBooleansWithAjaxToggleEntity('display')»
                     «application.vendorAndName»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
                 «ENDFOR»
             «ELSE»
                 {% set itemid = «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» %}
-                «FOR field : getBooleansWithAjaxToggleEntity»
+                «FOR field : getBooleansWithAjaxToggleEntity('display')»
                     «application.vendorAndName»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{ itemid|e('html_attr') }}');
                 «ENDFOR»
             «ENDIF»

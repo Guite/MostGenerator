@@ -444,7 +444,7 @@ class View {
     '''
 
     def private ajaxToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity || (!application.targets('1.3.x') && hasImageFieldsEntity) || listType == LIST_TYPE_TABLE»
+        «IF hasBooleansWithAjaxToggleEntity('view') || (!application.targets('1.3.x') && hasImageFieldsEntity) || listType == LIST_TYPE_TABLE»
             «IF !application.targets('1.3.x')»
                 {% block footer %}
                     {{ parent() }}
@@ -482,19 +482,19 @@ class View {
     '''
 
     def private initAjaxSingleToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity»
+        «IF hasBooleansWithAjaxToggleEntity('view')»
             «val objName = name.formatForCode»
             «IF application.targets('1.3.x')»
                 {{foreach item='«objName»' from=$items}}
                     {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
-                    «FOR field : getBooleansWithAjaxToggleEntity»
+                    «FOR field : getBooleansWithAjaxToggleEntity('view')»
                         «application.vendorAndName»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
                     «ENDFOR»
                 {{/foreach}}
             «ELSE»
                 {% for «objName» in items %}
                     {% set itemid = «objName».«getFirstPrimaryKey.name.formatForCode» %}
-                    «FOR field : getBooleansWithAjaxToggleEntity»
+                    «FOR field : getBooleansWithAjaxToggleEntity('view')»
                         «application.vendorAndName»InitToggle('«objName»', '«field.name.formatForCode»', '{{ itemid|e('js') }}');
                     «ENDFOR»
                 {% endfor %}
@@ -548,7 +548,11 @@ class View {
     def private headerLine(DerivedField it) '''
         <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.application.targets('1.3.x')»z«ELSE»text«ENDIF»-«alignment»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
-            «headerSortingLink(entity, name.formatForCode, fieldLabel)»
+            «IF entity.getSortingFields.contains(it)»
+                «headerSortingLink(entity, name.formatForCode, fieldLabel)»
+            «ELSE»
+                «headerTitle(entity, name.formatForCode, fieldLabel)»
+            «ENDIF»
         </th>
     '''
 
@@ -564,6 +568,14 @@ class View {
             {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=$lct func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)» ot='«entity.name.formatForCode»'}
         «ELSE»
             <a href="{{ sort.«fieldName».url }}" title="{{ __f('Sort by %s', {'%s': '«label.formatForDisplay»'}) }}" class="{{ sort.«fieldName».class }}">{{ __('«label.formatForDisplayCapital»') }}</a>
+        «ENDIF»
+    '''
+
+    def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''
+        «IF entity.application.targets('1.3.x')»
+            {gt text='«label.formatForDisplayCapital»'}
+        «ELSE»
+            {{ __('«label.formatForDisplayCapital»') }}
         «ENDIF»
     '''
 

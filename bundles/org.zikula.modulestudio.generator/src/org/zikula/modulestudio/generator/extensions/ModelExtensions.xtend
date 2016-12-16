@@ -159,7 +159,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one boolean field having ajax toggle enabled.
      */
     def getEntitiesWithAjaxToggle(Application it) {
-        entities.filter[hasBooleansWithAjaxToggleEntity]
+        entities.filter[hasBooleansWithAjaxToggleEntity('')]
     }
 
     /**
@@ -281,13 +281,15 @@ class ModelExtensions {
     /**
      * Returns a list of all fields which should be displayed.
      */
-    def getDisplayFields(Entity it) {
+    def getDisplayFields(DataObject it) {
         var fields = getDerivedFields
-        if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
-            fields = fields.filter[!primaryKey]
-        }
-        if (!hasVisibleWorkflow) {
-            fields = fields.filter[name != 'workflowState']
+        if (it instanceof Entity) {
+            if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
+                fields = fields.filter[!primaryKey]
+            }
+            if (!hasVisibleWorkflow) {
+                fields = fields.filter[name != 'workflowState']
+            }
         }
         fields
     }
@@ -295,7 +297,7 @@ class ModelExtensions {
     /**
      * Returns a list of all fields which may be used for sorting.
      */
-    def getSortingFields(Entity it) {
+    def getSortingFields(DataObject it) {
         var fields = getDisplayFields.filter[f|f.isSortField].exclude(ArrayField).exclude(ObjectField)
         fields.toList as List<EntityField>
     }
@@ -582,15 +584,23 @@ class ModelExtensions {
     /**
      * Checks whether this entity has at least one boolean field having ajax toggle enabled.
      */
-    def hasBooleansWithAjaxToggleEntity(DataObject it) {
-        !getBooleansWithAjaxToggleEntity.empty
+    def hasBooleansWithAjaxToggleEntity(DataObject it, String context) {
+        !getBooleansWithAjaxToggleEntity(context).empty
     }
 
     /**
      * Returns a list of all boolean fields having ajax toggle enabled.
      */
-    def getBooleansWithAjaxToggleEntity(DataObject it) {
-        getBooleanFieldsEntity.filter[ajaxTogglability]
+    def getBooleansWithAjaxToggleEntity(DataObject it, String context) {
+        val fields = getBooleanFieldsEntity.filter[ajaxTogglability]
+        if (fields.empty || context == '') {
+            return fields
+        }
+        if (context == 'view') {
+            return fields.filter[f|f.isVisibleOnViewPage]
+        } else if (context == 'display') {
+            return fields.filter[f|f.isVisibleOnDisplayPage]
+        }
     }
 
     /**
