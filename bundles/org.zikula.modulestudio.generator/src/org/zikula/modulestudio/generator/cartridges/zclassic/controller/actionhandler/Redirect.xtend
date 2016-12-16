@@ -100,6 +100,7 @@ class Redirect {
             $objectIsPersisted = $args['commandName'] != 'delete' && !($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create' && $args['commandName'] == 'cancel');
 
             if (null !== $this->returnTo) {
+                «/* TODO improve this check considering slugs */»
                 $isDisplayOrEditPage = substr($this->returnTo, -7) == 'display' || substr($this->returnTo, -4) == 'edit';
                 if (!$isDisplayOrEditPage || $objectIsPersisted) {
                     // return to referer
