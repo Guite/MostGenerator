@@ -194,7 +194,7 @@ class Property {
         «IF isIndexByField»
             «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, nullable, (it instanceof UploadField), '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, nullable, false, '', '')»
         «ENDIF»
     '''
 

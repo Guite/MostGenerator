@@ -23,6 +23,7 @@ class UploadType {
     def private uploadTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
+        use ServiceUtil;
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
@@ -136,6 +137,12 @@ class UploadType {
                 // assign other custom options
                 $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options) ? $options['allowed_extensions'] : '';
                 $view->vars['allowed_size'] = array_key_exists('allowed_size', $options) ? $options['allowed_size'] : 0;
+                $view->vars['thumbRuntimeOptions'] = null;
+
+                if (true === $fileMeta['isImage']) {
+                    $imageHelper = ServiceUtil::get('«appService».image_helper');
+                    $view->vars['thumbRuntimeOptions'] = $imageHelper->getRuntimeOptions($this->entity->get_objectType(), $this->fieldName, 'controllerAction', ['action' => 'edit']);
+                }
             }
 
             /**

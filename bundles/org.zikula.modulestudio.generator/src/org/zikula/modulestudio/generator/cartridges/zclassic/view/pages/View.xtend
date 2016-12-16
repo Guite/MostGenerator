@@ -43,13 +43,11 @@ class View {
 
     Integer listType
 
-    /*
-      listType:
-        0 = div and ul
-        1 = div and ol
-        2 = div and dl
-        3 = div and table
-     */
+    static val LIST_TYPE_UL = 0
+    static val LIST_TYPE_OL = 1
+    static val LIST_TYPE_DL = 2
+    static val LIST_TYPE_TABLE = 3
+
     def generate(Entity it, String appName, Integer listType, IFileSystemAccess fsa) {
         println('Generating view templates for entity "' + name.formatForDisplay + '"')
         this.listType = listType
@@ -178,7 +176,7 @@ class View {
     '''
 
     def private viewForm(Entity it, String appName) '''
-        «IF listType == 3»
+        «IF listType == LIST_TYPE_TABLE»
             «IF application.targets('1.3.x')»
                 {if $lct eq 'admin'}
                 <form action="{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="z-form">
@@ -194,7 +192,7 @@ class View {
         «ENDIF»
             «viewItemList(appName)»
             «pagerCall(appName)»
-        «IF listType == 3»
+        «IF listType == LIST_TYPE_TABLE»
             «IF application.targets('1.3.x')»
                 {if $lct eq 'admin'}
                         «massActionFields(appName)»
@@ -223,7 +221,7 @@ class View {
     '''
 
     def private viewItemListHeader(Entity it, String appName, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
-        «IF listType != 3»
+        «IF listType != LIST_TYPE_TABLE»
             <«listType.asListTag»>
         «ELSE»
             «IF !application.targets('1.3.x')»
@@ -275,11 +273,11 @@ class View {
 
     def private viewItemListBody(Entity it, String appName, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
         «IF application.targets('1.3.x')»{foreach item='«name.formatForCode»' from=$items}«ELSE»{% for «name.formatForCode» in items %}«ENDIF»
-            «IF listType < 2»
+            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 <li><ul>
-            «ELSEIF listType == 2»
+            «ELSEIF listType == LIST_TYPE_DL»
                 <dt>
-            «ELSEIF listType == 3»
+            «ELSEIF listType == LIST_TYPE_TABLE»
                 <tr«IF application.targets('1.3.x')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
                     «IF application.targets('1.3.x')»
                         {if $lct eq 'admin'}
@@ -299,19 +297,19 @@ class View {
                 «FOR relation : listItemsIn»«relation.displayEntry(false, application.targets('1.3.x'))»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true, application.targets('1.3.x'))»«ENDFOR»
                 «itemActions(appName)»
-            «IF listType < 2»
+            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </ul></li>
-            «ELSEIF listType == 2»
+            «ELSEIF listType == LIST_TYPE_DL»
                 </dt>
-            «ELSEIF listType == 3»
+            «ELSEIF listType == LIST_TYPE_TABLE»
                 </tr>
             «ENDIF»
         «IF application.targets('1.3.x')»{foreachelse}«ELSE»{% else %}«ENDIF»
-            «IF listType < 2»
+            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 <li>
-            «ELSEIF listType == 2»
+            «ELSEIF listType == LIST_TYPE_DL»
                 <dt>
-            «ELSEIF listType == 3»
+            «ELSEIF listType == LIST_TYPE_TABLE»
                 <tr class="z-«IF application.targets('1.3.x')»{if $lct eq 'admin'}admin{else}data{/if}«ELSE»{{ routeArea == 'admin' ? 'admin' : 'data' }}«ENDIF»tableempty">
                 «IF application.targets('1.3.x')»
                     «'    '»<td class="z-left" colspan="{if $lct eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
@@ -320,11 +318,11 @@ class View {
                 «ENDIF»
             «ENDIF»
             «IF application.targets('1.3.x')»{gt text='No «nameMultiple.formatForDisplay» found.'}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
-            «IF listType < 2»
+            «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </li>
-            «ELSEIF listType == 2»
+            «ELSEIF listType == LIST_TYPE_DL»
                 </dt>
-            «ELSEIF listType == 3»
+            «ELSEIF listType == LIST_TYPE_TABLE»
                   </td>
                 </tr>
             «ENDIF»
@@ -332,7 +330,7 @@ class View {
     '''
 
     def private viewItemListFooter(Entity it) '''
-        «IF listType != 3»
+        «IF listType != LIST_TYPE_TABLE»
             <«listType.asListTag»>
         «ELSE»
                 </tbody>
@@ -446,7 +444,7 @@ class View {
     '''
 
     def private ajaxToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity || listType == 3»
+        «IF hasBooleansWithAjaxToggleEntity || (!application.targets('1.3.x') && hasImageFieldsEntity) || listType == LIST_TYPE_TABLE»
             «IF !application.targets('1.3.x')»
                 {% block footer %}
                     {{ parent() }}
@@ -457,16 +455,19 @@ class View {
                 «IF application.targets('1.3.x')»
                     document.observe('dom:loaded', function() {
                         «initAjaxSingleToggle»
-                        «IF listType == 3»
+                        «IF listType == LIST_TYPE_TABLE»
                             «initMassToggle»
                         «ENDIF»
                     });
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
+                            «IF hasImageFieldsEntity»
+                                $('a.lightbox').lightbox();
+                            «ENDIF»
                             «new ItemActionsView().generateView(it, 'javascript')»
                             «initAjaxSingleToggle»
-                            «IF listType == 3»
+                            «IF listType == LIST_TYPE_TABLE»
                                 «initMassToggle»
                             «ENDIF»
                         });
@@ -586,7 +587,7 @@ class View {
 
     def private displayEntry(Object it, Boolean useTarget, Boolean useLegacy) '''
         «val cssClass = entryContainerCssClass»
-        «IF listType != 3»
+        «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»«IF cssClass != ''» class="«cssClass»"«ENDIF»>
         «ELSE»
             <td headers="h«markupIdCode(useTarget)»" class="«IF useLegacy»z«ELSE»text«ENDIF»-«alignment»«IF cssClass != ''» «cssClass»«ENDIF»">
@@ -703,7 +704,7 @@ class View {
     }
 
     def private itemActions(Entity it, String appName) '''
-        «IF listType != 3»
+        «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
             <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF application.targets('1.3.x')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
@@ -714,20 +715,20 @@ class View {
 
     def private asListTag (Integer listType) {
         switch listType {
-            case 0: 'ul'
-            case 1: 'ol'
-            case 2: 'dl'
-            case 3: 'table'
+            case LIST_TYPE_UL: 'ul'
+            case LIST_TYPE_OL: 'ol'
+            case LIST_TYPE_DL: 'dl'
+            case LIST_TYPE_TABLE: 'table'
             default: 'table'
         }
     }
 
     def private asItemTag (Integer listType) {
         switch listType {
-            case 0: 'li' // ul
-            case 1: 'li' // ol
-            case 2: 'dd' // dl
-            case 3: 'td' // table
+            case LIST_TYPE_UL: 'li' // ul
+            case LIST_TYPE_OL: 'li' // ol
+            case LIST_TYPE_DL: 'dd' // dl
+            case LIST_TYPE_TABLE: 'td' // table
             default: 'td'
         }
     }

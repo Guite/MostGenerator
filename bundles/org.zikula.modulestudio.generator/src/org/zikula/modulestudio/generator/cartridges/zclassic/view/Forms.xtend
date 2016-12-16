@@ -490,6 +490,9 @@ class Forms {
 
             ( function($) {
                 $(document).ready(function() {
+                    «IF hasImageFieldsEntity»
+                        $('a.lightbox').lightbox();
+                    «ENDIF»
                     «val userFields = getUserFieldsEntity»
                     «IF !userFields.empty»
                         // initialise auto completion for user fields

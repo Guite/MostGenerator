@@ -73,7 +73,7 @@ class UploadFileTransformer {
             /**
              * Transforms a filename to the corresponding file object.
              *
-             * @param string|null $fileName
+             * @param string|File|null $fileName
              *
              * @return File|null
              */
@@ -81,6 +81,9 @@ class UploadFileTransformer {
             {
                 if (empty($fileName)) {
                     return null;
+                }
+                if ($fileName instanceof File) {
+                    return $fileName;
                 }
 
                 $fieldName = $this->formType->getFieldName();

@@ -185,7 +185,7 @@ class Display {
                 {{ parent() }}
 
         «ENDIF»
-        «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && isLegacyApp)»
+        «IF hasBooleansWithAjaxToggleEntity || (useGroupingPanels('display') && isLegacyApp) || (hasImageFieldsEntity && !isLegacyApp)»
 
         «IF isLegacyApp»{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}«ELSE»{% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}«ENDIF»
             <script type="text/javascript">
@@ -205,7 +205,12 @@ class Display {
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            «initAjaxToggle»
+                            «IF hasImageFieldsEntity»
+                                $('a.lightbox').lightbox();
+                            «ENDIF»
+                            «IF hasBooleansWithAjaxToggleEntity»
+                                «initAjaxToggle»
+                            «ENDIF»
                         });
                     })(jQuery);
                 «ENDIF»

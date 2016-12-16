@@ -85,8 +85,15 @@ class EditEntity {
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         use Symfony\Component\Form\AbstractType;
+        «IF hasUploadFieldsEntity»
+            use Symfony\Component\Form\FormEvent;
+            use Symfony\Component\Form\FormEvents;
+        «ENDIF»
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
+        «IF hasUploadFieldsEntity»
+            use Symfony\Component\HttpFoundation\File\File;
+        «ENDIF»
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
@@ -217,6 +224,16 @@ class EditEntity {
                 «ENDIF»
                 $this->addReturnControlField($builder, $options);
                 $this->addSubmitButtons($builder, $options);
+                «IF hasUploadFieldsEntity»
+
+                    $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                        $entity = $event->getData();
+                        foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
+                            $filePath = $entity[$uploadFieldName . 'FullPath'];
+                            $entity[$uploadFieldName] = [$uploadFieldName => file_exists($filePath) ? new File($filePath) : null];
+                        }
+                    });
+                «ENDIF»
             }
 
             «addFields»

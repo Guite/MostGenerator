@@ -434,12 +434,14 @@ class Repository {
                 }
                 «IF app.hasUploads»
 
-                    // initialise Imagine preset instances
                     «IF app.targets('1.3.x')»
+                        // initialise Imagine preset instances
                         $serviceManager = ServiceUtil::getManager();
                         $imageHelper = new «app.appName»_Util_Image($serviceManager);
-
+                    «ELSE»
+                        // initialise Imagine runtime options
                     «ENDIF»
+
                     «IF hasUploadFieldsEntity»
                         $objectType = '«name.formatForCode»';
                         «IF app.targets('1.3.x')»
