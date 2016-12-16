@@ -706,7 +706,7 @@ class Ajax {
         if ($id == 0
             || («FOR entity : entities SEPARATOR ' && '»$objectType != '«entity.name.formatForCode»'«ENDFOR»)
         «FOR entity : entities»
-            || ($objectType == '«entity.name.formatForCode»' && !in_array($field, «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR field : entity.getBooleansWithAjaxToggleEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»))
+            || ($objectType == '«entity.name.formatForCode»' && !in_array($field, «IF app.isLegacy»array(«ELSE»[«ENDIF»«FOR field : entity.getBooleansWithAjaxToggleEntity('') SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»«IF app.isLegacy»)«ELSE»]«ENDIF»))
         «ENDFOR»
         ) {
             return new «IF app.isLegacy»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
