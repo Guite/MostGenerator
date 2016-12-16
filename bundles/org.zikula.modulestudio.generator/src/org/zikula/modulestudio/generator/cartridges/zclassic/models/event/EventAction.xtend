@@ -53,7 +53,7 @@ class EventAction {
             $dispatcher = ServiceUtil::get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
             $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_LOAD'), $event);
         «ENDIF»
@@ -146,7 +146,7 @@ class EventAction {
             $dispatcher = ServiceUtil::get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
             $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_PERSIST'), $event);
             if ($event->isPropagationStopped()) {
@@ -166,7 +166,7 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
             $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_PERSIST'), $event);
         «ENDIF»
@@ -178,7 +178,7 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
             $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_REMOVE'), $event);
             if ($event->isPropagationStopped()) {
@@ -267,7 +267,7 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst($objectType) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst($objectType) . 'Event';
             $event = new $filterEventClass(«entityVar»);
             $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper($objectType) . '_POST_REMOVE'), $event);
         «ENDIF»
@@ -279,7 +279,7 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
             $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_PRE_UPDATE'), $event);
             if ($event->isPropagationStopped()) {
@@ -299,7 +299,7 @@ class EventAction {
             $dispatcher = $serviceManager->get('event_dispatcher');
 
             // create the filter event and dispatch it
-            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
+            $filterEventClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Event\\Filter' . ucfirst(«entityVar»->get_objectType()) . 'Event';
             $event = new $filterEventClass(«entityVar»);
             $dispatcher->dispatch(constant('\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«name.formatForCodeCapital»Events::' . strtoupper(«entityVar»->get_objectType()) . '_POST_UPDATE'), $event);
         «ENDIF»
