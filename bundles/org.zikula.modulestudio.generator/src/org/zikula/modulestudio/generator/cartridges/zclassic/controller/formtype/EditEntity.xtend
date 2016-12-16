@@ -233,6 +233,14 @@ class EditEntity {
                             $entity[$uploadFieldName] = [$uploadFieldName => file_exists($filePath) ? new File($filePath) : null];
                         }
                     });
+                    $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+                        $entity = $event->getData();
+                        foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
+                            if (is_array($entity[$uploadFieldName])) {
+                                $entity[$uploadFieldName] = $entity[$uploadFieldName][$uploadFieldName];
+                            }
+                        }
+                    });
                 «ENDIF»
             }
 

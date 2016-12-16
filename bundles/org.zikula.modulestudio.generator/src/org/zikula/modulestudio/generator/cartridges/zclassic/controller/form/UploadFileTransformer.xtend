@@ -134,8 +134,13 @@ class UploadFileTransformer {
                     }
                 }
 
+                $oldFile = $entity[$fieldName];
+                if (is_array($oldFile)) {
+                    $oldFile = $oldFile[$fieldName];
+                }
+
                 // check if an existing file must be deleted
-                $hasOldFile = !empty($entity[$fieldName]);
+                $hasOldFile = !empty($oldFile);
                 $hasBeenDeleted = !$hasOldFile;
                 if ($hasOldFile && true === $deleteFile) {
                     // remove old upload file

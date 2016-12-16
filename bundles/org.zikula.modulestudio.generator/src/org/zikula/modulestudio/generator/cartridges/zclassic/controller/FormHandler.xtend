@@ -1587,6 +1587,13 @@ class FormHandler {
             «IF app.isLegacy»
                 return $this->view->redirect($this->getRedirectUrl($args));
             «ELSE»
+                // build $args for BC (e.g. used by redirect handling)
+                foreach ($this->templateParameters['actions'] as $action) {
+                    if ($this->form->get($action['id'])->isClicked()) {
+                        $args['commandName'] = $action['id'];
+                    }
+                }
+
                 return new RedirectResponse($this->getRedirectUrl($args), 302);
             «ENDIF»
         }
