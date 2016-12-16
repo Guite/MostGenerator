@@ -888,6 +888,7 @@ class Repository {
                 }
             }
 
+            «/* TODO fix buggy session storage of current page
             «val sessionVar = app.appName + nameMultiple.formatForCodeCapital + 'CurrentPage'»
             if (!$hasFilters) {
                 «IF !app.targets('1.3.x')»
@@ -917,7 +918,7 @@ class Repository {
                     «ENDIF»
                 }
             }
-
+*/»
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $page, $resultsPerPage);
 
             «IF app.targets('1.3.x')»

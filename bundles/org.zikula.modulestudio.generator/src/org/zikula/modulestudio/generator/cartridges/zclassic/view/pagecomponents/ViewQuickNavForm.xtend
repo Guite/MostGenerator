@@ -70,8 +70,7 @@ class ViewQuickNavForm {
         {# purpose of this template: «nameMultiple.formatForDisplay» view filter form #}
         {% if hasPermission('«application.appName»:«name.formatForCodeCapital»:', '::', 'ACCESS_EDIT') %}
             {% form_theme quickNavForm with [
-                '@«application.appName»/Form/bootstrap_3.html.twig',
-                'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
+                'bootstrap_3_layout.html.twig'
             ] %}
             {{ form_start(quickNavForm, {attr: {id: '«application.appName.toFirstLower»«name.formatForCodeCapital»QuickNavForm', class: '«application.appName.toLowerCase»-quicknav navbar-form', role: 'navigation'}}) }}
             {{ form_errors(quickNavForm) }}
