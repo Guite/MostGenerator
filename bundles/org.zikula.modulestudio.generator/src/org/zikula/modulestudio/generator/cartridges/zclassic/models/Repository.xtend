@@ -114,7 +114,7 @@ class Repository {
             /**
              * @var string The default sorting field/expression
              */
-            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!stringFields.empty) stringFields.head else getDerivedFields.head).name.formatForCode»';
+            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else if (!getSortingFields.empty) getSortingFields.head else if (!stringFields.empty) stringFields.head else getDerivedFields.head).name.formatForCode»';
 
             «IF app.targets('1.3.x')»
                 /**
@@ -172,7 +172,7 @@ class Repository {
             public function getAllowedSortingFields()
             {
                 return «IF app.targets('1.3.x')»array(«ELSE»[«ENDIF»
-                    «FOR field : fields»«field.singleSortingField»«ENDFOR»
+                    «FOR field : getSortingFields»«field.singleSortingField»«ENDFOR»
                     «extensionSortingFields»
                 «IF app.targets('1.3.x')»)«ELSE»]«ENDIF»;
             }

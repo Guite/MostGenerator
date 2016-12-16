@@ -210,14 +210,14 @@ class View {
     '''
 
     def private viewItemList(Entity it, String appName) '''
-            «val listItemsFields = getDisplayFieldsForView»
-            «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
-            «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
-            «viewItemListHeader(appName, listItemsFields, listItemsIn, listItemsOut)»
+        «val listItemsFields = getFieldsForViewPage»
+        «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
+        «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
+        «viewItemListHeader(appName, listItemsFields, listItemsIn, listItemsOut)»
 
-            «viewItemListBody(appName, listItemsFields, listItemsIn, listItemsOut)»
+        «viewItemListBody(appName, listItemsFields, listItemsIn, listItemsOut)»
 
-            «viewItemListFooter»
+        «viewItemListFooter»
     '''
 
     def private viewItemListHeader(Entity it, String appName, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''

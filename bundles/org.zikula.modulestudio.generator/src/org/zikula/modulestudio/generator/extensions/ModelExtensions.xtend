@@ -13,6 +13,8 @@ import de.guite.modulestudio.metamodel.DerivedField
 import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityChangeTrackingPolicy
+import de.guite.modulestudio.metamodel.EntityField
+import de.guite.modulestudio.metamodel.EntityFieldDisplayType
 import de.guite.modulestudio.metamodel.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.EntityIndexType
 import de.guite.modulestudio.metamodel.EntityLockType
@@ -262,11 +264,18 @@ class ModelExtensions {
     def idFieldsAsParameterTemplate(DataObject it) '''«IF application.targets('1.3.x')»«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»«ELSE»«FOR pkField : getPrimaryKeyFields SEPARATOR ' ~ \'_\' ~ '»«name.formatForCode».«pkField.name.formatForCode»«ENDFOR»«ENDIF»'''
 
     /**
-     * Returns a list of all fields which should be displayed.
+     * Returns a list of all fields which should be displayed on the view page.
      */
-    def getDisplayFieldsForView(Entity it) {
-        var fields = getDisplayFields.exclude(ArrayField).exclude(ObjectField)
+    def getFieldsForViewPage(Entity it) {
+        var fields = getDisplayFields.filter[f|f.isVisibleOnViewPage].exclude(ArrayField).exclude(ObjectField)
         fields.toList as List<DerivedField>
+    }
+
+    /**
+     * Returns a list of all fields which should be displayed on the display page.
+     */
+    def getFieldsForDisplayPage(Entity it) {
+        getDisplayFields.filter[f|f.isVisibleOnDisplayPage]
     }
 
     /**
@@ -281,6 +290,14 @@ class ModelExtensions {
             fields = fields.filter[name != 'workflowState']
         }
         fields
+    }
+
+    /**
+     * Returns a list of all fields which may be used for sorting.
+     */
+    def getSortingFields(Entity it) {
+        var fields = getDisplayFields.filter[f|f.isSortField].exclude(ArrayField).exclude(ObjectField)
+        fields.toList as List<EntityField>
     }
 
     /**
@@ -345,6 +362,27 @@ class ModelExtensions {
      */
     def getListFieldsEntity(DataObject it) {
         getSelfAndParentDataObjects.map[fields.filter(ListField)].flatten
+    }
+
+    /**
+     * Returns whether this field is visible on the view page.
+     */
+    def isVisibleOnViewPage(EntityField it) {
+        #[EntityFieldDisplayType.VIEW, EntityFieldDisplayType.VIEW_SORTING, EntityFieldDisplayType.VIEW_DISPLAY, EntityFieldDisplayType.ALL].contains(displayType)
+    }
+
+    /**
+     * Returns whether this field is visible on the display page.
+     */
+    def isVisibleOnDisplayPage(EntityField it) {
+        #[EntityFieldDisplayType.DISPLAY, EntityFieldDisplayType.DISPLAY_SORTING, EntityFieldDisplayType.VIEW_DISPLAY, EntityFieldDisplayType.ALL].contains(displayType)
+    }
+
+    /**
+     * Returns whether this field maybe used for sorting.
+     */
+    def isSortField(EntityField it) {
+        #[EntityFieldDisplayType.SORTING, EntityFieldDisplayType.VIEW_SORTING, EntityFieldDisplayType.DISPLAY_SORTING, EntityFieldDisplayType.ALL].contains(displayType)
     }
 
     /**

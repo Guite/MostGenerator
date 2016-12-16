@@ -640,7 +640,7 @@ class Actions {
 
     def private sortableColumns(Entity it) '''
         $sortableColumns = new SortableColumns($this->get('router'), '«app.appName.formatForDB»_«name.toLowerCase»_' . ($isAdmin ? 'admin' : '') . 'view', 'sort', 'sortdir');
-        «val listItemsFields = getDisplayFieldsForView»
+        «val listItemsFields = getSortingFields»
         «val listItemsIn = incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»
         «val listItemsOut = outgoing.filter(OneToOneRelationship).filter[target instanceof Entity]»
         $sortableColumns->addColumns([

@@ -306,7 +306,7 @@ class ViewQuickNavForm {
                 <label for="sortBy">{gt text='Sort by'}</label>
                 &nbsp;
                 <select id="sortBy" name="sort">
-                    «FOR field : getDerivedFields»
+                    «FOR field : getSortingFields»
                         «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
                             <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
                         «ENDIF»

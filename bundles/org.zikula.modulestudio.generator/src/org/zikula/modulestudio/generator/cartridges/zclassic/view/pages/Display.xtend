@@ -241,7 +241,7 @@ class Display {
 
     def private fieldDetails(Entity it, String appName) '''
         <dl>
-            «FOR field : getDisplayFields»«field.displayEntry»«ENDFOR»
+            «FOR field : getFieldsForDisplayPage»«field.displayEntry»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     «IF isLegacyApp»

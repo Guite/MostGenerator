@@ -225,8 +225,6 @@ class QuickNavigation {
 
             «addSortingFields»
 
-            «getSortingChoices»
-
             «addAmountField»
 
             «IF hasBooleanFieldsEntity»
@@ -446,7 +444,18 @@ class QuickNavigation {
                     'attr' => [
                         'class' => 'input-sm'
                     ],
-                    'choices' => $this->getSortingChoices(),
+                    'choices' =>             [
+                        «FOR field : getSortingFields»
+                            «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
+                                $this->__('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
+                            «ENDIF»
+                        «ENDFOR»
+                        «IF standardFields»
+                            $this->__('Creation date') => 'createdDate',
+                            $this->__('Creator') => 'createdUserId',
+                            $this->__('Update date') => 'updatedDate'
+                        «ENDIF»
+                    ],
                     'choices_as_values' => true,
                     'required' => false,
                     'expanded' => false
@@ -466,29 +475,6 @@ class QuickNavigation {
                     'expanded' => false
                 ])
             ;
-        }
-    '''
-
-    def private getSortingChoices(Entity it) '''
-        /**
-         * Returns the choices array for the sort field selection.
-         *
-         * @return array Sorting choices
-         */
-        protected function getSortingChoices()
-        {
-            return [
-                «FOR field : getDerivedFields»
-                    «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
-                        $this->__('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
-                    «ENDIF»
-                «ENDFOR»
-                «IF standardFields»
-                    $this->__('Creation date') => 'createdDate',
-                    $this->__('Creator') => 'createdUserId',
-                    $this->__('Update date') => 'updatedDate'
-                «ENDIF»
-            ];
         }
     '''
 
@@ -540,7 +526,7 @@ class QuickNavigation {
 
     def private dispatch fieldImpl(DerivedField it) '''
         $builder->add('«name.formatForCode»', '«IF it instanceof StringField && (it as StringField).locale»Zikula\Bundle\FormExtensionBundle\Form\Type\Locale«ELSEIF it instanceof ListField && (it as ListField).multiple»«app.appNamespace»\Form\Type\Field\MultiList«ELSEIF it instanceof UserField»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»«fieldType»«ENDIF»Type', [
-            'label' => $this->__('«name.formatForDisplayCapital»'),
+            'label' => $this->__('«IF name == 'workflowState'»State«ELSE»«name.formatForDisplayCapital»«ENDIF»'),
             'attr' => [
                 'class' => 'input-sm'
             ],
