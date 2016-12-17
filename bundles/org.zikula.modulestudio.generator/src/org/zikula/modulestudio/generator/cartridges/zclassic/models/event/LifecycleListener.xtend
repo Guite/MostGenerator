@@ -202,12 +202,7 @@ class LifecycleListener {
                     $request = ServiceUtil::get('request_stack')->getCurrentRequest();
                     $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
 
-                    $uploadFields = [];
-                    «FOR entity : getUploadEntities»
-                        if ($objectType == '«entity.name.formatForCode»') {
-                            $uploadFields = ['«entity.getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'];
-                        }
-                    «ENDFOR»
+                    $uploadFields = $this->getUploadFields($objectType);
 
                     if (count($uploadFields) > 0) {
                         foreach ($uploadFields as $fieldName) {

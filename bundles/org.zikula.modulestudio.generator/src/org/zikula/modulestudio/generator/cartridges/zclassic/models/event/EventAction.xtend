@@ -144,6 +144,7 @@ class EventAction {
     def prePersist(Application it) '''
         «IF !isLegacy»
             «IF hasUploads»
+                $objectType = $entity->get_objectType();
                 $uploadFields = $this->getUploadFields($objectType);
 
                 foreach ($uploadFields as $uploadField) {
@@ -151,6 +152,9 @@ class EventAction {
                         continue;
                     }
 
+                    if (!($entity[$uploadField] instanceof File)) {
+                        $entity[$uploadField] = new File($entity[$uploadField]);
+                    }
                     «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
                 }
 
@@ -292,6 +296,7 @@ class EventAction {
     def preUpdate(Application it) '''
         «IF !isLegacy»
             «IF hasUploads»
+                $objectType = $entity->get_objectType();
                 $uploadFields = $this->getUploadFields($objectType);
 
                 foreach ($uploadFields as $uploadField) {
@@ -299,6 +304,9 @@ class EventAction {
                         continue;
                     }
 
+                    if (!($entity[$uploadField] instanceof File)) {
+                        $entity[$uploadField] = new File($entity[$uploadField]);
+                    }
                     «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
                 }
 
