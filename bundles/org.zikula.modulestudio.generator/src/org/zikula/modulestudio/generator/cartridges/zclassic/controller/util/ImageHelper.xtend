@@ -222,6 +222,21 @@ class ImageHelper {
         targets('1.3.x')
     }
 
+    def private checkAndCreateImagineCacheDirectory(Application it) '''
+        /**
+         * Check if cache directory exists and create it if needed.
+         */
+        protected function checkAndCreateImagineCacheDirectory()
+        {
+            $cachePath = 'web/imagine/cache';
+            if (file_exists($cachePath)) {
+                return;
+            }
+
+            $this->session->getFlashBag()->add('warning', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
+        }
+    '''
+
     def private dummySignerBaseImpl(Application it) '''
         namespace «appNamespace»\Imagine\Cache\Base;
 
@@ -266,21 +281,6 @@ class ImageHelper {
             {
                 return true;//$hash === $this->sign($path, $runtimeConfig);
             }
-        }
-    '''
-
-    def private checkAndCreateImagineCacheDirectory(Application it) '''
-        /**
-         * Check if cache directory exists and create it if needed.
-         */
-        protected function checkAndCreateImagineCacheDirectory()
-        {
-            $cachePath = 'web/imagine/cache';
-            if (file_exists($cachePath)) {
-                return;
-            }
-
-            $this->session->getFlashBag()->add('warning', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
         }
     '''
 
