@@ -234,7 +234,6 @@ class ControllerLayer {
             use Zikula\Core\Controller\AbstractController;
             use Zikula\Core\RouteUrl;
             «controllerBaseImportsResponse»
-            use Zikula\ThemeModule\Engine\Annotation\Theme;
             «IF app.hasCategorisableEntities»
                 use «app.appNamespace»\Helper\FeatureActivationHelper;
             «ENDIF»
@@ -281,7 +280,6 @@ class ControllerLayer {
                 use Zikula\Core\RouteUrl;
             «ENDIF»
             «entityControllerBaseImportsResponse»
-            use Zikula\ThemeModule\Engine\Annotation\Theme;
             «IF app.hasCategorisableEntities»
                 use «app.appNamespace»\Helper\FeatureActivationHelper;
             «ENDIF»
@@ -571,8 +569,6 @@ class ControllerLayer {
          * @Route("/config",
          *        methods = {"GET", "POST"}
          * )
-         «ELSEIF !isLegacy && isBase»
-         *
          * @Theme("admin")
          «ENDIF»
          «IF !isLegacy»
@@ -643,6 +639,7 @@ class ControllerLayer {
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
             use Symfony\Component\HttpFoundation\Request;
+            use Zikula\ThemeModule\Engine\Annotation\Theme;
 
         «ENDIF»
         /**
@@ -694,6 +691,7 @@ class ControllerLayer {
                 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+            use Zikula\ThemeModule\Engine\Annotation\Theme;
             use «app.appNamespace»\Entity\«name.formatForCodeCapital»Entity;
 
         «ENDIF»

@@ -34,11 +34,11 @@ class Annotations {
     def generate(Action it, Entity entity, Boolean isBase, Boolean isAdmin) '''
         «IF !isBase»
             «actionRoute(entity, isAdmin)»
+            «IF isAdmin»
+                «' '»* @Theme("admin")
+            «ENDIF»
         «ELSE»
             «IF null !== entity»
-                «IF isAdmin»
-                    «' '»* @Theme("admin")
-                «ENDIF»
                 «IF it instanceof DisplayAction || it instanceof DeleteAction»
                     «paramConverter(entity)»
                 «ENDIF»
