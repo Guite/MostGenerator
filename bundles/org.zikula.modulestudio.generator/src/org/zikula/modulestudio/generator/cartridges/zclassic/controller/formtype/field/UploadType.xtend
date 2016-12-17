@@ -119,6 +119,9 @@ class UploadType {
 
                 // assign basic file properties
                 $file = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter) : null;
+                if (null !== $file && is_array($file)) {
+                    $file = $file[$fieldName];
+                }
                 if (null !== $file && is_string($file)) {
                     $file = new File($file);
                 }
@@ -131,7 +134,7 @@ class UploadType {
                     $fileMeta['size'] = 0;
                 }
                 $view->vars['file_meta'] = $fileMeta;
-                $view->vars['file_path'] = $hasFile ? $hasFile->getPathname() : null;
+                $view->vars['file_path'] = $hasFile ? $file->getPathname() : null;
                 $view->vars['file_url'] = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Url') : null;
 
                 // assign other custom options

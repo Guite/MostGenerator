@@ -214,7 +214,7 @@ class Uploads {
 
             «determineFileName»
 
-            «IF !targets('1.3.x')»
+            «IF targets('1.3.x')»
                 «handleError»
 
             «ENDIF»
@@ -762,26 +762,17 @@ class Uploads {
                 $controllerHelper = $serviceManager->get('«appService».controller_helper');
             «ENDIF»
 
-            // determine file system information
-            try {
-                $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
-            } catch (\Exception $e) {
-                «IF targets('1.3.x')»
-                    LogUtil::registerError($e->getMessage());
-                «ELSE»
-                    $flashBag = ServiceUtil::get('session')->getFlashBag();
-                    $flashBag->add('error', $e->getMessage());
-                    $logger = $serviceManager->get('logger');
-                    $logger->error('{app}: User {user} could not detect upload destination path for entity {entity} and field {field}.', ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname'), 'entity' => $objectType, 'field' => $fieldName]);
-
-                    return false;
-                «ENDIF»
-            }
-            $fileName = $entity[$fieldName];
-
-            // path to original file
-            $filePath = $basePath . $fileName;
             «IF targets('1.3.x')»
+                // determine file system information
+                try {
+                    $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
+                } catch (\Exception $e) {
+                    LogUtil::registerError($e->getMessage());
+                }
+                $fileName = $entity[$fieldName];
+
+                // path to original file
+                $filePath = $basePath . $fileName;
 
                 // check whether we have to consider thumbnails, too
                 $fileExtension = FileUtil::getExtension($fileName, false);
@@ -792,12 +783,18 @@ class Uploads {
                     $fullObjectId = $objectType . '-' . $entity->createCompositeIdentifier();
                     $manager->removeImageThumbs($filePath, $fullObjectId);
                 }
-            «ENDIF»
 
-            // remove original file
-            if (file_exists($filePath) && !unlink($filePath)) {
-                return false;
-            }
+                // remove original file
+                if (file_exists($filePath) && !unlink($filePath)) {
+                    return false;
+                }
+            «ELSE»
+                // remove the file
+                $filePath = $entity[$fieldName]->getPathname();
+                if (file_exists($filePath) && !unlink($filePath)) {
+                    return false;
+                }
+            «ENDIF»
             $entity[$fieldName] = '';
             $entity[$fieldName . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 

@@ -226,6 +226,14 @@ class EditEntity {
                 $this->addSubmitButtons($builder, $options);
                 «IF hasUploadFieldsEntity»
 
+                    $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                        $entity = $event->getData();
+                        foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
+                            if ($entity[$uploadFieldName] instanceof File) {
+                                $entity[$uploadFieldName] = [$uploadFieldName => $entity[$uploadFieldName]->getPathname()];
+                            }
+                        }
+                    });
                     $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                         $entity = $event->getData();
                         foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {

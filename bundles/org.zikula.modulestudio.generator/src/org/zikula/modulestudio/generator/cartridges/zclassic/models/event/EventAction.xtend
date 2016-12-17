@@ -143,6 +143,18 @@ class EventAction {
 
     def prePersist(Application it) '''
         «IF !isLegacy»
+            «IF hasUploads»
+                $uploadFields = $this->getUploadFields($objectType);
+
+                foreach ($uploadFields as $uploadField) {
+                    if (empty(«entityVar»[$uploadField])) {
+                        continue;
+                    }
+
+                    «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
+                }
+
+            «ENDIF»
             $dispatcher = ServiceUtil::get('event_dispatcher');
 
             // create the filter event and dispatch it
@@ -240,21 +252,25 @@ class EventAction {
                 $uploadManager = $serviceManager->get('«appService».upload_handler');
             «ENDIF»
 
-            $uploadFields = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-            switch ($objectType) {
-                «FOR entity : entities.filter[e|e.hasUploadFieldsEntity]»
-                    case '«entity.name.formatForCode»':
-                        $uploadFields = «IF isLegacy»array(«ELSE»[«ENDIF»«FOR uploadField : entity.getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»«IF isLegacy»)«ELSE»]«ENDIF»;
-                        break;
-                «ENDFOR»
-            }
+            «IF isLegacy»
+                $uploadFields = array();
+                switch ($objectType) {
+                    «FOR entity : entities.filter[e|e.hasUploadFieldsEntity]»
+                        case '«entity.name.formatForCode»':
+                            $uploadFields = array('«entity.getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»');
+                            break;
+                    «ENDFOR»
+                }
+            «ELSE»
+                $uploadFields = $this->getUploadFields($objectType);
+            «ENDIF»
 
             foreach ($uploadFields as $uploadField) {
-                if (empty(«entityVar»->$uploadField)) {
+                if (empty(«entityVar»[$uploadField])) {
                     continue;
                 }
 
-                // remove upload file (and image thumbnails)
+                // remove upload file«IF isLegacy» (and image thumbnails)«ENDIF»
                 $uploadManager->deleteUploadFile(«entityVar», $uploadField);
             }
         «ENDIF»
@@ -275,6 +291,18 @@ class EventAction {
 
     def preUpdate(Application it) '''
         «IF !isLegacy»
+            «IF hasUploads»
+                $uploadFields = $this->getUploadFields($objectType);
+
+                foreach ($uploadFields as $uploadField) {
+                    if (empty(«entityVar»[$uploadField])) {
+                        continue;
+                    }
+
+                    «entityVar»[$uploadField] = «entityVar»[$uploadField]->getFilename();
+                }
+
+            «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             $dispatcher = $serviceManager->get('event_dispatcher');
 

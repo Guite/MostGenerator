@@ -1462,9 +1462,11 @@ class FormHandler {
 
             «ENDIF»
             $result = parent::«IF app.isLegacy»initialize($view)«ELSE»processForm($templateParameters)«ENDIF»;
-            if (true !== $result) {
-                return $result;
-            }
+            «IF app.isLegacy»
+                if (true !== $result) {
+                    return $result;
+                }
+            «ENDIF»
 
             if ($this->«IF app.isLegacy»mode«ELSE»templateParameters['mode']«ENDIF» == 'create') {
                 «IF app.isLegacy»
@@ -1525,8 +1527,7 @@ class FormHandler {
                 $this->prepareWorkflowAdditions(«(workflow == EntityWorkflowType.ENTERPRISE).displayBool»);
             «ENDIF»
 
-            // everything okay, no initialisation errors occured
-            return true;
+            return «IF app.isLegacy»true«ELSE»$result«ENDIF»;
         }
         «IF !app.isLegacy»
 

@@ -254,6 +254,29 @@ class LifecycleListener {
 
                 return ($entityClassParts[0] == '«vendor.formatForCodeCapital»' && $entityClassParts[1] == '«name.formatForCodeCapital»Module');
             }
+            «IF hasUploads»
+
+                /**
+                 * Returns list of upload fields for the given object type.
+                 *
+                 * @param string $objectType The object type
+                 *
+                 * @return array List of upload fields
+                 */
+                protected function getUploadFields($objectType)
+                {
+                    $uploadFields = [];
+                    switch ($objectType) {
+                        «FOR entity : entities.filter[e|e.hasUploadFieldsEntity]»
+                            case '«entity.name.formatForCode»':
+                                $uploadFields = ['«entity.getUploadFieldsEntity.map[name.formatForCode].join('\', \'')»'];
+                                break;
+                        «ENDFOR»
+                    }
+
+                    return $uploadFields;
+                }
+            «ENDIF»
         }
     '''
 

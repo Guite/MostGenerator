@@ -80,23 +80,20 @@ class UploadFileTransformer {
             /**
              * Transforms a filename to the corresponding file object.
              *
-             * @param string|File|null $fileName
+             * @param string|File|null $filePath
              *
              * @return File|null
              */
-            public function transform($fileName)
+            public function transform($filePath)
             {
-                if (empty($fileName)) {
+                if (empty($filePath)) {
                     return null;
                 }
-                if ($fileName instanceof File) {
-                    return $fileName;
+                if ($filePath instanceof File) {
+                    return $filePath;
                 }
 
-                $fieldName = $this->fieldName;
-                $filePath = $this->controllerHelper->getFileBaseFolder($this->formType->getEntity()->get_objectType(), $fieldName) . $fileName;
-
-                return [$fieldName => new File($filePath)];
+                return [$this->fieldName => new File($filePath)];
             }
 
             /**
