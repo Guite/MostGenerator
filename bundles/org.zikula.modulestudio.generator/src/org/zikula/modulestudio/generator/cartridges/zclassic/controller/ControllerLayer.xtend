@@ -277,7 +277,9 @@ class ControllerLayer {
                 use Zikula\Component\SortableColumns\SortableColumns;
             «ENDIF»
             use Zikula\Core\Controller\AbstractController;
-            use Zikula\Core\RouteUrl;
+            «IF !skipHookSubscribers»
+                use Zikula\Core\RouteUrl;
+            «ENDIF»
             «entityControllerBaseImportsResponse»
             use Zikula\ThemeModule\Engine\Annotation\Theme;
             «IF app.hasCategorisableEntities»
