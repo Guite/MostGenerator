@@ -123,7 +123,9 @@ class UploadType {
                 $fieldNameGetter = 'get' . ucfirst($this->fieldName);
 
                 // assign basic file properties
-                $fileMeta = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : [];
+                $file = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter) : null;
+                $hasFile = null !== $parentData && null !== $file;
+                $fileMeta = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : [];
                 if (!isset($fileMeta['isImage'])) {
                     $fileMeta['isImage'] = false;
                 }
@@ -131,8 +133,8 @@ class UploadType {
                     $fileMeta['size'] = 0;
                 }
                 $view->vars['file_meta'] = $fileMeta;
-                $view->vars['file_path'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'FullPath') : null;
-                $view->vars['file_url'] = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter . 'FullPathUrl') : null;
+                $view->vars['file_path'] = $hasFile ? $hasFile->getRelativePathname() : null;
+                $view->vars['file_url'] = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Url') : null;
 
                 // assign other custom options
                 $view->vars['allowed_extensions'] = array_key_exists('allowed_extensions', $options) ? $options['allowed_extensions'] : '';

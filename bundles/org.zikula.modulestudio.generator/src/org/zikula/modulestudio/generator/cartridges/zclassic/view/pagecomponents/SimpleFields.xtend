@@ -44,11 +44,11 @@ class SimpleFields {
                 {% set itemid = «objName».«entity.getFirstPrimaryKey.name.formatForCode» %}
                 <a id="toggle«name.formatForCodeCapital»{{ itemid }}" href="javascript:void(0);" class="hidden">
                 {% if «objName».«name.formatForCode» %}
-                    <span class="cursor-pointer fa fa-check" id="yes«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></span>
-                    <span class="cursor-pointer fa fa-times hidden" id="no«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></span>
+                    <i class="cursor-pointer fa fa-check" id="yes«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
+                    <i class="cursor-pointer fa fa-times hidden" id="no«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
                 {% else %}
-                    <span class="cursor-pointer fa fa-check hidden" id="yes«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></span>
-                    <span class="cursor-pointer fa fa-times" id="no«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></span>
+                    <i class="cursor-pointer fa fa-check hidden" id="yes«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is enabled. Click here to disable it.') }}"></i>
+                    <i class="cursor-pointer fa fa-times" id="no«name.formatForDB»_{{ itemid }}" title="{{ __('This setting is disabled. Click here to enable it.') }}"></i>
                 {% endif %}
                 </a>
             «ENDIF»
@@ -56,12 +56,25 @@ class SimpleFields {
                 «IF isLegacyApp»
                     {$«objName».«name.formatForCode»|yesno:true}
                 «ELSE»
-                    {{ «objName».«name.formatForCode»|yesNo(true) }}
+                    {% if «objName».«name.formatForCode» %}
+                        <i class="fa fa-check" title="{{ __('Yes') }}"></i>
+                    {% else %}
+                        <i class="fa fa-times" title="{{ __('No') }}"></i>
+                    {% endif %}
                 «ENDIF»
             </div></noscript>
         '''
         else '''
-            «IF isLegacyApp»{$«objName».«name.formatForCode»|yesno:true}«ELSE»{{ «objName».«name.formatForCode»|yesNo(true) }}«ENDIF»'''
+            «IF isLegacyApp»
+                {$«objName».«name.formatForCode»|yesno:true}
+            «ELSE»
+                {% if «objName».«name.formatForCode» %}
+                    <i class="fa fa-check" title="{{ __('Yes') }}"></i>
+                {% else %}
+                    <i class="fa fa-times" title="{{ __('No') }}"></i>
+                {% endif %}
+            «ENDIF»
+        '''
     }
 
     def dispatch displayField(IntegerField it, String objName, String page) '''
@@ -198,7 +211,7 @@ class SimpleFields {
             «ELSEIF !isLegacyApp»{% if «realName»Meta|default %}
             «ENDIF»
             «IF isLegacyApp»
-                <a href="{$«realName»FullPathURL}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
+                <a href="{$«realName»FullPathUrl}" title="{$«objName»->getTitleFromDisplayPattern()|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
                 {if $«realName»Meta.isImage}
                     {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName»->getTitleFromDisplayPattern()}
                 {else}
@@ -206,12 +219,12 @@ class SimpleFields {
                 {/if}
                 </a>
             «ELSE»
-                <a href="{{ «realName»FullPathURL }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="lightbox"{% endif %}>
+                <a href="{{ «realName»Url }}" title="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}"{% if «realName»Meta.isImage %} class="lightbox"{% endif %}>
                 {% if «realName»Meta.isImage %}
                     {% set thumbOptions = attribute(thumbRuntimeOptions, '«entity.name.formatForCode»«name.formatForCodeCapital»') %}
-                    <img src="{{ «realName»FullPath|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
+                    <img src="{{ «realName».getRelativePathname()|imagine_filter('zkroot', thumbOptions) }}" alt="{{ «objName».getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ thumbOptions.thumbnail.size[0] }}" height="{{ thumbOptions.thumbnail.size[1] }}" class="img-thumbnail" />
                 {% else %}
-                    {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName»FullPath, false, false) }})
+                    {{ __('Download') }} ({{ «realName»Meta.size|«appNameSmall»_fileSize(«realName».getRelativePathname(), false, false) }})
                 {% endif %}
                 </a>
             «ENDIF»

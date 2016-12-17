@@ -318,7 +318,11 @@ class Newsletter {
 
                 // A picture to display in Newsletter next to the item
                 «IF hasImageFields»
-                    $items[$k]['nl_picture'] = $previewFieldName != '' ? $item[$previewFieldName . 'FullPath'] : null;
+                    «IF targets('1.3.x')»
+                        $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName . 'FullPath'] : '';
+                    «ELSE»
+                        $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName]->getRelativePathname() : '';
+                    «ENDIF»
                 «ELSE»
                     $items[$k]['nl_picture'] = '';
                 «ENDIF»

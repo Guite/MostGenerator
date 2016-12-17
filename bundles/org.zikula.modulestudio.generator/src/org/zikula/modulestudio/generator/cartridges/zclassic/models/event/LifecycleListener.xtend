@@ -38,6 +38,9 @@ class LifecycleListener {
         use Doctrine\ORM\Event\PreUpdateEventArgs;
         use Doctrine\ORM\Events;
         use ServiceUtil;
+        «IF hasUploads»
+            use Symfony\Component\HttpFoundation\File\File;
+        «ENDIF»
         use Zikula\Core\Doctrine\EntityAccess;
         use «appNamespace»\«name.formatForCodeCapital»Events;
         «FOR entity : entities»
@@ -196,8 +199,8 @@ class LifecycleListener {
                     // prepare helper fields for uploaded files
                     $objectType = $entity->get_objectType();
                     $controllerHelper = ServiceUtil::get('«appService».controller_helper');
-                    $flashBag = ServiceUtil::get('session')->getFlashBag();
                     $request = ServiceUtil::get('request_stack')->getCurrentRequest();
+                    $baseUrl = $request->getSchemeAndHttpHost() . $request->getBasePath();
 
                     $uploadFields = [];
                     «FOR entity : getUploadEntities»
@@ -213,14 +216,20 @@ class LifecycleListener {
                             }
                             $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
                             $fullPath = $basePath . $entity[$fieldName];
-                            $entity[$fieldName . 'FullPath'] = $fullPath;
-                            $entity[$fieldName . 'FullPathURL'] = $request->getSchemeAndHttpHost() . $request->getBasePath() . '/' . $fullPath;
+                            if (file_exists($fullPath)) {
+                                $entity[$fieldName] = new File($fullPath);
+                                $entity[$fieldName . 'Url'] = $baseUrl . '/' . $fullPath;
 
-                            // just some backwards compatibility stuff«/*TODO remove on demand handling of upload meta data */»
-                            /*if (!isset($entity[$fieldName . 'Meta']) || !is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
-                                // assign new meta data
-                                $entity[$fieldName . 'Meta'] = $uploadManager->readMetaDataForFile($entity[$fieldName], $fullPath);
-                            }*/
+                                // just some backwards compatibility stuff«/*TODO remove on demand handling of upload meta data */»
+                                /*if (!isset($entity[$fieldName . 'Meta']) || !is_array($entity[$fieldName . 'Meta']) || !count($entity[$fieldName . 'Meta'])) {
+                                    // assign new meta data
+                                    $entity[$fieldName . 'Meta'] = $uploadManager->readMetaDataForFile($entity[$fieldName], $fullPath);
+                                }*/
+                            } else {
+                                $entity[$fieldName] = null;
+                                $entity[$fieldName . 'Url'] = '';
+                                $entity[$fieldName . 'Meta'] = [];
+                            }
                         }
                     }
                 «ENDIF»

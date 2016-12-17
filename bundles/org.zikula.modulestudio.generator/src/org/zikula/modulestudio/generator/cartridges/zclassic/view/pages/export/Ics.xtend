@@ -59,7 +59,7 @@ class Ics {
         PRIORITY:5
         «IF hasUploadFieldsEntity»
             «FOR field : getUploadFieldsEntity»
-                {if $«objName».«field.name.formatForCode»}ATTACH;VALUE=URL:{$«objName».«field.name.formatForCode»FullPathURL}
+                {if $«objName».«field.name.formatForCode»}ATTACH;VALUE=URL:{$«objName».«field.name.formatForCode»FullPathUrl}
                 {/if}
             «ENDFOR»
         «ENDIF»
@@ -108,7 +108,7 @@ class Ics {
         PRIORITY:5
         «IF hasUploadFieldsEntity»
             «FOR field : getUploadFieldsEntity»
-                {% if «objName».«field.name.formatForCode» %}ATTACH;VALUE=URL:{{ «objName».«field.name.formatForCode»FullPathURL }}
+                {% if «objName».«field.name.formatForCode» %}ATTACH;VALUE=URL:{{ «objName».«field.name.formatForCode»Url }}
                 {% endif %}
             «ENDFOR»
         «ENDIF»

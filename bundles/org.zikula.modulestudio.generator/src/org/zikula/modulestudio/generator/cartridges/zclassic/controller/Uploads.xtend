@@ -266,7 +266,7 @@ class Uploads {
                 return $result;
             }
 
-            // retrieve the final file name
+            // build the file name
             $fileName = «IF targets('1.3.x')»$fileData[$fieldName]['name']«ELSE»$file->getClientOriginalName()«ENDIF»;
             $fileNameParts = explode('.', $fileName);
             «IF targets('1.3.x')»

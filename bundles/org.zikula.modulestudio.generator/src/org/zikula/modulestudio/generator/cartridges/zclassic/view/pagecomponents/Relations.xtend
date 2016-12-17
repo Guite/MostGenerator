@@ -114,7 +114,7 @@ class Relations {
             {% if items|default and items|length > 0 %}
             <ul class="«app.appName.toLowerCase»-related-item-list «name.formatForCode»">
             {% for item in items %}
-                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» || (item.workflowState == 'defered' and hasEditPermission and uid is defined and item.createdUserId == uid)«ENDIF» %}
+                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and uid is defined and item.createdUserId == uid)«ENDIF» %}
                 <li>
         «ENDIF»
         «IF hasActions('display')»
@@ -127,7 +127,7 @@ class Relations {
         «IF hasActions('display')»
             {% if not nolink %}
                 </a>
-                <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display'«routePkParams('item', true)»«appendSlug('item', true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window') }}" class="fa fa-search-plus hidden"></a>
+                <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{ item.«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«app.appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ 'display', { «routePkParams('item', true)»«appendSlug('item', true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window') }}" class="fa fa-search-plus hidden"></a>
             {% endif %}
             {% endspaceless %}
         «ENDIF»
@@ -149,8 +149,8 @@ class Relations {
         «IF hasImageFieldsEntity»
             <br />
             «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
-            {% if item.«imageFieldName» != '' and item.«imageFieldName»FullPath is defined and item.«imageFieldName»Meta.isImage %}
-                <img src="{{ item.«imageFieldName»FullPath|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
+            {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
+                <img src="{{ item.«imageFieldName».getRelativePathname()|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
             {% endif %}
         «ENDIF»
         «IF many»

@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Styles {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension GeneratorSettingsExtensions = new GeneratorSettingsExtensions
@@ -103,7 +104,6 @@ class Styles {
         «validationStyles»
         «autoCompletion»
         «viewAdditions»
-        «viewFilterForm»
     '''
 
     def private validationStyles(Application it) '''
@@ -335,39 +335,44 @@ class Styles {
     '''
 
     def private viewAdditions(Application it) '''
-        «IF !targets('1.3.x')»
         «IF !controllers.filter[hasActions('view')].empty»
-            /** fix dropdown visibility inside responsive tables */
-            div.«cssPrefix»-view .table-responsive {
-                min-height: 300px;
-            }
-        «ENDIF»
+            «IF !targets('1.3.x')»
+                /** fix dropdown visibility inside responsive tables */
+                div.«cssPrefix»-view .table-responsive {
+                    min-height: 300px;
+                }
+            «ENDIF»
+            «viewFilterForm»
         «ENDIF»
     '''
 
     def private viewFilterForm(Application it) '''
-        «IF !controllers.filter[hasActions('view')].empty»
-            div.«cssPrefix»-view form.«cssPrefix»-quicknav {
-                margin: 10px 0;
-                padding: 8px 12px;
-                border: 1px solid #ccc;
-            }
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+        }
 
-            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset {
-                padding: 3px 10px;
-                margin-bottom: 0;
-            }
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset {
+            padding: 3px 10px;
+            margin-bottom: 0;
+        }
 
-            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset h3 {
-                margin-top: 0;
-                display: none;
-            }
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset h3 {
+            margin-top: 0;
+            display: none;
+        }
+        «IF !targets('1.3.x')»
 
-            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset #num {
-                width: 50px;
-                text-align: right;
+            div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset label {
+                margin-right: 5px;
             }
         «ENDIF»
+
+        div.«cssPrefix»-view form.«cssPrefix»-quicknav fieldset #num {
+            width: 50px;
+            text-align: right;
+        }
     '''
 
     def private finderStyles(Application it) '''

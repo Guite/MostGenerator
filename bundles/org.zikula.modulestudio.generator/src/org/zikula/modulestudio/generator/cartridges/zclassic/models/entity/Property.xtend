@@ -75,26 +75,33 @@ class Property {
         protected $«name.formatForCode»Meta = «IF entity.application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
 
         «persistentProperty(name.formatForCode, fieldTypeAsString, '')»
-        /**
-         * The full path to the «name.formatForDisplay».
-         *
-         «IF !entity.application.targets('1.3.x')»
-         * @Assert\Type(type="string")
-            «thVal.fieldUploadAnnotations(it)»
-        «ENDIF»
-         * @var string $«name.formatForCode»FullPath
-         */
-        protected $«name.formatForCode»FullPath = '';
+        «IF entity.application.targets('1.3.x')»
+            /**
+             * The full path to the «name.formatForDisplay».
+             *
+             «IF !entity.application.targets('1.3.x')»
+             * @Assert\Type(type="string")
+            «ENDIF»
+             * @var string $«name.formatForCode»FullPath
+             */
+            protected $«name.formatForCode»FullPath = '';
 
-        /**
-         * Full «name.formatForDisplay» path as url.
-         *
-         «IF !entity.application.targets('1.3.x')»
-         * @Assert\Type(type="string")
-         «ENDIF»
-         * @var string $«name.formatForCode»FullPathUrl
-         */
-        protected $«name.formatForCode»FullPathUrl = '';
+            /**
+             * Full «name.formatForDisplay» path as url.
+             *
+             * @var string $«name.formatForCode»FullPathUrl
+             */
+            protected $«name.formatForCode»FullPathUrl = '';
+        «ELSE»
+            /**
+             * Full «name.formatForDisplay» path as url.
+             *
+             * @Assert\Type(type="string")
+             * @Assert\Url()
+             * @var string $«name.formatForCode»Url
+             */
+            protected $«name.formatForCode»Url = '';
+        «ENDIF»
     '''
 
     def dispatch persistentProperty(ArrayField it) {
@@ -212,8 +219,12 @@ class Property {
 
     def dispatch fieldAccessor(UploadField it) '''
         «fieldAccessorDefault»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', false, true, false, '', '')»
-        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, false, if (entity.application.targets('1.3.x')) 'Array()' else '[]', '')»
+        «IF entity.application.targets('1.3.x')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', false, true, false, '', '')»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', false, true, false, '', '')»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, name.formatForCode + 'Url', 'string', false, true, false, '', '')»
+        «ENDIF»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, true, true, if (entity.application.targets('1.3.x')) 'Array()' else '[]', '')»
     '''
 }

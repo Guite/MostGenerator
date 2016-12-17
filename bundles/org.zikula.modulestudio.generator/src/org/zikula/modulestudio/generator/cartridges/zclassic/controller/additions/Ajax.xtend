@@ -465,7 +465,7 @@ class Ajax {
                     «IF app.hasImageFields»
 
                         // check for preview image
-                        if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
+                        if (!empty($previewFieldName) && !empty($item[$previewFieldName])) {
                             $fullObjectId = $objectType . '-' . $resultItem['id'];
                             $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
                             $preview = '<img src="' . $thumbImagePath . '" width="50" height="50" alt="' . $itemTitleStripped . '" />';

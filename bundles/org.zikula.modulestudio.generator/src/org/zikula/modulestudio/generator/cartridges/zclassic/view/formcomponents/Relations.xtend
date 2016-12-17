@@ -304,8 +304,8 @@ class Relations {
                 «IF targetEntity.hasImageFieldsEntity»
                     <br />
                     «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
-                    {% if item.«imageFieldName» != '' and item.«imageFieldName»FullPath is defined and item.«imageFieldName»Meta.isImage %}
-                        <img src="{{ item.«imageFieldName»FullPath|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
+                    {% if item.«imageFieldName» is not empty and item.«imageFieldName»Meta.isImage %}
+                        <img src="{{ item.«imageFieldName».getRelativePathname()|imagine_filter('zkroot', relationThumbRuntimeOptions) }}" alt="{{ item.getTitleFromDisplayPattern()|e('html_attr') }}" width="{{ relationThumbRuntimeOptions.thumbnail.size[0] }}" height="{{ relationThumbRuntimeOptions.thumbnail.size[1] }}" class="img-rounded" />
                     {% endif %}
                 «ENDIF»
             </li>

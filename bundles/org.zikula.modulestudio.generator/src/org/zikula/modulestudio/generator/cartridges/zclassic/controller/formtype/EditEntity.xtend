@@ -226,13 +226,13 @@ class EditEntity {
                 $this->addSubmitButtons($builder, $options);
                 «IF hasUploadFieldsEntity»
 
-                    $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                    /*$builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                         $entity = $event->getData();
                         foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
                             $filePath = $entity[$uploadFieldName . 'FullPath'];
                             $entity[$uploadFieldName] = [$uploadFieldName => file_exists($filePath) ? new File($filePath) : null];
                         }
-                    });
+                    });*/
                     $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                         $entity = $event->getData();
                         foreach (['«getUploadFieldsEntity.map[f|f.name.formatForCode].join("', '")»'] as $uploadFieldName) {
@@ -469,7 +469,9 @@ class EditEntity {
             «IF readonly»
                 'disabled' => true,
             «ENDIF»
-            'empty_data' => «IF it instanceof UploadField»null«ELSE»'«defaultValue»'«ENDIF»,
+            «IF !(it instanceof BooleanField)»
+                'empty_data' => «IF it instanceof UploadField»null«ELSE»'«defaultValue»'«ENDIF»,
+            «ENDIF»
             «IF idSuffix != ''»
                 'mapped' => false,
             «ENDIF»

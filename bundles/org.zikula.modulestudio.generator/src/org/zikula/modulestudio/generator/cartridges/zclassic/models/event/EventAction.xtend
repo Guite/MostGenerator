@@ -375,7 +375,7 @@ class EventAction {
 
             $fullPath = $basePath . «entityVar»['«realName»'];
             «entityVar»['«realName»FullPath'] = $fullPath;
-            «entityVar»['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
+            «entityVar»['«realName»FullPathUrl'] = System::getBaseUrl() . $fullPath;
 
             // just some backwards compatibility stuff«/*TODO remove on demand handling of upload meta data */»
             /*if (!isset(«entityVar»['«realName»Meta']) || !is_array(«entityVar»['«realName»Meta']) || !count(«entityVar»['«realName»Meta'])) {
