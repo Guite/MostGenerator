@@ -280,7 +280,7 @@ class ImageHelper {
                 return;
             }
 
-            $this->session->getFlashBag()->add('error', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
+            $this->session->getFlashBag()->add('warning', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
         }
     '''
 
