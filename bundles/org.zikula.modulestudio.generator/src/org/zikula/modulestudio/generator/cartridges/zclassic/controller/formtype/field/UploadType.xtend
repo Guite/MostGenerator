@@ -28,6 +28,7 @@ class UploadType {
         use Symfony\Component\Form\FormBuilderInterface;
         use Symfony\Component\Form\FormInterface;
         use Symfony\Component\Form\FormView;
+        use Symfony\Component\HttpFoundation\File\File;
         use Symfony\Component\OptionsResolver\OptionsResolver;
         use Symfony\Component\PropertyAccess\PropertyAccess;
         use Zikula\Common\Translator\TranslatorInterface;
@@ -42,11 +43,6 @@ class UploadType {
              * @var TranslatorInterface
              */
             protected $translator;
-
-            /**
-             * @var string
-             */
-            protected $fieldName = '';
 
             /**
              * @var FormBuilderInterface
@@ -77,7 +73,6 @@ class UploadType {
                 $fieldName = $builder->getName();
 
                 $this->entity = $options['entity'];
-                $this->fieldName = $fieldName;
                 $this->formBuilder = $builder;
 
                 $fileOptions = [];
@@ -90,7 +85,7 @@ class UploadType {
                 $fileOptions['attr']['class'] = 'validate-upload';
 
                 $builder->add($fieldName, 'Symfony\Component\Form\Extension\Core\Type\FileType', $fileOptions);
-                $uploadFileTransformer = new UploadFileTransformer($this);
+                $uploadFileTransformer = new UploadFileTransformer($this, $fieldName);
                 $builder->get($fieldName)->addModelTransformer($uploadFileTransformer);
 
                 if ($options['required']) {
@@ -112,19 +107,22 @@ class UploadType {
              */
             public function buildView(FormView $view, FormInterface $form, array $options)
             {
-                $this->fieldName = $form->getConfig()->getName();
+                $fieldName = $form->getConfig()->getName();
 
                 $view->vars['object_type'] = $this->entity->get_objectType();
-                $view->vars['fieldName'] = $this->fieldName;
+                $view->vars['fieldName'] = $fieldName;
                 $view->vars['formattedEntityTitle'] = $this->entity->getTitleFromDisplayPattern();
 
                 $parentData = $form->getParent()->getData();
                 $accessor = PropertyAccess::createPropertyAccessor();
-                $fieldNameGetter = 'get' . ucfirst($this->fieldName);
+                $fieldNameGetter = 'get' . ucfirst($fieldName);
 
                 // assign basic file properties
                 $file = null !== $parentData ? $accessor->getValue($parentData, $fieldNameGetter) : null;
-                $hasFile = null !== $parentData && null !== $file;
+                if (null !== $file && is_string($file)) {
+                    $file = new File($file);
+                }
+                $hasFile = null !== $file;
                 $fileMeta = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Meta') : [];
                 if (!isset($fileMeta['isImage'])) {
                     $fileMeta['isImage'] = false;
@@ -133,7 +131,7 @@ class UploadType {
                     $fileMeta['size'] = 0;
                 }
                 $view->vars['file_meta'] = $fileMeta;
-                $view->vars['file_path'] = $hasFile ? $hasFile->getRelativePathname() : null;
+                $view->vars['file_path'] = $hasFile ? $hasFile->getPathname() : null;
                 $view->vars['file_url'] = $hasFile ? $accessor->getValue($parentData, $fieldNameGetter . 'Url') : null;
 
                 // assign other custom options
@@ -143,7 +141,7 @@ class UploadType {
 
                 if (true === $fileMeta['isImage']) {
                     $imageHelper = ServiceUtil::get('«appService».image_helper');
-                    $view->vars['thumbRuntimeOptions'] = $imageHelper->getRuntimeOptions($this->entity->get_objectType(), $this->fieldName, 'controllerAction', ['action' => 'edit']);
+                    $view->vars['thumbRuntimeOptions'] = $imageHelper->getRuntimeOptions($this->entity->get_objectType(), $fieldName, 'controllerAction', ['action' => 'edit']);
                 }
             }
 
@@ -170,7 +168,6 @@ class UploadType {
                 ;
             }
 
-            «new FileHelper().getterMethod(null, 'fieldName', 'string', false)»
             «new FileHelper().getterMethod(null, 'formBuilder', 'FormBuilderInterface', false)»
             «new FileHelper().getterMethod(null, 'entity', 'object', false)»
             /**

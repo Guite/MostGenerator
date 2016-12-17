@@ -321,7 +321,7 @@ class Newsletter {
                     «IF targets('1.3.x')»
                         $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName . 'FullPath'] : '';
                     «ELSE»
-                        $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName]->getRelativePathname() : '';
+                        $items[$k]['nl_picture'] = $previewFieldName != '' && !empty($item[$previewFieldName) ? $item[$previewFieldName]->getPathname() : '';
                     «ENDIF»
                 «ELSE»
                     $items[$k]['nl_picture'] = '';

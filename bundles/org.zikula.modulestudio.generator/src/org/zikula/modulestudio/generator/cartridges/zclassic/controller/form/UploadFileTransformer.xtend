@@ -58,16 +58,23 @@ class UploadFileTransformer {
             protected $uploadHandler = '';
 
             /**
+             * @var string
+             */
+            protected $fieldName = '';
+
+            /**
              * Constructor.
              *
-             * @param UploadType $formType The form type containing this transformer
+             * @param UploadType $formType  The form type containing this transformer
+             * @param string     $fieldName The form field name
              */
-            public function __construct(UploadType $formType)
+            public function __construct(UploadType $formType, $fieldName)
             {
                 $this->formType = $formType;
                 $this->request = ServiceUtil::get('request_stack')->getMasterRequest();
                 $this->controllerHelper = ServiceUtil::get('«appService».controller_helper');
                 $this->uploadHandler = ServiceUtil::get('«appService».upload_handler');
+                $this->fieldName = $fieldName;
             }
 
             /**
@@ -86,7 +93,7 @@ class UploadFileTransformer {
                     return $fileName;
                 }
 
-                $fieldName = $this->formType->getFieldName();
+                $fieldName = $this->fieldName;
                 $filePath = $this->controllerHelper->getFileBaseFolder($this->formType->getEntity()->get_objectType(), $fieldName) . $fileName;
 
                 return [$fieldName => new File($filePath)];
@@ -121,7 +128,7 @@ class UploadFileTransformer {
 
                 $entity = $this->formType->getEntity();
                 $objectType = $entity->get_objectType();
-                $fieldName = $this->formType->getFieldName();
+                $fieldName = $this->fieldName;
 
                 if (null === $uploadedFile) {
                     // check files array
@@ -161,12 +168,22 @@ class UploadFileTransformer {
 
                 // do the actual upload (includes validation, physical file processing and reading meta data)
                 $uploadResult = $this->uploadHandler->performFileUpload($objectType, $uploadedFile, $fieldName);
-                // assign the upload file name
-                $entity[$fieldName] = $uploadResult['fileName'];
-                // assign the meta data
-                $entity[$fieldName . 'Meta'] = $uploadResult['metaData'];
 
-                return $uploadResult['fileName'];
+                $result = null;
+                $metaData = [];
+                if ($uploadResult['fileName'] != '') {
+                    $result = $this->controllerHelper->getFileBaseFolder($this->formType->getEntity()->get_objectType(), $fieldName) . $uploadResult['fileName'];
+                    $metaData = $uploadResult['metaData'];
+                }
+
+                // assign the upload file
+                $setter = 'set' . ucfirst($fieldName);
+                $entity->$setter(null !== $result ? new File($result) : $result);
+
+                // assign the meta data
+                $entity[$fieldName . 'Meta'] = $metaData;
+
+                return $result;
             }
         }
     '''
