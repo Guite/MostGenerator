@@ -84,6 +84,11 @@ class ServiceDefinitions {
           - { resource: 'helpers.yml' }
           - { resource: 'twig.yml' }
           - { resource: 'logger.yml' }
+        «IF hasImageFields»
+
+        parameters:
+            liip_imagine.cache.signer.class: «appNamespace»\Imagine\Cache\DummySigner
+        «ENDIF»
     '''
 
     def private uploadHandler(Application it) '''
@@ -338,6 +343,7 @@ class ServiceDefinitions {
 
             «modPrefix».image_helper:
                 class: «nsBase»ImageHelper
+                arguments: ["@translator.default", "@session"]
         «ENDIF»
         «IF hasListFields»
 

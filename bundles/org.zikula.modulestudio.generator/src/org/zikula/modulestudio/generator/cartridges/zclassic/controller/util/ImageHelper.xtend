@@ -3,10 +3,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ImageHelper {
+
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -21,11 +24,19 @@ class ImageHelper {
         generateClassPair(fsa, getAppSourceLibPath + helperFolder + '/Image' + (if (isLegacy) '' else 'Helper') + '.php',
             fh.phpFileContent(it, imageFunctionsBaseImpl), fh.phpFileContent(it, imageFunctionsImpl)
         )
+        if (!isLegacy && hasImageFields) {
+            generateClassPair(fsa, getAppSourceLibPath + 'Imagine/Cache/DummySigner.php',
+                fh.phpFileContent(it, dummySignerBaseImpl), fh.phpFileContent(it, dummySignerImpl)
+            )
+        }
     }
 
     def private imageFunctionsBaseImpl(Application it) '''
         «IF !isLegacy»
             namespace «appNamespace»\Helper\Base;
+
+            use Symfony\Component\HttpFoundation\Session\SessionInterface;
+            use Zikula\Common\Translator\TranslatorInterface;
 
         «ENDIF»
         /**
@@ -34,6 +45,16 @@ class ImageHelper {
         abstract class «IF isLegacy»«appName»_Util_Base_AbstractImage extends Zikula_AbstractBase«ELSE»AbstractImageHelper«ENDIF»
         {
             «IF !isLegacy»
+                /**
+                 * @var TranslatorInterface
+                 */
+                protected $translator;
+
+                /**
+                 * @var SessionInterface
+                 */
+                protected $session;
+
                 /**
                  * Name of the application.
                  *
@@ -44,9 +65,14 @@ class ImageHelper {
                 /**
                  * Constructor.
                  * Initialises member vars.
+                 *
+                 * @param TranslatorInterface $translator Translator service instance
+                 * @param SessionInterface    $session    Session service instance
                  */
-                public function __construct()
+                public function __construct(TranslatorInterface $translator, SessionInterface $session)
                 {
+                    $this->translator = $translator;
+                    $this->session = $session;
                     $this->name = '«appName»';
                 }
 
@@ -54,6 +80,10 @@ class ImageHelper {
             «getRuntimeOptions»
 
             «getCustomRuntimeOptions»
+            «IF !isLegacy»
+
+                «checkAndCreateImagineCacheDirectory»
+            «ENDIF»
         }
     '''
 
@@ -70,6 +100,10 @@ class ImageHelper {
          */
         public function get«IF isLegacy»Preset«ELSE»RuntimeOptions«ENDIF»($objectType = '', $fieldName = '', $context = '', $args = «IF isLegacy»array()«ELSE»[]«ENDIF»)
         {
+            «IF !isLegacy»
+                $this->checkAndCreateImagineCacheDirectory();
+
+            «ENDIF»
             if (!in_array($context, «IF isLegacy»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF isLegacy»)«ELSE»]«ENDIF»)) {
                 $context = 'controllerAction';
             }
@@ -187,4 +221,80 @@ class ImageHelper {
     def private isLegacy(Application it) {
         targets('1.3.x')
     }
+
+    def private dummySignerBaseImpl(Application it) '''
+        namespace «appNamespace»\Imagine\Cache\Base;
+
+        use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
+
+        /**
+         * Temporary dummy signer until https://github.com/liip/LiipImagineBundle/issues/837 has been resolved.
+         */
+        abstract class AbstractDummySigner implements SignerInterface
+        {
+            /**
+             * @var string
+             */
+            private $secret;
+
+            /**
+             * @param string $secret
+             */
+            public function __construct($secret)
+            {
+                $this->secret = $secret;
+            }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function sign($path, array $runtimeConfig = null)
+            {
+                if ($runtimeConfig) {
+                    array_walk_recursive($runtimeConfig, function (&$value) {
+                        $value = (string) $value;
+                    });
+                }
+
+                return substr(preg_replace('/[^a-zA-Z0-9-_]/', '', base64_encode(hash_hmac('sha256', ltrim($path, '/').(null === $runtimeConfig ?: serialize($runtimeConfig)), $this->secret, true))), 0, 8);
+            }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function check($hash, $path, array $runtimeConfig = null)
+            {
+                return true;//$hash === $this->sign($path, $runtimeConfig);
+            }
+        }
+    '''
+
+    def private checkAndCreateImagineCacheDirectory(Application it) '''
+        /**
+         * Check if cache directory exists and create it if needed.
+         */
+        protected function checkAndCreateImagineCacheDirectory()
+        {
+            $cachePath = 'web/imagine/cache';
+            if (file_exists($cachePath)) {
+                return;
+            }
+
+            $this->session->getFlashBag()->add('error', $this->translator->__f('The cache directory "%directory%" does not exist. Please create it and make it writable for the webserver.', ['%directory%' => $cachePath]));
+        }
+    '''
+
+    def private dummySignerImpl(Application it) '''
+        namespace «appNamespace»\Imagine\Cache;
+
+        use «appNamespace»\Imagine\Cache\Base\AbstractDummySigner;
+
+        /**
+         * Temporary dummy signer until https://github.com/liip/LiipImagineBundle/issues/837 has been resolved.
+         */
+        class DummySigner extends AbstractDummySigner
+        {
+            // feel free to add your own convenience methods here
+        }
+    '''
 }
