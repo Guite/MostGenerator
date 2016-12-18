@@ -244,14 +244,14 @@ class ThirdParty {
          *
          * Adds external plugin to TinyMCE.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function getTinyMcePlugins(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function getTinyMcePlugins(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
         {
             «IF !isBase»
                 parent::getTinyMcePlugins($event);
@@ -282,14 +282,14 @@ class ThirdParty {
          *
          * Adds external plugin to CKEditor.
          *
-         * @param «IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance
+         * @param «IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event The event instance
          */
         «ELSE»
             /**
              * {@inheritdoc}
              */
         «ENDIF»
-        public «IF targets('1.3.x')»static «ENDIF»function getCKEditorPlugins(«IF targets('1.3.x')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
+        public «IF targets('1.3.x')»static «ENDIF»function getCKEditorPlugins(«IF !targets('1.3.x')»\«ENDIF»«/*IF targets('1.3.x')*/»Zikula_Event«/*ELSE»GenericEvent«ENDIF*/» $event)
         {
             «IF !isBase»
                 parent::getCKEditorPlugins($event);
