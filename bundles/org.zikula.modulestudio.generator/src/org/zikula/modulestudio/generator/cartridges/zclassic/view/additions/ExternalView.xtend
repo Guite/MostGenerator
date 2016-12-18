@@ -315,9 +315,9 @@ class ExternalView {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ __('Search and select «name.formatForDisplay»') }}</title>
-            {{ pageAddAsset('stylesheet', zasset('style/core.css') }}
-            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css') }}
-            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/finder.css') }}
+            {{ pageAddAsset('stylesheet', zasset('style/core.css')) }}
+            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
+            {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/finder.css')) }}
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
                 Zikula.Config = {'entrypoint': '{{ getModVar('ZConfig', 'entrypoint', 'index.php') }}', 'baseURL': '{{ app.request.getSchemeAndHttpHost() ~ '/' }}', 'baseURI': '{{ app.request.getBasePath() }}'}; /* ]]> */
