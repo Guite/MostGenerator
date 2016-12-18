@@ -166,7 +166,7 @@ class ExternalView {
                 </p>
             #}
             «ENDIF»
-        {/if}
+        {% endif %}
         </div>
     '''
 
