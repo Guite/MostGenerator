@@ -89,7 +89,7 @@ class Tag {
 
             /** TODO support composite identifiers properly at this point */
             $entity = $repository->selectById($objectId, $useJoins);
-            if ($entity === false || (!is_array($entity) && !is_object($entity))) {
+            if (false === $entity || (!is_array($entity) && !is_object($entity))) {
                 return;
             }
 

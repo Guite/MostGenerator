@@ -208,7 +208,7 @@ class ViewHelper {
             «IF !isLegacy»
                 $response = null;
             «ENDIF»
-            if ($raw == true) {
+            if (true === $raw) {
                 // standalone output
                 if ($templateExtension == 'pdf«IF !isLegacy».twig«ENDIF»') {
                     $template = str_replace('.pdf', '«IF !isLegacy».html«ENDIF»', $template);

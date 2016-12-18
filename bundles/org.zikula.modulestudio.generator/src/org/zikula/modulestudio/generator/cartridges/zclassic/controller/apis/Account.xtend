@@ -54,13 +54,13 @@ class Account {
             $items = array();
 
             $useAccountPage = $this->getVar('useAccountPage', true);
-            if ($useAccountPage === false) {
+            if (false === $useAccountPage) {
                 return $items;
             }
 
             $userName = (isset($args['uname'])) ? $args['uname'] : UserUtil::getVar('uname');
             // does this user exist?
-            if (UserUtil::getIdFromName($userName) === false) {
+            if (false === UserUtil::getIdFromName($userName)) {
                 // user does not exist
                 return $items;
             }

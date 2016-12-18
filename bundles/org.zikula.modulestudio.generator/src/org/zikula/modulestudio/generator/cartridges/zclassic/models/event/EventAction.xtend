@@ -222,7 +222,7 @@ class EventAction {
                     $result = false;
                 }
             «ENDIF»
-            if ($result === false) {
+            if (false === $result) {
                 «IF isLegacy»
                     $dom = ZLanguage::getModuleDomain('«appName»');
 

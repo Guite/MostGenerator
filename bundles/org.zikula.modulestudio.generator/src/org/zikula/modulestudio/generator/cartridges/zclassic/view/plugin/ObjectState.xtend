@@ -45,7 +45,7 @@ class ObjectState {
             $stateInfo = $«IF !targets('1.3.x')»this->«ENDIF»workflowHelper->getStateInfo($state);
 
             $result = $stateInfo['text'];
-            if ($uiFeedback === true) {
+            if (true === $uiFeedback) {
                 «IF targets('1.3.x')»«/* LED images (legacy) */»
                     $result = '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/' . $stateInfo['ui'] . 'led.png" width="16" height="16" alt="' . $result . '" />&nbsp;&nbsp;' . $result;
                 «ELSE»«/* use Bootstrap labels instead of images */»

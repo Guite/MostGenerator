@@ -922,7 +922,7 @@ class Actions {
             // check for unique permalinks (without id)
             $hasSlug = false;
             $slug = '';
-            if ($hasIdentifier === false) {
+            if (false === $hasIdentifier) {
                 $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
                 $meta = $this->entityManager->getClassMetadata($entityClass);
                 $hasSlug = $meta->hasField('slug') && $meta->isUniqueField('slug');
@@ -1272,7 +1272,7 @@ class Actions {
             $workflowHelper = $this->get('«app.appService».workflow_helper');
         «ENDIF»
         $actions = $workflowHelper->getActionsForObject($entity);
-        if ($actions === false || !is_array($actions)) {
+        if (false === $actions || !is_array($actions)) {
             «IF isLegacy»
                 return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
             «ELSE»

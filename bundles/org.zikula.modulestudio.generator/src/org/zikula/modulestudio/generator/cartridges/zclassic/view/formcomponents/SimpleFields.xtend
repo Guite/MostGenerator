@@ -273,8 +273,8 @@ class SimpleFields {
 
     def private dispatch formField(ListField it, String groupSuffix, String idSuffix) '''
         «IF isLegacyApp»
-            «IF expanded == true»
-                «IF multiple == true»
+            «IF expanded»
+                «IF multiple»
                     {formcheckboxlist «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay»' repeatColumns=2}
                 «ELSE»
                     «FOR item : items»

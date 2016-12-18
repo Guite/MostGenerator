@@ -638,7 +638,7 @@ class Ajax {
 
         $exclude = $postData->get('ex', '');
         «IF !application.entities.filter[hasCompositeKeys].empty»
-            if (strpos($exclude, '_') !== false) {
+            if (false !== strpos($exclude, '_')) {
                 $exclude = explode('_', $exclude);
             }
         «ENDIF» 

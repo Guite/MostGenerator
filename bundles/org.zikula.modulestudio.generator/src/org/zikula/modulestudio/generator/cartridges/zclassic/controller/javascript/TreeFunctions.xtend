@@ -98,7 +98,7 @@ class TreeFunctions {
             listItem = jQuery('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Basic actions', '«appName.formatForDB»_js'))
         );
 
-        if (hasDisplay === true) {
+        if (true === hasDisplay) {
             contextMenu.append(
                 jQuery('<li>', { role: 'presentation' }).append(
                     jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
@@ -109,7 +109,7 @@ class TreeFunctions {
                 )
             );
         }
-        if (hasEdit === true) {
+        if (true === hasEdit) {
             contextMenu.append(
                 jQuery('<li>', { role: 'presentation' }).append(
                     jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
@@ -146,7 +146,7 @@ class TreeFunctions {
                         if (!liRef.hasClass('z-tree-leaf')) {
                             confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?', '«appName.formatForDB»_js');
                         }
-                        if (window.confirm(confirmQuestion) !== false) {
+                        if (false !== window.confirm(confirmQuestion)) {
                             «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
                         }
                     })
@@ -203,7 +203,7 @@ class TreeFunctions {
 
         // and use it to attach a context menu
         contextMenu = new «vendorAndName»TreeContextMenu(elem.id, { leftClick: true, animation: false });
-        if (hasDisplay === true) {
+        if (true === hasDisplay) {
             contextMenu.addItem({
                 label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/kview.png" width="16" height="16" alt="' + Zikula.__('Display', 'module_«appName.formatForDB»_js') + '" /> '
                      + Zikula.__('Display', 'module_«appName.formatForDB»_js'),
@@ -222,7 +222,7 @@ class TreeFunctions {
                 }
             });
         }
-        if (hasEdit === true) {
+        if (true === hasEdit) {
             contextMenu.addItem({
                 label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/edit.png" width="16" height="16" alt="' + Zikula.__('Edit', 'module_«appName.formatForDB»_js') + '" /> '
                      + Zikula.__('Edit', 'module_«appName.formatForDB»_js'),
@@ -259,7 +259,7 @@ class TreeFunctions {
                 if (!liRef.hasClassName('z-tree-leaf')) {
                     confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?', 'module_«appName.formatForDB»_js');
                 }
-                if (window.confirm(confirmQuestion) !== false) {
+                if (false !== window.confirm(confirmQuestion)) {
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
                 }

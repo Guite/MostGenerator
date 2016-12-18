@@ -300,7 +300,7 @@ class EntityMethods {
          */
         public function validate()
         {
-            if ($this->_bypassValidation === true) {
+            if (true === $this->_bypassValidation) {
                 return«IF !application.targets('1.3.x')» true«ENDIF»;
             }
 
@@ -308,7 +308,7 @@ class EntityMethods {
             «IF emailFields.size > 0»
                 // decode possibly encoded mail addresses (#201)
                 «FOR emailField : emailFields»
-                    if (strpos($this['«emailField.name.formatForCode»'], '&#') !== false) {
+                    if (false !== strpos($this['«emailField.name.formatForCode»'], '&#')) {
                         $this['«emailField.name.formatForCode»'] = html_entity_decode($this['«emailField.name.formatForCode»']);
                     }
                 «ENDFOR»

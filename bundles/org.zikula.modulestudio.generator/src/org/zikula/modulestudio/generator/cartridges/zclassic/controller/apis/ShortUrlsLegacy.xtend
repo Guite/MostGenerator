@@ -215,7 +215,7 @@ class ShortUrlsLegacy {
 
             // remove some unrequired parameters
             foreach ($_GET as $k => $v) {
-                if (in_array($k, array('module', 'type', 'func', 'lang', 'ot')) === false) {
+                if (false === in_array($k, array('module', 'type', 'func', 'lang', 'ot'))) {
                     unset($_GET[$k]);
                 }
             }
@@ -227,7 +227,7 @@ class ShortUrlsLegacy {
             $url = implode('/', $urlVars);
 
             // check if default view urls end with a trailing slash
-            if ($func == 'view' && strpos($url, '.') === false && substr($url, -1) != '/') {
+            if ($func == 'view' && false === strpos($url, '.') && substr($url, -1) != '/') {
                 // add missing trailing slash
                 $url .= '/';
             }

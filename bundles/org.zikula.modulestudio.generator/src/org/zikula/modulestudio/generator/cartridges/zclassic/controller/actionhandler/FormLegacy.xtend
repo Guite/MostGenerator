@@ -123,7 +123,7 @@ class FormLegacy {
     def initExtensions(Application it) '''
         «IF hasCategorisableEntities»
 
-            if ($this->hasCategories === true) {
+            if (true === $this->hasCategories) {
                 $this->initCategoriesForEditing();
             }
         «ENDIF»

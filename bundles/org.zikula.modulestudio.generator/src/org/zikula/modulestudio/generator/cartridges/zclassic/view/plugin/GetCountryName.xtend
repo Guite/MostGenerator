@@ -36,7 +36,7 @@ class GetCountryName {
         «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_modifier_«appName.formatForDB»G«ELSE»g«ENDIF»etCountryName($countryCode)
         {
             $result = «IF targets('1.3.x')»ZLanguage::getCountryName«ELSE»\Symfony\Component\Intl\Intl::getRegionBundle()->getCountryName«ENDIF»($countryCode);
-            if ($result === false) {
+            if (false === $result) {
                 $result = $countryCode;
             }
 

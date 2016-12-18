@@ -114,7 +114,7 @@ class EntityConstructor {
                 $items = «IF application.targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 $listEntries = $listHelper->get«listField.name.formatForCodeCapital»EntriesFor«name.formatForCodeCapital»();
                 foreach ($listEntries as $listEntry) {
-                    if ($listEntry['default'] === true) {
+                    if (true === $listEntry['default']) {
                         $items[] = $listEntry['value'];
                     }
                 }

@@ -287,7 +287,7 @@ class TranslatableHelper {
                     }
                 }
             }
-            if ($useOnlyCurrentLanguage === true) {
+            if (true === $useOnlyCurrentLanguage) {
                 $language = $this->getCurrentLanguage();
                 $translations[$language] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
                 foreach ($fields as $field) {

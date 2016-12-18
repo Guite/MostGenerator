@@ -100,7 +100,7 @@ class ServiceDefinitions {
         # Upload handler class
         «modPrefix».upload_handler:
             class: «appNamespace»\UploadHandler
-            arguments: ["@translator.default", "@zikula_users_module.current_user"]
+            arguments: ["@translator.default", "@zikula_users_module.current_user", "@zikula_extensions_module.api.variable"]
     '''
 
     def private linkContainer(Application it) '''

@@ -448,7 +448,7 @@ class DisplayFunctions {
 
                             idSuffix = idSuffix.toLowerCase();
                             var state = data.state;
-                            if (state === true) {
+                            if (true === state) {
                                 $('no' + idSuffix).addClassName('z-hide');
                                 $('yes' + idSuffix).removeClassName('z-hide');
                             } else {
@@ -476,7 +476,7 @@ class DisplayFunctions {
 
                     idSuffix = idSuffix.toLowerCase();
                     var state = data.state;
-                    if (state === true) {
+                    if (true === state) {
                         jQuery('#no' + idSuffix).addClass('hidden');
                         jQuery('#yes' + idSuffix).removeClass('hidden');
                     } else {

@@ -84,7 +84,7 @@ class PermissionCheck {
         {
             «IF !app.getAllEntities.filter[hasArchive && null !== getEndDateField].empty»
                 // every user is allowed to perform automatic archiving 
-                if («IF !app.targets('1.3.x')»\«ENDIF»PageUtil::getVar('«app.appName»AutomaticArchiving', false) === true) {
+                if (true === «IF !app.targets('1.3.x')»\«ENDIF»PageUtil::getVar('«app.appName»AutomaticArchiving', false)) {
                     return true;
                 }
             «ENDIF»

@@ -129,6 +129,7 @@ class Uploads {
             use Symfony\Component\HttpFoundation\File\UploadedFile;
             use Zikula\Common\Translator\TranslatorInterface;
             use Zikula\Common\Translator\TranslatorTrait;
+            use Zikula\ExtensionsModule\Api\VariableApi;
             use Zikula\UsersModule\Api\CurrentUserApi;
             use ServiceUtil;
 
@@ -149,6 +150,11 @@ class Uploads {
                  * @var CurrentUserApi
                  */
                 protected $currentUserApi;
+
+                /**
+                 * @var VariableApi
+                 */
+                protected $variableApi;
 
             «ENDIF»
             /**
@@ -176,15 +182,18 @@ class Uploads {
             /**
              * Constructor initialising the supported object types.
             «IF !targets('1.3.x')»
-                «' '»*
-                «' '»* @param TranslatorInterface $translator Translator service instance
+             *
+             * @param TranslatorInterface $translator     Translator service instance
+             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
+             * @param VariableApi         $variableApi    VariableApi service instance
             «ENDIF»
              */
-            public function __construct(«IF !targets('1.3.x')»TranslatorInterface $translator, CurrentUserApi $currentUserApi«ENDIF»)
+            public function __construct(«IF !targets('1.3.x')»TranslatorInterface $translator, CurrentUserApi $currentUserApi, VariableApi $variableApi«ENDIF»)
             {
                 «IF !targets('1.3.x')»
                     $this->setTranslator($translator);
                     $this->currentUserApi = $currentUserApi;
+                    $this->variableApi = $variableApi;
                 «ENDIF»
                 $this->allowedObjectTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
                 $this->imageFileTypes = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'gif', 'jpeg', 'jpg', 'png', 'swf'«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
@@ -327,11 +336,11 @@ class Uploads {
             if ($isImage) {
                 // check if shrinking functionality is enabled
                 $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
-                if (\ModUtil::getVar('«appName»', 'enableShrinkingFor' . $fieldSuffix, false) == true) {
+                if (true === «IF targets('1.3.x')»ModUtil::getVar«ELSE»$this->variableApi->get«ENDIF»('«appName»', 'enableShrinkingFor' . $fieldSuffix, false)) {
                     // resize to allowed maximum size
                     $thumbManager = $serviceManager->get('systemplugin.imagine.manager');
-                    $maxWidth = \ModUtil::getVar('«appName»', 'shrinkWidth' . $fieldSuffix, 800);
-                    $maxHeight = \ModUtil::getVar('«appName»', 'shrinkHeight' . $fieldSuffix, 600);
+                    $maxWidth = «IF targets('1.3.x')»ModUtil::getVar«ELSE»$this->variableApi->get«ENDIF»('«appName»', 'shrinkWidth' . $fieldSuffix, 800);
+                    $maxHeight = «IF targets('1.3.x')»ModUtil::getVar«ELSE»$this->variableApi->get«ENDIF»('«appName»', 'shrinkHeight' . $fieldSuffix, 600);
 
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
@@ -417,7 +426,7 @@ class Uploads {
 
             // validate extension
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
-            if ($isValidExtension === false) {
+            if (false === $isValidExtension) {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
                 «ELSE»

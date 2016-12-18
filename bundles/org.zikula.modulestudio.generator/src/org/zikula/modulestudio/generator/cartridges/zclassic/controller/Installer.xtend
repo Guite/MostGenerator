@@ -328,7 +328,7 @@ class Installer {
             «ENDIF»
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule(«IF targets('1.3.x')»$this->getName()«ELSE»'«appName»'«ENDIF»);
-            if ($result === false) {
+            if (false === $result) {
                 «IF targets('1.3.x')»
                     return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
                 «ELSE»

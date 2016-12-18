@@ -78,7 +78,7 @@ class Config {
                         function «prefix.formatForDB»ToggleShrinkSettings(fieldName)
                         {
                             $$('.shrinkdimension-' + fieldName.toLowerCase()).each(function(elem, index) {
-                                if ($('enableShrinkingFor' + fieldName).checked == true) {
+                                if (true === $('enableShrinkingFor' + fieldName).checked) {
                                     elem.removeClassName('z-hide');
                                 } else {
                                     elem.addClassName('z-hide');

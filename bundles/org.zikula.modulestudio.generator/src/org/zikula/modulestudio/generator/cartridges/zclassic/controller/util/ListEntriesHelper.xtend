@@ -89,14 +89,14 @@ class ListEntriesHelper {
             }
 
             $isMulti = $this->hasMultipleSelection($objectType, $fieldName);
-            if ($isMulti === true) {
+            if (true === $isMulti) {
                 $value = $this->extractMultiList($value);
             }
 
             $options = $this->getEntries($objectType, $fieldName);
             $result = '';
 
-            if ($isMulti === true) {
+            if (true === $isMulti) {
                 foreach ($options as $option) {
                     if (!in_array($option['value'], $value)) {
                         continue;

@@ -248,7 +248,7 @@ class AbstractObjectSelector {
             if (!$this->mandatory) {
                 $this->addItem('', '');
             }
-            if ($this->showEmptyValue != false) {
+            if (true === $this->showEmptyValue) {
                 $this->addItem('- - -', 0);
             }
             

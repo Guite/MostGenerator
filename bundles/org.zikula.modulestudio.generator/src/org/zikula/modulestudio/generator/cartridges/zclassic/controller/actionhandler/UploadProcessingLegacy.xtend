@@ -43,7 +43,7 @@ class UploadProcessingLegacy {
                 $hasOldFile = !empty($entity[$uploadField]);
                 $hasBeenDeleted = !$hasOldFile;
                 if (isset($formData[$uploadField . 'DeleteFile'])) {
-                    if ($hasOldFile && $formData[$uploadField . 'DeleteFile'] === true) {
+                    if ($hasOldFile && true === $formData[$uploadField . 'DeleteFile']) {
                         // remove upload file (and image thumbnails)
                         $entity = $uploadHandler->deleteUploadFile($entity, $uploadField);
                     }

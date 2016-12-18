@@ -279,11 +279,11 @@ class ValidatorLegacy {
              */
             public function isStringNotContaining($fieldName, $keyword, $caseSensitive = false)
             {
-                if ($caseSensitive === true) {
-                    return (strstr($this->entity[$fieldName], $keyword) === false);
+                if (true === $caseSensitive) {
+                    return (false === strstr($this->entity[$fieldName], $keyword));
                 }
 
-                return (stristr($this->entity[$fieldName], $keyword) === false);
+                return (false === stristr($this->entity[$fieldName], $keyword));
             }
 
             /**
@@ -394,7 +394,7 @@ class ValidatorLegacy {
              */
             protected function isDateTimeValueInPast($fieldName, $format, $mandatory = true)
             {
-                if ($mandatory === false) {
+                if (false === $mandatory) {
                     return true;
                 }
 
@@ -412,7 +412,7 @@ class ValidatorLegacy {
              */
             protected function isDateTimeValueInFuture($fieldName, $format, $mandatory = true)
             {
-                if ($mandatory === false) {
+                if (false === $mandatory) {
                     return true;
                 }
 

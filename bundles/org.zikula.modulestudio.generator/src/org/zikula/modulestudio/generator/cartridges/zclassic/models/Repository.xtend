@@ -1258,7 +1258,7 @@ class Repository {
             $useJoins = false;
 
             $selection = 'COUNT(tbl.«getFirstPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
-            if ($useJoins === true) {
+            if (true === $useJoins) {
                 $selection .= $this->addJoinsToSelection();
             }
 
@@ -1266,7 +1266,7 @@ class Repository {
             $qb->select($selection)
                ->from('«entityClassName('', false)»', 'tbl');
 
-            if ($useJoins === true) {
+            if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
             }
 
@@ -1344,7 +1344,7 @@ class Repository {
             // normally we select the whole table
             $selection = 'tbl';
 
-            if ($slimMode === true) {
+            if (true === $slimMode) {
                 // but for the slim version we select only the basic fields, and no joins
 
                 $selection = '«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»tbl.«pkField.name.formatForCode»«ENDFOR»';
@@ -1355,7 +1355,7 @@ class Repository {
                 $useJoins = false;
             }
 
-            if ($useJoins === true) {
+            if (true === $useJoins) {
                 $selection .= $this->addJoinsToSelection();
             }
 
@@ -1363,7 +1363,7 @@ class Repository {
             $qb->select($selection)
                ->from('«entityClassName('', false)»', 'tbl');
 
-            if ($useJoins === true) {
+            if (true === $useJoins) {
                 $this->addJoinsToFrom($qb);
             }
 
@@ -1512,7 +1512,7 @@ class Repository {
 
             // add order by clause
             if (!empty($orderBy)) {
-                if (strpos($orderBy, '.') === false) {
+                if (false === strpos($orderBy, '.')) {
                     $orderBy = 'tbl.' . $orderBy;
                 }
                 $qb->add('orderBy', $orderBy);

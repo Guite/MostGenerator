@@ -527,7 +527,7 @@ class EditFunctions {
             });
 
             // if no handler was found
-            if (found === false) {
+            if (false === found) {
                 // create a new one
                 newItem = new Object();
                 newItem.ot = objectType;
@@ -609,7 +609,7 @@ class EditFunctions {
 
             «IF targets('1.3.x')»
                 var li = Builder.node('li', {id: elemPrefix}, newTitle);
-                if (includeEditing === true) {
+                if (true === includeEditing) {
                     var editHref = $(idPrefix + 'SelectorDoNew').href + '&id=' + newItemId;
                     editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
                     li.appendChild(editLink);
@@ -625,7 +625,7 @@ class EditFunctions {
                 $(idPrefix + 'ReferenceList').appendChild(li);
             «ELSE»
                 var li = jQuery('<li>', {id: elemPrefix, text: newTitle});
-                if (includeEditing === true) {
+                if (true === includeEditing) {
                     var editHref = jQuery('#' + idPrefix + 'SelectorDoNew').attr('href') + '&id=' + newItemId;
                     editLink = jQuery('<a>', {id: elemPrefix + 'Edit', href: editHref, text: 'edit'});
                     li.append(editLink);
@@ -641,7 +641,7 @@ class EditFunctions {
                 jQuery('#' + idPrefix + 'ReferenceList').append(li);
             «ENDIF»
 
-            if (includeEditing === true) {
+            if (true === includeEditing) {
                 «IF targets('1.3.x')»
                     editLink.update(' ' + editImage);
                 «ELSE»

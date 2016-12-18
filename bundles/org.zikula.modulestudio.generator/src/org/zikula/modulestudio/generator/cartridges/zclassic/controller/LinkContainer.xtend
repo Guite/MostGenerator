@@ -154,13 +154,13 @@ class LinkContainer {
                 «IF app.generateAccountApi»
                     if (LinkContainerInterface::TYPE_ACCOUNT == $type) {
                         $useAccountPage = $this->variableApi->get('«app.appName»', 'useAccountPage', true);
-                        if ($useAccountPage === false) {
+                        if (false === $useAccountPage) {
                             return $links;
                         }
 
                         $userName = isset($args['uname']) ? $args['uname'] : $this->currentUserApi->get('uname');
                         // does this user exist?
-                        if (UserUtil::getIdFromName($userName) === false) {
+                        if (false === UserUtil::getIdFromName($userName)) {
                             // user does not exist
                             return $links;
                         }

@@ -262,7 +262,7 @@ class Category {
                     'ot' => $objectType,
                     'registry' => $propertyName
                 «IF isLegacy»)«ELSE»]«ENDIF»);
-                if ($hasMultiSelection === true) {
+                if (true === $hasMultiSelection) {
                     $argName = 'catids' . $propertyName;
                     $inputValue = $dataSource->get($argName, «IF isLegacy»array()«ELSE»[]«ENDIF»);
                     if (!is_array($inputValue)) {

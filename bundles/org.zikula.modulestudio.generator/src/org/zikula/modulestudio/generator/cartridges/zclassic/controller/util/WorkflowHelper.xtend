@@ -393,7 +393,7 @@ class WorkflowHelper {
 
             $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, «IF targets('1.3.x')»$this->name«ELSE»'«appName»'«ENDIF», $idColumn);
 
-            if ($result !== false && !$recursive) {
+            if (false !== $result && !$recursive) {
                 $entities = $entity->getRelatedObjectsToPersist();
                 foreach ($entities as $rel) {
                     if ($rel->getWorkflowState() == 'initial') {
@@ -402,7 +402,7 @@ class WorkflowHelper {
                 }
             }
 
-            return ($result !== false);
+            return (false !== $result);
         }
     '''
 
