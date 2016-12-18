@@ -350,7 +350,7 @@ class Actions {
                 $resultsPerPage = $request->query->getInt('num', 0);
             «ENDIF»
             if ($resultsPerPage == 0) {
-                $resultsPerPage = $this->getVar('pageSize', 10);
+                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
             }
 
             // retrieve item list with pagination
@@ -480,7 +480,7 @@ class Actions {
                 $resultsPerPage = $num;
             «ENDIF»
             if ($resultsPerPage == 0) {
-                $resultsPerPage = $this->getVar('pageSize', 10);
+                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
             }
         }
 

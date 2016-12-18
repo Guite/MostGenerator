@@ -53,6 +53,7 @@ class PersistenceTransformer {
         }
 
         addWorkflowSettings
+        addViewSettings
         addImageSettings
 
         // add legacy bridge methods to admin/user controllers
@@ -278,6 +279,24 @@ class PersistenceTransformer {
         varContainer
     }
 
+    def private addViewSettings(Application it) {
+        val entitiesWithView = entities.filter(Entity).filter[hasActions('view')]
+        if (!entitiesWithView.empty) {
+            return
+        }
+
+        val varContainer = createVarContainerForViewSettings
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        for (entity : entitiesWithView) {
+            varContainer.vars += factory.createIntVar => [
+                name = entity.name.formatForCode + 'EntriesPerPage'
+                value = '10'
+                documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page'
+            ]
+        }
+    }
+
     def private addImageSettings(Application it) {
         if (!hasImageFields) {
             return
@@ -293,7 +312,7 @@ class PersistenceTransformer {
                 varContainer.vars += factory.createBoolVar => [
                     name = 'enableShrinkingFor' + fieldSuffix
                     value = 'false'
-                    documentation = 'Whether to enable shrinking to maximum image dimensions. Stores downscaled version of the original image.'
+                    documentation = 'Whether to enable shrinking huge images to maximum dimensions. Stores downscaled version of the original image.'
                 ]
                 varContainer.vars += factory.createIntVar => [
                     name = 'shrinkWidth' + fieldSuffix
@@ -350,6 +369,25 @@ class PersistenceTransformer {
         variables += varContainer
     }
 
+    def private createVarContainerForViewSettings(Application it) {
+        var lastVarContainerSortNumber = 0
+        if (!variables.empty) {
+            lastVarContainerSortNumber = variables.sortBy[sortOrder].reverseView.head.sortOrder
+        }
+
+        val newSortNumber = lastVarContainerSortNumber + 1
+
+        val factory = ModuleStudioFactory.eINSTANCE
+
+        val varContainer = factory.createVariables => [
+            name = 'List views'
+            documentation = 'Here you can configure parameters for list views.'
+            sortOrder = newSortNumber
+        ]
+
+        varContainer
+    }
+
     def private createVarContainerForImageSettings(Application it) {
         var lastVarContainerSortNumber = 0
         if (!variables.empty) {
@@ -362,7 +400,7 @@ class PersistenceTransformer {
 
         val varContainer = factory.createVariables => [
             name = 'Images'
-            documentation = 'Here you can define shrinking behaviour for huge images.'
+            documentation = 'Here you can define several options for image handling.'
             sortOrder = newSortNumber
         ]
 
