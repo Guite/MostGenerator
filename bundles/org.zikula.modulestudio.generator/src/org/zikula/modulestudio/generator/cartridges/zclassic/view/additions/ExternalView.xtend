@@ -326,7 +326,7 @@ class ExternalView {
             {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
             {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}
             {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-            {{ pageAddAsset('javascript', pagevars.homepath ~ 'javascript/helpers/Zikula.js')) }}«/* still required for Gettext */»
+            {{ pageAddAsset('javascript', pagevars.homepath ~ 'javascript/helpers/Zikula.js') }}«/* still required for Gettext */»
             {{ pageAddAsset('javascript', zasset('@«app.appName»:javascript/«app.appName».Finder.js')) }}
         </head>
         <body>
@@ -443,7 +443,7 @@ class ExternalView {
                     «IF app.targets('1.3.x')»
                         {foreach item='«name.formatForCode»' from=$items}
                             <li>
-                                {assign var='itemId' value=$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}
+                                {assign var='itemId' value=$«name.formatForCode»->createCompositeIdentifier()}
                                 <a href="#" onclick="«app.appName.toFirstLower».finder.selectItem({$itemId})" onkeypress="«app.appName.toFirstLower».finder.selectItem({$itemId})">{$«name.formatForCode»->getTitleFromDisplayPattern()}</a>
                                 <input type="hidden" id="url{$itemId}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='user' func='display' ot='«name.formatForCode»' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}«ENDIF»" />
                                 <input type="hidden" id="title{$itemId}" value="{$«name.formatForCode»->getTitleFromDisplayPattern()|replace:"\"":""}" />
@@ -455,7 +455,7 @@ class ExternalView {
                     «ELSE»
                         {% for «name.formatForCode» in items %}
                             <li>
-                                {% set itemId = «name.formatForCode».«getFirstPrimaryKey.name.formatForCode» }}
+                                {% set itemId = «name.formatForCode».createCompositeIdentifier() }}
                                 <a href="#" data-itemid="{{ itemId }}">{{ «name.formatForCode».getTitleFromDisplayPattern() }}</a>
                                 <input type="hidden" id="url{{ itemId }}" value="«IF app.hasUserController»{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}«ENDIF»" />
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
