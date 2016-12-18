@@ -153,7 +153,9 @@ class Config {
                     'class' => 'tooltips',
                     'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
-                'help' => $this->__('«documentation.replace("'", '"')»'),
+                «IF name != 'thumbnailQuality'»
+                    'help' => $this->__('«documentation.replace("'", '"')»'),
+                «ENDIF»
             «ENDIF»
             'required' => false,
             'data' => «IF it instanceof BoolVar»(bool)«ENDIF»$this->modVars['«name.formatForCode»'],
@@ -188,8 +190,7 @@ class Config {
                 'type' => 'integer',
             «ENDIF»
             'scale' => 0«IF isShrinkDimensionField || isThumbDimensionField»,
-            'input_group' => ['right' => $this->__('pixels')]«ELSEIF name == 'thumbnailQuality'»,
-            'input_group' => ['right' => $this->__('percent')]«ENDIF»
+            'input_group' => ['right' => $this->__('pixels')]«ENDIF»
         «ENDIF»
     '''
 
@@ -223,7 +224,7 @@ class Config {
     '''
 
     def private itemDefinition(ListVarItem it) '''
-        $this->__('«name.formatForCode»') => '«name.formatForDisplayCapital»'
+        $this->__('«name.formatForDisplayCapital»') => '«name.formatForCode»'
     '''
 
     def private configTypeImpl(Application it) '''
