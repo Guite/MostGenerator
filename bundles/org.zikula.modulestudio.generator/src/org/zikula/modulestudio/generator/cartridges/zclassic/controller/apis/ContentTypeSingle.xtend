@@ -35,6 +35,15 @@ class ContentTypeSingle {
             use ModUtil;
             use ServiceUtil;
 
+            if (!class_exists('Content_AbstractContentType')) {
+                if (file_exists('modules/Content/lib/Content/AbstractContentType.php')) {
+                    require_once 'modules/Content/lib/Content/AbstractType.php';
+                    require_once 'modules/Content/lib/Content/AbstractContentType.php';
+                } else {
+                    class Content_AbstractContentType {}
+                }
+            }
+
         «ENDIF»
         /**
          * Generic single item display content plugin base class.
@@ -220,6 +229,20 @@ class ContentTypeSingle {
             // required as parameter for the item selector plugin
             $this->view->assign('objectType', $this->objectType);
         }
+        «IF !targets('1.3.x')»
+
+            /**
+             * Returns the edit template path.
+             *
+             * @return string
+             */
+            public function getEditTemplate()
+            {
+                $absoluteTemplatePath = str_replace('ContentType/Base/AbstractItem.php', 'Resources/views/ContentType/item_edit.tpl', __FILE__);
+
+                return 'file:' . $absoluteTemplatePath;
+            }
+        «ENDIF»
     '''
 
     def private contentTypeImpl(Application it) '''

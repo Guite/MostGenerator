@@ -232,7 +232,7 @@ class ThirdParty {
             «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'module' => '«appName»',
                 'type'   => 'javascript',
-                'path'   => '«rootFolder»/«IF targets('1.3.x')»«appName»/javascript/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js'
+                'path'   => '«rootFolder»/«IF targets('1.3.x')»«appName»/javascript/«ELSE»«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppJsPath»«ENDIF»«appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js'
             «IF targets('1.3.x')»)«ELSE»]«ENDIF»
         );
     '''

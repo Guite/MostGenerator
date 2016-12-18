@@ -44,6 +44,15 @@ class ContentTypeList {
                 use «appNamespace»\Helper\FeatureActivationHelper;
             «ENDIF»
 
+            if (!class_exists('Content_AbstractContentType')) {
+                if (file_exists('modules/Content/lib/Content/AbstractContentType.php')) {
+                    require_once 'modules/Content/lib/Content/AbstractType.php';
+                    require_once 'modules/Content/lib/Content/AbstractContentType.php';
+                } else {
+                    class Content_AbstractContentType {}
+                }
+            }
+
         «ENDIF»
         /**
          * Generic item list content plugin base class.
@@ -615,6 +624,20 @@ class ContentTypeList {
                 «ENDIF»
             «ENDIF»
         }
+        «IF !isLegacy»
+
+            /**
+             * Returns the edit template path.
+             *
+             * @return string
+             */
+            public function getEditTemplate()
+            {
+                $absoluteTemplatePath = str_replace('ContentType/Base/AbstractItemList.php', 'Resources/views/ContentType/itemlist_edit.tpl', __FILE__);
+
+                return 'file:' . $absoluteTemplatePath;
+            }
+        «ENDIF»
     '''
 
     def private contentTypeImpl(Application it) '''

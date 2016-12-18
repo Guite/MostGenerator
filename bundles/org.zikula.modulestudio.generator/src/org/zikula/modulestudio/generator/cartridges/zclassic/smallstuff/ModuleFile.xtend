@@ -19,13 +19,35 @@ class ModuleFile {
             return
         }
         generateClassPair(fsa, getAppSourceLibPath + appName + '.php',
-            fh.phpFileContent(it, moduleBaseImpl), fh.phpFileContent(it, moduleInfoImpl)
+            fh.phpFileContent(it, moduleBaseClass), fh.phpFileContent(it, moduleInfoImpl)
         )
     }
 
-    def private moduleBaseImpl(Application it) '''
-        namespace «appNamespace»\Base;
+    def private moduleBaseClass(Application it) '''
+        «IF generateListContentType || generateDetailContentType»
+            namespace «appNamespace»\Base {
 
+                «moduleBaseImpl»
+            }
+
+            namespace {
+                «IF generateListContentType»
+                    class «appName»_ContentType_ItemList extends \«appNamespace»\ContentType\ItemList {
+                    }
+                «ENDIF»
+                «IF generateDetailContentType»
+                    class «appName»_ContentType_Item extends \«appNamespace»\ContentType\Item {
+                    }
+                «ENDIF»
+            }
+        «ELSE»
+            namespace «appNamespace»\Base;
+
+            «moduleBaseImpl»
+        «ENDIF»
+    '''
+
+    def private moduleBaseImpl(Application it) '''
         «IF isSystemModule»
             use Zikula\Bundle\CoreBundle\Bundle\AbstractCoreModule;
         «ELSE»
