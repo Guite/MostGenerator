@@ -270,7 +270,7 @@ class ThirdParty {
         $plugins->add(
             «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'name' => '«appName.formatForDB»',
-                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/plugins/«appName.formatForDB»/editor_plugin.js'
+                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/plugins/«appName.formatForDB»/editor_plugin.js'
             «IF targets('1.3.x')»)«ELSE»]«ENDIF»
         );
     '''
@@ -308,7 +308,7 @@ class ThirdParty {
         $plugins->add(
             «IF targets('1.3.x')»array(«ELSE»[«ENDIF»
                 'name' => '«appName.formatForDB»',
-                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCode else appName»/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                'path' => '«rootFolder»/«IF targets('1.3.x')»«appName»/docs/«ELSE»«if (systemModule) name.formatForCodeCapital else vendor.formatForCodeCapital + '/' + name.formatForCodeCapital»Module/«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
                 'file' => 'plugin.js',
                 'img'  => 'ed_«appName.formatForDB».gif'
             «IF targets('1.3.x')»)«ELSE»]«ENDIF»

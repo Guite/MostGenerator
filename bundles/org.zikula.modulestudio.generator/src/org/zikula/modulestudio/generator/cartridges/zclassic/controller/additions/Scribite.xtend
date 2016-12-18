@@ -47,7 +47,7 @@ class Scribite {
     }
 
     def private pluginCk(Application it) {
-        val pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
+        val pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + appName.formatForDB + '/'
 
         var fileName = 'plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
@@ -81,7 +81,7 @@ class Scribite {
     }
 
     def private pluginTinyMce(Application it) {
-        var pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
+        var pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + appName.formatForDB + '/'
 
         var fileName = 'plugin.js'
         if (!shouldBeSkipped(pluginPath + fileName)) {
