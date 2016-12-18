@@ -37,6 +37,7 @@ class ImageHelper {
 
             use Symfony\Component\HttpFoundation\Session\SessionInterface;
             use Zikula\Common\Translator\TranslatorInterface;
+            use Zikula\ExtensionsModule\Api\VariableApi;
 
         «ENDIF»
         /**
@@ -56,6 +57,11 @@ class ImageHelper {
                 protected $session;
 
                 /**
+                 * @var VariableApi
+                 */
+                protected $variableApi;
+
+                /**
                  * Name of the application.
                  *
                  * @var string
@@ -66,13 +72,15 @@ class ImageHelper {
                  * Constructor.
                  * Initialises member vars.
                  *
-                 * @param TranslatorInterface $translator Translator service instance
-                 * @param SessionInterface    $session    Session service instance
+                 * @param TranslatorInterface $translator  Translator service instance
+                 * @param SessionInterface    $session     Session service instance
+                 * @param VariableApi         $variableApi VariableApi service instance
                  */
-                public function __construct(TranslatorInterface $translator, SessionInterface $session)
+                public function __construct(TranslatorInterface $translator, SessionInterface $session, VariableApi $variableApi)
                 {
                     $this->translator = $translator;
                     $this->session = $session;
+                    $this->variableApi = $variableApi;
                     $this->name = '«appName»';
                 }
 
@@ -149,14 +157,15 @@ class ImageHelper {
                 $presetData = array(
                     'width'     => 100,      // thumbnail width in pixels
                     'height'    => 100,      // thumbnail height in pixels
-                    'mode'      => 'inset',  // inset or outbound
+                    'mode'      => ModUtil::getVar('«appName»', 'thumbnailMode' . ucfirst($objectType), 'inset'),
                     'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
                 );
             «ELSE»
                 $options = [
+                    'quality' => $this->variableApi->get('«appName»', 'thumbnailQuality', 90),
                     'thumbnail' => [
                         'size'      => [100, 100], // thumbnail width and height in pixels
-                        'mode'      => 'inset',    // inset or outbound
+                        'mode'      => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType), 'inset'),
                         'extension' => null        // file extension for thumbnails (jpg, png, gif; null for original file type)
                     ]
                 ];
@@ -165,33 +174,37 @@ class ImageHelper {
             if ($«IF isLegacy»preset«ELSE»context«ENDIF»Name == $this->name . '_ajax_autocomplete') {
                 «IF isLegacy»
                     $presetData['width'] = 100;
-                    $presetData['height'] = 80;
+                    $presetData['height'] = 75;
                 «ELSE»
-                    $options['thumbnail']['size'] = [100, 80];
+                    $options['thumbnail']['size'] = [100, 75];
                 «ENDIF»
             } elseif ($«IF isLegacy»preset«ELSE»context«ENDIF»Name == $this->name . '_relateditem') {
                 «IF isLegacy»
                     $presetData['width'] = 50;
-                    $presetData['height'] = 40;
+                    $presetData['height'] = 38;
                 «ELSE»
-                    $options['thumbnail']['size'] = [50, 40];
+                    $options['thumbnail']['size'] = [50, 38];
                 «ENDIF»
             } elseif ($context == 'controllerAction') {
-                if ($args['action'] == 'view') {
-                    «IF isLegacy»
-                        $presetData['width'] = 32;
-                        $presetData['height'] = 20;
-                    «ELSE»
-                        $options['thumbnail']['size'] = [32, 20];
-                    «ENDIF»
-                } elseif ($args['action'] == 'display') {
-                    «IF isLegacy»
-                        $presetData['width'] = 250;
-                        $presetData['height'] = 150;
-                    «ELSE»
-                        $options['thumbnail']['size'] = [250, 150];
-                    «ENDIF»
-                }
+                «IF isLegacy»
+                    if (in_array($args['action'], array('view', 'display', 'edit'))) {
+                        $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName) . ucfirst($args['action']);
+                        $defaultWidth = $args['action'] == 'view' ? 32 : 240;
+                        $defaultHeight = $args['action'] == 'view' ? 24 : 180;
+                        $presetData['width'] = ModUtil::getVar('«appName»', 'thumbnailWidth' . $fieldSuffix, $defaultWidth);
+                        $presetData['height'] = ModUtil::getVar('«appName»', 'thumbnailHeight' . $fieldSuffix, $defaultHeight);
+                    }
+                «ELSE»
+                    if (in_array($args['action'], ['view', 'display', 'edit'])) {
+                        $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName) . ucfirst($args['action']);
+                        $defaultWidth = $args['action'] == 'view' ? 32 : 240;
+                        $defaultHeight = $args['action'] == 'view' ? 24 : 180;
+                        $options['thumbnail']['size'] = [
+                            $this->variableApi->get('«appName»', 'thumbnailWidth' . $fieldSuffix, $defaultWidth),
+                            $this->variableApi->get('«appName»', 'thumbnailHeight' . $fieldSuffix, $defaultHeight)
+                        ];
+                    }
+                «ENDIF»
             }
 
             return «IF isLegacy»new SystemPlugin_Imagine_Preset($presetName, $presetData)«ELSE»$options«ENDIF»;

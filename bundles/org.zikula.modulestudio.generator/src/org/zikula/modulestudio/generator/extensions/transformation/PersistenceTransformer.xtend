@@ -279,32 +279,71 @@ class PersistenceTransformer {
     }
 
     def private addImageSettings(Application it) {
-        val entitiesWithImageUploads = getAllEntities.filter[hasImageFieldsEntity]
-        if (entitiesWithImageUploads.empty) {
+        if (!hasImageFields) {
             return
         }
 
         val varContainer = createVarContainerForImageSettings
         val factory = ModuleStudioFactory.eINSTANCE
 
+        val entitiesWithImageUploads = getAllEntities.filter[hasImageFieldsEntity]
         for (entity : entitiesWithImageUploads) {
             for (imageUploadField : entity.imageFieldsEntity) {
                 val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
                 varContainer.vars += factory.createBoolVar => [
                     name = 'enableShrinkingFor' + fieldSuffix
                     value = 'false'
-                    documentation = 'Whether to enable shrinking to maximum image dimensions. The original image is not stored.'
+                    documentation = 'Whether to enable shrinking to maximum image dimensions. Stores downscaled version of the original image.'
                 ]
                 varContainer.vars += factory.createIntVar => [
                     name = 'shrinkWidth' + fieldSuffix
                     value = '800'
-                    documentation = 'The maximum image width.'
+                    documentation = 'The maximum image width in pixels.'
                 ]
                 varContainer.vars += factory.createIntVar => [
                     name = 'shrinkHeight' + fieldSuffix
                     value = '600'
-                    documentation = 'The maximum image height.'
+                    documentation = 'The maximum image height in pixels.'
                 ]
+            }
+        }
+        if (!targets('1.3.x')) {
+            varContainer.vars += factory.createIntVar => [
+                name = 'thumbnailQuality'
+                value = '90'
+                documentation = 'Thumbnail quality in percent.'
+            ]
+        }
+        for (entity : entitiesWithImageUploads) {
+            val thumbModeVar = factory.createListVar => [
+                name = 'thumbnailMode' + entity.name.formatForCodeCapital
+                value = 'inset'
+                documentation = 'Thumbnail mode (inset or outbound).'
+            ]
+            thumbModeVar.items += factory.createListVarItem => [
+                name = 'Inset'
+                ^default = true
+            ]
+            thumbModeVar.items += factory.createListVarItem => [
+                name = 'Outbound'
+            ]
+            varContainer.vars += thumbModeVar
+            for (imageUploadField : entity.imageFieldsEntity) {
+                val fieldSuffix = entity.name.formatForCodeCapital + imageUploadField.name.formatForCodeCapital
+                for (action : #['view', 'display', 'edit']) {
+                    if (entity.hasActions(action)) {
+                        varContainer.vars += factory.createIntVar => [
+                            name = 'thumbnailWidth' + fieldSuffix + action.toFirstUpper
+                            value = if (action == 'view') '32' else '240'
+                            documentation = 'Thumbnail width on ' + action + ' pages in pixels.'
+                        ]
+                        varContainer.vars += factory.createIntVar => [
+                            name = 'thumbnailHeight' + fieldSuffix + action.toFirstUpper
+                            value = if (action == 'view') '24' else '180'
+                            documentation = 'Thumbnail height on ' + action + ' pages in pixels.'
+                        ]
+                    }
+                }
             }
         }
 

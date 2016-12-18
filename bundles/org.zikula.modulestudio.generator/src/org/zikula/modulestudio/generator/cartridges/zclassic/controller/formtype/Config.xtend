@@ -174,7 +174,7 @@ class Config {
         'max_length' => 255
     '''
 
-    def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
+    def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»«IF name == 'thumbnailQuality'»Percent«ELSE»Integer«ENDIF»«ENDIF»'''
     def private dispatch titleAttribute(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
     def private dispatch additionalOptions(IntVar it) '''
         «IF hasUserGroupSelectors && isUserGroupSelector»
@@ -183,14 +183,22 @@ class Config {
             'class' => 'ZikulaGroupsModule:GroupEntity',
             'choice_label' => 'name'
         «ELSE»
-            'max_length' => «IF isShrinkDimensionField»4«ELSE»255«ENDIF»,
-            'scale' => 0«IF isShrinkDimensionField»,
-            'input_group' => ['right' => $this->__('pixels')]«ENDIF»
+            'max_length' => «IF isShrinkDimensionField || isThumbDimensionField»4«ELSE»255«ENDIF»,
+            «IF name == 'thumbnailQuality'»
+                'type' => 'integer',
+            «ENDIF»
+            'scale' => 0«IF isShrinkDimensionField || isThumbDimensionField»,
+            'input_group' => ['right' => $this->__('pixels')]«ELSEIF name == 'thumbnailQuality'»,
+            'input_group' => ['right' => $this->__('percent')]«ENDIF»
         «ENDIF»
     '''
 
     def private isShrinkDimensionField(Variable it) {
         name.formatForCode.startsWith('shrinkWidth') || name.formatForCode.startsWith('shrinkHeight')
+    }
+
+    def private isThumbDimensionField(Variable it) {
+        name.formatForCode.startsWith('thumbnailWidth') || name.formatForCode.startsWith('thumbnailHeight')
     }
 
     def private dispatch fieldType(TextVar it) '''«nsSymfonyFormType»Text«IF multiline»area«ENDIF»'''

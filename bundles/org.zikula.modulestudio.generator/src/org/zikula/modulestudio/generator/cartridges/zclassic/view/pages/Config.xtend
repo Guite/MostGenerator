@@ -226,7 +226,7 @@ class Config {
                     {gt text='«documentation.replace("'", '"')»' assign='toolTip'}
                 «ENDIF»
                 {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»' cssClass='«IF null !== documentation && documentation != ''»«container.application.appName.toLowerCase»-form-tooltips «ENDIF»'«IF null !== documentation && documentation != ''» title=$toolTip«ENDIF»}
-                «IF isShrinkDimensionField»
+                «IF isShrinkDimensionField || isThumbDimensionField»
                     <div>
                         «inputFieldLegacy» {gt text='pixels'}
                     </div>
@@ -247,6 +247,10 @@ class Config {
 
     def private isShrinkDimensionField(Variable it) {
         name.formatForCode.startsWith('shrinkWidth') || name.formatForCode.startsWith('shrinkHeight')
+    }
+
+    def private isThumbDimensionField(Variable it) {
+        name.formatForCode.startsWith('thumbnailWidth') || name.formatForCode.startsWith('thumbnailHeight')
     }
 
     def private dispatch inputFieldLegacy(Variable it) '''

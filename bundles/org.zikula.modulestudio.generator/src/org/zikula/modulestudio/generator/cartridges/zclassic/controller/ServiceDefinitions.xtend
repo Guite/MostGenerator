@@ -343,7 +343,7 @@ class ServiceDefinitions {
 
             «modPrefix».image_helper:
                 class: «nsBase»ImageHelper
-                arguments: ["@translator.default", "@session"]
+                arguments: ["@translator.default", "@session", "@zikula_extensions_module.api.variable"]
         «ENDIF»
         «IF hasListFields»
 
