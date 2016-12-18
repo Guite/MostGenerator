@@ -153,9 +153,7 @@ class Config {
                     'class' => 'tooltips',
                     'title' => $this->__('«documentation.replace("'", '"')»')
                 ],
-                «IF name != 'thumbnailQuality'»
-                    'help' => $this->__('«documentation.replace("'", '"')»'),
-                «ENDIF»
+                'help' => $this->__('«documentation.replace("'", '"')»'),
             «ENDIF»
             'required' => false,
             'data' => «IF it instanceof BoolVar»(bool)«ENDIF»$this->modVars['«name.formatForCode»'],
@@ -176,7 +174,7 @@ class Config {
         'max_length' => 255
     '''
 
-    def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»«IF name == 'thumbnailQuality'»Percent«ELSE»Integer«ENDIF»«ENDIF»'''
+    def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
     def private dispatch titleAttribute(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
     def private dispatch additionalOptions(IntVar it) '''
         «IF hasUserGroupSelectors && isUserGroupSelector»
@@ -186,9 +184,6 @@ class Config {
             'choice_label' => 'name'
         «ELSE»
             'max_length' => «IF isShrinkDimensionField || isThumbDimensionField»4«ELSE»255«ENDIF»,
-            «IF name == 'thumbnailQuality'»
-                'type' => 'integer',
-            «ENDIF»
             'scale' => 0«IF isShrinkDimensionField || isThumbDimensionField»,
             'input_group' => ['right' => $this->__('pixels')]«ENDIF»
         «ENDIF»

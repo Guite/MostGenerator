@@ -326,13 +326,6 @@ class PersistenceTransformer {
                 ]
             }
         }
-        if (!targets('1.3.x')) {
-            varContainer.vars += factory.createIntVar => [
-                name = 'thumbnailQuality'
-                value = '90'
-                documentation = 'Thumbnail quality in percent.'
-            ]
-        }
         for (entity : entitiesWithImageUploads) {
             val thumbModeVar = factory.createListVar => [
                 name = 'thumbnailMode' + entity.name.formatForCodeCapital

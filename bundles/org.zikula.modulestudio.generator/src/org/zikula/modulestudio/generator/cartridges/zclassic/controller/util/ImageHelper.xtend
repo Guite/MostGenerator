@@ -162,7 +162,6 @@ class ImageHelper {
                 );
             «ELSE»
                 $options = [
-                    'quality' => $this->variableApi->get('«appName»', 'thumbnailQuality', 90),
                     'thumbnail' => [
                         'size'      => [100, 100], // thumbnail width and height in pixels
                         'mode'      => $this->variableApi->get('«appName»', 'thumbnailMode' . ucfirst($objectType), 'inset'),
