@@ -73,6 +73,15 @@ class Docs {
             }
             fsa.generateFile(docPath + fileName, Install)
         }
+        if (!targets('1.3.x') && !isSystemModule) {
+            fileName = 'translation.md'
+            if (!shouldBeSkipped(docPath + fileName)) {
+                if (shouldBeMarked(docPath + fileName)) {
+                    fileName = 'translation.generated.md'
+                }
+                fsa.generateFile(docPath + fileName, Translation)
+            }
+        }
         fileName = 'LICENSE'
         if (!shouldBeSkipped(getAppLicencePath + fileName)) {
             if (shouldBeMarked(getAppLicencePath + fileName)) {
@@ -124,24 +133,44 @@ class Docs {
         # INSTALLATION INSTRUCTIONS
 
         «IF targets('1.3.x')»
-            1) Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«appName»/lib`.
+            1. Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«appName»/lib`.
         «ELSE»
             «IF isSystemModule»
-                1) Copy «appName» into your system directory. Afterwards you should have a folder named `system/«name.formatForCodeCapital»Module/Resources`.
+                1. Copy «appName» into your system directory. Afterwards you should have a folder named `system/«name.formatForCodeCapital»Module/Resources`.
             «ELSE»
-                1) Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/Resources`.
+                1. Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/Resources`.
             «ENDIF»
         «ENDIF»
-        2) Initialize and activate «appName» in the modules administration.
+        2. Initialize and activate «appName» in the modules administration.
         «IF hasUploads»
             «IF !targets('1.3.x')»
-                3) Move or copy the directory `Resources/userdata/«appName»/` to `/userdata/«appName»/`.
+                3. Move or copy the directory `Resources/userdata/«appName»/` to `/userdata/«appName»/`.
                    Note this step is optional as the install process can create these folders, too.
-                4) Make the directory `/userdata/«appName»/` writable including all sub folders.
+                4. Make the directory `/userdata/«appName»/` writable including all sub folders.
             «ELSE»
-                3) Make the directory `/userdata/«appName»/` writable including all sub folders.
+                3. Make the directory `/userdata/«appName»/` writable including all sub folders.
             «ENDIF»
         «ENDIF»
+
+        For questions and other remarks visit our homepage «url».
+
+        «ReadmeFooter»
+    '''
+
+    def private Translation(Application it) '''
+        # TRANSLATION INSTRUCTIONS
+
+        To create a new translation follow the steps below:
+
+        1. First install the module like described in the `install.md` file.
+        2. Open a console and navigate to the Zikula root directory.
+        3. Execute this command replacing `en` by your desired locale code:
+
+        `php app/console translation:extract en --bundle=«appName» --enable-extractor=jms_i18n_routing --output-format=po`
+
+        You can also use multiple locales at once, for example `de fr es`.
+
+        4. Translate the resulting `.po` files in `modules/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/Resources/translations/` using your favourite Gettext tooling.
 
         For questions and other remarks visit our homepage «url».
 
