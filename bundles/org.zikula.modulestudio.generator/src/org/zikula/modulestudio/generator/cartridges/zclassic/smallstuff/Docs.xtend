@@ -96,7 +96,6 @@ class Docs {
         Changes in «appName» «version»
     '''
 
-
     def private DoctrineHints(Application it) '''
         # NOTES ON USING DOCTRINE 2
 
@@ -124,19 +123,19 @@ class Docs {
     def private Install(Application it) '''
         # INSTALLATION INSTRUCTIONS
 
-        1) Copy «appName» to your modules folder.
+        «IF targets('1.3.x')»
+            1) Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«appName»/lib`.
+        «ELSE»
+            1) Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»/Resources`.
+        «ENDIF»
         2) Initialize and activate «appName» in the modules administration.
         «IF hasUploads»
             «IF !targets('1.3.x')»
                 3) Move or copy the directory `Resources/userdata/«appName»/` to `/userdata/«appName»/`.
                    Note this step is optional as the install process can create these folders, too.
-                «IF hasUploads»
-                    4) Make the directory `/userdata/«appName»/` writable including all sub folders.
-                «ENDIF»
+                4) Make the directory `/userdata/«appName»/` writable including all sub folders.
             «ELSE»
-                «IF hasUploads»
-                    3) Make the directory `/userdata/«appName»/` writable including all sub folders.
-                «ENDIF»
+                3) Make the directory `/userdata/«appName»/` writable including all sub folders.
             «ENDIF»
         «ENDIF»
 
@@ -160,9 +159,9 @@ class Docs {
         «ENDIF»
 
         «IF targets('1.3.x')»
-            This module is intended for being used with Zikula 1.3.5 to 1.3.10.
+            This module is intended for being used with Zikula 1.3.5 to 1.3.11.
         «ELSE»
-            This module is intended for being used with Zikula 1.4.4 and later.
+            This module is intended for being used with Zikula «IF targets('1.4-dev')»1.4.5-git«ELSE»1.4.4«ENDIF» and later.
             «IF targets('1.4-dev')»
 
             **Note this is a development version which is NOT READY for production yet.**
