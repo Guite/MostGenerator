@@ -337,13 +337,21 @@ class Uploads {
                 // check if shrinking functionality is enabled
                 $fieldSuffix = ucfirst($objectType) . ucfirst($fieldName);
                 if (true === «IF targets('1.3.x')»ModUtil::getVar«ELSE»$this->variableApi->get«ENDIF»('«appName»', 'enableShrinkingFor' . $fieldSuffix, false)) {
-                    // resize to allowed maximum size
-                    $thumbManager = $serviceManager->get('systemplugin.imagine.manager');
+                    // check for maximum size
                     $maxWidth = «IF targets('1.3.x')»ModUtil::getVar«ELSE»$this->variableApi->get«ENDIF»('«appName»', 'shrinkWidth' . $fieldSuffix, 800);
                     $maxHeight = «IF targets('1.3.x')»ModUtil::getVar«ELSE»$this->variableApi->get«ENDIF»('«appName»', 'shrinkHeight' . $fieldSuffix, 600);
 
                     $imgInfo = getimagesize($destinationFilePath);
                     if ($imgInfo[0] > $maxWidth || $imgInfo[1] > $maxHeight) {
+                        // resize to allowed maximum size
+                        $thumbManager = $serviceManager->get('systemplugin.imagine.manager');
+                        $preset = new \SystemPlugin_Imagine_Preset('«appName»_Shrinker', [
+                            'width' => $maxWidth,
+                            'height' => $maxHeight,
+                            'mode' => 'inset'
+                        ]);
+                        $thumbManager->setPreset($preset);
+
                         // create thumbnail image
                         $thumbFilePath = $thumbManager->getThumb($destinationFilePath, $maxWidth, $maxHeight);
 
