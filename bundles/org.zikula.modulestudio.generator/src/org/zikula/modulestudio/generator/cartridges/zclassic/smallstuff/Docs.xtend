@@ -126,7 +126,11 @@ class Docs {
         «IF targets('1.3.x')»
             1) Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«appName»/lib`.
         «ELSE»
-            1) Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»/Resources`.
+            «IF isSystemModule»
+                1) Copy «appName» into your system directory. Afterwards you should have a folder named `system/«name.formatForCodeCapital»Module/Resources`.
+            «ELSE»
+                1) Copy «appName» into your modules directory. Afterwards you should have a folder named `modules/«vendor.formatForCodeCapital»/«name.formatForCodeCapital»Module/Resources`.
+            «ENDIF»
         «ENDIF»
         2) Initialize and activate «appName» in the modules administration.
         «IF hasUploads»
