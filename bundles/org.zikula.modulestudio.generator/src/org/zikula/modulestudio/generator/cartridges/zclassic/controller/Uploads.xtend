@@ -807,9 +807,14 @@ class Uploads {
                 }
             «ELSE»
                 // remove the file
-                $filePath = $entity[$fieldName]->getPathname();
-                if (file_exists($filePath) && !unlink($filePath)) {
-                    return false;
+                if (is_array($entity[$fieldName]) && isset($entity[$fieldName][$fieldName])) {
+                    $entity[$fieldName] = $entity[$fieldName][$fieldName];
+                }
+                if (is_object($entity[$fieldName])) {
+                    $filePath = $entity[$fieldName]->getPathname();
+                    if (file_exists($filePath) && !unlink($filePath)) {
+                        return false;
+                    }
                 }
             «ENDIF»
             $entity[$fieldName] = '';
