@@ -421,9 +421,9 @@ class ControllerLayer {
                 $success = $workflowHelper->executeAction($entity, $action);
             } catch(\Exception $e) {
                 «IF isLegacy»
-                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    LogUtil::registerError($this->__f('Sorry, but an error occured during the %s action.', array($action)) . ' ' . $e->getMessage());
                 «ELSE»
-                    $this->addFlash('error', $this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', ['%s' => $action]));
+                    $this->addFlash('error', $this->__f('Sorry, but an error occured during the %s action.', ['%s' => $action]) . '  ' . $e->getMessage());
                     $logger->error('{app}: User {user} tried to execute the {action} workflow action for the {entity} with id {id}, but failed. Error details: {errorMessage}.', ['app' => '«app.appName»', 'user' => $userName, 'action' => $action, 'entity' => '«name.formatForDisplay»', 'id' => $itemid, 'errorMessage' => $e->getMessage()]);
                 «ENDIF»
             }
