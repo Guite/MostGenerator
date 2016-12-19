@@ -546,7 +546,7 @@ class View {
     '''
 
     def private headerLine(DerivedField it) '''
-        <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.application.targets('1.3.x')»z«ELSE»text«ENDIF»-«alignment»">
+        <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.application.targets('1.3.x')»z«ELSE»text«ENDIF»-«alignment»«IF !entity.getSortingFields.contains(it)» z-order-unsorted«ENDIF»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
             «IF entity.getSortingFields.contains(it)»
                 «headerSortingLink(entity, name.formatForCode, fieldLabel)»
