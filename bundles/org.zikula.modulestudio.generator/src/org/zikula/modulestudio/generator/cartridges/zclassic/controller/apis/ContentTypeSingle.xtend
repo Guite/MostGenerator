@@ -35,15 +35,6 @@ class ContentTypeSingle {
             use ModUtil;
             use ServiceUtil;
 
-            if (!class_exists('Content_AbstractContentType')) {
-                if (file_exists('modules/Content/lib/Content/AbstractContentType.php')) {
-                    require_once 'modules/Content/lib/Content/AbstractType.php';
-                    require_once 'modules/Content/lib/Content/AbstractContentType.php';
-                } else {
-                    class Content_AbstractContentType {}
-                }
-            }
-
         «ENDIF»
         /**
          * Generic single item display content plugin base class.

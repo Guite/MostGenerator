@@ -31,6 +31,16 @@ class ModuleFile {
             }
 
             namespace {
+
+                if (!class_exists('Content_AbstractContentType')) {
+                    if (file_exists('modules/Content/lib/Content/AbstractContentType.php')) {
+                        require_once 'modules/Content/lib/Content/AbstractType.php';
+                        require_once 'modules/Content/lib/Content/AbstractContentType.php';
+                    } else {
+                        class Content_AbstractContentType {}
+                    }
+                }
+
                 «IF generateListContentType»
                     class «appName»_ContentType_ItemList extends \«appNamespace»\ContentType\ItemList {
                     }
