@@ -351,7 +351,7 @@ class ViewQuickNavForm {
             {% endif %}
                 {{ form_row(quickNavForm.num) }}
             {% if pageSizeSelector is defined and pageSizeSelector != true %}
-            	</div>
+                </div>
             {% endif %}
         «ENDIF»
     '''
