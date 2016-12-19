@@ -69,7 +69,7 @@ class TravisFile {
             - rm Zikula_Core-1.4.5.build49.tar.gz
             - cd Zikula_Core-1.4.5
             «ELSE»
-            - wget http://ci.zikula.org/job/Zikula_Core-1.4.4/182/artifact/build/archive/Zikula_Core-1.4.5.build182.tar.gz
+            - wget http://ci.zikula.org/job/Zikula_Core-1.4.4/182/artifact/build/archive/Zikula_Core-1.4.4.build182.tar.gz
             - tar -xpzf Zikula_Core-1.4.4.build182.tar.gz
             - rm Zikula_Core-1.4.4.build182.tar.gz
             - cd Zikula_Core-1.4.4
