@@ -455,7 +455,7 @@ class ExternalView {
                     «ELSE»
                         {% for «name.formatForCode» in items %}
                             <li>
-                                {% set itemId = «name.formatForCode».createCompositeIdentifier() }}
+                                {% set itemId = «name.formatForCode».createCompositeIdentifier() %}
                                 <a href="#" data-itemid="{{ itemId }}">{{ «name.formatForCode».getTitleFromDisplayPattern() }}</a>
                                 <input type="hidden" id="url{{ itemId }}" value="«IF app.hasUserController»{{ url('«app.appName.formatForDB»_«name.formatForDB»_display'«routeParams(name.formatForCode, true)») }}«ENDIF»" />
                                 <input type="hidden" id="title{{ itemId }}" value="{{ «name.formatForCode».getTitleFromDisplayPattern()|e('html_attr') }}" />
