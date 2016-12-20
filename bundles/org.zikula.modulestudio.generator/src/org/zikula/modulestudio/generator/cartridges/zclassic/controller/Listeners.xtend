@@ -500,6 +500,9 @@ class Listeners {
                 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
+            «IF isBase && targets('1.4-dev')»
+                use Zikula\GroupsModule\GroupEvents;
+            «ENDIF»
 
         «ENDIF»
         /**
