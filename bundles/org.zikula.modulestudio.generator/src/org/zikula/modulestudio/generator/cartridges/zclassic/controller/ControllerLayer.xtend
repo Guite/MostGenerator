@@ -414,7 +414,7 @@ class ControllerLayer {
             «ENDIF»
             $success = false;
             try {
-                if (!$entity->validate()) {
+                if ($action != 'delete' && !$entity->validate()) {
                     continue;
                 }
                 // execute the workflow action
