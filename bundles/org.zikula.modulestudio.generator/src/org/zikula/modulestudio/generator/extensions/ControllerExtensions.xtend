@@ -249,6 +249,20 @@ class ControllerExtensions {
     }
 
     /**
+     * Returns whether variables contain any user group selectors or not.
+     */
+    def hasUserGroupSelectors(Application it) {
+        !getUserGroupSelectors.empty
+    }
+
+    /**
+     * Returns all variables acting as user group selectors.
+     */
+    def getUserGroupSelectors(Application it) {
+        getAllVariables.filter(IntVar).filter[isUserGroupSelector]
+    }
+
+    /**
      * Determines whether the given integer variable instance represents a user group
      * selector for moderation purposes.
      */

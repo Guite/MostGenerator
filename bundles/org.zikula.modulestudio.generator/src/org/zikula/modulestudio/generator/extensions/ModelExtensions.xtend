@@ -37,6 +37,7 @@ import java.util.List
  * This class contains model related extension methods.
  */
 class ModelExtensions {
+
     extension CollectionUtils = new CollectionUtils
     extension FormattingExtensions = new FormattingExtensions
     extension Utils = new Utils
@@ -115,7 +116,7 @@ class ModelExtensions {
     /**
      * Checks whether the application contains at least one user field.
      */
-    def boolean hasUserFields(Application it) {
+    def hasUserFields(Application it) {
         !getAllUserFields.empty
     }
 

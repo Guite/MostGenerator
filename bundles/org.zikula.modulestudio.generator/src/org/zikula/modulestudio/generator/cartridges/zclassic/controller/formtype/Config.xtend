@@ -16,13 +16,13 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Config {
+
     extension ControllerExtensions = new ControllerExtensions
     extension FormattingExtensions = new FormattingExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
     FileHelper fh = new FileHelper
-    Boolean hasUserGroupSelectors = false
     String nsSymfonyFormType = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'
 
     /**
@@ -33,7 +33,6 @@ class Config {
         if (!needsConfig) {
             return
         }
-        hasUserGroupSelectors = !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty
         generateClassPair(fsa, getAppSourceLibPath + 'Form/AppSettingsType.php',
             fh.phpFileContent(it, configTypeBaseImpl), fh.phpFileContent(it, configTypeImpl)
         )
@@ -47,6 +46,9 @@ class Config {
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\Common\Translator\TranslatorTrait;
         use Zikula\ExtensionsModule\Api\VariableApi;
+        «IF hasUserGroupSelectors»
+            use Zikula\GroupsModule\Entity\RepositoryInterface\GroupRepositoryInterface;
+        «ENDIF»
 
         /**
          * Configuration form type base class.
@@ -68,14 +70,30 @@ class Config {
             /**
              * AppSettingsType constructor.
              *
+             «IF hasUserGroupSelectors»
+             * @param TranslatorInterface      $translator      Translator service instance
+             * @param VariableApi              $variableApi     VariableApi service instance
+             * @param GroupRepositoryInterface $groupRepository GroupRepository service instance
+             «ELSE»
              * @param TranslatorInterface $translator  Translator service instance
              * @param VariableApi         $variableApi VariableApi service instance
+             «ENDIF»
              */
-            public function __construct(TranslatorInterface $translator, VariableApi $variableApi)
+            public function __construct(TranslatorInterface $translator, VariableApi $variableApi«IF hasUserGroupSelectors», GroupRepositoryInterface $groupRepository«ENDIF»)
             {
                 $this->setTranslator($translator);
                 $this->variableApi = $variableApi;
                 $this->modVars = $this->variableApi->getAll('«appName»');
+                «IF hasUserGroupSelectors»
+
+                    foreach (['«getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
+                        $groupId = intval($this->modVars[$groupFieldName]);
+                        if ($groupId < 1) {
+                            $groupId = 2; // fallback to admin group
+                        }
+                        $this->modVars[$groupFieldName] = $groupRepository->find($groupId);
+                    }
+                «ENDIF»
             }
 
             /**
@@ -155,10 +173,14 @@ class Config {
                 ],
                 'help' => $this->__('«documentation.replace("'", '"')»'),
             «ENDIF»
-            'required' => false,
+            «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector)»
+                'required' => false,
+            «ENDIF»
             'data' => «IF it instanceof BoolVar»(bool)«ENDIF»$this->modVars['«name.formatForCode»'],
             «IF !(it instanceof BoolVar)»
-                'empty_data' => «IF it instanceof IntVar»intval('«value»')«ELSE»'«value»'«ENDIF»,
+                «IF !(it instanceof IntVar && (it as IntVar).isUserGroupSelector)»
+                    'empty_data' => «IF it instanceof IntVar»intval('«value»')«ELSE»'«value»'«ENDIF»,
+                «ENDIF»
             «ENDIF»
             'attr' => [
                 'title' => $this->__('«titleAttribute»')«IF isShrinkDimensionField»,
@@ -174,14 +196,15 @@ class Config {
         'max_length' => 255
     '''
 
-    def private dispatch fieldType(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
-    def private dispatch titleAttribute(IntVar it) '''«IF hasUserGroupSelectors && isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
+    def private dispatch fieldType(IntVar it) '''«IF isUserGroupSelector»Symfony\Bridge\Doctrine\Form\Type\Entity«ELSE»«nsSymfonyFormType»Integer«ENDIF»'''
+    def private dispatch titleAttribute(IntVar it) '''«IF isUserGroupSelector»Choose the «name.formatForDisplay».«ELSE»Enter the «name.formatForDisplay». Only digits are allowed.«ENDIF»'''
     def private dispatch additionalOptions(IntVar it) '''
-        «IF hasUserGroupSelectors && isUserGroupSelector»
+        «IF isUserGroupSelector»
             'max_length' => 255,
             // Zikula core should provide a form type for this to hide entity details
             'class' => 'ZikulaGroupsModule:GroupEntity',
-            'choice_label' => 'name'
+            'choice_label' => 'name',
+            'choice_value' => 'gid'
         «ELSE»
             'max_length' => «IF isShrinkDimensionField || isThumbDimensionField»4«ELSE»255«ENDIF»,
             'scale' => 0«IF isShrinkDimensionField || isThumbDimensionField»,

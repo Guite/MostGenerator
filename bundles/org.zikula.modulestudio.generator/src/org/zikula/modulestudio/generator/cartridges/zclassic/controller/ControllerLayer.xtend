@@ -606,7 +606,15 @@ class ControllerLayer {
 
             if ($form->handleRequest($request)->isValid()) {
                 if ($form->get('save')->isClicked()) {
-                    $this->setVars($form->getData());
+                    «IF app.hasUserGroupSelectors»
+                        $formData = $form->getData();
+                        foreach (['«app.getUserGroupSelectors.map[name.formatForCode].join('\', \'')»'] as $groupFieldName) {
+                            $formData[$groupFieldName] = is_object($formData[$groupFieldName]) ? $formData[$groupFieldName]->getGid() : $formData[$groupFieldName];
+                        }
+                        $this->setVars($formData);
+                    «ELSE»
+                        $this->setVars($form->getData());
+                    «ENDIF»
 
                     $this->addFlash('status', $this->__('Done! Module configuration updated.'));
                     $userName = $this->get('zikula_users_module.current_user')->get('uname');

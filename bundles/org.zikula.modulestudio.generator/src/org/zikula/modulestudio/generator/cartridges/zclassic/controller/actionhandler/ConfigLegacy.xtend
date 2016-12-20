@@ -63,7 +63,7 @@ class ConfigLegacy {
                 if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                     return $view->registerError(LogUtil::registerPermissionError());
                 }
-                «IF !getAllVariables.filter(IntVar).filter[isUserGroupSelector].empty»
+                «IF hasUserGroupSelectors»
 
                     // prepare list of user groups for moderation group selectors
                     $userGroups = ModUtil::apiFunc('Groups', 'user', 'getall');

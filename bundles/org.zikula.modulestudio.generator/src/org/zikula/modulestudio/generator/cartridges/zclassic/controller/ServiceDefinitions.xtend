@@ -305,7 +305,7 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.appsettings:
                 class: «nsBase.replace('Type\\', '')»AppSettingsType
-                arguments: ["@translator.default", "@zikula_extensions_module.api.variable"]
+                arguments: ["@translator.default", "@zikula_extensions_module.api.variable"«IF hasUserGroupSelectors», "@zikula_groups_module.group_repository"«ENDIF»]
                 tags:
                     - { name: form.type }
         «ENDIF»
