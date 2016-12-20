@@ -1037,7 +1037,7 @@ class Repository {
                         $this->request = ServiceUtil::get('request');
                     }
                     $routeName = $this->request->get('_route');
-                    $isAdminArea = false !== strpos($routeName, 'rkparkhausmodule_fahrzeug_admin');
+                    $isAdminArea = false !== strpos($routeName, '«app.appName.toLowerCase»_«name.formatForDisplay.toLowerCase»_admin');
                     if ($isAdminArea) {
                         return $qb;
                     }
