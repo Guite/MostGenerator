@@ -97,7 +97,7 @@ class Factory {
             public function __construct(ObjectManager $om, $className)
             {
                 $this->className = $className;
-                $this->om = $om;
+                $this->objectManager = $om;
                 $this->repository = $this->om->getRepository($className);
             }
 
