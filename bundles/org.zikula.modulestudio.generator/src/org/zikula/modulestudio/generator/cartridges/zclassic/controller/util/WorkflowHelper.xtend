@@ -504,13 +504,11 @@ class WorkflowHelper {
                     'amount' => $amount,
                     'objectType' => $objectType,
                     'state' => $state,
-                    'message' => $this->«IF !application.targets('1.3.x')»translator->«ENDIF»_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
+                    'message' => $this->«IF !application.targets('1.3.x')»translator->«ENDIF»_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, «IF application.targets('1.3.x')»array($amount)«ELSE»['%s' => $amount]«ENDIF»)
                 «IF application.targets('1.3.x')»)«ELSE»]«ENDIF»;
                 «IF !application.targets('1.3.x')»
 
-                    if ($amounts > 0) {
-                        $logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']);
-                    }
+                    $logger->info('{app}: There are {amount} {entities} waiting for approval.', ['app' => '«application.appName»', 'amount' => $amount, 'entities' => '«nameMultiple.formatForDisplay»']);
                 «ENDIF»
             }
         }
@@ -532,11 +530,13 @@ class WorkflowHelper {
                 $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
                 $entityManager = $this->serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
                 $repository = $entityManager->getRepository($entityClass);
+
+                $where = 'tbl.workflowState = \'' . $state . '\'';
             «ELSE»
                 $repository = $this->container->get('«appService».' . $objectType . '_factory')->getRepository();
-            «ENDIF»
 
-            $where = 'tbl.workflowState = \'' . $state . '\'';
+                $where = 'tbl.workflowState:eq:' . $state;
+            «ENDIF»
             $parameters = «IF targets('1.3.x')»array(«ELSE»[«ENDIF»'workflowState' => $state«IF targets('1.3.x')»)«ELSE»]«ENDIF»;
             $useJoins = false;
             $amount = $repository->selectCount($where, $useJoins, $parameters);
