@@ -264,7 +264,7 @@ class View {
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
-                    <th id="hItemActions" scope="col" class="«IF application.targets('1.3.x')»z-right «ENDIF»z-order-unsorted">«IF application.targets('1.3.x')»{gt text='Actions'}«ELSE»{{ __('Actions') }}«ENDIF»</th>
+                    <th id="hItemActions" scope="col" class="«IF application.targets('1.3.x')»z-right «ENDIF»text-right z-order-unsorted">«IF application.targets('1.3.x')»{gt text='Actions'}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -719,7 +719,7 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF application.targets('1.3.x')»z-right z-nowrap«ELSE»actions nowrap«ENDIF» z-w02">
+            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF application.targets('1.3.x')»z-right z-nowrap«ELSE»actions text-right nowrap«ENDIF» z-w02">
         «ENDIF»
             «new ItemActionsView().generateView(it, 'markup')»
         </«listType.asItemTag»>

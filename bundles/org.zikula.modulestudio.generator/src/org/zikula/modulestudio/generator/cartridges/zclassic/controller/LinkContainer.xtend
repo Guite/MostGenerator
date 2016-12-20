@@ -33,6 +33,10 @@ class LinkContainer {
         app.generateClassPair(fsa, app.getAppSourceLibPath + 'Container/LinkContainer.php',
             fh.phpFileContent(app, linkContainerBaseImpl), fh.phpFileContent(app, linkContainerImpl)
         )
+        println('Generating item actions menu class')
+        app.generateClassPair(fsa, app.getAppSourceLibPath + 'Menu/ItemActionsMenu.php',
+            fh.phpFileContent(app, itemActionsMenuBaseImpl), fh.phpFileContent(app, itemActionsMenuImpl)
+        )
     }
 
     // 1.4+ only
@@ -208,25 +212,6 @@ class LinkContainer {
             }
 
             /**
-             * Returns action links for a given entity.
-             *
-             * @param EntityAccess $entity  The entity
-             * @param string       $area    The context area name (e.g. admin or nothing for user)
-             * @param string       $context The context page name (e.g. view, display, edit, delete)
-             *
-             * @return array Array of action links
-             */
-            public function getActionLinks(EntityAccess $entity, $area = '', $context = 'view')
-            {
-                // Create an array of links to return
-                $links = [];
-
-                «new ItemActions().itemActionsImpl(app)»
-
-                return $links;
-            }
-
-            /**
              * Returns the name of the providing bundle.
              *
              * @return string The bundle name
@@ -247,6 +232,78 @@ class LinkContainer {
          * This is the link container service implementation class.
          */
         class LinkContainer extends AbstractLinkContainer
+        {
+            // feel free to add own extensions here
+        }
+    '''
+
+    def private itemActionsMenuBaseImpl(Controller it) '''
+        namespace «app.appNamespace»\Menu\Base;
+
+        use Knp\Menu\FactoryInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+        use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+        use Zikula\Common\Translator\TranslatorTrait;
+
+        /**
+         * This is the item actions menu implementation class.
+         */
+        class AbstractItemActionsMenu implements ContainerAwareInterface
+        {
+            use ContainerAwareTrait;
+            use TranslatorTrait;
+
+            /**
+             * Sets the translator.
+             *
+             * @param TranslatorInterface $translator Translator service instance
+             */
+            public function setTranslator(/*TranslatorInterface */$translator)
+            {
+                $this->translator = $translator;
+            }
+
+            /**
+             * Builds the menu.
+             *
+             * @param FactoryInterface $factory Menu factory
+             * @param array            $options Additional options
+             *
+             * @return \Knp\Menu\MenuItem The assembled menu
+             */
+            public function menu(FactoryInterface $factory, array $options)
+            {
+                $menu = $factory->createItem('adminActions');
+                if (!isset($options['entity']) || !isset($options['area']) || !isset($options['context'])) {
+                    return $menu;
+                }
+
+                $this->setTranslator($this->container->get('translator'));
+
+                $entity = $options['entity'];
+                $area = $options['area'];
+                $context = $options['context'];
+
+                $permissionApi = $this->container->get('zikula_permissions_module.api.permission');
+                $currentUserApi = $this->container->get('zikula_users_module.current_user');
+                $menu->setChildrenAttribute('class', 'list-inline');
+
+                «new ItemActions().itemActionsImpl(app)»
+
+                return $menu;
+            }
+        }
+    '''
+
+    def private itemActionsMenuImpl(Controller it) '''
+        namespace «app.appNamespace»\Menu;
+
+        use «app.appNamespace»\Menu\Base\AbstractItemActionsMenu;
+
+        /**
+         * This is the item actions menu implementation class.
+         */
+        class ItemActionsMenu extends AbstractItemActionsMenu
         {
             // feel free to add own extensions here
         }

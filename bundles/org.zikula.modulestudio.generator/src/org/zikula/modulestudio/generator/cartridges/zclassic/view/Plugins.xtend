@@ -113,7 +113,6 @@ class Plugins {
             use «appNamespace»\Helper\ViewHelper;
         «ENDIF»
         use «appNamespace»\Helper\WorkflowHelper;
-        use «appNamespace»\Container\LinkContainer;
 
         /**
          * Twig extension base class.
@@ -149,11 +148,6 @@ class Plugins {
         protected $variableApi;
 
         /**
-         * @var LinkContainer
-         */
-        protected $linkContainer;
-
-        /**
          * @var WorkflowHelper
          */
         protected $workflowHelper;
@@ -184,7 +178,6 @@ class Plugins {
             «' '»* @param RequestStack        $requestStack   RequestStack service instance
         «ENDIF»
          * @param VariableApi         $variableApi    VariableApi service instance
-         * @param LinkContainer       $linkContainer  LinkContainer service instance
          * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
         «IF hasUploads»
             «' '»* @param ViewHelper          $viewHelper     ViewHelper service instance
@@ -193,7 +186,7 @@ class Plugins {
             «' '»* @param ListEntriesHelper   $listHelper     ListEntriesHelper service instance
         «ENDIF»
          */
-        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», RequestStack $requestStack«ENDIF», VariableApi $variableApi, LinkContainer $linkContainer, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
+        public function __construct(TranslatorInterface $translator«IF hasTrees», RouterInterface $router«ENDIF»«IF generateIcsTemplates && hasEntitiesWithIcsTemplates», RequestStack $requestStack«ENDIF», VariableApi $variableApi, WorkflowHelper $workflowHelper«IF hasUploads», ViewHelper $viewHelper«ENDIF»«IF hasListFields», ListEntriesHelper $listHelper«ENDIF»)
         {
             $this->setTranslator($translator);
             «IF hasTrees»
@@ -203,7 +196,6 @@ class Plugins {
                 $this->request = $requestStack->getMasterRequest();
             «ENDIF»
             $this->variableApi = $variableApi;
-            $this->linkContainer = $linkContainer;
             $this->workflowHelper = $workflowHelper;
             «IF hasUploads»
                 $this->viewHelper = $viewHelper;
@@ -231,7 +223,6 @@ class Plugins {
         public function getFunctions()
         {
             return [
-                new \Twig_SimpleFunction('«appNameLower»_actions', [$this, 'getActionLinks']),
                 «IF hasTrees»
                     new \Twig_SimpleFunction('«appNameLower»_treeData', [$this, 'getTreeData']),
                     new \Twig_SimpleFunction('«appNameLower»_treeSelection', [$this, 'getTreeSelection']),
@@ -271,20 +262,6 @@ class Plugins {
                 «ENDIF»
                 new \Twig_SimpleFilter('«appNameLower»_objectState', [$this, 'getObjectState'], ['is_safe' => ['html']])
             ];
-        }
-
-        /**
-         * Returns action links for a given entity.
-         *
-         * @param EntityAccess $entity  The entity
-         * @param string       $area    The context area name (e.g. admin or nothing for user)
-         * @param string       $context The context page name (e.g. view, display, edit, delete)
-         *
-         * @return array Array of action links
-         */
-        public function getActionLinks(/*EntityAccess */$entity, $area = '', $context = 'view')
-        {
-            return $this->linkContainer->getActionLinks($entity, $area, $context);
         }
 
         «generateInternal»

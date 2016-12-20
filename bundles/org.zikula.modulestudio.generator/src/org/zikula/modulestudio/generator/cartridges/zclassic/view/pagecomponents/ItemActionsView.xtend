@@ -21,10 +21,8 @@ class ItemActionsView {
                     «ENDIF»
                 {/if}
             «ELSE»
-                {% set actionLinks = «application.appName.toLowerCase»_actions(entity=«name.formatForCode», area=routeArea, context='view') %}
-                {% if actionLinks|length > 0 %}
-                    «markup('view')»
-                {% endif %}
+                {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], { entity: «name.formatForCode», area: routeArea, context: 'view' }) %}
+                «markup('view')»
             «ENDIF»
         «ELSEIF subject == 'javascript'»
             «javaScript('view')»
@@ -38,11 +36,9 @@ class ItemActionsView {
                 «javaScript('display')»
             {/if}
         «ELSE»
-            {% set actionLinks = «application.appName.toLowerCase»_actions(entity=«name.formatForCode», area=routeArea, context='display') %}
-            {% if actionLinks|length > 0 %}
-                «markup('display')»
-                «javaScript('display')»
-            {% endif %}
+            {% set itemActions = knp_menu_get('«application.appName»:ItemActionsMenu:menu', [], { entity: «name.formatForCode», area: routeArea, context: 'display' }) %}
+            «markup('display')»
+            «javaScript('display')»
         «ENDIF»
     '''
 
@@ -60,7 +56,7 @@ class ItemActionsView {
             <div class="dropdown">
                 «trigger(context)»
                 <ul class="dropdown-menu«IF context == 'view'» dropdown-menu-right«ENDIF»" role="menu" aria-labelledby="«itemActionContainerViewId»DropDownToggle">
-                    «linkList(context)»
+                    {{ knp_menu_render(itemActions, { template: 'ZikulaMenuModule:Override:actions.html.twig' }) }}
                 </ul>
             </div>
         «ENDIF»
