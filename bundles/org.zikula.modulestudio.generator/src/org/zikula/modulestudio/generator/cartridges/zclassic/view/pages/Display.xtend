@@ -245,21 +245,29 @@ class Display {
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     «IF isLegacyApp»
-                        <dt>{gt text='«geoFieldName.toFirstUpper»'}</dt>
-                        <dd>{$«name.formatForCode».«geoFieldName»|«appName.formatForDB»FormatGeoData}</dd>
+                        {if $«name.formatForCode».«geoFieldName»}
+                            <dt>{gt text='«geoFieldName.toFirstUpper»'}</dt>
+                            <dd>{$«name.formatForCode».«geoFieldName»|«appName.formatForDB»FormatGeoData}</dd>
+                        {/if}
                     «ELSE»
-                        <dt>{{ __('«geoFieldName.toFirstUpper»') }}</dt>
-                        <dd>{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}</dd>
+                        {% if «name.formatForCode».«geoFieldName» is not empty %}
+                            <dt>{{ __('«geoFieldName.toFirstUpper»') }}</dt>
+                            <dd>{{ «name.formatForCode».«geoFieldName»|«appName.formatForDB»_geoData }}</dd>
+                        {% endif %}
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
             «IF softDeleteable»
                 «IF isLegacyApp»
-                    <dt>{gt text='Deleted at'}</dt>
-                    <dd>{$«name.formatForCode».deletedAt|dateformat:'datebrief'}</dd>
+                    {if $«name.formatForCode».deletedAt}
+                        <dt>{gt text='Deleted at'}</dt>
+                        <dd>{$«name.formatForCode».deletedAt|dateformat:'datebrief'}</dd>
+                    {/if}
                 «ELSE»
-                    <dt>{{ __('Deleted at') }}</dt>
-                    <dd>{{ «name.formatForCode».deletedAt|localizeddate('medium', 'short') }}</dd>
+                    {% if «name.formatForCode».deletedAt is not empty %}
+                        <dt>{{ __('Deleted at') }}</dt>
+                        <dd>{{ «name.formatForCode».deletedAt|localizeddate('medium', 'short') }}</dd>
+                    {% endif %}
                 «ENDIF»
             «ENDIF»
             «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional && source instanceof Entity]»«relation.displayEntry(false)»«ENDFOR»
@@ -284,8 +292,17 @@ class Display {
 
     def private displayEntry(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
-        <dt>«IF entity.isLegacyApp»{gt text='«fieldLabel.formatForDisplayCapital»'}«ELSE»{{ __('«fieldLabel.formatForDisplayCapital»') }}«ENDIF»</dt>
-        <dd>«displayEntryImpl»</dd>
+        «IF entity.isLegacyApp»
+            {if $«entity.name.formatForCode».«name.formatForCode»}
+                <dt>{gt text='«fieldLabel.formatForDisplayCapital»'}</dt>
+                <dd>«displayEntryImpl»</dd>
+            {/if}
+        «ELSE»
+            {% if «entity.name.formatForCode».«name.formatForCode» is not empty %}
+                <dt>{{ __('«fieldLabel.formatForDisplayCapital»') }}</dt>
+                <dd>«displayEntryImpl»</dd>
+            {% endif %}
+        «ENDIF»
     '''
 
     def private displayEntryImpl(DerivedField it) {
@@ -298,61 +315,57 @@ class Display {
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         «IF linkEntity.isLegacyApp»
-            <dt>{gt text='«relationAliasName.formatForDisplayCapital»'}</dt>
-            <dd>
             {if isset($«relObjName») && $«relObjName» ne null}
-              {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-              «IF linkEntity.hasActions('display')»
-                  <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
-              «ENDIF»
-                {$«relObjName»->getTitleFromDisplayPattern()}
-              «IF linkEntity.hasActions('display')»
-                {/strip}</a>
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    document.observe('dom:loaded', function() {
-                        «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
-                    });
-                /* ]]> */
-                </script>
-              «ENDIF»
-              {else}
-                {$«relObjName»->getTitleFromDisplayPattern()}
-              {/if}
-            {else}
-                {gt text='Not set.'}
+                <dt>{gt text='«relationAliasName.formatForDisplayCapital»'}</dt>
+                <dd>
+                  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+                  «IF linkEntity.hasActions('display')»
+                      <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
+                  «ENDIF»
+                    {$«relObjName»->getTitleFromDisplayPattern()}
+                  «IF linkEntity.hasActions('display')»
+                    {/strip}</a>
+                    <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
+                    <script type="text/javascript">
+                    /* <![CDATA[ */
+                        document.observe('dom:loaded', function() {
+                            «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
+                        });
+                    /* ]]> */
+                    </script>
+                  «ENDIF»
+                  {else}
+                    {$«relObjName»->getTitleFromDisplayPattern()}
+                  {/if}
+                </dd>
             {/if}
-            </dd>
         «ELSE»
+            {% if «relObjName»|default %}
             <dt>{{ __('«relationAliasName.formatForDisplayCapital»') }}</dt>
             <dd>
-            {% if «relObjName»|default %}
               {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
-              «IF linkEntity.hasActions('display')»
-                  <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
-              «ENDIF»
-                {{ «relObjName».getTitleFromDisplayPattern() }}
-              «IF linkEntity.hasActions('display')»
-                {% endspaceless %}</a>
-                <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="hidden"><span class="fa fa-eye"></span></a>
-                <script type="text/javascript">
-                /* <![CDATA[ */
-                    ( function($) {
-                        $(document).ready(function() {
-                            «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display'), '{{ «relObjName».getTitleFromDisplayPattern()|e('js') }}');
-                        });
-                    })(jQuery);
-                /* ]]> */
-                </script>
-              «ENDIF»
-              {% else %}
-                {{ «relObjName».getTitleFromDisplayPattern() }}
-              {% endif %}
-            {% else %}
-                {{ __('Not set.') }}
+                  «IF linkEntity.hasActions('display')»
+                      <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.toLowerCase»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
+                  «ENDIF»
+                    {{ «relObjName».getTitleFromDisplayPattern() }}
+                  «IF linkEntity.hasActions('display')»
+                    {% endspaceless %}</a>
+                    <a id="«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display" href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', { «linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="hidden"><span class="fa fa-eye"></span></a>
+                    <script type="text/javascript">
+                    /* <![CDATA[ */
+                        ( function($) {
+                            $(document).ready(function() {
+                                «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item{{ «FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR ' ~ '»«relObjName».«pkField.name.formatForCode»«ENDFOR» }}Display'), '{{ «relObjName».getTitleFromDisplayPattern()|e('js') }}');
+                            });
+                        })(jQuery);
+                    /* ]]> */
+                    </script>
+                  «ENDIF»
+                  {% else %}
+                    {{ «relObjName».getTitleFromDisplayPattern() }}
+                  {% endif %}
+                </dd>
             {% endif %}
-            </dd>
         «ENDIF»
     '''
 
