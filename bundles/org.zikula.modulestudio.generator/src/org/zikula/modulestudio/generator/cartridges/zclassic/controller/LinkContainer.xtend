@@ -58,9 +58,6 @@ class LinkContainer {
         «IF app.generateAccountApi || !app.controllers.filter[c|c.hasActions('edit')].empty»
             use Zikula\UsersModule\Api\CurrentUserApi;
         «ENDIF»
-        «FOR entity : app.entities»
-            use «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
-        «ENDFOR»
         use «app.appNamespace»\Helper\ControllerHelper;
 
         /**
@@ -244,6 +241,9 @@ class LinkContainer {
         use Symfony\Component\DependencyInjection\ContainerAwareInterface;
         use Symfony\Component\DependencyInjection\ContainerAwareTrait;
         use Zikula\Common\Translator\TranslatorTrait;
+        «FOR entity : app.entities»
+            use «app.appNamespace»\Entity\«entity.name.formatForCodeCapital»Entity;
+        «ENDFOR»
 
         /**
          * This is the item actions menu implementation class.
@@ -273,7 +273,7 @@ class LinkContainer {
              */
             public function menu(FactoryInterface $factory, array $options)
             {
-                $menu = $factory->createItem('adminActions');
+                $menu = $factory->createItem('itemActions');
                 if (!isset($options['entity']) || !isset($options['area']) || !isset($options['context'])) {
                     return $menu;
                 }

@@ -55,9 +55,7 @@ class ItemActionsView {
         «ELSE»
             <div class="dropdown">
                 «trigger(context)»
-                <ul class="dropdown-menu«IF context == 'view'» dropdown-menu-right«ENDIF»" role="menu" aria-labelledby="«itemActionContainerViewId»DropDownToggle">
-                    {{ knp_menu_render(itemActions, { template: 'ZikulaMenuModule:Override:actions.html.twig' }) }}
-                </ul>
+                {{ knp_menu_render(itemActions, { template: 'ZikulaMenuModule:Override:actions.html.twig' }) }}
             </div>
         «ENDIF»
     '''
@@ -97,8 +95,12 @@ class ItemActionsView {
 
     def private javaScript(Entity it, String context) '''
         «IF !application.targets('1.3.x') && context == 'view'»
-            $('.dropdown-toggle').dropdown();
-            $('a.fa-zoom-in').attr('target', '_blank');
+            $('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu dropdown-menu-right');
+            $('.dropdown > ul a').each(function (index) {
+                $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
+            });
+            $('.dropdown > ul a i').addClass('fa-fw');
+            $('.dropdown-toggle').removeClass('hidden').dropdown();
         «ELSE»
             <script type="text/javascript">
             /* <![CDATA[ */
@@ -109,8 +111,12 @@ class ItemActionsView {
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            $('.dropdown-toggle').dropdown();
-                            $('a.fa-zoom-in').attr('target', '_blank');
+                            $('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu dropdown-menu-right');
+                            $('.dropdown > ul a').each(function (index) {
+                                $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
+                            });
+                            $('.dropdown > ul a i').addClass('fa-fw');
+                            $('.dropdown-toggle').removeClass('hidden').dropdown();
                         });
                     })(jQuery);
                 «ENDIF»
@@ -123,7 +129,7 @@ class ItemActionsView {
         «IF application.targets('1.3.x')»
             {icon id="«itemActionContainerViewIdForSmarty»Trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
         «ELSE»
-            <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
+            <a id="«itemActionContainerViewId»DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="hidden dropdown-toggle"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></a>
 «/*            <button id="«itemActionContainerViewId»DropDownToggle" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-tasks"></i>«IF context == 'display'» {{ __('Actions') }}«ENDIF» <span class="caret"></span></button>*/»
         «ENDIF»
     '''
