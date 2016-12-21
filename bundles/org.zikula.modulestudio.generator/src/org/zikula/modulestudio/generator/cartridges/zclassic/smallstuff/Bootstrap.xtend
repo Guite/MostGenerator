@@ -183,18 +183,28 @@ class Bootstrap {
                 $serviceManager = ServiceUtil::getManager();
                 «IF targets('1.3.x')»
                     $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
+                    // check if own services exist (which is not true if the module is not installed yet)
                 «ELSE»
+                    // check if own services exist (which is not true if the module is not installed yet)
+                    if (!$serviceManager->has('«appService».workflow_helper')) {
+                        return;
+                    }
+                    $workflowHelper = $serviceManager->get('«appService».workflow_helper');
+                    «IF hasHookSubscribers»
+
+                        if (!$serviceManager->has('«appService».hook_helper')) {
+                            return;
+                        }
+                        $hookHelper = $serviceManager->get('«appService».hook_helper');
+                    «ENDIF»
+
                     $logger = $serviceManager->get('logger');
                     $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
                     $session = $serviceManager->get('session');
                     $translator = $serviceManager->get('translator.default');
-                    $workflowHelper = $serviceManager->get('«appService».workflow_helper');
-                    «IF hasHookSubscribers»
-                        $hookHelper = $serviceManager->get('«appService».hook_helper');
-                    «ENDIF»
                 «ENDIF»
                 «FOR entity : entitiesWithArchive»
-                    // check if service exists (does not if module is uninstalled, see #770)
+
                     if (!$serviceManager->has('«appService».«entity.name.formatForCode»_factory')) {
                         return;
                     }
