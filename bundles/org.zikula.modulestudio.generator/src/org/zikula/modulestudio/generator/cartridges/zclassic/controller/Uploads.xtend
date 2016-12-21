@@ -819,6 +819,12 @@ class Uploads {
             «ENDIF»
             $entity[$fieldName] = '';
             $entity[$fieldName . 'Meta'] = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
+            «IF targets('1.3.x')»
+                $entity[$fieldName . 'FullPath'] = '';
+                $entity[$fieldName . 'FullPathUrl'] = '';
+            «ELSE»
+                $entity[$fieldName . 'Url'] = '';
+            «ENDIF»
 
             return $entity;
         }

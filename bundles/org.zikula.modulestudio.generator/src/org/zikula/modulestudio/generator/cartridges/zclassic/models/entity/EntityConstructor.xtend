@@ -96,8 +96,8 @@ class EntityConstructor {
         «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(AbstractDateField).filter[null === defaultValue || defaultValue == '' || defaultValue.length == 0]»
-            $this->«mandatoryField.name.formatForCode» = «mandatoryField.defaultAssignment»;
+        «FOR dateField : getDerivedFields.filter(AbstractDateField)»
+            $this->«dateField.name.formatForCode» = «dateField.defaultAssignment»;
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(FloatField).filter[null === defaultValue || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
@@ -151,7 +151,7 @@ class EntityConstructor {
         $this->«targetField.name.formatForCode» = $«targetField.name.formatForCode»;
     '''
 
-    def private defaultAssignment(AbstractDateField it) '''\DateTime::createFromFormat('«defaultFormat»', date('«defaultFormat»'))'''
+    def private defaultAssignment(AbstractDateField it) '''\DateTime::createFromFormat('«defaultFormat»', «IF null === defaultValue || defaultValue == '' || defaultValue.length == 0»date('«defaultFormat»')«ELSE»'«defaultValue»'«ENDIF»)'''
     def private dispatch defaultFormat(AbstractDateField it) {
     }
     def private dispatch defaultFormat(DatetimeField it) '''Y-m-d H:i:s'''

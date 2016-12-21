@@ -139,7 +139,7 @@ class Property {
         «ENDIF»
          * @var «IF type == 'bigint' || type == 'smallint'»integer«ELSEIF type == 'datetime'»\DateTime«ELSE»«type»«ENDIF» $«name.formatForCode»
          */
-        «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE» = «defaultFieldData»«ENDIF»;
+        «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE»«IF !(it instanceof AbstractDateField)» = «defaultFieldData»«ENDIF»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
@@ -190,7 +190,7 @@ class Property {
             ListField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else 'null'
             AbstractStringField: if (null !== it.defaultValue && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             AbstractDateField:
-                if (it.mandatory && null !== it.defaultValue && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else 'null'
+                if (it.mandatory && null !== it.defaultValue && it.defaultValue.length > 0 && it.defaultValue != 'now') 'new \\DateTime(\'' + it.defaultValue + '\')' else 'null'
             FloatField:
                 if (null !== it.defaultValue && it.defaultValue.length > 0) it.defaultValue else '0'
             default: '\'\''
