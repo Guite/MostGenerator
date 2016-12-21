@@ -87,12 +87,11 @@ class Categories {
     '''
 
     def private viewBody(Application it) '''
-        <dl class="category-list">
-        {% for propName, catMapping in obj.categories %}
-            <dt>{{ propName }}</dt>
-            <dd>{{ catMapping.category.display_name[app.request.locale] }}</dd>
+        <ul class="category-list">
+        {% for catMapping in obj.categories %}
+            <li>{{ catMapping.category.display_name[app.request.locale] }}</li>
         {% endfor %}
-        </dl>
+        </ul>
     '''
 
     def private categoriesEditImplLegacy(Application it) '''

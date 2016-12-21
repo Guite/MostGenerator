@@ -176,9 +176,9 @@ class Category {
             «ENDIF»
 
             «IF targets('1.4-dev')»
-                return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType), $registry, 32); // 32 == /__System/Modules/Global
+                return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $registry, 32); // 32 == /__System/Modules/Global
             «ELSE»
-                return CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType), «IF isLegacy»$args['registry']«ELSE»$registry«ENDIF», 32); // 32 == /__System/Modules/Global
+                return CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['registry']«ELSE»$registry«ENDIF», 32); // 32 == /__System/Modules/Global
             «ENDIF»
         }
 
@@ -257,39 +257,65 @@ class Category {
 
             $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'retrieveCategoriesFromRequest');
             $properties = $this->getAllProperties(«IF isLegacy»$args«ELSE»$objectType«ENDIF»);
-            foreach ($properties as $propertyName => $propertyId) {
-                $hasMultiSelection = $this->hasMultipleSelection(«IF isLegacy»array(«ELSE»[«ENDIF»
-                    'ot' => $objectType,
-                    'registry' => $propertyName
-                «IF isLegacy»)«ELSE»]«ENDIF»);
-                if (true === $hasMultiSelection) {
-                    $argName = 'catids' . $propertyName;
-                    $inputValue = $dataSource->get($argName, «IF isLegacy»array()«ELSE»[]«ENDIF»);
+            «IF isLegacy»
+                foreach ($properties as $propertyName => $propertyId) {
+                    $hasMultiSelection = $this->hasMultipleSelection(«IF isLegacy»array(«ELSE»[«ENDIF»
+                        'ot' => $objectType,
+                        'registry' => $propertyName
+                    «IF isLegacy»)«ELSE»]«ENDIF»);
+                    if (true === $hasMultiSelection) {
+                        $argName = 'catids' . $propertyName;
+                        $inputValue = $dataSource->get($argName, «IF isLegacy»array()«ELSE»[]«ENDIF»);
+                        if (!is_array($inputValue)) {
+                            $inputValue = explode(',', $inputValue);
+                        }
+                    } else {
+                        $argName = 'catid' . $propertyName;
+                        «IF isLegacy»
+                            $inputVal = (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);
+                        «ELSE»
+                            $inputVal = $dataSource->getInt($argName, 0);
+                        «ENDIF»
+                        $inputValue = «IF isLegacy»array()«ELSE»[]«ENDIF»;
+                        if ($inputVal > 0) {
+                            $inputValue[] = $inputVal;
+                        }
+                    }
+
+                    // prevent "All" option hiding all entries
+                    foreach ($inputValue as $k => $v) {
+                        if ($v == 0) {
+                            unset($inputValue[$k]);
+                        }
+                    }
+
+                    $catIdsPerRegistry[$propertyName] = $inputValue;
+                }
+            «ELSE»
+                $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'quicknav';
+                $inputValues = $dataSource->get($inputName);
+                $inputCategories = isset($inputValues['categories']) ? $inputValues['categories'] : [];
+
+                if (!count($inputCategories)) {
+                    return $catIdsPerRegistry;
+                }
+
+                foreach ($properties as $propertyName => $propertyId) {
+                    $inputValue = isset($inputCategories['registry_' . $propertyId]) ? $inputCategories['registry_' . $propertyId] : [];
                     if (!is_array($inputValue)) {
-                        $inputValue = explode(',', $inputValue);
+                        $inputValue = [$inputValue];
                     }
-                } else {
-                    $argName = 'catid' . $propertyName;
-                    «IF isLegacy»
-                        $inputVal = (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);
-                    «ELSE»
-                        $inputVal = $dataSource->getInt($argName, 0);
-                    «ENDIF»
-                    $inputValue = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-                    if ($inputVal > 0) {
-                        $inputValue[] = $inputVal;
-                    }
-                }
 
-                // prevent "All" option hiding all entries
-                foreach ($inputValue as $k => $v) {
-                    if ($v == 0) {
-                        unset($inputValue[$k]);
+                    // prevent "All" option hiding all entries
+                    foreach ($inputValue as $k => $v) {
+                        if ($v == 0) {
+                            unset($inputValue[$k]);
+                        }
                     }
-                }
 
-                $catIdsPerRegistry[$propertyName] = $inputValue;
-            }
+                    $catIdsPerRegistry[$propertyName] = $inputValue;
+                }
+            «ENDIF»
 
             return $catIdsPerRegistry;
         }
@@ -373,9 +399,9 @@ class Category {
             $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getAllProperties');
 
             «IF targets('1.4-dev')»
-                $propertyIdsPerName = $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType));
+                $propertyIdsPerName = $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
             «ELSE»
-                $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType));
+                $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF»);
             «ENDIF»
 
             return $propertyIdsPerName;
@@ -405,9 +431,9 @@ class Category {
 
             «ENDIF»
             «IF targets('1.4-dev')»
-                $registryInfo = $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType), $arrayKey);
+                $registryInfo = $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
             «ELSE»
-                $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType), «IF isLegacy»$args['arraykey']«ELSE»$arrayKey«ENDIF»);
+                $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['arraykey']«ELSE»$arrayKey«ENDIF»);
             «ENDIF»
 
             return $registryInfo;
@@ -431,9 +457,9 @@ class Category {
             $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getMainCatForProperty');
 
             «IF targets('1.4-dev')»
-                $catId = $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType), $property);
+                $catId = $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
             «ELSE»
-                $catId = CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType), «IF isLegacy»$args['property']«ELSE»$property«ENDIF»);
+                $catId = CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['property']«ELSE»$property«ENDIF»);
             «ENDIF»
 
             return $catId;
