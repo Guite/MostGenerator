@@ -437,7 +437,7 @@ class ContentTypeList {
                     'objectType' => $this->objectType,
                     'items' => $entities
                 ];
-                «IF hasCategorisableEntities»,
+                «IF hasCategorisableEntities»
                     if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
                         $templateParameters['registries'] = $this->catRegistries;
                         $templateParameters['properties'] = $this->catProperties;
