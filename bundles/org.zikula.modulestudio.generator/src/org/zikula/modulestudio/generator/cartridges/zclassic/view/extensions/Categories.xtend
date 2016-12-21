@@ -90,7 +90,7 @@ class Categories {
         <dl class="category-list">
         {% for propName, catMapping in obj.categories %}
             <dt>{{ propName }}</dt>
-            <dd>{{ catMapping.category.display_name[lang] }}</dd>
+            <dd>{{ catMapping.category.display_name[app.request.locale] }}</dd>
         {% endfor %}
         </dl>
     '''
