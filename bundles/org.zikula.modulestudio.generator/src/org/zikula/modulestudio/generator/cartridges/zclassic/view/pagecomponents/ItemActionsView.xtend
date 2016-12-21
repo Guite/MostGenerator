@@ -111,7 +111,7 @@ class ItemActionsView {
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            $('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu dropdown-menu-right');
+                            $('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
                             $('.dropdown > ul a').each(function (index) {
                                 $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
                             });
