@@ -88,9 +88,9 @@ class ImageHelper {
             «getRuntimeOptions»
 
             «getCustomRuntimeOptions»
-            «IF !isLegacy»
+            «IF !isLegacy && hasImageFields»
 
-                «checkAndCreateImagineCacheDirectory»
+                «checkIfImagineCacheDirectoryExists»
             «ENDIF»
         }
     '''
@@ -108,8 +108,8 @@ class ImageHelper {
          */
         public function get«IF isLegacy»Preset«ELSE»RuntimeOptions«ENDIF»($objectType = '', $fieldName = '', $context = '', $args = «IF isLegacy»array()«ELSE»[]«ENDIF»)
         {
-            «IF !isLegacy»
-                $this->checkAndCreateImagineCacheDirectory();
+            «IF !isLegacy && hasImageFields»
+                $this->checkIfImagineCacheDirectoryExists();
 
             «ENDIF»
             if (!in_array($context, «IF isLegacy»array(«ELSE»[«ENDIF»'controllerAction', 'api', 'actionHandler', 'block', 'contentType'«IF isLegacy»)«ELSE»]«ENDIF»)) {
@@ -234,11 +234,11 @@ class ImageHelper {
         targets('1.3.x')
     }
 
-    def private checkAndCreateImagineCacheDirectory(Application it) '''
+    def private checkIfImagineCacheDirectoryExists(Application it) '''
         /**
          * Check if cache directory exists and create it if needed.
          */
-        protected function checkAndCreateImagineCacheDirectory()
+        protected function checkIfImagineCacheDirectoryExists()
         {
             $cachePath = 'web/imagine/cache';
             if (file_exists($cachePath)) {

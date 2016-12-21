@@ -439,7 +439,7 @@ class ModelExtensions {
      * Checks whether an upload field is an image field.
      */
     def isImageField(UploadField it) {
-        allowedExtensions.split(', ').forall[it == 'gif' || it == 'jpeg' || it == 'jpg' || it == 'png']
+        !allowedExtensions.split(', ').filter[it == 'gif' || it == 'jpeg' || it == 'jpg' || it == 'png'].empty
     }
 
     /**

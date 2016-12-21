@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
@@ -22,7 +21,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.EditEntity
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.AutoCompletionRelationType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.ColourType
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.DateTypeExtension
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
@@ -78,9 +76,6 @@ class FormHandler {
                 }
                 if (hasGeographical) {
                     new GeoType().generate(it, fsa)
-                }
-                if (!getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty) {
-                    new DateTypeExtension().generate(it, fsa)
                 }
                 if (!getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty) {
                     new TimeTypeExtension().generate(it, fsa)

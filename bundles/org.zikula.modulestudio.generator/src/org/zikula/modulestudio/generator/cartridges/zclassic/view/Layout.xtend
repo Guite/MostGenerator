@@ -178,7 +178,7 @@ class Layout {
         «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
 
             {% block date_widget %}
-                {{ block('date_widget') }}
+                {{- parent() -}}
                 {% if not required %}
                     <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}
@@ -187,7 +187,7 @@ class Layout {
         «IF !getAllEntities.filter[e|!e.fields.filter(DatetimeField).empty].empty»
 
             {% block datetime_widget %}
-                {{ block('datetime_widget') }}
+                {{- parent() -}}
                 {% if not required %}
                     <span class="help-block"><a id="reset{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
                 {% endif %}

@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import de.guite.modulestudio.metamodel.Application
-import de.guite.modulestudio.metamodel.DateField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.MappedSuperClass
 import de.guite.modulestudio.metamodel.TimeField
@@ -183,13 +182,6 @@ class ServiceDefinitions {
                 class: «nsBase»Field\GeoType
                 tags:
                     - { name: form.type }
-        «ENDIF»
-        «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
-
-            «modPrefix».form.date_type_extension:
-                class: «nsBase.replace('Type\\', '')»Extension\DateTypeExtension
-                tags:
-                    - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\DateType }
         «ENDIF»
         «IF !getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty»
 
