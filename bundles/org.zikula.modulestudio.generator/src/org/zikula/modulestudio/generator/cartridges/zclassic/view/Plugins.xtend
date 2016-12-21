@@ -249,7 +249,7 @@ class Plugins {
                     new \Twig_SimpleFilter('«appNameLower»_countryName', [$this, 'getCountryName']),
                 «ENDIF»
                 «IF hasUploads»
-                    new \Twig_SimpleFilter('«appNameLower»_fileSize', [$this, 'getFileSize']),
+                    new \Twig_SimpleFilter('«appNameLower»_fileSize', [$this, 'getFileSize'], ['is_safe' => ['html']]),
                 «ENDIF»
                 «IF hasListFields»
                     new \Twig_SimpleFilter('«appNameLower»_listEntry', [$this, 'getListEntry']),
