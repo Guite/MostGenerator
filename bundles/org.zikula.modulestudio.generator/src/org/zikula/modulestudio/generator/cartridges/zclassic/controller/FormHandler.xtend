@@ -5,7 +5,6 @@ import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityWorkflowType
 import de.guite.modulestudio.metamodel.JoinRelationship
 import de.guite.modulestudio.metamodel.MappedSuperClass
-import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.ConfigLegacy
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionhandler.FormLegacy
@@ -24,7 +23,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.EntityTreeType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.GeoType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.MultiListType
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.TimeTypeExtension
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UploadType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.formtype.field.UserType
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -76,9 +74,6 @@ class FormHandler {
                 }
                 if (hasGeographical) {
                     new GeoType().generate(it, fsa)
-                }
-                if (!getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty) {
-                    new TimeTypeExtension().generate(it, fsa)
                 }
                 if (hasTrees) {
                     new EntityTreeType().generate(it, fsa)

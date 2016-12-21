@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 import de.guite.modulestudio.metamodel.Application
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.MappedSuperClass
-import de.guite.modulestudio.metamodel.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -182,14 +181,6 @@ class ServiceDefinitions {
                 class: «nsBase»Field\GeoType
                 tags:
                     - { name: form.type }
-        «ENDIF»
-        «IF !getAllEntities.filter[e|!e.fields.filter(TimeField).empty].empty»
-
-            «modPrefix».form.time_type_extension:
-                class: «nsBase.replace('Type\\', '')»Extension\TimeTypeExtension
-                arguments: ["@zikula_core.common.theme.assets_footer"]
-                tags:
-                    - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\TimeType }
         «ENDIF»
         «IF hasMultiListFields»
 
