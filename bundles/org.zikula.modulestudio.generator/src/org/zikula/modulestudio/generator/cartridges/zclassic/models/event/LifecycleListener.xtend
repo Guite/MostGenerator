@@ -79,7 +79,7 @@ class LifecycleListener {
             public function preRemove(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity)) {
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
 
@@ -99,7 +99,7 @@ class LifecycleListener {
             public function postRemove(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity)) {
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
 
@@ -119,7 +119,7 @@ class LifecycleListener {
             public function prePersist(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity)) {
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
 
@@ -136,7 +136,7 @@ class LifecycleListener {
             public function postPersist(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity)) {
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
 
@@ -154,7 +154,7 @@ class LifecycleListener {
             public function preUpdate(PreUpdateEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity)) {
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
 
@@ -170,7 +170,7 @@ class LifecycleListener {
             public function postUpdate(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity)) {
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
 
@@ -191,7 +191,7 @@ class LifecycleListener {
             public function postLoad(LifecycleEventArgs $args)
             {
                 $entity = $args->getObject();
-                if (!$this->isEntityManagedByThisBundle($entity)) {
+                if (!$this->isEntityManagedByThisBundle($entity) || !method_exists($entity, 'get_objectType')) {
                     return;
                 }
                 «IF hasUploads»
