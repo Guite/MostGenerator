@@ -24,11 +24,7 @@ class ColourType {
         namespace «appNamespace»\Form\Type\Field\Base;
 
         use Symfony\Component\Form\AbstractType;
-        use Symfony\Component\Form\FormInterface;
-        use Symfony\Component\Form\FormView;
         use Symfony\Component\OptionsResolver\OptionsResolver;
-        use Symfony\Component\Routing\RouterInterface;
-        use Zikula\ThemeModule\Engine\AssetBag;
 
         /**
          * Colour field type base class.
@@ -37,78 +33,6 @@ class ColourType {
          */
         abstract class AbstractColourType extends AbstractType
         {
-            /**
-             * @var RouterInterface
-             */
-            protected $router;
-
-            /**
-             * @var AssetBag
-             */
-            protected $jsAssetHelper;
-
-            /**
-             * @var AssetBag
-             */
-            protected $cssAssetHelper;
-
-            /**
-             * @var AssetBag
-             */
-            protected $footerAssetHelper;
-
-            /**
-             * ColourType constructor.
-             *
-             * @param Routerinterface $router         Router service instance
-             * @param AssetBag        $jsAssetBag     AssetBag service instance for JS files
-             * @param AssetBag        $cssAssetBag    AssetBag service instance for CSS files
-             * @param AssetBag        $footerAssetBag AssetBag service instance for footer code
-             */
-            public function __construct(RouterInterface $router, AssetBag $jsAssetBag, AssetBag $cssAssetBag, AssetBag $footerAssetBag)
-            {
-                $this->router = $router;
-                $this->jsAssetBag = $jsAssetBag;
-                $this->cssAssetBag = $cssAssetBag;
-                $this->footerAssetBag = $footerAssetBag;
-            }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function buildView(FormView $view, FormInterface $form, array $options)
-            {
-                static $firstTime = true;
-
-                if (
-                    (isset($options['disabled']) && $options['disabled'])
-                    || (isset($options['attr']) && isset($options['attr']['readonly']))
-                ) {
-                    return;
-                }
-
-                if ($firstTime) {
-                    $homePath = $this->router->generate('home');
-                    $this->jsAssetBag->add($homePath . 'web/jquery-minicolors/jquery.minicolors.min.js');
-                    $this->cssAssetBag->add($homePath . 'web/jquery-minicolors/jquery.minicolors.css');
-                    $firstTime = false;
-                }
-
-                $domId = $form->getParent()->getConfig()->getName() . '_' . $form->getConfig()->getName();
-
-                $customScript = "<script type=\"text/javascript\">
-                    /* <![CDATA[ */
-                        ( function($) {
-                            $(document).ready(function() {
-                                $('#" . $domId . "').minicolors({theme: 'bootstrap'});
-                            });
-                        })(jQuery);
-                    /* ]]> */
-                </script>";
-
-                $this->footerAssetBag->add($customScript);
-            }
-
             /**
              * {@inheritdoc}
              */

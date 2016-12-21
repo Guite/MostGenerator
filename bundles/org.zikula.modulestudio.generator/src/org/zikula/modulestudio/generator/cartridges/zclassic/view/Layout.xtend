@@ -177,21 +177,28 @@ class Layout {
         {% extends 'ZikulaFormExtensionBundle:Form:bootstrap_3_zikula_admin_layout.html.twig' %}
         «IF !getAllEntities.filter[e|!e.fields.filter(DateField).empty].empty»
 
-            {% block date_widget %}
+            {%- block date_widget -%}
                 {{- parent() -}}
-                {% if not required %}
+                {%- if not required -%}
                     <span class="help-block"><a id="{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
-                {% endif %}
-            {% endblock %}
+                {%- endif -%}
+            {%- endblock -%}
         «ENDIF»
         «IF !getAllEntities.filter[e|!e.fields.filter(DatetimeField).empty].empty»
 
-            {% block datetime_widget %}
+            {%- block datetime_widget -%}
                 {{- parent() -}}
-                {% if not required %}
+                {%- if not required -%}
                     <span class="help-block"><a id="reset{{ id }}ResetVal" href="javascript:void(0);" class="hidden">{{ __('Reset to empty value') }}</a></span>
-                {% endif %}
-            {% endblock %}
+                {%- endif -%}
+            {%- endblock -%}
+        «ENDIF»
+        «IF hasColourFields»
+
+            {%- block «appName.formatForDB»_field_colour_widget -%}
+                {%- set type = type|default('color') -%}
+                {{ block('form_widget_simple') }}
+            {%- endblock -%}
         «ENDIF»
         «IF hasUploads»
 

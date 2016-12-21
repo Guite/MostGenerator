@@ -171,7 +171,6 @@ class ServiceDefinitions {
 
             «modPrefix».form.type.field.colour:
                 class: «nsBase»Field\ColourType
-                arguments: ["@router", "@zikula_core.common.theme.assets_js", "@zikula_core.common.theme.assets_css", "@zikula_core.common.theme.assets_footer"]
                 tags:
                     - { name: form.type }
         «ENDIF»
