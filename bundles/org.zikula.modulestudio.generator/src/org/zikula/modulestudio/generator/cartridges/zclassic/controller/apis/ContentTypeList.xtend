@@ -386,17 +386,14 @@ class ContentTypeList {
                 «IF !isLegacy»
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $this->objectType)) {
                 «ENDIF»
-                «IF targets('1.4-dev')»
-                    $categoryPermissionApi = $serviceManager->get('zikula_categories_module.api.category_permission');
-                «ENDIF»
                 $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($entities as $entity) {
                     «IF targets('1.4-dev')»
-                        if ($categoryPermissionApi->hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                        if ($this->get('«appService».category_helper')->hasPermission($entity)) {
                             $filteredEntities[] = $entity;
                         }
                     «ELSE»
-                        if (CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                        if (ModUtil::apiFunc('«appName»', 'category', 'hasPermission', array('entity' => $entity))) {
                             $filteredEntities[] = $entity;
                         }
                     «ENDIF»

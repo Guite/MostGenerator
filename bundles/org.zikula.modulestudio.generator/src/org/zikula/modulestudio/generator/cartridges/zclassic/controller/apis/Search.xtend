@@ -244,7 +244,7 @@ class Search {
                     }
                     «IF hasCategorisableEntities»
                         if (in_array($objectType, array('«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'))) {
-                            if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
+                            if (!ModUtil::apiFunc($this->name, 'category', 'hasPermission', array('entity' => $entity))) {
                                 continue;
                             }
                         }
@@ -387,9 +387,6 @@ class Search {
                 $descriptionField = $repository->getDescriptionFieldName();
 
                 $entitiesWithDisplayAction = [«FOR entity : getAllEntities.filter[hasActions('display')] SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»];
-                «IF targets('1.4-dev')»
-                    $categoryPermissionApi = $serviceManager->get('zikula_categories_module.api.category_permission');
-                «ENDIF»
 
                 foreach ($entities as $entity) {
                     $urlArgs = $entity->createUrlArgs();
@@ -403,15 +400,9 @@ class Search {
                     «IF hasCategorisableEntities»
                         if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
                             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                                «IF targets('1.4-dev')»
-                                    if (!$categoryPermissionApi->hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
-                                        continue;
-                                    }
-                                «ELSE»
-                                    if (!CategoryUtil::hasCategoryAccess($entity['categories'], '«appName»', ACCESS_OVERVIEW)) {
-                                        continue;
-                                    }
-                                «ENDIF»
+                                if (!$this->get('«appService».category_helper')->hasPermission($entity)) {
+                                    continue;
+                                }
                             }
                         }
                     «ENDIF»

@@ -46,6 +46,7 @@ class Category {
         namespace «appNamespace»\Helper\Base;
 
         «IF !targets('1.4-dev')»
+            use CategoryUtil;
             use CategoryRegistryUtil;
         «ENDIF»
         use Doctrine\ORM\QueryBuilder;
@@ -55,6 +56,7 @@ class Category {
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
         «IF targets('1.4-dev')»
             use Zikula\CategoriesModule\Api\CategoryRegistryApi;
+            use Zikula\CategoriesModule\Api\CategoryPermissionApi;
         «ENDIF»
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\CurrentUserApi;
@@ -99,6 +101,11 @@ class Category {
                  * @var CategoryRegistryApi
                  */
                 private $categoryRegistryApi;
+
+                /**
+                 * @var CategoryPermissionApi
+                 */
+                private $categoryPermissionApi;
             «ENDIF»
 
             /**
@@ -112,7 +119,8 @@ class Category {
              * @param RequestStack        $requestStack   RequestStack service instance
              * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
              «IF targets('1.4-dev')»
-                 «' '»* @param CategoryRegistryApi $categoryRegistryApi CategoryRegistryApi service instance
+                 «' '»* @param CategoryRegistryApi   $categoryRegistryApi   CategoryRegistryApi service instance
+                 «' '»* @param CategoryPermissionApi $categoryPermissionApi CategoryPermissionApi service instance
              «ENDIF»
              */
             public function __construct(
@@ -122,7 +130,8 @@ class Category {
                 LoggerInterface $logger,
                 RequestStack $requestStack,
                 CurrentUserApi $currentUserApi«IF targets('1.4-dev')»,
-                CategoryRegistryApi $categoryRegistryApi«ENDIF»)
+                CategoryRegistryApi $categoryRegistryApi,
+                CategoryPermissionApi $categoryPermissionApi«ENDIF»)
             {
                 $this->container = $container;
                 $this->translator = $translator;
@@ -132,6 +141,7 @@ class Category {
                 $this->currentUserApi = $currentUserApi;
                 «IF targets('1.4-dev')»
                     $this->categoryRegistryApi = $categoryRegistryApi;
+                    $this->categoryPermissionApi = $categoryPermissionApi;
                 «ENDIF»
             }
 
@@ -483,6 +493,41 @@ class Category {
             $registry = 'Main';
 
             return $registry;
+        }
+
+        /**
+         * Checks whether permissions are granted to the given categories or not.
+         *
+         «IF isLegacy»
+         * @param string $args['entity'] The entity to check permission for
+         «ELSE»
+         * @param object $entity The entity to check permission for
+         «ENDIF»
+         *
+         * @return boolean True if permissions are given, false otherwise
+         */
+        public function hasPermission(«IF isLegacy»array $args = array()«ELSE»$entity«ENDIF»)
+        {
+            «IF isLegacy»
+                $entity = $args['entity'];
+            «ENDIF»
+            $objectType = $entity->get_objectType();
+            $categories = $entity['categories'];
+
+            $registries = $this->getAllProperties(«IF isLegacy»array('ot' => $objectType)«ELSE»$objectType«ENDIF»);
+            $registries = array_flip($registries);
+
+            $categoryInfo = [];
+            foreach ($categories as $category) {
+                $registryId = $category->getCategoryRegistryId();
+                $registryName = $registries[$registryId];
+                if (!isset($categoryInfo[$registryName])) {
+                    $categoryInfo[$registryName] = [];
+                }
+                $categoryInfo[$registryName][] = $category->getCategory()->toArray();
+            }
+
+            return «IF targets('1.4-dev')»$this->categoryPermissionApi->«ELSE»CategoryUtil::«ENDIF»hasCategoryAccess($categoryInfo«IF !targets('1.4-dev')», '«appName»'«ENDIF», ACCESS_OVERVIEW);
         }
 
         /**
