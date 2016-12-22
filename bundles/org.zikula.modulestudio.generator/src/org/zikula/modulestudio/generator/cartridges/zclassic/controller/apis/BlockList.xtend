@@ -206,7 +206,7 @@ class BlockList {
             «' '»* @return string output of the rendered block
         «ELSE»
             «' '»* @param array $properties The block properties array
-
+            «' '»*
             «' '»* @return array|string
         «ENDIF»
          */
