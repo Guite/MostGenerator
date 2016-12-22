@@ -914,6 +914,9 @@ class EditEntity {
          */
         public function addReturnControlField(FormBuilderInterface $builder, array $options)
         {
+            if ($options['mode'] != 'create') {
+                return;
+            }
             $builder->add('repeatCreation', '«nsSymfonyFormType»CheckboxType', [
                 'mapped' => false,
                 'label' => $this->__('Create another item after save'),
