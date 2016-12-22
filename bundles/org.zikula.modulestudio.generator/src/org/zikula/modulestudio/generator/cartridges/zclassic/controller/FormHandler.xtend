@@ -826,6 +826,9 @@ class FormHandler {
                         $args['commandName'] = $action['id'];
                     }
                 }
+                if ($this->form->get('cancel')->isClicked()) {
+                    $args['commandName'] = 'cancel';
+                }
 
             «ENDIF»
             $action = $args['commandName'];
@@ -1583,6 +1586,9 @@ class FormHandler {
                     if ($this->form->get($action['id'])->isClicked()) {
                         $args['commandName'] = $action['id'];
                     }
+                }
+                if ($this->form->get('cancel')->isClicked()) {
+                    $args['commandName'] = 'cancel';
                 }
 
                 return new RedirectResponse($this->getRedirectUrl($args), 302);
