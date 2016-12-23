@@ -527,9 +527,20 @@ class BlockList {
              */
             public function getFormOptions()
             {
+                $objectType = '«leadingEntity.name.formatForCode»';
+
+                $request = $this->get('request_stack')->getCurrentRequest();
+                if ($request->attributes->has('blockEntity')) {
+                    $blockEntity = $request->attributes->get('blockEntity'));
+                    $blockProperties = $blockEntity->getContent();
+                    if (isset($blockProperties['objectType'])) {
+                        $objectType = $blockProperties['objectType'];
+                    }
+                }
+
                 return [
-                    'objectType' => $properties['objectType']«IF hasCategorisableEntities»,
-                    'isCategorisable' => in_array($properties['objectType'], $this->categorisableObjectTypes),
+                    'objectType' => $objectType«IF hasCategorisableEntities»,
+                    'isCategorisable' => in_array($objectType, $this->categorisableObjectTypes),
                     'categoryHelper' => $this->get('«appService».category_helper'),
                     'featureActivationHelper' => $this->get('«appService».feature_activation_helper')«ENDIF»
                 ];
