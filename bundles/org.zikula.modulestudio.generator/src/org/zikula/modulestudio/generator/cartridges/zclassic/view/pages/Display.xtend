@@ -287,18 +287,18 @@ class Display {
         {/if}
     '''
 
-    def private templateHeadingLegacy(Entity it, String appName) '''{$templateTitle«IF !skipHookSubscribers»|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'«ENDIF»}«IF hasVisibleWorkflow» <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>«ENDIF»'''
-    def private templateHeading(Entity it, String appName) '''{{ templateTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}«IF hasVisibleWorkflow» <small>({{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }})</small>«ENDIF»'''
+    def private templateHeadingLegacy(Entity it, String appName) '''{$templateTitle«IF !skipHookSubscribers»|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'«ENDIF»}«IF hasVisibleWorkflow»{if $lct eq 'admin'} <small>({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})</small>{/if}«ENDIF»'''
+    def private templateHeading(Entity it, String appName) '''{{ templateTitle«IF !skipHookSubscribers»|notifyFilters('«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter')«ENDIF» }}«IF hasVisibleWorkflow»{% if routeArea == 'admin' %} <small>({{ «name.formatForCode».workflowState|«appName.formatForDB»_objectState(false)|lower }})</small>{% endif %}«ENDIF»'''
 
     def private displayEntry(DerivedField it) '''
         «val fieldLabel = if (name == 'workflowState') 'state' else name»
         «IF entity.isLegacyApp»
-            {if $«entity.name.formatForCode».«name.formatForCode»}
+            {if $«entity.name.formatForCode».«name.formatForCode»«IF name == 'workflowState'» && $lct eq 'admin'«ENDIF»}
                 <dt>{gt text='«fieldLabel.formatForDisplayCapital»'}</dt>
                 <dd>«displayEntryImpl»</dd>
             {/if}
         «ELSE»
-            {% if «entity.name.formatForCode».«name.formatForCode» is not empty %}
+            {% if «entity.name.formatForCode».«name.formatForCode» is not empty«IF name == 'workflowState'» and routeArea == 'admin'«ENDIF» %}
                 <dt>{{ __('«fieldLabel.formatForDisplayCapital»') }}</dt>
                 <dd>«displayEntryImpl»</dd>
             {% endif %}

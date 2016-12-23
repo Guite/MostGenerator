@@ -14,6 +14,7 @@ import de.guite.modulestudio.metamodel.ListField
 import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
+import de.guite.modulestudio.metamodel.Relationship
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
@@ -59,7 +60,7 @@ class View {
     }
 
     def private viewView(Entity it, String appName) '''
-        «IF application.targets('1.3.x')»
+        «IF isLegacy»
             {* purpose of this template: «nameMultiple.formatForDisplay» list view *}
             {assign var='lct' value='user'}
             {if isset($smarty.get.lct) && $smarty.get.lct eq 'admin'}
@@ -74,21 +75,21 @@ class View {
             {% block content %}
         «ENDIF»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-view">
-            «IF application.targets('1.3.x')»
+            «IF isLegacy»
                 {gt text='«name.formatForDisplayCapital» list' assign='templateTitle'}
                 {pagesetvar name='title' value=$templateTitle}
                 «templateHeader»
             «ENDIF»
             «IF null !== documentation && documentation != ''»
 
-                «IF application.targets('1.3.x')»
+                «IF isLegacy»
                     <p class="z-informationmsg">{gt text='«documentation.replace('\'', '\\\'')»'}</p>
                 «ELSE»
                     <p class="alert alert-info">{{ __('«documentation.replace('\'', '\\\'')»') }}</p>
                 «ENDIF»
             «ENDIF»
 
-            «IF application.targets('1.3.x')»
+            «IF isLegacy»
                 «pageNavLinks(appName)»
 
                 {include file='«name.formatForCode»/viewQuickNav.tpl' all=$all own=$own«IF !hasVisibleWorkflow» workflowStateFilter=false«ENDIF»}{* see template file for available options *}
@@ -101,21 +102,21 @@ class View {
             «viewForm(appName)»
             «IF !skipHookSubscribers»
 
-                «IF application.targets('1.3.x')»
+                «IF isLegacy»
                     «callDisplayHooks(appName)»
                 «ELSE»
                     {{ block('display_hooks') }}
                 «ENDIF»
             «ENDIF»
         </div>
-        «IF application.targets('1.3.x')»
+        «IF isLegacy»
             {include file="`$lct`/footer.tpl"}
         «ELSE»
             {% endblock %}
             {% block page_nav_links %}
                 «pageNavLinks(appName)»
             {% endblock %}
-            «IF !skipHookSubscribers && !application.targets('1.3.x')»
+            «IF !skipHookSubscribers && !isLegacy»
                 {% block display_hooks %}
                     «callDisplayHooks(appName)»
                 {% endblock %}
@@ -126,7 +127,7 @@ class View {
 
     def private pageNavLinks(Entity it, String appName) '''
         «val objName = name.formatForCode»
-        «IF application.targets('1.3.x')»
+        «IF isLegacy»
             «IF hasActions('edit')»
                 {if $canBeCreated}
                     {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_«IF workflow == EntityWorkflowType::NONE»EDIT«ELSE»COMMENT«ENDIF»'}
@@ -177,7 +178,7 @@ class View {
 
     def private viewForm(Entity it, String appName) '''
         «IF listType == LIST_TYPE_TABLE»
-            «IF application.targets('1.3.x')»
+            «IF isLegacy»
                 {if $lct eq 'admin'}
                 <form action="{modurl modname='«appName»' type='«name.formatForCode»' func='handleSelectedEntries' lct=$lct}" method="post" id="«nameMultiple.formatForCode»ViewForm" class="z-form">
                     <div>
@@ -193,7 +194,7 @@ class View {
             «viewItemList(appName)»
             «pagerCall(appName)»
         «IF listType == LIST_TYPE_TABLE»
-            «IF application.targets('1.3.x')»
+            «IF isLegacy»
                 {if $lct eq 'admin'}
                         «massActionFields(appName)»
                     </div>
@@ -224,12 +225,12 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asListTag»>
         «ELSE»
-            «IF !application.targets('1.3.x')»
+            «IF !isLegacy»
                 <div class="table-responsive">
             «ENDIF»
-            <table class="«IF application.targets('1.3.x')»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»«ENDIF»">
+            <table class="«IF isLegacy»z-datatable«ELSE»table table-striped table-bordered table-hover«IF (listItemsFields.size + listItemsIn.size + listItemsOut.size + 1) > 7» table-condensed«ELSE»{% if routeArea == 'admin' %} table-condensed{% endif %}«ENDIF»«ENDIF»">
                 <colgroup>
-                    «IF application.targets('1.3.x')»
+                    «IF isLegacy»
                         {if $lct eq 'admin'}
                             <col id="cSelect" />
                         {/if}
@@ -245,7 +246,7 @@ class View {
                 </colgroup>
                 <thead>
                 <tr>
-                    «IF application.targets('1.3.x')»
+                    «IF isLegacy»
                         «IF categorisable»
                             {assign var='catIdListMainString' value=','|implode:$catIdList.Main}
                         «ENDIF»
@@ -264,7 +265,7 @@ class View {
                     «FOR field : listItemsFields»«field.headerLine»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.headerLine(false)»«ENDFOR»
                     «FOR relation : listItemsOut»«relation.headerLine(true)»«ENDFOR»
-                    <th id="hItemActions" scope="col" class="«IF application.targets('1.3.x')»z-right «ENDIF»text-right z-order-unsorted">«IF application.targets('1.3.x')»{gt text='Actions'}«ELSE»{{ __('Actions') }}«ENDIF»</th>
+                    <th id="hItemActions" scope="col" class="«IF isLegacy»z-right «ENDIF»text-right z-order-unsorted">«IF isLegacy»{gt text='Actions'}«ELSE»{{ __('Actions') }}«ENDIF»</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -272,14 +273,14 @@ class View {
     '''
 
     def private viewItemListBody(Entity it, String appName, List<DerivedField> listItemsFields, Iterable<OneToManyRelationship> listItemsIn, Iterable<OneToOneRelationship> listItemsOut) '''
-        «IF application.targets('1.3.x')»{foreach item='«name.formatForCode»' from=$items}«ELSE»{% for «name.formatForCode» in items %}«ENDIF»
+        «IF isLegacy»{foreach item='«name.formatForCode»' from=$items}«ELSE»{% for «name.formatForCode» in items %}«ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 <li><ul>
             «ELSEIF listType == LIST_TYPE_DL»
                 <dt>
             «ELSEIF listType == LIST_TYPE_TABLE»
-                <tr«IF application.targets('1.3.x')» class="{cycle values='z-odd, z-even'}"«ENDIF»>
-                    «IF application.targets('1.3.x')»
+                <tr«IF isLegacy» class="{cycle values='z-odd, z-even'}"«ENDIF»>
+                    «IF isLegacy»
                         {if $lct eq 'admin'}
                             <td headers="hSelect" align="center" valign="top">
                                 <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode.toLowerCase»-checkbox" />
@@ -293,9 +294,9 @@ class View {
                         {% endif %}
                     «ENDIF»
             «ENDIF»
-                «FOR field : listItemsFields»«field.displayEntry(false, application.targets('1.3.x'))»«ENDFOR»
-                «FOR relation : listItemsIn»«relation.displayEntry(false, application.targets('1.3.x'))»«ENDFOR»
-                «FOR relation : listItemsOut»«relation.displayEntry(true, application.targets('1.3.x'))»«ENDFOR»
+                «FOR field : listItemsFields»«IF name == 'workflowState'»«IF isLegacy»{if $lct eq 'admin'}«ELSE»{% if routeArea == 'admin' %}«ENDIF»«ENDIF»«field.displayEntry(false, isLegacy)»«IF name == 'workflowState'»«IF isLegacy»{/if}«ELSE»{% endif %}«ENDIF»«ENDIF»«ENDFOR»
+                «FOR relation : listItemsIn»«relation.displayEntry(false, isLegacy)»«ENDFOR»
+                «FOR relation : listItemsOut»«relation.displayEntry(true, isLegacy)»«ENDFOR»
                 «itemActions(appName)»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </ul></li>
@@ -304,20 +305,20 @@ class View {
             «ELSEIF listType == LIST_TYPE_TABLE»
                 </tr>
             «ENDIF»
-        «IF application.targets('1.3.x')»{foreachelse}«ELSE»{% else %}«ENDIF»
+        «IF isLegacy»{foreachelse}«ELSE»{% else %}«ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 <li>
             «ELSEIF listType == LIST_TYPE_DL»
                 <dt>
             «ELSEIF listType == LIST_TYPE_TABLE»
-                <tr class="z-«IF application.targets('1.3.x')»{if $lct eq 'admin'}admin{else}data{/if}«ELSE»{{ routeArea == 'admin' ? 'admin' : 'data' }}«ENDIF»tableempty">
-                «IF application.targets('1.3.x')»
+                <tr class="z-«IF isLegacy»{if $lct eq 'admin'}admin{else}data{/if}«ELSE»{{ routeArea == 'admin' ? 'admin' : 'data' }}«ENDIF»tableempty">
+                «IF isLegacy»
                     «'    '»<td class="z-left" colspan="{if $lct eq 'admin'}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{else}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{/if}">
                 «ELSE»
                     «'    '»<td class="text-left" colspan="{% if routeArea == 'admin' %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 1)»{% else %}«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + 0)»{% endif %}">
                 «ENDIF»
             «ENDIF»
-            «IF application.targets('1.3.x')»{gt text='No «nameMultiple.formatForDisplay» found.'}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
+            «IF isLegacy»{gt text='No «nameMultiple.formatForDisplay» found.'}«ELSE»{{ __('No «nameMultiple.formatForDisplay» found.') }}«ENDIF»
             «IF listType == LIST_TYPE_UL || listType == LIST_TYPE_OL»
                 </li>
             «ELSEIF listType == LIST_TYPE_DL»
@@ -326,7 +327,7 @@ class View {
                   </td>
                 </tr>
             «ENDIF»
-        «IF application.targets('1.3.x')»{/foreach}«ELSE»{% endfor %}«ENDIF»
+        «IF isLegacy»{/foreach}«ELSE»{% endfor %}«ENDIF»
     '''
 
     def private viewItemListFooter(Entity it) '''
@@ -335,7 +336,7 @@ class View {
         «ELSE»
                 </tbody>
             </table>
-            «IF !application.targets('1.3.x')»
+            «IF !isLegacy»
                 </div>
             «ENDIF»
         «ENDIF»
@@ -343,7 +344,7 @@ class View {
 
     def private pagerCall(Entity it, String appName) '''
 
-        «IF application.targets('1.3.x')»
+        «IF isLegacy»
             {if !isset($showAllEntries) || $showAllEntries ne 1}
                 {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type=$lct func='view' ot='«name.formatForCode»'}
             {/if}
@@ -355,7 +356,7 @@ class View {
     '''
 
     def private massActionFields(Entity it, String appName) '''
-        «IF application.targets('1.3.x')»
+        «IF isLegacy»
         <fieldset>
             <label for="«appName.toFirstLower»Action">{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
             <select id="«appName.toFirstLower»Action" name="action">
@@ -424,7 +425,7 @@ class View {
 
     def private callDisplayHooks(Entity it, String appName) '''
 
-        «IF application.targets('1.3.x')»
+        «IF isLegacy»
             {* here you can activate calling display hooks for the view page if you need it *}
             {*if $lct ne 'admin'}
                 {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' urlobject=$currentUrlObject assign='hooks'}
@@ -444,15 +445,15 @@ class View {
     '''
 
     def private ajaxToggle(Entity it) '''
-        «IF hasBooleansWithAjaxToggleEntity('view') || (!application.targets('1.3.x') && hasImageFieldsEntity) || listType == LIST_TYPE_TABLE»
-            «IF !application.targets('1.3.x')»
+        «IF hasBooleansWithAjaxToggleEntity('view') || (!isLegacy && hasImageFieldsEntity) || listType == LIST_TYPE_TABLE»
+            «IF !isLegacy»
                 {% block footer %}
                     {{ parent() }}
             «ENDIF»
 
             <script type="text/javascript">
             /* <![CDATA[ */
-                «IF application.targets('1.3.x')»
+                «IF isLegacy»
                     document.observe('dom:loaded', function() {
                         «initAjaxSingleToggle»
                         «IF listType == LIST_TYPE_TABLE»
@@ -475,7 +476,7 @@ class View {
                 «ENDIF»
             /* ]]> */
             </script>
-            «IF !application.targets('1.3.x')»
+            «IF !isLegacy»
                 {% endblock %}
             «ENDIF»
         «ENDIF»
@@ -484,7 +485,7 @@ class View {
     def private initAjaxSingleToggle(Entity it) '''
         «IF hasBooleansWithAjaxToggleEntity('view')»
             «val objName = name.formatForCode»
-            «IF application.targets('1.3.x')»
+            «IF isLegacy»
                 {{foreach item='«objName»' from=$items}}
                     {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
                     «FOR field : getBooleansWithAjaxToggleEntity('view')»
@@ -503,7 +504,7 @@ class View {
     '''
 
     def private initMassToggle(Entity it) '''
-        «IF application.targets('1.3.x')»
+        «IF isLegacy»
             {{if $lct eq 'admin'}}
                 {{* init the "toggle all" functionality *}}
                 if ($('toggle«nameMultiple.formatForCodeCapital»') != undefined) {
@@ -538,7 +539,9 @@ class View {
     '''
 
     def private columnDef(DerivedField it) '''
+        «IF name == 'workflowState'»«IF entity.isLegacy»{if $lct eq 'admin'}«ELSE»{% if routeArea == 'admin' %}«ENDIF»«ENDIF»
         <col id="c«markupIdCode(false)»" />
+        «IF name == 'workflowState'»«IF entity.isLegacy»{/if}«ELSE»{% endif %}«ENDIF»«ENDIF»
     '''
 
     def private columnDef(JoinRelationship it, Boolean useTarget) '''
@@ -546,7 +549,8 @@ class View {
     '''
 
     def private headerLine(DerivedField it) '''
-        <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.application.targets('1.3.x')»z«ELSE»text«ENDIF»-«alignment»«IF !entity.getSortingFields.contains(it)» z-order-unsorted«ENDIF»">
+        «IF name == 'workflowState'»«IF entity.isLegacy»{if $lct eq 'admin'}«ELSE»{% if routeArea == 'admin' %}«ENDIF»«ENDIF»
+        <th id="h«markupIdCode(false)»" scope="col" class="«IF entity.isLegacy»z«ELSE»text«ENDIF»-«alignment»«IF !entity.getSortingFields.contains(it)» z-order-unsorted«ENDIF»">
             «val fieldLabel = if (name == 'workflowState') 'state' else name»
             «IF entity.getSortingFields.contains(it)»
                 «headerSortingLink(entity, name.formatForCode, fieldLabel)»
@@ -554,17 +558,18 @@ class View {
                 «headerTitle(entity, name.formatForCode, fieldLabel)»
             «ENDIF»
         </th>
+        «IF name == 'workflowState'»«IF entity.isLegacy»{/if}«ELSE»{% endif %}«ENDIF»«ENDIF»
     '''
 
     def private headerLine(JoinRelationship it, Boolean useTarget) '''
-        <th id="h«markupIdCode(useTarget)»" scope="col" class="«IF application.targets('1.3.x')»z«ELSE»text«ENDIF»-left">
+        <th id="h«markupIdCode(useTarget)»" scope="col" class="«IF isLegacy»z«ELSE»text«ENDIF»-left">
             «val mainEntity = (if (useTarget) source else target)»
             «headerSortingLink(mainEntity, getRelationAliasName(useTarget).formatForCode, getRelationAliasName(useTarget).formatForCodeCapital)»
         </th>
     '''
 
     def private headerSortingLink(Object it, DataObject entity, String fieldName, String label) '''
-        «IF entity.application.targets('1.3.x')»
+        «IF entity.isLegacy»
             {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«entity.application.appName»' type=$lct func='view' sort='«fieldName»'«headerSortingLinkParameters(entity)» ot='«entity.name.formatForCode»'}
         «ELSE»
             <a href="{{ sort.«fieldName».url }}" title="{{ __f('Sort by %s', {'%s': '«label.formatForDisplay»'}) }}" class="{{ sort.«fieldName».class }}">{{ __('«label.formatForDisplayCapital»') }}</a>
@@ -572,7 +577,7 @@ class View {
     '''
 
     def private headerTitle(Object it, DataObject entity, String fieldName, String label) '''
-        «IF entity.application.targets('1.3.x')»
+        «IF entity.isLegacy»
             {gt text='«label.formatForDisplayCapital»'}
         «ELSE»
             {{ __('«label.formatForDisplayCapital»') }}
@@ -613,7 +618,7 @@ class View {
     }
     def private dispatch entryContainerCssClass(ListField it) {
         if (name == 'workflowState') {
-            if (entity.application.targets('1.3.x')) {
+            if (entity.isLegacy) {
                 'z-nowrap'
             } else {
                 'nowrap'
@@ -627,7 +632,7 @@ class View {
     def private dispatch displayEntryInner(DerivedField it, Boolean useTarget) '''
         «IF newArrayList('name', 'title').contains(name)»
             «IF entity instanceof Entity && entity.hasActions('display')»
-                «IF entity.application.targets('1.3.x')»
+                «IF entity.isLegacy»
                     <a href="{modurl modname='«entity.application.appName»' type=$lct func='display' ot='«entity.name.formatForCode»' «(entity as Entity).routeParamsLegacy(entity.name.formatForCode, true, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry»</a>
                 «ELSE»
                     <a href="{{ path('«entity.application.appName.formatForDB»_«entity.name.formatForDB»_' ~ routeArea ~ 'display'«(entity as Entity).routeParams(entity.name.formatForCode, true)») }}" title="{{ __('View detail page')|e('html_attr') }}">«displayLeadingEntry»</a>
@@ -636,7 +641,7 @@ class View {
                 «displayLeadingEntry»
             «ENDIF»
         «ELSEIF name == 'workflowState'»
-            «IF entity.application.targets('1.3.x')»
+            «IF entity.isLegacy»
                 {$«entity.name.formatForCode».workflowState|«entity.application.appName.formatForDB»ObjectState}
             «ELSE»
                 {{ «entity.name.formatForCode».workflowState|«entity.application.appName.formatForDB»_objectState }}
@@ -647,7 +652,7 @@ class View {
     '''
 
     def private displayLeadingEntry(DerivedField it) {
-        if (entity.application.targets('1.3.x')) '''{$«entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyfilters:'«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»'«ENDIF»}'''
+        if (entity.isLegacy) '''{$«entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyfilters:'«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»'«ENDIF»}'''
         else '''{{ «entity.name.formatForCode».«name.formatForCode»«IF entity instanceof Entity && !((entity as Entity).skipHookSubscribers)»|notifyFilters('«entity.application.appName.formatForDB».filterhook.«(entity as Entity).nameMultiple.formatForDB»')«ENDIF» }}'''
     }
 
@@ -656,25 +661,25 @@ class View {
         «val mainEntity = (if (!useTarget) target else source) as Entity»
         «val linkEntity = (if (useTarget) target else source) as Entity»
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        «IF application.targets('1.3.x')»{if isset($«relObjName») && $«relObjName» ne null}«ELSE»{% if «relObjName»|default %}«ENDIF»
+        «IF isLegacy»{if isset($«relObjName») && $«relObjName» ne null}«ELSE»{% if «relObjName»|default %}«ENDIF»
             «IF linkEntity.hasActions('display')»
-                «IF application.targets('1.3.x')»
+                «IF isLegacy»
                     <a href="{modurl modname='«linkEntity.application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)»}">{strip}
                 «ELSE»
                     <a href="{{ path('«linkEntity.application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display'«linkEntity.routeParams(relObjName, true)») }}">{% spaceless %}
                 «ENDIF»
             «ENDIF»
-              «IF application.targets('1.3.x')»{$«relObjName»->getTitleFromDisplayPattern()}«ELSE»{{ «relObjName».getTitleFromDisplayPattern() }}«ENDIF»
+              «IF isLegacy»{$«relObjName»->getTitleFromDisplayPattern()}«ELSE»{{ «relObjName».getTitleFromDisplayPattern() }}«ENDIF»
             «IF linkEntity.hasActions('display')»
-                «IF application.targets('1.3.x')»{/strip}«ELSE»{% endspaceless %}«ENDIF»</a>
-                «IF application.targets('1.3.x')»
+                «IF isLegacy»{/strip}«ELSE»{% endspaceless %}«ENDIF»</a>
+                «IF isLegacy»
                     <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«application.appName»' type=$lct func='display' ot='«linkEntity.name.formatForCode»' «linkEntity.routeParamsLegacy(relObjName, true, true)» theme='Printer' forcelongurl=true}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 «ELSE»
                     <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «mainEntity.name.formatForCode».«pkField.name.formatForCode» }}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{ «relObjName».«pkField.name.formatForCode» }}«ENDFOR»Display" href="{{ path('«application.appName.formatForDB»_«linkEntity.name.formatForDB»_' ~ routeArea ~ 'display', {«linkEntity.routePkParams(relObjName, true)»«linkEntity.appendSlug(relObjName, true)», 'theme': 'ZikulaPrinterTheme' }) }}" title="{{ __('Open quick view window')|e('html_attr') }}" class="fa fa-search-plus hidden"></a>
                 «ENDIF»
                 <script type="text/javascript">
                 /* <![CDATA[ */
-                    «IF application.targets('1.3.x')»
+                    «IF isLegacy»
                         document.observe('dom:loaded', function() {
                             «application.vendorAndName»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName»->getTitleFromDisplayPattern()|replace:"'":""}}');
                         });
@@ -688,9 +693,9 @@ class View {
                 /* ]]> */
                 </script>
             «ENDIF»
-        «IF application.targets('1.3.x')»{else}«ELSE»{% else %}«ENDIF»
-            «IF application.targets('1.3.x')»{gt text='Not set.'}«ELSE»{{ __('Not set.') }}«ENDIF»
-        «IF application.targets('1.3.x')»{/if}«ELSE»{% endif %}«ENDIF»
+        «IF isLegacy»{else}«ELSE»{% else %}«ENDIF»
+            «IF isLegacy»{gt text='Not set.'}«ELSE»{{ __('Not set.') }}«ENDIF»
+        «IF isLegacy»{/if}«ELSE»{% endif %}«ENDIF»
     '''
 
     def private dispatch markupIdCode(Object it, Boolean useTarget) {
@@ -719,7 +724,7 @@ class View {
         «IF listType != LIST_TYPE_TABLE»
             <«listType.asItemTag»>
         «ELSE»
-            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF application.targets('1.3.x')»z-right z-nowrap«ELSE»actions text-right nowrap«ENDIF» z-w02">
+            <td id="«new ItemActionsView().itemActionContainerViewId(it)»" headers="hItemActions" class="«IF isLegacy»z-right z-nowrap«ELSE»actions text-right nowrap«ENDIF» z-w02">
         «ENDIF»
             «new ItemActionsView().generateView(it, 'markup')»
         </«listType.asItemTag»>
@@ -743,5 +748,13 @@ class View {
             case LIST_TYPE_TABLE: 'td' // table
             default: 'td'
         }
+    }
+
+    def private isLegacy(DataObject it) {
+        application.targets('1.3.x')
+    }
+
+    def private isLegacy(Relationship it) {
+        application.targets('1.3.x')
     }
 }
