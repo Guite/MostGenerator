@@ -294,7 +294,7 @@ class View {
                         {% endif %}
                     «ENDIF»
             «ENDIF»
-                «FOR field : listItemsFields»«IF name == 'workflowState'»«IF isLegacy»{if $lct eq 'admin'}«ELSE»{% if routeArea == 'admin' %}«ENDIF»«ENDIF»«field.displayEntry(false, isLegacy)»«IF name == 'workflowState'»«IF isLegacy»{/if}«ELSE»{% endif %}«ENDIF»«ENDIF»«ENDFOR»
+                «FOR field : listItemsFields»«IF field.name == 'workflowState'»«IF isLegacy»{if $lct eq 'admin'}«ELSE»{% if routeArea == 'admin' %}«ENDIF»«ENDIF»«field.displayEntry(false, isLegacy)»«IF field.name == 'workflowState'»«IF isLegacy»{/if}«ELSE»{% endif %}«ENDIF»«ENDIF»«ENDFOR»
                 «FOR relation : listItemsIn»«relation.displayEntry(false, isLegacy)»«ENDFOR»
                 «FOR relation : listItemsOut»«relation.displayEntry(true, isLegacy)»«ENDFOR»
                 «itemActions(appName)»
