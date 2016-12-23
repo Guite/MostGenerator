@@ -282,7 +282,7 @@ class Newsletter {
             $currentPage = 1;
             $resultsPerPage = isset($args['amount']) && is_numeric($args['amount']) ? $args['amount'] : $this->nItems;
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
+            «IF targets('1.3.x')»$entities«ELSE»list($entities, $objectCount)«ENDIF» = $repository->retrieveCollectionResult($query, $orderBy, true);
 
             // post processing
             $descriptionFieldName = $repository->getDescriptionFieldName();

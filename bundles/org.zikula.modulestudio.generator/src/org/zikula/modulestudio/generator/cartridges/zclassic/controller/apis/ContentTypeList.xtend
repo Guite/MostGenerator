@@ -380,7 +380,7 @@ class ContentTypeList {
             $currentPage = 1;
             $resultsPerPage = isset($this->amount) ? $this->amount : 1;
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
+            «IF targets('1.3.x')»$entities«ELSE»list($entities, $objectCount)«ENDIF» = $repository->retrieveCollectionResult($query, $orderBy, true);
             «IF hasCategorisableEntities»
 
                 «IF !isLegacy»

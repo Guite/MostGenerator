@@ -327,7 +327,7 @@ class BlockList {
             $currentPage = 1;
             $resultsPerPage = $properties['amount'];
             list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
-            $entities = $repository->retrieveCollectionResult($query, $orderBy, true);
+            «IF targets('1.3.x')»$entities«ELSE»list($entities, $objectCount)«ENDIF» = $repository->retrieveCollectionResult($query, $orderBy, true);
             «IF hasCategorisableEntities»
 
                 «IF !targets('1.3.x')»
@@ -416,15 +416,19 @@ class BlockList {
             }
 
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $properties['objectType'] . '_', $templateFile);
+            «IF !targets('1.3.x')»
+                «/* TODO find a better way considering overriding */»
+                $templateDirectory = str_replace('Block/Base/AbstractItemListBlock.php', 'Resources/views/', __FILE__);
+            «ENDIF»
 
             $template = '';
-            if ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
+            if («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
                 $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateForObjectType)) {
+            } elseif («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateForObjectType)) {
                 $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
+            } elseif («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
                 $template = '«IF targets('1.3.x')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
-            } elseif ($this->view->template_exists('«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
+            } elseif («IF targets('1.3.x')»$this->view->template_exists(«ELSE»file_exists($templateDirectory . «ENDIF»'«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
                 $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/' . $templateFile;
             } else {
                 $template = '«IF targets('1.3.x')»block«ELSE»Block«ENDIF»/itemlist.«IF targets('1.3.x')»tpl«ELSE»html.twig«ENDIF»';
