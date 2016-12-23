@@ -47,7 +47,7 @@ class Kml {
                 <name>«IF !stringFields.empty»{$«objName»->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{$«objName»->get«textFields.head.name.formatForCodeCapital»()}«IF hasActions('display')»<br /><a href="{modurl modname='«appName»' type='user' ot='«name.formatForCode»' func='display' «routeParamsLegacy(name.formatForCode, true, true)»}">{gt text='Details'}</a>«ENDIF»]]></description>
+                    <description><![CDATA[{$«objName»->get«textFields.head.name.formatForCodeCapital»()}«IF hasActions('display')»<br /><a href="{modurl modname='«appName»' type='user' ot='«name.formatForCode»' func='display' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}">{gt text='Details'}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{$«objName»->getLongitude()}, {$«objName»->getLatitude()}, 0</coordinates>
@@ -92,7 +92,7 @@ class Kml {
                 <name>«IF !stringFields.empty»{$«objName»->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 «val textFields = fields.filter(TextField)»
                 «IF !textFields.empty && textFields.head != stringFields.head»
-                    <description><![CDATA[{$«objName»->get«textFields.head.name.formatForCodeCapital»()}«IF hasActions('display')»<br /><a href="{modurl modname='«appName»' type='user' ot='«name.formatForCode»' func='display' «routeParamsLegacy(name.formatForCode, true, true)»}">{gt text='Details'}</a>«ENDIF»]]></description>
+                    <description><![CDATA[{$«objName»->get«textFields.head.name.formatForCodeCapital»()}«IF hasActions('display')»<br /><a href="{modurl modname='«appName»' type='user' ot='«name.formatForCode»' func='display' «routeParamsLegacy(name.formatForCode, true, true)» fqurl=true}">{gt text='Details'}</a>«ENDIF»]]></description>
                 «ENDIF»
                 <Point>
                     <coordinates>{$«objName»->getLongitude()}, {$«objName»->getLatitude()}, 0</coordinates>
