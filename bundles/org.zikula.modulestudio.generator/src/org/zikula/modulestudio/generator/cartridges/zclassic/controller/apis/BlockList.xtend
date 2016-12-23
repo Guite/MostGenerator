@@ -532,9 +532,11 @@ class BlockList {
                 $request = $this->get('request_stack')->getCurrentRequest();
                 if ($request->attributes->has('blockEntity')) {
                     $blockEntity = $request->attributes->get('blockEntity');
-                    $blockProperties = $blockEntity->getContent();
-                    if (isset($blockProperties['objectType'])) {
-                        $objectType = $blockProperties['objectType'];
+                    if (is_object($blockEntity) && method_exists($blockEntity, 'getContent')) {
+                        $blockProperties = $blockEntity->getContent();
+                        if (isset($blockProperties['objectType'])) {
+                            $objectType = $blockProperties['objectType'];
+                        }
                     }
                 }
 

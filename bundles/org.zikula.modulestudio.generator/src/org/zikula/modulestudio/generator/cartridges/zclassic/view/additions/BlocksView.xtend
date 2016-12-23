@@ -76,6 +76,7 @@ class BlocksView {
             </div>
 
             {{ form_row(form.filter) }}
+            <p class="col-sm-offset-3 help-block small"><a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">{{ __('Show syntax examples') }}</a></p>
 
             {{ include('@«appName»/includeFilterSyntaxDialog.html.twig') }}
             «editTemplateJs»

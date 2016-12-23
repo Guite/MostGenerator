@@ -295,7 +295,6 @@ class ListBlock {
             $builder->add('filter', '«nsSymfonyFormType»TextType', [
                 'label' => $this->__('Filter (expert option)') . ':',
                 'required' => false,
-                'help' => '<a class="fa fa-filter" data-toggle="modal" data-target="#filterSyntaxModal">' . $this->__('Show syntax examples') . '</a>',
                 'max_length' => 255
             ]);
         }
