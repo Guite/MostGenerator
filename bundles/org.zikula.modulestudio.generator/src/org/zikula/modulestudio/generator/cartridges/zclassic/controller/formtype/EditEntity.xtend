@@ -816,7 +816,7 @@ class EditEntity {
         public function addCategoriesField(FormBuilderInterface $builder, array $options)
         {
             $builder->add('categories', 'Zikula\CategoriesModule\Form\Type\CategoriesType', [
-                'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»', [], '«app.appName.formatForDB»') . ':',
+                'label' => $this->__('«IF categorisableMultiSelection»Categories«ELSE»Category«ENDIF»') . ':',
                 'empty_data' => [],
                 'attr' => [
                     'class' => 'category-selector'
