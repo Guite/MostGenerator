@@ -260,7 +260,7 @@ class ContentTypeListView {
             «ENDIF»
         </div>
 
-        <div id="customTemplateArea" class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»"«IF !targets('1.3.x')» data-switch="«appName.toFirstLower»Template" data-switch-value="custom"«ENDIF»>
+        <div id="customTemplateArea" class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group«ENDIF»"«IF !targets('1.3.x')» data-switch="«appName.toFirstLower»Template" data-switch-value="custom"«ENDIF»>
             {gt text='Custom template' domain='«IF targets('1.3.x')»module_«ENDIF»«appName.formatForDB»' assign='customTemplateLabel'}
             {formlabel for='«appName.toFirstLower»CustomTemplate' text=$customTemplateLabel«IF !targets('1.3.x')» cssClass='col-sm-3 control-label'«ENDIF»}
             «IF !targets('1.3.x')»

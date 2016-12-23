@@ -71,7 +71,7 @@ class BlocksView {
             {{ form_row(form.amount) }}
 
             {{ form_row(form.template) }}
-            <div id="customTemplateArea" class="hidden" data-switch="template" data-switch-value="custom">
+            <div id="customTemplateArea" data-switch="zikulablocksmodule_block[properties][template]" data-switch-value="custom">
                 {{ form_row(form.customTemplate) }}
             </div>
 
