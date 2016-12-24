@@ -147,7 +147,7 @@ class Scribite {
                         «IF targets('1.3.x')»
                             var url = Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor';
                         «ELSE»
-                            var url = Routing.generate('«appName.formatForDB»_external_finder', { editor: 'ckeditor' });
+                            var url = Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'ckeditor' });
                         «ENDIF»
                         // call method in «appName»«IF targets('1.3.x')»_f«ELSE».F«ENDIF»inder.js and provide current editor
                         «appName»FinderCKEditor(editor, url);
@@ -156,7 +156,7 @@ class Scribite {
                 editor.ui.addButton('«appName.formatForDB»', {
                     label: editor.lang.«appName.formatForDB».title,
                     command: 'insert«appName»',
-                    icon: this.path + 'images/«appName».png'
+                    icon: this.path.replace('docs/scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»', '«IF !targets('1.3.x')»public/«ENDIF»images') + 'admin.png'
                 });
             }
         });
@@ -164,7 +164,7 @@ class Scribite {
 
     def private ckLangDe(Application it) '''
         CKEDITOR.plugins.setLang('«appName.formatForDB»', 'de', {
-            title : '«appName»-Objekt einfügen',
+            title: '«appName»-Objekt einfügen',
             alt: '«appName»-Objekt einfügen'
         });
     '''
@@ -178,7 +178,7 @@ class Scribite {
 
     def private ckLangNl(Application it) '''
         CKEDITOR.plugins.setLang('«appName.formatForDB»', 'nl', {
-            title : '«appName» Object invoegen',
+            title: '«appName» Object invoegen',
             alt: '«appName» Object invoegen'
         });
     '''
@@ -207,31 +207,31 @@ class Scribite {
                  * @param {tinymce.Editor} ed Editor instance that the plugin is initialised in
                  * @param {string} url Absolute URL to where the plugin is located
                  */
-                init : function (ed, url) {
+                init: function (ed, url) {
                     // Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mce«appName»');
                     ed.addCommand('mce«appName»', function () {
                         ed.windowManager.open({
                             «IF targets('1.3.x')»
-                                file : Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=tinymce',
+                                file: Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=tinymce',
                             «ELSE»
-                                file : Routing.generate('«appName.formatForDB»_external_finder', { editor: 'tinymce' }),
+                                file: Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'tinymce' }),
                             «ENDIF»
-                            width : (screen.width * 0.75),
-                            height : (screen.height * 0.66),
-                            inline : 1,
-                            scrollbars : true,
-                            resizable : true
+                            width: (screen.width * 0.75),
+                            height: (screen.height * 0.66),
+                            inline: 1,
+                            scrollbars: true,
+                            resizable: true
                         }, {
-                            plugin_url : url, // Plugin absolute URL
-                            some_custom_arg : 'custom arg' // Custom argument
+                            plugin_url: url, // Plugin absolute URL
+                            some_custom_arg: 'custom arg' // Custom argument
                         });
                     });
 
                     // Register «name.formatForDB» button
                     ed.addButton('«name.formatForDB»', {
-                        title : '«name.formatForDB».desc',
-                        cmd : 'mce«appName»',
-                        image : url + '/images/«appName».png',
+                        title: '«name.formatForDB».desc',
+                        cmd: 'mce«appName»',
+                        image: this.path.replace('docs/scribite/plugins/TinyMce/vendor/tinymce/plugins/«appName.formatForDB»', '«IF !targets('1.3.x')»public/«ENDIF»images') + 'admin.png'
                         onPostRender: function() {
                             var ctrl = this;
         
@@ -253,7 +253,7 @@ class Scribite {
                  * @param {tinymce.ControlManager} cm Control manager to use in order to create new control
                  * @return {tinymce.ui.Control} New control instance or null if no control was created
                  */
-                createControl : function (n, cm) {
+                createControl: function (n, cm) {
                     return null;
                 },
 
@@ -263,13 +263,13 @@ class Scribite {
                  *
                  * @return {Object} Name/value array containing information about the plugin
                  */
-                getInfo : function () {
+                getInfo: function () {
                     return {
-                        longname : '«appName» for tinymce',
-                        author : '«author»',
-                        authorurl : '«url»',
-                        infourl : '«url»',
-                        version : '«version»'
+                        longname: '«appName» for tinymce',
+                        author: '«author»',
+                        authorurl: '«url»',
+                        infourl: '«url»',
+                        version: '«version»'
                     };
                 }
             });
@@ -281,19 +281,19 @@ class Scribite {
 
     def private tinyLangDe(Application it) '''
         tinyMCE.addI18n('de.«name.formatForDB»', {
-            desc : '«appName»-Objekt einfügen'
+            desc: '«appName»-Objekt einfügen'
         });
     '''
 
     def private tinyLangEn(Application it) '''
         tinyMCE.addI18n('en.«name.formatForDB»', {
-            desc : 'Insert «appName» object'
+            desc: 'Insert «appName» object'
         });
     '''
 
     def private tinyLangNl(Application it) '''
         tinyMCE.addI18n('nl.«name.formatForDB»', {
-            desc : '«appName» Object invoegen'
+            desc: '«appName» Object invoegen'
         });
     '''
 }

@@ -116,41 +116,4 @@ class WorkflowSettings {
 
         targetFolder
     }
-
-    /**
-     * Returns pathes to image folders of Scribite plugins.
-     *
-     * @return list of pathes to images folders
-     */
-    def getPathesToScribiteImageAssets() {
-        val targetFolders = newArrayList
-
-        val targetBasePath = getPathToModuleRoot
-        val scribiteFolder = File.separator + 'docs' + File.separator + 'scribite' + File.separator + 'plugins' + File.separator //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        var scribitePath = 'Resources' + scribiteFolder //$NON-NLS-1$
-        var baseFolder = new File(targetBasePath + scribitePath)
-        var fullAppName = appVendor.toFirstUpper + appName.toFirstUpper + 'Module' //$NON-NLS-1$
-        if (!baseFolder.exists) {
-            // BC support for 1.3.x
-            scribitePath = 'src' + File.separator + 'modules' + File.separator + appName.toFirstUpper + scribiteFolder //$NON-NLS-1$ //$NON-NLS-2$
-            baseFolder = new File(targetBasePath + scribitePath)
-            fullAppName = appName.toFirstUpper
-        }
-
-        if (!baseFolder.exists) {
-            // no Scribite plugins have been generated
-            return targetFolders
-        }
-
-        var File imageFolder
-        val supportedEditors = #['CKEditor', 'TinyMce'] //$NON-NLS-1$ //$NON-NLS-2$
-        for (editor : supportedEditors) {
-            imageFolder = new File(targetBasePath + scribitePath + editor + File.separator + 'vendor' + File.separator + editor.toLowerCase + File.separator + 'plugins/' + (if (editor == 'Xinha') fullAppName else appName.toLowerCase) + File.separator + 'images') //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            if (imageFolder.exists) {
-                targetFolders += imageFolder
-            }
-        }
-
-        targetFolders
-    }
 }

@@ -227,7 +227,7 @@ class ExternalController {
          «IF !isLegacy && !isBase»
          *
          * @Route("/finder/{objectType}/{editor}/{sort}/{sortdir}/{pos}/{num}",
-         *        requirements = {"editor" = "xinha|tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
+         *        requirements = {"editor" = "tinymce|ckeditor", "sortdir" = "asc|desc", "pos" = "\d+", "num" = "\d+"},
          *        defaults = {"sort" = "", "sortdir" = "asc", "pos" = 1, "num" = 0},
          *        methods = {"GET"},
          *        options={"expose"=true}
@@ -257,11 +257,12 @@ class ExternalController {
         «IF isLegacy»
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
         «ELSE»
+            «/* TODO remove PageUtil usage */»
             PageUtil::addVar('stylesheet', '@«appName»/Resources/public/css/style.css');
         «ENDIF»
 
-        $getData = $this->request->query;
         «IF isLegacy»
+            $getData = $this->request->query;
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
         «ELSE»
             $controllerHelper = $this->get('«appService».controller_helper');
@@ -342,7 +343,7 @@ class ExternalController {
                 «IF !isLegacy»
                 $featureActivationHelper = $this->get('«appService».feature_activation_helper');
                 if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-            	«ENDIF»
+                «ENDIF»
                 $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($entities as $entity) {
                     «IF targets('1.4-dev')»
@@ -354,11 +355,11 @@ class ExternalController {
                             $filteredEntities[] = $entity;
                         }
                     «ENDIF»
-            	}
-            	$entities = $filteredEntities;
-            	«IF !isLegacy»
-            	}
-            	«ENDIF»
+                }
+                $entities = $filteredEntities;
+                «IF !isLegacy»
+                }
+                «ENDIF»
             }
 
         «ENDIF»
@@ -401,7 +402,7 @@ class ExternalController {
                 'sort' => $sort,
                 'sortdir' => $sdir,
                 'currentPage' => $currentPage,
-                'pager', ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]
+                'pager' => ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]
             ];
             «IF needsFeatureActivationHelper»
                 $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');

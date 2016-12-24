@@ -26,11 +26,6 @@ class ImageCreator {
     static final String CONTEXT_ADMIN = 'admin' // $NON-NLS-1$
 
     /**
-     * Scribite editor plugin images context.
-     */
-    static final String CONTEXT_EDITOR = 'editor' // $NON-NLS-1$
-
-    /**
      * Transparent background mode.
      */
     static final String BG_TRANSPARENT = 'transparent' // $NON-NLS-1$
@@ -89,7 +84,7 @@ class ImageCreator {
         val sourceImageFile = new File(sourceImageUrl.getPath)
         sourceImage = ImageIO.read(new File(sourceImageFile.absolutePath))
 
-        for (contextName : #[CONTEXT_ADMIN, CONTEXT_EDITOR]) {
+        for (contextName : #[CONTEXT_ADMIN]) {
             context = contextName
             determineTargetDirectories
             if (targetDirectories.length > 0) {
@@ -129,8 +124,6 @@ class ImageCreator {
     def private determineTargetDirectories() {
         if (context == CONTEXT_ADMIN) {
             targetDirectories = #[settings.getPathToModuleImageAssets]
-    	} else if (context == CONTEXT_EDITOR) {
-    	    targetDirectories = settings.getPathesToScribiteImageAssets
     	}
     }
 
@@ -140,13 +133,13 @@ class ImageCreator {
      * @param bgMode The background colour mode (transparent, white, black); defaults to transparent
      */
     def private generateCustomImage(String bgMode) {
-        val size = if (context == CONTEXT_ADMIN) 48 else if (context == CONTEXT_EDITOR) 16
+        val size = if (context == CONTEXT_ADMIN) 48 else 48
         val bgColour = if (!#[BG_TRANSPARENT, BG_WHITE, BG_BLACK].contains(bgMode)) BG_TRANSPARENT else bgMode
         val textColour = if (bgColour == BG_BLACK) Color.WHITE else Color.BLACK
         val fontSize = size / 2
 
         // determine output file name
-        var targetFileName = if (context == CONTEXT_ADMIN) CONTEXT_ADMIN else if (context == CONTEXT_EDITOR) settings.appName
+        var targetFileName = if (context == CONTEXT_ADMIN) CONTEXT_ADMIN else settings.appName
         if (bgColour == BG_WHITE) {
             targetFileName = targetFileName + '_w' //$NON-NLS-1$
         } else if (bgColour == BG_BLACK) {

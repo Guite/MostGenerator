@@ -315,7 +315,7 @@ class ExternalView {
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ app.request.locale }}" lang="{{ app.request.locale }}">
         <head>
             <title>{{ __('Search and select «name.formatForDisplay»') }}</title>
-            {{ pageAddAsset('stylesheet', zasset('style/core.css')) }}
+            {{ pageAddAsset('stylesheet', pagevars.homepath ~ 'style/core.css') }}
             {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/style.css')) }}
             {{ pageAddAsset('stylesheet', zasset('@«app.appName»:css/finder.css')) }}
             <script type="text/javascript">/* <![CDATA[ */
@@ -326,8 +326,8 @@ class ExternalView {
             {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
             {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}
             {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-            {{ pageAddAsset('javascript', pagevars.homepath ~ 'javascript/helpers/Zikula.js') }}«/* still required for Gettext */»
-            {{ pageAddAsset('javascript', zasset('@«app.appName»:javascript/«app.appName».Finder.js')) }}
+            {#{ pageAddAsset('javascript', pagevars.homepath ~ 'javascript/helpers/Zikula.js') }#}«/* still required for Gettext */»
+            {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Finder.js')) }}
         </head>
         <body>
             <div class="container">
@@ -336,7 +336,7 @@ class ExternalView {
                     '@«app.appName»/Form/bootstrap_3.html.twig',
                     'ZikulaFormExtensionBundle:Form:form_div_layout.html.twig'
                 ] %}
-                {{ form_start(finderForm, {attr: {id: '«app.appName.toFirstLower»SelectorForm'}}) }}
+                {{ form_start(finderForm, {attr: { id: '«app.appName.toFirstLower»SelectorForm' }}) }}
                 {{ form_errors(finderForm) }}
                 <fieldset>
                     <legend>{{ __('Search and select «name.formatForDisplay»') }}</legend>

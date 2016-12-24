@@ -3,11 +3,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 import de.guite.modulestudio.metamodel.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Finder {
+
     extension FormattingExtensions = new FormattingExtensions
+    extension ModelExtensions = new ModelExtensions
     extension NamingExtensions = new NamingExtensions
     extension Utils = new Utils
 
@@ -55,20 +58,6 @@ class Finder {
         }
 
         /**
-         * Open a popup window with the finder triggered by a Xinha button.
-         */
-        function «appName»FinderXinha(editor, «prefix()»Url)
-        {
-            var popupAttributes;
-
-            // Save editor for access in selector window
-            current«appName»Editor = editor;
-
-            popupAttributes = get«appName»PopupAttributes();
-            window.open(«prefix()»Url, '', popupAttributes);
-        }
-
-        /**
          * Open a popup window with the finder triggered by a CKEditor button.
          */
         function «appName»FinderCKEditor(editor, «prefix()»Url)
@@ -80,7 +69,7 @@ class Finder {
                 «IF targets('1.3.x')»
                     Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor',
                 «ELSE»
-                    Routing.generate('«appName.formatForDB»_external_finder', { editor: 'ckeditor' }),
+                    Routing.generate('«appName.formatForDB»_external_finder', { objectType: '«getLeadingEntity.name.formatForCode»', editor: 'ckeditor' }),
                 «ENDIF»
                 /*width*/ '80%', /*height*/ '70%',
                 'location=no,menubar=no,toolbar=no,dependent=yes,minimizable=no,modal=yes,alwaysRaised=yes,resizable=yes,scrollbars=yes'
@@ -130,13 +119,9 @@ class Finder {
             «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
-                editor = jQuery("[id$='editorName']").first().val();
+                editor = jQuery("[id$='editor']").first().val();
             «ENDIF»
-            if ('xinha' === editor) {
-                w = parent.window;
-                window.close();
-                w.focus();
-            } else if (editor === 'tinymce') {
+            if (editor === 'tinymce') {
                 «vendorAndName»ClosePopup();
             } else if (editor === 'ckeditor') {
                 «vendorAndName»ClosePopup();
@@ -160,7 +145,7 @@ class Finder {
                 itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
                 itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '');
                 itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '');
-                pasteMode = jQuery("[id$='pasteAs']").first().val();
+                pasteMode = jQuery("[id$='pasteas']").first().val();
             «ENDIF»
 
             if (pasteMode === '2' || pasteMode !== '1') {
@@ -188,39 +173,7 @@ class Finder {
             «ELSE»
                 editor = jQuery("[id$='editorName']").first().val();
             «ENDIF»
-            if ('xinha' === editor) {
-                if (null !== window.opener.current«appName»Editor) {
-                    html = «vendorAndName»GetPasteSnippet('html', itemId);
-
-                    window.opener.current«appName»Editor.focusEditor();
-                    window.opener.current«appName»Editor.insertHTML(html);
-                } else {
-                    html = «vendorAndName»GetPasteSnippet('url', itemId);
-                    var currentInput = window.opener.current«appName»Input;
-
-                    if ('INPUT' === currentInput.tagName) {
-                        // Simply overwrite value of input elements
-                        currentInput.value = html;
-                    } else if ('TEXTAREA' === currentInput.tagName) {
-                        // Try to paste into textarea - technique depends on environment
-                        if (typeof document.selection !== 'undefined') {
-                            // IE: Move focus to textarea (which fortunately keeps its current selection) and overwrite selection
-                            currentInput.focus();
-                            window.opener.document.selection.createRange().text = html;
-                        } else if (typeof currentInput.selectionStart !== 'undefined') {
-                            // Firefox: Get start and end points of selection and create new value based on old value
-                            var startPos = currentInput.selectionStart;
-                            var endPos = currentInput.selectionEnd;
-                            currentInput.value = currentInput.value.substring(0, startPos)
-                                                + html
-                                                + currentInput.value.substring(endPos, currentInput.value.length);
-                        } else {
-                            // Others: just append to the current value
-                            currentInput.value += html;
-                        }
-                    }
-                }
-            } else if ('tinymce' === editor) {
+            if ('tinymce' === editor) {
                 html = «vendorAndName»GetPasteSnippet('html', itemId);
                 tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
                 // other tinymce commands: mceImage, mceInsertLink, mceReplaceContent, see http://www.tinymce.com/wiki.php/Command_identifiers
