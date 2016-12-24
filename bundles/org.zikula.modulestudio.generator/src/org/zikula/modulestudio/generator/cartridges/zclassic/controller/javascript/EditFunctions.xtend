@@ -291,8 +291,8 @@ class EditFunctions {
                     Form.Element.setValue('latitude', location.point.lat.toFixed(7));
                     Form.Element.setValue('longitude', location.point.lng.toFixed(7));
                 «ELSE»
-                    jQuery('#latitude').val(location.point.lat.toFixed(7));
-                    jQuery('#longitude').val(location.point.lng.toFixed(7));
+                    jQuery([id$='latitude']).val(location.point.lat.toFixed(7));
+                    jQuery([id$='longitude']).val(location.point.lng.toFixed(7));
                 «ENDIF»
                 newCoordinatesEventHandler();
             }
@@ -308,8 +308,8 @@ class EditFunctions {
                 $('latitude').value = position.coords.latitude.toFixed(7);
                 $('longitude').value = position.coords.longitude.toFixed(7);
             «ELSE»
-                $('#latitude').val(position.coords.latitude.toFixed(7));
-                $('#longitude').val(position.coords.longitude.toFixed(7));
+                jQuery([id$='latitude']).val(position.coords.latitude.toFixed(7));
+                jQuery([id$='longitude']).val(position.coords.longitude.toFixed(7));
             «ENDIF»
             newCoordinatesEventHandler();
         }
