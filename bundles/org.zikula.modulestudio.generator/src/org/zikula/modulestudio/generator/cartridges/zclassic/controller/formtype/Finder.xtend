@@ -176,7 +176,7 @@ class Finder {
                         'editorName' => 'string'
                     ])
                     ->setAllowedValues([
-                        'editorName' => ['xinha', 'tinymce', 'ckeditor']
+                        'editorName' => ['tinymce', 'ckeditor']
                     ])
                 ;
             }

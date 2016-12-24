@@ -296,7 +296,7 @@ class ExternalController {
         «IF isLegacy»
             $editor = $getData->filter('editor', '', FILTER_SANITIZE_STRING);
         «ENDIF»
-        if (empty($editor) || !in_array($editor, «IF isLegacy»array(«ELSE»[«ENDIF»'xinha', 'tinymce', 'ckeditor'«IF isLegacy»)«ELSE»]«ENDIF»)) {
+        if (empty($editor) || !in_array($editor, «IF isLegacy»array(«ELSE»[«ENDIF»'tinymce', 'ckeditor'«IF isLegacy»)«ELSE»]«ENDIF»)) {
             return $this->__('Error: Invalid editor context given for external controller action.');
         }
         «IF hasCategorisableEntities»
