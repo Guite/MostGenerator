@@ -28,7 +28,9 @@ class Group {
                             GroupEvents::GROUP_UPDATE      => ['update', 5],
                             GroupEvents::GROUP_DELETE      => ['delete', 5],
                             GroupEvents::GROUP_ADD_USER    => ['addUser', 5],
-                            GroupEvents::GROUP_REMOVE_USER => ['removeUser', 5]
+                            GroupEvents::GROUP_REMOVE_USER => ['removeUser', 5],
+                            GroupEvents::GROUP_APPLICATION_PROCESSED => ['applicationProcessed', 5],
+                            GroupEvents::GROUP_NEW_APPLICATION => ['newApplication', 5]
                         «ELSE»
                             'group.create'     => ['create', 5],
                             'group.update'     => ['update', 5],
@@ -158,5 +160,54 @@ class Group {
                 «commonExample.generalEventProperties(it)»
             «ENDIF»
         }
+        «IF targets('1.4-dev')»
+
+        «IF isBase»
+        /**
+         * Listener for the `group.application.processed` event.
+         *
+         * Occurs after a group application has been processed.
+         * The subject is the GroupApplicationEntity.
+         * Arguments are the form data from \Zikula\GroupsModule\Form\Type\ManageApplicationType
+         *
+         * @param GenericEvent $event The event instance
+         */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
+        public function applicationProcessed(GenericEvent $event)
+        {
+            «IF !isBase»
+                parent::applicationProcessed($event);
+
+                «commonExample.generalEventProperties(it)»
+            «ENDIF»
+        }
+
+        «IF isBase»
+        /**
+         * Listener for the `group.application.new` event.
+         *
+         * Occurs after the successful creation of a group application.
+         * The subject is the GroupApplicationEntity.
+         *
+         * @param GenericEvent $event The event instance
+         */
+        «ELSE»
+            /**
+             * {@inheritdoc}
+             */
+        «ENDIF»
+        public function newApplication(GenericEvent $event)
+        {
+            «IF !isBase»
+                parent::newApplication($event);
+
+                «commonExample.generalEventProperties(it)»
+            «ENDIF»
+        }
+        «ENDIF»
     '''
 }
