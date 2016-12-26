@@ -116,14 +116,14 @@ class StandardFields {
             {% set cr_uname = «appName.toLowerCase»_userVar('uname', obj.createdUserId) %}
             {% set profileLink = obj.createdUserId|profileLinkByUserId() %}
             <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId, rating='g') }}</dd>
-            <dd>{{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')}) }}</dd>
+            <dd>{{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
         {% if obj.updatedUserId|default %}
             <dt>{{ __('Last update') }}</dt>
             {% set lu_uname = «appName.toLowerCase»_userVar('uname', obj.updatedUserId) %}
             {% set profileLink = obj.updatedUserId|profileLinkByUserId() %}
             <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId, rating='g') }}</dd>
-            <dd>{{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</dd>
+            <dd>{{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
         </dl>
     '''
