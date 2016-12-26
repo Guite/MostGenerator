@@ -337,28 +337,13 @@ class Validation {
                             $('«endFieldName»').removeClassName('validation-passed').addClassName('validation-failed');
                         }
                     «ELSE»
-                        cmpVal = «vendorAndName»ReadDate(jQuery('#«startFieldName»').val(), «(startDateField instanceof DatetimeField).displayBool»);
-                        cmpVal2 = «vendorAndName»ReadDate(jQuery('#«endFieldName»').val(), «(endDateField instanceof DatetimeField).displayBool»);
+                        cmpVal = «vendorAndName»ReadDate(jQuery("[id$='«startFieldName»']").val(), «(startDateField instanceof DatetimeField).displayBool»);
+                        cmpVal2 = «vendorAndName»ReadDate(jQuery("[id$='«endFieldName»']").val(), «(endDateField instanceof DatetimeField).displayBool»);
 
                         if (typeof cmpVal == 'undefined' && typeof cmpVal2 == 'undefined') {
                             result = true;
                         } else {
                             result = (cmpVal <= cmpVal2);
-                        }
-
-                        if (result) {
-                            jQuery('#advice-«validateClass»-«startFieldName»').hide();
-                            jQuery('#advice-«validateClass»-«endFieldName»').hide();
-                            jQuery('#«startFieldName»').parent().parent().removeClass('has-error').addClass('has-success');
-                            jQuery('#«endFieldName»').parent().parent().removeClass('has-error').addClass('has-success');
-                        } else {
-                            jQuery('#advice-«validateClass»-«startFieldName»').html(/*Zikula.__(*/'The start must be before the end.'/*, '«appName.formatForDB»_js')*/);
-                            jQuery('#advice-«validateClass»-«endFieldName»').html(/*Zikula.__(*/'The start must be before the end.'/*, '«appName.formatForDB»_js')*/);
-
-                            jQuery('#advice-«validateClass»-«startFieldName»').show();
-                            jQuery('#advice-«validateClass»-«endFieldName»').show();
-                            jQuery('#«startFieldName»').parent().parent().removeClass('has-success').addClass('has-error');
-                            jQuery('#«endFieldName»').parent().parent().removeClass('has-success').addClass('has-error');
                         }
                     «ENDIF»
 
@@ -525,10 +510,12 @@ class Validation {
                 «FOR entity : entities»
                     «IF null !== entity.startDateField && null !== entity.endDateField»
                         jQuery('.validate-daterange-«entity.name.formatForDB»').each( function() {
+                            if (typeof jQuery(this).attr('id') != 'undefined') {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(jQuery(this).val())) {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'The start must be before the end.'/*, '«appName.formatForDB»_js')*/);
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
+                            }
                             }
                         });
                     «ENDIF»
