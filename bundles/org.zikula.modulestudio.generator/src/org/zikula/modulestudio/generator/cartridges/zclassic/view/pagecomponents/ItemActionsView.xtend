@@ -95,12 +95,12 @@ class ItemActionsView {
 
     def private javaScript(Entity it, String context) '''
         «IF !application.targets('1.3.x') && context == 'view'»
-            $('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu dropdown-menu-right');
-            $('.dropdown > ul a').each(function (index) {
+            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu dropdown-menu-right');
+            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul a').each(function (index) {
                 $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
             });
-            $('.dropdown > ul a i').addClass('fa-fw');
-            $('.dropdown-toggle').removeClass('hidden').dropdown();
+            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul a i').addClass('fa-fw');
+            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown-toggle').removeClass('hidden').dropdown();
         «ELSE»
             <script type="text/javascript">
             /* <![CDATA[ */
@@ -111,12 +111,12 @@ class ItemActionsView {
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            $('.dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
-                            $('.dropdown > ul a').each(function (index) {
+                            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
+                            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul a').each(function (index) {
                                 $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
                             });
-                            $('.dropdown > ul a i').addClass('fa-fw');
-                            $('.dropdown-toggle').removeClass('hidden').dropdown();
+                            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown > ul a i').addClass('fa-fw');
+                            $('.«application.appName.toLowerCase»-«name.formatForDB» .dropdown-toggle').removeClass('hidden').dropdown();
                         });
                     })(jQuery);
                 «ENDIF»
