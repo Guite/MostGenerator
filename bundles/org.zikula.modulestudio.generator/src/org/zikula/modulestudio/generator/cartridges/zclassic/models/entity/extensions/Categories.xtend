@@ -46,7 +46,54 @@ class Categories extends AbstractExtension implements EntityExtensionInterface {
      */
     override accessors(Entity it) '''
         «val fh = new FileHelper»
-        «fh.getterAndSetterMethods(it, 'categories', 'array', true, true, false, '', '')»
+        «IF application.targets('1.3.x')»
+            «fh.getterAndSetterMethods(it, 'categories', 'array', true, true, false, '', '')»
+        «ELSE»
+            «fh.getterMethod(it, 'categories', 'ArrayCollection', true)»
+
+            /**
+             * Sets the categories.
+             *
+             * @param ArrayCollection $categories
+             *
+             * @return void
+             */
+            public function setCategories(ArrayCollection $categories)
+            {
+                foreach ($this->categories as $category) {
+                    if (false === $key = $this->collectionContains($categories, $category)) {
+                        $this->categories->removeElement($category);
+                    } else {
+                        $categories->remove($key);
+                    }
+                }
+                foreach ($categories as $category) {
+                    $this->categories->add($category);
+                }
+            }
+
+            /**
+             * Checks if a collection contains an element based only on two criteria (categoryRegistryId, category).
+             *
+             * @param ArrayCollection $collection
+             * @param \«entityClassName('category', false)» $element
+             *
+             * @return bool|int
+             */
+            private function collectionContains(ArrayCollection $collection, \«entityClassName('category', false)» $element)
+            {
+                foreach ($collection as $key => $category) {
+                    /** @var \«entityClassName('category', false)» $category */
+                    if ($category->getCategoryRegistryId() == $element->getCategoryRegistryId()
+                        && $category->getCategory() == $element->getCategory()
+                    ) {
+                        return $key;
+                    }
+                }
+
+                return false;
+            }
+        «ENDIF»
     '''
 
     /**
