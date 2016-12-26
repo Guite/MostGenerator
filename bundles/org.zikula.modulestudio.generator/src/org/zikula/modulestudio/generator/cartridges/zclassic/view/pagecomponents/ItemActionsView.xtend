@@ -111,12 +111,12 @@ class ItemActionsView {
                 «ELSE»
                     ( function($) {
                         $(document).ready(function() {
-                            $('h3 .dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
-                            $('h3 .dropdown > ul a').each(function (index) {
+                            $('h2 .dropdown > ul, h3 .dropdown > ul').removeClass('list-inline').addClass('list-unstyled dropdown-menu');
+                            $('h2 .dropdown > ul a, h3 .dropdown > ul a').each(function (index) {
                                 $(this).html($(this).html() + $(this).find('i').first().data('original-title'));
                             });
-                            $('h3 .dropdown > ul a i').addClass('fa-fw');
-                            $('h3 .dropdown-toggle').removeClass('hidden').dropdown();
+                            $('h2 .dropdown > ul a i, h3 .dropdown > ul a i').addClass('fa-fw');
+                            $('h2 .dropdown-toggle, h3 .dropdown-toggle').removeClass('hidden').dropdown();
                         });
                     })(jQuery);
                 «ENDIF»
