@@ -281,7 +281,7 @@ class PersistenceTransformer {
 
     def private addViewSettings(Application it) {
         val entitiesWithView = entities.filter(Entity).filter[hasActions('view')]
-        if (!entitiesWithView.empty) {
+        if (entitiesWithView.empty) {
             return
         }
 
