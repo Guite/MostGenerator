@@ -83,7 +83,7 @@ class Selection {
             public function __construct(ContainerBuilder $container, ObjectManager $om, TranslatorInterface $translator, ControllerHelper $controllerHelper)
             {
                 $this->container = $container;
-                $this->om = $om;
+                $this->objectManager = $om;
                 $this->translator = $translator;
                 $this->controllerHelper = $controllerHelper;
             }
@@ -114,7 +114,7 @@ class Selection {
             «ELSE»
                 $entityClass = '«vendor.formatForCodeCapital»«name.formatForCodeCapital»Module:' . ucfirst($objectType) . 'Entity';
 
-                $meta = $this->om->getClassMetadata($entityClass);
+                $meta = $this->objectManager->getClassMetadata($entityClass);
             «ENDIF»
 
             if ($this->hasCompositeKeys($objectType)) {
