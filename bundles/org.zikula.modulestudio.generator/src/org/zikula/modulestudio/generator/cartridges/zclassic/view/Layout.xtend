@@ -90,8 +90,7 @@ class Layout {
 
         {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
             {% block appTitle %}
-                <h2 class="userheader">{{ __('«name.formatForDisplayCapital»') }}</h2>
-                {{ moduleLinks(type='user«/* TODO controller.formattedName */»', modName='«appName»') }}
+                {{ moduleHeader('user«/* TODO controller.formattedName */»', '«/* custom title */»', '«/* title link */»', false, true«/* flashes */», false, true«/* image */») }}
             {% endblock %}
         {% endif %}
 
@@ -331,7 +330,7 @@ class Layout {
                 {adminheader}
             «ELSE»
                 <div class="z-frontendbox">
-                    <h2>{gt text='«name.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
+                    <h2>{modgetinfo info='displayname' modname='«appName»'}</h2>
                     {modulelinks modname='«appName»' type='«controller.formattedName»'}
                 </div>
             «ENDIF»
