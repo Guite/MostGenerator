@@ -34,8 +34,9 @@ class ExternalController {
     «IF !isLegacy»
         namespace «appNamespace»\Controller\Base;
 
-        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
         use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+        use Symfony\Component\HttpFoundation\Request;
+        use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
         «IF hasCategorisableEntities && !targets('1.4-dev')»
             use CategoryUtil;
@@ -234,12 +235,13 @@ class ExternalController {
          * )
          «ENDIF»
          *
-         * @param string $objectType The object type
-         * @param string $editor     Name of used Scribite editor
-         * @param string $sort       Sorting field
-         * @param string $sortdir    Sorting direction
-         * @param int    $pos        Current pager position
-         * @param int    $num        Amount of entries to display
+         * @param Request $request    The current request
+         * @param string  $objectType The object type
+         * @param string  $editor     Name of used Scribite editor
+         * @param string  $sort       Sorting field
+         * @param string  $sortdir    Sorting direction
+         * @param int     $pos        Current pager position
+         * @param int     $num        Amount of entries to display
          *
          * @return output The external item finder page
          «IF !isLegacy»
@@ -250,7 +252,7 @@ class ExternalController {
     '''
 
     def private finderSignature(Application it) '''
-        public function finder«IF isLegacy»()«ELSE»Action($objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
+        public function finder«IF isLegacy»()«ELSE»Action(Request $request, $objectType, $editor, $sort, $sortdir, $pos = 1, $num = 0)«ENDIF»
     '''
 
     def private finderBaseImpl(Application it) '''
@@ -290,7 +292,7 @@ class ExternalController {
             $repository->setControllerArguments(array());
         «ELSE»
             $repository = $this->get('«appService».' . $objectType . '_factory')->getRepository();
-            $repository->setRequest($this->get('request_stack')->getCurrentRequest());
+            $repository->setRequest($request);
         «ENDIF»
 
         «IF isLegacy»
@@ -325,8 +327,6 @@ class ExternalController {
             $sdir = 'asc';
         }
 
-        $sortParam = $sort . ' ' . $sdir;
-
         // the current offset which is used to calculate the pagination
         $currentPage = (int) «IF isLegacy»$getData->filter('pos', 1, FILTER_VALIDATE_INT)«ELSE»$pos«ENDIF»;
 
@@ -335,8 +335,43 @@ class ExternalController {
         if ($resultsPerPage == 0) {
             $resultsPerPage = $this->getVar('pageSize', 20);
         }
+
+        «IF isLegacy»
+            $searchTerm = '';
+        «ELSE»
+            $templateParameters = [
+                'editorName' => $editor,
+                'objectType' => $objectType,
+                'sort' => $sort,
+                'sortdir' => $sdir,
+                'currentPage' => $currentPage
+            ];
+            $searchTerm = '';
+
+            $formOptions = [
+                'objectType' => $objectType,
+                'editorName' => $editor
+            ];
+            $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions);
+
+            if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
+                $formData = $form->getData();
+                $templateParameters = array_merge($templateParameters, $formData);
+                $currentPage = $formData['currentPage'];
+                $resultsPerPage = $formData['num'];
+                $sort = $formData['sort'];
+                $sdir = $formData['sortdir'];
+                $searchTerm = $formData['q'];
+            }
+        «ENDIF»
+
         $where = '';
-        list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+        $sortParam = $sort . ' ' . $sdir;
+        if ($searchTerm != '') {
+            list($entities, $objectCount) = $repository->selectSearch($searchTerm, «IF isLegacy»array()«ELSE»[]«ENDIF», $sortParam, $currentPage, $resultsPerPage);
+        } else {
+            list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+        }
 
         «IF hasCategorisableEntities»
             if (in_array($objectType, «IF isLegacy»array(«ELSE»[«ENDIF»'«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'«IF isLegacy»)«ELSE»]«ENDIF»)) {
@@ -395,33 +430,18 @@ class ExternalController {
 
             return $view->display('external/' . $objectType . '/find.tpl');
         «ELSE»
-            $templateParameters = [
-                'editorName' => $editor,
-                'objectType' => $objectType,
-                'items' => $entities,
-                'sort' => $sort,
-                'sortdir' => $sdir,
-                'currentPage' => $currentPage,
-                'pager' => ['numitems' => $objectCount, 'itemsperpage' => $resultsPerPage]
-            ];
-            «IF needsFeatureActivationHelper»
-                $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
-            «ENDIF»
-
-            $formOptions = [
-                'objectType' => $objectType,
-                'editorName' => $editor
-            ];
-            $form = $this->createForm('«appNamespace»\Form\Type\Finder\\' . ucfirst($objectType) . 'FinderType', $templateParameters, $formOptions);
-
+            $templateParameters['items'] = $entities;
             $templateParameters['finderForm'] = $form->createView();
 
-            «/* shouldn't be necessary
-            if ($form->handleRequest($request)->isValid() && $form->get('update')->isClicked()) {
-                $templateParameters = array_merge($templateParameters, $form->getData());
-            }
+            «IF needsFeatureActivationHelper»
+                $templateParameters['featureActivationHelper'] = $this->get('«appService».feature_activation_helper');
 
-            */»
+            «ENDIF»
+            $templateParameters['pager'] = [
+                'numitems' => $objectCount,
+                'itemsperpage' => $resultsPerPage
+            ];
+
             return $this->render('@«appName»/External/' . ucfirst($objectType) . '/find.html.twig', $templateParameters);
         «ENDIF»
     '''
@@ -433,6 +453,7 @@ class ExternalController {
             use «appNamespace»\Controller\Base\AbstractExternalController;
 
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+            use Symfony\Component\HttpFoundation\Request;
 
         «ENDIF»
         /**
@@ -470,7 +491,7 @@ class ExternalController {
         «finderDocBlock(false)»
         «finderSignature»
         {
-            return parent::finderAction($objectType, $editor, $sort, $sortdir, $pos, $num);
+            return parent::finderAction(Request $request, $objectType, $editor, $sort, $sortdir, $pos, $num);
         }
     '''
 

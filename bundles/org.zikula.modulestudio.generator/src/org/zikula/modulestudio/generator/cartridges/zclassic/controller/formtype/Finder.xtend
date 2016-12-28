@@ -246,7 +246,7 @@ class Finder {
                     'label' => $this->__('Sort by') . ':',
                     'empty_data' => '',
                     'choices' => [
-                        «FOR field : getDerivedFields»
+                        «FOR field : getSortingFields»
                             «IF field.name.formatForCode != 'workflowState' || workflow != EntityWorkflowType.NONE»
                                 $this->__('«field.name.formatForDisplayCapital»') => '«field.name.formatForCode»'«IF standardFields || field != getDerivedFields.last»,«ENDIF»
                             «ENDIF»

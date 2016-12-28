@@ -95,8 +95,8 @@ class Finder {
                 $('«elemPrefix»Submit').addClassName('z-hide');
                 $('«elemPrefix»Cancel').observe('click', «objName».finder.handleCancel);
             «ELSE»
-                jQuery('select').change(«objName».finder.onParamChanged);
-                jQuery('.btn-success').addClass('hidden');
+                jQuery('select').not("[id$='pasteas']").change(«objName».finder.onParamChanged);
+                «/*jQuery('.btn-success').addClass('hidden');*/»
                 jQuery('.btn-default').click(«objName».finder.handleCancel);
 
                 var selectedItems = jQuery('#«appName.toLowerCase»ItemContainer li a');
@@ -114,16 +114,16 @@ class Finder {
 
         «objName».finder.handleCancel = function ()
         {
-            var editor, w;
+            var editor;
 
             «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
                 editor = jQuery("[id$='editor']").first().val();
             «ENDIF»
-            if (editor === 'tinymce') {
+            if ('tinymce' === editor) {
                 «vendorAndName»ClosePopup();
-            } else if (editor === 'ckeditor') {
+            } else if ('ckeditor' === editor) {
                 «vendorAndName»ClosePopup();
             } else {
                 alert('Close Editor: ' + editor);
@@ -138,13 +138,13 @@ class Finder {
             quoteFinder = new RegExp('"', 'g');
             «IF targets('1.3.x')»
                 itemUrl = $F('url' + itemId).replace(quoteFinder, '');
-                itemTitle = $F('title' + itemId).replace(quoteFinder, '');
-                itemDescription = $F('desc' + itemId).replace(quoteFinder, '');
+                itemTitle = $F('title' + itemId).replace(quoteFinder, '').trim();
+                itemDescription = $F('desc' + itemId).replace(quoteFinder, '').trim();
                 pasteMode = $F('«elemPrefix»PasteAs');
             «ELSE»
                 itemUrl = jQuery('#url' + itemId).val().replace(quoteFinder, '');
-                itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '');
-                itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '');
+                itemTitle = jQuery('#title' + itemId).val().replace(quoteFinder, '').trim();
+                itemDescription = jQuery('#desc' + itemId).val().replace(quoteFinder, '').trim();
                 pasteMode = jQuery("[id$='pasteas']").first().val();
             «ENDIF»
 
@@ -171,7 +171,7 @@ class Finder {
             «IF targets('1.3.x')»
                 editor = $F('editorName');
             «ELSE»
-                editor = jQuery("[id$='editorName']").first().val();
+                editor = jQuery("[id$='editor']").first().val();
             «ENDIF»
             if ('tinymce' === editor) {
                 html = «vendorAndName»GetPasteSnippet('html', itemId);
