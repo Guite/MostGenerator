@@ -28,7 +28,7 @@ class ExternalView {
     def generate(Application it, IFileSystemAccess fsa) {
         var fileName = ''
         val templateExtension = if (targets('1.3.x')) '.tpl' else '.html.twig'
-        for (entity : getAllEntities) {
+        for (entity : getAllEntities.filter[hasActions('display')]) {
             val templatePath = getViewPath + (if (targets('1.3.x')) 'external/' + entity.name.formatForCode else 'External/' + entity.name.formatForCodeCapital) + '/'
 
             fileName = 'display' + templateExtension
@@ -376,16 +376,16 @@ class ExternalView {
     '''
 
     def private findTemplateObjectTypeSwitcher(Entity it, Application app) '''
-        «IF app.getAllEntities.size > 1»
+        «IF app.getAllEntities.filter[hasActions('display')].size > 1»
             «IF app.targets('1.3.x')»
                 <p>{gt text='Switch to'}:
-                «FOR entity : app.getAllEntities/*.filter[e|e.name != name]*/ SEPARATOR ' | '»
+                «FOR entity : app.getAllEntities.filter[hasActions('display')]/*.filter[e|e.name != name]*/ SEPARATOR ' | '»
                     <a href="{modurl modname='«app.appName»' type='external' func='finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a>
                 «ENDFOR»
                 </p>
             «ELSE»
                 <ul class="nav nav-tabs«/*pills nav-justified*/»">
-                «FOR entity : app.getAllEntities/*.filter[e|e.name != name]*/ SEPARATOR ' | '»
+                «FOR entity : app.getAllEntities.filter[hasActions('display')]/*.filter[e|e.name != name]*/»
                     <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
                 «ENDFOR»
                 </ul>
