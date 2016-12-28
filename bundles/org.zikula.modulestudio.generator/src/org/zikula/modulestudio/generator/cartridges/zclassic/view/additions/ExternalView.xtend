@@ -379,13 +379,13 @@ class ExternalView {
         «IF app.getAllEntities.size > 1»
             «IF app.targets('1.3.x')»
                 <p>{gt text='Switch to'}:
-                «FOR entity : app.getAllEntities.filter[e|e.name != name] SEPARATOR ' | '»
+                «FOR entity : app.getAllEntities/*.filter[e|e.name != name]*/ SEPARATOR ' | '»
                     <a href="{modurl modname='«app.appName»' type='external' func='finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a>
                 «ENDFOR»
                 </p>
             «ELSE»
-                <ul class="nav nav-pills nav-justified">
-                «FOR entity : app.getAllEntities.filter[e|e.name != name] SEPARATOR ' | '»
+                <ul class="nav nav-tabs«/*pills nav-justified*/»">
+                «FOR entity : app.getAllEntities/*.filter[e|e.name != name]*/ SEPARATOR ' | '»
                     <li{{ objectType == '«entity.name.formatForCode»' ? ' class="active"' : '' }}><a href="{{ path('«app.appName.formatForDB»_external_finder', {'objectType': '«entity.name.formatForCode»', 'editor': editorName}) }}" title="{{ __('Search and select «entity.name.formatForDisplay»') }}">{{ __('«entity.nameMultiple.formatForDisplayCapital»') }}</a></li>
                 «ENDFOR»
                 </ul>
