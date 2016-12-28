@@ -149,7 +149,7 @@ class Finder {
             «ENDIF»
 
             if (pasteMode === '2' || pasteMode !== '1') {
-                return itemId;
+                return '' + itemId;
             }
 
             // return link to item
