@@ -313,7 +313,7 @@ class Search {
             $serviceManager = ServiceUtil::getManager();
             $permissionApi = $serviceManager->get('zikula_permissions_module.api.permission');
             «IF hasCategorisableEntities»
-                $featureActivationHelper = $serviceManager('«appService».feature_activation_helper');
+                $featureActivationHelper = $serviceManager->get('«appService».feature_activation_helper');
             «ENDIF»
             $request = $serviceManager->get('request_stack')->getMasterRequest();
 
@@ -400,7 +400,7 @@ class Search {
                     «IF hasCategorisableEntities»
                         if (in_array($objectType, ['«getCategorisableEntities.map[e|e.name.formatForCode].join('\', \'')»'])) {
                             if ($featureActivationHelper->isEnabled(FeatureActivationHelper::CATEGORIES, $objectType)) {
-                                if (!$this->get('«appService».category_helper')->hasPermission($entity)) {
+                                if (!$serviceManager->get('«appService».category_helper')->hasPermission($entity)) {
                                     continue;
                                 }
                             }
