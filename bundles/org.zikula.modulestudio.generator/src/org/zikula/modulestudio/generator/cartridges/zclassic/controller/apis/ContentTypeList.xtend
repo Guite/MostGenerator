@@ -388,7 +388,7 @@ class ContentTypeList {
                 «ENDIF»
                 $filteredEntities = «IF isLegacy»array()«ELSE»[]«ENDIF»;
                 foreach ($entities as $entity) {
-                    «IF targets('1.4-dev')»
+                    «IF !targets('1.3.x')»
                         if ($this->get('«appService».category_helper')->hasPermission($entity)) {
                             $filteredEntities[] = $entity;
                         }
