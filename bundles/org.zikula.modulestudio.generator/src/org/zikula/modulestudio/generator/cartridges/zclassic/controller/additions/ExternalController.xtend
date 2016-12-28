@@ -491,7 +491,7 @@ class ExternalController {
         «finderDocBlock(false)»
         «finderSignature»
         {
-            return parent::finderAction(Request $request, $objectType, $editor, $sort, $sortdir, $pos, $num);
+            return parent::finderAction($request, $objectType, $editor, $sort, $sortdir, $pos, $num);
         }
     '''
 
