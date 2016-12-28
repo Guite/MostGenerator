@@ -67,7 +67,7 @@ class DeleteEntity {
                         'label' => $this->translator->__('Delete'),
                         'icon' => 'fa-trash-o',
                         'attr' => [
-                            'class' => 'btn btn-success'
+                            'class' => 'btn btn-danger'
                         ]
                     ])
                     ->add('cancel', '«nsSymfonyFormType»SubmitType', [
