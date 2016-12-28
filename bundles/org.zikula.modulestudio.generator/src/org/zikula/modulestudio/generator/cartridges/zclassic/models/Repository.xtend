@@ -879,6 +879,7 @@ class Repository {
             $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
 
             $page = $currentPage;
+            «/* TODO fix buggy session storage of current page
 
             // check if we have any filters set
             $parameters = $this->getViewQuickNavParameters('', «IF app.targets('1.3.x')»array()«ELSE»[]«ENDIF»);
@@ -890,7 +891,6 @@ class Repository {
                 }
             }
 
-            «/* TODO fix buggy session storage of current page
             «val sessionVar = app.appName + nameMultiple.formatForCodeCapital + 'CurrentPage'»
             if (!$hasFilters) {
                 «IF !app.targets('1.3.x')»

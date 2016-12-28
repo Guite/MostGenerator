@@ -38,13 +38,7 @@ class ExternalController {
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-        «IF hasCategorisableEntities && !targets('1.4-dev')»
-            use CategoryUtil;
-        «ENDIF»
-        use ModUtil;
         use PageUtil;
-        use ThemeUtil;
-        use UserUtil;
         use Zikula\Core\Controller\AbstractController;
         use Zikula\Core\Response\PlainResponse;
         «IF hasCategorisableEntities»
@@ -57,16 +51,16 @@ class ExternalController {
      */
     abstract class «IF isLegacy»«appName»_Controller_Base_AbstractExternal extends Zikula_AbstractController«ELSE»AbstractExternalController extends AbstractController«ENDIF»
     {
-        «IF hasCategorisableEntities»
-            /**
-             * List of object types allowing categorisation.
-             *
-             * @var array
-             */
-            protected $categorisableObjectTypes;
-
-        «ENDIF»
         «IF isLegacy»
+            «IF hasCategorisableEntities»
+                /**
+                 * List of object types allowing categorisation.
+                 *
+                 * @var array
+                 */
+                protected $categorisableObjectTypes;
+
+            «ENDIF»
             «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
             «new ControllerHelperFunctions().controllerPostInitialize(it, false, additionalCommands.toString)»
         «ENDIF»
@@ -301,16 +295,11 @@ class ExternalController {
         if (empty($editor) || !in_array($editor, «IF isLegacy»array(«ELSE»[«ENDIF»'tinymce', 'ckeditor'«IF isLegacy»)«ELSE»]«ENDIF»)) {
             return $this->__('Error: Invalid editor context given for external controller action.');
         }
-        «IF hasCategorisableEntities»
+        «IF hasCategorisableEntities && isLegacy»
 
             // fetch selected categories to reselect them in the output
             // the actual filtering is done inside the repository class
-            «IF isLegacy»
-                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
-            «ELSE»
-                $categoryHelper = $this->get('«appService».category_helper');
-                $categoryIds = $categoryHelper->retrieveCategoriesFromRequest($objectType, 'GET');
-            «ENDIF»
+            $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
         «ENDIF»
         «IF isLegacy»
             $sort = $getData->filter('sort', '', FILTER_SANITIZE_STRING);

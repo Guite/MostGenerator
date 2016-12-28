@@ -302,8 +302,17 @@ class Category {
                     $catIdsPerRegistry[$propertyName] = $inputValue;
                 }
             «ELSE»
+                $inputValues = null;
                 $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'quicknav';
-                $inputValues = $dataSource->get($inputName);
+                if (!$dataSource->has($inputName)) {
+                    $inputName = '«appName.toLowerCase»_' . strtolower($objectType) . 'finder';
+                }
+                if ($dataSource->has($inputName)) {
+                    $inputValues = $dataSource->get($inputName);
+                }
+                if (null === $inputValues) {
+                    return $catIdsPerRegistry;
+                }
                 $inputCategories = isset($inputValues['categories']) ? $inputValues['categories'] : [];
 
                 if (!count($inputCategories)) {
