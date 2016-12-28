@@ -135,6 +135,7 @@ class QuickNavigation {
                     ->setMethod('GET')
                     ->add('all', '«nsSymfonyFormType»HiddenType')
                     ->add('own', '«nsSymfonyFormType»HiddenType')
+                    ->add('tpl', '«nsSymfonyFormType»HiddenType')
                 ;
 
                 «IF categorisable»
