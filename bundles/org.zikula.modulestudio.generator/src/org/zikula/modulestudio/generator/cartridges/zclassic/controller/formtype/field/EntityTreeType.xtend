@@ -51,7 +51,6 @@ class EntityTreeType {
                         ],«/*'query_builder' => function (EntityRepository $er) {
                             return $er->selectTree($options['root'], $options['useJoins']);
                         },*/»
-                        'choices' => $choices,
                         'choices_as_values' => true
                     ])
                     ->setAllowedTypes([
@@ -112,7 +111,6 @@ class EntityTreeType {
                     return false;
                 }
 
-                $repository = $options['em']->getRepository($options['class']);
                 if (!$this->includeLeafNodes && $repository->childCount($item) == 0) {
                     // if we do not include leaf nodes skip them
                     return false;

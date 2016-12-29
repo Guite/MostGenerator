@@ -238,7 +238,7 @@ class Repository {
         use Doctrine\Common\Collections\ArrayCollection;
         «IF tree != EntityTreeType.NONE»
             «/*IF app.targets('1.3.x')*/»
-                use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
+            use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
             «/*ELSE»
                 use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
             «ENDIF*/»

@@ -66,7 +66,7 @@ class TreeFunctions {
         /**
          * Initialise a tree.
          */
-        function «vendorAndName»InitTree(idPrefix, theObjectType, theRootId, hasDisplay, hasEdit)
+        function «vendorAndName»InitTree(idPrefix, theObjectType, theRootId, hasDisplayAction, hasEditAction)
         {
             objectType = theObjectType;
             rootId = theRootId;
@@ -406,7 +406,7 @@ class TreeFunctions {
                     «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                     «ELSE»
-                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Invalid node id', '«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
+                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), /*Zikula.__(*/'Error'/*, '«appName.formatForDB»_js')*/, /*Zikula.__(*/'Invalid node id'/*, '«appName.formatForDB»_js')*/, 'treeInvalidNodeAlert', 'danger');
                     «ENDIF»
                 }
                 params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + «IF targets('1.3.x')»currentNodeId«ELSE»nodeEntityId«ENDIF»;
@@ -454,7 +454,7 @@ class TreeFunctions {
 
                     window.location.reload();
                 }).fail(function(jqXHR, textStatus) {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), /*Zikula.__(*/'Error'/*, '«appName.formatForDB»_js')*/, /*Zikula.__(*/'Could not persist your change.'/*, '«appName.formatForDB»_js')*/, 'treeAjaxFailedAlert', 'danger');
                 });
             «ENDIF»
         }
@@ -541,7 +541,7 @@ class TreeFunctions {
                     return true;
                 }).fail(function(jqXHR, textStatus) {
                     var treeName = 'itemTree' + rootId;
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), /*Zikula.__(*/'Error'/*, '«appName.formatForDB»_js')*/, /*Zikula.__(*/'Could not persist your change.'/*, '«appName.formatForDB»_js')*/, 'treeAjaxFailedAlert', 'danger');
 
                     window.location.reload();
                     return false;
