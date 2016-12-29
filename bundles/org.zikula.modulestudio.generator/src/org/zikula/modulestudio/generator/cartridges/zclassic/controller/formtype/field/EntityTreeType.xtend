@@ -23,6 +23,7 @@ class EntityTreeType {
     def private entityTreeTypeBaseImpl(Application it) '''
         namespace «appNamespace»\Form\Type\Field\Base;
 
+        use Doctrine\ORM\EntityRepository;
         use Symfony\Component\Form\AbstractType;
         use Symfony\Component\OptionsResolver\Options;
         use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,32 +33,6 @@ class EntityTreeType {
          */
         abstract class AbstractEntityTreeType extends AbstractType
         {
-            /**
-             * {@inheritdoc}
-             */
-            public static function createChoiceLabel($choice)
-            {
-                // determine current list hierarchy level depending on root node inclusion
-                $shownLevel = $choice->getLvl();
-                if (!$options['includeRootNode']) {
-                    $shownLevel--;
-                }
-                $prefix = str_repeat('- - ', $shownLevel);
-
-                $itemLabel = $prefix . $choice->getTitleFromDisplayPattern();
-
-                return $itemLabel;
-            }
-
-            /**
-             * Sets dynamic option for retrieving the choices.
-             *
-             * @param array $options The options
-             */
-            $choices = function(Options $options) {
-                return $this->loadChoices($options);
-            };
-
             /**
              * {@inheritdoc}
              */
@@ -73,8 +48,7 @@ class EntityTreeType {
                         'useJoins' => true,
                         'attr' => [
                             'class' => 'entity-tree'
-                        ],
-                        «/*'query_builder' => function (EntityRepository $er) {
+                        ],«/*'query_builder' => function (EntityRepository $er) {
                             return $er->selectTree($options['root'], $options['useJoins']);
                         },*/»
                         'choices' => $choices,
@@ -87,6 +61,85 @@ class EntityTreeType {
                         'useJoins' => 'bool'
                     ])
                 ;
+                $resolver->setNormalizer('choices', function (Options $options, $choices) {
+                    if (empty($choices)) {
+                        $choices = $this->loadChoices($options);
+                    }
+
+                    return $choices;
+                });
+            }
+
+            /**
+             * Performs the actual data selection.
+             *
+             * @param array $options The options
+             *
+             * @return array List of selected objects
+             */
+            protected function loadChoices(array $options)
+            {
+                $repository = $options['em']->getRepository($options['class']);
+                $treeNodes = $repository->selectTree($options['root'], $options['useJoins']);
+
+                $choices = [];
+                foreach ($treeNodes as $node) {
+                    if (!$this->isIncluded($node, $repository)) {
+                        continue;
+                    }
+
+                    $choices[$this->createChoiceLabel($node)] = $node->createCompositeIdentifier();
+                }
+
+                return $choices;
+            }
+
+            /**
+             * Determines whether a certain list item should be included or not.
+             * Allows to exclude undesired items after the selection has happened.
+             *
+             * @param object           $item       The treated entity
+             * @param EntityRepository $repository The entity repository
+             *
+             * @return boolean Whether this entity should be included into the list
+             */
+            protected function isIncluded($item, EntityRepository $repository)
+            {
+                $nodeLevel = $item->getLvl();
+
+                if (!$this->includeRootNode && $nodeLevel == 0) {
+                    // if we do not include the root node skip it
+                    return false;
+                }
+
+                $repository = $options['em']->getRepository($options['class']);
+                if (!$this->includeLeafNodes && $repository->childCount($item) == 0) {
+                    // if we do not include leaf nodes skip them
+                    return false;
+                }
+
+                return true;
+            }
+
+            /**
+             * Creates the label for a choice.
+             *
+             * @param object $choice The object
+             *
+             * @return string The string representation of the object
+             */
+            public function createChoiceLabel($choice)
+            {
+                // determine current list hierarchy level depending on root node inclusion
+                $shownLevel = $choice->getLvl();
+                if (!$options['includeRootNode']) {
+                    $shownLevel--;
+                }
+                $prefix = str_repeat('- - ', $shownLevel);
+
+                $itemLabel = $prefix . $choice->getTitleFromDisplayPattern();
+
+                return $itemLabel;
             }
 
             /**
@@ -103,56 +156,6 @@ class EntityTreeType {
             public function getBlockPrefix()
             {
                 return '«appName.formatForDB»_field_entitytree';
-            }
-
-            /**
-             * Performs the actual data selection.
-             *
-             * @param array $options The options
-             *
-             * @return array List of selected objects
-             */
-            protected function loadChoices(array $options)
-            {
-                $repository = $options['em']->getRepository($options['class']);
-
-                $items = $repository->selectTree($options['root'], $options['useJoins'])
-
-                $choices = array();
-                foreach ($items as $item) {
-                    if (!$this->isIncluded($item)) {
-                        continue;
-                    }
-
-                    $choices[$this->createChoiceLabel($item)] = $item->createCompositeIdentifier();
-                }
-
-                return $choices;
-            }
-
-            /**
-             * Determines whether a certain list item should be included or not.
-             * Allows to exclude undesired items after the selection has happened.
-             *
-             * @param Doctrine\ORM\Entity $item The treated entity
-             *
-             * @return boolean Whether this entity should be included into the list
-             */
-            protected function isIncluded($item)
-            {
-                $nodeLevel = $item->getLvl();
-
-                if (!$this->includeRootNode && $nodeLevel == 0) {
-                    // if we do not include the root node skip it
-                    return false;
-                }
-
-                if (!$this->includeLeafNodes && $this->repository->childCount($item) == 0) {
-                    // if we do not include leaf nodes skip them
-                    return false;
-                }
-
-                return true;
             }
         }
     '''
