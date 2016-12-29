@@ -37,15 +37,122 @@ class TreeFunctions {
     def private generate(Application it) '''
         'use strict';
 
-        var currentNodeId = 0;
+        «IF targets('1.3.x')»
+            var currentNodeId = 0;
+        «ELSE»
+            var nodeEntityId = 0;
+        «ENDIF»
 
         «performTreeOperation»
 
-        «initTreeNodes»
+        «IF !targets('1.3.x')»
+            «initTree»
+            
+            «treeContextMenuActions»
+        «ELSE»
+            «initTreeNodes»
+        «ENDIF»
 
         «treeSave»
     '''
 
+    def private initTree(Application it) '''
+        var tree;
+        var objectType;
+        var rootId;
+        var hasDisplay;
+        var hasEdit;
+
+        /**
+         * Initialise a tree.
+         */
+        function «vendorAndName»InitTree(idPrefix, theObjectType, theRootId, hasDisplay, hasEdit)
+        {
+            objectType = theObjectType;
+            rootId = theRootId;
+            hasDisplay = hasDisplayAction;
+            hasEdit = hasEditAction;
+
+            tree = jQuery('#' + idPrefix).jstree({
+                'core': {
+                    'multiple': false,
+                    'check_callback': true
+                },
+                'contextmenu': {
+                    'items': «vendorAndName»TreeContextMenuActions
+                },
+                'dnd': {
+                    'copy': false,
+                    'is_draggable': function(node) {
+                        // disable drag and drop for root category
+                        return !jQuery(node).hasClass('lvl0');
+                    }
+                },
+                'state': {
+                    'key': idPrefix
+                },
+                'plugins': [ 'contextmenu', 'dnd', 'search', 'state', 'wholerow'«/*, 'types' */» ]
+            });
+            «/*
+            tree.on('open_node.jstree', function(e, data) {
+                if (data.instance.is_leaf(data.node)) {
+                    return;
+                }
+                jQuery('#' + data.node.id)
+                    // hide the folder icons
+                    .find('a.jstree-anchor.leaf > i.fa-folder').hide().end()
+                    // replace folder with folder-open
+                    .find('i.jstree-icon.jstree-themeicon').first()
+                        .removeClass('fa-folder').addClass('fa-folder-open');
+            });
+            tree.on('close_node.jstree', function(e, data) {
+                if (data.instance.is_leaf(data.node)) {
+                    return;
+                }
+                jQuery('#' + data.node.id).find('i.jstree-icon.jstree-themeicon').first()
+                    .removeClass('fa-folder-open').addClass('fa-folder');
+            });*/»
+
+            // Drag n drop
+            tree.on('move_node.jstree', function (e, data) {
+                var node = data.node;
+                var parentId = data.parent;
+                var parentNode = $tree.jstree('get_node', parentId, false);
+
+                «vendorAndName»TreeSave(node, parentNode, 'bottom');
+            });
+
+            // Expand and collapse
+            jQuery('#' + idPrefix + 'Expand').click(function(event) {
+                event.preventDefault();
+                tree.jstree(true).open_all(null, 500);
+            });
+            jQuery('#' + idPrefix + 'Collapse').click(function(event) {
+                event.preventDefault();
+                tree.jstree(true).close_all(null, 500);
+            });
+
+            // Search
+            var searchStartDelay = false;
+            jQuery('#' + idPrefix + 'SearchTerm').keyup(function () {
+                if (searchStartDelay) {
+                    clearTimeout(searchStartDelay);
+                }
+                searchStartDelay = setTimeout(function () {
+                    var v = jQuery('#' + idPrefix + 'SearchTerm').val();
+                    tree.jstree(true).search(v);
+                }, 250);
+            });
+
+            // allow redirecting if a link has been clicked
+            tree.find('ul').on('click', 'li.jstree-node a', function(e) {
+                tree.jstree('save_state');
+                document.location.href = jQuery(this).attr('href');
+            });
+        }
+    '''
+
+    // 1.3.x only
     def private initTreeNodes(Application it) '''
         «IF targets('1.3.x')»
             var «vendorAndName»TreeContextMenu;
@@ -73,122 +180,113 @@ class TreeFunctions {
          */
         function «vendorAndName»InitTreeNodes(objectType, rootId, hasDisplay, hasEdit)
         {
-            «IF targets('1.3.x')»$«ENDIF»$('#itemTree' + rootId + ' a').each(function («IF targets('1.3.x')»elem«ELSE»index«ENDIF») {
-                «IF targets('1.3.x')»
-                    «initTreeNodesLegacy»
-                «ELSE»
-                    «initTreeNodesImpl»
-                «ENDIF»
+            $$('#itemTree' + rootId + ' a').each(function (elem) {
+                «initTreeNodesLegacy»
             });
         }
     '''
 
+    def private treeContextMenuActions(Application it) '''
+        /**
+         * Initialise context menu actions for a given tree node.
+         */
+        function «vendorAndName»TreeContextMenuActions(theNode)
+        {
+            «initTreeNodesImpl»
+        }
+    '''
+
     def private initTreeNodesImpl(Application it) '''
-        var liRef, isRoot, contextMenu;
+        var currentNode;
+        var isRoot;
 
-        // get reference to list item
-        liRef = jQuery(this).parent();
-        isRoot = (liRef.attr('id') === 'tree' + rootId + 'node_' + rootId);
-        currentNodeId = liRef.attr('id').replace('tree' + rootId + 'node_', '');
+        currentNode = tree.jstree('get_node', theNode, true);
+        isRoot = (currentNode.attr('id') === 'tree' + rootId + 'node_' + rootId);
+        nodeEntityId = currentNode.attr('id').replace('tree' + rootId + 'node_', '');
 
-        // fill the context menu
-        contextMenu = liRef.attr('id') + 'DropDownMenu';
-
-        contextMenu.append(
-            listItem = jQuery('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Basic actions', '«appName.formatForDB»_js'))
-        );
+        var actions = {};
 
         if (true === hasDisplay) {
-            contextMenu.append(
-                jQuery('<li>', { role: 'presentation' }).append(
-                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                        .attr('href', Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: currentNodeId }, true))
-                        «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
-                        .append(jQuery('<i>', class: 'fa fa-eye' }))
-                        .append(Zikula.__('Display', '«appName.formatForDB»_js'))
-                )
-            );
+            actions.display = {
+                label: /*Zikula.__(*/'Display'/*, '«appName.formatForDB»_js')*/,
+                title: /*Zikula.__(*/'Show detail page'/*, '«appName.formatForDB»_js')*/,
+                action: function (node) {
+                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
+                    document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: nodeEntityId }, true);
+                },
+                icon: 'fa fa-fw fa-eye'
+            };
         }
         if (true === hasEdit) {
-            contextMenu.append(
-                jQuery('<li>', { role: 'presentation' }).append(
-                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                        .attr('href', Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: currentNodeId }, true))
-                        «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
-                        .append(jQuery('<i>', class: 'fa fa-pencil-square-o' }))
-                        .append(Zikula.__('Edit', '«appName.formatForDB»_js'))
-                )
-            );
+            actions.edit = {
+                label: /*Zikula.__(*/'Edit'/*, '«appName.formatForDB»_js')*/,
+                title: /*Zikula.__(*/'Show edit form'/*, '«appName.formatForDB»_js')*/,
+                action: function (node) {
+                    «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
+                    document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: nodeEntityId }, true);
+                },
+                icon: 'fa fa-fw fa-pencil-square-o'
+            };
         }
-        contextMenu.append(
-            jQuery('<li>', { role: 'presentation' }).append(
-                jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                    .attr('href', '#')
-                    .append(jQuery('<i>', class: 'fa fa-plus' }))
-                    .append(Zikula.__('Add child node', '«appName.formatForDB»_js'))
-                    .click(function (evt) {
-                        evt.preventDefault();
-                        «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
-                    })
-            )
-        );
-        contextMenu.append({
-            jQuery('<li>', { role: 'presentation' }).append(
-                jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                    .attr('href', '#')
-                    .append(jQuery('<i>', class: 'fa fa-trash-o' }))
-                    .append(Zikula.__('Delete node', '«appName.formatForDB»_js'))
-                    .click(function (evt) {
-                        var confirmQuestion;
+        actions.addChildNode = {
+            label: /*Zikula.__(*/'Add child node'/*, '«appName.formatForDB»_js')*/,
+            title: /*Zikula.__(*/'Add child node'/*, '«appName.formatForDB»_js')*/,
+            action: function (node) {
+                «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
+            },
+            icon: 'fa fa-fw fa-plus'
+        };
+        actions.deleteNode = {
+            label: /*Zikula.__(*/'Delete'/*, '«appName.formatForDB»_js')*/,
+            title: /*Zikula.__(*/'Delete this node'/*, '«appName.formatForDB»_js')*/,
+            action: function (node) {
+                var confirmQuestion;
+                var amountOfChildren;
 
-                        evt.preventDefault();
-                        confirmQuestion = Zikula.__('Do you really want to remove this node?', '«appName.formatForDB»_js');
-                        if (!liRef.hasClass('z-tree-leaf')) {
-                            confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?', '«appName.formatForDB»_js');
-                        }
-                        if (false !== window.confirm(confirmQuestion)) {
-                            «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
-                        }
-                    })
-            )
-        });
+                confirmQuestion = /*Zikula.__(*/'Do you really want to remove this node?'/*, '«appName.formatForDB»_js')*/;
+                amountOfChildren = node.children.length;
+                if (amountOfChildren > 0) {
+                    confirmQuestion = /*Zikula.__(*/'Do you really want to remove this node including all child nodes?'/*, '«appName.formatForDB»_js')*/;
+                }
+                if (false !== window.confirm(confirmQuestion)) {
+                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
+                }
+            },
+            icon: 'fa fa-fw fa-trash-o'
+        };
 
-        contextMenu.append(
-            listItem = jQuery('<li>', { role: 'presentation', class: 'divider' })
-        );
-        contextMenu.append(
-            listItem = jQuery('<li>', { role: 'presentation', class: 'dropdown-header' }).append(Zikula.__('Sorting', '«appName.formatForDB»_js'))
-        );
-
-        if (!isRoot && !liRef.is(':first-child')) { // has previous sibling
-            contextMenu.append(
-                jQuery('<li>', { role: 'presentation' }).append(
-                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                        .attr('href', '#')
-                        .append(jQuery('<i>', class: 'fa fa-angle-up' }))
-                        .append(Zikula.__('Move up', '«appName.formatForDB»_js'))
-                        .click(function (evt) {
-                            evt.preventDefault();
-                            «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
-                        })
-                )
-            );
+        if (isRoot) {
+            return actions;
         }
 
-        if (!isRoot && !liRef.is(':last-child')) { // has next sibling
-            contextMenu.append(
-                jQuery('<li>', { role: 'presentation' }).append(
-                    jQuery('<a>', { role: 'menuitem', tabindex: '-1', })
-                        .attr('href', '#')
-                        .append(jQuery('<i>', class: 'fa fa-angle-down' }))
-                        .append(Zikula.__('Move down', '«appName.formatForDB»_js'))
-                        .click(function (evt) {
-                            evt.preventDefault();
-                            «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
-                        })
-                )
-            );
+        if (currentNode.is(':first-child') && currentNode.is(':last-child')) {
+            return actions;
         }
+
+        if (!currentNode.is(':first-child')) { // has previous sibling
+            actions.moveUp = {
+                label: /*Zikula.__(*/'Move up'/*, '«appName.formatForDB»_js')*/,
+                title: /*Zikula.__(*/'Move one position up'/*, '«appName.formatForDB»_js')*/,
+                action: function (node) {
+                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
+                },
+                icon: 'fa fa-fw fa-angle-up',
+                separator_before: true
+            };
+        }
+        if (!currentNode.is(':last-child')) { // has next sibling
+            actions.moveDown = {
+                label: /*Zikula.__(*/'Move down'/*, '«appName.formatForDB»_js')*/,
+                title: /*Zikula.__(*/'Move one position down'/*, '«appName.formatForDB»_js')*/,
+                action: function (node) {
+                    «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
+                },
+                icon: 'fa fa-fw fa-angle-down',
+                separator_before: currentNode.is(':first-child')
+            };
+        }
+
+        return actions;
     '''
 
     def private initTreeNodesLegacy(Application it) '''
@@ -304,14 +402,14 @@ class TreeFunctions {
             if (op !== 'addRootNode') {
                 params += '&root=' + rootId;
 
-                if (!currentNodeId) {
+                if (!«IF targets('1.3.x')»currentNodeId«ELSE»nodeEntityId«ENDIF») {
                     «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                     «ELSE»
                         «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Invalid node id', '«appName.formatForDB»_js'), 'treeInvalidNodeAlert', 'danger');
                     «ENDIF»
                 }
-                params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + currentNodeId;
+                params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + «IF targets('1.3.x')»currentNodeId«ELSE»nodeEntityId«ENDIF»;
 
                 if (op === 'moveNodeUp') {
                     params += '&direction=up';

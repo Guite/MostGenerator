@@ -555,7 +555,7 @@ class Ajax {
         «ELSE»
             /* can probably be removed
              * $createMethod = 'create' . ucfirst($objectType);
-             * $object = $this->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+             * $object = $this->get('«app.appService».' . $objectType . '_factory')->$createMethod();
              */
         «ENDIF»
 
@@ -861,7 +861,10 @@ class Ajax {
             }
         }
         $repository->recover();
-        $this->entityManager->clear(); // clear cached nodes
+        «IF !app.isLegacy»
+            $entityManager = $this->get('doctrine')->getManager();
+        «ENDIF»
+        $«IF app.isLegacy»this->«ENDIF»entityManager->clear(); // clear cached nodes
 
         «treeOperationDetermineEntityFields(app)»
 
@@ -978,11 +981,11 @@ class Ajax {
     '''
 
     def private treeOperationAddRootNode(AjaxController it, Application app) '''
-        //$this->entityManager->transactional(function($entityManager) {
+        //$«IF app.isLegacy»this->«ENDIF»entityManager->transactional(function($entityManager) {
             «IF app.isLegacy»
                 $entity = new $entityClass();
             «ELSE»
-                $entity = $this->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+                $entity = $this->get('«app.appService».' . $objectType . '_factory')->$createMethod();
             «ENDIF»
             $entityData = «IF app.isLegacy»array()«ELSE»[]«ENDIF»;
             if (!empty($titleFieldName)) {
@@ -1024,11 +1027,11 @@ class Ajax {
             throw new «IF app.isLegacy»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid parent node.'));
         }
 
-        //$this->entityManager->transactional(function($entityManager) {
+        //$«IF app.isLegacy»this->«ENDIF»entityManager->transactional(function($entityManager) {
             «IF app.isLegacy»
                 $childEntity = new $entityClass();
             «ELSE»
-                $childEntity = $this->get('«app.name.formatForDB».' . $objectType . '_factory')->$createMethod();
+                $childEntity = $this->get('«app.appService».' . $objectType . '_factory')->$createMethod();
             «ENDIF»
             $entityData = «IF app.isLegacy»array()«ELSE»[]«ENDIF»;
             $entityData[$titleFieldName] = $this->__('New child node');
@@ -1064,7 +1067,7 @@ class Ajax {
             }
             $repository->persistAsLastChildOf($childEntity, $parentEntity);
         //});
-        $this->entityManager->flush();
+        $«IF app.isLegacy»this->«ENDIF»entityManager->flush();
     '''
 
     def private treeOperationDeleteNode(AjaxController it, Application app) '''
@@ -1097,7 +1100,7 @@ class Ajax {
         }
 
         $repository->removeFromTree($entity);
-        $this->entityManager->clear(); // clear cached nodes
+        $«IF app.isLegacy»this->«ENDIF»entityManager->clear(); // clear cached nodes
     '''
 
     def private treeOperationMoveNode(AjaxController it, Application app) '''
@@ -1124,7 +1127,7 @@ class Ajax {
         } else if ($moveDirection == 'down') {
             $repository->moveDown($entity, 1);
         }
-        $this->entityManager->flush();
+        $«IF app.isLegacy»this->«ENDIF»entityManager->flush();
     '''
 
     def private treeOperationMoveNodeTo(AjaxController it, Application app) '''
@@ -1146,7 +1149,7 @@ class Ajax {
             throw new «IF app.isLegacy»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid destination node.'));
         }
 
-        //$this->entityManager->transactional(function($entityManager) {
+        //$«IF app.isLegacy»this->«ENDIF»entityManager->transactional(function($entityManager) {
             «IF app.isLegacy»
                 $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
                 $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
@@ -1165,7 +1168,7 @@ class Ajax {
             } elseif ($moveDirection == 'bottom') {
                 $repository->persistAsLastChildOf($entity, $destEntity);
             }
-            $this->entityManager->flush();
+            $«IF app.isLegacy»this->«ENDIF»entityManager->flush();
         //});
     '''
 

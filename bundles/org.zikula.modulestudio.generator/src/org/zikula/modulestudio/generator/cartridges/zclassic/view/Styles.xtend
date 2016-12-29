@@ -373,6 +373,12 @@ class Styles {
             width: 50px;
             text-align: right;
         }
+        «IF !targets('1.3.x') && hasTrees»
+
+            .vakata-context, .vakata-context ul {
+                z-index: 100;
+            }
+        «ENDIF»
     '''
 
     def private finderStyles(Application it) '''

@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.DeleteAction
 import de.guite.modulestudio.metamodel.DisplayAction
 import de.guite.modulestudio.metamodel.EditAction
 import de.guite.modulestudio.metamodel.Entity
+import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.MainAction
 import de.guite.modulestudio.metamodel.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -85,7 +86,8 @@ class Annotations {
          «' '»* @Route("/«IF isAdmin»admin/«ENDIF»«name.formatForCode»/«IF !(action instanceof DisplayAction)»«action.name.formatForCode»/«ENDIF»«actionRouteParamsForSingleEntity(action)».{_format}",
          «' '»*        requirements = {«actionRouteRequirementsForSingleEntity(action)», "_format" = "html«IF action instanceof DisplayAction && app.getListOfDisplayFormats.size > 0»|«FOR format : app.getListOfDisplayFormats SEPARATOR '|'»«format»«ENDFOR»«ENDIF»"},
          «' '»*        defaults = {«IF action instanceof EditAction»«actionRouteDefaultsForSingleEntity(action)», «ENDIF»"_format" = "html"},
-         «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}
+         «' '»*        methods = {"GET"«IF action instanceof EditAction || action instanceof DeleteAction», "POST"«ENDIF»}«IF tree != EntityTreeType.NONE»,
+         «' '»*        options={"expose"=true}«ENDIF»
          «' '»* )
     '''
 

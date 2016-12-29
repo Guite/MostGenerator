@@ -224,7 +224,7 @@ class Plugins {
         {
             return [
                 «IF hasTrees»
-                    new \Twig_SimpleFunction('«appNameLower»_treeData', [$this, 'getTreeData']),
+                    new \Twig_SimpleFunction('«appNameLower»_treeData', [$this, 'getTreeData'], ['is_safe' => ['html']]),
                     new \Twig_SimpleFunction('«appNameLower»_treeSelection', [$this, 'getTreeSelection']),
                 «ENDIF»
                 «IF generateModerationPanel && needsApproval»

@@ -171,10 +171,7 @@ class ViewHierarchy {
             {/if}
         «ELSE»
             {# purpose of this template: «nameMultiple.formatForDisplay» tree items #}
-            {% set hasNodes = false %}
-            {% if items|default and items is iterable and items|length > 0 %}
-                {% set hasNodes = true %}
-            {% endif %}
+            {% set hasNodes = items|default and items is iterable and items|length > 0 %}
             {% set idPrefix = '«name.formatForCode.toFirstLower»Tree' ~ rootId %}
 
             <p>
@@ -182,10 +179,12 @@ class ViewHierarchy {
                 <input type="search" id="{{ idPrefix }}SearchTerm" value="" />
             </p>
 
+            <p><a href="#" id="{{ idPrefix }}Expand" title="{{ __('Expand all nodes') }}">{{ __('Expand all') }}</a> | <a href="#" id="{{ idPrefix }}Collapse" title="{{ __('Collapse all nodes') }}">{{ __('Collapse all') }}</a></p>
+
             <div id="{{ idPrefix }}" class="tree-container">
                 {% if hasNodes %}
                     <ul id="itemTree{{ rootId }}">
-                        {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, controller=area, root=rootId) }}
+                        {{ «appName.formatForDB»_treeData(objectType='«name.formatForCode»', tree=items, controller='«name.formatForCode»', rootId=rootId) }}
                     </ul>
                 {% endif %}
             </div>
@@ -199,49 +198,7 @@ class ViewHierarchy {
                 /* <![CDATA[ */
                     ( function($) {
                         $(document).ready(function() {
-                            «application.vendorAndName»InitTreeNodes('«name.formatForCode»', '{{ rootId|e('js') }}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
-
-                            var tree = $('#{{ idPrefix|e('js') }}').jstree({
-                                'core': {
-                                    'multiple': false,
-                                    'check_callback': true
-                                },
-                                'dnd': {
-                                    'copy': false,
-                                    'is_draggable': function(node) {
-                                        // disable drag and drop for root category
-                                        var inst = node.inst;
-                                        var level = inst.get_path().length;
-
-                                        return level > 1 ? true : false;
-                                    }
-                                },
-                                'state': {
-                                    'key': '{{ idPrefix|e('js') }}'
-                                },
-                                'plugins': [ 'dnd', 'search', 'state', 'wholerow' ]
-                            });
-
-                            tree.on('move_node.jstree', function (e, data) {
-                                var node = data.node;
-                                var parentId = data.parent;
-                                var parentNode = $tree.jstree('get_node', parentId, false);
-
-                                «application.vendorAndName»TreeSave(node, parentNode, 'bottom');
-                            });
-
-                            var searchStartDelay = false;
-                            $('#{{ idPrefix|e('js') }}SearchTerm').keyup(function () {
-                                if (searchStartDelay) {
-                                    clearTimeout(searchStartDelay);
-                                }
-                                searchStartDelay = setTimeout(function () {
-                                    var v = $('#{{ idPrefix|e('js') }}SearchTerm').val();
-                                    $('#{{ idPrefix|e('js') }}').jstree(true).search(v);
-                                }, 250);
-                            });
-
-                            $('.dropdown-toggle').dropdown();
+                            «application.vendorAndName»InitTree('{{ idPrefix|e('js') }}', '«name.formatForCode»', '{{ rootId|e('js') }}', «hasActions('display').displayBool», «(hasActions('edit') && !readOnly).displayBool»);
                         });
                     })(jQuery);
                 /* ]]> */

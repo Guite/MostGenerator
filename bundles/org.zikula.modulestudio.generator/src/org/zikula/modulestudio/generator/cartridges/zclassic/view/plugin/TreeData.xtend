@@ -34,7 +34,11 @@ class TreeData {
          *   - objectType: Name of treated object type.
          *   - tree:       Object collection with tree items.
          *   - controller: Optional name of controller, defaults to 'user'.
+         «IF targets('1.3.x')»
          *   - root:       Optional id of root node, defaults to 1.
+         «ELSE»
+         *   - rootId:     Optional id of root node, defaults to 1.
+         «ENDIF»
         «IF targets('1.3.x')»
             «' '»*   - sortable:   Whether tree nodes should be sortable or not, defaults to true.
             «' '»*   - assign:     If set, the results are assigned to the corresponding variable instead of printed out.
@@ -45,7 +49,7 @@ class TreeData {
          *
          * @return string The output of the plugin
          */
-        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TreeData(«IF targets('1.3.x')»$params, $view«ELSE»$objectType, $tree, $controller = 'user', $root = 1«ENDIF»)
+        «IF !targets('1.3.x')»public «ENDIF»function «IF targets('1.3.x')»smarty_function_«appName.formatForDB»«ELSE»get«ENDIF»TreeData(«IF targets('1.3.x')»$params, $view«ELSE»$objectType, $tree, $controller = 'user', $rootId = 1«ENDIF»)
         {
             «IF targets('1.3.x')»
                 if (!isset($params['objectType']) || empty($params['objectType'])) {
@@ -83,7 +87,7 @@ class TreeData {
                 $entityManager = $serviceManager->get«IF targets('1.3.x')»Service«ENDIF»('«entityManagerService»');
                 $repository = $entityManager->getRepository($entityClass);
             «ELSE»
-                $repository = $serviceManager->get('«appService».' . $params['objectType'] . '_factory')->getRepository();
+                $repository = $serviceManager->get('«appService».' . $objectType . '_factory')->getRepository();
             «ENDIF»
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
@@ -123,8 +127,10 @@ class TreeData {
                 // get output result
                 $result = $tree->getHTML();
             «ELSE»
-                foreach ($params['tree'] as $item) {
-                    $result .= processTreeItemWithChildren($objectType, $controller, $item, $rootId, $descriptionFieldName, $controllerHasEditAction);
+                foreach ($tree as $node) {
+                    if ($node->getLvl() < 1) {
+                        $result .= $this->processTreeItemWithChildren($objectType, $controller, $node, $rootId, $descriptionFieldName, $controllerHasEditAction);
+                    }
                 }
             «ENDIF»
 
@@ -140,37 +146,28 @@ class TreeData {
         }
         «IF !targets('1.3.x')»
 
-            function processTreeItemWithChildren($objectType, $controller, $node, $rootId, $descriptionFieldName, $controllerHasEditAction)
+            protected function processTreeItemWithChildren($objectType, $controller, $node, $rootId, $descriptionFieldName, $controllerHasEditAction)
             {
                 $output = '';
-                $idPrefix = 'tree' . $rootId . 'node_' . $item->createCompositeIdentifier();
-                $title = ($descriptionFieldName != '' ? strip_tags($item[$descriptionFieldName]) : '');
-                $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $item->getLvl() . '">';
+                $idPrefix = 'tree' . $rootId . 'node_' . $node->createCompositeIdentifier();
+                $title = ($descriptionFieldName != '' ? strip_tags($node[$descriptionFieldName]) : '');
+                $liTag = '<li id="' . $idPrefix . '" title="' . str_replace('"', '', $title) . '" class="lvl' . $node->getLvl() . '">';
 
-                $liContent = $item->getTitleFromDisplayPattern();
+                $liContent = $node->getTitleFromDisplayPattern();
                 if ($controllerHasEditAction) {
-                    $urlArgs = $item->createUrlArgs();
-                    $routeArea = $controller == 'admin' ? 'admin' : '';
+                    $urlArgs = $node->createUrlArgs();
+                    $routeArea = $controller == 'admin' ? 'admin' : '';«/* TODO fix this (#715) */»
                     $url = $this->router->generate('«appName.formatForDB»_' . strtolower($objectType) . '_' . $routeArea . 'edit', $urlArgs);
 
                     $liContent = '<a href="' . $url . '" title="' . str_replace('"', '', $title) . '">' . $liContent . '</a>';
-
-                    // add dropdown for available node-related actions
-                    $liContent .= '
-                        <div class="dropdown">
-                            <a id="' . $idPrefix . 'DropDownToggle" role="button" data-toggle="dropdown" data-target="#" href="javascript:void(0);" class="dropdown-toggle"><span class="caret"></span></a>
-                            <ul id="' . $idPrefix . 'DropDownMenu" class="dropdown-menu" role="menu" aria-labelledby="' . $idPrefix . 'DropDownToggle">
-                            </ul>
-                        </div>
-                    ';
                 }
 
                 $treeItem = $liTag . $liContent;
 
-                if (count($item->getChildren()) > 0) {
+                if (count($node->getChildren()) > 0) {
                     $treeItem .= '<ul>';
-                    foreach ($item->getChildren() as $childNode) {
-                        $treeItem .= processTreeItemWithChildren($objectType, $controller, $childNode, $rootId, $descriptionFieldName, $controllerHasEditAction);
+                    foreach ($node->getChildren() as $childNode) {
+                        $treeItem .= $this->processTreeItemWithChildren($objectType, $controller, $childNode, $rootId, $descriptionFieldName, $controllerHasEditAction);
                     }
                     $treeItem .= '</ul>';
                 }

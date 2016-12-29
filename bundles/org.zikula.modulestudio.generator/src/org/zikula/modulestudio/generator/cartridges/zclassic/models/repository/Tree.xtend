@@ -64,7 +64,7 @@ class Tree {
             $slimMode = false;
 
             // get all root nodes
-            $qb = $this->genericBaseQuery('tbl.lvl = 0', '', $useJoins, $slimMode);
+            $qb = $this->genericBaseQuery('tbl.lvl«IF application.targets('1.3.x')» = «ELSE»:eq:«ENDIF»0', '', $useJoins, $slimMode);
             $query = $this->getQueryFromBuilder($qb);
             $rootNodes = $query->getResult();
 
