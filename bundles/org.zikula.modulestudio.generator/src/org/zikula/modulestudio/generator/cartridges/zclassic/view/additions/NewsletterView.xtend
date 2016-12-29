@@ -115,7 +115,7 @@ class NewsletterView {
                 </div>
             «ENDIF»
         </div>
-        <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group hidden«ENDIF»"«IF !targets('1.3.x')» data-switch="«appName.toFirstLower»Args_{$objectType}_template" data-switch-value="custom"«ENDIF»>
+        <div id="customTemplateArea_{$objectType}" class="«IF targets('1.3.x')»z-formrow z-hide«ELSE»form-group«ENDIF»"«IF !targets('1.3.x')» data-switch="«appName.toFirstLower»Args_{$objectType}_template" data-switch-value="custom"«ENDIF»>
             <label for="«appName.toFirstLower»Args_{$objectType}_customtemplate"«IF !targets('1.3.x')» class="col-sm-3 control-label"«ENDIF»>{gt text='Custom template'}:</label>
             «IF !targets('1.3.x')»
                 <div class="col-sm-9">
