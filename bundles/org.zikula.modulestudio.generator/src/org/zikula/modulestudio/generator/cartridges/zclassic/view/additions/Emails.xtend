@@ -71,11 +71,11 @@ class Emails {
     '''
 
     def private notifyCreatorTemplate(Entity it) '''
-        <p>{{ __f('Hello %s', recipient.name) }},</p>
+        <p>{{ __f('Hello %s', { '%s': recipient.name }) }},</p>
 
-        <p>{{ __f('Your «name.formatForDisplay» "%s" has been changed., mailData.name) }}</p>
+        <p>{{ __f('Your «name.formatForDisplay» "%s" has been changed., { '%s': mailData.name }) }}</p>
 
-        <p>{{ __f('It\'s new state is: %s', mailData.newState) }}</p>
+        <p>{{ __f('It\'s new state is: %s', { '%s': mailData.newState }) }}</p>
 
         {% if mailData.remarks is not empty %}
             <p>{{ __('Additional remarks:') }} {{ mailData.remarks }}</p>
@@ -91,7 +91,7 @@ class Emails {
             «ENDIF»
         «ENDIF»
 
-        <p>{{ __f('This mail has been sent automatically by %s.', getModVar('ZConfig', 'sitename')) }}</p>
+        <p>{{ __f('This mail has been sent automatically by %s.', { '%s': getModVar('ZConfig', 'sitename') }) }}</p>
     '''
 
     def private notifyModeratorTemplateLegacy(Entity it) '''
@@ -118,11 +118,11 @@ class Emails {
     '''
 
     def private notifyModeratorTemplate(Entity it) '''
-        <p>{{ __f('Hello %s', recipient.name) }},</p>
+        <p>{{ __f('Hello %s', { '%s': recipient.name }) }},</p>
 
-        <p>{{ __f('A user changed his «name.formatForDisplay» "%s".', mailData.name) }}</p>
+        <p>{{ __f('A user changed his «name.formatForDisplay» "%s".', { '%s': mailData.name }) }}</p>
 
-        <p>{{ __f('It\'s new state is: %s', mailData.newState) }}</p>
+        <p>{{ __f('It\'s new state is: %s', { '%s': mailData.newState }) }}</p>
 
         {% if mailData.remarks is not empty %}
             <p>{{ __('Additional remarks:') }} {{ mailData.remarks }}</p>
@@ -137,6 +137,6 @@ class Emails {
             <p>{{ __('Edit the «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
         «ENDIF»
 
-        <p>{{ __f('This mail has been sent automatically by %s.', getModVar('ZConfig', 'sitename')) }}</p>
+        <p>{{ __f('This mail has been sent automatically by %s.', { '%s': getModVar('ZConfig', 'sitename') }) }}</p>
     '''
 }
