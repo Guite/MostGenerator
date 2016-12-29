@@ -103,13 +103,13 @@ class Repository {
         «IF app.targets('1.3.x')»
         abstract class «app.appName»_Entity_Repository_Base_Abstract«name.formatForCodeCapital» extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF hasTranslatableFields»TranslationRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital»Repository extends «IF tree != EntityTreeType.NONE»«tree.literal.toLowerCase.toFirstUpper»TreeRepository«ELSEIF hasTranslatableFields»TranslationRepository«ELSEIF hasSortableFields»SortableRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
-            «IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
+            «/*IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
                 use «tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
 
-            «ENDIF»
+            «ENDIF*/»
             «val stringFields = fields.filter(StringField).filter[!password]»
             /**
              * @var string The default sorting field/expression
@@ -237,18 +237,17 @@ class Repository {
         «ENDIF»
         use Doctrine\Common\Collections\ArrayCollection;
         «IF tree != EntityTreeType.NONE»
-            «IF app.targets('1.3.x')»
+            «/*IF app.targets('1.3.x')*/»
                 use Gedmo\Tree\Entity\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepository;
-            «ELSE»
+            «/*ELSE»
                 use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
-            «ENDIF»
+            «ENDIF*/»
             use Doctrine\ORM\EntityManager;
-        «ENDIF»
-        «IF !app.targets('1.3.x') && hasTranslatableFields»
+        «ELSEIF !app.targets('1.3.x') && hasTranslatableFields»
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;
-        «ELSEIF !app.targets('1.3.x')»
+        «ELSE/*IF !app.targets('1.3.x')*/»
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         use Doctrine\ORM\Query;
