@@ -127,14 +127,14 @@ class Repository {
                  */
                 protected $request;
             «ENDIF»
-            «IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
+            «/*IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
 
                 /**
                  * Constructor.
                  *
                  * @param EntityManager $em    The entity manager
                  * @param ClassMetadata $class The class meta data
-                 */
+                 * /
                 public function __construct(EntityManager $em, ClassMetadata $class)
                 {
                     parent::__construct($em, $class);
@@ -150,7 +150,7 @@ class Repository {
                      * @param array  $args   Additional arguments
                      *
                      * @return mixed $result
-                     */
+                     * /
                     public function __call($method, $args)
                     {
                         $result = $this->callTreeUtilMethods($method, $args);
@@ -162,7 +162,7 @@ class Repository {
                         return parent::__call($method, $args);
                     }
                 «ENDIF»
-            «ENDIF»
+            «ENDIF*/»
 
             /**
              * Retrieves an array with all fields which can be used for sorting instances.
@@ -250,6 +250,9 @@ class Repository {
         «ELSE/*IF !app.targets('1.3.x')*/»
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
+        «/*IF !app.targets('1.3.x') && tree != EntityTreeType.NONE»
+            use Doctrine\ORM\Mapping\ClassMetadata;
+        «ENDIF*/»
         use Doctrine\ORM\Query;
         use Doctrine\ORM\QueryBuilder;
         «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
