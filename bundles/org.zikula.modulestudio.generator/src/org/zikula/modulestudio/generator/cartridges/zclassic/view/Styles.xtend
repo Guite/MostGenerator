@@ -104,6 +104,12 @@ class Styles {
         «validationStyles»
         «autoCompletion»
         «viewAdditions»
+        «IF !targets('1.3.x') && hasTrees»
+
+            .vakata-context, .vakata-context ul {
+                z-index: 100;
+            }
+        «ENDIF»
     '''
 
     def private validationStyles(Application it) '''
@@ -335,7 +341,7 @@ class Styles {
     '''
 
     def private viewAdditions(Application it) '''
-        «IF !controllers.filter[hasActions('view')].empty»
+        «IF hasViewActions»
             «IF !targets('1.3.x')»
                 /** fix dropdown visibility inside responsive tables */
                 div.«cssPrefix»-view .table-responsive {
@@ -343,6 +349,13 @@ class Styles {
                 }
             «ENDIF»
             «viewFilterForm»
+            «IF !targets('1.3.x')»
+
+                div.«cssPrefix»-view .avatar img {
+                    width: auto;
+                    max-height: 24px;
+                }
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -373,12 +386,6 @@ class Styles {
             width: 50px;
             text-align: right;
         }
-        «IF !targets('1.3.x') && hasTrees»
-
-            .vakata-context, .vakata-context ul {
-                z-index: 100;
-            }
-        «ENDIF»
     '''
 
     def private finderStyles(Application it) '''
