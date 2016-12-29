@@ -208,6 +208,8 @@ class Notification {
 
         /**
          * Sends a mail to either an item's creator or a group of moderators.
+         *
+         * @return boolean
          */
         public function process($args)
         {
