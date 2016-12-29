@@ -248,7 +248,7 @@ class Repository {
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;
-        «ELSE»
+        «ELSEIF !app.targets('1.3.x')»
             use Doctrine\ORM\EntityRepository;
         «ENDIF»
         use Doctrine\ORM\Query;
