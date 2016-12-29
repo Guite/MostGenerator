@@ -147,6 +147,13 @@ class Notification {
          */
         private $action = '';
 
+        /**
+         * Name of the application.
+         *
+         * @var string
+         */
+        protected $name;
+
         «IF !targets('1.3.x')»
             /**
              * Constructor.
@@ -185,6 +192,7 @@ class Notification {
                 $this->templating = $twig;
                 $this->mailerApi = $mailerApi;
                 $this->workflowHelper = $workflowHelper;
+                $this->name = '«appName»';
             }
 
             /**
