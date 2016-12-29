@@ -243,7 +243,8 @@ class Repository {
                 use Gedmo\Tree\Traits\Repository\«tree.literal.toLowerCase.toFirstUpper»TreeRepositoryTrait;
             «ENDIF»
             use Doctrine\ORM\EntityManager;
-        «ELSEIF !app.targets('1.3.x') && hasTranslatableFields»
+        «ENDIF»
+        «IF !app.targets('1.3.x') && hasTranslatableFields»
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF hasSortableFields»
             use Gedmo\Sortable\Entity\Repository\SortableRepository;
