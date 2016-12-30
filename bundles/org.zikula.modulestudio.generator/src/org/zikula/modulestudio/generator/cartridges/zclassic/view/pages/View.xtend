@@ -4,6 +4,7 @@ import de.guite.modulestudio.metamodel.BooleanField
 import de.guite.modulestudio.metamodel.DataObject
 import de.guite.modulestudio.metamodel.DecimalField
 import de.guite.modulestudio.metamodel.DerivedField
+import de.guite.modulestudio.metamodel.EmailField
 import de.guite.modulestudio.metamodel.Entity
 import de.guite.modulestudio.metamodel.EntityTreeType
 import de.guite.modulestudio.metamodel.EntityWorkflowType
@@ -15,6 +16,7 @@ import de.guite.modulestudio.metamodel.NamedObject
 import de.guite.modulestudio.metamodel.OneToManyRelationship
 import de.guite.modulestudio.metamodel.OneToOneRelationship
 import de.guite.modulestudio.metamodel.Relationship
+import de.guite.modulestudio.metamodel.UrlField
 import java.util.List
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ItemActionsView
@@ -716,6 +718,8 @@ class View {
             IntegerField: 'right'
             DecimalField: 'right'
             FloatField: 'right'
+            EmailField: 'center'
+            UrlField: 'center'
             default: 'left'
         }
     }
