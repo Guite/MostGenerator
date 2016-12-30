@@ -1012,7 +1012,7 @@ class Ajax {
                     $success = $workflowHelper->executeAction($entity, $action);
                 }
             } catch(\Exception $e) {
-                «IF app.isLegacy»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', «IF app.isLegacy»array($action)«ELSE»['%s' => $action]«ENDIF»));
+                «IF app.isLegacy»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', «IF app.isLegacy»array($action)«ELSE»['%s' => $action]«ENDIF») . '  ' . $e->getMessage());
             }
         //});
     '''
@@ -1053,7 +1053,7 @@ class Ajax {
                     $success = $workflowHelper->executeAction($childEntity, $action);
                 }
             } catch(\Exception $e) {
-                «IF app.isLegacy»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', «IF app.isLegacy»array($action)«ELSE»['%s' => $action]«ENDIF»));
+                «IF app.isLegacy»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', «IF app.isLegacy»array($action)«ELSE»['%s' => $action]«ENDIF») . '  ' . $e->getMessage());
             }
 
             //$childEntity->setParent($parentEntity);
@@ -1096,7 +1096,7 @@ class Ajax {
                 $success = $workflowHelper->executeAction($entity, $action);
             }
         } catch(\Exception $e) {
-            «IF app.isLegacy»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', «IF app.isLegacy»array($action)«ELSE»['%s' => $action]«ENDIF»));
+            «IF app.isLegacy»LogUtil::registerError«ELSE»throw new \RuntimeException«ENDIF»($this->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', «IF app.isLegacy»array($action)«ELSE»['%s' => $action]«ENDIF») . '  ' . $e->getMessage());
         }
 
         $repository->removeFromTree($entity);

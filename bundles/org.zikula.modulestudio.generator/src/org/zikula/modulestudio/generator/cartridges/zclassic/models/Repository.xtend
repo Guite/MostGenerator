@@ -1699,10 +1699,10 @@ class Repository {
                 } catch(\Exception $e) {
                     «IF app.targets('1.3.x')»
                         $dom = ZLanguage::getModuleDomain($this->name);
-                        LogUtil::registerError(__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action), $dom));
+                        LogUtil::registerError(__f('Sorry, but an error occured during the %s action. Please apply the changes again!', array($action), $dom) . '  ' . $e->getMessage());
                     «ELSE»
                         $flashBag = $session->getFlashBag();
-                        $flashBag->add('error', $translator->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', ['%s' => $action]));
+                        $flashBag->add('error', $translator->__f('Sorry, but an error occured during the %s action. Please apply the changes again!', ['%s' => $action]) . '  ' . $e->getMessage());
                     «ENDIF»
                 }
 
