@@ -326,7 +326,6 @@ class ExternalView {
             {{ pageAddAsset('stylesheet', asset('bootstrap/css/bootstrap-theme.min.css')) }}
             {{ pageAddAsset('javascript', asset('jquery/jquery.min.js')) }}
             {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-            {#{ pageAddAsset('javascript', pagevars.homepath ~ 'javascript/helpers/Zikula.js') }#}«/* still required for Gettext */»
             {{ pageAddAsset('javascript', zasset('@«app.appName»:js/«app.appName».Finder.js')) }}
         </head>
         <body>

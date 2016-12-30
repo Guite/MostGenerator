@@ -70,7 +70,6 @@ class Layout {
             «/*{{ pageAddAsset('javascript', 'jquery-ui') }}*/»
             {{ pageAddAsset('stylesheet', asset('jquery-ui/themes/base/jquery-ui.min.css')) }}
             {{ pageAddAsset('javascript', asset('bootstrap/js/bootstrap.min.js')) }}
-            {#{ pageAddAsset('javascript', 'zikula') }}{# still required for Gettext #}
             «IF hasUploads»
                 {{ pageAddAsset('javascript', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.min.js')) }}
                 {{ pageAddAsset('stylesheet', asset('bootstrap-media-lightbox/bootstrap-media-lightbox.css')) }}
@@ -81,11 +80,6 @@ class Layout {
             «ENDIF»
             {{ pageAddAsset('javascript', zasset('@«appName»:js/«appName».js')) }}
             {{ polyfill([«IF hasGeographical»'geolocation', «ENDIF»'forms', 'forms-ext']) }}
-
-            {# initialise additional gettext domain for translations within javascript #}
-            {# blocked by https://github.com/zikula/core/issues/2601 #}
-            {# commented out because not sure yet whether this is still required in 1.4.x #}
-            {# { pageAddVar('jsgettext', '«appName.formatForDB»_js:«appName»') } #}
         {% endblock %}
 
         {% if app.request.query.get('theme') != 'ZikulaPrinterTheme' %}
