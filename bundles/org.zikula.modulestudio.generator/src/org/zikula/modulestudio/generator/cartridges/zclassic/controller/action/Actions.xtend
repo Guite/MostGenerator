@@ -345,12 +345,15 @@ class Actions {
             // the number of items displayed on a page for pagination
             «IF isLegacy»
                 $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
+                if ($resultsPerPage == 0) {
+                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
+                }
             «ELSE»
                 $resultsPerPage = $request->query->getInt('num', 0);
+                if (in_array($resultsPerPage, [0, 10])) {
+                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
+                }
             «ENDIF»
-            if ($resultsPerPage == 0) {
-                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-            }
 
             // retrieve item list with pagination
             «IF isLegacy»
@@ -466,12 +469,15 @@ class Actions {
             // the number of items displayed on a page for pagination
             «IF isLegacy»
                 $resultsPerPage = (int) $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
+                if ($resultsPerPage == 0) {
+                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
+                }
             «ELSE»
                 $resultsPerPage = $num;
+                if (in_array($resultsPerPage, [0, 10])) {
+                    $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
+                }
             «ENDIF»
-            if ($resultsPerPage == 0) {
-                $resultsPerPage = $this->getVar($objectType . 'EntriesPerPage', 10);
-            }
         }
 
         // parameter for used sorting field
