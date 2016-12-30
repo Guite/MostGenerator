@@ -57,14 +57,16 @@ class Emails {
             <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
         {/if}
 
-        «IF application.hasUserController»
-            «IF application.getMainUserController.hasActions('display')»
-                <p>{gt text='Link to your «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
+        {if $mailData.newState ne 'deleted'}
+            «IF application.hasUserController»
+                «IF application.getMainUserController.hasActions('display')»
+                    <p>{gt text='Link to your «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
+                «ENDIF»
+                «IF application.getMainUserController.hasActions('edit')»
+                    <p>{gt text='Edit your «name.formatForDisplay»:'} <a href="{$mailData.editUrl|safetext}" title="{gt text='Edit'}">{$mailData.editUrl|safetext}</a></p>
+                «ENDIF»
             «ENDIF»
-            «IF application.getMainUserController.hasActions('edit')»
-                <p>{gt text='Edit your «name.formatForDisplay»:'} <a href="{$mailData.editUrl|safetext}" title="{gt text='Edit'}">{$mailData.editUrl|safetext}</a></p>
-            «ENDIF»
-        «ENDIF»
+        {/if}
 
         <p>{gt text='This mail has been sent automatically by %s.' tag=$modvars.ZConfig.sitename}</p>
     '''
@@ -80,14 +82,16 @@ class Emails {
             <p>{{ __('Additional remarks:') }}<br />{{ mailData.remarks|nl2br }}</p>
         {% endif %}
 
-        «IF application.hasUserController»
-            «IF application.getMainUserController.hasActions('display')»
-                <p>{{ __('Link to your «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+        {% if mailData.newState != 'deleted' %}
+            «IF application.hasUserController»
+                «IF application.getMainUserController.hasActions('display')»
+                    <p>{{ __('Link to your «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+                «ENDIF»
+                «IF application.getMainUserController.hasActions('edit')»
+                    <p>{{ __('Edit your «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
+                «ENDIF»
             «ENDIF»
-            «IF application.getMainUserController.hasActions('edit')»
-                <p>{{ __('Edit your «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
-            «ENDIF»
-        «ENDIF»
+        {% endif %}
 
         <p>{{ __f('This mail has been sent automatically by %s.', { '%s': getModVar('ZConfig', 'sitename') }) }}</p>
     '''
@@ -103,14 +107,16 @@ class Emails {
             <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
         {/if}
 
-        «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
-            || application.hasUserController && application.getMainUserController.hasActions('display')»
-            <p>{gt text='Link to the «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
-        «ENDIF»
-        «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('edit')
-            || application.hasUserController && application.getMainUserController.hasActions('edit')»
-            <p>{gt text='Edit the «name.formatForDisplay»:'} <a href="{$mailData.editUrl|safetext}" title="{gt text='Edit'}">{$mailData.editUrl|safetext}</a></p>
-        «ENDIF»
+        {if $mailData.newState ne 'deleted'}
+            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
+                || application.hasUserController && application.getMainUserController.hasActions('display')»
+                <p>{gt text='Link to the «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
+            «ENDIF»
+            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('edit')
+                || application.hasUserController && application.getMainUserController.hasActions('edit')»
+                <p>{gt text='Edit the «name.formatForDisplay»:'} <a href="{$mailData.editUrl|safetext}" title="{gt text='Edit'}">{$mailData.editUrl|safetext}</a></p>
+            «ENDIF»
+        {/if}
 
         <p>{gt text='This mail has been sent automatically by %s.' tag=$modvars.ZConfig.sitename}</p>
     '''
@@ -126,14 +132,16 @@ class Emails {
             <p>{{ __('Additional remarks:') }}<br />{{ mailData.remarks|nl2br }}</p>
         {% endif %}
 
-        «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
-            || application.hasUserController && application.getMainUserController.hasActions('display')»
-            <p>{{ __('Link to the «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
-        «ENDIF»
-        «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('edit')
-            || application.hasUserController && application.getMainUserController.hasActions('edit')»
-            <p>{{ __('Edit the «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
-        «ENDIF»
+        {% if mailData.newState != 'deleted' %}
+            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
+                || application.hasUserController && application.getMainUserController.hasActions('display')»
+                <p>{{ __('Link to the «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
+            «ENDIF»
+            «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('edit')
+                || application.hasUserController && application.getMainUserController.hasActions('edit')»
+                <p>{{ __('Edit the «name.formatForDisplay»:') }} <a href="{{ mailData.editUrl|e('html_attr') }}" title="{{ __('Edit') }}">{{ mailData.editUrl }}</a></p>
+            «ENDIF»
+        {% endif %}
 
         <p>{{ __f('This mail has been sent automatically by %s.', { '%s': getModVar('ZConfig', 'sitename') }) }}</p>
     '''
