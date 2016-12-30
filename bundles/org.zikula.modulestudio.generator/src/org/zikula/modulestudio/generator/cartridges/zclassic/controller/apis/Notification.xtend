@@ -57,7 +57,6 @@ class Notification {
         use Zikula\Core\Doctrine\EntityAccess;
         use Zikula\ExtensionsModule\Api\VariableApi;
         use Zikula\MailerModule\Api\MailerApi;
-        use Zikula\UsersModule\Api\CurrentUserApi;
         use «appNamespace»\Helper\WorkflowHelper;
 
         /**
@@ -97,11 +96,6 @@ class Notification {
              * @var VariableApi
              */
             protected $variableApi;
-
-            /**
-             * @var CurrentUserApi
-             */
-            private $currentUserApi;
 
             /**
              * @var Twig_Environment
@@ -165,7 +159,6 @@ class Notification {
              * @param KernelInterface     $kernel         Kernel service instance
              * @param RequestStack        $requestStack   RequestStack service instance
              * @param VariableApi         $variableApi    VariableApi service instance
-             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
              * @param Twig_Environment    $twig           Twig service instance
              * @param MailerApi           $mailerApi      MailerApi service instance
              * @param WorkflowHelper      $workflowHelper WorkflowHelper service instance
@@ -177,7 +170,6 @@ class Notification {
                 KernelInterface $kernel,
                 RequestStack $requestStack,
                 VariableApi $variableApi,
-                CurrentUserApi $currentUserApi,
                 Twig_Environment $twig,
                 MailerApi $mailerApi,
                 WorkflowHelper $workflowHelper)
@@ -188,7 +180,6 @@ class Notification {
                 $this->kernel = $kernel;
                 $this->request = $requestStack->getMasterRequest();
                 $this->variableApi = $variableApi;
-                $this->currentUserApi = $currentUserApi;
                 $this->templating = $twig;
                 $this->mailerApi = $mailerApi;
                 $this->workflowHelper = $workflowHelper;
@@ -228,12 +219,6 @@ class Notification {
             $this->recipientType = $args['recipientType'];
             $this->action = $args['action'];
             $this->entity = $args['entity'];
-
-            «IF targets('1.3.x')»
-                $uid = UserUtil::getVar('uid');
-            «ELSE»
-                $uid = $this->currentUserApi->get('uid');
-            «ENDIF»
 
             $this->collectRecipients();
 
@@ -344,7 +329,7 @@ class Notification {
             // send one mail per recipient
             $totalResult = true;
             foreach ($this->recipients as $recipient) {
-                if (!isset($recipient['username']) || !$recipient['username']) {
+                if (!isset($recipient['name']) || !$recipient['name']) {
                     continue;
                 }
                 if (!isset($recipient['email']) || !$recipient['email']) {
@@ -384,7 +369,7 @@ class Notification {
                     $message->setFrom([$adminMail => $siteName]);
                     $message->setTo([$recipient['email'] => $recipient['name']]);
 
-                    $totalResult &= $this->mailerApi->sendMessage($message, $subject, $msgBody, $altBody, $html);
+                    $totalResult &= $this->mailerApi->sendMessage($message, $subject, $body, $altBody, $html);
                 «ENDIF»
             }
 

@@ -268,7 +268,7 @@ class Definition {
                 <operation>update</operation>
             «ENDIF»
             «IF wfType != EntityWorkflowType.NONE»
-                «notifyCall(id, state)»
+                «notifyCall(id, nextState)»
             «ENDIF»
         </action>
 

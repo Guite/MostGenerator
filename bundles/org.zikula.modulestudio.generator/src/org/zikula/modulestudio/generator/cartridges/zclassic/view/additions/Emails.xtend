@@ -54,7 +54,7 @@ class Emails {
         <p>{gt text='It\'s new state is: %s' tag=$mailData.newState}</p>
 
         {if $mailData.remarks ne ''}
-            <p>{gt text='Additional remarks:'} {$mailData.remarks|safetext}</p>
+            <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
         {/if}
 
         «IF application.hasUserController»
@@ -78,7 +78,7 @@ class Emails {
         <p>{{ __f('It\'s new state is: %s', { '%s': mailData.newState }) }}</p>
 
         {% if mailData.remarks is not empty %}
-            <p>{{ __('Additional remarks:') }} {{ mailData.remarks }}</p>
+            <p>{{ __('Additional remarks:') }}<br />{{ mailData.remarks|nl2br }}</p>
         {% endif %}
 
         «IF application.hasUserController»
@@ -102,7 +102,7 @@ class Emails {
         <p>{gt text='It\'s new state is: %s' tag=$mailData.newState}</p>
 
         {if $mailData.remarks ne ''}
-            <p>{gt text='Additional remarks:'} {$mailData.remarks|safetext}</p>
+            <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
         {/if}
 
         «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
@@ -125,7 +125,7 @@ class Emails {
         <p>{{ __f('It\'s new state is: %s', { '%s': mailData.newState }) }}</p>
 
         {% if mailData.remarks is not empty %}
-            <p>{{ __('Additional remarks:') }} {{ mailData.remarks }}</p>
+            <p>{{ __('Additional remarks:') }}<br />{{ mailData.remarks|nl2br }}</p>
         {% endif %}
 
         «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
