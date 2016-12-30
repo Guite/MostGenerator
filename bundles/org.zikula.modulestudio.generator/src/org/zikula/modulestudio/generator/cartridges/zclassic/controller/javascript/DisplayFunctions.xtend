@@ -471,7 +471,7 @@ class DisplayFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
+                        «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Success'), data.message, 'toggle' + idSuffix + 'DoneAlert', 'success');
                     }*/
 
                     idSuffix = idSuffix.toLowerCase();
@@ -486,7 +486,7 @@ class DisplayFunctions {
                 })«/*.fail(function(jqXHR, textStatus) {
                     // nothing to do yet
                     var idSuffix = fieldName + '_' + itemId;
-                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Zikula.__('Error', '«appName.formatForDB»_js'), Zikula.__('Could not persist your change.', '«appName.formatForDB»_js'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('#toggle' + idSuffix), Translator.__('Error'), Translator.__('Could not persist your change.'), 'toggle' + idSuffix + 'FailedAlert', 'danger');
                 })*/»;
             «ENDIF»
         }

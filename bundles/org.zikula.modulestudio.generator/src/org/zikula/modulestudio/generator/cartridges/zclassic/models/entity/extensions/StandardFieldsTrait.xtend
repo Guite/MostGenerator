@@ -15,7 +15,7 @@ class StandardFieldsTrait {
     FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (targets('1.3.x') || !targets('1.4-dev')) {
+        if (targets('1.3.x')) {
             return
         }
         val filePath = getAppSourceLibPath + 'Traits/StandardFieldsTrait.php'

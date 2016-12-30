@@ -45,19 +45,13 @@ class Category {
     def private categoryHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF !targets('1.4-dev')»
-            use CategoryUtil;
-            use CategoryRegistryUtil;
-        «ENDIF»
         use Doctrine\ORM\QueryBuilder;
         use Psr\Log\LoggerInterface;
         use Symfony\Component\DependencyInjection\ContainerBuilder;
         use Symfony\Component\HttpFoundation\RequestStack;
         use Symfony\Component\HttpFoundation\Session\SessionInterface;
-        «IF targets('1.4-dev')»
-            use Zikula\CategoriesModule\Api\CategoryRegistryApi;
-            use Zikula\CategoriesModule\Api\CategoryPermissionApi;
-        «ENDIF»
+        use Zikula\CategoriesModule\Api\CategoryRegistryApi;
+        use Zikula\CategoriesModule\Api\CategoryPermissionApi;
         use Zikula\Common\Translator\TranslatorInterface;
         use Zikula\UsersModule\Api\CurrentUserApi;
 
@@ -95,33 +89,29 @@ class Category {
              * @var CurrentUserApi
              */
             private $currentUserApi;
-            «IF targets('1.4-dev')»
 
-                /**
-                 * @var CategoryRegistryApi
-                 */
-                private $categoryRegistryApi;
+            /**
+             * @var CategoryRegistryApi
+             */
+            private $categoryRegistryApi;
 
-                /**
-                 * @var CategoryPermissionApi
-                 */
-                private $categoryPermissionApi;
-            «ENDIF»
+            /**
+             * @var CategoryPermissionApi
+             */
+            private $categoryPermissionApi;
 
             /**
              * Constructor.
              * Initialises member vars.
              *
-             * @param ContainerBuilder    $container      ContainerBuilder service instance
-             * @param TranslatorInterface $translator     Translator service instance
-             * @param SessionInterface    $session        Session service instance
-             * @param LoggerInterface     $logger         Logger service instance
-             * @param RequestStack        $requestStack   RequestStack service instance
-             * @param CurrentUserApi      $currentUserApi CurrentUserApi service instance
-             «IF targets('1.4-dev')»
-                 «' '»* @param CategoryRegistryApi   $categoryRegistryApi   CategoryRegistryApi service instance
-                 «' '»* @param CategoryPermissionApi $categoryPermissionApi CategoryPermissionApi service instance
-             «ENDIF»
+             * @param ContainerBuilder      $container             ContainerBuilder service instance
+             * @param TranslatorInterface   $translator            Translator service instance
+             * @param SessionInterface      $session               Session service instance
+             * @param LoggerInterface       $logger                Logger service instance
+             * @param RequestStack          $requestStack          RequestStack service instance
+             * @param CurrentUserApi        $currentUserApi        CurrentUserApi service instance
+             * @param CategoryRegistryApi   $categoryRegistryApi   CategoryRegistryApi service instance
+             * @param CategoryPermissionApi $categoryPermissionApi CategoryPermissionApi service instance
              */
             public function __construct(
                 ContainerBuilder $container,
@@ -129,9 +119,9 @@ class Category {
                 SessionInterface $session,
                 LoggerInterface $logger,
                 RequestStack $requestStack,
-                CurrentUserApi $currentUserApi«IF targets('1.4-dev')»,
+                CurrentUserApi $currentUserApi,
                 CategoryRegistryApi $categoryRegistryApi,
-                CategoryPermissionApi $categoryPermissionApi«ENDIF»)
+                CategoryPermissionApi $categoryPermissionApi)
             {
                 $this->container = $container;
                 $this->translator = $translator;
@@ -139,10 +129,8 @@ class Category {
                 $this->logger = $logger;
                 $this->requestStack = $requestStack;
                 $this->currentUserApi = $currentUserApi;
-                «IF targets('1.4-dev')»
-                    $this->categoryRegistryApi = $categoryRegistryApi;
-                    $this->categoryPermissionApi = $categoryPermissionApi;
-                «ENDIF»
+                $this->categoryRegistryApi = $categoryRegistryApi;
+                $this->categoryPermissionApi = $categoryPermissionApi;
             }
 
             «categoryBaseImpl»
@@ -183,9 +171,7 @@ class Category {
 
                 $logArgs = ['app' => '«appName»', 'user' => $this->currentUserApi->get('uname')];
                 $this->logger->warning('{app}: User {user} called CategoryHelper#getMainCat which is deprecated.', $logArgs);
-            «ENDIF»
 
-            «IF targets('1.4-dev')»
                 return $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $registry, 32); // 32 == /__System/Modules/Global
             «ELSE»
                 return CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['registry']«ELSE»$registry«ENDIF», 32); // 32 == /__System/Modules/Global
@@ -417,7 +403,7 @@ class Category {
         {
             $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getAllProperties');
 
-            «IF targets('1.4-dev')»
+            «IF !isLegacy»
                 $propertyIdsPerName = $this->categoryRegistryApi->getModuleRegistriesIds('«appName»', ucfirst($objectType) . 'Entity');
             «ELSE»
                 $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF»);
@@ -449,7 +435,7 @@ class Category {
                 }
 
             «ENDIF»
-            «IF targets('1.4-dev')»
+            «IF !isLegacy»
                 $registryInfo = $this->categoryRegistryApi->getModuleCategoryIds('«appName»', ucfirst($objectType) . 'Entity', $arrayKey);
             «ELSE»
                 $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['arraykey']«ELSE»$arrayKey«ENDIF»);
@@ -475,7 +461,7 @@ class Category {
         {
             $objectType = $this->determineObjectType(«IF isLegacy»$args«ELSE»$objectType«ENDIF», 'getMainCatForProperty');
 
-            «IF targets('1.4-dev')»
+            «IF !isLegacy»
                 $catId = $this->categoryRegistryApi->getModuleCategoryId('«appName»', ucfirst($objectType) . 'Entity', $property);
             «ELSE»
                 $catId = CategoryRegistryUtil::getRegisteredModuleCategory(«IF isLegacy»$this->name«ELSE»'«appName»'«ENDIF», ucfirst($objectType)«IF !isLegacy» . 'Entity'«ENDIF», «IF isLegacy»$args['property']«ELSE»$property«ENDIF»);
@@ -536,7 +522,7 @@ class Category {
                 $categoryInfo[$registryName][] = $category->getCategory()->toArray();
             }
 
-            return «IF targets('1.4-dev')»$this->categoryPermissionApi->«ELSE»CategoryUtil::«ENDIF»hasCategoryAccess($categoryInfo«IF !targets('1.4-dev')», '«appName»'«ENDIF», ACCESS_OVERVIEW);
+            return «IF !isLegacy»$this->categoryPermissionApi->«ELSE»CategoryUtil::«ENDIF»hasCategoryAccess($categoryInfo«IF isLegacy», '«appName»'«ENDIF», ACCESS_OVERVIEW);
         }
 
         /**

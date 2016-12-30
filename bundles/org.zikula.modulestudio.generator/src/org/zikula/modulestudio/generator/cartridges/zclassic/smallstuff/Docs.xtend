@@ -192,9 +192,9 @@ class Docs {
         «ENDIF»
 
         «IF targets('1.3.x')»
-            This module is intended for being used with Zikula 1.3.5 to 1.3.11.
+            This module is intended for being used with Zikula 1.3.5 to 1.3.12.
         «ELSE»
-            This module is intended for being used with Zikula «IF targets('1.4-dev')»1.4.5-git«ELSE»1.4.4«ENDIF» and later.
+            This module is intended for being used with Zikula «IF targets('1.4-dev')»1.4.6-git«ELSE»1.4.5«ENDIF» and later.
             «IF targets('1.4-dev')»
 
             **Note this is a development version which is NOT READY for production yet.**

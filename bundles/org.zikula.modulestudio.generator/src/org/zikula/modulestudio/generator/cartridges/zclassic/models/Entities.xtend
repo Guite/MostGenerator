@@ -60,7 +60,7 @@ class Entities {
             }
         } else {
             new LifecycleListener().generate(it, fsa)
-            if (targets('1.4-dev') && hasStandardFieldEntities) {
+            if (hasStandardFieldEntities) {
                 new StandardFieldsTrait().generate(it, fsa)
             }
         }
@@ -132,7 +132,7 @@ class Entities {
             use Doctrine\Common\NotifyPropertyChanged;
             use Doctrine\Common\PropertyChangedListener;
         «ENDIF»
-        «IF standardFields && !application.targets('1.3.x') && !application.targets('1.4-dev')»
+        «IF standardFields && application.targets('1.3.x')»
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
         «ENDIF»
         «IF !application.targets('1.3.x')»
@@ -149,7 +149,7 @@ class Entities {
             «IF !getUniqueDerivedFields.filter[!primaryKey].empty || (hasSluggableFields && slugUnique) || !getIncomingJoinRelations.filter[unique].empty || !getOutgoingJoinRelations.filter[unique].empty || !getUniqueIndexes.empty»
                 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             «ENDIF»
-            «IF standardFields && application.targets('1.4-dev')»
+            «IF standardFields»
                 use «application.appNamespace»\Traits\StandardFieldsTrait;
             «ENDIF»
         «ENDIF»
@@ -193,7 +193,7 @@ class Entities {
         abstract class Abstract«name.formatForCodeCapital»Entity extends EntityAccess«IF it instanceof Entity && ((it as Entity).hasNotifyPolicy || (it as Entity).hasTranslatableFields)» implements«IF (it as Entity).hasNotifyPolicy» NotifyPropertyChanged«ENDIF»«IF (it as Entity).hasTranslatableFields»«IF (it as Entity).hasNotifyPolicy»,«ENDIF» Translatable«ENDIF»«ENDIF»
         «ENDIF»
         {
-            «IF it instanceof Entity && (it as Entity).standardFields && application.targets('1.4-dev')»
+            «IF it instanceof Entity && (it as Entity).standardFields && !application.targets('1.3.x')»
                 /**
                  * Hook standard fields behaviour.
                  * Updates createdUserId, updatedUserId, createdDate, updatedDate fields.

@@ -208,8 +208,8 @@ class TreeFunctions {
 
         if (true === hasDisplay) {
             actions.display = {
-                label: /*Zikula.__(*/'Display'/*, '«appName.formatForDB»_js')*/,
-                title: /*Zikula.__(*/'Show detail page'/*, '«appName.formatForDB»_js')*/,
+                label: Translator.__('Display'),
+                title: Translator.__('Show detail page'),
                 action: function (node) {
                     «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
                     document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_display', { id: nodeEntityId }, true);
@@ -219,8 +219,8 @@ class TreeFunctions {
         }
         if (true === hasEdit) {
             actions.edit = {
-                label: /*Zikula.__(*/'Edit'/*, '«appName.formatForDB»_js')*/,
-                title: /*Zikula.__(*/'Show edit form'/*, '«appName.formatForDB»_js')*/,
+                label: Translator.__('Edit'),
+                title: Translator.__('Show edit form'),
                 action: function (node) {
                     «/* TODO more detailed differentiation of parameters to be provided, e.g. slugs and composite keys */»
                     document.location.href = Routing.generate('«appName.formatForDB»_' + objectType.toLowerCase() + '_edit', { id: nodeEntityId }, true);
@@ -229,24 +229,24 @@ class TreeFunctions {
             };
         }
         actions.addChildNode = {
-            label: /*Zikula.__(*/'Add child node'/*, '«appName.formatForDB»_js')*/,
-            title: /*Zikula.__(*/'Add child node'/*, '«appName.formatForDB»_js')*/,
+            label: Translator.__('Add child node'),
+            title: Translator.__('Add child node'),
             action: function (node) {
                 «vendorAndName»PerformTreeOperation(objectType, rootId, 'addChildNode');
             },
             icon: 'fa fa-fw fa-plus'
         };
         actions.deleteNode = {
-            label: /*Zikula.__(*/'Delete'/*, '«appName.formatForDB»_js')*/,
-            title: /*Zikula.__(*/'Delete this node'/*, '«appName.formatForDB»_js')*/,
+            label: Translator.__('Delete'),
+            title: Translator.__('Delete this node'),
             action: function (node) {
                 var confirmQuestion;
                 var amountOfChildren;
 
-                confirmQuestion = /*Zikula.__(*/'Do you really want to remove this node?'/*, '«appName.formatForDB»_js')*/;
+                confirmQuestion = Translator.__('Do you really want to remove this node?');
                 amountOfChildren = node.children.length;
                 if (amountOfChildren > 0) {
-                    confirmQuestion = /*Zikula.__(*/'Do you really want to remove this node including all child nodes?'/*, '«appName.formatForDB»_js')*/;
+                    confirmQuestion = Translator.__('Do you really want to remove this node including all child nodes?');
                 }
                 if (false !== window.confirm(confirmQuestion)) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'deleteNode');
@@ -265,8 +265,8 @@ class TreeFunctions {
 
         if (!currentNode.is(':first-child')) { // has previous sibling
             actions.moveUp = {
-                label: /*Zikula.__(*/'Move up'/*, '«appName.formatForDB»_js')*/,
-                title: /*Zikula.__(*/'Move one position up'/*, '«appName.formatForDB»_js')*/,
+                label: Translator.__('Move up'),
+                title: Translator.__('Move one position up'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
                 },
@@ -276,8 +276,8 @@ class TreeFunctions {
         }
         if (!currentNode.is(':last-child')) { // has next sibling
             actions.moveDown = {
-                label: /*Zikula.__(*/'Move down'/*, '«appName.formatForDB»_js')*/,
-                title: /*Zikula.__(*/'Move one position down'/*, '«appName.formatForDB»_js')*/,
+                label: Translator.__('Move down'),
+                title: Translator.__('Move one position down'),
                 action: function (node) {
                     «vendorAndName»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
                 },
@@ -406,7 +406,7 @@ class TreeFunctions {
                     «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Invalid node id', 'module_«appName.formatForDB»_js'), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                     «ELSE»
-                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), /*Zikula.__(*/'Error'/*, '«appName.formatForDB»_js')*/, /*Zikula.__(*/'Invalid node id'/*, '«appName.formatForDB»_js')*/, 'treeInvalidNodeAlert', 'danger');
+                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Invalid node id'), 'treeInvalidNodeAlert', 'danger');
                     «ENDIF»
                 }
                 params += '&' + ((op === 'addChildNode') ? 'pid' : 'id') + '=' + «IF targets('1.3.x')»currentNodeId«ELSE»nodeEntityId«ENDIF»;
@@ -449,12 +449,12 @@ class TreeFunctions {
                     data = res.data;
 
                     /*if (data.message) {
-                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Zikula.__('Success', '«appName.formatForDB»_js'), data.message, 'treeAjaxDoneAlert', 'success');
+                        «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Success'), data.message, 'treeAjaxDoneAlert', 'success');
                     }*/
 
                     window.location.reload();
                 }).fail(function(jqXHR, textStatus) {
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), /*Zikula.__(*/'Error'/*, '«appName.formatForDB»_js')*/, /*Zikula.__(*/'Could not persist your change.'/*, '«appName.formatForDB»_js')*/, 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
                 });
             «ENDIF»
         }
@@ -541,7 +541,7 @@ class TreeFunctions {
                     return true;
                 }).fail(function(jqXHR, textStatus) {
                     var treeName = 'itemTree' + rootId;
-                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), /*Zikula.__(*/'Error'/*, '«appName.formatForDB»_js')*/, /*Zikula.__(*/'Could not persist your change.'/*, '«appName.formatForDB»_js')*/, 'treeAjaxFailedAlert', 'danger');
+                    «vendorAndName»SimpleAlert(jQuery('.tree-container'), Translator.__('Error'), Translator.__('Could not persist your change.'), 'treeAjaxFailedAlert', 'danger');
 
                     window.location.reload();
                     return false;

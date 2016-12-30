@@ -36,9 +36,6 @@ class BlockList {
         «IF !targets('1.3.x')»
             namespace «appNamespace»\Block\Base;
 
-            «IF hasCategorisableEntities && !targets('1.4-dev')»
-                use CategoryUtil;
-            «ENDIF»
             use Zikula\BlocksModule\AbstractBlockHandler;
             use Zikula\Core\AbstractBundle;
             «IF hasCategorisableEntities»

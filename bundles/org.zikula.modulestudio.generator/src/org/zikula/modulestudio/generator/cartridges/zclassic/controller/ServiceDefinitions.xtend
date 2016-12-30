@@ -304,7 +304,7 @@ class ServiceDefinitions {
         «IF hasCategorisableEntities»
             «modPrefix».category_helper:
                 class: «nsBase»CategoryHelper
-                arguments: ["@service_container", "@translator.default", "@session", "@logger", "@request_stack", "@zikula_users_module.current_user"«IF targets('1.4-dev')», "@zikula_categories_module.api.category_registry", "@zikula_categories_module.api.category_permission"«ENDIF»]
+                arguments: ["@service_container", "@translator.default", "@session", "@logger", "@request_stack", "@zikula_users_module.current_user", "@zikula_categories_module.api.category_registry", "@zikula_categories_module.api.category_permission"]
 
         «ENDIF»
         «modPrefix».controller_helper:

@@ -256,9 +256,6 @@ class ControllerLayer {
                 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
             «ENDIF»
             use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-            «IF categorisable && !app.targets('1.4-dev')»
-                use CategoryUtil;
-            «ENDIF»
             «IF hasActions('edit') && app.needsAutoCompletion»
                 use JCSSUtil;
             «ENDIF»

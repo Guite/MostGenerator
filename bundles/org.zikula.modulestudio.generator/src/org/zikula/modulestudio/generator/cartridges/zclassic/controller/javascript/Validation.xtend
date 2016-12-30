@@ -424,7 +424,7 @@ class Validation {
             «ELSE»
                 jQuery('.validate-nospace').each( function() {
                     if (!«vendorAndName»ValidateNoSpace(jQuery(this).val())) {
-                        document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'This value must not contain spaces.'/*, '«appName.formatForDB»_js')*/);
+                        document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('This value must not contain spaces.'));
                     } else {
                         document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                     }
@@ -432,7 +432,7 @@ class Validation {
                 «IF hasColourFields»
                     jQuery('.validate-htmlcolour').each( function() {
                         if (!«vendorAndName»ValidateHtmlColour(jQuery(this).val())) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a valid html colour code.'/*, '«appName.formatForDB»_js')*/);
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a valid html colour code.'));
                         } else {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                         }
@@ -441,7 +441,7 @@ class Validation {
                 «IF hasUploads»
                     jQuery('.validate-upload').each( function() {
                         if (!«vendorAndName»ValidateUploadExtension(jQuery(this).val(), jQuery(this))) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a valid file extension.'/*, '«appName.formatForDB»_js')*/);
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a valid file extension.'));
                         } else {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                         }
@@ -451,7 +451,7 @@ class Validation {
                     «IF datetimeFields.exists[past]»
                         jQuery('.validate-datetime-past').each( function() {
                             if (!«vendorAndName»ValidateDatetimePast(jQuery(this).val())) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a value in the past.'/*, '«appName.formatForDB»_js')*/);
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the past.'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
@@ -460,7 +460,7 @@ class Validation {
                     «IF datetimeFields.exists[future]»
                         jQuery('.validate-datetime-future').each( function() {
                             if (!«vendorAndName»ValidateDatetimeFuture(jQuery(this).val())) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a value in the future.'/*, '«appName.formatForDB»_js')*/);
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the future.'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
@@ -471,7 +471,7 @@ class Validation {
                     «IF dateFields.exists[past]»
                         jQuery('.validate-date-past').each( function() {
                             if (!«vendorAndName»ValidateDatePast(jQuery(this).val())) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a value in the past.'/*, '«appName.formatForDB»_js')*/);
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the past.'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
@@ -480,7 +480,7 @@ class Validation {
                     «IF dateFields.exists[future]»
                         jQuery('.validate-date-future').each( function() {
                             if (!«vendorAndName»ValidateDateFuture(jQuery(this).val())) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a value in the future.'/*, '«appName.formatForDB»_js')*/);
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the future.'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
@@ -491,7 +491,7 @@ class Validation {
                     «IF timeFields.exists[past]»
                         jQuery('.validate-time-past').each( function() {
                             if (!«vendorAndName»ValidateTimePast(jQuery(this).val())) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a value in the past.'/*, '«appName.formatForDB»_js')*/);
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the past.'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
@@ -500,7 +500,7 @@ class Validation {
                     «IF timeFields.exists[future]»
                         jQuery('.validate-time-future').each( function() {
                             if (!«vendorAndName»ValidateTimeFuture(jQuery(this).val())) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'Please select a value in the future.'/*, '«appName.formatForDB»_js')*/);
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('Please select a value in the future.'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
@@ -512,7 +512,7 @@ class Validation {
                         jQuery('.validate-daterange-«entity.name.formatForDB»').each( function() {
                             if (typeof jQuery(this).attr('id') != 'undefined') {
                             if (!«vendorAndName»ValidateDateRange«entity.name.formatForCodeCapital»(jQuery(this).val())) {
-                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'The start must be before the end.'/*, '«appName.formatForDB»_js')*/);
+                                document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('The start must be before the end.'));
                             } else {
                                 document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                             }
@@ -523,7 +523,7 @@ class Validation {
                 «IF entities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                     jQuery('.validate-unique').each( function() {
                         if (!«vendorAndName»UniqueCheck(jQuery(this).attr('id'), jQuery(this).val(), jQuery(this), currentEntityId)) {
-                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(/*Zikula.__(*/'This value is already assigned, but must be unique. Please change it.'/*, '«appName.formatForDB»_js')*/);
+                            document.getElementById(jQuery(this).attr('id')).setCustomValidity(Translator.__('This value is already assigned, but must be unique. Please change it.'));
                         } else {
                             document.getElementById(jQuery(this).attr('id')).setCustomValidity('');
                         }

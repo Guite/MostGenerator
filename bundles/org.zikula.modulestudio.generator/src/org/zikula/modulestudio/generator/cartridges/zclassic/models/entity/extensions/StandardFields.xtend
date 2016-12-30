@@ -25,7 +25,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
      * Generates additional entity properties.
      */
     override properties(Entity it) '''
-        «IF !application.targets('1.4-dev')»
+        «IF application.targets('1.3.x')»
 
             /**
              * @ORM\Column(type="integer")
@@ -73,7 +73,7 @@ class StandardFields extends AbstractExtension implements EntityExtensionInterfa
      * Generates additional accessor methods.
      */
     override accessors(Entity it) '''
-        «IF !application.targets('1.4-dev')»
+        «IF application.targets('1.3.x')»
             «val fh = new FileHelper»
             «fh.getterAndSetterMethods(it, 'createdUserId', 'integer', false, true, false, '', '')»
             «fh.getterAndSetterMethods(it, 'updatedUserId', 'integer', false, true, false, '', '')»

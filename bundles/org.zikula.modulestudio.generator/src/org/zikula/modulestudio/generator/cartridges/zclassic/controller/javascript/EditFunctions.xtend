@@ -203,7 +203,7 @@ class EditFunctions {
                 }
             «ELSE»
                 jQuery('#' + fieldName).val('');
-                jQuery('#' + fieldName + 'cal').html(Zikula.__('No date set.', '«appName.formatForDB»_js'));
+                jQuery('#' + fieldName + 'cal').html(Translator.__('No date set.'));
             «ENDIF»
         }
     '''
@@ -281,7 +281,7 @@ class EditFunctions {
                     «IF targets('1.3.x')»
                         Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName.formatForDB»_js') + ' ' + status);
                     «ELSE»
-                        «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Zikula.__('Error during geocoding', '«appName.formatForDB»_js'), status, 'geoCodingAlert', 'danger');
+                        «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.__('Error during geocoding'), status, 'geoCodingAlert', 'danger');
                     «ENDIF»
                 }
             }
@@ -318,7 +318,7 @@ class EditFunctions {
             «IF targets('1.3.x')»
                 Zikula.UI.Alert(event.message, Zikula.__('Error during geolocation', 'module_«appName.formatForDB»_js'));
             «ELSE»
-                «vendorAndName»SimpleAlert($('#mapContainer'), /*Zikula.__(*/'Error during geolocation'/*, '«appName.formatForDB»_js')*/, event.message, 'geoLocationAlert', 'danger');
+                «vendorAndName»SimpleAlert(jQuery('#mapContainer'), Translator.__('Error during geolocation'), event.message, 'geoLocationAlert', 'danger');
             «ENDIF»
         }
     '''
@@ -928,7 +928,7 @@ class EditFunctions {
                                     autoClose: 3 // time in seconds
                                 });
                             «ELSE»
-                                «vendorAndName»SimpleAlert(jQuery('.«appName.toLowerCase»-form'), Zikula.__('Information', '«appName.formatForDB»_js'), Zikula.__('Action has been completed.', '«appName.formatForDB»_js'), 'actionDoneAlert', 'success');
+                                «vendorAndName»SimpleAlert(jQuery('.«appName.toLowerCase»-form'), Translator.__('Information'), Translator.__('Action has been completed.'), 'actionDoneAlert', 'success');
                             «ENDIF»
                         }
                     }

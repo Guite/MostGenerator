@@ -41,9 +41,6 @@ class Installer {
             namespace «appNamespace»\Base;
 
             «IF hasCategorisableEntities»
-                «IF !targets('1.4-dev')»
-                    use CategoryUtil;
-                «ENDIF»
                 use DBUtil;
             «ENDIF»
             use Doctrine\DBAL\Connection;
@@ -146,7 +143,7 @@ class Installer {
                         $this->container->get('zikula_users_module.current_user')
                     );
                 «ENDIF»
-                «IF targets('1.4-dev')»
+                «IF !targets('1.3.x')»
                     $categoryGlobal = $this->container->get('zikula_categories_module.api.category')->getCategoryByPath('/__SYSTEM__/Modules/Global');
                 «ELSE»
                     $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');

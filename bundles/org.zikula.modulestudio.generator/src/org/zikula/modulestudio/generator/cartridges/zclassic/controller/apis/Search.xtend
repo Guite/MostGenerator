@@ -48,9 +48,6 @@ class Search {
     def private searchHelperBaseClass(Application it) '''
         namespace «appNamespace»\Helper\Base;
 
-        «IF hasCategorisableEntities && !targets('1.4-dev')»
-            use CategoryUtil;
-        «ENDIF»
         use ServiceUtil;
         use Zikula\Core\RouteUrl;
         use Zikula\SearchModule\AbstractSearchable;

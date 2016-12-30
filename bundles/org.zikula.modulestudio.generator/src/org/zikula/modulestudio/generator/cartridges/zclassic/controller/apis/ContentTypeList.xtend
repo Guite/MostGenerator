@@ -34,9 +34,6 @@ class ContentTypeList {
         «IF !isLegacy»
             namespace «appNamespace»\ContentType\Base;
 
-            «IF hasCategorisableEntities && !targets('1.4-dev')»
-                use CategoryUtil;
-            «ENDIF»
             use ModUtil;
             use ServiceUtil;
             use ZLanguage;
@@ -576,7 +573,7 @@ class ContentTypeList {
                     $locale = $serviceManager->get('request_stack')->getMasterRequest()->getLocale();
                 «ENDIF»
                 $categories = «IF isLegacy»array()«ELSE»[]«ENDIF»;
-                «IF targets('1.4-dev')»
+                «IF !isLegacy»
                     $categoryApi = $serviceManager->get('zikula_categories_module.api.category');
                 «ENDIF»
                 foreach ($this->catRegistries as $registryId => $registryCid) {
@@ -588,7 +585,7 @@ class ContentTypeList {
                         }
                     }
 
-                    «IF targets('1.4-dev')»
+                    «IF !isLegacy»
                         //$mainCategory = $categoryApi->getCategoryById($registryCid);
                         $cats = $categoryApi->getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
                     «ELSE»
