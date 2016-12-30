@@ -57,7 +57,8 @@ class Emails {
             <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
         {/if}
 
-        {if $mailData.newState ne 'deleted'}
+        {gt text='Deleted' assign='deletedStateText'}
+        {if $mailData.newState ne $deletedStateText}
             «IF application.hasUserController»
                 «IF application.getMainUserController.hasActions('display')»
                     <p>{gt text='Link to your «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
@@ -82,7 +83,7 @@ class Emails {
             <p>{{ __('Additional remarks:') }}<br />{{ mailData.remarks|nl2br }}</p>
         {% endif %}
 
-        {% if mailData.newState != 'deleted' %}
+        {% if mailData.newState != __('Deleted') %}
             «IF application.hasUserController»
                 «IF application.getMainUserController.hasActions('display')»
                     <p>{{ __('Link to your «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
@@ -107,7 +108,8 @@ class Emails {
             <p>{gt text='Additional remarks:'}<br />{$mailData.remarks|safetext|nl2br}</p>
         {/if}
 
-        {if $mailData.newState ne 'deleted'}
+        {gt text='Deleted' assign='deletedStateText'}
+        {if $mailData.newState ne $deletedStateText}
             «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
                 || application.hasUserController && application.getMainUserController.hasActions('display')»
                 <p>{gt text='Link to the «name.formatForDisplay»:'} <a href="{$mailData.displayUrl|safetext}" title="{$mailData.name|replace:'"':''}">{$mailData.displayUrl|safetext}</a></p>
@@ -132,7 +134,7 @@ class Emails {
             <p>{{ __('Additional remarks:') }}<br />{{ mailData.remarks|nl2br }}</p>
         {% endif %}
 
-        {% if mailData.newState != 'deleted' %}
+        {% if mailData.newState != __('Deleted') %}
             «IF application.hasAdminController && application.getAllAdminControllers.head.hasActions('display')
                 || application.hasUserController && application.getMainUserController.hasActions('display')»
                 <p>{{ __('Link to the «name.formatForDisplay»:') }} <a href="{{ mailData.displayUrl|e('html_attr') }}" title="{{ mailData.name|e('html_attr') }}">{{ mailData.displayUrl }}</a></p>
