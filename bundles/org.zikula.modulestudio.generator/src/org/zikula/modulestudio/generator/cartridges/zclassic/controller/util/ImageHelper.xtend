@@ -179,10 +179,10 @@ class ImageHelper {
                 «ENDIF»
             } elseif ($«IF isLegacy»preset«ELSE»context«ENDIF»Name == $this->name . '_relateditem') {
                 «IF isLegacy»
-                    $presetData['width'] = 50;
-                    $presetData['height'] = 38;
+                    $presetData['width'] = 100;
+                    $presetData['height'] = 75;
                 «ELSE»
-                    $options['thumbnail']['size'] = [50, 38];
+                    $options['thumbnail']['size'] = [100, 75];
                 «ENDIF»
             } elseif ($context == 'controllerAction') {
                 «IF isLegacy»
