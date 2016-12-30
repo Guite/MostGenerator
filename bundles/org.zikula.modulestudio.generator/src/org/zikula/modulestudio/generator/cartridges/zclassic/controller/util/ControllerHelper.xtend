@@ -43,14 +43,18 @@ class ControllerHelper {
             «IF hasGeographical»
                 use UserUtil;
             «ENDIF»
-            use Psr\Log\LoggerInterface;
+            «IF hasUploads || hasGeographical»
+                use Psr\Log\LoggerInterface;
+            «ENDIF»
             use Symfony\Component\DependencyInjection\ContainerBuilder;
             «IF hasUploads»
                 use Symfony\Component\Filesystem\Filesystem;
                 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
             «ENDIF»
             use Symfony\Component\HttpFoundation\Request;
-            use Symfony\Component\HttpFoundation\Session\SessionInterface;
+            «IF hasUploads»
+                use Symfony\Component\HttpFoundation\Session\SessionInterface;
+            «ENDIF»
             use Zikula\Common\Translator\TranslatorInterface;
 
         «ENDIF»
@@ -69,16 +73,20 @@ class ControllerHelper {
                  * @var TranslatorInterface
                  */
                 protected $translator;
+                «IF hasUploads»
 
-                /**
-                 * @var SessionInterface
-                 */
-                protected $session;
+                    /**
+                     * @var SessionInterface
+                     */
+                    protected $session;
+                «ENDIF»
+                «IF hasUploads || hasGeographical»
 
-                /**
-                 * @var LoggerInterface
-                 */
-                protected $logger;
+                    /**
+                     * @var LoggerInterface
+                     */
+                    protected $logger;
+                «ENDIF»
 
                 /**
                  * Constructor.
@@ -86,15 +94,23 @@ class ControllerHelper {
                  *
                  * @param ContainerBuilder    $container  ContainerBuilder service instance
                  * @param TranslatorInterface $translator Translator service instance
-                 * @param SessionInterface    $session    Session service instance
-                 * @param LoggerInterface     $logger     Logger service instance
+                 «IF hasUploads»
+                     * @param SessionInterface    $session    Session service instance
+                 «ENDIF»
+                 «IF hasUploads || hasGeographical»
+                     * @param LoggerInterface     $logger     Logger service instance
+                 «ENDIF»
                  */
-                public function __construct(ContainerBuilder $container, TranslatorInterface $translator, SessionInterface $session, LoggerInterface $logger)
+                public function __construct(ContainerBuilder $container, TranslatorInterface $translator«IF hasUploads», SessionInterface $session«ENDIF»«IF hasUploads || hasGeographical», LoggerInterface $logger«ENDIF»)
                 {
                     $this->container = $container;
                     $this->translator = $translator;
-                    $this->session = $session;
-                    $this->logger = $logger;
+                    «IF hasUploads»
+                        $this->session = $session;
+                    «ENDIF»
+                    «IF hasUploads || hasGeographical»
+                        $this->logger = $logger;
+                    «ENDIF»
                 }
 
             «ENDIF»

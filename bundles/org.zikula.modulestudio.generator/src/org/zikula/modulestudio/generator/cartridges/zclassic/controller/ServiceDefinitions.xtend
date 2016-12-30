@@ -309,7 +309,7 @@ class ServiceDefinitions {
         «ENDIF»
         «modPrefix».controller_helper:
             class: «nsBase»ControllerHelper
-            arguments: ["@service_container", "@translator.default", "@session", "@logger"]
+            arguments: ["@service_container", "@translator.default"«IF hasUploads», "@session"«ENDIF»«IF hasUploads || hasGeographical», "@logger"«ENDIF»]
         «IF needsFeatureActivationHelper»
 
             «modPrefix».feature_activation_helper:
