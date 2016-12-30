@@ -521,7 +521,7 @@ class View {
                 {# init the "toggle all" functionality #}
                 if ($('#toggle«nameMultiple.formatForCodeCapital»').length > 0) {
                     $('#toggle«nameMultiple.formatForCodeCapital»').click(function (event) {
-                        $('«nameMultiple.formatForCode.toLowerCase»-checkbox').prop('checked', $(this).prop('checked'));
+                        $('.«nameMultiple.formatForCode.toLowerCase»-checkbox').prop('checked', $(this).prop('checked'));
                     });
                 }
             {% endif %}
