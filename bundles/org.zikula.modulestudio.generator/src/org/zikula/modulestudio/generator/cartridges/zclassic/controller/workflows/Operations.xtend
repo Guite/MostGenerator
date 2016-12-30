@@ -137,6 +137,12 @@ class Operations {
     '''
 
     def private deleteImpl() '''
+        // get attributes read from the workflow
+        if (isset($params['nextstate']) && !empty($params['nextstate'])) {
+            // assign value to the data object
+            $entity['workflowState'] = $params['nextstate'];
+        }
+
         // get entity manager
         $serviceManager = «IF !app.targets('1.3.x')»\«ENDIF»ServiceUtil::getManager();
         $entityManager = $serviceManager->get«IF app.targets('1.3.x')»Service«ENDIF»('«app.entityManagerService»');

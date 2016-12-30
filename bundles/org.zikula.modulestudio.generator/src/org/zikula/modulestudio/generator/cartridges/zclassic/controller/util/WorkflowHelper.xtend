@@ -273,7 +273,7 @@ class WorkflowHelper {
             $actions = «IF targets('1.3.x')»array()«ELSE»[]«ENDIF»;
             foreach ($wfActions as $actionId => $action) {
                 $nextState = (isset($action['nextState']) ? $action['nextState'] : '');
-                if ($nextState != '' && !in_array($nextState, $allowedStates)) {
+                if (!in_array($nextState, «IF targets('1.3.x')»array('', 'deleted')«ELSE»['', 'deleted']«ENDIF») && !in_array($nextState, $allowedStates)) {
                     continue;
                 }
 

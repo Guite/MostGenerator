@@ -382,11 +382,17 @@ class Notification {
             if ($this->recipientType == 'moderator' || $this->recipientType == 'superModerator') {
                 if ($this->action == 'submit') {
                     $mailSubject = $this->__('New content has been submitted');
+                } elseif ($this->action == 'delete') {
+                    $mailSubject = $this->__('Content has been deleted');
                 } else {
                     $mailSubject = $this->__('Content has been updated');
                 }
             } elseif ($this->recipientType == 'creator') {
-                $mailSubject = $this->__('Your submission has been updated');
+                if ($this->action == 'delete') {
+                    $mailSubject = $this->__('Your submission has been deleted');
+                } else {
+                    $mailSubject = $this->__('Your submission has been updated');
+                }
             }
 
             return $mailSubject;

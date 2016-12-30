@@ -247,7 +247,7 @@ class Definition {
     '''
 
     def private deleteAction(ListFieldItem it) '''
-        «actionImpl('delete', 'Delete', 'delete', it.value, '')»
+        «actionImpl('delete', 'Delete', 'delete', it.value, 'deleted')»
     '''
 
     def private actionImpl(String id, String title, String permission, String state, String nextState) '''
