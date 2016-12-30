@@ -295,6 +295,8 @@ class PersistenceTransformer {
                 documentation = 'The amount of ' + entity.nameMultiple.formatForDisplay + ' shown per page'
             ]
         }
+
+        variables += varContainer
     }
 
     def private addImageSettings(Application it) {
