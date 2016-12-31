@@ -1227,21 +1227,24 @@ class FormHandler {
         {
             $roles = «IF isLegacy»array()«ELSE»[]«ENDIF»;
 
+            «/* TODO recheck this after https://github.com/zikula/core/issues/2800 has been solved */»
             «IF isLegacy»
-                $uid = UserUtil::getVar('uid');
+                $uid = UserUtil::isLoggedIn() ? UserUtil::getVar('uid') : 1;
             «ELSE»
-                $uid = $this->container->get('zikula_users_module.current_user')->get('uid');
+                $currentUserApi = $this->container->get('zikula_users_module.current_user');
+                $isLoggedIn = $currentUserApi->isLoggedIn();
+                $uid = $isLoggedIn ? $currentUserApi->get('uid') : 1;
             «ENDIF»
             $roles['isCreator'] = $this->entityRef['createdUserId'] == $uid;
             «IF !isLegacy»
-                $varHelper = $this->container->get('zikula_extensions_module.api.variable');
+                $variableApi = $this->container->get('zikula_extensions_module.api.variable');
             «ENDIF»
 
-            $groupArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF isLegacy»$this->getVar(«ELSE»$varHelper->get('«appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2)«IF isLegacy»)«ELSE»]«ENDIF»;
+            $groupArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF isLegacy»$this->getVar(«ELSE»$variableApi->get('«appName»', «ENDIF»'moderationGroupFor' . $this->objectTypeCapital, 2)«IF isLegacy»)«ELSE»]«ENDIF»;
             $roles['isModerator'] = ModUtil::apiFunc('«IF isLegacy»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
 
             if (true === $enterprise) {
-                $groupArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF isLegacy»$this->getVar(«ELSE»$varHelper->get('«appName»', «ENDIF»'superModerationGroupFor' . $this->objectTypeCapital, 2)«IF isLegacy»)«ELSE»]«ENDIF»;
+                $groupArgs = «IF isLegacy»array(«ELSE»[«ENDIF»'uid' => $uid, 'gid' => «IF isLegacy»$this->getVar(«ELSE»$variableApi->get('«appName»', «ENDIF»'superModerationGroupFor' . $this->objectTypeCapital, 2)«IF isLegacy»)«ELSE»]«ENDIF»;
                 $roles['isSuperModerator'] = ModUtil::apiFunc('«IF isLegacy»Groups«ELSE»ZikulaGroupsModule«ENDIF»', 'user', 'isgroupmember', $groupArgs);
             }
 
