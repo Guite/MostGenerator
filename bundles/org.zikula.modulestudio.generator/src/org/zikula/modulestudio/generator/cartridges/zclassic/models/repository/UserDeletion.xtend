@@ -76,16 +76,11 @@ class UserDeletion {
                 «ENDIF»
             }
 
-            «IF !application.targets('1.3.x')»
-                $userName = \UserUtil::getVar('uname', $userId);
-                $newUserName = \UserUtil::getVar('uname', $newUserId);
-
-            «ENDIF»
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
-               ->set('tbl.createdUserId', «IF !application.targets('1.3.x')»$newUserName«ELSE»$newUserId«ENDIF»)
+               ->set('tbl.createdUserId', $newUserId)
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', «IF !application.targets('1.3.x')»$userName«ELSE»$userId«ENDIF»);
+               ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
@@ -134,16 +129,11 @@ class UserDeletion {
                 «ENDIF»
             }
 
-            «IF !application.targets('1.3.x')»
-                $userName = \UserUtil::getVar('uname', $userId);
-                $newUserName = \UserUtil::getVar('uname', $newUserId);
-
-            «ENDIF»
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
-               ->set('tbl.updatedUserId', «IF !application.targets('1.3.x')»$newUserName«ELSE»$newUserId«ENDIF»)
+               ->set('tbl.updatedUserId', $newUserId)
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', «IF !application.targets('1.3.x')»$userName«ELSE»$userId«ENDIF»);
+               ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.lockTypeAsConstant»);
@@ -189,14 +179,10 @@ class UserDeletion {
                 «ENDIF»
             }
 
-            «IF !application.targets('1.3.x')»
-                $userName = \UserUtil::getVar('uname', $userId);
-
-            «ENDIF»
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', «IF !application.targets('1.3.x')»$userName«ELSE»$userId«ENDIF»);
+               ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «initDeleteQueryAdditions»
 
@@ -241,14 +227,10 @@ class UserDeletion {
                 «ENDIF»
             }
 
-            «IF !application.targets('1.3.x')»
-                $userName = \UserUtil::getVar('uname', $userId);
-
-            «ENDIF»
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', «IF !application.targets('1.3.x')»$userName«ELSE»$userId«ENDIF»);
+               ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «initDeleteQueryAdditions»
 

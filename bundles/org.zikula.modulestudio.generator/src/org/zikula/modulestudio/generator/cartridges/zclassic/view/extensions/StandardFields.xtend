@@ -113,14 +113,14 @@ class StandardFields {
         <dl class="propertylist">
         {% if obj.createdUserId|default %}
             <dt>{{ __('Creation') }}</dt>
-            {% set profileLink = obj.createdUserId|profileLinkByUserName() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uname=obj.createdUserId, rating='g') }}</dd>
+            {% set profileLink = obj.createdUserId.getUid()|profileLinkByUserId() %}
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.createdUserId.id, rating='g') }}</dd>
             <dd>{{ __f('Created by %user on %date', {'%user': profileLink, '%date': obj.createdDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
         {% if obj.updatedUserId|default %}
             <dt>{{ __('Last update') }}</dt>
-            {% set profileLink = obj.updatedUserId|profileLinkByUserName() %}
-            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uname=obj.updatedUserId, rating='g') }}</dd>
+            {% set profileLink = obj.updatedUserId.getUid()|profileLinkByUserId() %}
+            <dd class="avatar">{{ «appName.toLowerCase»_userAvatar(uid=obj.updatedUserId.id, rating='g') }}</dd>
             <dd>{{ __f('Updated by %user on %date', {'%user': profileLink, '%date': obj.updatedDate|localizeddate('medium', 'short')})|raw }}</dd>
         {% endif %}
         </dl>
@@ -188,11 +188,11 @@ class StandardFields {
     def private editBody(Application it) '''
         <ul>
         {% if obj.createdUserId|default %}
-            <li>{{ __f('Created by %user', {'%user': obj.createdUserId}) }}</li>
+            <li>{{ __f('Created by %user', {'%user': obj.createdUserId.getUname()}) }}</li>
             <li>{{ __f('Created on %date', {'%date': obj.createdDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
         {% if obj.updatedUserId|default %}
-            <li>{{ __f('Updated by %user', {'%user': obj.updatedUserId}) }}</li>
+            <li>{{ __f('Updated by %user', {'%user': obj.updatedUserId.getUname()}) }}</li>
             <li>{{ __f('Updated on %date', {'%date': obj.updatedDate|localizeddate('medium', 'short')}) }}</li>
         {% endif %}
         </ul>

@@ -127,8 +127,8 @@ class Rss {
             <guid>{{ url('«appName.formatForDB»_«name.formatForDB»_' ~ routeArea ~ '«defaultAction»'«IF hasActions('display')»«routeParams(objName, true)»«ENDIF») }}</guid>
             «IF standardFields»
                 {% if «objName».createdUserId is defined %}
-                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
-                    <author>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }} ({{ realName|default(obj.createdUserId) }})</author>
+                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdUserId.getUid()) %}
+                    <author>{{ «objName».createdUserId.getEmail() }} ({{ realName|default(obj.createdUserId.getUname()) }})</author>
                 {% endif %}
             «ENDIF»
             «IF categorisable»

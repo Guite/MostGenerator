@@ -41,16 +41,18 @@ class StandardFieldsTrait {
         trait StandardFieldsTrait
         {
             /**
-             * @var string
+             * @var UserEntity
              * @Gedmo\Blameable(on="create")
-             * @ORM\Column(nullable=true)
+             * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+             * @ORM\JoinColumn(referencedColumnName="uid")
              */
             protected $createdUserId;
 
             /**
-             * @var string
+             * @var UserEntity
              * @Gedmo\Blameable(on="update")
-             * @ORM\Column(nullable=true)
+             * @ORM\ManyToOne(targetEntity="Zikula\UsersModule\Entity\UserEntity")
+             * @ORM\JoinColumn(referencedColumnName="uid")
              */
             protected $updatedUserId;
 

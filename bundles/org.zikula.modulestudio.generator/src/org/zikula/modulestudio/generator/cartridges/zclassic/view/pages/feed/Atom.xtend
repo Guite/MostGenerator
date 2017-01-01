@@ -125,11 +125,11 @@ class Atom {
                     <published>{{ «objName».createdDate|date('Y-m-dTH:M:SZ') }}</published>
                 {% endif %}
                 {% if «objName».createdUserId|default %}
-                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdUserId) %}
+                    {% set realName = «appName.toLowerCase»_userVar('name', obj.createdUserId.getUid()) %}
                     <author>
-                       <name>{{ realName|default(obj.createdUserId) }}</name>
-                       <uri>{{ «appName.toLowerCase»_userVar('_UYOURHOMEPAGE', «objName».createdUserId, '-') }}</uri>
-                       <email>{{ «appName.toLowerCase»_userVar('email', «objName».createdUserId) }}</email>
+                       <name>{{ realName|default(obj.createdUserId.getUname()) }}</name>
+                       <uri>{{ «appName.toLowerCase»_userVar('_UYOURHOMEPAGE', «objName».createdUserId.getUid(), '-') }}</uri>
+                       <email>{{ «objName».createdUserId.getEmail() }}</email>
                     </author>
                 {% endif %}
             «ENDIF»

@@ -151,6 +151,7 @@ class Entities {
             «ENDIF»
             «IF standardFields»
                 use «application.appNamespace»\Traits\StandardFieldsTrait;
+                use Zikula\UsersModule\Entity\UserEntity;
             «ENDIF»
         «ENDIF»
     '''

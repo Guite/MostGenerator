@@ -114,7 +114,7 @@ class Relations {
             {% if items|default and items|length > 0 %}
             <ul class="«app.appName.toLowerCase»-related-item-list «name.formatForCode»">
             {% for item in items %}
-                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and currentUser|default and item.createdUserId == currentUser.uname)«ENDIF» %}
+                {% if hasAdminPermission or item.workflowState == 'approved'«IF ownerPermission» or (item.workflowState == 'defered' and hasEditPermission and currentUser|default and item.createdUserId.getUid() == currentUser.uid)«ENDIF» %}
                 <li>
         «ENDIF»
         «IF hasActions('display')»
@@ -229,7 +229,7 @@ class Relations {
                 {% set permLevel = 'ACCESS_ADMIN' %}
             {% endif %}
             {% set mayManage = hasPermission('«appName»:«relatedEntity.name.formatForCodeCapital»:', «relatedEntity.idFieldsAsParameterTemplate» ~ '::', permLevel) %}
-            {% if mayManage or (currentUser|default and «relatedEntity.name.formatForCode».createdUserId|default and «relatedEntity.name.formatForCode».createdUserId == currentUser.uname) %}
+            {% if mayManage or (currentUser|default and «relatedEntity.name.formatForCode».createdUserId|default and «relatedEntity.name.formatForCode».createdUserId.getUid() == currentUser.uid) %}
             <p class="managelink">
                 {% set createTitle = __('Create «otherEntity.name.formatForDisplay»') %}
                 <a href="{{ path('«appName.formatForDB»_«otherEntity.name.formatForDB»_' ~ routeArea ~ 'edit', { «relationAliasNameParam»: «relatedEntity.idFieldsAsParameterTemplate» }) }}" title="{{ createTitle }}" class="fa fa-plus">{{ createTitle }}</a>

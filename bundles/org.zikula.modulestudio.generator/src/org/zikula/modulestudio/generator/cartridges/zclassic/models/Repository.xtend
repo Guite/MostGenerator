@@ -1480,15 +1480,12 @@ class Repository {
                 if ($showOnlyOwnEntries == 1) {
                     «IF app.targets('1.3.x')»
                         $uid = UserUtil::getVar('uid');
-                        $qb->andWhere('tbl.createdUserId = :creator')
-                           ->setParameter('creator', $uid);
                     «ELSE»
                         «/*$uid = $serviceManager->get('zikula_users_module.current_user')->get('uid');*/»
                         $uid = $this->getRequest()->getSession()->get('uid');
-                        $uname = \UserUtil::getVar('uname', $uid);
-                        $qb->andWhere('tbl.createdUserId = :creator')
-                           ->setParameter('creator', $uname);
                     «ENDIF»
+                    $qb->andWhere('tbl.createdUserId = :creator')
+                       ->setParameter('creator', $uid);
                 }
             «ENDIF»
 
