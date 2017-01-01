@@ -140,7 +140,9 @@ class Installer {
                         $this->container->get('session'),
                         $logger,
                         $this->container->get('request_stack'),
-                        $this->container->get('zikula_users_module.current_user')
+                        $this->container->get('zikula_users_module.current_user'),
+                        $this->container->get('zikula_categories_module.api.category_registry'),
+                        $this->container->get('zikula_categories_module.api.category_permission')
                     );
                 «ENDIF»
                 «IF !targets('1.3.x')»
