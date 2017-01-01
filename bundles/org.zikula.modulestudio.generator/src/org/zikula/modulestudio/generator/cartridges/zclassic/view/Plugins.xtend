@@ -275,13 +275,18 @@ class Plugins {
          * Returns the value of a user variable.
          *
          * @param string     $name    Name of desired property
-         * @param int        $uid     The user's id
+         * @param string     $uname   The user name
          * @param string|int $default The default value
          *
          * @return string
          */
-        public function getUserVar($name, $uid = -1, $default = '')
+        public function getUserVar($name, $uname = '', $default = '')
         {
+            if (!$uname) {
+                return null;
+            }
+
+            $uid = \UserUtil::getIdFromName($uname);
             if (!$uid) {
                 $uid = -1;
             }
@@ -295,6 +300,7 @@ class Plugins {
          * Display the avatar of a user.
          *
          * @param int    $uid    The user's id
+         * @param string $uname  The user name
          * @param int    $width  Image width (optional)
          * @param int    $height Image height (optional)
          * @param int    $size   Gravatar size (optional)
@@ -302,8 +308,19 @@ class Plugins {
          *
          * @return string
          */
-        public function getUserAvatar($uid, $width = 0, $height = 0, $size = 0, $rating = '')
+        public function getUserAvatar($uid = 0, $uname = '', $width = 0, $height = 0, $size = 0, $rating = '')
         {
+            if (!$uid && !$uname) {
+                return '';
+            }
+
+            if (!$uid) {
+                $uid = \UserUtil::getIdFromName($uname);
+                if (!$uid) {
+                    $uid = -1;
+                }
+            }
+
             $params = ['uid' => $uid];
             if ($width > 0) {
                 $params['width'] = $width;
