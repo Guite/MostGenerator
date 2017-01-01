@@ -285,6 +285,7 @@ class LifecycleListener {
          */
         class EntityLifecycleListener extends AbstractEntityLifecycleListener
         {
+            // feel free to enhance this listener by custom actions
         }
     '''
 }

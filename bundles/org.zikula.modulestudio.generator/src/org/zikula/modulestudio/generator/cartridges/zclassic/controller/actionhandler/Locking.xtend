@@ -33,6 +33,11 @@ class Locking {
                 $lockingApi = $this->container->get('zikula_pagelock_module.api.locking');
                 $lockName = '«appName»' . $this->objectTypeCapital . $this->createCompositeIdentifier();
                 $lockingApi->addLock($lockName, $this->getRedirectUrl(null));
+                «IF hasUploads»
+                    // reload entity as the addLock call above has triggered the preUpdate event
+                    $entityManager = $this->container->get('doctrine.orm.entity_manager');
+                    $entityManager->refresh($entity);
+                «ENDIF»
             «ENDIF»
         }
     '''
